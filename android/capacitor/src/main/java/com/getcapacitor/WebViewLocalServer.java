@@ -43,6 +43,7 @@ import java.util.Map;
  * methods.
  */
 public class WebViewLocalServer {
+
     private static final String capacitorFileStart = Bridge.CAPACITOR_FILE_START;
     private static final String capacitorContentStart = Bridge.CAPACITOR_CONTENT_START;
     private String basePath;
@@ -71,6 +72,7 @@ public class WebViewLocalServer {
      * minimum.
      */
     public abstract static class PathHandler {
+
         protected String mimeType;
         private String encoding;
         private String charset;
@@ -143,7 +145,7 @@ public class WebViewLocalServer {
             return null;
         }
         String path = uri.getPath();
-        if (path == null || path.length() == 0) {
+        if (path == null || path.isEmpty()) {
             Logger.error("URL does not have a path: " + url);
             return null;
         }
@@ -171,7 +173,8 @@ public class WebViewLocalServer {
 
         if (
             isLocalFile(loadingUrl) ||
-            (bridge.getConfig().getString("server.url") == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))
+            loadingUrl.getHost().equalsIgnoreCase(bridge.getHost()) ||
+            (bridge.getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))
         ) {
             Logger.debug("Handling local request: " + request.getUrl().toString());
             return handleLocalRequest(request, handler);
@@ -281,7 +284,7 @@ public class WebViewLocalServer {
 
         int periodIndex = path.lastIndexOf(".");
         if (periodIndex >= 0) {
-            String ext = path.substring(path.lastIndexOf("."), path.length());
+            String ext = path.substring(path.lastIndexOf("."));
 
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
 
@@ -354,8 +357,6 @@ public class WebViewLocalServer {
                         responseStream
                     );
                 }
-            } catch (SocketTimeoutException ex) {
-                bridge.handleAppUrlLoadError(ex);
             } catch (Exception ex) {
                 bridge.handleAppUrlLoadError(ex);
             }
@@ -454,7 +455,6 @@ public class WebViewLocalServer {
         }
 
         PathHandler handler = new PathHandler() {
-
             @Override
             public InputStream handle(Uri url) {
                 InputStream stream = null;
@@ -506,6 +506,7 @@ public class WebViewLocalServer {
      * parallelize loading.
      */
     private abstract static class LazyInputStream extends InputStream {
+
         protected final PathHandler handler;
         private InputStream is = null;
 
@@ -555,6 +556,7 @@ public class WebViewLocalServer {
 
     // For L and above.
     private static class LollipopLazyInputStream extends LazyInputStream {
+
         private WebResourceRequest request;
         private InputStream is;
 

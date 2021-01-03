@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class Logger {
+
     public static final String LOG_TAG_CORE = "Capacitor";
     public static CapConfig config;
 
@@ -21,7 +22,7 @@ public class Logger {
     }
 
     private void loadConfig(CapConfig config) {
-        this.config = config;
+        Logger.config = config;
     }
 
     public static String tags(String... subtags) {
@@ -97,6 +98,6 @@ public class Logger {
     }
 
     protected static boolean shouldLog() {
-        return config == null || !config.getBoolean("android.hideLogs", config.getBoolean("hideLogs", false));
+        return config == null || !config.isLogsHidden();
     }
 }

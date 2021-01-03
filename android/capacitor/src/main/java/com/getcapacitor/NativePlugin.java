@@ -1,12 +1,16 @@
 package com.getcapacitor;
 
+import com.getcapacitor.annotation.CapacitorPlugin;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
  * Base annotation for all Plugins
+ * @deprecated
+ * <p> Use {@link CapacitorPlugin} instead
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
 public @interface NativePlugin {
     /**
      * Request codes this plugin uses and responds to, in order to tie

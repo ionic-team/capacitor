@@ -24,6 +24,7 @@ import java.util.UUID;
  * Manager for assets.
  */
 public final class AssetUtil {
+
     public static final int RESOURCE_ID_ZERO_VALUE = 0;
     // Name of the storage folder
     private static final String STORAGE_FOLDER = "/capacitorassets";

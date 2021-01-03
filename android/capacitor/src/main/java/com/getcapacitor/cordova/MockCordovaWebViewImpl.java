@@ -21,6 +21,7 @@ import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
 
 public class MockCordovaWebViewImpl implements CordovaWebView {
+
     private Context context;
     private PluginManager pluginManager;
     private CordovaPreferences preferences;
@@ -58,6 +59,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
     }
 
     public static class CapacitorEvalBridgeMode extends NativeToJsMessageQueue.BridgeMode {
+
         private final WebView webView;
         private final CordovaInterface cordova;
 

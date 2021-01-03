@@ -1,18 +1,5 @@
 import Foundation
 
-enum JSProcessingError: LocalizedError {
-    case jsonSerializeError(call: JSCall)
-    var errorDescription: String? {
-        switch self {
-        case .jsonSerializeError(call: let call):
-            return "Unable to JSON serialize plugin data result for plugin \(call.pluginId) and method \(call.method)"
-        }
-    }
-}
-
-public typealias JSObject = [String: Any]
-public typealias JSArray = [JSObject]
-
 public class JSDate {
     static func toString(_ date: Date) -> String {
         let formatter = ISO8601DateFormatter()
@@ -24,13 +11,13 @@ public class JSDate {
  * A call originating from JavaScript land
  */
 public class JSCall {
-    public var options: [String: Any] = [:]
+    public var options: JSObject = [:]
     public var pluginId: String = ""
     public var method: String = ""
     public var callbackId: String = ""
 
     public init(options: [String: Any], pluginId: String, method: String, callbackId: String) {
-        self.options = options
+        self.options = JSTypes.coerceDictionaryToJSObject(options) ?? [:]
         self.pluginId = pluginId
         self.method = method
         self.callbackId = callbackId
@@ -52,7 +39,7 @@ public class JSResult {
         self.result = result
     }
 
-    public func toJson() throws -> String {
+    public func toJson() -> String {
         if let result = result {
             do {
                 if JSONSerialization.isValidJSONObject(result) {
@@ -62,11 +49,8 @@ public class JSResult {
                                   encoding: .utf8)!
                 } else {
                     CAPLog.print("[Capacitor Plugin Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
-                        "Ensure that all data passed to success callback from module method is JSON serializable!")
-                    throw JSProcessingError.jsonSerializeError(call: call)
+                                    "Ensure that all data passed to success callback from module method is JSON serializable!")
                 }
-            } catch let error as JSProcessingError {
-                throw error
             } catch {
                 CAPLog.print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
             }
@@ -102,7 +86,7 @@ public class JSResultError {
             return nil
         }
 
-        return "\(CAPBridge.capacitorSite)error/ios?m=\(data)"
+        return "\(CapacitorBridge.capacitorSite)error/ios?m=\(data)"
     }
 
     public func toJson() -> String {

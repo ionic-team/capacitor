@@ -1,30 +1,21 @@
+import { readdir, readFile, writeFile } from '@ionic/utils-fs';
 import { join, resolve } from 'path';
 
 import c from '../colors';
-import {
-  isInstalled,
-  checkCapacitorPlatform,
-  getProjectPlatformDirectory,
-} from '../common';
+import { checkCapacitorPlatform, getProjectPlatformDirectory } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
 import { OS } from '../definitions';
 import type { Plugin } from '../plugin';
 import { PluginType, getPluginPlatform } from '../plugin';
-import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
+import { isInstalled } from '../util/subprocess';
 
 export async function findXcodePath(config: Config): Promise<string | null> {
   try {
-    const files = await readdirAsync(
-      join(config.ios.platformDirAbs, config.ios.nativeProjectName),
-    );
+    const files = await readdir(config.ios.nativeProjectDirAbs);
     const xcodeProject = files.find(file => file.endsWith('.xcworkspace'));
     if (xcodeProject) {
-      return join(
-        config.ios.platformDirAbs,
-        config.ios.nativeProjectName,
-        xcodeProject,
-      );
+      return join(config.ios.nativeProjectDirAbs, xcodeProject);
     }
     return null;
   } catch {
@@ -37,7 +28,7 @@ export async function checkIOSPackage(config: Config): Promise<string | null> {
 }
 
 export async function checkCocoaPods(config: Config): Promise<string | null> {
-  if (!(await isInstalled('pod')) && config.cli.os === OS.Mac) {
+  if (!(await isInstalled(config.ios.podPath)) && config.cli.os === OS.Mac) {
     return (
       `CocoaPods is not installed.\n` +
       `See this install guide: ${c.strong(
@@ -59,12 +50,14 @@ export async function checkIOSProject(config: Config): Promise<string | null> {
   return null;
 }
 
-export function getIOSPlugins(allPlugins: Plugin[]): Plugin[] {
-  const resolved = allPlugins.map(plugin => resolvePlugin(plugin));
-  return resolved.filter(plugin => !!plugin) as Plugin[];
+export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
+  const resolved = await Promise.all(
+    allPlugins.map(async plugin => await resolvePlugin(plugin)),
+  );
+  return resolved.filter((plugin): plugin is Plugin => !!plugin);
 }
 
-export function resolvePlugin(plugin: Plugin): Plugin | null {
+export async function resolvePlugin(plugin: Plugin): Promise<Plugin | null> {
   const platform = 'ios';
   if (plugin.manifest?.ios) {
     plugin.ios = {
@@ -97,30 +90,22 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 
-  const pbxPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.nativeProjectName,
-    'App.xcodeproj/project.pbxproj',
-  );
-  const plistPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.nativeProjectName,
-    'App/Info.plist',
-  );
+  const pbxPath = `${config.ios.nativeTargetDirAbs}.xcodeproj/project.pbxproj`;
+  const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
 
-  let plistContent = await readFileAsync(plistPath, 'utf8');
+  let plistContent = await readFile(plistPath, { encoding: 'utf-8' });
 
   plistContent = plistContent.replace(
     /<key>CFBundleDisplayName<\/key>[\s\S]?\s+<string>([^<]*)<\/string>/,
     `<key>CFBundleDisplayName</key>\n        <string>${appName}</string>`,
   );
 
-  let pbxContent = await readFileAsync(pbxPath, 'utf8');
+  let pbxContent = await readFile(pbxPath, { encoding: 'utf-8' });
   pbxContent = pbxContent.replace(
     /PRODUCT_BUNDLE_IDENTIFIER = ([^;]+)/g,
     `PRODUCT_BUNDLE_IDENTIFIER = ${appId}`,
   );
 
-  await writeFileAsync(plistPath, plistContent, 'utf8');
-  await writeFileAsync(pbxPath, pbxContent, 'utf8');
+  await writeFile(plistPath, plistContent, { encoding: 'utf-8' });
+  await writeFile(pbxPath, pbxContent, { encoding: 'utf-8' });
 }

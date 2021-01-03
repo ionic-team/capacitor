@@ -1,7 +1,6 @@
 import { openAndroid } from '../android/open';
 import c from '../colors';
 import {
-  logFatal,
   resolvePlatform,
   runPlatformHook,
   runTask,
@@ -11,7 +10,7 @@ import {
 } from '../common';
 import type { Config } from '../definitions';
 import { openIOS } from '../ios/open';
-import { logger } from '../log';
+import { logger, logFatal } from '../log';
 
 export async function openCommand(
   config: Config,
@@ -37,7 +36,7 @@ export async function openCommand(
       platformName = platforms[0];
     } else {
       platformName = await promptForPlatform(
-        '',
+        platforms.filter(createOpenablePlatformFilter(config)),
         `Please choose a platform to open:`,
       );
     }
@@ -48,6 +47,13 @@ export async function openCommand(
       logFatal(e.stack ?? e);
     }
   }
+}
+
+function createOpenablePlatformFilter(
+  config: Config,
+): (platform: string) => boolean {
+  return platform =>
+    platform === config.ios.name || platform === config.android.name;
 }
 
 export async function open(

@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Close old issues that need reply
-        uses: dwieeb/needs-reply@master
+        uses: dwieeb/needs-reply@v2
         with:
           repo-token: ${{ secrets.BOT_TOKEN }}
           issue-label: 'needs reply'

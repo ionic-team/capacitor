@@ -1,0 +1,23 @@
+{
+  "appId": "com.capacitorjs.testshostapp",
+  "appName": "testshostapp",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "build",
+  "overrideUserAgent": "level 1 override",
+  "appendUserAgent": "level 1 append",
+  "backgroundColor": "#ffffff",
+  "hideLogs": true,
+  "server": {
+    "androidScheme": "override",
+    "allowNavigation": ["capacitorjs.com", "ionic.io", "192.168.0.1"],
+    "hostname": "myhost",
+    "url": "http://192.168.100.1:2057"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}

@@ -1,15 +1,14 @@
+import { readJSON } from '@ionic/utils-fs';
+
 import { doctorAndroid } from '../android/doctor';
 import c from '../colors';
-import {
-  readJSON,
-  resolveNode,
-  getCommandOutput,
-  selectPlatforms,
-} from '../common';
+import { selectPlatforms } from '../common';
 import type { Config } from '../definitions';
 import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
+import { resolveNode } from '../util/node';
+import { getCommandOutput } from '../util/subprocess';
 
 export async function doctorCommand(
   config: Config,
@@ -36,10 +35,10 @@ export async function doctorCore(config: Config): Promise<void> {
     androidVersion,
     iosVersion,
   ] = await Promise.all([
-    getCommandOutput(`npm info @capacitor/cli version`),
-    getCommandOutput(`npm info @capacitor/core version`),
-    getCommandOutput(`npm info @capacitor/android version`),
-    getCommandOutput(`npm info @capacitor/ios version`),
+    getCommandOutput('npm', ['info', '@capacitor/cli', 'version']),
+    getCommandOutput('npm', ['info', '@capacitor/core', 'version']),
+    getCommandOutput('npm', ['info', '@capacitor/android', 'version']),
+    getCommandOutput('npm', ['info', '@capacitor/ios', 'version']),
   ]);
 
   output.write(

@@ -6,11 +6,11 @@ import {
 import c from '../colors';
 import type { CheckFunction } from '../common';
 import {
+  getKnownPlatforms,
   check,
   checkAppConfig,
   checkPackage,
   checkWebDir,
-  logFatal,
   resolvePlatform,
   runPlatformHook,
   runTask,
@@ -27,7 +27,7 @@ import {
   checkIOSPackage,
   checkCocoaPods,
 } from '../ios/common';
-import { logger } from '../log';
+import { logger, logFatal } from '../log';
 
 import { sync } from './sync';
 
@@ -51,9 +51,11 @@ export async function addCommand(
       logger.error(msg);
     }
   } else {
+    const knownPlatforms = await getKnownPlatforms();
     const platformName = await promptForPlatform(
-      selectedPlatformName,
+      knownPlatforms,
       `Please choose a platform to add:`,
+      selectedPlatformName,
     );
 
     if (platformName === config.web.name) {
@@ -155,7 +157,7 @@ function webWarning() {
     `Not adding platform ${c.strong('web')}.\n` +
       `In Capacitor, the web platform is just your web app! For example, if you have a React or Angular project, the web platform is that project.\n` +
       `To add Capacitor functionality to your web app, follow the Web Getting Started Guide: ${c.strong(
-        'https://capacitorjs.com/docs/web',
+        'https://capacitorjs.com/docs/v3/web',
       )}`,
   );
 }

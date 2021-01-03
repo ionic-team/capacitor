@@ -101,7 +101,7 @@ id messageFromMultipart(NSArray* theMessages)
 {
     self = [super init];
     if (self) {
-        status = [NSNumber numberWithInt:statusOrdinal];
+        status = [NSNumber numberWithUnsignedLong:statusOrdinal];
         message = theMessage;
         keepCallback = [NSNumber numberWithBool:NO];
     }

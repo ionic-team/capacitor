@@ -1,3 +1,9 @@
+import type { CapacitorConfig } from './declarations';
+
+type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
+
+export type ExternalConfig = DeepReadonly<CapacitorConfig>;
+
 export const enum OS {
   Unknown = 'unknown',
   Mac = 'mac',
@@ -10,31 +16,6 @@ export interface PackageJson {
   readonly version: string;
   readonly dependencies?: { readonly [key: string]: string | undefined };
   readonly devDependencies?: { readonly [key: string]: string | undefined };
-}
-
-export interface ExternalConfig {
-  readonly windowsAndroidStudioPath?: string;
-  readonly linuxAndroidStudioPath?: string;
-  readonly appId?: string;
-  readonly appName?: string;
-  readonly webDir?: string;
-  readonly bundledWebRuntime?: boolean;
-  readonly android?: {
-    readonly path?: string;
-  };
-  readonly ios?: {
-    readonly path?: string;
-    readonly cordovaSwiftVersion?: string;
-    readonly minVersion?: string;
-    readonly cordovaLinkerFlags?: string[];
-  };
-  readonly cordova?: {
-    readonly preferences?: { readonly [key: string]: string | undefined };
-  };
-  readonly plugins?: { readonly [key: string]: any };
-  readonly server?: {
-    readonly cleartext?: boolean;
-  };
 }
 
 export interface WindowsConfig {
@@ -52,16 +33,20 @@ export interface PlatformConfig {
 }
 
 export interface PlatformAssetsConfig {
-  readonly templateName: string;
-  readonly pluginsFolderName: string;
-  readonly templateDir: string;
-  readonly pluginsDir: string;
+  readonly platformTemplateArchive: string;
+  readonly platformTemplateArchiveAbs: string;
+  readonly cordovaPluginsTemplateArchive: string;
+  readonly cordovaPluginsTemplateArchiveAbs: string;
 }
 
 export interface CLIConfig {
   readonly rootDir: string;
-  readonly assetsName: string;
   readonly assetsDir: string;
+  readonly assetsDirAbs: string;
+  readonly assets: {
+    readonly ios: PlatformAssetsConfig;
+    readonly android: PlatformAssetsConfig;
+  };
   readonly package: PackageJson;
   readonly os: OS;
 }
@@ -73,6 +58,7 @@ export interface AppConfig {
   readonly webDir: string;
   readonly webDirAbs: string;
   readonly package: PackageJson;
+  readonly extConfigType: 'json' | 'js' | 'ts';
   readonly extConfigName: string;
   readonly extConfigFilePath: string;
   readonly extConfig: ExternalConfig;
@@ -85,28 +71,42 @@ export interface AppConfig {
 }
 
 export interface AndroidConfig extends PlatformConfig {
+  readonly cordovaPluginsDir: string;
+  readonly cordovaPluginsDirAbs: string;
+  readonly studioPath: string;
   readonly minVersion: string;
+  readonly appDir: string;
+  readonly appDirAbs: string;
+  readonly srcDir: string;
+  readonly srcDirAbs: string;
+  readonly srcMainDir: string;
+  readonly srcMainDirAbs: string;
   readonly webDir: string;
   readonly webDirAbs: string;
+  readonly assetsDir: string;
+  readonly assetsDirAbs: string;
   readonly resDir: string;
   readonly resDirAbs: string;
-  readonly assets: PlatformAssetsConfig;
+  readonly buildOutputDir: string;
+  readonly buildOutputDirAbs: string;
 }
 
 export interface IOSConfig extends PlatformConfig {
+  readonly cordovaPluginsDir: string;
+  readonly cordovaPluginsDirAbs: string;
   readonly minVersion: string;
-  readonly cordovaSwiftVersion: string;
+  readonly podPath: string;
   readonly webDir: string;
   readonly webDirAbs: string;
-  readonly nativeProjectName: string;
-  readonly assets: PlatformAssetsConfig;
+  readonly nativeProjectDir: string;
+  readonly nativeProjectDirAbs: string;
+  readonly nativeTargetDir: string;
+  readonly nativeTargetDirAbs: string;
 }
 
 export type WebConfig = PlatformConfig;
 
 export interface Config {
-  readonly windows: WindowsConfig;
-  readonly linux: LinuxConfig;
   readonly android: AndroidConfig;
   readonly ios: IOSConfig;
   readonly web: WebConfig;

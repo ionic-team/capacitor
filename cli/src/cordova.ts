@@ -1,4 +1,11 @@
-import { copy as fsCopy, existsSync } from 'fs-extra';
+import {
+  copy,
+  ensureDir,
+  pathExists,
+  readFile,
+  remove,
+  writeFile,
+} from '@ionic/utils-fs';
 import { basename, extname, join, resolve } from 'path';
 import type { PlistObject } from 'plist';
 import plist from 'plist';
@@ -6,21 +13,13 @@ import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
 import c from './colors';
-import {
-  buildXmlElement,
-  logFatal,
-  logPrompt,
-  parseXML,
-  readXML,
-  resolveNode,
-  writeXML,
-} from './common';
 import type { Config } from './definitions';
 import { getIOSPlugins } from './ios/common';
-import { logger } from './log';
+import { logger, logFatal, logPrompt } from './log';
 import type { Plugin } from './plugin';
 import {
   PluginType,
+  getAllElements,
   getAssets,
   getJSModules,
   getPlatformElement,
@@ -29,14 +28,9 @@ import {
   getPlugins,
   printPlugins,
 } from './plugin';
-import { copy } from './tasks/copy';
-import {
-  copySync,
-  ensureDirSync,
-  readFileAsync,
-  removeSync,
-  writeFileAsync,
-} from './util/fs';
+import { copy as copyTask } from './tasks/copy';
+import { resolveNode } from './util/node';
+import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
 
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.
@@ -136,18 +130,18 @@ export async function copyPluginsJS(
   const webDir = getWebDir(config, platform);
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
-  removePluginFiles(config, platform);
+  await removePluginFiles(config, platform);
   await Promise.all(
     cordovaPlugins.map(async p => {
       const pluginId = p.xml.$.id;
       const pluginDir = join(pluginsDir, pluginId, 'www');
-      ensureDirSync(pluginDir);
+      await ensureDir(pluginDir);
       const jsModules = getJSModules(p, platform);
       await Promise.all(
         jsModules.map(async (jsModule: any) => {
           const filePath = join(webDir, 'plugins', pluginId, jsModule.$.src);
-          copySync(join(p.rootPath, jsModule.$.src), filePath);
-          let data = await readFileAsync(filePath, 'utf8');
+          await copy(join(p.rootPath, jsModule.$.src), filePath);
+          let data = await readFile(filePath, { encoding: 'utf-8' });
           data = data.trim();
           // mimics Cordova's module name logic if the name attr is missing
           const name =
@@ -160,17 +154,19 @@ export async function copyPluginsJS(
             /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi,
             '',
           );
-          await writeFileAsync(filePath, data, 'utf8');
+          await writeFile(filePath, data, { encoding: 'utf-8' });
         }),
       );
       const assets = getAssets(p, platform);
-      assets.map((asset: any) => {
-        const filePath = join(webDir, asset.$.target);
-        copySync(join(p.rootPath, asset.$.src), filePath);
-      });
+      await Promise.all(
+        assets.map(async (asset: any) => {
+          const filePath = join(webDir, asset.$.target);
+          await copy(join(p.rootPath, asset.$.src), filePath);
+        }),
+      );
     }),
   );
-  writeFileAsync(
+  await writeFile(
     cordovaPluginsJSFile,
     generateCordovaPluginsJSFile(config, cordovaPlugins, platform),
   );
@@ -192,26 +188,26 @@ export async function copyCordovaJS(
     );
   }
 
-  return fsCopy(cordovaPath, join(getWebDir(config, platform), 'cordova.js'));
+  return copy(cordovaPath, join(getWebDir(config, platform), 'cordova.js'));
 }
 
 export async function createEmptyCordovaJS(
   config: Config,
   platform: string,
 ): Promise<void> {
-  await writeFileAsync(join(getWebDir(config, platform), 'cordova.js'), '');
-  await writeFileAsync(
-    join(getWebDir(config, platform), 'cordova_plugins.js'),
-    '',
-  );
+  await writeFile(join(getWebDir(config, platform), 'cordova.js'), '');
+  await writeFile(join(getWebDir(config, platform), 'cordova_plugins.js'), '');
 }
 
-export function removePluginFiles(config: Config, platform: string): void {
+export async function removePluginFiles(
+  config: Config,
+  platform: string,
+): Promise<void> {
   const webDir = getWebDir(config, platform);
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
-  removeSync(pluginsDir);
-  removeSync(cordovaPluginsJSFile);
+  await remove(pluginsDir);
+  await remove(cordovaPluginsJSFile);
 }
 
 export async function autoGenerateConfig(
@@ -222,15 +218,11 @@ export async function autoGenerateConfig(
   let xmlDir = join(config.android.resDirAbs, 'xml');
   const fileName = 'config.xml';
   if (platform === 'ios') {
-    xmlDir = join(
-      config.ios.platformDirAbs,
-      config.ios.nativeProjectName,
-      config.ios.nativeProjectName,
-    );
+    xmlDir = config.ios.nativeTargetDirAbs;
   }
-  ensureDirSync(xmlDir);
+  await ensureDir(xmlDir);
   const cordovaConfigXMLFile = join(xmlDir, fileName);
-  removeSync(cordovaConfigXMLFile);
+  await remove(cordovaConfigXMLFile);
   const pluginEntries: any[] = [];
   cordovaPlugins.map(p => {
     const currentPlatform = getPluginPlatform(p, platform);
@@ -275,7 +267,7 @@ export async function autoGenerateConfig(
   ${pluginEntriesString.join('')}
   ${pluginPreferencesString.join('')}
 </widget>`;
-  await writeFileAsync(cordovaConfigXMLFile, content);
+  await writeFile(cordovaConfigXMLFile, content);
 }
 
 function getWebDir(config: Config, platform: string): string {
@@ -293,15 +285,15 @@ export async function handleCordovaPluginsJS(
   config: Config,
   platform: string,
 ): Promise<void> {
-  if (!existsSync(getWebDir(config, platform))) {
-    await copy(config, platform);
+  if (!(await pathExists(getWebDir(config, platform)))) {
+    await copyTask(config, platform);
   }
   if (cordovaPlugins.length > 0) {
     printPlugins(cordovaPlugins, platform, 'cordova');
     await copyCordovaJS(config, platform);
     await copyPluginsJS(config, cordovaPlugins, platform);
   } else {
-    removePluginFiles(config, platform);
+    await removePluginFiles(config, platform);
     await createEmptyCordovaJS(config, platform);
   }
   await autoGenerateConfig(config, cordovaPlugins, platform);
@@ -311,12 +303,12 @@ export async function getCordovaPlugins(
   config: Config,
   platform: string,
 ): Promise<Plugin[]> {
-  const allPlugins = await getPlugins(config);
+  const allPlugins = await getPlugins(config, platform);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
-    plugins = getIOSPlugins(allPlugins);
+    plugins = await getIOSPlugins(allPlugins);
   } else if (platform === config.android.name) {
-    plugins = getAndroidPlugins(allPlugins);
+    plugins = await getAndroidPlugins(allPlugins);
   }
   return plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);
 }
@@ -342,14 +334,9 @@ export async function logCordovaManualSteps(
 }
 
 async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
-  const plistPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.nativeProjectName,
-    config.ios.nativeProjectName,
-    'Info.plist',
-  );
+  const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
   const xmlMeta = await readXML(plistPath);
-  const data = await readFileAsync(plistPath, 'utf8');
+  const data = await readFile(plistPath, { encoding: 'utf-8' });
   const plistData = plist.parse(data) as PlistObject;
   const dict = xmlMeta.plist.dict.pop();
   if (!dict.key.includes(configElement.$.parent)) {
@@ -512,7 +499,7 @@ export function getIncompatibleCordovaPlugins(platform: string): string[] {
 export async function getCordovaPreferences(config: Config): Promise<any> {
   const configXml = join(config.app.rootDir, 'config.xml');
   let cordova: any = {};
-  if (existsSync(configXml)) {
+  if (await pathExists(configXml)) {
     cordova.preferences = {};
     const xmlMeta = await readXML(configXml);
     if (xmlMeta.widget.preference) {
@@ -525,14 +512,14 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
     const answers = await logPrompt(
       `${c.strong(
         `Cordova preferences can be automatically ported to ${c.strong(
-          'capacitor.config.json',
+          config.app.extConfigName,
         )}.`,
       )}\n` +
         `Keep in mind: Not all values can be automatically migrated from ${c.strong(
           'config.xml',
         )}. There may be more work to do.\n` +
         `More info: ${c.strong(
-          'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
+          'https://capacitorjs.com/docs/v3/cordova/migrating-from-cordova-to-capacitor',
         )}`,
       {
         type: 'confirm',
@@ -548,8 +535,7 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
             {
               type: 'confirm',
               name: 'confirm',
-              message:
-                'capacitor.config.json already contains Cordova preferences. Overwrite?',
+              message: `${config.app.extConfigName} already contains Cordova preferences. Overwrite?`,
             },
           ],
           { onCancel: () => process.exit(1) },
@@ -572,12 +558,8 @@ export async function writeCordovaAndroidManifest(
   config: Config,
   platform: string,
 ): Promise<void> {
-  const pluginsFolder = resolve(
-    config.android.platformDirAbs,
-    config.android.assets.pluginsFolderName,
-  );
   const manifestPath = join(
-    pluginsFolder,
+    config.android.cordovaPluginsDirAbs,
     'src',
     'main',
     'AndroidManifest.xml',
@@ -585,9 +567,11 @@ export async function writeCordovaAndroidManifest(
   const rootXMLEntries: any[] = [];
   const applicationXMLEntries: any[] = [];
   const applicationXMLAttributes: any[] = [];
+  let prefsArray: any[] = [];
   cordovaPlugins.map(async p => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
+    prefsArray = prefsArray.concat(getAllElements(p, platform, 'preference'));
     editConfig.concat(configFile).map(async (configElement: any) => {
       if (
         configElement.$ &&
@@ -656,8 +640,14 @@ ${rootXMLEntries.join('\n')}
     new RegExp('$PACKAGE_NAME'.replace('$', '\\$&'), 'g'),
     '${applicationId}',
   );
-  if (existsSync(manifestPath)) {
-    await writeFileAsync(manifestPath, content);
+  for (const preference of prefsArray) {
+    content = content.replace(
+      new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'),
+      preference.$.default,
+    );
+  }
+  if (await pathExists(manifestPath)) {
+    await writeFile(manifestPath, content);
   }
 }
 

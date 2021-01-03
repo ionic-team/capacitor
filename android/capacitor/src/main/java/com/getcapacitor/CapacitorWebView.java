@@ -9,6 +9,7 @@ import android.view.inputmethod.InputConnection;
 import android.webkit.WebView;
 
 public class CapacitorWebView extends WebView {
+
     private BaseInputConnection capInputConnection;
 
     public CapacitorWebView(Context context, AttributeSet attrs) {
@@ -17,8 +18,8 @@ public class CapacitorWebView extends WebView {
 
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        CapConfig config = new CapConfig(getContext().getAssets(), null);
-        boolean captureInput = config.getBoolean("android.captureInput", false);
+        CapConfig config = CapConfig.loadDefault(getContext());
+        boolean captureInput = config.isInputCaptured();
         if (captureInput) {
             if (capInputConnection == null) {
                 capInputConnection = new BaseInputConnection(this, false);

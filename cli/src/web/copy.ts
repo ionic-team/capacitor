@@ -1,9 +1,11 @@
-import { copy } from 'fs-extra';
+import { copy } from '@ionic/utils-fs';
 import { join } from 'path';
 
 import c from '../colors';
-import { logFatal, resolveNode, runTask } from '../common';
+import { runTask } from '../common';
 import type { Config } from '../definitions';
+import { logFatal } from '../log';
+import { resolveNode } from '../util/node';
 
 export async function copyWeb(config: Config): Promise<void> {
   if (config.app.bundledWebRuntime) {

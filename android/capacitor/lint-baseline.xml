@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="5" by="lint 4.1.1" client="gradle" variant="all" version="4.1.1">
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            String msg = String.format("
+        errorLine2="                         ^">
+        <location
+            file="src/main/java/com/getcapacitor/BridgeWebChromeClient.java"
+            line="474"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="                return mask.toUpperCase().equals(string.toUpperCase());"
+        errorLine2="                            ~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/util/HostMask.java"
+            line="110"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="                return mask.toUpperCase().equals(string.toUpperCase());"
+        errorLine2="                                                        ~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/util/HostMask.java"
+            line="110"
+            column="57"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toLowerCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="                switch (spinnerStyle.toLowerCase()) {"
+        errorLine2="                                     ~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/Splash.java"
+            line="127"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toLowerCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="                    if (header.getKey().equalsIgnoreCase(&quot;Accept&quot;) &amp;&amp; header.getValue().toLowerCase().contains(&quot;text/html&quot;)) {"
+        errorLine2="                                                                                        ~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/WebViewLocalServer.java"
+            line="327"
+            column="89"/>
+    </issue>
+
+    <issue
+        id="SimpleDateFormat"
+        message="To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, or `getTimeInstance()`, or use `new SimpleDateFormat(String template, Locale locale)` with for example `Locale.US` for ASCII dates."
+        errorLine1="        String timeStamp = new SimpleDateFormat(&quot;yyyyMMdd_HHmmss&quot;).format(new Date());"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/BridgeWebChromeClient.java"
+            line="511"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="SimpleDateFormat"
+        message="To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, or `getTimeInstance()`, or use `new SimpleDateFormat(String template, Locale locale)` with for example `Locale.US` for ASCII dates."
+        errorLine1="        DateFormat df = new SimpleDateFormat(&quot;yyyy-MM-dd&apos;T&apos;HH:mm&apos;Z&apos;&quot;);"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/PluginResult.java"
+            line="44"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="SetJavaScriptEnabled"
+        message="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into your application, review carefully"
+        errorLine1="        settings.setJavaScriptEnabled(true);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/Bridge.java"
+            line="384"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="Recycle"
+        message="This `TypedArray` should be recycled after use with `#recycle()`"
+        errorLine1="        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.bridge_fragment);"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/BridgeFragment.java"
+            line="84"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields; this is a memory leak"
+        errorLine1="    private static ImageView splashImage;"
+        errorLine2="            ~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/Splash.java"
+            line="41"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields; this is a memory leak"
+        errorLine1="    private static ProgressBar spinnerBar;"
+        errorLine2="            ~~~~~~">
+        <location
+            file="src/main/java/com/getcapacitor/Splash.java"
+            line="42"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `#F0FF1414` with a theme that also paints a background (inferred theme is `@android:style/Theme.Holo`)"
+        errorLine1="    android:background=&quot;#F0FF1414&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_bridge.xml"
+            line="5"
+            column="5"/>
+    </issue>
+
+</issues>

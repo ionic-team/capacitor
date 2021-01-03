@@ -1,220 +1,151 @@
-//
-//  ViewController.swift
-//  IonicRunner
-//
-
 import UIKit
 import WebKit
 import Cordova
 
-public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUIDelegate, WKNavigationDelegate {
-
-    private var webView: WKWebView?
-
-    public var bridgedWebView: WKWebView? {
-        return webView
+@objc open class CAPBridgeViewController: UIViewController {
+    private var capacitorBridge: CapacitorBridge?
+    public final var bridge: CAPBridgeProtocol? {
+        return capacitorBridge
     }
 
-    public var bridgedViewController: UIViewController? {
-        return self
-    }
-    public let cordovaParser = CDVConfigParser.init()
-    private var hostname: String?
-    private var allowNavigationConfig: [String]?
-    private var basePath: String = ""
-    private let assetsFolder = "public"
+    public fileprivate(set) var webView: WKWebView?
 
-    private enum WebViewLoadingState {
-        case unloaded
-        case initialLoad(isOpaque: Bool)
-        case subsequentLoad
-    }
-    private var webViewLoadingState = WebViewLoadingState.unloaded
+    public var isStatusBarVisible = true
+    public var statusBarStyle: UIStatusBarStyle = .default
+    public var statusBarAnimation: UIStatusBarAnimation = .slide
+    public var supportedOrientations: [Int] = []
 
-    private var isStatusBarVisible = true
-    private var statusBarStyle: UIStatusBarStyle = .default
-    private var statusBarAnimation: UIStatusBarAnimation = .slide
-    @objc public var supportedOrientations: [Int] = []
+    public lazy final var isNewBinary: Bool = {
+        if let curVersionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
+           let curVersionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+            if let lastVersionCode = UserDefaults.standard.string(forKey: "lastBinaryVersionCode"),
+               let lastVersionName = UserDefaults.standard.string(forKey: "lastBinaryVersionName") {
+                return (curVersionCode.isEqual(lastVersionCode) == false || curVersionName.isEqual(lastVersionName) == false)
+            }
+        }
+        return false
+    }()
 
-    @objc public var startDir = ""
-    @objc public var config: String?
+    override public final func loadView() {
+        // load the configuration and set the logging flag
+        let configDescriptor = instanceDescriptor()
+        let configuration = InstanceConfiguration(with: configDescriptor)
+        CAPLog.enableLogging = configuration.enableLogging
+        logWarnings(for: configDescriptor)
 
-    // Construct the Capacitor runtime
-    public var bridge: CAPBridge?
-    private var handler: CAPAssetHandler?
-
-    override public func loadView() {
-        let configUrl = Bundle.main.url(forResource: "config", withExtension: "xml")
-        let configParser = XMLParser(contentsOf: configUrl!)!
-        configParser.delegate = cordovaParser
-        configParser.parse()
-        guard let startPath = self.getStartPath() else {
-            return
+        if configDescriptor.instanceType == .fixed {
+            updateBinaryVersion()
         }
 
         setStatusBarDefaults()
         setScreenOrientationDefaults()
-        let capConfig = CAPConfig(self.config)
 
-        HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
-        let webViewConfiguration = WKWebViewConfiguration()
-        let messageHandler = CAPMessageHandlerWrapper()
-        self.handler = CAPAssetHandler()
-        self.handler!.setAssetPath(startPath)
-        var specifiedScheme = CAPBridge.defaultScheme
-        let configScheme = capConfig.getString("server.iosScheme") ?? CAPBridge.defaultScheme
-        // check if WebKit handles scheme and if it is valid according to Apple's documentation
-        if !WKWebView.handlesURLScheme(configScheme) && configScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
-            specifiedScheme = configScheme.lowercased()
-        }
-        webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: specifiedScheme)
-        webViewConfiguration.userContentController = messageHandler.contentController
-
-        configureWebView(configuration: webViewConfiguration)
-
-        if let appendUserAgent = (capConfig.getValue("ios.appendUserAgent") as? String) ?? (capConfig.getValue("appendUserAgent") as? String) {
-            webViewConfiguration.applicationNameForUserAgent = appendUserAgent
-        }
-
-        webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
-        webView?.scrollView.bounces = false
-        let availableInsets = ["automatic", "scrollableAxes", "never", "always"]
-        if let contentInset = (capConfig.getValue("ios.contentInset") as? String),
-            let index = availableInsets.firstIndex(of: contentInset) {
-            webView?.scrollView.contentInsetAdjustmentBehavior = UIScrollView.ContentInsetAdjustmentBehavior.init(rawValue: index)!
-        } else {
-            webView?.scrollView.contentInsetAdjustmentBehavior = .never
-        }
-
-        webView?.uiDelegate = self
-        webView?.navigationDelegate = self
-        if let allowsLinkPreview = (capConfig.getValue("ios.allowsLinkPreview") as? Bool) {
-            webView?.allowsLinkPreview = allowsLinkPreview
-        }
-        webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+        // get the web view
+        let assetHandler = WebViewAssetHandler()
+        assetHandler.setAssetPath(configuration.appLocation.path)
+        let delegationHandler = WebViewDelegationHandler()
+        prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView
-
-        setKeyboardRequiresUserInteraction(false)
-
-        bridge = CAPBridge(self, messageHandler, capConfig, specifiedScheme)
-
-        if let scrollEnabled = bridge!.config.getValue("ios.scrollEnabled") as? Bool {
-            webView?.scrollView.isScrollEnabled = scrollEnabled
-        }
-
-        if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
-            webView?.backgroundColor = UIColor.capacitor.color(fromHex: backgroundColor)
-            webView?.scrollView.backgroundColor = UIColor.capacitor.color(fromHex: backgroundColor)
-        } else if #available(iOS 13, *) {
-            // Use the system background colors if background is not set by user
-            webView?.backgroundColor = UIColor.systemBackground
-            webView?.scrollView.backgroundColor = UIColor.systemBackground
-        }
-
-        if let overrideUserAgent = (bridge!.config.getValue("ios.overrideUserAgent") as? String) ?? (bridge!.config.getValue("overrideUserAgent") as? String) {
-            webView?.customUserAgent = overrideUserAgent
-        }
+        // create the bridge
+        capacitorBridge = CapacitorBridge(with: configuration,
+                                          delegate: self,
+                                          cordovaConfiguration: configDescriptor.cordovaConfiguration,
+                                          assetHandler: assetHandler,
+                                          delegationHandler: delegationHandler)
+        capacitorDidLoad()
     }
 
-    private func getStartPath() -> String? {
-        var resourcesPath = assetsFolder
-        if !startDir.isEmpty {
-            resourcesPath = URL(fileURLWithPath: resourcesPath).appendingPathComponent(startDir).relativePath
-        }
-
-        guard var startPath = Bundle.main.path(forResource: resourcesPath, ofType: nil) else {
-            printLoadError()
-            return nil
-        }
-
-        if !isDeployDisabled() && !isNewBinary() {
-            let defaults = UserDefaults.standard
-            let persistedPath = defaults.string(forKey: "serverBasePath")
-            if persistedPath != nil && !persistedPath!.isEmpty {
-                let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
-                let cordovaDataDirectory = (libPath as NSString).appendingPathComponent("NoCloud")
-                let snapshots = (cordovaDataDirectory as NSString).appendingPathComponent("ionic_built_snapshots")
-                startPath = (snapshots as NSString).appendingPathComponent((persistedPath! as NSString).lastPathComponent)
-            }
-        }
-
-        self.basePath = startPath
-        return startPath
-    }
-
-    func isDeployDisabled() -> Bool {
-        let val = cordovaParser.settings.object(forKey: "DisableDeploy".lowercased()) as? NSString
-        return val?.boolValue ?? false
-    }
-
-    func isNewBinary() -> Bool {
-        if let plist = Bundle.main.infoDictionary {
-            if let versionCode = plist["CFBundleVersion"] as? String, let versionName = plist["CFBundleShortVersionString"] as? String {
-                let prefs = UserDefaults.standard
-                let lastVersionCode = prefs.string(forKey: "lastBinaryVersionCode")
-                let lastVersionName = prefs.string(forKey: "lastBinaryVersionName")
-                if !versionCode.isEqual(lastVersionCode) || !versionName.isEqual(lastVersionName) {
-                    prefs.set(versionCode, forKey: "lastBinaryVersionCode")
-                    prefs.set(versionName, forKey: "lastBinaryVersionName")
-                    prefs.set("", forKey: "serverBasePath")
-                    prefs.synchronize()
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         self.becomeFirstResponder()
         loadWebView()
     }
 
-    func printLoadError() {
-        let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir)
-
-        CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath.relativePath)/index.html")
-        CAPLog.print("⚡️  This file is the root of your web app and must exist before")
-        CAPLog.print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least")
-        CAPLog.print("⚡️  or, if embedding, that this directory exists as a resource directory.")
+    override open func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
+        return false
     }
 
-    func fatalLoadError() -> Never {
-        printLoadError()
-        exit(1)
+    // MARK: - Initialization
+
+    /**
+     The InstanceDescriptor that should be used for the Capacitor environment.
+
+     - Returns: `InstanceDescriptor`
+
+     - Note: This is called early in the View Controller's lifecycle. Not all properties will be set at invocation.
+     */
+    open func instanceDescriptor() -> InstanceDescriptor {
+        let descriptor = InstanceDescriptor.init()
+        if !isNewBinary && !descriptor.cordovaDeployDisabled {
+            if let persistedPath = UserDefaults.standard.string(forKey: "serverBasePath"), !persistedPath.isEmpty {
+                if let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first {
+                    descriptor.appLocation = URL(fileURLWithPath: libPath, isDirectory: true)
+                        .appendingPathComponent("NoCloud")
+                        .appendingPathComponent("ionic_built_snapshots")
+                        .appendingPathComponent(URL(fileURLWithPath: persistedPath, isDirectory: true).lastPathComponent)
+                }
+            }
+        }
+        return descriptor
     }
 
-    func loadWebView() {
-        // Set the webview to be not opaque on the inital load. This prevents
-        // the webview from showing a white background, which is its default
-        // loading display, as that can appear as a screen flash. This might
-        // have already been set by something else, like a plugin, so we want
-        // to save the current value to reset it on success or failure.
-        if let webView = webView, case .unloaded = webViewLoadingState {
-            webViewLoadingState = .initialLoad(isOpaque: webView.isOpaque)
-            webView.isOpaque = false
+    /**
+     The WKWebViewConfiguration to use for the webview.
+
+     - Parameter instanceConfiguration: the configuration that will define the capacitor environment.
+
+     - Returns: `WKWebViewConfiguration`
+
+     It is recommended to call super's implementation and modify the result, rather than creating a new object.
+     */
+    open func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
+        let webViewConfiguration = WKWebViewConfiguration()
+        webViewConfiguration.allowsInlineMediaPlayback = true
+        webViewConfiguration.suppressesIncrementalRendering = false
+        webViewConfiguration.allowsAirPlayForMediaPlayback = true
+        webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
+        if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
+            webViewConfiguration.applicationNameForUserAgent = appendUserAgent
+        }
+        return webViewConfiguration
+    }
+
+    /**
+     Returns a WKWebView initialized with the frame and configuration.
+
+     Subclasses can override this method to return a subclass of WKWebView if needed.
+     */
+    open func webView(with frame: CGRect, configuration: WKWebViewConfiguration) -> WKWebView {
+        return WKWebView(frame: frame, configuration: configuration)
+    }
+
+    /**
+     Allows any additional configuration to be performed. The `webView` and `bridge` properties will be set by this point.
+     
+     - Note: This is called before the webview has been added to the view hierarchy. Not all operations may be possible at
+     this time.
+     */
+    open func capacitorDidLoad() {
+    }
+
+    public final func loadWebView() {
+        guard let bridge = capacitorBridge else {
+            return
         }
 
-        let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
-        if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
+        guard FileManager.default.fileExists(atPath: bridge.config.appStartFileURL.path) else {
             fatalLoadError()
         }
 
-        hostname = bridge!.config.getString("server.url") ?? "\(bridge!.getLocalUrl())"
-        allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? [String]
-
-        CAPLog.print("⚡️  Loading app at \(hostname!)...")
-        let request = URLRequest(url: URL(string: hostname!)!)
-        _ = webView?.load(request)
+        let url = bridge.config.appStartServerURL
+        CAPLog.print("⚡️  Loading app at \(url.absoluteString)...")
+        bridge.webViewDelegationHandler.willLoadWebview(webView)
+        _ = webView?.load(URLRequest(url: url))
     }
 
-    func setServerPath(path: String) {
-        self.basePath = path
-        self.handler?.setAssetPath(path)
-    }
+    // MARK: - System Integration
 
-    public func setStatusBarDefaults() {
+    open func setStatusBarDefaults() {
         if let plist = Bundle.main.infoDictionary {
             if let statusBarHidden = plist["UIStatusBarHidden"] as? Bool {
                 if statusBarHidden {
@@ -235,7 +166,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         }
     }
 
-    public func setScreenOrientationDefaults() {
+    open func setScreenOrientationDefaults() {
         if let plist = Bundle.main.infoDictionary {
             if let orientations = plist["UISupportedInterfaceOrientations"] as? [String] {
                 for orientation in orientations {
@@ -259,301 +190,43 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         }
     }
 
-    public func configureWebView(configuration: WKWebViewConfiguration) {
-        configuration.allowsInlineMediaPlayback = true
-        configuration.suppressesIncrementalRendering = false
-        configuration.allowsAirPlayForMediaPlayback = true
-        configuration.mediaTypesRequiringUserActionForPlayback = []
-    }
-
-    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        // Reset the bridge on each navigation
-        bridge!.reset()
-    }
-
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DecidePolicyForNavigationAction.name()), object: navigationAction)
-        let navUrl = navigationAction.request.url!
-
-        /*
-         * Give plugins the chance to handle the url
-         */
-        if let plugins = bridge?.plugins {
-            for pluginObject in plugins {
-                let plugin = pluginObject.value
-                let selector = NSSelectorFromString("shouldOverrideLoad:")
-                if plugin.responds(to: selector) {
-                    let shouldOverrideLoad = plugin.shouldOverrideLoad(navigationAction)
-                    if shouldOverrideLoad != nil {
-                        if shouldOverrideLoad == true {
-                            decisionHandler(.cancel)
-                            return
-                        } else if shouldOverrideLoad == false {
-                            decisionHandler(.allow)
-                            return
-                        }
-                    }
-                }
-            }
-        }
-
-        if let allowNavigation = allowNavigationConfig, let requestHost = navUrl.host {
-            for pattern in allowNavigation {
-                if matchHost(host: requestHost, pattern: pattern.lowercased()) {
-                    decisionHandler(.allow)
-                    return
-                }
-            }
-        }
-
-        if navUrl.absoluteString.range(of: hostname!) == nil && (navigationAction.targetFrame == nil || (navigationAction.targetFrame?.isMainFrame)!) {
-            if UIApplication.shared.applicationState == .active {
-                UIApplication.shared.open(navUrl, options: [:], completionHandler: nil)
-            }
-            decisionHandler(.cancel)
-            return
-        }
-
-        decisionHandler(.allow)
-    }
-
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        if case .initialLoad(let isOpaque) = webViewLoadingState {
-            webView.isOpaque = isOpaque
-            webViewLoadingState = .subsequentLoad
-        }
-        CAPLog.print("⚡️  WebView loaded")
-    }
-
-    public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        if case .initialLoad(let isOpaque) = webViewLoadingState {
-            webView.isOpaque = isOpaque
-            webViewLoadingState = .subsequentLoad
-        }
-        CAPLog.print("⚡️  WebView failed to load")
-        CAPLog.print("⚡️  Error: " + error.localizedDescription)
-    }
-
-    public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        CAPLog.print("⚡️  WebView failed provisional navigation")
-        CAPLog.print("⚡️  Error: " + error.localizedDescription)
-    }
-
-    public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-        webView.reload()
-    }
-
-    override public func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
-        return false
-    }
-
-    typealias ClosureType =  @convention(c) (Any, Selector, UnsafeRawPointer, Bool, Bool, Any?) -> Void
-    typealias NewClosureType =  @convention(c) (Any, Selector, UnsafeRawPointer, Bool, Bool, Bool, Any?) -> Void
-    func setKeyboardRequiresUserInteraction( _ value: Bool) {
-        let frameworkName = "WK"
-        let className = "ContentView"
-        guard let wkc = NSClassFromString(frameworkName + className) else {
-            return
-        }
-
-        let oldSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:")
-        let newSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
-        let newerSelector: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
-        let ios13Selector: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:")
-
-        if let method = class_getInstanceMethod(wkc, oldSelector) {
-            let originalImp: IMP = method_getImplementation(method)
-            let original: ClosureType = unsafeBitCast(originalImp, to: ClosureType.self)
-            let block : @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Any?) -> Void = { (me, arg0, arg1, arg2, arg3) in
-                original(me, oldSelector, arg0, !value, arg2, arg3)
-            }
-            let imp: IMP = imp_implementationWithBlock(block)
-            method_setImplementation(method, imp)
-        }
-
-        if let method = class_getInstanceMethod(wkc, newSelector) {
-            self.swizzleAutofocusMethod(method, newSelector, value)
-        }
-
-        if let method = class_getInstanceMethod(wkc, newerSelector) {
-            self.swizzleAutofocusMethod(method, newerSelector, value)
-        }
-
-        if let method = class_getInstanceMethod(wkc, ios13Selector) {
-            self.swizzleAutofocusMethod(method, ios13Selector, value)
-        }
-    }
-
-    func swizzleAutofocusMethod(_ method: Method, _ selector: Selector, _ value: Bool) {
-        let originalImp: IMP = method_getImplementation(method)
-        let original: NewClosureType = unsafeBitCast(originalImp, to: NewClosureType.self)
-        let block : @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Bool, Any?) -> Void = { (me, arg0, arg1, arg2, arg3, arg4) in
-            original(me, selector, arg0, !value, arg2, arg3, arg4)
-        }
-        let imp: IMP = imp_implementationWithBlock(block)
-        method_setImplementation(method, imp)
-    }
-
-    func handleJSStartupError(_ error: [String: Any]) {
-        let message = error["message"] ?? "No message"
-        let url = error["url"] as? String ?? ""
-        let line = error["line"] ?? ""
-        let col = error["col"] ?? ""
-        var filename = ""
-        if let filenameIndex = url.range(of: "/", options: .backwards)?.lowerBound {
-            let index = url.index(after: filenameIndex)
-            filename = String(url[index...])
-        }
-
-        CAPLog.print("\n⚡️  ------ STARTUP JS ERROR ------\n")
-        CAPLog.print("⚡️  \(message)")
-        CAPLog.print("⚡️  URL: \(url)")
-        CAPLog.print("⚡️  \(filename):\(line):\(col)")
-        CAPLog.print("\n⚡️  See above for help with debugging blank-screen issues")
-    }
-
-    func matchHost(host: String, pattern: String) -> Bool {
-        var host = host.split(separator: ".")
-        var pattern = pattern.split(separator: ".")
-
-        if host.count != pattern.count {
-            return false
-        }
-
-        if host == pattern {
-            return true
-        }
-
-        let wildcards = pattern.enumerated().filter { $0.element == "*" }
-        for wildcard in wildcards.reversed() {
-            host.remove(at: wildcard.offset)
-            pattern.remove(at: wildcard.offset)
-        }
-
-        return host == pattern
-    }
-
-    override public func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    override public var prefersStatusBarHidden: Bool {
+    override open var prefersStatusBarHidden: Bool {
         get {
             return !isStatusBarVisible
         }
     }
 
-    override public var preferredStatusBarStyle: UIStatusBarStyle {
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
         get {
             return statusBarStyle
         }
     }
 
-    override public var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+    override open var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         get {
             return statusBarAnimation
         }
     }
 
-    public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
+    open func setStatusBarVisible(_ isStatusBarVisible: Bool) {
         self.isStatusBarVisible = isStatusBarVisible
         UIView.animate(withDuration: 0.2, animations: {
             self.setNeedsStatusBarAppearanceUpdate()
         })
     }
 
-    public func setStatusBarStyle(_ statusBarStyle: UIStatusBarStyle) {
+    open func setStatusBarStyle(_ statusBarStyle: UIStatusBarStyle) {
         self.statusBarStyle = statusBarStyle
         UIView.animate(withDuration: 0.2, animations: {
             self.setNeedsStatusBarAppearanceUpdate()
         })
     }
 
-    public func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
+    open func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
         self.statusBarAnimation = statusBarAnimation
     }
 
-    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-
-        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-            completionHandler()
-        }))
-
-        self.present(alertController, animated: true, completion: nil)
-    }
-
-    public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-
-        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-            completionHandler(true)
-        }))
-
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
-            completionHandler(false)
-        }))
-
-        self.present(alertController, animated: true, completion: nil)
-    }
-
-    public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
-
-        let alertController = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
-
-        alertController.addTextField { (textField) in
-            textField.text = defaultText
-        }
-
-        alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-            if let text = alertController.textFields?.first?.text {
-                completionHandler(text)
-            } else {
-                completionHandler(defaultText)
-            }
-
-        }))
-
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
-
-            completionHandler(nil)
-
-        }))
-
-        self.present(alertController, animated: true, completion: nil)
-    }
-
-    public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if navigationAction.request.url != nil {
-            UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
-        }
-        return nil
-    }
-
-    public func getWebView() -> WKWebView {
-        return self.webView!
-    }
-
-    public func getServerBasePath() -> String {
-        return self.basePath
-    }
-
-    public func setServerBasePath(path: String) {
-        setServerPath(path: path)
-        let request = URLRequest(url: URL(string: hostname!)!)
-        DispatchQueue.main.async {
-            _ = self.getWebView().load(request)
-        }
-    }
-
-    override open var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return UIApplication.shared.statusBarOrientation
-    }
-
-    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         var ret = 0
         if self.supportedOrientations.contains(UIInterfaceOrientation.portrait.rawValue) {
             ret = ret | (1 << UIInterfaceOrientation.portrait.rawValue)
@@ -569,21 +242,122 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         }
         return UIInterfaceOrientationMask.init(rawValue: UInt(ret))
     }
+}
 
-    /**
-     * Add hooks to detect failed HTTP requests
+// MARK: - Application Path
 
-     func webView(webView: WKWebView,
-     didFailProvisionalNavigation navigation: WKNavigation!,
-     withError error: NSError) {
-     if error.code == -1001 { // TIMED OUT:
-     // CODE to handle TIMEOUT
-     } else if error.code == -1003 { // SERVER CANNOT BE FOUND
-     // CODE to handle SERVER not found
-     } else if error.code == -1100 { // URL NOT FOUND ON SERVER
-     // CODE to handle URL not found
-     }
-     }
-     */
+extension CAPBridgeViewController {
+    @objc public func getServerBasePath() -> String {
+        return bridge?.config.appLocation.path ?? ""
+    }
 
+    @objc public func setServerBasePath(path: String) {
+        let url = URL(fileURLWithPath: path, isDirectory: true)
+        guard let capBridge = capacitorBridge, FileManager.default.fileExists(atPath: url.path) else {
+            return
+        }
+        capBridge.config = capBridge.config.updatingAppLocation(url)
+        capBridge.webViewAssetHandler.setAssetPath(url.path)
+        if let url = capacitorBridge?.config.serverURL {
+            DispatchQueue.main.async { [weak self] in
+                _ = self?.webView?.load(URLRequest(url: url))
+            }
+        }
+    }
+}
+
+// MARK: - Private
+
+extension CAPBridgeViewController {
+    private func prepareWebView(with configuration: InstanceConfiguration, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler) {
+        // set the cookie policy
+        HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
+        // setup the web view configuration
+        let webConfig = webViewConfiguration(for: configuration)
+        webConfig.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
+        webConfig.userContentController = delegationHandler.contentController
+        // create the web view and set its properties
+        let aWebView = webView(with: .zero, configuration: webConfig)
+        aWebView.scrollView.bounces = false
+        aWebView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
+        aWebView.allowsLinkPreview = configuration.allowLinkPreviews
+        aWebView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+        aWebView.scrollView.isScrollEnabled = configuration.enableScrolling
+        if let overrideUserAgent = configuration.overridenUserAgentString {
+            aWebView.customUserAgent = overrideUserAgent
+        }
+        if let backgroundColor = configuration.backgroundColor {
+            aWebView.backgroundColor = backgroundColor
+            aWebView.scrollView.backgroundColor = backgroundColor
+        } else if #available(iOS 13, *) {
+            // Use the system background colors if background is not set by user
+            aWebView.backgroundColor = UIColor.systemBackground
+            aWebView.scrollView.backgroundColor = UIColor.systemBackground
+        }
+        aWebView.capacitor.setKeyboardShouldRequireUserInteraction(false)
+        // set our ivar
+        webView = aWebView
+        // set our delegates
+        aWebView.uiDelegate = delegationHandler
+        aWebView.navigationDelegate = delegationHandler
+    }
+
+    private func updateBinaryVersion() {
+        guard isNewBinary else {
+            return
+        }
+        guard let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
+              let versionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
+            return
+        }
+        let prefs = UserDefaults.standard
+        prefs.set(versionCode, forKey: "lastBinaryVersionCode")
+        prefs.set(versionName, forKey: "lastBinaryVersionName")
+        prefs.set("", forKey: "serverBasePath")
+        prefs.synchronize()
+    }
+
+    private func logWarnings(for descriptor: InstanceDescriptor) {
+        if descriptor.warnings.contains(.missingAppDir) {
+            CAPLog.print("⚡️  ERROR: Unable to find application directory at: \"\(descriptor.appLocation.absoluteString)\"!")
+        }
+        if descriptor.instanceType == .fixed {
+            if descriptor.warnings.contains(.missingFile) {
+                CAPLog.print("Unable to find capacitor.config.json, make sure it exists and run npx cap copy.")
+            }
+            if descriptor.warnings.contains(.invalidFile) {
+                CAPLog.print("Unable to parse capacitor.config.json. Make sure it's valid JSON.")
+            }
+            if descriptor.warnings.contains(.missingCordovaFile) {
+                CAPLog.print("Unable to find config.xml, make sure it exists and run npx cap copy.")
+            }
+            if descriptor.warnings.contains(.invalidCordovaFile) {
+                CAPLog.print("Unable to parse config.xml. Make sure it's valid XML.")
+            }
+        }
+    }
+
+    private func printLoadError() {
+        let fullStartPath = bridge?.config.appStartFileURL.path ?? ""
+
+        CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath)")
+        CAPLog.print("⚡️  This file is the root of your web app and must exist before")
+        CAPLog.print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least")
+        CAPLog.print("⚡️  or, if embedding, that this directory exists as a resource directory.")
+    }
+
+    private func fatalLoadError() -> Never {
+        printLoadError()
+        exit(1)
+    }
+}
+
+extension CAPBridgeViewController: CAPBridgeDelegate {
+    internal var bridgedWebView: WKWebView? {
+        return webView
+    }
+
+    internal var bridgedViewController: UIViewController? {
+        return self
+    }
 }

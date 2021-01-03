@@ -27,21 +27,26 @@ package com.getcapacitor;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Common File utilities, such as resolve content URIs and
  * creating portable web paths from low-level files
  */
 public class FileUtils {
+
     private static String CapacitorFileScheme = Bridge.CAPACITOR_FILE_START;
 
     public enum Type {
@@ -58,8 +63,6 @@ public class FileUtils {
         String path = getFileUrlForUri(c, u);
         if (path.startsWith("file://")) {
             path = path.replace("file://", "");
-        } else if (path.startsWith("/")) {
-            path = path;
         }
         return host + Bridge.CAPACITOR_FILE_START + path;
     }
@@ -131,6 +134,26 @@ public class FileUtils {
         }
 
         return null;
+    }
+
+    /**
+     * Read a plaintext file.
+     *
+     * @param assetManager Used to open the file.
+     * @param fileName The path of the file to read.
+     * @return The contents of the file path.
+     * @throws IOException Thrown if any issues reading the provided file path.
+     */
+    static String readFile(AssetManager assetManager, String fileName) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open(fileName)))) {
+            StringBuffer buffer = new StringBuffer();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+
+            return buffer.toString();
+        }
     }
 
     /**
