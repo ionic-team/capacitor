@@ -93,7 +93,7 @@ public class PluginHandle {
             this.instance.setPluginHandle(this);
             this.instance.setBridge(this.bridge);
             this.instance.load();
-            this.instance.initializeBasePermissionLauncher();
+            this.instance.initializePermissionLauncher();
             return this.instance;
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");

@@ -166,13 +166,13 @@ public class BridgeActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         if (this.bridge == null) {
             return;
         }
 
-        this.bridge.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (!bridge.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override

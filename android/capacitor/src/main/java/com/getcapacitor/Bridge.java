@@ -764,24 +764,29 @@ public class Bridge {
      * @param requestCode the code that was requested
      * @param permissions the permissions requested
      * @param grantResults the set of granted/denied permissions
+     * @return true if permission code was handled by a plugin explicitly, false if not
      */
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
         if (plugin == null) {
+            boolean permissionHandled = false;
             Logger.debug("Unable to find a Capacitor plugin to handle permission requestCode, trying Cordova plugins " + requestCode);
             try {
-                cordovaInterface.onRequestPermissionResult(requestCode, permissions, grantResults);
+                permissionHandled = cordovaInterface.handlePermissionResult(requestCode, permissions, grantResults);
             } catch (JSONException e) {
                 Logger.debug("Error on Cordova plugin permissions request " + e.getMessage());
             }
-            return;
+            return permissionHandled;
         }
 
         // Call deprecated method if using deprecated NativePlugin annotation
         if (plugin.getPluginAnnotation() == null) {
             plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
+            return true;
         }
+
+        return false;
     }
 
     /**

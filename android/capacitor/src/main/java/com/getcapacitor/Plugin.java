@@ -88,7 +88,7 @@ public class Plugin {
     /**
      * Registers the base permission launcher used by the {@link #requestPermissions(PluginCall)} plugin call
      */
-    void initializeBasePermissionLauncher() {
+    void initializePermissionLauncher() {
         basePermissionLauncher =
             bridge
                 .getActivity()
