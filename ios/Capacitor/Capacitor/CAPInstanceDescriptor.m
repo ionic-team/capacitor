@@ -45,6 +45,8 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
     _warnings = 0;
     if (location == nil) {
         _warnings |= CAPInstanceWarningMissingAppDir;
+        // location is nil so assume it was supposed to be the default
+        _appLocation = [[[NSBundle mainBundle] resourceURL] URLByAppendingPathComponent:@"public"];
     }
 }
 @end

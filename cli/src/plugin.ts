@@ -12,12 +12,13 @@ export const enum PluginType {
   Cordova,
   Incompatible,
 }
+
 export interface PluginManifest {
-  ios: {
-    src: string;
+  readonly ios?: {
+    readonly src?: string;
   };
-  android: {
-    src: string;
+  readonly android?: {
+    readonly src?: string;
   };
 }
 
@@ -192,12 +193,13 @@ export function getPlatformElement(
 }
 
 export function getPluginType(p: Plugin, platform: string): PluginType {
-  if (platform === 'ios') {
-    return p.ios!.type;
+  switch (platform) {
+    case 'ios':
+      return p.ios?.type ?? PluginType.Core;
+    case 'android':
+      return p.android?.type ?? PluginType.Core;
   }
-  if (platform === 'android') {
-    return p.android!.type;
-  }
+
   return PluginType.Core;
 }
 
