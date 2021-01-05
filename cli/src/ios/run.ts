@@ -31,7 +31,7 @@ export async function runIOS(
     '-scheme',
     'App',
     '-configuration',
-    'debug',
+    'Debug',
     '-destination',
     `id=${target.id}`,
     '-derivedDataPath',
@@ -50,7 +50,7 @@ export async function runIOS(
   const appPath = resolve(
     derivedDataPath,
     'Build/Products',
-    target.virtual ? 'Release-iphonesimulator' : 'Release-iphoneos',
+    target.virtual ? 'Debug-iphonesimulator' : 'Debug-iphoneos',
     appName,
   );
 
