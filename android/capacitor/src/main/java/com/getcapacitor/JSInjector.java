@@ -75,7 +75,7 @@ class JSInjector {
         } else if (html.contains("</head>")) {
             html = html.replace("</head>", js + "\n" + "</head>");
         } else {
-            Logger.error("Unable to inject Capacitor, Plugins won't work");
+            html = js + "\n" + html;
         }
         return new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
     }
