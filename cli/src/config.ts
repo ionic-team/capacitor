@@ -16,6 +16,7 @@ import { OS } from './definitions';
 import { logFatal } from './log';
 import { tryFn } from './util/fn';
 import { resolveNode, requireTS } from './util/node';
+import { lazy } from './util/promise';
 
 const debug = Debug('capacitor:config');
 
@@ -195,7 +196,7 @@ async function loadAndroidConfig(
   const resDir = `${srcMainDir}/res`;
   const buildOutputDir = `${appDir}/build/outputs/apk/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
-  const studioPath = await determineAndroidStudioPath(cliConfig.os);
+  const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
 
   return {
     name,
