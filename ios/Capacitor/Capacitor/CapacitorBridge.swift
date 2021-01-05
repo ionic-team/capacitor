@@ -87,7 +87,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     var lastPlugin: CAPPlugin?
 
-    @objc public var config: InstanceConfiguration
+    @objc public internal(set) var config: InstanceConfiguration
     // Map of all loaded and instantiated plugins by pluginId -> instance
     var plugins =  [String: CAPPlugin]()
     // List of known plugins by pluginId -> Plugin Type
