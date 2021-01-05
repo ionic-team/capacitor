@@ -17,6 +17,9 @@ export class WebPlugin implements Plugin {
   listeners: { [eventName: string]: ListenerCallback[] } = {};
   windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
+  // This gets injected into the scope via the Proxy in runtime.ts
+  pluginName: string;
+
   constructor(config?: WebPluginConfig) {
     if (config) {
       // TODO: add link to upgrade guide
@@ -131,8 +134,7 @@ export class WebPlugin implements Plugin {
   }
 
   callNative(methodName: string, parameters?: any): Promise<any> {
-    const pluginName = this.constructor.name;
-    return Capacitor.nativePromise(pluginName, methodName, parameters);
+    return Capacitor.nativePromise(this.pluginName, methodName, parameters);
   }
 }
 

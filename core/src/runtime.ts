@@ -147,7 +147,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
               const func = Reflect.get(loadedImpl, prop);
               if (typeof func === 'function') {
                 return (...args: any[]) =>
-                  Reflect.apply(func, loadedImpl, args);
+                  Reflect.apply(func, { ...loadedImpl, pluginName }, args);
               }
               throw new CapacitorException(
                 `"${pluginName}.${
@@ -169,7 +169,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                   lazyLoadingImpl.then(lazyLoadedImpl => {
                     loadedImpl = lazyLoadedImpl;
                     const func = Reflect.get(loadedImpl, prop);
-                    loadedRtn = Reflect.apply(func, loadedImpl, args);
+                    loadedRtn = Reflect.apply(func, { ...loadedImpl, pluginName }, args);
                   });
                   return {
                     remove: () => {
@@ -191,7 +191,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                   lazyLoadingImpl.then(lazyLoadedImpl => {
                     loadedImpl = lazyLoadedImpl;
                     const func = Reflect.get(loadedImpl, prop);
-                    return Reflect.apply(func, loadedImpl, []);
+                    return Reflect.apply(func, { ...loadedImpl, pluginName }, []);
                   });
                 };
               }
@@ -203,7 +203,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
                   const func = Reflect.get(loadedImpl, prop);
                   if (typeof func === 'function') {
-                    return Reflect.apply(func, loadedImpl, args);
+                    return Reflect.apply(func, { ...loadedImpl, pluginName }, args);
                   }
 
                   throw new CapacitorException(
@@ -215,6 +215,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                 });
               };
             }
+          }
+
+          // https://github.com/facebook/react/issues/20030
+          if (prop === '$$typeof') {
+            return undefined;
           }
 
           throw new CapacitorException(
