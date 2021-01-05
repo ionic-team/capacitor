@@ -169,7 +169,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                   lazyLoadingImpl.then(lazyLoadedImpl => {
                     loadedImpl = lazyLoadedImpl;
                     const func = Reflect.get(loadedImpl, prop);
-                    loadedRtn = Reflect.apply(func, { ...loadedImpl, pluginName }, args);
+                    loadedRtn = Reflect.apply(
+                      func,
+                      { ...loadedImpl, pluginName },
+                      args,
+                    );
                   });
                   return {
                     remove: () => {
@@ -191,7 +195,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                   lazyLoadingImpl.then(lazyLoadedImpl => {
                     loadedImpl = lazyLoadedImpl;
                     const func = Reflect.get(loadedImpl, prop);
-                    return Reflect.apply(func, { ...loadedImpl, pluginName }, []);
+                    return Reflect.apply(
+                      func,
+                      { ...loadedImpl, pluginName },
+                      [],
+                    );
                   });
                 };
               }
@@ -203,7 +211,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
                   const func = Reflect.get(loadedImpl, prop);
                   if (typeof func === 'function') {
-                    return Reflect.apply(func, { ...loadedImpl, pluginName }, args);
+                    return Reflect.apply(
+                      func,
+                      { ...loadedImpl, pluginName },
+                      args,
+                    );
                   }
 
                   throw new CapacitorException(
