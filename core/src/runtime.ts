@@ -87,6 +87,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
               return func;
             }
 
+            // https://github.com/facebook/react/issues/20030
+            if (prop === '$$typeof') {
+              return undefined;
+            }
+
             throw new CapacitorException(
               `"${pluginName}.${
                 prop as any
