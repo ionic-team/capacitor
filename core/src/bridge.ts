@@ -44,7 +44,7 @@ export const initBridge = (
     };
   }
 
-  const logger = initLogger(win, cap, postToNative);
+  initLogger(win, cap, postToNative);
 
   /**
    * Send a plugin method call to the native layer
@@ -76,11 +76,7 @@ export const initBridge = (
           options: options || {},
         };
 
-        if (
-          cap.DEBUG &&
-          pluginName !== 'Console' &&
-          typeof cap.logToNative === 'function'
-        ) {
+        if (cap.DEBUG && pluginName !== 'Console') {
           cap.logToNative(callData);
         }
 
@@ -89,10 +85,10 @@ export const initBridge = (
 
         return callbackId;
       } else {
-        logger('warn', `implementation unavailable for: ${pluginName}`);
+        win?.console?.warn(`implementation unavailable for: ${pluginName}`);
       }
     } catch (e) {
-      logger('error', e);
+      win?.console?.error(e);
     }
 
     return null;
@@ -102,11 +98,7 @@ export const initBridge = (
    * Process a response from the native layer.
    */
   cap.fromNative = (result: PluginResult) => {
-    if (
-      cap.DEBUG &&
-      result.pluginId !== 'Console' &&
-      typeof cap.logFromNative === 'function'
-    ) {
+    if (cap.DEBUG && result.pluginId !== 'Console') {
       cap.logFromNative(result);
     }
 
@@ -146,14 +138,14 @@ export const initBridge = (
         }
       } else if (!result.success && result.error) {
         // no stored callback, but if there was an error let's log it
-        logger('warn', result.error);
+        win?.console?.warn(result.error);
       }
 
       if (result.save === false) {
         callbacks.delete(result.callbackId);
       }
     } catch (e) {
-      logger('error', e);
+      win?.console?.error(e);
     }
 
     // always delete to prevent memory leaks

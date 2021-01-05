@@ -143,8 +143,3 @@ export interface WindowCapacitor {
     };
   };
 }
-
-export type Logger = (
-  level: 'debug' | 'error' | 'info' | 'log' | 'trace' | 'warn',
-  msg: any,
-) => void;
