@@ -44,7 +44,40 @@ export const initBridge = (
     };
   }
 
-  initLogger(win, cap, postToNative);
+  cap.handleWindowError = (msg, url, lineNo, columnNo, err) => {
+    const str = msg.toLowerCase();
+
+    if (str.indexOf('script error') > -1) {
+      // Some IE issue?
+    } else {
+      const errObj = {
+        type: 'js.error',
+        error: {
+          message: msg,
+          url: url,
+          line: lineNo,
+          col: columnNo,
+          errorObject: JSON.stringify(err),
+        },
+      };
+
+      if (err !== null) {
+        cap.handleError(err);
+      }
+
+      if (postToNative) {
+        postToNative(errObj as any);
+      }
+    }
+
+    return false;
+  };
+
+  if (cap.DEBUG) {
+    window.onerror = cap.handleWindowError;
+  }
+
+  initLogger(win, cap);
 
   /**
    * Send a plugin method call to the native layer
