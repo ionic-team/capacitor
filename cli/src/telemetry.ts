@@ -93,7 +93,7 @@ export function telemetryAction(
     if (isInteractive()) {
       let sysconfig = await readConfig();
 
-      if (typeof sysconfig.telemetry === 'undefined') {
+      if (!error && typeof sysconfig.telemetry === 'undefined') {
         const confirm = await promptForTelemetry();
         sysconfig = { ...sysconfig, telemetry: confirm };
 
