@@ -12,7 +12,7 @@ export const THANK_YOU =
     'https://capacitorjs.com/telemetry',
   )}\n`;
 
-export interface TelemetryData {
+export interface CommandMetricData {
   app_id: string;
   command: string;
   arguments: string;
@@ -23,28 +23,12 @@ export interface TelemetryData {
   os: string;
 }
 
-export interface TelemetryMessage {
-  name: string;
+export interface Metric<N extends string, D> {
+  name: N;
   timestamp: string;
   session_id: string;
-  source: string;
-  value: TelemetryData;
-}
-
-async function sendTelemetryData(data: TelemetryData): Promise<void> {
-  const sysconfig = await readConfig();
-
-  if (sysconfig.telemetry && isInteractive()) {
-    const message: TelemetryMessage = {
-      name: 'capacitor_cli_command',
-      timestamp: new Date().toISOString(),
-      session_id: sysconfig.machine,
-      source: 'capacitor_cli',
-      value: data,
-    };
-
-    await send({ type: 'telemetry', data: message });
-  }
+  source: 'capacitor_cli';
+  value: D;
 }
 
 type CommanderAction = (...args: any[]) => void | Promise<void>;
@@ -88,7 +72,7 @@ export function telemetryAction(
       v,
     ]);
 
-    const data: TelemetryData = {
+    const data: CommandMetricData = {
       app_id: '', // TODO
       command,
       arguments: cmd.args.join(' '),
@@ -100,12 +84,28 @@ export function telemetryAction(
       ...Object.fromEntries(versions),
     };
 
-    await sendTelemetryData(data);
+    await sendMetric('capacitor_cli_command', data);
 
     if (error) {
       throw error;
     }
   };
+}
+
+export async function sendMetric<D>(name: string, data: D): Promise<void> {
+  const sysconfig = await readConfig();
+
+  if (sysconfig.telemetry && isInteractive()) {
+    const message: Metric<string, D> = {
+      name,
+      timestamp: new Date().toISOString(),
+      session_id: sysconfig.machine,
+      source: 'capacitor_cli',
+      value: data,
+    };
+
+    await send({ type: 'telemetry', data: message });
+  }
 }
 
 /**

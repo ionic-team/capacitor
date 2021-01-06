@@ -4,14 +4,14 @@ import Debug from 'debug';
 import { request } from 'https';
 import { resolve } from 'path';
 
-import type { TelemetryMessage } from './telemetry';
+import type { Metric } from './telemetry';
 import { ENV_PATHS } from './util/cli';
 
 const debug = Debug('capacitor:ipc');
 
 export interface TelemetryIPCMessage {
   type: 'telemetry';
-  data: TelemetryMessage;
+  data: Metric<string, unknown>;
 }
 
 export type IPCMessage = TelemetryIPCMessage;
@@ -63,7 +63,8 @@ export async function receive(msg: IPCMessage): Promise<void> {
       },
       response => {
         debug(
-          'Sent telemetry data to events service (status: %O)',
+          'Sent %O metric to events service (status: %O)',
+          data.name,
           response.statusCode,
         );
 
