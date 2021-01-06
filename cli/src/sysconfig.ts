@@ -18,8 +18,10 @@ export interface SystemConfig {
 
   /**
    * Whether telemetry is enabled or not.
+   *
+   * If undefined, a choice has not yet been made.
    */
-  readonly telemetry: boolean;
+  readonly telemetry?: boolean;
 }
 
 export async function readConfig(): Promise<SystemConfig> {
@@ -34,7 +36,6 @@ export async function readConfig(): Promise<SystemConfig> {
 
     const sysconfig: SystemConfig = {
       machine: uuidv4(),
-      telemetry: true,
     };
 
     await writeConfig(sysconfig);

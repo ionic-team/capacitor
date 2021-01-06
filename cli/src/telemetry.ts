@@ -4,7 +4,9 @@ import Debug from 'debug';
 import c from './colors';
 import type { Config } from './definitions';
 import { send } from './ipc';
-import { readConfig } from './sysconfig';
+import { logPrompt, output } from './log';
+import type { SystemConfig } from './sysconfig';
+import { readConfig, writeConfig } from './sysconfig';
 import { getCommandOutput } from './util/subprocess';
 import { isInteractive } from './util/term';
 
@@ -88,7 +90,18 @@ export function telemetryAction(
       ...Object.fromEntries(versions),
     };
 
-    await sendMetric('capacitor_cli_command', data);
+    if (isInteractive()) {
+      let sysconfig = await readConfig();
+
+      if (typeof sysconfig.telemetry === 'undefined') {
+        const confirm = await promptForTelemetry();
+        sysconfig = { ...sysconfig, telemetry: confirm };
+
+        await writeConfig(sysconfig);
+      }
+
+      await sendMetric(sysconfig, 'capacitor_cli_command', data);
+    }
 
     if (error) {
       throw error;
@@ -96,9 +109,14 @@ export function telemetryAction(
   };
 }
 
-export async function sendMetric<D>(name: string, data: D): Promise<void> {
-  const sysconfig = await readConfig();
-
+/**
+ * If telemetry is enabled, send a metric via IPC to a forked process for uploading.
+ */
+export async function sendMetric<D>(
+  sysconfig: Pick<SystemConfig, 'machine' | 'telemetry'>,
+  name: string,
+  data: D,
+): Promise<void> {
   if (sysconfig.telemetry && isInteractive()) {
     const message: Metric<string, D> = {
       name,
@@ -109,7 +127,36 @@ export async function sendMetric<D>(name: string, data: D): Promise<void> {
     };
 
     await send({ type: 'telemetry', data: message });
+  } else {
+    debug(
+      'Telemetry is off (user choice, non-interactive terminal, or CI)--not sending metric',
+    );
   }
+}
+
+async function promptForTelemetry(): Promise<boolean> {
+  const { confirm } = await logPrompt(
+    `${c.strong(
+      'Would you like to help improve Capacitor by sharing anonymous usage data? 💖',
+    )}\n` +
+      `Read more about what is being collected and why here: ${c.strong(
+        'https://capacitorjs.com/telemetry',
+      )}. You can change your mind at any time by using the ${c.input(
+        'npx cap telemetry',
+      )} command.`,
+    {
+      type: 'confirm',
+      name: 'confirm',
+      message: 'Share anonymous usage data?',
+      initial: true,
+    },
+  );
+
+  if (confirm) {
+    output.write(THANK_YOU);
+  }
+
+  return confirm;
 }
 
 /**
