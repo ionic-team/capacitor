@@ -2,6 +2,7 @@ import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
 import { selectPlatforms } from '../common';
 import type { Config } from '../definitions';
+import { isFatal } from '../errors';
 import { getIOSPlugins } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
@@ -25,6 +26,10 @@ export async function listCommand(
       platforms.map(platformName => () => list(config, platformName)),
     );
   } catch (e) {
+    if (isFatal(e)) {
+      throw e;
+    }
+
     logger.error(e.stack ?? e);
   }
 }
