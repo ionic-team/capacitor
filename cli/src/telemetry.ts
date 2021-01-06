@@ -1,10 +1,14 @@
 import { Command } from 'commander';
+import Debug from 'debug';
 
 import c from './colors';
 import type { Config } from './definitions';
 import { send } from './ipc';
 import { readConfig } from './sysconfig';
+import { getCommandOutput } from './util/subprocess';
 import { isInteractive } from './util/term';
+
+const debug = Debug('capacitor:telemetry');
 
 export const THANK_YOU =
   `\nThank you for helping to make Capacitor better! 💖` +
@@ -73,7 +77,7 @@ export function telemetryAction(
     ]);
 
     const data: CommandMetricData = {
-      app_id: '', // TODO
+      app_id: await getAppIdentifier(config),
       command,
       arguments: cmd.args.join(' '),
       options: JSON.stringify(cmd.opts()),
@@ -106,6 +110,32 @@ export async function sendMetric<D>(name: string, data: D): Promise<void> {
 
     await send({ type: 'telemetry', data: message });
   }
+}
+
+/**
+ * Get a unique anonymous identifier for this app.
+ */
+async function getAppIdentifier(config: Config): Promise<string | null> {
+  const { createHash } = await import('crypto');
+
+  // get the first commit hash, which should be universally unique
+  const output = await getCommandOutput(
+    'git',
+    ['rev-list', '--max-parents=0', 'HEAD'],
+    { cwd: config.app.rootDir },
+  );
+
+  const firstLine = output?.split('\n')[0];
+
+  if (!firstLine) {
+    debug('Could not obtain unique app identifier');
+    return null;
+  }
+
+  // use sha1 to create a one-way hash to anonymize
+  const id = createHash('sha1').update(firstLine).digest('hex');
+
+  return id;
 }
 
 /**
