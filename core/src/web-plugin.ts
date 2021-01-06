@@ -1,4 +1,9 @@
-import type { PluginListenerHandle, Plugin } from './definitions';
+import type {
+  PluginListenerHandle,
+  Plugin,
+  PluginCallback,
+} from './definitions';
+import type { CapacitorInstance } from './definitions-internal';
 import { Capacitor } from './global';
 import type { CapacitorException } from './util';
 import { ExceptionCode } from './util';
@@ -17,8 +22,9 @@ export class WebPlugin implements Plugin {
   listeners: { [eventName: string]: ListenerCallback[] } = {};
   windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
-  // This gets injected into the scope via the Proxy in runtime.ts
-  pluginName: string;
+  // These gets injected into the scope via the Proxy in runtime.ts
+  private pluginName: string;
+  private cap: CapacitorInstance;
 
   constructor(config?: WebPluginConfig) {
     if (config) {
@@ -133,8 +139,27 @@ export class WebPlugin implements Plugin {
     this.loaded = true;
   }
 
-  callNative(methodName: string, parameters?: any): Promise<any> {
-    return Capacitor.nativePromise(this.pluginName, methodName, parameters);
+  protected callNative(methodName: string, parameters?: any): Promise<any>;
+  protected callNative(
+    methodName: string,
+    parameters?: any,
+    callback?: PluginCallback,
+  ): string;
+  protected callNative(
+    methodName: string,
+    parameters?: any,
+    callback?: PluginCallback,
+  ): Promise<any> | string {
+    if (callback) {
+      return Capacitor.nativeCallback(
+        this.pluginName,
+        methodName,
+        parameters,
+        callback,
+      );
+    } else {
+      return Capacitor.nativePromise(this.pluginName, methodName, parameters);
+    }
   }
 }
 
