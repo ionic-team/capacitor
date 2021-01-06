@@ -4,6 +4,7 @@ import c from './colors';
 import type { Config } from './definitions';
 import { send } from './ipc';
 import { readConfig } from './sysconfig';
+import { isInteractive } from './util/term';
 
 export const THANK_YOU =
   `\nThank you for helping to make Capacitor better! 💖` +
@@ -33,7 +34,7 @@ export interface TelemetryMessage {
 async function sendTelemetryData(data: TelemetryData): Promise<void> {
   const sysconfig = await readConfig();
 
-  if (sysconfig.telemetry) {
+  if (sysconfig.telemetry && isInteractive()) {
     const message: TelemetryMessage = {
       name: 'capacitor_cli_command',
       timestamp: new Date().toISOString(),
