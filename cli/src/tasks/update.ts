@@ -11,9 +11,10 @@ import {
   isValidPlatform,
 } from '../common';
 import type { Config } from '../definitions';
+import { fatal, isFatal } from '../errors';
 import { checkCocoaPods, checkIOSProject } from '../ios/common';
 import { updateIOS } from '../ios/update';
-import { logger, logFatal } from '../log';
+import { logger } from '../log';
 import { allSerial } from '../util/promise';
 
 export async function updateCommand(
@@ -50,7 +51,11 @@ export async function updateCommand(
       const diff = (now - then) / 1000;
       logger.info(`Update finished in ${diff}s`);
     } catch (e) {
-      logFatal(e.stack ?? e);
+      if (!isFatal(e)) {
+        fatal(e.stack ?? e);
+      }
+
+      throw e;
     }
   }
 }
