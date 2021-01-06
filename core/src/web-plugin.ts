@@ -22,9 +22,9 @@ export class WebPlugin implements Plugin {
   listeners: { [eventName: string]: ListenerCallback[] } = {};
   windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
-  // These gets injected into the scope via the Proxy in runtime.ts
-  private pluginName: string;
-  private cap: CapacitorInstance;
+  // These get injected into the scope via the Proxy in runtime.ts
+  private _pluginName: string;
+  private _cap: CapacitorInstance;
 
   constructor(config?: WebPluginConfig) {
     if (config) {
@@ -151,14 +151,14 @@ export class WebPlugin implements Plugin {
     callback?: PluginCallback,
   ): Promise<any> | string {
     if (callback) {
-      return Capacitor.nativeCallback(
-        this.pluginName,
+      return this._cap.nativeCallback(
+        this._pluginName,
         methodName,
         parameters,
         callback,
       );
     } else {
-      return Capacitor.nativePromise(this.pluginName, methodName, parameters);
+      return this._cap.nativePromise(this._pluginName, methodName, parameters);
     }
   }
 }
