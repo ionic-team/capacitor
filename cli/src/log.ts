@@ -48,8 +48,3 @@ export async function logPrompt<T extends string>(
 export function logSuccess(msg: string): void {
   logger.msg(`${c.success('[success]')} ${msg}`);
 }
-
-export function logFatal(msg: string): never {
-  logger.error(msg);
-  return process.exit(1);
-}
