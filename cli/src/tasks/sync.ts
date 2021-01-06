@@ -7,7 +7,8 @@ import {
   isValidPlatform,
 } from '../common';
 import type { Config } from '../definitions';
-import { logger, logFatal } from '../log';
+import { fatal, isFatal } from '../errors';
+import { logger } from '../log';
 import { allSerial } from '../util/promise';
 
 import { copy, copyCommand } from './copy';
@@ -53,7 +54,11 @@ export async function syncCommand(
       const diff = (now - then) / 1000;
       logger.info(`Sync finished in ${diff}s`);
     } catch (e) {
-      logFatal(e.stack ?? e);
+      if (!isFatal(e)) {
+        fatal(e.stack ?? e);
+      }
+
+      throw e;
     }
   }
 }

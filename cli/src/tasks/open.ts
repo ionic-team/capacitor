@@ -9,8 +9,9 @@ import {
   promptForPlatform,
 } from '../common';
 import type { Config } from '../definitions';
+import { fatal, isFatal } from '../errors';
 import { openIOS } from '../ios/open';
-import { logger, logFatal } from '../log';
+import { logger } from '../log';
 
 export async function openCommand(
   config: Config,
@@ -44,7 +45,11 @@ export async function openCommand(
     try {
       await open(config, platformName);
     } catch (e) {
-      logFatal(e.stack ?? e);
+      if (!isFatal(e)) {
+        fatal(e.stack ?? e);
+      }
+
+      throw e;
     }
   }
 }
