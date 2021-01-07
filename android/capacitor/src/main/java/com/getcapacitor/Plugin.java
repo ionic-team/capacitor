@@ -105,17 +105,20 @@ public class Plugin {
                 );
 
         for (final Method method : getClass().getDeclaredMethods()) {
-            if (method.isAnnotationPresent(PermissionResponse.class)) {
-                PermissionResponse permResponseAnnotation = method.getAnnotation(PermissionResponse.class);
-                if (permResponseAnnotation == null) {
+            if (method.isAnnotationPresent(PluginMethod.class)) {
+                PluginMethod pluginAnnotation = method.getAnnotation(PluginMethod.class);
+                if (pluginAnnotation == null) {
                     continue;
                 }
 
-                String permResponseMethodName = permResponseAnnotation.value();
-                Method permResponseMethod;
+                // get the defined permission callback, skip if default (empty string)
+                String permResponseMethodName = pluginAnnotation.permissionCallback();
+                if (permResponseMethodName.isEmpty()) {
+                    continue;
+                }
 
                 try {
-                    permResponseMethod = getClass().getDeclaredMethod(permResponseMethodName, PluginCall.class, Map.class);
+                    Method permResponseMethod = getClass().getDeclaredMethod(permResponseMethodName, PluginCall.class, Map.class);
 
                     if (permResponseMethod != null) {
                         permissionLaunchers.put(
@@ -378,22 +381,14 @@ public class Plugin {
      * @param call the plugin call
      */
     protected void requestAllPermissions(@NonNull PluginCall call) {
-        String callingMethodName = null;
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        for (int i = 0; i < stacktrace.length; i++) {
-            if (stacktrace[i].getMethodName().equals("requestAllPermissions")) {
-                callingMethodName = stacktrace[i + 1].getMethodName();
-                break;
-            }
-        }
-
+        String callingMethodName = call.getMethodName();
         if (!permissionLaunchers.containsKey(callingMethodName)) {
             Logger.error(
                 String.format(
                     Locale.US,
-                    "There is no permission handler method registered for the name %s. " +
-                    "Please check that it exists and has the correct signature: " +
-                    "(PluginCall, Map<String, PermissionState>)",
+                    "There is no permission callback method registered for the plugin method %s. " +
+                    "Please define a permissionCallback method name in the annotation and provide a " +
+                    "method that has the correct signature: (PluginCall, Map<String, PermissionState>)",
                     callingMethodName
                 )
             );
@@ -427,20 +422,7 @@ public class Plugin {
      * @param call the plugin call involved in originating the request
      */
     protected void requestPermissionForAliases(@NonNull String[] aliases, @NonNull PluginCall call) {
-        // get calling method name to determine the registered permission handler
-        String callingMethodName = null;
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        for (int i = 0; i < stacktrace.length; i++) {
-            if (stacktrace[i].getMethodName().equals("requestPermissionForAliases")) {
-                callingMethodName = stacktrace[i + 1].getMethodName();
-                if (callingMethodName.equals("requestPermissionForAlias")) {
-                    // if requestPermissionForAlias was the original call, look one method call further
-                    callingMethodName = stacktrace[i + 2].getMethodName();
-                }
-                break;
-            }
-        }
-
+        String callingMethodName = call.getMethodName();
         ActivityResultLauncher<String[]> activityResultLauncher = permissionLaunchers.get(callingMethodName);
         if (activityResultLauncher == null) {
             Logger.error(
