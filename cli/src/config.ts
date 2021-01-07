@@ -237,6 +237,8 @@ async function loadIOSConfig(
   const platformDirAbs = resolve(rootDir, platformDir);
   const nativeProjectDir = 'App';
   const nativeTargetDir = `${nativeProjectDir}/App`;
+  const nativeXcodeProjDir = `${nativeProjectDir}/App.xcodeproj`;
+  const nativeXcodeWorkspaceDir = `${nativeProjectDir}/App.xcworkspace`;
   const webDir = `${nativeProjectDir}/public`;
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
 
@@ -251,6 +253,13 @@ async function loadIOSConfig(
     nativeProjectDirAbs: resolve(platformDirAbs, nativeProjectDir),
     nativeTargetDir,
     nativeTargetDirAbs: resolve(platformDirAbs, nativeTargetDir),
+    nativeXcodeProjDir,
+    nativeXcodeProjDirAbs: resolve(platformDirAbs, nativeXcodeProjDir),
+    nativeXcodeWorkspaceDir,
+    nativeXcodeWorkspaceDirAbs: resolve(
+      platformDirAbs,
+      nativeXcodeWorkspaceDir,
+    ),
     webDir,
     webDirAbs: resolve(platformDirAbs, webDir),
     podPath,
