@@ -21,11 +21,6 @@ public @interface CapacitorPlugin {
     Permission[] permissions() default {};
 
     /**
-     * The request code to use when automatically requesting permissions
-     */
-    int permissionRequestCode() default 9000;
-
-    /**
      * A custom name for the plugin, otherwise uses the
      * simple class name.
      */
