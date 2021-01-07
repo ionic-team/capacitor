@@ -382,7 +382,8 @@ public class Plugin {
      */
     protected void requestAllPermissions(@NonNull PluginCall call) {
         String callingMethodName = call.getMethodName();
-        if (!permissionLaunchers.containsKey(callingMethodName)) {
+        ActivityResultLauncher<String[]> activityResultLauncher = permissionLaunchers.get(callingMethodName);
+        if (activityResultLauncher == null && !callingMethodName.equals("requestPermissions")) {
             Logger.error(
                 String.format(
                     Locale.US,
@@ -392,7 +393,11 @@ public class Plugin {
                     callingMethodName
                 )
             );
-            return;
+        }
+
+        // default to base permission launcher that returns permission states via the plugin call
+        if (activityResultLauncher == null) {
+            activityResultLauncher = basePermissionLauncher;
         }
 
         CapacitorPlugin annotation = handle.getPluginAnnotation();
@@ -403,7 +408,7 @@ public class Plugin {
             }
 
             bridge.savePermissionCall(call);
-            permissionLaunchers.get(callingMethodName).launch(perms.toArray(new String[0]));
+            activityResultLauncher.launch(perms.toArray(new String[0]));
         }
     }
 
@@ -424,17 +429,20 @@ public class Plugin {
     protected void requestPermissionForAliases(@NonNull String[] aliases, @NonNull PluginCall call) {
         String callingMethodName = call.getMethodName();
         ActivityResultLauncher<String[]> activityResultLauncher = permissionLaunchers.get(callingMethodName);
-        if (activityResultLauncher == null) {
+        if (activityResultLauncher == null && !callingMethodName.equals("requestPermissions")) {
             Logger.error(
                 String.format(
                     Locale.US,
-                    "There is no permission handler method registered for the name %s. " +
-                    "Please check that it exists and has the correct signature: " +
-                    "(PluginCall, Map<String, PermissionState>)",
+                    "There is no permission callback method registered for the plugin method %s. " +
+                    "Please define a permissionCallback method name in the annotation and provide a " +
+                    "method that has the correct signature: (PluginCall, Map<String, PermissionState>)",
                     callingMethodName
                 )
             );
+        }
 
+        // default to base permission launcher that returns permission states via the plugin call
+        if (activityResultLauncher == null) {
             activityResultLauncher = basePermissionLauncher;
         }
 
@@ -454,7 +462,7 @@ public class Plugin {
      * @param call
      * @param activityResultLauncher
      */
-    protected void requestPermissionForAliases(
+    private void requestPermissionForAliases(
         @NonNull String[] aliases,
         @NonNull PluginCall call,
         ActivityResultLauncher<String[]> activityResultLauncher
