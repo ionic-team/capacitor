@@ -766,7 +766,7 @@ public class Bridge {
      * @param grantResults the set of granted/denied permissions
      * @return true if permission code was handled by a plugin explicitly, false if not
      */
-    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
         if (plugin == null) {
