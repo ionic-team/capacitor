@@ -14,8 +14,9 @@ import prompts from 'prompts';
 import { getAndroidPlugins } from './android/common';
 import c from './colors';
 import type { Config } from './definitions';
+import { fatal } from './errors';
 import { getIOSPlugins } from './ios/common';
-import { logger, logFatal, logPrompt } from './log';
+import { logger, logPrompt } from './log';
 import type { Plugin } from './plugin';
 import {
   PluginType,
@@ -182,7 +183,7 @@ export async function copyCordovaJS(
     'cordova.js',
   );
   if (!cordovaPath) {
-    logFatal(
+    fatal(
       `Unable to find node_modules/@capacitor/core/cordova.js.\n` +
         `Are you sure ${c.strong('@capacitor/core')} is installed?`,
     );
