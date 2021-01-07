@@ -3,7 +3,8 @@ import { dirname, join } from 'path';
 
 import c from './colors';
 import type { Config, PackageJson } from './definitions';
-import { output, logger, logFatal } from './log';
+import { fatal } from './errors';
+import { output, logger } from './log';
 import { resolveNode } from './util/node';
 
 export type CheckFunction = () => Promise<string | null>;
@@ -221,7 +222,7 @@ export async function requireCapacitorPackage(
   const pkg = await getCapacitorPackage(config, name);
 
   if (!pkg) {
-    logFatal(
+    fatal(
       `Unable to find node_modules/@capacitor/${name}.\n` +
         `Are you sure ${c.strong(`@capacitor/${name}`)} is installed?`,
     );
@@ -279,15 +280,15 @@ export async function selectPlatforms(
     const platformName = selectedPlatformName.toLowerCase().trim();
 
     if (!(await isValidPlatform(platformName))) {
-      logFatal(`Invalid platform: ${c.input(platformName)}`);
+      fatal(`Invalid platform: ${c.input(platformName)}`);
     } else if (!(await getProjectPlatformDirectory(config, platformName))) {
       if (platformName === 'web') {
-        logFatal(
+        fatal(
           `Could not find the web platform directory.\n` +
             `Make sure ${c.strong(config.app.webDir)} exists.`,
         );
       }
-      logFatal(
+      fatal(
         `${c.strong(platformName)} platform has not been added yet.\n` +
           `Use ${c.input(
             `npx cap add ${platformName}`,
@@ -350,7 +351,7 @@ export async function promptForPlatform(
   if (!(await isValidPlatform(platformName))) {
     const knownPlatforms = await getKnownPlatforms();
 
-    logFatal(
+    fatal(
       `Invalid platform: ${c.input(platformName)}.\n` +
         `Valid platforms include: ${knownPlatforms.join(', ')}`,
     );
@@ -401,7 +402,7 @@ export async function promptForPlatformTarget(
   const target = targets.find(t => t.id === targetID);
 
   if (!target) {
-    logFatal(
+    fatal(
       `Invalid target ID: ${c.input(targetID)}.\n` +
         `Valid targets are: ${targets.map(t => t.id).join(', ')}`,
     );

@@ -13,10 +13,11 @@ import type {
   WebConfig,
 } from './definitions';
 import { OS } from './definitions';
-import { logFatal } from './log';
+import { fatal, isFatal } from './errors';
 import { tryFn } from './util/fn';
 import { formatJSObject } from './util/js';
 import { resolveNode, requireTS } from './util/node';
+import { lazy } from './util/promise';
 
 const debug = Debug('capacitor:config');
 
@@ -89,7 +90,7 @@ async function loadExtConfigTS(
     const tsPath = resolveNode(rootDir, 'typescript');
 
     if (!tsPath) {
-      logFatal(
+      fatal(
         'Could not find installation of TypeScript.\n' +
           `To use ${c.strong(
             extConfigName,
@@ -108,7 +109,11 @@ async function loadExtConfigTS(
       extConfig: requireTS(ts, extConfigFilePath) as any,
     };
   } catch (e) {
-    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+    if (!isFatal(e)) {
+      fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+    }
+
+    throw e;
   }
 }
 
@@ -125,7 +130,7 @@ async function loadExtConfigJS(
       extConfig: require(extConfigFilePath),
     };
   } catch (e) {
-    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+    fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
   }
 }
 
@@ -213,7 +218,7 @@ async function loadAndroidConfig(
   const resDir = `${srcMainDir}/res`;
   const buildOutputDir = `${appDir}/build/outputs/apk/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
-  const studioPath = await determineAndroidStudioPath(cliConfig.os);
+  const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
 
   return {
     name,

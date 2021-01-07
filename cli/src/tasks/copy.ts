@@ -16,6 +16,7 @@ import {
   writeCordovaAndroidManifest,
 } from '../cordova';
 import type { Config } from '../definitions';
+import { isFatal } from '../errors';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
@@ -45,6 +46,10 @@ export async function copyCommand(
         platforms.map(platformName => () => copy(config, platformName)),
       );
     } catch (e) {
+      if (isFatal(e)) {
+        throw e;
+      }
+
       logger.error(e.stack ?? e);
     }
   }

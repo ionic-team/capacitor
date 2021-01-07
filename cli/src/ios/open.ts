@@ -3,7 +3,7 @@ import open from 'open';
 import c from '../colors';
 import { wait } from '../common';
 import type { Config } from '../definitions';
-import { logFatal } from '../log';
+import { fatal } from '../errors';
 
 import { findXcodePath } from './common';
 
@@ -11,7 +11,7 @@ export async function openIOS(config: Config): Promise<void> {
   const xcodeProject = await findXcodePath(config);
 
   if (!xcodeProject) {
-    logFatal(
+    fatal(
       'Xcode workspace does not exist.\n' +
         `Run ${c.input('npx cap add ios')} to bootstrap a new iOS project.`,
     );

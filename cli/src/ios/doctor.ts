@@ -1,6 +1,7 @@
 import { check, checkWebDir } from '../common';
 import type { Config } from '../definitions';
-import { logFatal, logSuccess } from '../log';
+import { fatal } from '../errors';
+import { logSuccess } from '../log';
 import { isInstalled } from '../util/subprocess';
 
 import { checkCocoaPods, checkIOSProject } from './common';
@@ -26,7 +27,7 @@ export async function doctorIOS(config: Config): Promise<void> {
     ]);
     logSuccess('iOS looking great! 👌');
   } catch (e) {
-    logFatal(e.stack ?? e);
+    fatal(e.stack ?? e);
   }
 }
 

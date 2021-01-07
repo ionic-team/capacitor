@@ -3,7 +3,8 @@ import { dirname, join } from 'path';
 
 import c from './colors';
 import type { Config } from './definitions';
-import { logger, logFatal } from './log';
+import { fatal } from './errors';
+import { logger } from './log';
 import { resolveNode } from './util/node';
 import { readXML } from './util/xml';
 
@@ -75,7 +76,7 @@ export async function resolvePlugin(
   try {
     const packagePath = resolveNode(config.app.rootDir, name, 'package.json');
     if (!packagePath) {
-      logFatal(
+      fatal(
         `Unable to find node_modules/${name}.\n` +
           `Are you sure ${c.strong(name)} is installed?`,
       );

@@ -73,7 +73,7 @@ export interface AppConfig {
 export interface AndroidConfig extends PlatformConfig {
   readonly cordovaPluginsDir: string;
   readonly cordovaPluginsDirAbs: string;
-  readonly studioPath: string;
+  readonly studioPath: Promise<string>;
   readonly minVersion: string;
   readonly appDir: string;
   readonly appDirAbs: string;

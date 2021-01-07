@@ -10,7 +10,8 @@ import {
 } from '../config';
 import { getCordovaPreferences } from '../cordova';
 import type { Config, ExternalConfig } from '../definitions';
-import { output, logFatal, logSuccess, logPrompt } from '../log';
+import { fatal, isFatal } from '../errors';
+import { output, logSuccess, logPrompt } from '../log';
 import { resolveNode } from '../util/node';
 import { checkInteractive, isInteractive } from '../util/term';
 
@@ -26,7 +27,7 @@ export async function initCommand(
     }
 
     if (config.app.extConfigType !== 'json') {
-      logFatal(
+      fatal(
         `Cannot run ${c.input(
           'init',
         )} for a project using a non-JSON configuration file.\n` +
@@ -65,7 +66,12 @@ export async function initCommand(
       'Usage: npx cap init appName appId\n' +
         'Example: npx cap init "My App" "com.example.myapp"\n\n',
     );
-    logFatal(e.stack ?? e);
+
+    if (!isFatal(e)) {
+      fatal(e.stack ?? e);
+    }
+
+    throw e;
   }
 }
 
