@@ -53,7 +53,7 @@ export async function receive(msg: IPCMessage): Promise<void> {
     // This request is only made if telemetry is on.
     const req = request(
       {
-        hostname: 'api-staging.ionicjs.com', // TODO
+        hostname: 'api.ionicjs.com',
         port: 443,
         path: '/events/metrics',
         method: 'POST',
