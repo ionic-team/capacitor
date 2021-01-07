@@ -13,7 +13,7 @@ import type {
   WebConfig,
 } from './definitions';
 import { OS } from './definitions';
-import { logFatal } from './log';
+import { fatal, isFatal } from './errors';
 import { tryFn } from './util/fn';
 import { resolveNode, requireTS } from './util/node';
 import { lazy } from './util/promise';
@@ -69,7 +69,7 @@ async function loadExtConfigTS(
     const tsPath = resolveNode(rootDir, 'typescript');
 
     if (!tsPath) {
-      logFatal(
+      fatal(
         'Could not find installation of TypeScript.\n' +
           `To use ${c.strong(
             extConfigName,
@@ -88,7 +88,11 @@ async function loadExtConfigTS(
       extConfig: requireTS(ts, extConfigFilePath) as any,
     };
   } catch (e) {
-    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+    if (!isFatal(e)) {
+      fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+    }
+
+    throw e;
   }
 }
 
@@ -105,7 +109,7 @@ async function loadExtConfigJS(
       extConfig: require(extConfigFilePath),
     };
   } catch (e) {
-    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+    fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
   }
 }
 
