@@ -57,6 +57,7 @@
     "prompts": "^2.3.2",
     "semver": "^7.3.2",
     "tar": "^6.0.5",
+    "tslib": "^2.1.0",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {

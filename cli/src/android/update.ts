@@ -18,7 +18,7 @@ import {
   writeCordovaAndroidManifest,
 } from '../cordova';
 import type { Config } from '../definitions';
-import { logFatal } from '../log';
+import { fatal } from '../errors';
 import type { Plugin } from '../plugin';
 import {
   PluginType,
@@ -143,7 +143,7 @@ async function findAndroidPluginClassesInPlugin(
           );
 
           if (!packageMatch) {
-            logFatal(
+            fatal(
               `Package could not be parsed from Android plugin.\n` +
                 `Location: ${c.strong(srcFile)}`,
             );
@@ -177,7 +177,7 @@ export async function installGradlePlugins(
     'package.json',
   );
   if (!capacitorAndroidPackagePath) {
-    logFatal(
+    fatal(
       `Unable to find node_modules/@capacitor/android\n` +
         `Are you sure ${c.strong('@capacitor/android')} is installed?`,
     );

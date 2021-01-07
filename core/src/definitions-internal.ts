@@ -131,7 +131,7 @@ export interface WindowCapacitor {
       };
     };
   };
-  console?: any;
+  console?: Console;
   cordova?: {
     fireDocumentEvent?: (eventName: string, eventData: any) => void;
   };
@@ -143,8 +143,3 @@ export interface WindowCapacitor {
     };
   };
 }
-
-export type Logger = (
-  level: 'debug' | 'error' | 'info' | 'log' | 'trace' | 'warn',
-  msg: any,
-) => void;

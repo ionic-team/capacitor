@@ -4,7 +4,7 @@ import { join } from 'path';
 import c from '../colors';
 import { runTask } from '../common';
 import type { Config } from '../definitions';
-import { logFatal } from '../log';
+import { fatal } from '../errors';
 import { resolveNode } from '../util/node';
 
 export async function copyWeb(config: Config): Promise<void> {
@@ -16,7 +16,7 @@ export async function copyWeb(config: Config): Promise<void> {
       'capacitor.js',
     );
     if (!runtimePath) {
-      logFatal(
+      fatal(
         `Unable to find node_modules/@capacitor/core/dist/capacitor.js.\n` +
           `Are you sure ${c.strong('@capacitor/core')} is installed?`,
       );

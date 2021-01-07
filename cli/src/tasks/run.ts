@@ -11,8 +11,9 @@ import {
   getPlatformTargetName,
 } from '../common';
 import type { Config } from '../definitions';
+import { fatal, isFatal } from '../errors';
 import { runIOS } from '../ios/run';
-import { logger, output, logFatal } from '../log';
+import { logger, output } from '../log';
 import { getPlatformTargets } from '../util/native-run';
 
 import { sync } from './sync';
@@ -85,7 +86,11 @@ export async function runCommand(
 
       await run(config, platformName, options);
     } catch (e) {
-      logFatal(e.stack ?? e);
+      if (!isFatal(e)) {
+        fatal(e.stack ?? e);
+      }
+
+      throw e;
     }
   }
 }
