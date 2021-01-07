@@ -147,7 +147,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
               const func = Reflect.get(loadedImpl, prop);
               if (typeof func === 'function') {
                 return (...args: any[]) =>
-                  Reflect.apply(func, { ...loadedImpl, pluginName, cap }, args);
+                  Reflect.apply(func, { ...loadedImpl, _pluginName: pluginName, _cap: cap }, args);
               }
               throw new CapacitorException(
                 `"${pluginName}.${
@@ -171,7 +171,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                     const func = Reflect.get(loadedImpl, prop);
                     loadedRtn = Reflect.apply(
                       func,
-                      { ...loadedImpl, pluginName, cap },
+                      { ...loadedImpl, _pluginName: pluginName, _cap: cap },
                       args,
                     );
                   });
@@ -197,7 +197,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                     const func = Reflect.get(loadedImpl, prop);
                     return Reflect.apply(
                       func,
-                      { ...loadedImpl, pluginName, cap },
+                      { ...loadedImpl, _pluginName: pluginName, _cap: cap },
                       [],
                     );
                   });
@@ -213,7 +213,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                   if (typeof func === 'function') {
                     return Reflect.apply(
                       func,
-                      { ...loadedImpl, pluginName, cap },
+                      { ...loadedImpl, _pluginName: pluginName, _cap: cap },
                       args,
                     );
                   }
