@@ -1,5 +1,9 @@
+import envPaths from 'env-paths';
+
 import { isFatal } from '../errors';
 import { logger } from '../log';
+
+export const ENV_PATHS = envPaths('capacitor', { suffix: '' });
 
 export type CommanderAction = (...args: any[]) => void | Promise<void>;
 
