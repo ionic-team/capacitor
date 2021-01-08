@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -377,27 +378,19 @@ public class Plugin {
     /**
      * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
      *
+     * If there is no registered permission callback for the PluginCall passed in, the call will
+     * be rejected. Make sure a valid permission callback method is registered using the
+     * {@link PluginMethod#permissionCallback()} annotation.
+     *
      * @since 3.0.0
      * @param call the plugin call
      */
     protected void requestAllPermissions(@NonNull PluginCall call) {
-        String callingMethodName = call.getMethodName();
-        ActivityResultLauncher<String[]> activityResultLauncher = permissionLaunchers.get(callingMethodName);
-        if (activityResultLauncher == null && !callingMethodName.equals("requestPermissions")) {
-            Logger.error(
-                String.format(
-                    Locale.US,
-                    "There is no permission callback method registered for the plugin method %s. " +
-                    "Please define a permissionCallback method name in the annotation and provide a " +
-                    "method that has the correct signature: (PluginCall, Map<String, PermissionState>)",
-                    callingMethodName
-                )
-            );
-        }
-
-        // default to base permission launcher that returns permission states via the plugin call
+        String callMethodName = call.getMethodName();
+        ActivityResultLauncher<String[]> activityResultLauncher = getLauncherOrReject(call, callMethodName);
         if (activityResultLauncher == null) {
-            activityResultLauncher = basePermissionLauncher;
+            // return when null since call was rejected in getLauncherOrReject
+            return;
         }
 
         CapacitorPlugin annotation = handle.getPluginAnnotation();
@@ -413,7 +406,12 @@ public class Plugin {
     }
 
     /**
-     * Request permissions using an alias defined on the plugin
+     * Request permissions using an alias defined on the plugin.
+     *
+     * If there is no registered permission callback for the PluginCall passed in, the call will
+     * be rejected. Make sure a valid permission callback method is registered using the
+     * {@link PluginMethod#permissionCallback()} annotation.
+     *
      * @param alias an alias defined on the plugin
      * @param call the plugin call involved in originating the request
      */
@@ -422,28 +420,21 @@ public class Plugin {
     }
 
     /**
-     * Request permissions using aliases defined on the plugin
+     * Request permissions using aliases defined on the plugin.
+     *
+     * If there is no registered permission callback for the PluginCall passed in, the call will
+     * be rejected. Make sure a valid permission callback method is registered using the
+     * {@link PluginMethod#permissionCallback()} annotation.
+     *
      * @param aliases a set of aliases defined on the plugin
      * @param call the plugin call involved in originating the request
      */
     protected void requestPermissionForAliases(@NonNull String[] aliases, @NonNull PluginCall call) {
-        String callingMethodName = call.getMethodName();
-        ActivityResultLauncher<String[]> activityResultLauncher = permissionLaunchers.get(callingMethodName);
-        if (activityResultLauncher == null && !callingMethodName.equals("requestPermissions")) {
-            Logger.error(
-                String.format(
-                    Locale.US,
-                    "There is no permission callback method registered for the plugin method %s. " +
-                    "Please define a permissionCallback method name in the annotation and provide a " +
-                    "method that has the correct signature: (PluginCall, Map<String, PermissionState>)",
-                    callingMethodName
-                )
-            );
-        }
-
-        // default to base permission launcher that returns permission states via the plugin call
+        String callMethodName = call.getMethodName();
+        ActivityResultLauncher<String[]> activityResultLauncher = getLauncherOrReject(call, callMethodName);
         if (activityResultLauncher == null) {
-            activityResultLauncher = basePermissionLauncher;
+            // return when null since call was rejected in getLauncherOrReject
+            return;
         }
 
         if (aliases.length == 0) {
@@ -458,9 +449,6 @@ public class Plugin {
      * Request permissions using aliases defined on the plugin with a provided activityResultLauncher.
      * Plugin authors should use {@link #requestPermissionForAliases(String[], PluginCall)} with
      * a registered callback method for typical permission request use.
-     * @param aliases
-     * @param call
-     * @param activityResultLauncher
      */
     private void requestPermissionForAliases(
         @NonNull String[] aliases,
@@ -475,6 +463,13 @@ public class Plugin {
         }
     }
 
+    /**
+     * Gets the Android permission strings defined on the {@link CapacitorPlugin} annotation with
+     * the provided aliases.
+     *
+     * @param aliases aliases for permissions defined on the plugin
+     * @return Android permission strings associated with the provided aliases, if exists
+     */
     private String[] getPermissionStringsForAliases(@NonNull String[] aliases) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         HashSet<String> perms = new HashSet<>();
@@ -485,6 +480,38 @@ public class Plugin {
         }
 
         return perms.toArray(new String[0]);
+    }
+
+    /**
+     * Gets the permission launcher associated with the calling methodName, or rejects the call if
+     * no registered launcher exists
+     *
+     * @param call the plugin call
+     * @param methodName the name of the plugin method requesting a permission
+     * @return a launcher, or null if none found
+     */
+    private @Nullable ActivityResultLauncher<String[]> getLauncherOrReject(PluginCall call, String methodName) {
+        ActivityResultLauncher<String[]> activityResultLauncher = permissionLaunchers.get(methodName);
+
+        // if there is no registered result launcher but the method is the default requestPermissions
+        // method, associate the base permission launcher to make sure states are returned
+        if (activityResultLauncher == null && methodName.equals("requestPermissions")) {
+            activityResultLauncher = basePermissionLauncher;
+        }
+
+        // if there is no registered launcher, reject the call with an error and return null
+        if (activityResultLauncher == null) {
+            String registerError =
+                "There is no permission callback method registered for the plugin method %s. " +
+                "Please define a permissionCallback method name in the annotation and provide a " +
+                "method that has the correct signature: (PluginCall, Map<String, PermissionState>)";
+            registerError = String.format(Locale.US, registerError, methodName);
+            Logger.error(registerError);
+            call.reject(registerError);
+            return null;
+        }
+
+        return activityResultLauncher;
     }
 
     /**
