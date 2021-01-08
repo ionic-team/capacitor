@@ -487,7 +487,6 @@ public class Bridge {
     public PluginHandle getPluginWithRequestCode(int requestCode) {
         for (PluginHandle handle : this.plugins.values()) {
             int[] requestCodes;
-            Integer permissionRequestCode = null;
 
             CapacitorPlugin pluginAnnotation = handle.getPluginAnnotation();
             if (pluginAnnotation == null) {
@@ -497,8 +496,11 @@ public class Bridge {
                     continue;
                 }
 
+                if (legacyPluginAnnotation.permissionRequestCode() == requestCode) {
+                    return handle;
+                }
+
                 requestCodes = legacyPluginAnnotation.requestCodes();
-                permissionRequestCode = legacyPluginAnnotation.permissionRequestCode();
             } else {
                 requestCodes = pluginAnnotation.requestCodes();
             }
@@ -507,10 +509,6 @@ public class Bridge {
                 if (rc == requestCode) {
                     return handle;
                 }
-            }
-
-            if (permissionRequestCode != null && permissionRequestCode == requestCode) {
-                return handle;
             }
         }
         return null;
