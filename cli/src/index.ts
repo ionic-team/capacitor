@@ -4,13 +4,17 @@ import c from './colors';
 import { loadConfig } from './config';
 import type { Config } from './definitions';
 import { fatal, isFatal } from './errors';
+import { receive } from './ipc';
 import { logger, output } from './log';
+import { telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
 
 process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
 });
+
+process.on('message', receive);
 
 export async function run(): Promise<void> {
   try {
@@ -54,10 +58,12 @@ export function runProgram(config: Config): void {
       'Optional: Directory of your projects built web assets',
     )
     .action(
-      wrapAction(async (appName, appId, { webDir }) => {
-        const { initCommand } = await import('./tasks/init');
-        await initCommand(config, appName, appId, webDir);
-      }),
+      wrapAction(
+        telemetryAction(config, async (appName, appId, { webDir }) => {
+          const { initCommand } = await import('./tasks/init');
+          await initCommand(config, appName, appId, webDir);
+        }),
+      ),
     );
 
   program
@@ -78,10 +84,12 @@ export function runProgram(config: Config): void {
       "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
     )
     .action(
-      wrapAction(async (platform, { deployment }) => {
-        const { syncCommand } = await import('./tasks/sync');
-        await syncCommand(config, platform, deployment);
-      }),
+      wrapAction(
+        telemetryAction(config, async (platform, { deployment }) => {
+          const { syncCommand } = await import('./tasks/sync');
+          await syncCommand(config, platform, deployment);
+        }),
+      ),
     );
 
   program
@@ -96,20 +104,24 @@ export function runProgram(config: Config): void {
       "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
     )
     .action(
-      wrapAction(async (platform, { deployment }) => {
-        const { updateCommand } = await import('./tasks/update');
-        await updateCommand(config, platform, deployment);
-      }),
+      wrapAction(
+        telemetryAction(config, async (platform, { deployment }) => {
+          const { updateCommand } = await import('./tasks/update');
+          await updateCommand(config, platform, deployment);
+        }),
+      ),
     );
 
   program
     .command('copy [platform]')
     .description('copies the web app build into the native app')
     .action(
-      wrapAction(async platform => {
-        const { copyCommand } = await import('./tasks/copy');
-        await copyCommand(config, platform);
-      }),
+      wrapAction(
+        telemetryAction(config, async platform => {
+          const { copyCommand } = await import('./tasks/copy');
+          await copyCommand(config, platform);
+        }),
+      ),
     );
 
   program
@@ -123,51 +135,78 @@ export function runProgram(config: Config): void {
     .option('--target <id>', 'use a specific target')
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .action(
-      wrapAction(async (platform, { list, target, sync }) => {
-        const { runCommand } = await import('./tasks/run');
-        await runCommand(config, platform, { list, target, sync });
-      }),
+      wrapAction(
+        telemetryAction(config, async (platform, { list, target, sync }) => {
+          const { runCommand } = await import('./tasks/run');
+          await runCommand(config, platform, { list, target, sync });
+        }),
+      ),
     );
 
   program
     .command('open [platform]')
     .description('opens the native project workspace (Xcode for iOS)')
     .action(
-      wrapAction(async platform => {
-        const { openCommand } = await import('./tasks/open');
-        await openCommand(config, platform);
-      }),
+      wrapAction(
+        telemetryAction(config, async platform => {
+          const { openCommand } = await import('./tasks/open');
+          await openCommand(config, platform);
+        }),
+      ),
     );
 
   program
     .command('add [platform]')
     .description('add a native platform project')
     .action(
-      wrapAction(async platform => {
-        const { addCommand } = await import('./tasks/add');
-        await addCommand(config, platform);
-      }),
+      wrapAction(
+        telemetryAction(config, async platform => {
+          const { addCommand } = await import('./tasks/add');
+          await addCommand(config, platform);
+        }),
+      ),
     );
 
   program
     .command('ls [platform]')
     .description('list installed Cordova and Capacitor plugins')
     .action(
-      wrapAction(async platform => {
-        const { listCommand } = await import('./tasks/list');
-        await listCommand(config, platform);
-      }),
+      wrapAction(
+        telemetryAction(config, async platform => {
+          const { listCommand } = await import('./tasks/list');
+          await listCommand(config, platform);
+        }),
+      ),
     );
 
   program
     .command('doctor [platform]')
     .description('checks the current setup for common errors')
     .action(
-      wrapAction(async platform => {
-        const { doctorCommand } = await import('./tasks/doctor');
-        await doctorCommand(config, platform);
+      wrapAction(
+        telemetryAction(config, async platform => {
+          const { doctorCommand } = await import('./tasks/doctor');
+          await doctorCommand(config, platform);
+        }),
+      ),
+    );
+
+  program
+    .command('telemetry [on|off]', { hidden: true })
+    .description('enable or disable telemetry')
+    .action(
+      wrapAction(async onOrOff => {
+        const { telemetryCommand } = await import('./tasks/telemetry');
+        await telemetryCommand(onOrOff);
       }),
     );
+
+  program
+    .command('📡', { hidden: true })
+    .description('IPC receiver command')
+    .action(() => {
+      // no-op: IPC messages are received via `process.on('message')`
+    });
 
   program
     .command('plugin:generate', { hidden: true })
