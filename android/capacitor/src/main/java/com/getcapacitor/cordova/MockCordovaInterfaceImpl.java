@@ -18,8 +18,8 @@ public class MockCordovaInterfaceImpl extends CordovaInterfaceImpl {
     }
 
     /**
-     * Use in lieu of {@link CordovaInterfaceImpl#onRequestPermissionResult(int, String[], int[])} to return
-     * a boolean if Cordova is handling the permission request with a registered code.
+     * Checks Cordova permission callbacks to handle permissions defined by a Cordova plugin.
+     * Returns true if Cordova is handling the permission request with a registered code.
      *
      * @param requestCode
      * @param permissions

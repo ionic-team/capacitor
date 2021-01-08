@@ -67,7 +67,7 @@ public class Plugin {
     /**
      * Base activity result launcher used by the {@link #requestPermissions(PluginCall)} plugin call
      */
-    protected ActivityResultLauncher<String[]> basePermissionLauncher = null;
+    private ActivityResultLauncher<String[]> basePermissionLauncher = null;
 
     /**
      * Launchers used by the plugin to request permissions

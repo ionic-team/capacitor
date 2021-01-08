@@ -758,8 +758,9 @@ public class Bridge {
     }
 
     /**
-     * Handle a request permission result by finding the that requested
-     * the permission and calling their permission handler
+     * Check for legacy Capacitor or Cordova plugins that may have registered to handle a permission
+     * request, and handle them if so. If not handled, false is returned.
+     *
      * @param requestCode the code that was requested
      * @param permissions the permissions requested
      * @param grantResults the set of granted/denied permissions
