@@ -385,5 +385,5 @@ function formatConfigTS(extConfig: ExternalConfig): string {
 
 const config: CapacitorConfig = ${formatJSObject(extConfig)};
 
-export = config;\n`;
+export default config;\n`;
 }
