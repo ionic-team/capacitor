@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-alpha.12](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.11...3.0.0-alpha.12) (2021-01-08)
+
+
+### Bug Fixes
+
+* **core:** fix $$typeof() not implemented error ([#4013](https://github.com/ionic-team/capacitor/issues/4013)) ([c7f80b5](https://github.com/ionic-team/capacitor/commit/c7f80b577c1de60cd0a105f3aaf0d1c314f3150d))
+
+
+
+
+
 # [3.0.0-alpha.9](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.8...3.0.0-alpha.9) (2020-12-15)
 
 **Note:** Version bump only for package @capacitor/core
