@@ -1,6 +1,6 @@
 import { pathExists, readJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
-import { dirname, join, resolve } from 'path';
+import { dirname, join, relative, resolve } from 'path';
 
 import c from './colors';
 import type {
@@ -236,9 +236,12 @@ async function loadIOSConfig(
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
   const nativeProjectDir = 'App';
+  const nativeProjectDirAbs = resolve(platformDirAbs, nativeProjectDir);
   const nativeTargetDir = `${nativeProjectDir}/App`;
   const nativeXcodeProjDir = `${nativeProjectDir}/App.xcodeproj`;
-  const nativeXcodeWorkspaceDir = `${nativeProjectDir}/App.xcworkspace`;
+  const nativeXcodeWorkspaceDirAbs = lazy(() =>
+    determineXcodeWorkspaceDirAbs(nativeProjectDirAbs),
+  );
   const webDir = `${nativeProjectDir}/public`;
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
 
@@ -250,16 +253,15 @@ async function loadIOSConfig(
     cordovaPluginsDir,
     cordovaPluginsDirAbs: resolve(platformDirAbs, cordovaPluginsDir),
     nativeProjectDir,
-    nativeProjectDirAbs: resolve(platformDirAbs, nativeProjectDir),
+    nativeProjectDirAbs,
     nativeTargetDir,
     nativeTargetDirAbs: resolve(platformDirAbs, nativeTargetDir),
     nativeXcodeProjDir,
     nativeXcodeProjDirAbs: resolve(platformDirAbs, nativeXcodeProjDir),
-    nativeXcodeWorkspaceDir,
-    nativeXcodeWorkspaceDirAbs: resolve(
-      platformDirAbs,
-      nativeXcodeWorkspaceDir,
+    nativeXcodeWorkspaceDir: lazy(async () =>
+      relative(platformDirAbs, await nativeXcodeWorkspaceDirAbs),
     ),
+    nativeXcodeWorkspaceDirAbs,
     webDir,
     webDirAbs: resolve(platformDirAbs, webDir),
     podPath,
@@ -291,6 +293,21 @@ function determineOS(os: NodeJS.Platform): OS {
   }
 
   return OS.Unknown;
+}
+
+async function determineXcodeWorkspaceDirAbs(
+  nativeProjectDirAbs: string,
+): Promise<string> {
+  const xcodeDir = resolve(nativeProjectDirAbs, 'App.xcworkspace');
+
+  if (!(await pathExists(xcodeDir))) {
+    fatal(
+      'Xcode workspace does not exist.\n' +
+        `Run ${c.input('npx cap add ios')} to bootstrap a new iOS project.`,
+    );
+  }
+
+  return xcodeDir;
 }
 
 async function determineAndroidStudioPath(os: OS): Promise<string> {

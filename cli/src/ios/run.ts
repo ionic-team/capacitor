@@ -27,7 +27,7 @@ export async function runIOS(
 
   const xcodebuildArgs = [
     '-workspace',
-    basename(config.ios.nativeXcodeWorkspaceDirAbs),
+    basename(await config.ios.nativeXcodeWorkspaceDirAbs),
     '-scheme',
     'App',
     '-configuration',
