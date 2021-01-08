@@ -147,7 +147,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
               const func = Reflect.get(loadedImpl, prop);
               if (typeof func === 'function') {
                 return (...args: any[]) =>
-                  Reflect.apply(func, { ...loadedImpl, _pluginName: pluginName, _cap: cap }, args);
+                  Reflect.apply(
+                    func,
+                    { ...loadedImpl, _pluginName: pluginName, _cap: cap },
+                    args,
+                  );
               }
               throw new CapacitorException(
                 `"${pluginName}.${
