@@ -164,13 +164,31 @@ public class BridgeActivity extends AppCompatActivity {
         this.bridge.onDetachedFromWindow();
     }
 
+    /**
+     * Handles permission request results.
+     *
+     * Capacitor is backwards compatible such that plugins using legacy permission request codes
+     * may coexist with plugins using the AndroidX Activity v1.2 permission callback flow introduced
+     * in Capacitor 3.0.
+     *
+     * In this method, plugins are checked first for ownership of the legacy permission request code.
+     * If the {@link Bridge#onRequestPermissionsResult(int, String[], int[])} method indicates it has
+     * handled the permission, then the permission callback will be considered complete. Otherwise,
+     * the permission will be handled using the AndroidX Activity flow.
+     *
+     * @param requestCode the request code associated with the permission request
+     * @param permissions the Android permission strings requested
+     * @param grantResults the status result of the permission request
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (this.bridge == null) {
             return;
         }
 
-        this.bridge.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (!bridge.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override
