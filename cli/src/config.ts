@@ -1,4 +1,4 @@
-import { pathExists, readJSON } from '@ionic/utils-fs';
+import { pathExists, readFile, readJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
 import { dirname, join, relative, resolve } from 'path';
 
@@ -14,6 +14,7 @@ import type {
 } from './definitions';
 import { OS } from './definitions';
 import { fatal, isFatal } from './errors';
+import { logger } from './log';
 import { tryFn } from './util/fn';
 import { resolveNode, requireTS } from './util/node';
 import { lazy } from './util/promise';
@@ -240,11 +241,19 @@ async function loadIOSConfig(
   const nativeProjectDir = 'App';
   const nativeProjectDirAbs = resolve(platformDirAbs, nativeProjectDir);
   const nativeTargetDir = `${nativeProjectDir}/App`;
+  const nativeTargetDirAbs = resolve(platformDirAbs, nativeTargetDir);
   const nativeXcodeProjDir = `${nativeProjectDir}/App.xcodeproj`;
+  const nativeXcodeProjDirAbs = resolve(platformDirAbs, nativeXcodeProjDir);
   const nativeXcodeWorkspaceDirAbs = lazy(() =>
     determineXcodeWorkspaceDirAbs(nativeProjectDirAbs),
   );
-  const webDir = `${nativeProjectDir}/public`;
+  const webDirAbs = lazy(() =>
+    determineIOSWebDirAbs(
+      nativeProjectDirAbs,
+      nativeTargetDirAbs,
+      nativeXcodeProjDirAbs,
+    ),
+  );
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
 
   return {
@@ -257,15 +266,15 @@ async function loadIOSConfig(
     nativeProjectDir,
     nativeProjectDirAbs,
     nativeTargetDir,
-    nativeTargetDirAbs: resolve(platformDirAbs, nativeTargetDir),
+    nativeTargetDirAbs,
     nativeXcodeProjDir,
-    nativeXcodeProjDirAbs: resolve(platformDirAbs, nativeXcodeProjDir),
+    nativeXcodeProjDirAbs,
     nativeXcodeWorkspaceDir: lazy(async () =>
       relative(platformDirAbs, await nativeXcodeWorkspaceDirAbs),
     ),
     nativeXcodeWorkspaceDirAbs,
-    webDir,
-    webDirAbs: resolve(platformDirAbs, webDir),
+    webDir: lazy(async () => relative(platformDirAbs, await webDirAbs)),
+    webDirAbs,
     podPath,
   };
 }
@@ -310,6 +319,41 @@ async function determineXcodeWorkspaceDirAbs(
   }
 
   return xcodeDir;
+}
+
+async function determineIOSWebDirAbs(
+  nativeProjectDirAbs: string,
+  nativeTargetDirAbs: string,
+  nativeXcodeProjDirAbs: string,
+): Promise<string> {
+  const re = /path\s=\spublic[\s\S]+?sourceTree\s=\s([^;]+)/;
+  const pbxprojPath = resolve(nativeXcodeProjDirAbs, 'project.pbxproj');
+  const pbxproj = await readFile(pbxprojPath, { encoding: 'utf8' });
+
+  const m = pbxproj.match(re);
+
+  if (m === null) {
+    fatal(`Unrecognized structure in ${c.strong(pbxprojPath)}`);
+  }
+
+  const [, sourceTree] = m;
+
+  if (sourceTree === 'SOURCE_ROOT') {
+    logger.warn(
+      `Using the iOS project root for the ${c.strong(
+        'public',
+      )} directory is deprecated.\n` +
+        `Please follow the Upgrade Guide to move ${c.strong(
+          'public',
+        )} inside the iOS target directory: ${c.strong(
+          'https://capacitorjs.com/docs/v3/updating/3-0#move-public-into-the-ios-target-directory',
+        )}`,
+    );
+
+    return resolve(nativeProjectDirAbs, 'public');
+  }
+
+  return resolve(nativeTargetDirAbs, 'public');
 }
 
 async function determineAndroidStudioPath(os: OS): Promise<string> {
