@@ -346,7 +346,7 @@ async function determineIOSWebDirAbs(
         `Please follow the Upgrade Guide to move ${c.strong(
           'public',
         )} inside the iOS target directory: ${c.strong(
-          'https://capacitorjs.com/docs/v3/updating/3-0',
+          'https://capacitorjs.com/docs/v3/updating/3-0#move-public-into-the-ios-target-directory',
         )}`,
     );
 
