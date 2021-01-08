@@ -1,4 +1,3 @@
-import { pathExists, unlink } from '@ionic/utils-fs';
 import { basename, dirname, resolve } from 'path';
 
 import c from '../colors';
@@ -149,26 +148,6 @@ async function runMergeConfig(
       await mergeConfig(config, extConfig, newConfigPath);
     },
   );
-
-  if (
-    newConfigPath !== config.app.extConfigFilePath &&
-    (await pathExists(config.app.extConfigFilePath))
-  ) {
-    const answers = await logPrompt(
-      `${c.strong(`Remove old ${config.app.extConfigName} file?`)}\n` +
-        `The path to your configuration file changed. Would you like to delete the old configuration file?`,
-      {
-        type: 'confirm',
-        name: 'confirm',
-        message: `Delete ${c.strong(config.app.extConfigName)}?`,
-        initial: true,
-      },
-    );
-
-    if (answers.confirm) {
-      await unlink(config.app.extConfigFilePath);
-    }
-  }
 
   printNextSteps(basename(newConfigPath));
 }
