@@ -1,5 +1,5 @@
-import { readdir, readFile, writeFile } from '@ionic/utils-fs';
-import { join, resolve } from 'path';
+import { readFile, writeFile } from '@ionic/utils-fs';
+import { resolve } from 'path';
 
 import c from '../colors';
 import { checkCapacitorPlatform, getProjectPlatformDirectory } from '../common';
@@ -9,19 +9,6 @@ import { OS } from '../definitions';
 import type { Plugin } from '../plugin';
 import { PluginType, getPluginPlatform } from '../plugin';
 import { isInstalled } from '../util/subprocess';
-
-export async function findXcodePath(config: Config): Promise<string | null> {
-  try {
-    const files = await readdir(config.ios.nativeProjectDirAbs);
-    const xcodeProject = files.find(file => file.endsWith('.xcworkspace'));
-    if (xcodeProject) {
-      return join(config.ios.nativeProjectDirAbs, xcodeProject);
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 export async function checkIOSPackage(config: Config): Promise<string | null> {
   return checkCapacitorPlatform(config, 'ios');
@@ -90,7 +77,7 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 
-  const pbxPath = `${config.ios.nativeTargetDirAbs}.xcodeproj/project.pbxproj`;
+  const pbxPath = `${config.ios.nativeXcodeProjDirAbs}/project.pbxproj`;
   const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
 
   let plistContent = await readFile(plistPath, { encoding: 'utf-8' });

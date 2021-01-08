@@ -1,5 +1,5 @@
 import Debug from 'debug';
-import { resolve } from 'path';
+import { basename, resolve } from 'path';
 
 import c from '../colors';
 import { promptForPlatformTarget, runTask } from '../common';
@@ -27,7 +27,7 @@ export async function runIOS(
 
   const xcodebuildArgs = [
     '-workspace',
-    'App.xcworkspace',
+    basename(await config.ios.nativeXcodeWorkspaceDirAbs),
     '-scheme',
     'App',
     '-configuration',
