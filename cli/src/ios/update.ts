@@ -106,11 +106,7 @@ async function updatePodfile(
 
   await runCommand(
     'xcodebuild',
-    [
-      '-project',
-      basename(`${config.ios.nativeTargetDirAbs}.xcodeproj`),
-      'clean',
-    ],
+    ['-project', basename(`${config.ios.nativeXcodeProjDirAbs}`), 'clean'],
     {
       cwd: config.ios.nativeProjectDirAbs,
     },

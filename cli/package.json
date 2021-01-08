@@ -50,6 +50,7 @@
     "@ionic/utils-terminal": "^2.3.0",
     "commander": "^6.0.0",
     "debug": "^4.2.0",
+    "env-paths": "^2.2.0",
     "kleur": "^4.1.1",
     "native-run": "^1.2.1",
     "open": "^7.1.0",
