@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-alpha.12](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.11...3.0.0-alpha.12) (2021-01-08)
+
+
+### Bug Fixes
+
+* move `public` into iOS target directory ([#4002](https://github.com/ionic-team/capacitor/issues/4002)) ([4f41296](https://github.com/ionic-team/capacitor/commit/4f41296a109cf73fdf8e695849e95f292a543f85))
+* **cli:** run an actual debug build for iOS ([#4014](https://github.com/ionic-team/capacitor/issues/4014)) ([dc6399c](https://github.com/ionic-team/capacitor/commit/dc6399cf0b5eb6afb50274a84dc71486cd3e4173))
+* **core:** fix $$typeof() not implemented error ([#4013](https://github.com/ionic-team/capacitor/issues/4013)) ([c7f80b5](https://github.com/ionic-team/capacitor/commit/c7f80b577c1de60cd0a105f3aaf0d1c314f3150d))
+
+
+### Features
+
+* **android:** switch to new callback-style permission requests ([#4033](https://github.com/ionic-team/capacitor/issues/4033)) ([cc459de](https://github.com/ionic-team/capacitor/commit/cc459de7fc070c0227e066f3e8b92062728ab45d))
+* **cli:** allow 'export default' style TS config files ([#4031](https://github.com/ionic-team/capacitor/issues/4031)) ([9393667](https://github.com/ionic-team/capacitor/commit/9393667bbe629d6c18a22b16fe3f3c6fe83e11f6))
+* **cli:** opt-in anonymous usage data ([#4022](https://github.com/ionic-team/capacitor/issues/4022)) ([3facfb7](https://github.com/ionic-team/capacitor/commit/3facfb790bff79b00ba1ab6dd8cb331989937da7))
+
+
+
+
+
 # [3.0.0-alpha.11](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.10...3.0.0-alpha.11) (2020-12-26)
 
 
