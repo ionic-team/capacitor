@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-alpha.12](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.11...3.0.0-alpha.12) (2021-01-08)
+
+
+### Features
+
+* **android:** switch to new callback-style permission requests ([#4033](https://github.com/ionic-team/capacitor/issues/4033)) ([cc459de](https://github.com/ionic-team/capacitor/commit/cc459de7fc070c0227e066f3e8b92062728ab45d))
+
+
+
+
+
 # [3.0.0-alpha.11](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.10...3.0.0-alpha.11) (2020-12-26)
 
 
