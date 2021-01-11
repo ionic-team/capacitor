@@ -95,7 +95,7 @@ public class JSResultError {
         error["message"] = self.message
         error["code"] = self.code
         error["errorMessage"] = self.errorMessage
-        // error["_exlink"] = getLinkableError(self.message)
+        //error["_exlink"] = getLinkableError(self.message)
 
         if let theJSONData = try? JSONSerialization.data(withJSONObject: error, options: []) {
             jsonResponse = String(data: theJSONData,
