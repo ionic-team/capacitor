@@ -10,7 +10,7 @@ export async function configCommand(
   const evaluatedConfig = await deepAwait(config);
 
   if (json) {
-    output.write(JSON.stringify(evaluatedConfig));
+    process.stdout.write(`${JSON.stringify(evaluatedConfig)}\n`);
   } else {
     output.write(
       `${util.inspect(evaluatedConfig, { depth: Infinity, colors: true })}\n`,

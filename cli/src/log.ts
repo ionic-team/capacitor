@@ -10,7 +10,10 @@ import type { Answers, PromptObject } from 'prompts';
 import c from './colors';
 import { isInteractive } from './util/term';
 
-const options = { colors: c, stream: process.stdout };
+const options = {
+  colors: c,
+  stream: process.argv.includes('--json') ? process.stderr : process.stdout,
+};
 
 export const output = isInteractive()
   ? new TTYOutputStrategy(options)
