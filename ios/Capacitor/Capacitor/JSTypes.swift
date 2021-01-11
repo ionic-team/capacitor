@@ -152,6 +152,10 @@ extension JSValueContainer {
         if let isoString = jsObjectRepresentation[key] as? String {
             return Self.jsDateFormatter.date(from: isoString)
         }
+        
+        if let date = jsObjectRepresentation[key] as? NSDate {
+            return date as Date
+        }
         return nil
     }
 
