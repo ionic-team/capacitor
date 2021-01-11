@@ -9,7 +9,7 @@ extension Float: JSValue {}
 extension Double: JSValue {}
 extension NSNumber: JSValue {}
 extension Array: JSValue {}
-extension NSDate: JSValue {}
+extension Date: JSValue {}
 extension Dictionary: JSValue where Key == String, Value == JSValue {}
 
 // convenience aliases
@@ -206,7 +206,7 @@ private func coerceToJSValue(_ value: Any?) -> JSValue? {
         return floatValue
     case let doubleValue as Double:
         return doubleValue
-    case let dateValue as NSDate:
+    case let dateValue as Date:
         return dateValue
     case let arrayValue as NSArray:
         return arrayValue.compactMap { coerceToJSValue($0) }
