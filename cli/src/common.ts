@@ -64,14 +64,17 @@ export async function checkPackage(): Promise<string | null> {
 
 export async function checkCapacitorPlatform(
   config: Config,
-  platform: string,
+  platform: 'android' | 'ios',
 ): Promise<string | null> {
   const pkg = await getCapacitorPackage(config, platform);
 
   if (!pkg) {
-    return `Could not find the ${c.input(
-      platform,
-    )} platform. Does it need to be installed?\n`;
+    return (
+      `Could not find the ${c.input(platform)} platform.\n` +
+      `Does it need to be installed first? e.g. w/ ${c.input(
+        `npm install -D @capacitor/${platform}`,
+      )}`
+    );
   }
 
   return null;
