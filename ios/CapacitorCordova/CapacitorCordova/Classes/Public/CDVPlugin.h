@@ -53,6 +53,7 @@ extern NSString* const CDVViewWillTransitionToSizeNotification;
 
 @interface CDVPlugin : NSObject {}
 
+- (instancetype)initWithWebViewEngine:(WKWebView *)theWebViewEngine;
 @property (nonatomic, weak) UIView* webView;
 @property (nonatomic, weak) WKWebView * webViewEngine;
 @property (nonatomic, strong) NSString * className;
