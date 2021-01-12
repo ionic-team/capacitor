@@ -385,7 +385,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         dispatchQueue.async { [weak self] in
             //let startTime = CFAbsoluteTimeGetCurrent()
 
-            let pluginCall = CAPPluginCall(callbackId: call.callbackId, options: call.options, success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
+            let pluginCall = CAPPluginCall(callbackId: call.callbackId,
+                                           options: JSTypes.coerceDictionaryToJSObject(call.options) ?? [:],
+                                           success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
                 if result != nil {
                     self?.toJs(result: JSResult(call: call, result: result!.data), save: pluginCall?.isSaved ?? false)
                 } else {
