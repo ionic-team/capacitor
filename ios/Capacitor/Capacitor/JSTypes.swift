@@ -151,8 +151,8 @@ extension JSValueContainer {
     public func getDate(_ key: String) -> Date? {
         if let isoString = jsObjectRepresentation[key] as? String {
             return Self.jsDateFormatter.date(from: isoString)
-        }                
-        return jsObjectRepresentation[key] as? Date        
+        }
+        return jsObjectRepresentation[key] as? Date
     }
 
     public func getArray(_ key: String) -> JSArray? {
