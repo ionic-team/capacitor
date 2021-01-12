@@ -72,7 +72,7 @@ export async function checkCapacitorPlatform(
     return (
       `Could not find the ${c.input(platform)} platform.\n` +
       `You must install it in your project first, e.g. w/ ${c.input(
-        `npm install -D @capacitor/${platform}`,
+        `npm install @capacitor/${platform}`,
       )}`
     );
   }
