@@ -1,15 +1,25 @@
 {
   "name": "@capacitor/core",
   "version": "3.0.0-alpha.12",
-  "description": "Capacitor: cross-platform mobile apps with the web",
-  "homepage": "https://capacitorjs.com/",
+  "description": "Capacitor: Cross-platform apps with JavaScript and the web",
+  "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionic-team/capacitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ionic-team/capacitor/issues"
+  },
   "files": [
     "dist/",
     "types/",
     "cordova.js"
   ],
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "unpkg": "dist/capacitor.js",
   "scripts": {
     "build": "npm run clean && npm run transpile && npm run rollup",
     "clean": "rimraf dist",
@@ -20,9 +30,6 @@
     "test.watch": "jest --watchAll",
     "test.treeshaking": "node src/tests/build-treeshaking.js"
   },
-  "main": "dist/index.js",
-  "types": "types/index.d.ts",
-  "unpkg": "dist/capacitor.js",
   "dependencies": {
     "tslib": "^2.1.0"
   },
@@ -35,17 +42,10 @@
     "rollup-plugin-terser": "^7.0.2",
     "typescript": "^4.0.5"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ionic-team/capacitor.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ionic-team/capacitor/issues"
+  "jest": {
+    "preset": "ts-jest"
   },
   "publishConfig": {
     "access": "public"
-  },
-  "jest": {
-    "preset": "ts-jest"
   }
 }

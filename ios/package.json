@@ -1,10 +1,17 @@
 {
   "name": "@capacitor/ios",
   "version": "3.0.0-alpha.14",
-  "description": "Capacitor: cross-platform mobile apps with the web",
-  "homepage": "https://capacitorjs.com/",
+  "description": "Capacitor: Cross-platform apps with JavaScript and the web",
+  "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionic-team/capacitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ionic-team/capacitor/issues"
+  },
   "files": [
     "Capacitor/Capacitor/",
     "CapacitorCordova/CapacitorCordova/",
@@ -18,17 +25,10 @@
     "pod:lint:Capacitor": "pod lib lint --allow-warnings Capacitor.podspec",
     "pod:lint:CapacitorCordova": "pod lib lint --allow-warnings CapacitorCordova.podspec"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ionic-team/capacitor.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ionic-team/capacitor/issues"
+  "peerDependencies": {
+    "@capacitor/core": "~3.0.0-alpha.12"
   },
   "publishConfig": {
     "access": "public"
-  },
-  "peerDependencies": {
-    "@capacitor/core": "~3.0.0-alpha.12"
   }
 }
