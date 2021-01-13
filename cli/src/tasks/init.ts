@@ -1,11 +1,17 @@
-import { writeJSON } from '@ionic/utils-fs';
+import { basename, dirname, resolve } from 'path';
 
 import c from '../colors';
 import { check, checkAppId, checkAppName, runTask } from '../common';
+import {
+  CONFIG_FILE_NAME_JSON,
+  CONFIG_FILE_NAME_TS,
+  writeConfig,
+} from '../config';
 import { getCordovaPreferences } from '../cordova';
 import type { Config, ExternalConfig } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { output, logSuccess, logPrompt } from '../log';
+import { resolveNode } from '../util/node';
 import { checkInteractive, isInteractive } from '../util/term';
 
 export async function initCommand(
@@ -28,6 +34,8 @@ export async function initCommand(
       );
     }
 
+    const isNewConfig = Object.keys(config.app.extConfig).length === 0;
+    const tsInstalled = !!resolveNode(config.app.rootDir, 'typescript');
     const appName = await getName(config, name);
     const appId = await getAppId(config, id);
     const webDir = isInteractive()
@@ -41,22 +49,17 @@ export async function initCommand(
 
     const cordova = await getCordovaPreferences(config);
 
-    await runTask(
-      `Creating ${c.strong(config.app.extConfigName)} in ${c.input(
-        config.app.rootDir,
-      )}`,
-      async () => {
-        await mergeConfig(config, {
-          appId,
-          appName,
-          webDir,
-          bundledWebRuntime: false,
-          cordova,
-        });
+    await runMergeConfig(
+      config,
+      {
+        appId,
+        appName,
+        webDir,
+        bundledWebRuntime: false,
+        cordova,
       },
+      isNewConfig && tsInstalled ? 'ts' : 'json',
     );
-
-    printNextSteps(config);
   } catch (e) {
     if (!isFatal(e)) {
       output.write(
@@ -69,18 +72,6 @@ export async function initCommand(
 
     throw e;
   }
-}
-
-function printNextSteps(config: Config) {
-  logSuccess(`${c.strong(config.app.extConfigName)} created!`);
-  output.write(
-    `\nAdd platforms using ${c.input('npx cap add')}:\n` +
-      `  ${c.input('npx cap add android')}\n` +
-      `  ${c.input('npx cap add ios')}\n\n` +
-      `Follow the Developer Workflow guide to get building:\n${c.strong(
-        `https://capacitorjs.com/docs/v3/basics/workflow`,
-      )}\n`,
-  );
 }
 
 async function getName(config: Config, name: string) {
@@ -138,18 +129,48 @@ async function getWebDir(config: Config, webDir?: string) {
   return webDir;
 }
 
+async function runMergeConfig(
+  config: Config,
+  extConfig: ExternalConfig,
+  type: 'json' | 'ts',
+) {
+  const configDirectory = dirname(config.app.extConfigFilePath);
+  const newConfigPath = resolve(
+    configDirectory,
+    type === 'ts' ? CONFIG_FILE_NAME_TS : CONFIG_FILE_NAME_JSON,
+  );
+
+  await runTask(
+    `Creating ${c.strong(basename(newConfigPath))} in ${c.input(
+      config.app.rootDir,
+    )}`,
+    async () => {
+      await mergeConfig(config, extConfig, newConfigPath);
+    },
+  );
+
+  printNextSteps(basename(newConfigPath));
+}
+
 async function mergeConfig(
   config: Config,
   extConfig: ExternalConfig,
+  newConfigPath: string,
 ): Promise<void> {
   const oldConfig = { ...config.app.extConfig };
+  const newConfig = { ...oldConfig, ...extConfig };
 
-  await writeJSON(
-    config.app.extConfigFilePath,
-    {
-      ...oldConfig,
-      ...extConfig,
-    },
-    { spaces: 2 },
+  await writeConfig(newConfig, newConfigPath);
+}
+
+function printNextSteps(newConfigName: string) {
+  logSuccess(`${c.strong(newConfigName)} created!`);
+  output.write(
+    `\nAdd platforms using ${c.input('npx cap add')}:\n` +
+      `  ${c.input('npx cap add android')}\n` +
+      `  ${c.input('npx cap add ios')}\n\n` +
+      `Follow the Developer Workflow guide to get building:\n${c.strong(
+        `https://capacitorjs.com/docs/v3/basics/workflow`,
+      )}\n`,
   );
 }
