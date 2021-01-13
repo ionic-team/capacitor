@@ -8,7 +8,7 @@ var requiresNodeVersion = packageJson.engines.node;
 if (!satisfies(process.version, requiresNodeVersion)) {
   process.stdout.write(
     '\x1b[31m[fatal]\x1b[39m The Capacitor CLI requires NodeJS ' + requiresNodeVersion + '\n' +
-    '        Please download and install the latest LTS version: \x1b[1mhttps://nodejs.org\x1b[22m\n'
+    '        Please install the latest LTS version.\n'
   );
 
   process.exit(1);
