@@ -3,11 +3,14 @@
 
 var satisfies = require('semver/functions/satisfies');
 var packageJson = require('../package.json');
-var currentNodeVersion = process.version.replace('v', '');
 var requiresNodeVersion = packageJson.engines.node;
 
-if (!satisfies(currentNodeVersion, requiresNodeVersion)) {
-  console.error('ERROR: Capacitor CLI requires Node ' + requiresNodeVersion);
+if (!satisfies(process.version, requiresNodeVersion)) {
+  process.stdout.write(
+    '\x1b[31m[fatal]\x1b[39m The Capacitor CLI requires NodeJS ' + requiresNodeVersion + '\n' +
+    '        Please install the latest LTS version.\n'
+  );
+
   process.exit(1);
 }
 
