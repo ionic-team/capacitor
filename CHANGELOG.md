@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.14...3.0.0-beta.0) (2021-01-13)
+
+
+### Features
+
+* **core:** add commonjs output format ([#4064](https://github.com/ionic-team/capacitor/issues/4064)) ([74b7be8](https://github.com/ionic-team/capacitor/commit/74b7be89ef1bbf13ccd103410037cfe81c8fc124))
+
+
+
+
+
 # [3.0.0-alpha.14](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.13...3.0.0-alpha.14) (2021-01-13)
 
 
