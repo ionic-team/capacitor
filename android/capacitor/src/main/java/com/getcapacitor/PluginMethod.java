@@ -15,7 +15,7 @@ public @interface PluginMethod {
 
     /**
      * The name of a method that should be called on the result of a permission request. This method
-     * should be defined in the class with the parameters (PluginCall, Map<String, PermissionState>).
+     * should be defined in the class with the parameters (PluginCall).
      */
     String permissionCallback() default "";
 }
