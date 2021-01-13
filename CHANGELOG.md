@@ -178,7 +178,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.4.5...3.0.0-alpha.0) (2020-07-23)
+# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.4.6...3.0.0-alpha.0) (2020-07-23)
 
 
 ### Features
@@ -189,6 +189,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Chores
 
 * refactor(android): remove unused interaction listener on BridgeFragment (#3552) ([fae50b6](https://github.com/ionic-team/capacitor/commit/fae50b6)), closes [#3552](https://github.com/ionic-team/capacitor/issues/3552)
+
+
+
+## [2.4.6](https://github.com/ionic-team/capacitor/compare/2.4.5...2.4.6) (2021-01-13)
+
+
+### Bug Fixes
+
+* fix(ios): correctly initialize cordova plugins with webViewEngine (#4039) ([273fab5](https://github.com/ionic-team/capacitor/commit/273fab5)), closes [#4039](https://github.com/ionic-team/capacitor/issues/4039)
 
 
 
