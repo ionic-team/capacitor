@@ -550,6 +550,16 @@ public class Plugin {
     }
 
     /**
+     * Get the permission state for the provided permission alias.
+     *
+     * @param alias the permission alias to get
+     * @return the state of the provided permission alias or null
+     */
+    public PermissionState getPermissionState(String alias) {
+        return getPermissionStates().get(alias);
+    }
+
+    /**
      * Helper to check all permissions defined on a plugin and see the state of each.
      *
      * @since 3.0.0
