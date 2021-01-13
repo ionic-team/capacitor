@@ -153,8 +153,7 @@ public class Plugin {
                     Logger.error(
                         String.format(
                             "No method found by the name %s to register as a permission handler. " +
-                            "Please check that it exists and has the correct signature: " +
-                            "(PluginCall, Map<String, PermissionState>)",
+                            "Please check that it exists and has the correct signature: (PluginCall)",
                             permResponseMethodName
                         )
                     );
@@ -505,7 +504,7 @@ public class Plugin {
             String registerError =
                 "There is no permission callback method registered for the plugin method %s. " +
                 "Please define a permissionCallback method name in the annotation and provide a " +
-                "method that has the correct signature: (PluginCall, Map<String, PermissionState>)";
+                "method that has the correct signature: (PluginCall)";
             registerError = String.format(Locale.US, registerError, methodName);
             Logger.error(registerError);
             call.reject(registerError);
