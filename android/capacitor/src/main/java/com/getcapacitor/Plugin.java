@@ -91,7 +91,8 @@ public class Plugin {
     public void load() {}
 
     /**
-     * Registers the base permission launcher used by the {@link #requestPermissions(PluginCall)} plugin call
+     * Registers the permission launchers used by the {@link #requestPermissions(PluginCall)} plugin call and
+     * those defined on plugins
      */
     void initializePermissionLaunchers() {
         basePermissionLauncher =
@@ -119,7 +120,7 @@ public class Plugin {
                 }
 
                 try {
-                    Method permResponseMethod = getClass().getDeclaredMethod(permResponseMethodName, PluginCall.class, Map.class);
+                    Method permResponseMethod = getClass().getDeclaredMethod(permResponseMethodName, PluginCall.class);
 
                     if (permResponseMethod != null) {
                         permissionLaunchers.put(
@@ -135,7 +136,7 @@ public class Plugin {
                                             // handle request permissions call
                                             try {
                                                 permResponseMethod.setAccessible(true);
-                                                permResponseMethod.invoke(this, savedPermissionCall, getPermissionStates());
+                                                permResponseMethod.invoke(this, savedPermissionCall);
                                             } catch (IllegalAccessException | InvocationTargetException e) {
                                                 e.printStackTrace();
                                             }
