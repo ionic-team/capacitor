@@ -22,6 +22,13 @@ export default {
       banner,
       sourcemap: true,
     },
+    {
+      file: 'dist/index.cjs.js',
+      format: 'cjs',
+      banner,
+      sourcemap: true,
+      inlineDynamicImports: true,
+    },
   ],
   plugins: [nodeResolve()],
 };
