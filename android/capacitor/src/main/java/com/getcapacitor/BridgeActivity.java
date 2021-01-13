@@ -214,15 +214,6 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        if (this.bridge == null) {
-            return;
-        }
-
-        this.bridge.onBackPressed();
-    }
-
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 

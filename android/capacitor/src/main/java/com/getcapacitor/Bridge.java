@@ -1041,19 +1041,6 @@ public class Bridge {
         webView.destroy();
     }
 
-    public void onBackPressed() {
-        // If there are listeners, don't do the default action, as this means the user
-        // wants to override the back button
-        if (app.hasBackButtonListeners()) {
-            app.fireBackButton();
-            triggerJSEvent("backbutton", "document");
-        } else {
-            if (webView.canGoBack()) {
-                webView.goBack();
-            }
-        }
-    }
-
     public String getServerBasePath() {
         return this.localServer.getBasePath();
     }
