@@ -58,5 +58,4 @@ public class App {
             statusChangeListener.onAppStatusChanged(isActive);
         }
     }
-
 }
