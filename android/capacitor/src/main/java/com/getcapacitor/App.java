@@ -12,13 +12,6 @@ public class App {
     }
 
     /**
-     * Interface for callbacks when back button is pressed.
-     */
-    public interface BackButtonListener {
-        void onBackButton();
-    }
-
-    /**
      * Interface for callbacks when app is restored with pending plugin call.
      */
     public interface AppRestoredListener {
@@ -27,9 +20,6 @@ public class App {
 
     @Nullable
     private AppStatusChangeListener statusChangeListener;
-
-    @Nullable
-    private BackButtonListener backButtonListener;
 
     @Nullable
     private AppRestoredListener appRestoredListener;
@@ -52,14 +42,6 @@ public class App {
      * Set the object to receive callbacks.
      * @param listener
      */
-    public void setBackButtonListener(@Nullable BackButtonListener listener) {
-        this.backButtonListener = listener;
-    }
-
-    /**
-     * Set the object to receive callbacks.
-     * @param listener
-     */
     public void setAppRestoredListener(@Nullable AppRestoredListener listener) {
         this.appRestoredListener = listener;
     }
@@ -75,15 +57,5 @@ public class App {
         if (statusChangeListener != null) {
             statusChangeListener.onAppStatusChanged(isActive);
         }
-    }
-
-    public void fireBackButton() {
-        if (backButtonListener != null) {
-            backButtonListener.onBackButton();
-        }
-    }
-
-    public boolean hasBackButtonListeners() {
-        return backButtonListener != null;
     }
 }
