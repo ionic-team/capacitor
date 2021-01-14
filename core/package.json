@@ -3,7 +3,7 @@
   "version": "3.0.0-beta.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
-  "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
+  "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
   "license": "MIT",
   "repository": {
     "type": "git",
