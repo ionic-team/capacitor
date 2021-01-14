@@ -356,13 +356,7 @@ async function determineIOSWebDirAbs(
 
   const m = pbxproj.match(re);
 
-  if (m === null) {
-    fatal(`Unrecognized structure in ${c.strong(pbxprojPath)}`);
-  }
-
-  const [, sourceTree] = m;
-
-  if (sourceTree === 'SOURCE_ROOT') {
+  if (m && m[1] === 'SOURCE_ROOT') {
     logger.warn(
       `Using the iOS project root for the ${c.strong(
         'public',
