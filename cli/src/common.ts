@@ -1,4 +1,5 @@
 import { readJSON, pathExists } from '@ionic/utils-fs';
+import { prettyPath } from '@ionic/utils-terminal';
 import { dirname, join } from 'path';
 
 import c from './colors';
@@ -24,7 +25,9 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   }
   if (!(await pathExists(config.app.webDirAbs))) {
     return (
-      `Could not find the web assets directory: ${config.app.webDirAbs}.\n` +
+      `Could not find the web assets directory: ${c.strong(
+        prettyPath(config.app.webDirAbs),
+      )}.\n` +
       `Please create it and make sure it has an ${c.strong(
         'index.html',
       )} file. You can change the path of this directory in ${c.strong(
@@ -33,8 +36,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
         'webDir',
       )} option). You may need to compile the web assets for your app (typically ${c.input(
         'npm run build',
-      )}).\n` +
-      `More info: ${c.strong(
+      )}). More info: ${c.strong(
         'https://capacitorjs.com/docs/v3/basics/workflow#sync-your-project',
       )}`
     );
@@ -42,9 +44,9 @@ export async function checkWebDir(config: Config): Promise<string | null> {
 
   if (!(await pathExists(join(config.app.webDirAbs, 'index.html')))) {
     return (
-      `The web assets directory (${
-        config.app.webDirAbs
-      }) must contain an ${c.strong('index.html')} file.\n` +
+      `The web assets directory (${c.strong(
+        prettyPath(config.app.webDirAbs),
+      )}) must contain an ${c.strong('index.html')} file.\n` +
       `It will be the entry point for the web portion of the Capacitor app.`
     );
   }
