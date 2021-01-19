@@ -176,6 +176,21 @@ export interface CapacitorConfig {
     path?: string;
 
     /**
+     * iOS build scheme to use.
+     *
+     * Usually this matches your app's target in Xcode. You can use the
+     * following command to list schemes:
+     *
+     * ```shell
+     * xcodebuild -workspace ios/App/App.xcworkspace -list
+     * ```
+     *
+     * @since 3.0.0
+     * @default App
+     */
+    scheme?: string;
+
+    /**
      * User agent of Capacitor Web View on iOS.
      *
      * Overrides global `overrideUserAgent` option.
@@ -228,14 +243,6 @@ export interface CapacitorConfig {
      * @since 1.0.0
      */
     scrollEnabled?: boolean;
-
-    /**
-     * Configure the minimum iOS version supported.
-     *
-     * @since 1.0.0
-     * @default 12.0
-     */
-    minVersion?: string;
 
     /**
      * Configure custom linker flags for compiling Cordova plugins.

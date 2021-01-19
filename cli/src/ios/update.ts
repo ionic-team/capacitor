@@ -89,10 +89,6 @@ async function updatePodfile(
     /(def capacitor_pods)[\s\S]+?(\nend)/,
     `$1${dependenciesContent}$2`,
   );
-  podfileContent = podfileContent.replace(
-    /platform :ios, '[^']*'/,
-    `platform :ios, '${config.ios.minVersion}'`,
-  );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
   if (!deployment) {
     await remove(podfileLockPath);
