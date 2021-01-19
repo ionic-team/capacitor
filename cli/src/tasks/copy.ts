@@ -28,7 +28,7 @@ export async function copyCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(platformDir, 'capacitor:copy');
+      await runPlatformHook(config, platformDir, 'capacitor:copy');
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
