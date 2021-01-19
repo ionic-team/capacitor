@@ -5,6 +5,7 @@ import c from './colors';
 import type { Config, PackageJson } from './definitions';
 import { fatal } from './errors';
 import { output, logger } from './log';
+import { configCommand } from './tasks/config';
 import { resolveNode } from './util/node';
 
 export type CheckFunction = () => Promise<string | null>;
@@ -150,6 +151,7 @@ export async function wait(time: number): Promise<void> {
 }
 
 export async function runPlatformHook(
+  config: Config,
   platformDir: string,
   hook: string,
 ): Promise<void> {
@@ -168,6 +170,7 @@ export async function runPlatformHook(
       cwd: platformDir,
       env: {
         INIT_CWD: platformDir,
+        CAP_CONFIG: config,
         ...process.env,
       },
     });
