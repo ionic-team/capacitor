@@ -5,7 +5,6 @@ import c from './colors';
 import type { Config, PackageJson } from './definitions';
 import { fatal } from './errors';
 import { output, logger } from './log';
-import { configCommand } from './tasks/config';
 import { resolveNode } from './util/node';
 
 export type CheckFunction = () => Promise<string | null>;
