@@ -150,6 +150,7 @@ export async function wait(time: number): Promise<void> {
 }
 
 export async function runPlatformHook(
+  config: Config,
   platformDir: string,
   hook: string,
 ): Promise<void> {
@@ -168,6 +169,9 @@ export async function runPlatformHook(
       cwd: platformDir,
       env: {
         INIT_CWD: platformDir,
+        CAPACITOR_ROOT_DIR: config.app.rootDir,
+        CAPACITOR_WEB_DIR: config.app.webDirAbs,
+        CAPACITOR_CONFIG: JSON.stringify(config.app.extConfig),
         ...process.env,
       },
     });

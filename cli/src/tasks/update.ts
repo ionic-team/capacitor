@@ -25,7 +25,7 @@ export async function updateCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(platformDir, 'capacitor:update');
+      await runPlatformHook(config, platformDir, 'capacitor:update');
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
