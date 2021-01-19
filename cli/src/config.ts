@@ -262,6 +262,7 @@ async function loadIOSConfig(
   const podPath = determineCocoapodPath();
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
+  const scheme = extConfig.ios?.scheme ?? 'App';
   const nativeProjectDir = 'App';
   const nativeProjectDirAbs = resolve(platformDirAbs, nativeProjectDir);
   const nativeTargetDir = `${nativeProjectDir}/App`;
@@ -285,6 +286,7 @@ async function loadIOSConfig(
     minVersion: '12.0',
     platformDir,
     platformDirAbs,
+    scheme,
     cordovaPluginsDir,
     cordovaPluginsDirAbs: resolve(platformDirAbs, cordovaPluginsDir),
     nativeProjectDir,
