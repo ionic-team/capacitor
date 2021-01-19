@@ -120,7 +120,7 @@ async function generatePodFile(
   );
   if (!capacitoriOSPath) {
     fatal(
-      `Unable to find node_modules/@capacitor/ios.\n` +
+      `Unable to find ${c.strong('node_modules/@capacitor/ios')}.\n` +
         `Are you sure ${c.strong('@capacitor/ios')} is installed?`,
     );
   }
