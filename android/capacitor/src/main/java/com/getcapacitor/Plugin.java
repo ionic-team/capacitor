@@ -101,8 +101,15 @@ public class Plugin {
                 .registerForActivityResult(
                     new ActivityResultContracts.RequestMultiplePermissions(),
                     permissions -> {
-                        PluginCall call = bridge.getPermissionCall(handle.getId());
-                        checkPermissions(call);
+                        PluginCall savedPermissionCall = bridge.getPermissionCall(handle.getId());
+
+                        if (bridge.validatePermissions(this, savedPermissionCall, permissions)) {
+                            checkPermissions(savedPermissionCall);
+
+                            if (!savedPermissionCall.isReleased() && !savedPermissionCall.isSaved()) {
+                                savedPermissionCall.release(bridge);
+                            }
+                        }
                     }
                 );
 
