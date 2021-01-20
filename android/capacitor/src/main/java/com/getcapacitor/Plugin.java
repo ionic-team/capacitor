@@ -7,16 +7,20 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import com.getcapacitor.annotation.ActivityResultCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.util.PermissionHelper;
-import java.lang.annotation.Annotation;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -27,13 +31,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 import org.json.JSONException;
+
+import static androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.ACTION_REQUEST_PERMISSIONS;
+import static androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.EXTRA_PERMISSIONS;
+import static androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.EXTRA_PERMISSION_GRANT_RESULTS;
+import static java.util.Collections.emptyMap;
 
 /**
  * Plugin is the base class for all plugins, containing a number of
  * convenient features for interacting with the {@link Bridge}, managing
  * plugin permissions, tracking lifecycle events, and more.
- *
+ * <p>
  * You should inherit from this class when creating new plugins, along with
  * adding the {@link CapacitorPlugin} annotation to add additional required
  * metadata about the Plugin
@@ -66,14 +76,16 @@ public class Plugin {
     private final Map<String, List<PluginCall>> eventListeners;
 
     /**
-     * Base activity result launcher used by the {@link #requestPermissions(PluginCall)} plugin call
+     * Launchers used by the plugin to handle activity results
      */
-    private ActivityResultLauncher<String[]> basePermissionLauncher = null;
+    private final Map<String, ActivityResultLauncher<Intent>> activityLaunchers = new HashMap<>();
 
     /**
-     * Launchers used by the plugin to request permissions
+     * Launchers used by the plugin to handle permission results
      */
-    private final Map<String, ActivityResultLauncher<String[]>> permissionLaunchers = new HashMap<>();
+    private final Map<String, ActivityResultLauncher<String>> permissionLaunchers = new HashMap<>();
+
+    private String lastPluginCallId;
 
     // Stored results of an event if an event was fired and
     // no listeners were attached yet. Only stores the last value.
@@ -88,85 +100,119 @@ public class Plugin {
      * Called when the plugin has been connected to the bridge
      * and is ready to start initializing.
      */
-    public void load() {}
+    public void load() {
+    }
 
     /**
      * Registers the permission launchers used by the {@link #requestPermissions(PluginCall)} plugin call and
      * those defined on plugins
      */
     void initializePermissionLaunchers() {
-        basePermissionLauncher =
-            bridge
-                .getActivity()
-                .registerForActivityResult(
-                    new ActivityResultContracts.RequestMultiplePermissions(),
-                    permissions -> {
-                        PluginCall call = bridge.getPermissionCall(handle.getId());
-                        checkPermissions(call);
-                    }
-                );
+        try {
+            Method method = getClass().getSuperclass().getMethod("checkPermissions", PluginCall.class);
+            activityLaunchers.put("checkPermissions", bridge.getActivity().registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                triggerPermissionCallback(method, result);
+            }));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
 
         for (final Method method : getClass().getDeclaredMethods()) {
-            if (method.isAnnotationPresent(PluginMethod.class)) {
-                PluginMethod pluginAnnotation = method.getAnnotation(PluginMethod.class);
-                if (pluginAnnotation == null) {
-                    continue;
-                }
-
-                // get the defined permission callback, skip if default (empty string)
-                String permResponseMethodName = pluginAnnotation.permissionCallback();
-                if (permResponseMethodName.isEmpty()) {
-                    continue;
-                }
-
-                try {
-                    Method permResponseMethod = getClass().getDeclaredMethod(permResponseMethodName, PluginCall.class);
-
-                    if (permResponseMethod != null) {
-                        permissionLaunchers.put(
-                            method.getName(),
-                            bridge
+            if (method.isAnnotationPresent(ActivityResultCallback.class)) {
+                activityLaunchers.put(
+                        method.getName(),
+                        bridge
                                 .getActivity()
                                 .registerForActivityResult(
-                                    new ActivityResultContracts.RequestMultiplePermissions(),
-                                    permissions -> {
-                                        PluginCall savedPermissionCall = bridge.getPermissionCall(handle.getId());
+                                        new ActivityResultContracts.StartActivityForResult(),
+                                        result -> {
+                                            Intent resultData = result.getData();
+                                            String resultAction = resultData.getAction();
 
-                                        if (bridge.validatePermissions(this, savedPermissionCall, permissions)) {
-                                            // handle request permissions call
-                                            try {
-                                                permResponseMethod.setAccessible(true);
-                                                permResponseMethod.invoke(this, savedPermissionCall);
-                                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                            if (!savedPermissionCall.isReleased() && !savedPermissionCall.isSaved()) {
-                                                savedPermissionCall.release(bridge);
+                                            if (resultAction != null && resultAction.equalsIgnoreCase(ACTION_REQUEST_PERMISSIONS)) {
+                                                // request permission
+                                                triggerPermissionCallback(method, result);
+                                            } else {
+                                                // regular activity
+                                                triggerActivityCallback(method, result);
                                             }
                                         }
-                                    }
                                 )
-                        );
-                    }
-                } catch (NoSuchMethodException e) {
-                    Logger.error(
-                        String.format(
-                            "No method found by the name %s to register as a permission handler. " +
-                            "Please check that it exists and has the correct signature: (PluginCall)",
-                            permResponseMethodName
-                        )
-                    );
-
-                    // if the provided method name is not a valid permission handling method, default to base method
-                    permissionLaunchers.put(method.getName(), basePermissionLauncher);
-                }
+                );
             }
         }
     }
 
+    private void triggerPermissionCallback(Method method, ActivityResult result) {
+        PluginCall savedPermissionCall = bridge.getPermissionCall(handle.getId());
+        Map<String, Boolean> permissionResultMap = emptyMap();
+
+        Intent resultData = result.getData();
+
+        if (result.getResultCode() == Activity.RESULT_OK) {
+            if (resultData != null) {
+                String[] permissions = resultData.getStringArrayExtra(EXTRA_PERMISSIONS);
+                int[] grantResults = resultData.getIntArrayExtra(EXTRA_PERMISSION_GRANT_RESULTS);
+                for (int i = 0, size = permissions.length; i < size; i++) {
+                    permissionResultMap.put(permissions[i], grantResults[i] == PackageManager.PERMISSION_GRANTED);
+                }
+            }
+        }
+
+        if (bridge.validatePermissions(this, savedPermissionCall, permissionResultMap)) {
+            // handle request permissions call
+            try {
+                method.setAccessible(true);
+                method.invoke(this, savedPermissionCall);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+
+            if (!savedPermissionCall.isReleased() && !savedPermissionCall.isSaved()) {
+                savedPermissionCall.release(bridge);
+            }
+        }
+    }
+
+    private void triggerActivityCallback(Method method, Object result) {
+        PluginCall call = bridge.getSavedCall(lastPluginCallId);
+
+        // handle result call
+        try {
+            method.setAccessible(true);
+            method.invoke(this, call, result);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        if (!call.isReleased() && !call.isSaved()) {
+            call.release(bridge);
+        }
+    }
+
+    public void startActivityForResult(PluginCall call, Intent intent, String callbackName) {
+        lastPluginCallId = call.getCallbackId();
+        bridge.saveCall(call);
+        activityLaunchers.get(callbackName).launch(intent);
+    }
+
+    private void permissionActivityResult(PluginCall call, String[] permissionStrings, String callbackName) {
+        ActivityResultLauncher<Intent> activityResultLauncher = getLauncherOrReject(call, callbackName);
+        if (activityResultLauncher == null) {
+            // return when null since call was rejected in getLauncherOrReject
+            return;
+        }
+
+        Intent permissionIntent = new Intent().putExtra(EXTRA_PERMISSIONS, permissionStrings);
+        permissionIntent.setAction(ACTION_REQUEST_PERMISSIONS);
+        bridge.savePermissionCall(call);
+
+        activityResultLauncher.launch(permissionIntent);
+    }
+
     /**
      * Get the main {@link Context} for the current Activity (your app)
+     *
      * @return the Context for the current activity
      */
     public Context getContext() {
@@ -175,6 +221,7 @@ public class Plugin {
 
     /**
      * Get the main {@link Activity} for the app
+     *
      * @return the Activity for the current app
      */
     public AppCompatActivity getActivity() {
@@ -183,6 +230,7 @@ public class Plugin {
 
     /**
      * Set the Bridge instance for this plugin
+     *
      * @param bridge
      */
     public void setBridge(Bridge bridge) {
@@ -200,6 +248,7 @@ public class Plugin {
      * Set the wrapper {@link PluginHandle} instance for this plugin that
      * contains additional metadata about the Plugin instance (such
      * as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
+     *
      * @param pluginHandle
      */
     public void setPluginHandle(PluginHandle pluginHandle) {
@@ -208,9 +257,10 @@ public class Plugin {
 
     /**
      * Return the wrapper {@link PluginHandle} for this plugin.
-     *
+     * <p>
      * This wrapper contains additional metadata about the plugin instance,
      * such as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
+     *
      * @return
      */
     public PluginHandle getPluginHandle() {
@@ -219,6 +269,7 @@ public class Plugin {
 
     /**
      * Get the root App ID
+     *
      * @return
      */
     public String getAppId() {
@@ -228,9 +279,9 @@ public class Plugin {
     /**
      * Called to save a {@link PluginCall} in order to reference it
      * later, such as in an activity or permissions result handler
-     * @deprecated use {@link Bridge#saveCall(PluginCall)}
      *
      * @param lastCall
+     * @deprecated use {@link Bridge#saveCall(PluginCall)}
      */
     @Deprecated
     public void saveCall(PluginCall lastCall) {
@@ -239,6 +290,7 @@ public class Plugin {
 
     /**
      * Set the last saved call to null to free memory
+     *
      * @deprecated use {@link PluginCall#release(Bridge)}
      */
     @Deprecated
@@ -251,9 +303,9 @@ public class Plugin {
 
     /**
      * Get the last saved call, if any
-     * @deprecated use {@link Bridge#getSavedCall(String)}
      *
      * @return
+     * @deprecated use {@link Bridge#getSavedCall(String)}
      */
     @Deprecated
     public PluginCall getSavedCall() {
@@ -272,11 +324,11 @@ public class Plugin {
 
     /**
      * Get the value for a key on the config for this plugin.
-     * @deprecated use {@link #getConfig()} and access config values using the methods available
-     * depending on the type.
      *
      * @param key the key for the config value
      * @return some object containing the value from the config
+     * @deprecated use {@link #getConfig()} and access config values using the methods available
+     * depending on the type.
      */
     @Deprecated
     public Object getConfigValue(String key) {
@@ -290,6 +342,7 @@ public class Plugin {
 
     /**
      * Check whether any of the given permissions has been defined in the AndroidManifest.xml
+     *
      * @param permissions
      * @return
      */
@@ -304,6 +357,7 @@ public class Plugin {
 
     /**
      * Check whether any of the given permissions has been defined in the AndroidManifest.xml
+     *
      * @param permissions
      * @return
      */
@@ -336,6 +390,7 @@ public class Plugin {
 
     /**
      * Check whether the given permission has been granted by the user
+     *
      * @param permission
      * @return
      */
@@ -348,6 +403,7 @@ public class Plugin {
      * this method checks if each is granted. Note: if you are okay
      * with a limited subset of the permissions being granted, check
      * each one individually instead with hasPermission
+     *
      * @return
      */
     public boolean hasRequiredPermissions() {
@@ -377,22 +433,15 @@ public class Plugin {
 
     /**
      * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
-     *
+     * <p>
      * If there is no registered permission callback for the PluginCall passed in, the call will
      * be rejected. Make sure a valid permission callback method is registered using the
      * {@link PluginMethod#permissionCallback()} annotation.
      *
-     * @since 3.0.0
      * @param call the plugin call
+     * @since 3.0.0
      */
-    protected void requestAllPermissions(@NonNull PluginCall call) {
-        String callMethodName = call.getMethodName();
-        ActivityResultLauncher<String[]> activityResultLauncher = getLauncherOrReject(call, callMethodName);
-        if (activityResultLauncher == null) {
-            // return when null since call was rejected in getLauncherOrReject
-            return;
-        }
-
+    protected void requestAllPermissions(@NonNull PluginCall call, @NonNull String callbackName) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation != null) {
             HashSet<String> perms = new HashSet<>();
@@ -400,66 +449,45 @@ public class Plugin {
                 perms.addAll(Arrays.asList(perm.strings()));
             }
 
-            bridge.savePermissionCall(call);
-            activityResultLauncher.launch(perms.toArray(new String[0]));
+            permissionActivityResult(call, perms.toArray(new String[0]), callbackName);
         }
     }
 
     /**
      * Request permissions using an alias defined on the plugin.
-     *
+     * <p>
      * If there is no registered permission callback for the PluginCall passed in, the call will
      * be rejected. Make sure a valid permission callback method is registered using the
      * {@link PluginMethod#permissionCallback()} annotation.
      *
      * @param alias an alias defined on the plugin
-     * @param call the plugin call involved in originating the request
+     * @param call  the plugin call involved in originating the request
      */
-    protected void requestPermissionForAlias(@NonNull String alias, @NonNull PluginCall call) {
-        requestPermissionForAliases(new String[] { alias }, call);
+    protected void requestPermissionForAlias(@NonNull String alias, @NonNull PluginCall call, @NonNull String callbackName) {
+        requestPermissionForAliases(new String[]{alias}, call, callbackName);
     }
 
     /**
      * Request permissions using aliases defined on the plugin.
-     *
+     * <p>
      * If there is no registered permission callback for the PluginCall passed in, the call will
      * be rejected. Make sure a valid permission callback method is registered using the
      * {@link PluginMethod#permissionCallback()} annotation.
      *
      * @param aliases a set of aliases defined on the plugin
-     * @param call the plugin call involved in originating the request
+     * @param call    the plugin call involved in originating the request
      */
-    protected void requestPermissionForAliases(@NonNull String[] aliases, @NonNull PluginCall call) {
-        String callMethodName = call.getMethodName();
-        ActivityResultLauncher<String[]> activityResultLauncher = getLauncherOrReject(call, callMethodName);
-        if (activityResultLauncher == null) {
-            // return when null since call was rejected in getLauncherOrReject
-            return;
-        }
-
+    protected void requestPermissionForAliases(@NonNull String[] aliases, @NonNull PluginCall call, @NonNull String callbackName) {
         if (aliases.length == 0) {
             Logger.error("No permission alias was provided");
             return;
         }
 
-        requestPermissionForAliases(aliases, call, activityResultLauncher);
-    }
-
-    /**
-     * Request permissions using aliases defined on the plugin with a provided activityResultLauncher.
-     * Plugin authors should use {@link #requestPermissionForAliases(String[], PluginCall)} with
-     * a registered callback method for typical permission request use.
-     */
-    private void requestPermissionForAliases(
-        @NonNull String[] aliases,
-        @NonNull PluginCall call,
-        ActivityResultLauncher<String[]> activityResultLauncher
-    ) {
         String[] permissions = getPermissionStringsForAliases(aliases);
 
         if (permissions.length > 0) {
             bridge.savePermissionCall(call);
-            activityResultLauncher.launch(permissions);
+            permissionActivityResult(call, permissions, callbackName);
         }
     }
 
@@ -486,25 +514,20 @@ public class Plugin {
      * Gets the permission launcher associated with the calling methodName, or rejects the call if
      * no registered launcher exists
      *
-     * @param call the plugin call
+     * @param call       the plugin call
      * @param methodName the name of the plugin method requesting a permission
      * @return a launcher, or null if none found
      */
-    private @Nullable ActivityResultLauncher<String[]> getLauncherOrReject(PluginCall call, String methodName) {
-        ActivityResultLauncher<String[]> activityResultLauncher = permissionLaunchers.get(methodName);
-
-        // if there is no registered result launcher but the method is the default requestPermissions
-        // method, associate the base permission launcher to make sure states are returned
-        if (activityResultLauncher == null && methodName.equals("requestPermissions")) {
-            activityResultLauncher = basePermissionLauncher;
-        }
+    private @Nullable
+    ActivityResultLauncher<Intent> getLauncherOrReject(PluginCall call, String methodName) {
+        ActivityResultLauncher<Intent> activityResultLauncher = activityLaunchers.get(methodName);
 
         // if there is no registered launcher, reject the call with an error and return null
         if (activityResultLauncher == null) {
             String registerError =
-                "There is no permission callback method registered for the plugin method %s. " +
-                "Please define a permissionCallback method name in the annotation and provide a " +
-                "method that has the correct signature: (PluginCall)";
+                    "There is no permission callback method registered for the plugin method %s. " +
+                            "Please define a permissionCallback method name in the annotation and provide a " +
+                            "method that has the correct signature: (PluginCall)";
             registerError = String.format(Locale.US, registerError, methodName);
             Logger.error(registerError);
             call.reject(registerError);
@@ -516,10 +539,10 @@ public class Plugin {
 
     /**
      * Helper for requesting specific permissions
-     * @deprecated use {@link #requestPermissions(PluginCall)} in conjunction with @CapacitorPlugin
      *
      * @param permissions the set of permissions to request
      * @param requestCode the requestCode to use to associate the result with the plugin
+     * @deprecated use {@link #requestPermissions(PluginCall)} in conjunction with @CapacitorPlugin
      */
     @Deprecated
     public void pluginRequestPermissions(String[] permissions, int requestCode) {
@@ -528,7 +551,8 @@ public class Plugin {
 
     /**
      * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
-     * @deprecated use {@link #requestAllPermissions(PluginCall)} in conjunction with @CapacitorPlugin
+     *
+     * @deprecated use {@link #requestAllPermissions(PluginCall, String)} in conjunction with @CapacitorPlugin
      */
     @Deprecated
     public void pluginRequestAllPermissions() {
@@ -538,14 +562,14 @@ public class Plugin {
 
     /**
      * Helper for requesting a specific permission
-     * @deprecated use {@link #requestPermissionForAlias(String, PluginCall)} in conjunction with @CapacitorPlugin
      *
-     * @param permission the permission to request
+     * @param permission  the permission to request
      * @param requestCode the requestCode to use to associate the result with the plugin
+     * @deprecated use {@link #requestPermissionForAlias(String, PluginCall, String)} in conjunction with @CapacitorPlugin
      */
     @Deprecated
     public void pluginRequestPermission(String permission, int requestCode) {
-        ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, requestCode);
+        ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, requestCode);
     }
 
     /**
@@ -561,8 +585,8 @@ public class Plugin {
     /**
      * Helper to check all permissions defined on a plugin and see the state of each.
      *
-     * @since 3.0.0
      * @return A mapping of permission aliases to the associated granted status.
+     * @since 3.0.0
      */
     public Map<String, PermissionState> getPermissionStates() {
         return bridge.getPermissionStates(this);
@@ -570,6 +594,7 @@ public class Plugin {
 
     /**
      * Add a listener for the given event
+     *
      * @param eventName
      * @param call
      */
@@ -590,6 +615,7 @@ public class Plugin {
 
     /**
      * Remove a listener from the given event
+     *
      * @param eventName
      * @param call
      */
@@ -604,6 +630,7 @@ public class Plugin {
 
     /**
      * Notify all listeners that an event occurred
+     *
      * @param eventName
      * @param data
      */
@@ -627,6 +654,7 @@ public class Plugin {
      * Notify all listeners that an event occurred
      * This calls {@link Plugin#notifyListeners(String, JSObject, boolean)}
      * with retainUntilConsumed set to false
+     *
      * @param eventName
      * @param data
      */
@@ -648,6 +676,7 @@ public class Plugin {
     /**
      * Send retained arguments (if any) for this event. This
      * is called only when the first listener for an event is added
+     *
      * @param eventName
      */
     private void sendRetainedArgumentsForEvent(String eventName) {
@@ -662,6 +691,7 @@ public class Plugin {
 
     /**
      * Exported plugin call for adding a listener to this plugin
+     *
      * @param call
      */
     @SuppressWarnings("unused")
@@ -674,6 +704,7 @@ public class Plugin {
 
     /**
      * Exported plugin call to remove a listener from this plugin
+     *
      * @param call
      */
     @SuppressWarnings("unused")
@@ -690,6 +721,7 @@ public class Plugin {
 
     /**
      * Exported plugin call to remove all listeners from this plugin
+     *
      * @param call
      */
     @SuppressWarnings("unused")
@@ -706,6 +738,7 @@ public class Plugin {
      * @since 3.0.0
      */
     @PluginMethod
+    @ActivityResultCallback
     public void checkPermissions(PluginCall pluginCall) {
         Map<String, PermissionState> permissionsResult = getPermissionStates();
 
@@ -725,9 +758,9 @@ public class Plugin {
     /**
      * Exported plugin call to request all permissions for this plugin.
      * To manually request permissions within a plugin use:
-     *  {@link #requestAllPermissions(PluginCall)}, or
-     *  {@link #requestPermissionForAlias(String, PluginCall)}, or
-     *  {@link #requestPermissionForAliases(String[], PluginCall)}
+     * {@link #requestAllPermissions(PluginCall, String)}, or
+     * {@link #requestPermissionForAlias(String, PluginCall, String)}, or
+     * {@link #requestPermissionForAliases(String[], PluginCall, String)}
      *
      * @param call the plugin call
      */
@@ -792,7 +825,7 @@ public class Plugin {
 
             if (permAliases != null && permAliases.length > 0) {
                 // request permissions using provided aliases or all defined on the plugin
-                requestPermissionForAliases(permAliases, call, basePermissionLauncher);
+                requestPermissionForAliases(permAliases, call, "checkPermissions");
             } else if (!autoGrantPerms.isEmpty()) {
                 // if the plugin only has auto-grant permissions, return all as GRANTED
                 JSObject permissionsResults = new JSObject();
@@ -813,11 +846,11 @@ public class Plugin {
      * Handle request permissions result. A plugin using the deprecated {@link NativePlugin}
      * should override this to handle the result, or this method will handle the result
      * for our convenient requestPermissions call.
-     * @deprecated in favor of using callbacks in conjunction with {@link CapacitorPlugin}
      *
      * @param requestCode
      * @param permissions
      * @param grantResults
+     * @deprecated in favor of using callbacks in conjunction with {@link CapacitorPlugin}
      */
     @Deprecated
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -840,6 +873,7 @@ public class Plugin {
      * may be limited, plugins that expect to be called with large data
      * objects (such as a file), should override this method and selectively
      * store option values in a {@link Bundle} to avoid exceeding limits.
+     *
      * @return a new {@link Bundle} with fields set from the options of the last saved {@link PluginCall}
      */
     protected Bundle saveInstanceState() {
@@ -864,72 +898,87 @@ public class Plugin {
      * activity response. If the plugin that started the activity
      * stored data in {@link Plugin#saveInstanceState()} then this
      * method will be called to allow the plugin to restore from that.
+     *
      * @param state
      */
-    protected void restoreState(Bundle state) {}
+    protected void restoreState(Bundle state) {
+    }
 
     /**
      * Handle activity result, should be overridden by each plugin
+     *
      * @param lastPluginCall
      * @param requestCode
      * @param resultCode
      * @param data
      */
-    protected void handleOnActivityResult(PluginCall lastPluginCall, int requestCode, int resultCode, Intent data) {}
+    protected void handleOnActivityResult(PluginCall lastPluginCall, int requestCode, int resultCode, Intent data) {
+    }
 
     /**
      * Handle activity result, should be overridden by each plugin
-     * @deprecated use {@link #handleOnActivityResult(PluginCall, int, int, Intent)} in
-     * conjunction with @CapacitorPlugin
      *
      * @param requestCode
      * @param resultCode
      * @param data
+     * @deprecated use {@link #handleOnActivityResult(PluginCall, int, int, Intent)} in
+     * conjunction with @CapacitorPlugin
      */
     @Deprecated
-    protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {}
+    protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
+    }
 
     /**
      * Handle onNewIntent
+     *
      * @param intent
      */
-    protected void handleOnNewIntent(Intent intent) {}
+    protected void handleOnNewIntent(Intent intent) {
+    }
 
     /**
      * Handle onConfigurationChanged
+     *
      * @param newConfig
      */
-    protected void handleOnConfigurationChanged(Configuration newConfig) {}
+    protected void handleOnConfigurationChanged(Configuration newConfig) {
+    }
 
     /**
      * Handle onStart
      */
-    protected void handleOnStart() {}
+    protected void handleOnStart() {
+    }
 
     /**
      * Handle onRestart
      */
-    protected void handleOnRestart() {}
+    protected void handleOnRestart() {
+    }
 
     /**
      * Handle onResume
      */
-    protected void handleOnResume() {}
+    protected void handleOnResume() {
+    }
 
     /**
      * Handle onPause
      */
-    protected void handleOnPause() {}
+    protected void handleOnPause() {
+    }
 
     /**
      * Handle onStop
      */
-    protected void handleOnStop() {}
+    protected void handleOnStop() {
+    }
 
     /**
      * Handle onDestroy
      */
-    protected void handleOnDestroy() {}
+    protected void handleOnDestroy() {
+    }
 
     /**
      * Give the plugins a chance to take control when a URL is about to be loaded in the WebView.
@@ -944,20 +993,23 @@ public class Plugin {
 
     /**
      * Start a new Activity.
-     *
+     * <p>
      * Note: This method must be used by all plugins instead of calling
      * {@link Activity#startActivityForResult} as it associates the plugin with
      * any resulting data from the new Activity even if this app
      * is destroyed by the OS (to free up memory, for example).
+     *
      * @param intent
      * @param resultCode
      */
+    @Deprecated
     protected void startActivityForResult(PluginCall call, Intent intent, int resultCode) {
         bridge.startActivityForPluginWithResult(call, intent, resultCode);
     }
 
     /**
      * Execute the given runnable on the Bridge's task handler
+     *
      * @param runnable
      */
     public void execute(Runnable runnable) {
@@ -966,6 +1018,7 @@ public class Plugin {
 
     /**
      * Shortcut for getting the plugin log tag
+     *
      * @param subTags
      */
     protected String getLogTag(String... subTags) {

@@ -484,6 +484,7 @@ public class Bridge {
      * @param requestCode
      * @return
      */
+    @Deprecated
     public PluginHandle getPluginWithRequestCode(int requestCode) {
         for (PluginHandle handle : this.plugins.values()) {
             int[] requestCodes;
@@ -501,13 +502,11 @@ public class Bridge {
                 }
 
                 requestCodes = legacyPluginAnnotation.requestCodes();
-            } else {
-                requestCodes = pluginAnnotation.requestCodes();
-            }
 
-            for (int rc : requestCodes) {
-                if (rc == requestCode) {
-                    return handle;
+                for (int rc : requestCodes) {
+                    if (rc == requestCode) {
+                        return handle;
+                    }
                 }
             }
         }
