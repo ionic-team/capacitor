@@ -21,4 +21,9 @@ public enum PermissionState {
     public String toString() {
         return state;
     }
+
+    public static PermissionState byState(String state) {
+        state = state.toUpperCase().replace('-', '_');
+        return valueOf(state);
+    }
 }
