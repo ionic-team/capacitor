@@ -46,6 +46,6 @@ tasks:
         types: [opened]
       pull_request:
         types: [opened]
-    condition: (await getTeamMembers('capacitor')).includes(payload.issue.user.login)
+    condition: (await getTeamMembers('capacitor')).includes(payload.sender.login)
     config:
       column-id: 10495656
