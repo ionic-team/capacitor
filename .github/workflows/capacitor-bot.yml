@@ -5,6 +5,8 @@ on:
     branches: [main]
   issues:
     types: [opened, edited, labeled]
+  pull_request:
+    types: [opened]
   issue_comment:
     types: [created]
 
