@@ -44,6 +44,6 @@ tasks:
     on:
       issues:
         types: [opened]
+    condition: (await getTeamMembers('capacitor')).includes(payload.issue.user.login)
     config:
       column-id: 10495656
-      only-members-of-team-slug: capacitor
