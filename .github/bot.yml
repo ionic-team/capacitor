@@ -40,3 +40,12 @@ tasks:
       exclude-patterns:
         - '^Ionitron$'
         - '\[bot\]$'
+  - name: assign-to-project
+    on:
+      issues:
+        types: [opened]
+      pull_request:
+        types: [opened]
+    condition: (await getTeamMembers('capacitor')).includes(payload.sender.login)
+    config:
+      column-id: 10495656
