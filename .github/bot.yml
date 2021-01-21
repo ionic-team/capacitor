@@ -44,6 +44,8 @@ tasks:
     on:
       issues:
         types: [opened]
+      pull_request:
+        types: [opened]
     condition: (await getTeamMembers('capacitor')).includes(payload.issue.user.login)
     config:
       column-id: 10495656
