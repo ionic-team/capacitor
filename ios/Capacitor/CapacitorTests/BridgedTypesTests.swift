@@ -83,4 +83,43 @@ class BridgedTypesTests: XCTestCase {
         let coercedFloat = coercedResult["testFloat"]!
         XCTAssertTrue(type(of: coercedFloat) == underlyingType.self)
     }
+    
+    func testNullWrapping() throws {
+        let dictionary: [AnyHashable: Any] = ["testInt": 1 as Int, "testNull": NSNull()]
+        let coercedDictionary = JSTypes.coerceDictionaryToJSObject(dictionary)!
+        XCTAssertNotNil(coercedDictionary)
+        XCTAssertEqual(coercedDictionary.count, 2)
+        XCTAssertTrue(coercedDictionary["testNull"]! is NSNull)
+    }
+    
+    func testNullTransformation() throws {
+        let array: [Any] = [1, NSNull(), "test string"]
+        let coercedArray = JSTypes.coerceArrayToJSArray(array)!
+        XCTAssertNotNil(coercedArray)
+        XCTAssertEqual(coercedArray.count, 3)
+        XCTAssertTrue(type(of: coercedArray[1]) == NSNull.self)
+        let filteredArray = coercedArray.capacitor.replacingNullValues()
+        XCTAssertEqual(filteredArray.count, 3)
+        XCTAssertNil(filteredArray[1])
+        let restoredArray = filteredArray.capacitor.replacingOptionalValues()
+        XCTAssertEqual(restoredArray.count, 3)
+        XCTAssertNotNil(restoredArray[1])
+        XCTAssertTrue(restoredArray[0] is NSNumber)
+        XCTAssertTrue(restoredArray[1] is NSNull)
+        XCTAssertTrue(restoredArray[2] is String)
+    }
+    
+    func testSparseArrayCastSuccess() throws {
+        let array: [Any] = ["test string 1", "test string 2", NSNull()]
+        let sparseArray = JSTypes.coerceArrayToJSArray(array)?.capacitor.replacingNullValues() as? [String?]
+        XCTAssertNotNil(sparseArray)
+        XCTAssertEqual(sparseArray!.count, 3)
+        XCTAssertNil(sparseArray![2])
+    }
+    
+    func testSparseArrayCastFailure() throws {
+        let array: [Any] = ["test string 1", 1, NSNull()]
+        let sparseArray = JSTypes.coerceArrayToJSArray(array)?.capacitor.replacingNullValues() as? [String?]
+        XCTAssertNil(sparseArray)
+    }
 }

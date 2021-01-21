@@ -23,8 +23,12 @@ extension CAPPluginCall: JSValueContainer {
 }
 
 @objc public extension CAPPluginCall {
+    @available(*, deprecated, message: "Presence of a key should not be considered significant. Use typed accessors to check the value instead.")
     func hasOption(_ key: String) -> Bool {
-        return self.options.index(forKey: key) != nil
+        guard let value = options[key] else {
+            return false
+        }
+        return !(value is NSNull)
     }
 
     @available(*, deprecated, renamed: "resolve()")
