@@ -17,8 +17,9 @@ export async function copyWeb(config: Config): Promise<void> {
     );
     if (!runtimePath) {
       fatal(
-        `Unable to find node_modules/@capacitor/core/dist/capacitor.js.\n` +
-          `Are you sure ${c.strong('@capacitor/core')} is installed?`,
+        `Unable to find ${c.strong(
+          'node_modules/@capacitor/core/dist/capacitor.js',
+        )}.\n` + `Are you sure ${c.strong('@capacitor/core')} is installed?`,
       );
     }
 

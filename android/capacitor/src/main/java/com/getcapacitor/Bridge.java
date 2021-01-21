@@ -876,7 +876,7 @@ public class Bridge {
                         String state = prefs.getString(permString, null);
 
                         if (state != null) {
-                            permissionStatus = PermissionState.valueOf(state);
+                            permissionStatus = PermissionState.byState(state);
                         }
                     }
 

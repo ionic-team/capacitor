@@ -1,3 +1,5 @@
+import { prettyPath } from '@ionic/utils-terminal';
+
 import { addAndroid } from '../android/add';
 import {
   editProjectSettingsAndroid,
@@ -39,7 +41,7 @@ export async function addCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(platformDir, 'capacitor:add');
+      await runPlatformHook(config, platformDir, 'capacitor:add');
     } else {
       let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
 
@@ -72,7 +74,9 @@ export async function addCommand(
     if (existingPlatformDir) {
       fatal(
         `${c.input(platformName)} platform already exists.\n` +
-          `To re-add this platform, first remove ${existingPlatformDir}, then run this command again.\n` +
+          `To re-add this platform, first remove ${c.strong(
+            prettyPath(existingPlatformDir),
+          )}, then run this command again.\n` +
           `${c.strong(
             'WARNING',
           )}: Your native project will be completely removed.`,

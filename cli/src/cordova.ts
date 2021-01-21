@@ -184,8 +184,9 @@ export async function copyCordovaJS(
   );
   if (!cordovaPath) {
     fatal(
-      `Unable to find node_modules/@capacitor/core/cordova.js.\n` +
-        `Are you sure ${c.strong('@capacitor/core')} is installed?`,
+      `Unable to find ${c.strong(
+        'node_modules/@capacitor/core/cordova.js',
+      )}.\n` + `Are you sure ${c.strong('@capacitor/core')} is installed?`,
     );
   }
 
