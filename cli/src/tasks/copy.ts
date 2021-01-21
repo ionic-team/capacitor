@@ -16,6 +16,7 @@ import {
   writeCordovaAndroidManifest,
 } from '../cordova';
 import type { Config } from '../definitions';
+import { isFatal } from '../errors';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
@@ -27,7 +28,7 @@ export async function copyCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(platformDir, 'capacitor:copy');
+      await runPlatformHook(config, platformDir, 'capacitor:copy');
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
@@ -45,6 +46,10 @@ export async function copyCommand(
         platforms.map(platformName => () => copy(config, platformName)),
       );
     } catch (e) {
+      if (isFatal(e)) {
+        throw e;
+      }
+
       logger.error(e.stack ?? e);
     }
   }
@@ -61,7 +66,7 @@ export async function copy(
     }
 
     if (platformName === config.ios.name) {
-      await copyWebDir(config, config.ios.webDirAbs);
+      await copyWebDir(config, await config.ios.webDirAbs);
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);

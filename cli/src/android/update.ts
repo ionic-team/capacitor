@@ -18,7 +18,7 @@ import {
   writeCordovaAndroidManifest,
 } from '../cordova';
 import type { Config } from '../definitions';
-import { logFatal } from '../log';
+import { fatal } from '../errors';
 import type { Plugin } from '../plugin';
 import {
   PluginType,
@@ -143,7 +143,7 @@ async function findAndroidPluginClassesInPlugin(
           );
 
           if (!packageMatch) {
-            logFatal(
+            fatal(
               `Package could not be parsed from Android plugin.\n` +
                 `Location: ${c.strong(srcFile)}`,
             );
@@ -177,8 +177,8 @@ export async function installGradlePlugins(
     'package.json',
   );
   if (!capacitorAndroidPackagePath) {
-    logFatal(
-      `Unable to find node_modules/@capacitor/android\n` +
+    fatal(
+      `Unable to find ${c.strong('node_modules/@capacitor/android')}.\n` +
         `Are you sure ${c.strong('@capacitor/android')} is installed?`,
     );
   }
@@ -198,14 +198,19 @@ include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('${relativeCapcitorAndroidPath}')
 ${capacitorPlugins
   .map(p => {
+    if (!p.android) {
+      return '';
+    }
+
     const relativePluginPath = convertToUnixPath(
       relative(settingsPath, p.rootPath),
     );
+
     return `
 include ':${getGradlePackageName(p.id)}'
 project(':${getGradlePackageName(
       p.id,
-    )}').projectDir = new File('${relativePluginPath}/${p.android!.path}')
+    )}').projectDir = new File('${relativePluginPath}/${p.android.path}')
 `;
   })
   .join('')}`;

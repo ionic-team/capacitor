@@ -73,7 +73,7 @@ export interface AppConfig {
 export interface AndroidConfig extends PlatformConfig {
   readonly cordovaPluginsDir: string;
   readonly cordovaPluginsDirAbs: string;
-  readonly studioPath: string;
+  readonly studioPath: Promise<string>;
   readonly minVersion: string;
   readonly appDir: string;
   readonly appDirAbs: string;
@@ -96,13 +96,17 @@ export interface IOSConfig extends PlatformConfig {
   readonly cordovaPluginsDirAbs: string;
   readonly minVersion: string;
   readonly podPath: string;
-  readonly cordovaSwiftVersion: string;
-  readonly webDir: string;
-  readonly webDirAbs: string;
+  readonly scheme: string;
+  readonly webDir: Promise<string>;
+  readonly webDirAbs: Promise<string>;
   readonly nativeProjectDir: string;
   readonly nativeProjectDirAbs: string;
   readonly nativeTargetDir: string;
   readonly nativeTargetDirAbs: string;
+  readonly nativeXcodeProjDir: string;
+  readonly nativeXcodeProjDirAbs: string;
+  readonly nativeXcodeWorkspaceDir: Promise<string>;
+  readonly nativeXcodeWorkspaceDirAbs: Promise<string>;
 }
 
 export type WebConfig = PlatformConfig;

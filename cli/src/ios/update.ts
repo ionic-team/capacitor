@@ -1,5 +1,5 @@
 import { copy, remove, readFile, realpath, writeFile } from '@ionic/utils-fs';
-import { basename, dirname, join, relative, resolve } from 'path';
+import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
 import { checkPlatformVersions, runTask } from '../common';
@@ -9,7 +9,7 @@ import {
   logCordovaManualSteps,
 } from '../cordova';
 import type { Config } from '../definitions';
-import { logFatal } from '../log';
+import { fatal } from '../errors';
 import type { Plugin } from '../plugin';
 import {
   PluginType,
@@ -89,10 +89,6 @@ async function updatePodfile(
     /(def capacitor_pods)[\s\S]+?(\nend)/,
     `$1${dependenciesContent}$2`,
   );
-  podfileContent = podfileContent.replace(
-    /platform :ios, '[^']*'/,
-    `platform :ios, '${config.ios.minVersion}'`,
-  );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
   if (!deployment) {
     await remove(podfileLockPath);
@@ -106,11 +102,7 @@ async function updatePodfile(
 
   await runCommand(
     'xcodebuild',
-    [
-      '-project',
-      basename(`${config.ios.nativeTargetDirAbs}.xcodeproj`),
-      'clean',
-    ],
+    ['-project', basename(`${config.ios.nativeXcodeProjDirAbs}`), 'clean'],
     {
       cwd: config.ios.nativeProjectDirAbs,
     },
@@ -127,8 +119,8 @@ async function generatePodFile(
     'package.json',
   );
   if (!capacitoriOSPath) {
-    logFatal(
-      `Unable to find node_modules/@capacitor/ios.\n` +
+    fatal(
+      `Unable to find ${c.strong('node_modules/@capacitor/ios')}.\n` +
         `Are you sure ${c.strong('@capacitor/ios')} is installed?`,
     );
   }
@@ -142,13 +134,16 @@ async function generatePodFile(
     p => getPluginType(p, platform) === PluginType.Core,
   );
   const pods = await Promise.all(
-    capacitorPlugins.map(
-      async p =>
-        `pod '${p.ios!.name}', :path => '${relative(
-          podfilePath,
-          await realpath(p.rootPath),
-        )}'`,
-    ),
+    capacitorPlugins.map(async p => {
+      if (!p.ios) {
+        return '';
+      }
+
+      return `  pod '${p.ios.name}', :path => '${relative(
+        podfilePath,
+        await realpath(p.rootPath),
+      )}'\n`;
+    }),
   );
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
@@ -156,25 +151,25 @@ async function generatePodFile(
   const noPodPlugins = cordovaPlugins.filter(filterNoPods);
   if (noPodPlugins.length > 0) {
     pods.push(
-      `pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'`,
+      `  pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
   const podPlugins = cordovaPlugins.filter(el => !noPodPlugins.includes(el));
   if (podPlugins.length > 0) {
     pods.push(
-      `pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'`,
+      `  pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
   const resourcesPlugins = cordovaPlugins.filter(filterResources);
   if (resourcesPlugins.length > 0) {
     pods.push(
-      `pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'`,
+      `  pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
   return `
   pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
   pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'
-  ${pods.join('\n  ')}`;
+${pods.join('').trimRight()}`;
 }
 
 function getFrameworkName(framework: any) {
@@ -350,7 +345,7 @@ async function generateCordovaPodspec(
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) COCOAPODS=1 WK_WEB_VIEW_ONLY=1' }
     s.dependency 'CapacitorCordova'${getLinkerFlags(config)}
-    s.swift_version  = '${config.ios.cordovaSwiftVersion}'
+    s.swift_version  = '5.1'
     ${frameworksString}
   end`;
   await writeFile(

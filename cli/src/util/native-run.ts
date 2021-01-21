@@ -2,7 +2,7 @@ import { dirname } from 'path';
 
 import c from '../colors';
 import type { PlatformTarget } from '../common';
-import { logFatal } from '../log';
+import { fatal } from '../errors';
 
 import { resolveNode } from './node';
 import type { RunCommandOptions } from './subprocess';
@@ -19,7 +19,7 @@ export async function runNativeRun(
   );
 
   if (!p) {
-    logFatal(`${c.input('native-run')} not found.`);
+    fatal(`${c.input('native-run')} not found.`);
   }
 
   return await runCommand(p, args, options);

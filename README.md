@@ -1,10 +1,10 @@
 <br />
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/236501/83809024-9da80580-a66a-11ea-8a1d-090fe6f8b01e.png" width="372" height="70" /><br />
-</p>
-<p align="center">
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/236501/105104854-e5e42e80-5a67-11eb-8cb8-46fccb079062.png" width="560" height="168" />
+</div>
+<div align="center">
   ⚡️ Cross-platform apps with JavaScript and the Web ⚡️
-</p>
+</div>
 <br />
 <p align="center">
   <a href="https://github.com/ionic-team/capacitor/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/workflow/status/ionic-team/capacitor/CI?style=flat-square" /></a>
@@ -84,6 +84,8 @@ Made possible by the Capacitor community. 💖
 <!-- CONTRIBUTORS:START -->
 
 <p align="center">
+  <a href="https://github.com/timbru31"><img src="https://github.com/timbru31.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/theproducer"><img src="https://github.com/theproducer.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/thomasvidas"><img src="https://github.com/thomasvidas.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/cgadam"><img src="https://github.com/cgadam.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/RangerRick"><img src="https://github.com/RangerRick.png?size=100" width="50" height="50" /></a>

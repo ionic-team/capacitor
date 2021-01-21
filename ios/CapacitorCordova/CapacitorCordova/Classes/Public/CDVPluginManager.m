@@ -35,12 +35,12 @@
 
   id obj = [self.pluginObjects objectForKey:className];
   if (!obj) {
-    obj = [[NSClassFromString(className)alloc] init];
+    obj = [[NSClassFromString(className)alloc] initWithWebViewEngine: self.webView];
     if (!obj) {
       NSString* fullClassName = [NSString stringWithFormat:@"%@.%@",
                                  NSBundle.mainBundle.infoDictionary[@"CFBundleExecutable"],
                                  className];
-      obj = [[NSClassFromString(fullClassName)alloc] init];
+      obj = [[NSClassFromString(fullClassName)alloc] initWithWebViewEngine: self.webView];
     }
 
     if (obj != nil) {

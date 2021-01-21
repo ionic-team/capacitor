@@ -3,6 +3,91 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-beta.1](https://github.com/ionic-team/capacitor/compare/3.0.0-beta.0...3.0.0-beta.1) (2021-01-14)
+
+**Note:** Version bump only for package capacitor
+
+
+
+
+
+# [3.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.14...3.0.0-beta.0) (2021-01-13)
+
+
+### Features
+
+* **core:** add commonjs output format ([#4064](https://github.com/ionic-team/capacitor/issues/4064)) ([74b7be8](https://github.com/ionic-team/capacitor/commit/74b7be89ef1bbf13ccd103410037cfe81c8fc124))
+
+
+
+
+
+# [3.0.0-alpha.14](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.13...3.0.0-alpha.14) (2021-01-13)
+
+
+### Bug Fixes
+
+* **android:** append missing new lines on injected cordova files ([#4058](https://github.com/ionic-team/capacitor/issues/4058)) ([dbdc78d](https://github.com/ionic-team/capacitor/commit/dbdc78dc08e016dfbc2454d4f53a49f16f744b3e))
+* **cli:** bump minimum node version to 12.4.0 ([#4059](https://github.com/ionic-team/capacitor/issues/4059)) ([61e3be0](https://github.com/ionic-team/capacitor/commit/61e3be0c865a3591a0d6bcfc27d0bbb72ee98395))
+* **cli:** default to new directory instead of crashing ([70fdf0b](https://github.com/ionic-team/capacitor/commit/70fdf0be0e0f06b4f20e20a3ae4bfef4de2374e9))
+
+
+### Features
+
+* **android:** method to check permission for an alias ([#4062](https://github.com/ionic-team/capacitor/issues/4062)) ([c88c4b4](https://github.com/ionic-team/capacitor/commit/c88c4b46b949a87c1b89476b75273adef725242b))
+
+
+
+
+
+# [3.0.0-alpha.13](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.12...3.0.0-alpha.13) (2021-01-13)
+
+
+### Bug Fixes
+
+* **cli:** use stderr for logs when using --json option ([#4044](https://github.com/ionic-team/capacitor/issues/4044)) ([452a101](https://github.com/ionic-team/capacitor/commit/452a101648fe6da4232d18985c5d814920505920))
+* **iOS:** properly handle date types during JSValue coercion ([#4043](https://github.com/ionic-team/capacitor/issues/4043)) ([1affae7](https://github.com/ionic-team/capacitor/commit/1affae7cf8d2f49681bf25be48633ab985bbd12f))
+* **iOS:** skip Swift type coercion on Cordova plugin calls ([#4048](https://github.com/ionic-team/capacitor/issues/4048)) ([7bb9e0f](https://github.com/ionic-team/capacitor/commit/7bb9e0f22fdea369a6522c2d63a5b56baab9f5ca))
+
+
+### Features
+
+* **cli:** create TS configuration files in `init` ([#3999](https://github.com/ionic-team/capacitor/issues/3999)) ([fa7003e](https://github.com/ionic-team/capacitor/commit/fa7003e4ef1d988633abb85b1b109c51b94fda42))
+
+
+
+# [3.0.0-alpha.12](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.11...3.0.0-alpha.12) (2021-01-08)
+
+
+### Bug Fixes
+
+* move `public` into iOS target directory ([#4002](https://github.com/ionic-team/capacitor/issues/4002)) ([4f41296](https://github.com/ionic-team/capacitor/commit/4f41296a109cf73fdf8e695849e95f292a543f85))
+* **cli:** run an actual debug build for iOS ([#4014](https://github.com/ionic-team/capacitor/issues/4014)) ([dc6399c](https://github.com/ionic-team/capacitor/commit/dc6399cf0b5eb6afb50274a84dc71486cd3e4173))
+* **core:** fix $$typeof() not implemented error ([#4013](https://github.com/ionic-team/capacitor/issues/4013)) ([c7f80b5](https://github.com/ionic-team/capacitor/commit/c7f80b577c1de60cd0a105f3aaf0d1c314f3150d))
+
+
+### Features
+
+* **android:** switch to new callback-style permission requests ([#4033](https://github.com/ionic-team/capacitor/issues/4033)) ([cc459de](https://github.com/ionic-team/capacitor/commit/cc459de7fc070c0227e066f3e8b92062728ab45d))
+* **cli:** allow 'export default' style TS config files ([#4031](https://github.com/ionic-team/capacitor/issues/4031)) ([9393667](https://github.com/ionic-team/capacitor/commit/9393667bbe629d6c18a22b16fe3f3c6fe83e11f6))
+* **cli:** opt-in anonymous usage data ([#4022](https://github.com/ionic-team/capacitor/issues/4022)) ([3facfb7](https://github.com/ionic-team/capacitor/commit/3facfb790bff79b00ba1ab6dd8cb331989937da7))
+
+
+
+
+
+# [3.0.0-alpha.11](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.10...3.0.0-alpha.11) (2020-12-26)
+
+
+### Features
+
+* **android:** expose CapConfig.loadDefault(), deprecate v2 constructor ([#3964](https://github.com/ionic-team/capacitor/issues/3964)) ([94ae977](https://github.com/ionic-team/capacitor/commit/94ae9774d2467fa7ba0336e7183f6d28cae45908))
+* **iOS:** Open CAPBridgeViewController for subclassing ([#3973](https://github.com/ionic-team/capacitor/issues/3973)) ([a601705](https://github.com/ionic-team/capacitor/commit/a601705f8116ac10d1a0b5942511952c07cf474e))
+
+
+
+
+
 # [3.0.0-alpha.10](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.9...3.0.0-alpha.10) (2020-12-15)
 
 
@@ -146,7 +231,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.4.5...3.0.0-alpha.0) (2020-07-23)
+# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.4.6...3.0.0-alpha.0) (2020-07-23)
 
 
 ### Features
@@ -157,6 +242,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Chores
 
 * refactor(android): remove unused interaction listener on BridgeFragment (#3552) ([fae50b6](https://github.com/ionic-team/capacitor/commit/fae50b6)), closes [#3552](https://github.com/ionic-team/capacitor/issues/3552)
+
+
+
+## [2.4.6](https://github.com/ionic-team/capacitor/compare/2.4.5...2.4.6) (2021-01-13)
+
+
+### Bug Fixes
+
+* fix(ios): correctly initialize cordova plugins with webViewEngine (#4039) ([273fab5](https://github.com/ionic-team/capacitor/commit/273fab5)), closes [#4039](https://github.com/ionic-team/capacitor/issues/4039)
 
 
 

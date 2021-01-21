@@ -26,9 +26,10 @@ export async function runCommand(
 export async function getCommandOutput(
   command: string,
   args: readonly string[],
+  options: RunCommandOptions = {},
 ): Promise<string | null> {
   try {
-    return (await runCommand(command, args)).trim();
+    return (await runCommand(command, args, options)).trim();
   } catch (e) {
     return null;
   }

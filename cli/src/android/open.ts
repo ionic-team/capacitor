@@ -9,7 +9,7 @@ import { logger } from '../log';
 const debug = Debug('capacitor:android:open');
 
 export async function openAndroid(config: Config): Promise<void> {
-  const androidStudioPath = config.android.studioPath;
+  const androidStudioPath = await config.android.studioPath;
   const dir = config.android.platformDirAbs;
 
   try {

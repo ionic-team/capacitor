@@ -149,7 +149,7 @@ public class FileUtils {
             StringBuffer buffer = new StringBuffer();
             String line;
             while ((line = reader.readLine()) != null) {
-                buffer.append(line);
+                buffer.append(line + "\n");
             }
 
             return buffer.toString();

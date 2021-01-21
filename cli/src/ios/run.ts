@@ -1,5 +1,5 @@
 import Debug from 'debug';
-import { resolve } from 'path';
+import { basename, resolve } from 'path';
 
 import c from '../colors';
 import { promptForPlatformTarget, runTask } from '../common';
@@ -27,11 +27,11 @@ export async function runIOS(
 
   const xcodebuildArgs = [
     '-workspace',
-    'App.xcworkspace',
+    basename(await config.ios.nativeXcodeWorkspaceDirAbs),
     '-scheme',
-    'App',
+    config.ios.scheme,
     '-configuration',
-    'debug',
+    'Debug',
     '-destination',
     `id=${target.id}`,
     '-derivedDataPath',
@@ -46,11 +46,11 @@ export async function runIOS(
     }),
   );
 
-  const appName = 'App.app';
+  const appName = `${config.ios.scheme}.app`;
   const appPath = resolve(
     derivedDataPath,
     'Build/Products',
-    target.virtual ? 'Release-iphonesimulator' : 'Release-iphoneos',
+    target.virtual ? 'Debug-iphonesimulator' : 'Debug-iphoneos',
     appName,
   );
 

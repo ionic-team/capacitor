@@ -1,3 +1,5 @@
+import { prettyPath } from '@ionic/utils-terminal';
+
 import { addAndroid } from '../android/add';
 import {
   editProjectSettingsAndroid,
@@ -21,13 +23,14 @@ import {
 } from '../common';
 import type { Config } from '../definitions';
 import { OS } from '../definitions';
+import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
 import {
   editProjectSettingsIOS,
   checkIOSPackage,
   checkCocoaPods,
 } from '../ios/common';
-import { logger, logFatal } from '../log';
+import { logger } from '../log';
 
 import { sync } from './sync';
 
@@ -38,7 +41,7 @@ export async function addCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(platformDir, 'capacitor:add');
+      await runPlatformHook(config, platformDir, 'capacitor:add');
     } else {
       let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
 
@@ -69,9 +72,11 @@ export async function addCommand(
     );
 
     if (existingPlatformDir) {
-      logFatal(
+      fatal(
         `${c.input(platformName)} platform already exists.\n` +
-          `To re-add this platform, first remove ${existingPlatformDir}, then run this command again.\n` +
+          `To re-add this platform, first remove ${c.strong(
+            prettyPath(existingPlatformDir),
+          )}, then run this command again.\n` +
           `${c.strong(
             'WARNING',
           )}: Your native project will be completely removed.`,
@@ -103,7 +108,11 @@ export async function addCommand(
         );
       }
     } catch (e) {
-      logFatal(e.stack ?? e);
+      if (!isFatal(e)) {
+        fatal(e.stack ?? e);
+      }
+
+      throw e;
     }
   }
 }

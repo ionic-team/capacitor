@@ -3,7 +3,8 @@ import { dirname, join } from 'path';
 
 import c from './colors';
 import type { Config } from './definitions';
-import { logger, logFatal } from './log';
+import { fatal } from './errors';
+import { logger } from './log';
 import { resolveNode } from './util/node';
 import { readXML } from './util/xml';
 
@@ -12,12 +13,13 @@ export const enum PluginType {
   Cordova,
   Incompatible,
 }
+
 export interface PluginManifest {
-  ios: {
-    src: string;
+  readonly ios?: {
+    readonly src?: string;
   };
-  android: {
-    src: string;
+  readonly android?: {
+    readonly src?: string;
   };
 }
 
@@ -74,8 +76,8 @@ export async function resolvePlugin(
   try {
     const packagePath = resolveNode(config.app.rootDir, name, 'package.json');
     if (!packagePath) {
-      logFatal(
-        `Unable to find node_modules/${name}.\n` +
+      fatal(
+        `Unable to find ${c.strong(`node_modules/${name}`)}.\n` +
           `Are you sure ${c.strong(name)} is installed?`,
       );
     }
@@ -192,12 +194,13 @@ export function getPlatformElement(
 }
 
 export function getPluginType(p: Plugin, platform: string): PluginType {
-  if (platform === 'ios') {
-    return p.ios!.type;
+  switch (platform) {
+    case 'ios':
+      return p.ios?.type ?? PluginType.Core;
+    case 'android':
+      return p.android?.type ?? PluginType.Core;
   }
-  if (platform === 'android') {
-    return p.android!.type;
-  }
+
   return PluginType.Core;
 }
 

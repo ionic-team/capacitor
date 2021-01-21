@@ -1,9 +1,11 @@
 import { readJSON, pathExists } from '@ionic/utils-fs';
+import { prettyPath } from '@ionic/utils-terminal';
 import { dirname, join } from 'path';
 
 import c from './colors';
 import type { Config, PackageJson } from './definitions';
-import { output, logger, logFatal } from './log';
+import { fatal } from './errors';
+import { output, logger } from './log';
 import { resolveNode } from './util/node';
 
 export type CheckFunction = () => Promise<string | null>;
@@ -23,7 +25,9 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   }
   if (!(await pathExists(config.app.webDirAbs))) {
     return (
-      `Could not find the web assets directory: ${config.app.webDirAbs}.\n` +
+      `Could not find the web assets directory: ${c.strong(
+        prettyPath(config.app.webDirAbs),
+      )}.\n` +
       `Please create it and make sure it has an ${c.strong(
         'index.html',
       )} file. You can change the path of this directory in ${c.strong(
@@ -32,8 +36,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
         'webDir',
       )} option). You may need to compile the web assets for your app (typically ${c.input(
         'npm run build',
-      )}).\n` +
-      `More info: ${c.strong(
+      )}). More info: ${c.strong(
         'https://capacitorjs.com/docs/v3/basics/workflow#sync-your-project',
       )}`
     );
@@ -41,9 +44,9 @@ export async function checkWebDir(config: Config): Promise<string | null> {
 
   if (!(await pathExists(join(config.app.webDirAbs, 'index.html')))) {
     return (
-      `The web assets directory (${
-        config.app.webDirAbs
-      }) must contain an ${c.strong('index.html')} file.\n` +
+      `The web assets directory (${c.strong(
+        prettyPath(config.app.webDirAbs),
+      )}) must contain an ${c.strong('index.html')} file.\n` +
       `It will be the entry point for the web portion of the Capacitor app.`
     );
   }
@@ -68,9 +71,12 @@ export async function checkCapacitorPlatform(
   const pkg = await getCapacitorPackage(config, platform);
 
   if (!pkg) {
-    return `Could not find the ${c.input(
-      platform,
-    )} platform. Does it need to be installed?\n`;
+    return (
+      `Could not find the ${c.input(platform)} platform.\n` +
+      `You must install it in your project first, e.g. w/ ${c.input(
+        `npm install @capacitor/${platform}`,
+      )}`
+    );
   }
 
   return null;
@@ -146,6 +152,7 @@ export async function wait(time: number): Promise<void> {
 }
 
 export async function runPlatformHook(
+  config: Config,
   platformDir: string,
   hook: string,
 ): Promise<void> {
@@ -164,6 +171,9 @@ export async function runPlatformHook(
       cwd: platformDir,
       env: {
         INIT_CWD: platformDir,
+        CAPACITOR_ROOT_DIR: config.app.rootDir,
+        CAPACITOR_WEB_DIR: config.app.webDirAbs,
+        CAPACITOR_CONFIG: JSON.stringify(config.app.extConfig),
         ...process.env,
       },
     });
@@ -221,7 +231,7 @@ export async function requireCapacitorPackage(
   const pkg = await getCapacitorPackage(config, name);
 
   if (!pkg) {
-    logFatal(
+    fatal(
       `Unable to find node_modules/@capacitor/${name}.\n` +
         `Are you sure ${c.strong(`@capacitor/${name}`)} is installed?`,
     );
@@ -279,15 +289,15 @@ export async function selectPlatforms(
     const platformName = selectedPlatformName.toLowerCase().trim();
 
     if (!(await isValidPlatform(platformName))) {
-      logFatal(`Invalid platform: ${c.input(platformName)}`);
+      fatal(`Invalid platform: ${c.input(platformName)}`);
     } else if (!(await getProjectPlatformDirectory(config, platformName))) {
       if (platformName === 'web') {
-        logFatal(
+        fatal(
           `Could not find the web platform directory.\n` +
             `Make sure ${c.strong(config.app.webDir)} exists.`,
         );
       }
-      logFatal(
+      fatal(
         `${c.strong(platformName)} platform has not been added yet.\n` +
           `Use ${c.input(
             `npx cap add ${platformName}`,
@@ -350,7 +360,7 @@ export async function promptForPlatform(
   if (!(await isValidPlatform(platformName))) {
     const knownPlatforms = await getKnownPlatforms();
 
-    logFatal(
+    fatal(
       `Invalid platform: ${c.input(platformName)}.\n` +
         `Valid platforms include: ${knownPlatforms.join(', ')}`,
     );
@@ -401,7 +411,7 @@ export async function promptForPlatformTarget(
   const target = targets.find(t => t.id === targetID);
 
   if (!target) {
-    logFatal(
+    fatal(
       `Invalid target ID: ${c.input(targetID)}.\n` +
         `Valid targets are: ${targets.map(t => t.id).join(', ')}`,
     );
