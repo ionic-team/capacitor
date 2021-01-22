@@ -2,12 +2,25 @@ import XCTest
 
 @testable import Capacitor
 
-class BridgedTypesTests: XCTestCase {
-    static var sourceDictionary: [AnyHashable: Any] = [:]
-    static var resultDictionary: [AnyHashable: Any] = [:]
+class TestContainer: NSObject, JSValueContainer {
+    var coercedDictionary: [AnyHashable: Any] = [:]
     
-    var sourceDictionary: [AnyHashable: Any] = [:]
-    var resultDictionary: [AnyHashable: Any] = [:]
+    public static var jsDateFormatter: ISO8601DateFormatter = {
+        return ISO8601DateFormatter()
+    }()
+    
+    public var jsObjectRepresentation: JSObject {
+        return coercedDictionary as? JSObject ?? [:]
+    }
+}
+
+class BridgedTypesTests: XCTestCase {
+    static var unserializedDictionary: [AnyHashable: Any] = [:]
+    static var deserializedDictionary: [AnyHashable: Any] = [:]
+    
+    var unserializedDictionary: [AnyHashable: Any] = [:]
+    var deserializedDictionary: [AnyHashable: Any] = [:]
+    var testContainer = TestContainer()
     
     override class func setUp() {
         let formatter = ISO8601DateFormatter()
@@ -22,14 +35,15 @@ class BridgedTypesTests: XCTestCase {
         // date objects are not handled by the JSON serializer, so we have to insert these after the roundtrip
         unwrappedResult["testDateObject"] = date
         dictionary["testDateObject"] = date
-        sourceDictionary = dictionary
-        resultDictionary = unwrappedResult
+        unserializedDictionary = dictionary
+        deserializedDictionary = unwrappedResult
     }
     
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        sourceDictionary = BridgedTypesTests.sourceDictionary
-        resultDictionary = BridgedTypesTests.resultDictionary
+        unserializedDictionary = BridgedTypesTests.unserializedDictionary
+        deserializedDictionary = BridgedTypesTests.deserializedDictionary
+        testContainer.coercedDictionary = JSTypes.coerceDictionaryToJSObject(deserializedDictionary)!
     }
     
     override func tearDownWithError() throws {
@@ -37,36 +51,37 @@ class BridgedTypesTests: XCTestCase {
     }
     
     func testTranslation() throws {
-        XCTAssertNotNil(sourceDictionary)
-        XCTAssertNotNil(resultDictionary)
+        XCTAssertTrue(unserializedDictionary.count > 0)
+        XCTAssertTrue(deserializedDictionary.count > 0)
+        XCTAssertTrue(testContainer.coercedDictionary.count > 0)
     }
     
     func testCastingFailure() throws {
-        var castResult = resultDictionary as? JSObject
+        var castResult = deserializedDictionary as? JSObject
         XCTAssertNil(castResult)
         
-        castResult = sourceDictionary as? JSObject
+        castResult = unserializedDictionary as? JSObject
         XCTAssertNil(castResult)
     }
     
     func testCoercionSuccess() throws {
-        let coercedResult = JSTypes.coerceDictionaryToJSObject(resultDictionary)
+        let coercedResult = JSTypes.coerceDictionaryToJSObject(deserializedDictionary)
         XCTAssertNotNil(coercedResult)
     }
     
     func testRoundtripEquality() throws {
-        let coercedResult = JSTypes.coerceDictionaryToJSObject(resultDictionary)!
+        let coercedResult = JSTypes.coerceDictionaryToJSObject(deserializedDictionary)!
         let foo: NSDictionary = coercedResult as NSDictionary
-        let bar: NSDictionary = sourceDictionary as NSDictionary
+        let bar: NSDictionary = unserializedDictionary as NSDictionary
         
         XCTAssertEqual(foo, bar)
     }
     
     func testTypeEquavalency() throws {
-        let coercedResult = JSTypes.coerceDictionaryToJSObject(resultDictionary)!
+        let coercedResult = JSTypes.coerceDictionaryToJSObject(deserializedDictionary)!
         let coercedFloat = coercedResult["testFloat"] as? Float
-        let sourceFloat = sourceDictionary["testFloat"] as? Float
-        let resultFloat = resultDictionary["testFloat"] as? Float
+        let sourceFloat = unserializedDictionary["testFloat"] as? Float
+        let resultFloat = deserializedDictionary["testFloat"] as? Float
         
         XCTAssertNotNil(coercedFloat)
         XCTAssertNotNil(sourceFloat)
@@ -79,35 +94,47 @@ class BridgedTypesTests: XCTestCase {
     
     func testNumberWrapping() throws {
         // the original number is a swift primitive float
-        let sourceFloat = sourceDictionary["testFloat"]!
+        let sourceFloat = unserializedDictionary["testFloat"]!
         XCTAssertTrue(type(of: sourceFloat) == Float.self)
         
         // but after serialization/deserilization, it will be wrapped as an NSNumber
-        let wrappedFloat = resultDictionary["testFloat"]!
+        let wrappedFloat = deserializedDictionary["testFloat"]!
         let underlyingType: AnyObject.Type = NSClassFromString("__NSCFNumber")!
         XCTAssertTrue(type(of: wrappedFloat) == underlyingType.self)
         
-        // coercision will keep the NSNumber type since there's no way to recover it
-        let coercedResult = JSTypes.coerceDictionaryToJSObject(resultDictionary)!
+        // coercion will keep the NSNumber type since there's no way to recover it
+        let coercedResult = JSTypes.coerceDictionaryToJSObject(deserializedDictionary)!
         let coercedFloat = coercedResult["testFloat"]!
         XCTAssertTrue(type(of: coercedFloat) == underlyingType.self)
+        
+        // but the cast accessor should restore it
+        let castFloat = testContainer.getFloat("testFloat")!
+        XCTAssertTrue(type(of: castFloat) == Float.self)
+        XCTAssertEqual(sourceFloat as! Float, castFloat)
     }
     
     func testDateObject() throws {
-        let coercedResult = JSTypes.coerceDictionaryToJSObject(resultDictionary)!
+        let coercedResult = JSTypes.coerceDictionaryToJSObject(deserializedDictionary)!
         let date = coercedResult["testDateObject"] as! Date
         XCTAssertNotNil(date)
         XCTAssertTrue(type(of: date) == Date.self)
     }
     
     func testDateParsing() throws {
-        let coercedResult = JSTypes.coerceDictionaryToJSObject(resultDictionary)!
+        let coercedResult = JSTypes.coerceDictionaryToJSObject(deserializedDictionary)!
         let formatter = ISO8601DateFormatter()
         let parsedDate = formatter.date(from: coercedResult["testDateString"] as! String)!
         let dateObject = coercedResult["testDateObject"] as! Date
         XCTAssertNotNil(parsedDate)
         XCTAssertNotNil(dateObject)
-        print(parsedDate.timeIntervalSinceReferenceDate)
+        XCTAssertTrue(dateObject.compare(parsedDate) == .orderedSame)
+    }
+    
+    func testDateExtensions() throws {
+        let parsedDate = testContainer.getDate("testDateString")!
+        let dateObject = testContainer.getDate("testDateObject")!
+        XCTAssertNotNil(parsedDate)
+        XCTAssertNotNil(dateObject)
         XCTAssertTrue(dateObject.compare(parsedDate) == .orderedSame)
     }
     
