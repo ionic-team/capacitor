@@ -10,11 +10,20 @@ class BridgedTypesTests: XCTestCase {
     var resultDictionary: [AnyHashable: Any] = [:]
     
     override class func setUp() {
+        let formatter = ISO8601DateFormatter()
+        // an ISO 8601 string does not necessarily include subsecond precision, so we can't just captured the current date
+        // or else we won't be able to compare the objects since they could differ by milliseconds or nanoseonds. so instead
+        // we use a fixed timestamp at a whole hour.
+        let date = NSDate(timeIntervalSinceReferenceDate: 632854800)
         let subDictionary: [AnyHashable: Any] = ["testIntArray": [0, 1, 2], "testStringArray": ["1", "2", "3"], "testDictionary":["foo":"bar"]]
-        let dictionary: [AnyHashable: Any] = ["testInt": 1 as Int, "testFloat": Float.pi, "testBool": true as Bool, "testString": "Some string value", "testChild": subDictionary]
+        var dictionary: [AnyHashable: Any] = ["testInt": 1 as Int, "testFloat": Float.pi, "testBool": true as Bool, "testString": "Some string value", "testChild": subDictionary, "testDateString": formatter.string(from: date as Date)]
+        let serializer = JSONSerializationWrapper(dictionary: dictionary)!
+        var unwrappedResult = serializer.unwrappedResult()!
+        // date objects are not handled by the JSON serializer, so we have to insert these after the roundtrip
+        unwrappedResult["testDateObject"] = date
+        dictionary["testDateObject"] = date
         sourceDictionary = dictionary
-        let serializer = JSONSerializationWrapper(dictionary: sourceDictionary)!
-        resultDictionary = serializer.unwrappedResult()!
+        resultDictionary = unwrappedResult
     }
     
     override func setUpWithError() throws {
@@ -82,6 +91,24 @@ class BridgedTypesTests: XCTestCase {
         let coercedResult = JSTypes.coerceDictionaryToJSObject(resultDictionary)!
         let coercedFloat = coercedResult["testFloat"]!
         XCTAssertTrue(type(of: coercedFloat) == underlyingType.self)
+    }
+    
+    func testDateObject() throws {
+        let coercedResult = JSTypes.coerceDictionaryToJSObject(resultDictionary)!
+        let date = coercedResult["testDateObject"] as! Date
+        XCTAssertNotNil(date)
+        XCTAssertTrue(type(of: date) == Date.self)
+    }
+    
+    func testDateParsing() throws {
+        let coercedResult = JSTypes.coerceDictionaryToJSObject(resultDictionary)!
+        let formatter = ISO8601DateFormatter()
+        let parsedDate = formatter.date(from: coercedResult["testDateString"] as! String)!
+        let dateObject = coercedResult["testDateObject"] as! Date
+        XCTAssertNotNil(parsedDate)
+        XCTAssertNotNil(dateObject)
+        print(parsedDate.timeIntervalSinceReferenceDate)
+        XCTAssertTrue(dateObject.compare(parsedDate) == .orderedSame)
     }
     
     func testNullWrapping() throws {
