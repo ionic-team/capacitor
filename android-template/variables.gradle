@@ -4,9 +4,9 @@ ext {
     targetSdkVersion = 30
     androidxActivityVersion = '1.2.0-rc01'
     androidxAppCompatVersion = '1.2.0'
+    androidxCoordinatorLayoutVersion = '1.1.0'
     androidxCoreVersion = '1.3.2'
     androidxFragmentVersion = '1.3.0-rc01'
-    androidxMaterialVersion = '1.3.0-rc01'
     junitVersion = '4.13.1'
     androidxJunitVersion = '1.1.2'
     androidxEspressoCoreVersion = '3.3.0'
