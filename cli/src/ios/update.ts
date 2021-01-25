@@ -89,10 +89,6 @@ async function updatePodfile(
     /(def capacitor_pods)[\s\S]+?(\nend)/,
     `$1${dependenciesContent}$2`,
   );
-  podfileContent = podfileContent.replace(
-    /platform :ios, '[^']*'/,
-    `platform :ios, '${config.ios.minVersion}'`,
-  );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
   if (!deployment) {
     await remove(podfileLockPath);
@@ -124,7 +120,7 @@ async function generatePodFile(
   );
   if (!capacitoriOSPath) {
     fatal(
-      `Unable to find node_modules/@capacitor/ios.\n` +
+      `Unable to find ${c.strong('node_modules/@capacitor/ios')}.\n` +
         `Are you sure ${c.strong('@capacitor/ios')} is installed?`,
     );
   }

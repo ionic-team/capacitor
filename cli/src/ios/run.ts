@@ -29,7 +29,7 @@ export async function runIOS(
     '-workspace',
     basename(await config.ios.nativeXcodeWorkspaceDirAbs),
     '-scheme',
-    'App',
+    config.ios.scheme,
     '-configuration',
     'Debug',
     '-destination',
@@ -46,7 +46,7 @@ export async function runIOS(
     }),
   );
 
-  const appName = 'App.app';
+  const appName = `${config.ios.scheme}.app`;
   const appPath = resolve(
     derivedDataPath,
     'Build/Products',

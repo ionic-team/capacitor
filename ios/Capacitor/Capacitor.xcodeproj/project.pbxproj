@@ -70,6 +70,9 @@
 		62E0736325535E8700BAAADB /* flat.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735425535E6500BAAADB /* flat.json */; };
 		62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735525535E6500BAAADB /* hierarchy.json */; };
 		62E207AE2588234500A78983 /* WebViewDelegationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */; };
+		62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */; };
+		62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */; };
+		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,7 +154,6 @@
 		625AF1EC258963C700869675 /* WebViewAssetHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewAssetHandler.swift; sourceTree = "<group>"; };
 		62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPluginCall.h; sourceTree = "<group>"; };
 		62959AE32524DA7700A3D7F1 /* JSExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSExport.swift; sourceTree = "<group>"; };
-		62959AE42524DA7700A3D7F1 /* CAPBridgedJSTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPBridgedJSTypes.m; sourceTree = "<group>"; };
 		62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPBridgedPlugin.h; sourceTree = "<group>"; };
 		62959AE62524DA7700A3D7F1 /* CAPPluginCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPPluginCall.swift; sourceTree = "<group>"; };
 		62959AE72524DA7700A3D7F1 /* CAPFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPFile.swift; sourceTree = "<group>"; };
@@ -197,6 +199,9 @@
 		62E0735425535E6500BAAADB /* flat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = flat.json; sourceTree = "<group>"; };
 		62E0735525535E6500BAAADB /* hierarchy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hierarchy.json; sourceTree = "<group>"; };
 		62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewDelegationHandler.swift; sourceTree = "<group>"; };
+		62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Capacitor.swift"; sourceTree = "<group>"; };
+		62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgedTypesTests.m; sourceTree = "<group>"; };
+		62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,7 +250,6 @@
 				6296A77C253A2E49005A202A /* TestsHostApp */,
 				50503EE01FC08594003606DC /* Products */,
 				501CBAA51FC0A723009B0D4D /* Frameworks */,
-				621ECCD12542059800D3D615 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -264,21 +268,15 @@
 			children = (
 				50503EED1FC08595003606DC /* CapacitorTests.swift */,
 				621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */,
+				62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */,
 				62A91C3325535F5700861508 /* ConfigurationTests.swift */,
+				62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */,
 				621ECCC7254204BE00D3D615 /* JSONSerializationWrapper.h */,
 				621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */,
 				621ECCCD254204C400D3D615 /* CapacitorTests-Bridging-Header.h */,
 				62959BBD2526510200A3D7F1 /* Info.plist */,
 			);
 			path = CapacitorTests;
-			sourceTree = "<group>";
-		};
-		621ECCD12542059800D3D615 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				62959AE42524DA7700A3D7F1 /* CAPBridgedJSTypes.m */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		62959AE12524DA7700A3D7F1 /* Capacitor */ = {
@@ -321,6 +319,7 @@
 				62959B152524DA7700A3D7F1 /* CAPNotifications.swift */,
 				62959B072524DA7700A3D7F1 /* CapacitorExtension.swift */,
 				62959B112524DA7700A3D7F1 /* Data+Capacitor.swift */,
+				62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */,
 				62D43AEF2581817500673C24 /* WKWebView+Capacitor.swift */,
 				62D43B642582A13D00673C24 /* WKWebView+Capacitor.m */,
 				62959AE92524DA7700A3D7F1 /* UIColor.swift */,
@@ -573,6 +572,7 @@
 				62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */,
 				62959B392524DA7800A3D7F1 /* CapacitorExtension.swift in Sources */,
 				62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */,
+				62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */,
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
 				373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */,
 				625AF1ED258963C700869675 /* WebViewAssetHandler.swift in Sources */,
@@ -594,8 +594,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
+				62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */,
 				621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */,
 				62A91C3425535F5700861508 /* ConfigurationTests.swift in Sources */,
+				62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */,
 				621ECCC3254204B700D3D615 /* BridgedTypesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

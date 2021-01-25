@@ -32,7 +32,7 @@ export async function runCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(platformDir, 'capacitor:run');
+      await runPlatformHook(config, platformDir, 'capacitor:run');
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }

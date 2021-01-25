@@ -1,5 +1,7 @@
 package com.getcapacitor;
 
+import java.util.Locale;
+
 /**
  * Represents the state of a permission
  *
@@ -20,5 +22,10 @@ public enum PermissionState {
     @Override
     public String toString() {
         return state;
+    }
+
+    public static PermissionState byState(String state) {
+        state = state.toUpperCase(Locale.ROOT).replace('-', '_');
+        return valueOf(state);
     }
 }

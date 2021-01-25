@@ -77,7 +77,7 @@ export async function resolvePlugin(
     const packagePath = resolveNode(config.app.rootDir, name, 'package.json');
     if (!packagePath) {
       fatal(
-        `Unable to find node_modules/${name}.\n` +
+        `Unable to find ${c.strong(`node_modules/${name}`)}.\n` +
           `Are you sure ${c.strong(name)} is installed?`,
       );
     }
