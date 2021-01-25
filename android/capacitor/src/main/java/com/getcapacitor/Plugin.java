@@ -1,8 +1,5 @@
 package com.getcapacitor;
 
-import static androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.ACTION_REQUEST_PERMISSIONS;
-import static androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.EXTRA_PERMISSIONS;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,16 +7,17 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import com.getcapacitor.annotation.ActivityResultCallback;
+import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
-import com.getcapacitor.annotation.PermissionResultCallback;
+import com.getcapacitor.annotation.PermissionCallback;
 import com.getcapacitor.util.PermissionHelper;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -97,11 +95,12 @@ public class Plugin {
     public void load() {}
 
     /**
-     * Registers the permission launchers used by the {@link #requestPermissions(PluginCall)} plugin call and
-     * those defined on plugins
+     * Registers activity result launchers defined on plugins, used for permission requests and
+     * activities started for result.
      */
     void initializePermissionLaunchers() {
         try {
+            // load the default checkPermission callback from the plugin parent class
             Method method = getClass().getSuperclass().getMethod("checkPermissions", PluginCall.class);
             permissionLaunchers.put(
                 "checkPermissions",
@@ -109,9 +108,7 @@ public class Plugin {
                     .getActivity()
                     .registerForActivityResult(
                         new ActivityResultContracts.RequestMultiplePermissions(),
-                        permissions -> {
-                            triggerPermissionCallback(method, permissions);
-                        }
+                        permissions -> triggerPermissionCallback(method, permissions)
                     )
             );
         } catch (NoSuchMethodException e) {
@@ -119,7 +116,8 @@ public class Plugin {
         }
 
         for (final Method method : getClass().getDeclaredMethods()) {
-            if (method.isAnnotationPresent(ActivityResultCallback.class)) {
+            if (method.isAnnotationPresent(ActivityCallback.class)) {
+                // register callbacks annotated with ActivityCallback for activity results
                 activityLaunchers.put(
                     method.getName(),
                     bridge
@@ -129,7 +127,8 @@ public class Plugin {
                             result -> triggerActivityCallback(method, result)
                         )
                 );
-            } else if (method.isAnnotationPresent(PermissionResultCallback.class)) {
+            } else if (method.isAnnotationPresent(PermissionCallback.class)) {
+                // register callbacks annotated with PermissionCallback for permission results
                 permissionLaunchers.put(
                     method.getName(),
                     bridge
@@ -146,8 +145,8 @@ public class Plugin {
     private void triggerPermissionCallback(Method method, Map<String, Boolean> permissionResultMap) {
         PluginCall savedCall = bridge.getPermissionCall(handle.getId());
 
+        // validate permissions and invoke the permission result callback
         if (bridge.validatePermissions(this, savedCall, permissionResultMap)) {
-            // handle request permissions call
             try {
                 method.setAccessible(true);
                 method.invoke(this, savedCall);
@@ -161,10 +160,10 @@ public class Plugin {
         }
     }
 
-    private void triggerActivityCallback(Method method, Object result) {
+    private void triggerActivityCallback(Method method, ActivityResult result) {
         PluginCall savedCall = bridge.getSavedCall(lastPluginCallId);
 
-        // handle result savedCall
+        // invoke the activity result callback
         try {
             method.setAccessible(true);
             method.invoke(this, savedCall, result);
@@ -177,6 +176,16 @@ public class Plugin {
         }
     }
 
+    /**
+     * Start activity for result with the provided Intent and resolve with the provided callback method name.
+     * <p>
+     * If there is no registered activity callback for the method name passed in, the call will
+     * be rejected. Make sure a valid activity result callback method is registered using the
+     * {@link ActivityCallback} annotation.
+     *
+     * @param call the plugin call
+     * @since 3.0.0
+     */
     public void startActivityForResult(PluginCall call, Intent intent, String callbackName) {
         ActivityResultLauncher<Intent> activityResultLauncher = getActivityLauncherOrReject(call, callbackName);
         if (activityResultLauncher == null) {
@@ -426,7 +435,7 @@ public class Plugin {
      * <p>
      * If there is no registered permission callback for the PluginCall passed in, the call will
      * be rejected. Make sure a valid permission callback method is registered using the
-     * {@link PermissionResultCallback} annotation.
+     * {@link PermissionCallback} annotation.
      *
      * @param call the plugin call
      * @since 3.0.0
@@ -448,7 +457,7 @@ public class Plugin {
      * <p>
      * If there is no registered permission callback for the PluginCall passed in, the call will
      * be rejected. Make sure a valid permission callback method is registered using the
-     * {@link PermissionResultCallback} annotation.
+     * {@link PermissionCallback} annotation.
      *
      * @param alias an alias defined on the plugin
      * @param call  the plugin call involved in originating the request
@@ -462,7 +471,7 @@ public class Plugin {
      * <p>
      * If there is no registered permission callback for the PluginCall passed in, the call will
      * be rejected. Make sure a valid permission callback method is registered using the
-     * {@link PermissionResultCallback} annotation.
+     * {@link PermissionCallback} annotation.
      *
      * @param aliases a set of aliases defined on the plugin
      * @param call    the plugin call involved in originating the request
@@ -505,26 +514,25 @@ public class Plugin {
      * no registered launcher exists
      *
      * @param call       the plugin call
-     * @param methodName the name of the activity result callback method
+     * @param methodName the name of the activity callback method
      * @return a launcher, or null if none found
      */
     private @Nullable ActivityResultLauncher<Intent> getActivityLauncherOrReject(PluginCall call, String methodName) {
-        ActivityResultLauncher<Intent> activityResultLauncher = activityLaunchers.get(methodName);
+        ActivityResultLauncher<Intent> activityLauncher = activityLaunchers.get(methodName);
 
         // if there is no registered launcher, reject the call with an error and return null
-        if (activityResultLauncher == null) {
-            // TODO: fix the err msg
+        if (activityLauncher == null) {
             String registerError =
-                "There is no activity result callback method registered for: %s. " +
-                "Please define a permissionCallback method name in the annotation and provide a " +
-                "method that has the correct signature: (PluginCall)";
+                "There is no ActivityCallback method registered for the name: %s. " +
+                "Please define a callback method annotated with @ActivityCallback " +
+                "that receives arguments: (PluginCall, ActivityResult)";
             registerError = String.format(Locale.US, registerError, methodName);
             Logger.error(registerError);
             call.reject(registerError);
             return null;
         }
 
-        return activityResultLauncher;
+        return activityLauncher;
     }
 
     /**
@@ -532,26 +540,25 @@ public class Plugin {
      * no registered launcher exists
      *
      * @param call       the plugin call
-     * @param methodName the name of the permission result callback method
+     * @param methodName the name of the permission callback method
      * @return a launcher, or null if none found
      */
     private @Nullable ActivityResultLauncher<String[]> getPermissionLauncherOrReject(PluginCall call, String methodName) {
-        ActivityResultLauncher<String[]> permissionResultLauncher = permissionLaunchers.get(methodName);
+        ActivityResultLauncher<String[]> permissionLauncher = permissionLaunchers.get(methodName);
 
         // if there is no registered launcher, reject the call with an error and return null
-        if (permissionResultLauncher == null) {
-            // TODO: fix the err msg
+        if (permissionLauncher == null) {
             String registerError =
-                "There is no activity result callback method registered for: %s. " +
-                "Please define a permissionCallback method name in the annotation and provide a " +
-                "method that has the correct signature: (PluginCall)";
+                "There is no PermissionCallback method registered for the name: %s. " +
+                "Please define a callback method annotated with @PermissionCallback " +
+                "that receives arguments: (PluginCall)";
             registerError = String.format(Locale.US, registerError, methodName);
             Logger.error(registerError);
             call.reject(registerError);
             return null;
         }
 
-        return permissionResultLauncher;
+        return permissionLauncher;
     }
 
     /**
@@ -755,7 +762,7 @@ public class Plugin {
      * @since 3.0.0
      */
     @PluginMethod
-    @ActivityResultCallback
+    @PermissionCallback
     public void checkPermissions(PluginCall pluginCall) {
         Map<String, PermissionState> permissionsResult = getPermissionStates();
 
