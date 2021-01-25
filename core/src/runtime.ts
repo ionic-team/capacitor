@@ -80,16 +80,16 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         {},
         {
           get(_, prop) {
+            // https://github.com/facebook/react/issues/20030
+            if (prop === '$$typeof') {
+              return undefined;
+            }
+
             const func = Reflect.get(nativePluginImpl, prop);
             if (typeof func === 'function') {
               // call the plugin method, Plugin.method(args)
               // platform implementation already ready to go
               return func;
-            }
-
-            // https://github.com/facebook/react/issues/20030
-            if (prop === '$$typeof') {
-              return undefined;
             }
 
             throw new CapacitorException(
@@ -114,6 +114,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       {},
       {
         get(_, prop) {
+          // https://github.com/facebook/react/issues/20030
+          if (prop === '$$typeof') {
+            return undefined;
+          }
+
           // proxy getter for any call on this plugin object
           const platform = getPlatform();
           const pltImplementation = impls[platform];
