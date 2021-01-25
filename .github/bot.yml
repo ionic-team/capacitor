@@ -48,4 +48,7 @@ tasks:
         types: [opened]
     condition: (await getTeamMembers('capacitor')).includes(payload.sender.login)
     config:
-      column-id: 10495656
+      columns:
+        issue: 10495656
+        pr: 10495659
+        draft-pr: 10495658
