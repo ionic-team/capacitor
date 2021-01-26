@@ -33,7 +33,7 @@ export interface CapacitorInstance extends CapacitorGlobal {
     };
   };
 
-  PluginHeaders: readonly PluginHeader[];
+  PluginHeaders?: readonly PluginHeader[];
 
   /**
    * Low-level API to send data to the native layer.

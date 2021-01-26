@@ -2,6 +2,7 @@ import { getPlatformId, initBridge } from './bridge';
 import type { CapacitorGlobal, PluginImplementations } from './definitions';
 import type {
   CapacitorInstance,
+  PluginHeader,
   WindowCapacitor,
 } from './definitions-internal';
 import { initEvents } from './events';
@@ -28,14 +29,21 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const isPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
 
-    if (!plugin) {
-      return false;
+    if (plugin && getPlatform() in plugin.implementations) {
+      // JS implementation available for the current platform.
+      return true;
     }
 
-    const platform = getPlatform();
+    if (getPluginHeader(pluginName)) {
+      // Native implementation available.
+      return true;
+    }
 
-    return !!plugin.implementations[platform];
+    return false;
   };
+
+  const getPluginHeader = (pluginName: string): PluginHeader | undefined =>
+    cap.PluginHeaders?.find(h => h.name === pluginName);
 
   const convertFileSrc = (filePath: string) =>
     convertFileSrcServerUrl(webviewServerUrl, filePath);
