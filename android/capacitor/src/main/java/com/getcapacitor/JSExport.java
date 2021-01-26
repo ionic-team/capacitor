@@ -4,15 +4,13 @@ import static com.getcapacitor.FileUtils.readFile;
 
 import android.content.Context;
 import android.text.TextUtils;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class JSExport {
 
@@ -52,16 +50,16 @@ public class JSExport {
         for (PluginHandle plugin : plugins) {
             lines.add(
                 "(function(w) {\n" +
-                    "var a = (w.Capacitor = w.Capacitor || {});\n" +
-                    "var p = (a.Plugins = a.Plugins || {});\n" +
-                    "var t = (p['" +
-                    plugin.getId() +
-                    "'] = {});\n" +
-                    "t.addListener = function(eventName, callback) {\n" +
-                    "  return w.Capacitor.addListener('" +
-                    plugin.getId() +
-                    "', eventName, callback);\n" +
-                    "}"
+                "var a = (w.Capacitor = w.Capacitor || {});\n" +
+                "var p = (a.Plugins = a.Plugins || {});\n" +
+                "var t = (p['" +
+                plugin.getId() +
+                "'] = {});\n" +
+                "t.addListener = function(eventName, callback) {\n" +
+                "  return w.Capacitor.addListener('" +
+                plugin.getId() +
+                "', eventName, callback);\n" +
+                "}"
             );
             String id = plugin.getId();
             JSONObject pluginObj = new JSONObject();
@@ -135,12 +133,12 @@ public class JSExport {
             case PluginMethod.RETURN_NONE:
                 lines.add(
                     "return w.Capacitor.nativeCallback('" +
-                        plugin.getId() +
-                        "', '" +
-                        method.getName() +
-                        "', " +
-                        CATCHALL_OPTIONS_PARAM +
-                        ")"
+                    plugin.getId() +
+                    "', '" +
+                    method.getName() +
+                    "', " +
+                    CATCHALL_OPTIONS_PARAM +
+                    ")"
                 );
                 break;
             case PluginMethod.RETURN_PROMISE:
@@ -151,18 +149,18 @@ public class JSExport {
             case PluginMethod.RETURN_CALLBACK:
                 lines.add(
                     "return w.Capacitor.nativeCallback('" +
-                        plugin.getId() +
-                        "', '" +
-                        method.getName() +
-                        "', " +
-                        CATCHALL_OPTIONS_PARAM +
-                        ", " +
-                        CALLBACK_PARAM +
-                        ")"
+                    plugin.getId() +
+                    "', '" +
+                    method.getName() +
+                    "', " +
+                    CATCHALL_OPTIONS_PARAM +
+                    ", " +
+                    CALLBACK_PARAM +
+                    ")"
                 );
                 break;
             default:
-                // TODO: Do something here?
+            // TODO: Do something here?
         }
 
         lines.add("}");
