@@ -61,33 +61,18 @@ public class JSExport {
                 "', eventName, callback);\n" +
                 "}"
             );
-            String id = plugin.getId();
-            JSONObject pluginObj = new JSONObject();
             Collection<PluginMethodHandle> methods = plugin.getMethods();
-            try {
-                JSONArray methodArray = new JSONArray();
-                pluginObj.put("name", id);
-
-                for (PluginMethodHandle method : methods) {
-                    JSONObject methodObj = new JSONObject();
-                    methodObj.put("name", method.getName());
-                    if (!method.getReturnType().equals(PluginMethod.RETURN_NONE)) {
-                        methodObj.put("rtype", method.getReturnType());
-                    }
-                    methodArray.put(methodObj);
-                    if (method.getName().equals("addListener") || method.getName().equals("removeListener")) {
-                        // Don't export add/remove listener, we do that automatically above as they are "special snowflakes"
-                        continue;
-                    }
-                    lines.add(generateMethodJS(plugin, method));
+            for (PluginMethodHandle method : methods) {
+                if (method.getName().equals("addListener") || method.getName().equals("removeListener")) {
+                    // Don't export add/remove listener, we do that automatically above as they are "special snowflakes"
+                    continue;
                 }
-
-                pluginObj.put("methods", methodArray);
-            } catch (JSONException e) {
-                // ignore
+                lines.add(generateMethodJS(plugin, method));
             }
-            pluginArray.put(pluginObj);
+
             lines.add("})(window);\n");
+
+            pluginArray.put(createPluginHeader(plugin));
         }
 
         return TextUtils.join("\n", lines) + "\nwindow.Capacitor.PluginHeaders = " + pluginArray.toString() + ";";
@@ -112,6 +97,40 @@ public class JSExport {
             Logger.error("Unable to read file at path " + path);
         }
         return builder.toString();
+    }
+
+    private static JSONObject createPluginHeader(PluginHandle plugin) {
+        JSONObject pluginObj = new JSONObject();
+        Collection<PluginMethodHandle> methods = plugin.getMethods();
+        try {
+            String id = plugin.getId();
+            JSONArray methodArray = new JSONArray();
+            pluginObj.put("name", id);
+
+            for (PluginMethodHandle method : methods) {
+                methodArray.put(createPluginMethodHeader(method));
+            }
+
+            pluginObj.put("methods", methodArray);
+        } catch (JSONException e) {
+            // ignore
+        }
+        return pluginObj;
+    }
+
+    private static JSONObject createPluginMethodHeader(PluginMethodHandle method) {
+        JSONObject methodObj = new JSONObject();
+
+        try {
+            methodObj.put("name", method.getName());
+            if (!method.getReturnType().equals(PluginMethod.RETURN_NONE)) {
+                methodObj.put("rtype", method.getReturnType());
+            }
+        } catch (JSONException e) {
+            // ignore
+        }
+
+        return methodObj;
     }
 
     private static String generateMethodJS(PluginHandle plugin, PluginMethodHandle method) {
