@@ -40,10 +40,10 @@ export interface CapacitorGlobal {
    * Sends data over the bridge to the native layer.
    * Returns the Callback Id.
    */
-  nativeCallback: (
+  nativeCallback: <O>(
     pluginName: string,
     methodName: string,
-    options?: any,
+    options?: O,
     callback?: PluginCallback,
   ) => string;
 
@@ -52,11 +52,11 @@ export interface CapacitorGlobal {
    * resolves the promise when it receives the data from
    * the native implementation.
    */
-  nativePromise: (
+  nativePromise: <O, R>(
     pluginName: string,
     methodName: string,
-    options?: any,
-  ) => Promise<any>;
+    options?: O,
+  ) => Promise<R>;
 
   registerPlugin: RegisterPlugin;
 
