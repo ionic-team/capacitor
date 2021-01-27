@@ -81,7 +81,7 @@ export interface CapacitorInstance extends CapacitorGlobal {
 }
 
 export interface MessageCallData {
-  type: 'message' | undefined;
+  type?: 'message';
   callbackId: string;
   pluginId: string;
   methodName: string;
