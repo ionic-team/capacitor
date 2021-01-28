@@ -2,6 +2,7 @@ import { getPlatformId, initBridge } from './bridge';
 import type { CapacitorGlobal, PluginImplementations } from './definitions';
 import type {
   CapacitorInstance,
+  PluginHeader,
   WindowCapacitor,
 } from './definitions-internal';
 import { initEvents } from './events';
@@ -25,8 +26,24 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   const isNativePlatform = () => getPlatformId(win) !== 'web';
 
-  const isPluginAvailable = (pluginName: string) =>
-    Object.prototype.hasOwnProperty.call(Plugins, pluginName);
+  const isPluginAvailable = (pluginName: string): boolean => {
+    const plugin = registeredPlugins.get(pluginName);
+
+    if (plugin && getPlatform() in plugin.implementations) {
+      // JS implementation available for the current platform.
+      return true;
+    }
+
+    if (getPluginHeader(pluginName)) {
+      // Native implementation available.
+      return true;
+    }
+
+    return false;
+  };
+
+  const getPluginHeader = (pluginName: string): PluginHeader | undefined =>
+    cap.PluginHeaders?.find(h => h.name === pluginName);
 
   const convertFileSrc = (filePath: string) =>
     convertFileSrcServerUrl(webviewServerUrl, filePath);
@@ -59,8 +76,13 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     );
   };
 
+  interface RegisteredPlugin {
+    proxy: any;
+    implementations: PluginImplementations;
+  }
+
   // ensure we do not double proxy the same plugin
-  const registeredPlugins = new Map<string, any>();
+  const registeredPlugins = new Map<string, RegisteredPlugin>();
 
   const registerPlugin = (
     pluginName: string,
@@ -68,7 +90,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   ): any => {
     const registeredPlugin = registeredPlugins.get(pluginName);
     if (registeredPlugin) {
-      return registeredPlugin;
+      return registeredPlugin.proxy;
     }
 
     const nativePluginImpl = Plugins[pluginName];
@@ -76,7 +98,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       // the native implementation is already on the global
       // return a proxy that'll also handle any missing methods
       // convert the Capacitor.Plugins.PLUGIN into a proxy and return it
-      const nativePluginProxy = (Plugins[pluginName] = new Proxy<any>(
+      const nativePluginProxy = (Plugins[pluginName] = new Proxy(
         {},
         {
           get(_, prop) {
@@ -101,7 +123,10 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
           },
         },
       ));
-      registeredPlugins.set(pluginName, nativePluginProxy);
+      registeredPlugins.set(pluginName, {
+        implementations: impls,
+        proxy: nativePluginProxy,
+      });
       return nativePluginProxy;
     }
 
@@ -110,7 +135,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
     // there isn't a native implementation already on the global
     // create a Proxy which is used to lazy load implementations
-    const pluginProxy = (Plugins[pluginName] = new Proxy<any>(
+    const pluginProxy = (Plugins[pluginName] = new Proxy(
       {},
       {
         get(_, prop) {
@@ -229,7 +254,10 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         },
       },
     ));
-    registeredPlugins.set(pluginName, pluginProxy);
+    registeredPlugins.set(pluginName, {
+      implementations: impls,
+      proxy: pluginProxy,
+    });
     return pluginProxy;
   };
 
