@@ -98,7 +98,7 @@ public class Plugin {
      * Registers activity result launchers defined on plugins, used for permission requests and
      * activities started for result.
      */
-    void initializePermissionLaunchers() {
+    void initializeActivityLaunchers() {
         try {
             // load the default checkPermission callback from the plugin parent class
             Method method = getClass().getSuperclass().getMethod("checkPermissions", PluginCall.class);
