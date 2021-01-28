@@ -244,7 +244,6 @@ public class Plugin {
      * Set the wrapper {@link PluginHandle} instance for this plugin that
      * contains additional metadata about the Plugin instance (such
      * as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
-     *
      * @param pluginHandle
      */
     public void setPluginHandle(PluginHandle pluginHandle) {
@@ -273,9 +272,9 @@ public class Plugin {
     /**
      * Called to save a {@link PluginCall} in order to reference it
      * later, such as in an activity or permissions result handler
+     * @deprecated use {@link Bridge#saveCall(PluginCall)}
      *
      * @param lastCall
-     * @deprecated use {@link Bridge#saveCall(PluginCall)}
      */
     @Deprecated
     public void saveCall(PluginCall lastCall) {
@@ -296,9 +295,9 @@ public class Plugin {
 
     /**
      * Get the last saved call, if any
+     * @deprecated use {@link Bridge#getSavedCall(String)}
      *
      * @return
-     * @deprecated use {@link Bridge#getSavedCall(String)}
      */
     @Deprecated
     public PluginCall getSavedCall() {
@@ -458,7 +457,7 @@ public class Plugin {
 
     /**
      * Request permissions using aliases defined on the plugin.
-     * <p>
+     *
      * If there is no registered permission callback for the PluginCall passed in, the call will
      * be rejected. Make sure a valid permission callback method is registered using the
      * {@link PermissionCallback} annotation.
@@ -980,7 +979,6 @@ public class Plugin {
      * {@link Activity#startActivityForResult} as it associates the plugin with
      * any resulting data from the new Activity even if this app
      * is destroyed by the OS (to free up memory, for example).
-     *
      * @param intent
      * @param resultCode
      */
