@@ -637,6 +637,12 @@ public class Bridge {
         return this.savedCalls.get(callbackId);
     }
 
+    PluginCall getPluginCallForLastActivity() {
+        PluginCall pluginCallForLastActivity = this.pluginCallForLastActivity;
+        this.pluginCallForLastActivity = null;
+        return pluginCallForLastActivity;
+    }
+
     /**
      * Release a retained call
      * @param call

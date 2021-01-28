@@ -162,6 +162,9 @@ public class Plugin {
 
     private void triggerActivityCallback(Method method, ActivityResult result) {
         PluginCall savedCall = bridge.getSavedCall(lastPluginCallId);
+        if (savedCall == null) {
+            savedCall = bridge.getPluginCallForLastActivity();
+        }
 
         // invoke the activity result callback
         try {
