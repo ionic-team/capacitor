@@ -1,6 +1,6 @@
 import type {
-  CallData,
   CapacitorInstance,
+  MessageCallData,
   PluginResult,
   WindowCapacitor,
 } from './definitions-internal';
@@ -70,7 +70,7 @@ const isFullConsole = (c: Partial<Console>): c is Console => {
   );
 };
 
-const createLogToNative = (c: Partial<Console>) => (call: CallData) => {
+const createLogToNative = (c: Partial<Console>) => (call: MessageCallData) => {
   if (isFullConsole(c)) {
     c.groupCollapsed(
       '%cnative %c' +
