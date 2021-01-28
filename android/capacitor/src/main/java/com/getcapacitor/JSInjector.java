@@ -20,10 +20,6 @@ class JSInjector {
     private String cordovaPluginsFileJS;
     private String localUrlJS;
 
-    public JSInjector(String globalJS, String pluginJS) {
-        this(globalJS, pluginJS, ""/* cordovaJS */, ""/* cordovaPluginsJS */, ""/* cordovaPluginsFileJS */, ""/* localUrlJS */);
-    }
-
     public JSInjector(
         String globalJS,
         String pluginJS,

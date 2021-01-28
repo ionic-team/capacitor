@@ -5,6 +5,16 @@ import type {
   PluginResultError,
 } from './definitions';
 
+export interface PluginHeaderMethod {
+  readonly name: string;
+  readonly rtype?: 'promise' | 'callback';
+}
+
+export interface PluginHeader {
+  readonly name: string;
+  readonly methods: readonly PluginHeaderMethod[];
+}
+
 /**
  * Has all instance properties that are available and used
  * by the native layer. The "Capacitor" interface it extends
@@ -22,6 +32,8 @@ export interface CapacitorInstance extends CapacitorGlobal {
       [prop: string]: any;
     };
   };
+
+  PluginHeaders?: readonly PluginHeader[];
 
   /**
    * Low-level API to send data to the native layer.
