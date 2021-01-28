@@ -1,6 +1,7 @@
 import type {
   CallData,
   CapacitorInstance,
+  ErrorCallData,
   WindowCapacitor,
   PluginResult,
   StoredCallback,
@@ -25,7 +26,7 @@ export const initBridge = (
   // create the postToNative() fn if needed
   if (win.androidBridge) {
     // android platform
-    postToNative = (data: any) => {
+    postToNative = data => {
       try {
         win.androidBridge.postMessage(JSON.stringify(data));
       } catch (e) {
@@ -34,9 +35,9 @@ export const initBridge = (
     };
   } else if (win.webkit?.messageHandlers?.bridge) {
     // ios platform
-    postToNative = (data: any) => {
+    postToNative = data => {
       try {
-        data.type = 'message';
+        data.type = data.type ?? 'message';
         win.webkit.messageHandlers.bridge.postMessage(data);
       } catch (e) {
         win?.console?.error(e);
@@ -50,7 +51,7 @@ export const initBridge = (
     if (str.indexOf('script error') > -1) {
       // Some IE issue?
     } else {
-      const errObj = {
+      const errObj: ErrorCallData = {
         type: 'js.error',
         error: {
           message: msg,
@@ -66,7 +67,7 @@ export const initBridge = (
       }
 
       if (postToNative) {
-        postToNative(errObj as any);
+        postToNative(errObj);
       }
     }
 
