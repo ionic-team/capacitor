@@ -192,12 +192,15 @@ export const initBridge = (
     // toNative bridge found
     cap.nativeCallback = (pluginName, methodName, options, callback) => {
       if (typeof options === 'function') {
-        callback = options;
-        options = null;
+        console.warn(
+          `Using a callback as the 'options' parameter of 'nativeCallback()' is deprecated.`,
+        );
+
+        (callback as any) = options;
+        (options as any) = null;
       }
-      return cap.toNative(pluginName, methodName, options, {
-        callback: callback,
-      });
+
+      return cap.toNative(pluginName, methodName, options, { callback });
     };
 
     cap.nativePromise = (pluginName, methodName, options) => {
