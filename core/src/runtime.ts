@@ -86,184 +86,130 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   const registerPlugin = (
     pluginName: string,
-    impls: PluginImplementations = {},
+    jsImplementations: PluginImplementations,
   ): any => {
-    const registeredPlugin = registeredPlugins.get(pluginName);
-    if (registeredPlugin) {
-      return registeredPlugin.proxy;
-    }
+    const platform = getPlatform();
+    const pluginHeader = getPluginHeader(pluginName);
+    let jsImplementation: any;
 
-    const nativePluginImpl = Plugins[pluginName];
-    if (nativePluginImpl) {
-      // the native implementation is already on the global
-      // return a proxy that'll also handle any missing methods
-      // convert the Capacitor.Plugins.PLUGIN into a proxy and return it
-      const nativePluginProxy = (Plugins[pluginName] = new Proxy(
-        {},
-        {
-          get(_, prop) {
-            // https://github.com/facebook/react/issues/20030
-            if (prop === '$$typeof') {
-              return undefined;
-            }
+    const loadJavaScriptImplementation = async (): Promise<any> => {
+      if (!jsImplementation && platform in jsImplementations) {
+        jsImplementation =
+          typeof jsImplementations[platform] === 'function'
+            ? (jsImplementation = await jsImplementations[platform]())
+            : (jsImplementation = jsImplementations[platform]);
+      }
 
-            const func = Reflect.get(nativePluginImpl, prop);
-            if (typeof func === 'function') {
-              // call the plugin method, Plugin.method(args)
-              // platform implementation already ready to go
-              return func;
-            }
+      return jsImplementation;
+    };
 
-            throw new CapacitorException(
-              `"${pluginName}.${
-                prop as any
-              }()" is not implemented on ${getPlatform()}`,
-              ExceptionCode.Unimplemented,
-            );
-          },
-        },
-      ));
-      registeredPlugins.set(pluginName, {
-        implementations: impls,
-        proxy: nativePluginProxy,
+    const loadJavaScriptImplementationMethod = (
+      impl: any,
+      prop: PropertyKey,
+    ): any => {
+      if (impl) {
+        return impl[prop]?.bind(impl);
+      } else if (pluginHeader) {
+        const methodHeader = pluginHeader.methods.find(m => prop === m.name);
+
+        if (methodHeader) {
+          if (methodHeader.rtype === 'promise') {
+            return (options: any) =>
+              cap.nativePromise(pluginName, prop.toString(), options);
+          } else {
+            return (options: any, callback: any) =>
+              cap.nativeCallback(
+                pluginName,
+                prop.toString(),
+                options,
+                callback,
+              );
+          }
+        }
+      }
+    };
+
+    const createPluginMethodWrapper = (prop: PropertyKey) => {
+      const wrapper = async (...args: any[]) => {
+        const impl = await loadJavaScriptImplementation();
+        const fn = loadJavaScriptImplementationMethod(impl, prop);
+
+        if (fn) {
+          return fn(...args);
+        } else {
+          throw new CapacitorException(
+            `"${pluginName}.${
+              prop as any
+            }()" is not implemented on ${platform}`,
+            ExceptionCode.Unimplemented,
+          );
+        }
+      };
+
+      // Some flair ✨
+      wrapper.toString = () => `${prop.toString()}() { [capacitor code] }`;
+      Object.defineProperty(wrapper, 'name', {
+        value: prop,
+        writable: false,
       });
-      return nativePluginProxy;
-    }
 
-    let loadedImpl: any = null;
-    let lazyLoadingImpl: Promise<any> = null;
+      return wrapper;
+    };
 
-    // there isn't a native implementation already on the global
-    // create a Proxy which is used to lazy load implementations
-    const pluginProxy = (Plugins[pluginName] = new Proxy(
+    const addListener = createPluginMethodWrapper('addListener');
+    const removeListener = createPluginMethodWrapper('removeListener');
+    const addListenerWrapper = (eventName: string, callback: any) => {
+      const call = addListener({ eventName }, callback);
+      const remove = async () => {
+        const callbackId = await call;
+
+        removeListener(
+          {
+            eventName,
+            callbackId,
+          },
+          callback,
+        );
+      };
+
+      const p = new Promise(resolve => call.then(() => resolve({ remove })));
+
+      Object.defineProperty(p, 'remove', {
+        value: async () => {
+          console.warn(
+            `Calling 'remove' on a synchronous response from addListener() is deprecated.`,
+          );
+
+          remove();
+        },
+      });
+
+      return p;
+    };
+
+    const proxy = new Proxy(
       {},
       {
         get(_, prop) {
-          // https://github.com/facebook/react/issues/20030
-          if (prop === '$$typeof') {
-            return undefined;
+          switch (prop) {
+            // https://github.com/facebook/react/issues/20030
+            case '$$typeof':
+              return undefined;
+            case 'addListener':
+              return addListenerWrapper;
+            case 'removeListener':
+              return removeListener;
+            default:
+              return createPluginMethodWrapper(prop);
           }
-
-          // proxy getter for any call on this plugin object
-          const platform = getPlatform();
-          const pltImplementation = impls[platform];
-
-          if (pltImplementation) {
-            // this platform has an implementation we can use
-
-            if (!loadedImpl && !lazyLoadingImpl) {
-              // haven't loaded the implementation yet
-              if (typeof pltImplementation === 'function') {
-                // fn provided to load the implementation
-                const loaderRtn = pltImplementation();
-                if (loaderRtn) {
-                  // received an object from the implementation loader fn
-                  if (typeof loaderRtn.then === 'function') {
-                    // returned a promise to lazy load the implementation
-                    lazyLoadingImpl = loaderRtn;
-                  } else {
-                    // return the data we need
-                    loadedImpl = loaderRtn;
-                  }
-                }
-              } else {
-                // given the exact value already
-                loadedImpl = pltImplementation;
-              }
-            }
-
-            if (loadedImpl) {
-              // implementation loaded and has the methd to call ready
-              const func = Reflect.get(loadedImpl, prop);
-              if (typeof func === 'function') {
-                return (...args: any[]) =>
-                  Reflect.apply(func, loadedImpl, args);
-              }
-              throw new CapacitorException(
-                `"${pluginName}.${
-                  prop as any
-                }()" is not implemented on ${platform}`,
-                ExceptionCode.Unimplemented,
-              );
-            }
-
-            if (lazyLoadingImpl) {
-              // actively lazy loading the implementation
-              if (prop === 'addListener') {
-                // Plugin.addListener()
-                // returns an object with a remove() fn
-                return (...args: any[]) => {
-                  // doing some lazy loading trickery so we can return
-                  // an object, yet still lazy load the implementation
-                  let loadedRtn: any = null;
-                  lazyLoadingImpl.then(lazyLoadedImpl => {
-                    loadedImpl = lazyLoadedImpl;
-                    const func = Reflect.get(loadedImpl, prop);
-                    loadedRtn = Reflect.apply(func, loadedImpl, args);
-                  });
-                  return {
-                    remove: () => {
-                      lazyLoadingImpl.then(lazyLoadedImpl => {
-                        loadedImpl = lazyLoadedImpl;
-                        if (loadedRtn) {
-                          loadedRtn.remove();
-                        }
-                      });
-                    },
-                  };
-                };
-              }
-
-              if (prop === 'removeAllListeners') {
-                // Plugin.removeAllListeners()
-                // returns void, not a promise
-                return () => {
-                  lazyLoadingImpl.then(lazyLoadedImpl => {
-                    loadedImpl = lazyLoadedImpl;
-                    const func = Reflect.get(loadedImpl, prop);
-                    return Reflect.apply(func, loadedImpl, []);
-                  });
-                };
-              }
-
-              return (...args: any[]) => {
-                return lazyLoadingImpl.then(lazyLoadedImpl => {
-                  // implementation is now loaded and has the methd to call ready
-                  loadedImpl = lazyLoadedImpl;
-
-                  const func = Reflect.get(loadedImpl, prop);
-                  if (typeof func === 'function') {
-                    return Reflect.apply(func, loadedImpl, args);
-                  }
-
-                  throw new CapacitorException(
-                    `"${pluginName}.${
-                      prop as any
-                    }()" is not implemented on ${platform}`,
-                    ExceptionCode.Unimplemented,
-                  );
-                });
-              };
-            }
-          }
-
-          throw new CapacitorException(
-            `"${pluginName}" plugin is not implemented on ${platform}`,
-            ExceptionCode.Unimplemented,
-          );
         },
       },
-    ));
-    registeredPlugins.set(pluginName, {
-      implementations: impls,
-      proxy: pluginProxy,
-    });
-    return pluginProxy;
-  };
+    );
 
-  // convert all the existing plugins on the global Capacitor.Plugins
-  // object into proxies automatically
-  Object.keys(Plugins).forEach(pluginName => registerPlugin(pluginName));
+    Plugins[pluginName] = proxy;
+
+    return proxy;
+  };
 
   cap.convertFileSrc = convertFileSrc;
   cap.getPlatform = getPlatform;
