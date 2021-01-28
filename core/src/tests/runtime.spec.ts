@@ -22,6 +22,7 @@ describe('runtime', () => {
   it('used existing window.Capacitor.Plugins', () => {
     win.Capacitor = {
       Plugins: { Awesome: {} },
+      PluginHeaders: [{ name: 'Awesome', methods: [] }],
     } as any;
     cap = createCapacitor(win);
     expect(cap.isPluginAvailable('Awesome')).toBe(true);

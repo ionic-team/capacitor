@@ -1,3 +1,13 @@
+internal struct PluginHeaderMethod: Codable {
+    let name: String
+    let rtype: String?
+}
+
+internal struct PluginHeader: Codable {
+    let name: String
+    let methods: [PluginHeaderMethod]
+}
+
 /**
  * PluginExport handles defining JS APIs that map to registered
  * plugins and are responsible for proxying calls to our bridge.
@@ -56,10 +66,36 @@ internal class JSExport {
     })(window);
     """)
 
+        if let data = try? JSONEncoder().encode(createPluginHeader(pluginClassName: pluginClassName, pluginType: pluginType)), let header = String(data: data, encoding: .utf8) {
+            lines.append("""
+                (function(w) {
+                var a = (w.Capacitor = w.Capacitor || {});
+                var h = (a.PluginHeaders = a.PluginHeaders || []);
+                h.push(\(header));
+                })(window);
+                """)
+        }
+
         let js = lines.joined(separator: "\n")
 
         let userScript = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         userContentController.addUserScript(userScript)
+    }
+
+    private static func createPluginHeader(pluginClassName: String, pluginType: CAPPlugin.Type) -> PluginHeader? {
+        if let bridgeType = pluginType as? CAPBridgedPlugin.Type, let methods = bridgeType.pluginMethods() as? [CAPPluginMethod] {
+            return PluginHeader(name: pluginClassName, methods: methods.map { createPluginHeaderMethod(method: $0) })
+        }
+
+        return nil
+    }
+
+    private static func createPluginHeaderMethod(method: CAPPluginMethod) -> PluginHeaderMethod {
+        var rtype = method.returnType
+        if rtype == "none" {
+            rtype = nil
+        }
+        return PluginHeaderMethod(name: method.name, rtype: rtype)
     }
 
     private static func generateMethod(pluginClassName: String, method: CAPPluginMethod) -> String {
