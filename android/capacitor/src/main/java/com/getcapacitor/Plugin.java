@@ -35,7 +35,7 @@ import org.json.JSONException;
  * Plugin is the base class for all plugins, containing a number of
  * convenient features for interacting with the {@link Bridge}, managing
  * plugin permissions, tracking lifecycle events, and more.
- * <p>
+ *
  * You should inherit from this class when creating new plugins, along with
  * adding the {@link CapacitorPlugin} annotation to add additional required
  * metadata about the Plugin
@@ -211,7 +211,6 @@ public class Plugin {
 
     /**
      * Get the main {@link Context} for the current Activity (your app)
-     *
      * @return the Context for the current activity
      */
     public Context getContext() {
@@ -220,7 +219,6 @@ public class Plugin {
 
     /**
      * Get the main {@link Activity} for the app
-     *
      * @return the Activity for the current app
      */
     public AppCompatActivity getActivity() {
@@ -229,7 +227,6 @@ public class Plugin {
 
     /**
      * Set the Bridge instance for this plugin
-     *
      * @param bridge
      */
     public void setBridge(Bridge bridge) {
@@ -256,10 +253,9 @@ public class Plugin {
 
     /**
      * Return the wrapper {@link PluginHandle} for this plugin.
-     * <p>
+     *
      * This wrapper contains additional metadata about the plugin instance,
      * such as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
-     *
      * @return
      */
     public PluginHandle getPluginHandle() {
@@ -268,7 +264,6 @@ public class Plugin {
 
     /**
      * Get the root App ID
-     *
      * @return
      */
     public String getAppId() {
@@ -289,7 +284,6 @@ public class Plugin {
 
     /**
      * Set the last saved call to null to free memory
-     *
      * @deprecated use {@link PluginCall#release(Bridge)}
      */
     @Deprecated
@@ -323,11 +317,11 @@ public class Plugin {
 
     /**
      * Get the value for a key on the config for this plugin.
+     * @deprecated use {@link #getConfig()} and access config values using the methods available
+     * depending on the type.
      *
      * @param key the key for the config value
      * @return some object containing the value from the config
-     * @deprecated use {@link #getConfig()} and access config values using the methods available
-     * depending on the type.
      */
     @Deprecated
     public Object getConfigValue(String key) {
@@ -341,7 +335,6 @@ public class Plugin {
 
     /**
      * Check whether any of the given permissions has been defined in the AndroidManifest.xml
-     *
      * @param permissions
      * @return
      */
@@ -356,7 +349,6 @@ public class Plugin {
 
     /**
      * Check whether any of the given permissions has been defined in the AndroidManifest.xml
-     *
      * @param permissions
      * @return
      */
@@ -389,7 +381,6 @@ public class Plugin {
 
     /**
      * Check whether the given permission has been granted by the user
-     *
      * @param permission
      * @return
      */
@@ -402,7 +393,6 @@ public class Plugin {
      * this method checks if each is granted. Note: if you are okay
      * with a limited subset of the permissions being granted, check
      * each one individually instead with hasPermission
-     *
      * @return
      */
     public boolean hasRequiredPermissions() {
@@ -432,13 +422,13 @@ public class Plugin {
 
     /**
      * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
-     * <p>
+     *
      * If there is no registered permission callback for the PluginCall passed in, the call will
      * be rejected. Make sure a valid permission callback method is registered using the
      * {@link PermissionCallback} annotation.
      *
-     * @param call the plugin call
      * @since 3.0.0
+     * @param call the plugin call
      */
     protected void requestAllPermissions(@NonNull PluginCall call, @NonNull String callbackName) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
@@ -454,7 +444,7 @@ public class Plugin {
 
     /**
      * Request permissions using an alias defined on the plugin.
-     * <p>
+     *
      * If there is no registered permission callback for the PluginCall passed in, the call will
      * be rejected. Make sure a valid permission callback method is registered using the
      * {@link PermissionCallback} annotation.
@@ -609,8 +599,8 @@ public class Plugin {
     /**
      * Helper to check all permissions defined on a plugin and see the state of each.
      *
-     * @return A mapping of permission aliases to the associated granted status.
      * @since 3.0.0
+     * @return A mapping of permission aliases to the associated granted status.
      */
     public Map<String, PermissionState> getPermissionStates() {
         return bridge.getPermissionStates(this);
@@ -618,7 +608,6 @@ public class Plugin {
 
     /**
      * Add a listener for the given event
-     *
      * @param eventName
      * @param call
      */
@@ -639,7 +628,6 @@ public class Plugin {
 
     /**
      * Remove a listener from the given event
-     *
      * @param eventName
      * @param call
      */
@@ -654,7 +642,6 @@ public class Plugin {
 
     /**
      * Notify all listeners that an event occurred
-     *
      * @param eventName
      * @param data
      */
@@ -678,7 +665,6 @@ public class Plugin {
      * Notify all listeners that an event occurred
      * This calls {@link Plugin#notifyListeners(String, JSObject, boolean)}
      * with retainUntilConsumed set to false
-     *
      * @param eventName
      * @param data
      */
@@ -700,7 +686,6 @@ public class Plugin {
     /**
      * Send retained arguments (if any) for this event. This
      * is called only when the first listener for an event is added
-     *
      * @param eventName
      */
     private void sendRetainedArgumentsForEvent(String eventName) {
@@ -715,7 +700,6 @@ public class Plugin {
 
     /**
      * Exported plugin call for adding a listener to this plugin
-     *
      * @param call
      */
     @SuppressWarnings("unused")
@@ -728,7 +712,6 @@ public class Plugin {
 
     /**
      * Exported plugin call to remove a listener from this plugin
-     *
      * @param call
      */
     @SuppressWarnings("unused")
@@ -745,7 +728,6 @@ public class Plugin {
 
     /**
      * Exported plugin call to remove all listeners from this plugin
-     *
      * @param call
      */
     @SuppressWarnings("unused")
@@ -870,11 +852,11 @@ public class Plugin {
      * Handle request permissions result. A plugin using the deprecated {@link NativePlugin}
      * should override this to handle the result, or this method will handle the result
      * for our convenient requestPermissions call.
+     * @deprecated in favor of using callbacks in conjunction with {@link CapacitorPlugin}
      *
      * @param requestCode
      * @param permissions
      * @param grantResults
-     * @deprecated in favor of using callbacks in conjunction with {@link CapacitorPlugin}
      */
     @Deprecated
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -897,7 +879,6 @@ public class Plugin {
      * may be limited, plugins that expect to be called with large data
      * objects (such as a file), should override this method and selectively
      * store option values in a {@link Bundle} to avoid exceeding limits.
-     *
      * @return a new {@link Bundle} with fields set from the options of the last saved {@link PluginCall}
      */
     protected Bundle saveInstanceState() {
@@ -922,7 +903,6 @@ public class Plugin {
      * activity response. If the plugin that started the activity
      * stored data in {@link Plugin#saveInstanceState()} then this
      * method will be called to allow the plugin to restore from that.
-     *
      * @param state
      */
     protected void restoreState(Bundle state) {}
@@ -942,14 +922,12 @@ public class Plugin {
 
     /**
      * Handle onNewIntent
-     *
      * @param intent
      */
     protected void handleOnNewIntent(Intent intent) {}
 
     /**
      * Handle onConfigurationChanged
-     *
      * @param newConfig
      */
     protected void handleOnConfigurationChanged(Configuration newConfig) {}
@@ -997,7 +975,7 @@ public class Plugin {
 
     /**
      * Start a new Activity.
-     * <p>
+     *
      * Note: This method must be used by all plugins instead of calling
      * {@link Activity#startActivityForResult} as it associates the plugin with
      * any resulting data from the new Activity even if this app
@@ -1013,7 +991,6 @@ public class Plugin {
 
     /**
      * Execute the given runnable on the Bridge's task handler
-     *
      * @param runnable
      */
     public void execute(Runnable runnable) {
@@ -1022,7 +999,6 @@ public class Plugin {
 
     /**
      * Shortcut for getting the plugin log tag
-     *
      * @param subTags
      */
     protected String getLogTag(String... subTags) {
