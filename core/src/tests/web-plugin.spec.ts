@@ -6,6 +6,18 @@ class MockPlugin extends WebPlugin {
       value: 'Capacitors on top of toast!',
     });
   }
+
+  getListeners() {
+    return this.listeners;
+  }
+
+  getWindowListeners() {
+    return this.windowListeners;
+  }
+
+  registerFakeWindowListener() {
+    this.registerWindowListener('fake', 'test');
+  }
 }
 
 describe('Web Plugin', () => {
@@ -22,7 +34,7 @@ describe('Web Plugin', () => {
 
     const handle = await plugin.addListener('test', lf);
 
-    const listener = plugin.listeners['test'];
+    const listener = plugin.getListeners()['test'];
     expect(listener).not.toBe(undefined);
     expect(listener.length).toEqual(1);
     handle.remove();
@@ -42,7 +54,7 @@ describe('Web Plugin', () => {
     const handle2 = await plugin.addListener('test', lf2);
     const handle3 = await plugin.addListener('test', lf3);
 
-    const listener = plugin.listeners['test'];
+    const listener = plugin.getListeners()['test'];
     expect(listener.length).toEqual(3);
     handle1.remove();
     expect(listener.length).toEqual(2);
@@ -59,7 +71,7 @@ describe('Web Plugin', () => {
     const handle = await plugin.addListener('test', lf);
     handle.remove();
 
-    const listener = plugin.listeners['test'];
+    const listener = plugin.getListeners()['test'];
     expect(listener).toEqual([]);
   });
 
@@ -81,13 +93,13 @@ describe('Web Plugin', () => {
       MockPlugin.prototype as any,
       'addWindowListener',
     );
-    plugin.registerWindowListener('fake', 'test');
+    plugin.registerFakeWindowListener();
 
     const lf = jest.fn();
     const handle = await plugin.addListener('test', lf);
 
     // Make sure the window listener was added
-    let windowListener = plugin.windowListeners['test'];
+    let windowListener = plugin.getWindowListeners()['test'];
     expect(windowListener.registered).toEqual(true);
     expect(pluginAddWindowListener.mock.calls.length).toEqual(1);
 
@@ -103,15 +115,15 @@ describe('Web Plugin', () => {
     expect(eventArg.detail.value).toEqual('Capacitors on top of toast!');
 
     handle.remove();
-    windowListener = plugin.windowListeners['test'];
+    windowListener = plugin.getWindowListeners()['test'];
     expect(windowListener.registered).toEqual(false);
   });
 
   it('Should only call window event if listeners bound', () => {
-    plugin.registerWindowListener('fake', 'test');
+    plugin.registerFakeWindowListener();
 
     // Make sure the window listener was added
-    const windowListener = plugin.windowListeners['test'];
+    const windowListener = plugin.getWindowListeners()['test'];
 
     expect(windowListener.registered).toEqual(false);
 

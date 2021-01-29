@@ -14,6 +14,12 @@ import {
 } from './util';
 import { initVendor } from './vendor';
 
+export interface RegisteredPlugin {
+  readonly name: string;
+  readonly proxy: any;
+  readonly platforms: ReadonlySet<string>;
+}
+
 export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
 
@@ -29,7 +35,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const isPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
 
-    if (plugin && getPlatform() in plugin.implementations) {
+    if (plugin && plugin.platforms.has(getPlatform())) {
       // JS implementation available for the current platform.
       return true;
     }
@@ -76,18 +82,21 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     );
   };
 
-  interface RegisteredPlugin {
-    proxy: any;
-    implementations: PluginImplementations;
-  }
-
-  // ensure we do not double proxy the same plugin
   const registeredPlugins = new Map<string, RegisteredPlugin>();
 
   const registerPlugin = (
     pluginName: string,
-    jsImplementations: PluginImplementations,
+    jsImplementations: PluginImplementations = {},
   ): any => {
+    const registeredPlugin = registeredPlugins.get(pluginName);
+    if (registeredPlugin) {
+      console.warn(
+        `Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`,
+      );
+
+      return registeredPlugin.proxy;
+    }
+
     const platform = getPlatform();
     const pluginHeader = getPluginHeader(pluginName);
     let jsImplementation: any;
@@ -126,6 +135,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
               );
           }
         }
+      } else {
+        throw new CapacitorException(
+          `"${pluginName}" plugin is not implemented on ${platform}`,
+          ExceptionCode.Unimplemented,
+        );
       }
     };
 
@@ -137,7 +151,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
           if (fn) {
             const p = fn(...args);
-            remove = p.remove;
+            remove = p?.remove;
             return p;
           } else {
             throw new CapacitorException(
@@ -213,6 +227,15 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     );
 
     Plugins[pluginName] = proxy;
+
+    registeredPlugins.set(pluginName, {
+      name: pluginName,
+      proxy,
+      platforms: new Set([
+        ...Object.keys(jsImplementations),
+        ...(pluginHeader ? [platform] : []),
+      ]),
+    });
 
     return proxy;
   };

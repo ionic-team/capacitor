@@ -78,7 +78,7 @@ describe('legacy', () => {
     expect(cap.Plugins['Legacy']).toBe(Legacy);
   });
 
-  it('error registerWebPlugin() w/out config.name', () => {
+  it('error registerWebPlugin() w/out config.name', async () => {
     win = {};
     cap = createCapacitor(win) as any;
 
@@ -89,7 +89,7 @@ describe('legacy', () => {
     );
   });
 
-  it('error registerWebPlugin() w/out config', () => {
+  it('error registerWebPlugin() w/out config', async () => {
     win = {};
     cap = createCapacitor(win) as any;
 
