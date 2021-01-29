@@ -329,7 +329,10 @@ describe('plugin', () => {
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
 
-    const rtn = Awesome.addListener('eventName', () => {});
+    const rtn = Awesome.addListener('eventName', () => {
+      // ignore
+    });
+
     expect(rtn).toBeDefined();
     expect(typeof (rtn as any).remove === 'function').toBe(true);
   });
@@ -341,7 +344,10 @@ describe('plugin', () => {
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
 
-    const rtn = await Awesome.addListener('eventName', () => {});
+    const rtn = await Awesome.addListener('eventName', () => {
+      // ignore
+    });
+
     expect(rtn).toBeDefined();
     expect(typeof (rtn as any).remove === 'function').toBe(true);
   });

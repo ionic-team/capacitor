@@ -35,7 +35,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const isPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
 
-    if (plugin && plugin.platforms.has(getPlatform())) {
+    if (plugin?.platforms.has(getPlatform())) {
       // JS implementation available for the current platform.
       return true;
     }
