@@ -54,7 +54,7 @@ describe('plugin', () => {
 
     // core runtime creates the actual Capacitor instance
     cap = createCapacitor(win);
-    cap.nativePromise = async () => 88;
+    cap.nativePromise = async () => 88 as any;
 
     // user runtime registers the plugin
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
