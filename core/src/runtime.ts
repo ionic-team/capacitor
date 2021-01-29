@@ -92,7 +92,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     const pluginHeader = getPluginHeader(pluginName);
     let jsImplementation: any;
 
-    const loadJavaScriptImplementation = async (): Promise<any> => {
+    const loadPluginImplementation = async (): Promise<any> => {
       if (!jsImplementation && platform in jsImplementations) {
         jsImplementation =
           typeof jsImplementations[platform] === 'function'
@@ -103,10 +103,10 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       return jsImplementation;
     };
 
-    const loadJavaScriptImplementationMethod = (
+    const createPluginMethod = (
       impl: any,
       prop: PropertyKey,
-    ): any => {
+    ): ((...args: any[]) => any) => {
       if (impl) {
         return impl[prop]?.bind(impl);
       } else if (pluginHeader) {
@@ -130,20 +130,30 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     };
 
     const createPluginMethodWrapper = (prop: PropertyKey) => {
-      const wrapper = async (...args: any[]) => {
-        const impl = await loadJavaScriptImplementation();
-        const fn = loadJavaScriptImplementationMethod(impl, prop);
+      let remove: (() => void) | undefined;
+      const wrapper = (...args: any[]) => {
+        const p = loadPluginImplementation().then(impl => {
+          const fn = createPluginMethod(impl, prop);
 
-        if (fn) {
-          return fn(...args);
-        } else {
-          throw new CapacitorException(
-            `"${pluginName}.${
-              prop as any
-            }()" is not implemented on ${platform}`,
-            ExceptionCode.Unimplemented,
-          );
+          if (fn) {
+            const p = fn(...args);
+            remove = p.remove;
+            return p;
+          } else {
+            throw new CapacitorException(
+              `"${pluginName}.${
+                prop as any
+              }()" is not implemented on ${platform}`,
+              ExceptionCode.Unimplemented,
+            );
+          }
+        });
+
+        if (prop === 'addListener') {
+          (p as any).remove = async () => remove();
         }
+
+        return p;
       };
 
       // Some flair ✨
@@ -151,6 +161,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       Object.defineProperty(wrapper, 'name', {
         value: prop,
         writable: false,
+        configurable: false,
       });
 
       return wrapper;
@@ -158,7 +169,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
     const addListener = createPluginMethodWrapper('addListener');
     const removeListener = createPluginMethodWrapper('removeListener');
-    const addListenerWrapper = (eventName: string, callback: any) => {
+    const addListenerNative = (eventName: string, callback: any) => {
       const call = addListener({ eventName }, callback);
       const remove = async () => {
         const callbackId = await call;
@@ -174,15 +185,10 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
       const p = new Promise(resolve => call.then(() => resolve({ remove })));
 
-      Object.defineProperty(p, 'remove', {
-        value: async () => {
-          console.warn(
-            `Calling 'remove' on a synchronous response from addListener() is deprecated.`,
-          );
-
-          remove();
-        },
-      });
+      (p as any).remove = async () => {
+        console.warn(`Using addListener() without 'await' is deprecated.`);
+        await remove();
+      };
 
       return p;
     };
@@ -196,7 +202,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
             case '$$typeof':
               return undefined;
             case 'addListener':
-              return addListenerWrapper;
+              return isNativePlatform() ? addListenerNative : addListener;
             case 'removeListener':
               return removeListener;
             default:
