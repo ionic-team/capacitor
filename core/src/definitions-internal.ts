@@ -5,6 +5,16 @@ import type {
   PluginResultError,
 } from './definitions';
 
+export interface PluginHeaderMethod {
+  readonly name: string;
+  readonly rtype?: 'promise' | 'callback';
+}
+
+export interface PluginHeader {
+  readonly name: string;
+  readonly methods: readonly PluginHeaderMethod[];
+}
+
 /**
  * Has all instance properties that are available and used
  * by the native layer. The "Capacitor" interface it extends
@@ -22,6 +32,8 @@ export interface CapacitorInstance extends CapacitorGlobal {
       [prop: string]: any;
     };
   };
+
+  PluginHeaders?: readonly PluginHeader[];
 
   /**
    * Low-level API to send data to the native layer.
@@ -70,7 +82,7 @@ export interface CapacitorInstance extends CapacitorGlobal {
    */
   logJs: (message: string, level: 'error' | 'warn' | 'info' | 'log') => void;
 
-  logToNative: (data: CallData) => void;
+  logToNative: (data: MessageCallData) => void;
 
   logFromNative: (results: PluginResult) => void;
 
@@ -80,12 +92,26 @@ export interface CapacitorInstance extends CapacitorGlobal {
   withPlugin?: (pluginName: string, fn: (...args: any[]) => any) => void;
 }
 
-export interface CallData {
+export interface MessageCallData {
+  type?: 'message';
   callbackId: string;
   pluginId: string;
   methodName: string;
   options: any;
 }
+
+export interface ErrorCallData {
+  type: 'js.error';
+  error: {
+    message: string;
+    url: string;
+    line: number;
+    col: number;
+    errorObject: string;
+  };
+}
+
+export type CallData = MessageCallData | ErrorCallData;
 
 /**
  * A resulting call back from the native layer.
