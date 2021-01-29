@@ -82,7 +82,7 @@ export interface CapacitorInstance extends CapacitorGlobal {
    */
   logJs: (message: string, level: 'error' | 'warn' | 'info' | 'log') => void;
 
-  logToNative: (data: CallData) => void;
+  logToNative: (data: MessageCallData) => void;
 
   logFromNative: (results: PluginResult) => void;
 
@@ -92,12 +92,26 @@ export interface CapacitorInstance extends CapacitorGlobal {
   withPlugin?: (pluginName: string, fn: (...args: any[]) => any) => void;
 }
 
-export interface CallData {
+export interface MessageCallData {
+  type?: 'message';
   callbackId: string;
   pluginId: string;
   methodName: string;
   options: any;
 }
+
+export interface ErrorCallData {
+  type: 'js.error';
+  error: {
+    message: string;
+    url: string;
+    line: number;
+    col: number;
+    errorObject: string;
+  };
+}
+
+export type CallData = MessageCallData | ErrorCallData;
 
 /**
  * A resulting call back from the native layer.
