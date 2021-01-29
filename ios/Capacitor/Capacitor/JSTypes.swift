@@ -2,6 +2,7 @@ import Foundation
 
 // declare our empty protocol, and conformance, for typing
 public protocol JSValue {}
+extension NSString: JSValue {}
 extension String: JSValue {}
 extension Bool: JSValue {}
 extension Int: JSValue {}
