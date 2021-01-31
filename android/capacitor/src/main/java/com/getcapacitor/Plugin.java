@@ -175,6 +175,8 @@ public class Plugin {
      * {@link ActivityCallback} annotation.
      *
      * @param call the plugin call
+     * @param intent the intent used to start an activity
+     * @param callbackName the name of the callback to run when the launched activity is finished
      * @since 3.0.0
      */
     public void startActivityForResult(PluginCall call, Intent intent, String callbackName) {
@@ -419,6 +421,7 @@ public class Plugin {
      *
      * @since 3.0.0
      * @param call the plugin call
+     * @param callbackName the name of the callback to run when the permission request is complete
      */
     protected void requestAllPermissions(@NonNull PluginCall call, @NonNull String callbackName) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
@@ -441,6 +444,7 @@ public class Plugin {
      *
      * @param alias an alias defined on the plugin
      * @param call  the plugin call involved in originating the request
+     * @param callbackName the name of the callback to run when the permission request is complete
      */
     protected void requestPermissionForAlias(@NonNull String alias, @NonNull PluginCall call, @NonNull String callbackName) {
         requestPermissionForAliases(new String[] { alias }, call, callbackName);
@@ -455,6 +459,7 @@ public class Plugin {
      *
      * @param aliases a set of aliases defined on the plugin
      * @param call    the plugin call involved in originating the request
+     * @param callbackName the name of the callback to run when the permission request is complete
      */
     protected void requestPermissionForAliases(@NonNull String[] aliases, @NonNull PluginCall call, @NonNull String callbackName) {
         if (aliases.length == 0) {
