@@ -99,23 +99,11 @@ public class Plugin {
      * activities started for result.
      */
     void initializeActivityLaunchers() {
-        try {
-            // load the default checkPermission callback from the plugin parent class
-            Method method = getClass().getSuperclass().getMethod("checkPermissions", PluginCall.class);
-            permissionLaunchers.put(
-                "checkPermissions",
-                bridge
-                    .getActivity()
-                    .registerForActivityResult(
-                        new ActivityResultContracts.RequestMultiplePermissions(),
-                        permissions -> triggerPermissionCallback(method, permissions)
-                    )
-            );
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        List<Method> pluginClassMethods = new ArrayList<>();
+        pluginClassMethods.addAll(Arrays.asList(getClass().getSuperclass().getDeclaredMethods()));
+        pluginClassMethods.addAll(Arrays.asList(getClass().getDeclaredMethods()));
 
-        for (final Method method : getClass().getDeclaredMethods()) {
+        for (final Method method : pluginClassMethods) {
             if (method.isAnnotationPresent(ActivityCallback.class)) {
                 // register callbacks annotated with ActivityCallback for activity results
                 activityLaunchers.put(
