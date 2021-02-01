@@ -100,8 +100,13 @@ public class Plugin {
      */
     void initializeActivityLaunchers() {
         List<Method> pluginClassMethods = new ArrayList<>();
-        pluginClassMethods.addAll(Arrays.asList(getClass().getSuperclass().getDeclaredMethods()));
-        pluginClassMethods.addAll(Arrays.asList(getClass().getDeclaredMethods()));
+        for (
+            Class<?> pluginCursor = getClass();
+            !pluginCursor.getName().equals(Object.class.getName());
+            pluginCursor = pluginCursor.getSuperclass()
+        ) {
+            pluginClassMethods.addAll(Arrays.asList(pluginCursor.getDeclaredMethods()));
+        }
 
         for (final Method method : pluginClassMethods) {
             if (method.isAnnotationPresent(ActivityCallback.class)) {
