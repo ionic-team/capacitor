@@ -16,7 +16,6 @@ import androidx.core.app.ActivityCompat;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.util.PermissionHelper;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -192,7 +191,7 @@ public class Plugin {
      * Set the Bridge instance for this plugin
      * @param bridge
      */
-    public void setBridge(Bridge bridge) {
+    void setBridge(Bridge bridge) {
         this.bridge = bridge;
     }
 
@@ -209,7 +208,7 @@ public class Plugin {
      * as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
      * @param pluginHandle
      */
-    public void setPluginHandle(PluginHandle pluginHandle) {
+    void setPluginHandle(PluginHandle pluginHandle) {
         this.handle = pluginHandle;
     }
 
@@ -343,9 +342,15 @@ public class Plugin {
 
     /**
      * Check whether the given permission has been granted by the user
+     * @deprecated use {@link #getPermissionState(String)} and {@link #getPermissionStates()} to get
+     * the states of permissions defined on the Plugin in conjunction with the @CapacitorPlugin
+     * annotation. Use the Android API {@link ActivityCompat#checkSelfPermission(Context, String)}
+     * methods to check permissions with Android permission strings
+     *
      * @param permission
      * @return
      */
+    @Deprecated
     public boolean hasPermission(String permission) {
         return ActivityCompat.checkSelfPermission(this.getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
@@ -363,7 +368,7 @@ public class Plugin {
             // Check for legacy plugin annotation, @NativePlugin
             NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
             for (String perm : legacyAnnotation.permissions()) {
-                if (!hasPermission(perm)) {
+                if (ActivityCompat.checkSelfPermission(this.getContext(), perm) != PackageManager.PERMISSION_GRANTED) {
                     return false;
                 }
             }
@@ -373,7 +378,7 @@ public class Plugin {
 
         for (Permission perm : annotation.permissions()) {
             for (String permString : perm.strings()) {
-                if (!hasPermission(permString)) {
+                if (ActivityCompat.checkSelfPermission(this.getContext(), permString) != PackageManager.PERMISSION_GRANTED) {
                     return false;
                 }
             }
