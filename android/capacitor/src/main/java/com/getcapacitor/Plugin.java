@@ -475,7 +475,6 @@ public class Plugin {
         String[] permissions = getPermissionStringsForAliases(aliases);
 
         if (permissions.length > 0) {
-            bridge.savePermissionCall(call);
             permissionActivityResult(call, permissions, callbackName);
         }
     }
