@@ -11,6 +11,7 @@
   self.pluginName = pluginName;
   self.eventListeners = [[NSMutableDictionary alloc] init];
   self.retainedEventArguments = [[NSMutableDictionary alloc] init];
+  self.shouldStringifyDatesInCalls = true;
   return self;
 }
 

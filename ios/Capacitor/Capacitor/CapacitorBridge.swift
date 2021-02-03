@@ -386,7 +386,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             //let startTime = CFAbsoluteTimeGetCurrent()
 
             let pluginCall = CAPPluginCall(callbackId: call.callbackId,
-                                           options: JSTypes.coerceDictionaryToJSObject(call.options) ?? [:],
+                                           options: JSTypes.coerceDictionaryToJSObject(call.options, formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
                                            success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
                 if result != nil {
                     self?.toJs(result: JSResult(call: call, result: result!.data), save: pluginCall?.isSaved ?? false)
