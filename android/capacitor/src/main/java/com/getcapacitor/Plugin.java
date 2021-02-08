@@ -191,7 +191,7 @@ public class Plugin {
      * Set the Bridge instance for this plugin
      * @param bridge
      */
-    void setBridge(Bridge bridge) {
+    public void setBridge(Bridge bridge) {
         this.bridge = bridge;
     }
 
@@ -208,7 +208,7 @@ public class Plugin {
      * as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
      * @param pluginHandle
      */
-    void setPluginHandle(PluginHandle pluginHandle) {
+    public void setPluginHandle(PluginHandle pluginHandle) {
         this.handle = pluginHandle;
     }
 
