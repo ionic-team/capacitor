@@ -172,7 +172,7 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl) || loadingUrl.getHost().equalsIgnoreCase(bridge.getHost()) || (bridge.getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
+    if (isLocalFile(loadingUrl) || isMainUrl(loadingUrl) || !isAllowedUrl(loadingUrl)) {
       Logger.debug("Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
@@ -186,6 +186,14 @@ public class WebViewLocalServer {
       return true;
     }
     return false;
+  }
+
+  private boolean isMainUrl(Uri loadingUrl) {
+    return (bridge.getServerUrl() == null && loadingUrl.getHost().equalsIgnoreCase(bridge.getHost()));
+  }
+
+  private boolean isAllowedUrl(Uri loadingUrl) {
+    return !(bridge.getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()));
   }
 
   private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
