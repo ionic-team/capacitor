@@ -548,18 +548,6 @@ public class Plugin {
     }
 
     /**
-     * Helper for requesting specific permissions
-     * @deprecated use {@link #requestPermissions(PluginCall)} in conjunction with @CapacitorPlugin
-     *
-     * @param permissions the set of permissions to request
-     * @param requestCode the requestCode to use to associate the result with the plugin
-     */
-    @Deprecated
-    public void pluginRequestPermissions(String[] permissions, int requestCode) {
-        ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
-    }
-
-    /**
      * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
      * @deprecated use {@link #requestAllPermissions(PluginCall)} in conjunction with @CapacitorPlugin
      */
@@ -579,6 +567,19 @@ public class Plugin {
     @Deprecated
     public void pluginRequestPermission(String permission, int requestCode) {
         ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, requestCode);
+    }
+
+    /**
+     * Helper for requesting specific permissions
+     * @deprecated use {@link #requestPermissionForAliases(String[], PluginCall)} in conjunction
+     * with @CapacitorPlugin
+     *
+     * @param permissions the set of permissions to request
+     * @param requestCode the requestCode to use to associate the result with the plugin
+     */
+    @Deprecated
+    public void pluginRequestPermissions(String[] permissions, int requestCode) {
+        ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
     }
 
     /**
