@@ -377,12 +377,14 @@ public class Plugin {
     }
 
     /**
-     * If the {@link CapacitorPlugin} annotation specified a set of permissions,
-     * this method checks if each is granted. Note: if you are okay
-     * with a limited subset of the permissions being granted, check
-     * each one individually instead with hasPermission
+     * If the plugin annotation specified a set of permissions, this method checks if each is
+     * granted
+     * @deprecated use {@link #getPermissionState(String)} or {@link #getPermissionStates()} to
+     * check whether permissions are granted or not
+     *
      * @return
      */
+    @Deprecated
     public boolean hasRequiredPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
