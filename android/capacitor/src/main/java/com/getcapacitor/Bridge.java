@@ -753,6 +753,7 @@ public class Bridge {
         }
     }
 
+    @Deprecated
     public void startActivityForPluginWithResult(PluginCall call, Intent intent, int requestCode) {
         Logger.debug("Starting activity for result");
 
