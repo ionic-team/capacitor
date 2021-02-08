@@ -830,7 +830,7 @@ public class Bridge {
 
         String[] permStrings = permissions.keySet().toArray(new String[0]);
 
-        if (!plugin.hasDefinedPermissions(permStrings)) {
+        if (!PermissionHelper.hasDefinedPermissions(getContext(), permStrings)) {
             StringBuilder builder = new StringBuilder();
             builder.append("Missing the following permissions in AndroidManifest.xml:\n");
             String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permStrings);

@@ -296,9 +296,12 @@ public class Plugin {
 
     /**
      * Check whether any of the given permissions has been defined in the AndroidManifest.xml
+     * @deprecated use {@link #isPermissionDeclared(String)}
+     *
      * @param permissions
      * @return
      */
+    @Deprecated
     public boolean hasDefinedPermissions(String[] permissions) {
         for (String permission : permissions) {
             if (!PermissionHelper.hasDefinedPermission(getContext(), permission)) {
@@ -309,35 +312,53 @@ public class Plugin {
     }
 
     /**
-     * Check whether any of the given permissions has been defined in the AndroidManifest.xml
-     * @param permissions
-     * @return
-     */
-    public boolean hasDefinedPermissions(Permission[] permissions) {
-        for (Permission perm : permissions) {
-            for (String permString : perm.strings()) {
-                if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Check if all annotated permissions have been defined in the AndroidManifest.xml
+     * @deprecated use {@link #isPermissionDeclared(String)}
      *
      * @return true if permissions are all defined in the Manifest
      */
+    @Deprecated
     public boolean hasDefinedRequiredPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
             // Check for legacy plugin annotation, @NativePlugin
             NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
             return hasDefinedPermissions(legacyAnnotation.permissions());
+        } else {
+            for (Permission perm : annotation.permissions()) {
+                for (String permString : perm.strings()) {
+                    if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
+                        return false;
+                    }
+                }
+            }
         }
 
-        return hasDefinedPermissions(annotation.permissions());
+        return true;
+    }
+
+    /**
+     * Checks if the given permission alias is correctly declared in AndroidManifest.xml
+     * @param alias a permission alias defined on the plugin
+     * @return true only if all permissions associated with the given alias are declared in the manifest
+     */
+    public boolean isPermissionDeclared(String alias) {
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation != null) {
+            for (Permission perm : annotation.permissions()) {
+                if (alias.equalsIgnoreCase(perm.alias())) {
+                    boolean result = true;
+                    for (String permString : perm.strings()) {
+                        result = result && PermissionHelper.hasDefinedPermission(getContext(), permString);
+                    }
+
+                    return result;
+                }
+            }
+        }
+
+        Logger.error(String.format("isPermissionDeclared: No alias defined for %s " + "or missing @CapacitorPlugin annotation.", alias));
+        return false;
     }
 
     /**
