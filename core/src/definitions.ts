@@ -144,8 +144,8 @@ export interface Plugin {
   addListener(
     eventName: string,
     listenerFunc: (...args: any[]) => any,
-  ): PluginListenerHandle;
-  removeAllListeners(): void;
+  ): Promise<PluginListenerHandle>;
+  removeAllListeners(): Promise<void>;
 }
 
 export type PermissionState =
@@ -155,7 +155,7 @@ export type PermissionState =
   | 'denied';
 
 export interface PluginListenerHandle {
-  remove: () => void;
+  remove: () => Promise<void>;
 }
 
 export interface PluginResultData {

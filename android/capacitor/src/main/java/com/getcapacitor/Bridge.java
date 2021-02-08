@@ -484,6 +484,7 @@ public class Bridge {
      * @param requestCode
      * @return
      */
+    @Deprecated
     public PluginHandle getPluginWithRequestCode(int requestCode) {
         for (PluginHandle handle : this.plugins.values()) {
             int[] requestCodes;
@@ -501,13 +502,11 @@ public class Bridge {
                 }
 
                 requestCodes = legacyPluginAnnotation.requestCodes();
-            } else {
-                requestCodes = pluginAnnotation.requestCodes();
-            }
 
-            for (int rc : requestCodes) {
-                if (rc == requestCode) {
-                    return handle;
+                for (int rc : requestCodes) {
+                    if (rc == requestCode) {
+                        return handle;
+                    }
                 }
             }
         }
@@ -636,6 +635,12 @@ public class Bridge {
         }
 
         return this.savedCalls.get(callbackId);
+    }
+
+    PluginCall getPluginCallForLastActivity() {
+        PluginCall pluginCallForLastActivity = this.pluginCallForLastActivity;
+        this.pluginCallForLastActivity = null;
+        return pluginCallForLastActivity;
     }
 
     /**
@@ -900,36 +905,36 @@ public class Bridge {
      * @param resultCode
      * @param data
      */
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
         if (plugin == null || plugin.getInstance() == null) {
             Logger.debug("Unable to find a Capacitor plugin to handle requestCode, trying Cordova plugins " + requestCode);
-            cordovaInterface.onActivityResult(requestCode, resultCode, data);
-            return;
-        }
-
-        // deprecated, to be removed
-        PluginCall lastCall = plugin.getInstance().getSavedCall();
-
-        // If we don't have a saved last call (because our app was killed and restarted, for example),
-        // Then we should see if we have any saved plugin call information and generate a new,
-        // "dangling" plugin call (a plugin call that doesn't have a corresponding web callback)
-        // and then send that to the plugin
-        if (lastCall == null && pluginCallForLastActivity != null) {
-            plugin.getInstance().saveCall(pluginCallForLastActivity);
+            return cordovaInterface.onActivityResult(requestCode, resultCode, data);
         }
 
         CapacitorPlugin pluginAnnotation = plugin.getPluginClass().getAnnotation(CapacitorPlugin.class);
-        if (pluginAnnotation != null) {
-            // Use new callback with new @CapacitorPlugin plugins
-            plugin.getInstance().handleOnActivityResult(pluginCallForLastActivity, requestCode, resultCode, data);
-        } else {
-            plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
-        }
+        if (pluginAnnotation == null) {
+            // deprecated, to be removed
+            PluginCall lastCall = plugin.getInstance().getSavedCall();
 
-        // Clear the plugin call we may have re-hydrated on app launch
-        pluginCallForLastActivity = null;
+            // If we don't have a saved last call (because our app was killed and restarted, for example),
+            // Then we should see if we have any saved plugin call information and generate a new,
+            // "dangling" plugin call (a plugin call that doesn't have a corresponding web callback)
+            // and then send that to the plugin
+            if (lastCall == null && pluginCallForLastActivity != null) {
+                plugin.getInstance().saveCall(pluginCallForLastActivity);
+            }
+
+            plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+
+            // Clear the plugin call we may have re-hydrated on app launch
+            pluginCallForLastActivity = null;
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

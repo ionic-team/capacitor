@@ -112,7 +112,7 @@ describe('bridge', () => {
 
     try {
       cap.nativeCallback('pluginName', 'methodName', {}, () => {
-        /**/
+        // ignore
       });
       done('did not throw');
     } catch (e) {
