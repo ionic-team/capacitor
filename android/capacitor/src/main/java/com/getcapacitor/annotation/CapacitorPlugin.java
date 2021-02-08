@@ -9,20 +9,14 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CapacitorPlugin {
     /**
-     * Request codes this plugin uses and responds to, in order to tie
-     * Android events back the plugin to handle
+     * A custom name for the plugin, otherwise uses the
+     * simple class name.
      */
-    int[] requestCodes() default {};
+    String name() default "";
 
     /**
      * Permissions this plugin needs, in order to make permission requests
      * easy if the plugin only needs basic permission prompting
      */
     Permission[] permissions() default {};
-
-    /**
-     * A custom name for the plugin, otherwise uses the
-     * simple class name.
-     */
-    String name() default "";
 }
