@@ -184,7 +184,7 @@ extension JSTypes {
     public static func coerceDictionaryToJSObject(_ dictionary: [AnyHashable: Any]?, formattingDatesAsStrings: Bool = false) -> JSObject? {
         return coerceToJSValue(dictionary, formattingDates: formattingDatesAsStrings) as? JSObject
     }
-    
+
     public static func coerceArrayToJSArray(_ array: [Any]?, formattingDatesAsStrings: Bool = false) -> JSArray? {
         return array?.compactMap { coerceToJSValue($0, formattingDates: formattingDatesAsStrings) }
     }

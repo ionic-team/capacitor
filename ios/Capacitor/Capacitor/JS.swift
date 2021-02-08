@@ -40,11 +40,11 @@ internal extension JSResultProtocol {
     var callbackID: String {
         return call.callbackId
     }
-    
+
     var pluginID: String {
         return call.pluginId
     }
-    
+
     var methodName: String {
         return call.method
     }
@@ -63,12 +63,12 @@ private enum SerializationResult: String {
 internal struct JSResult: JSResultProtocol {
     let call: JSCall
     let result: PluginCallResult?
-    
+
     init(call: JSCall, result: PluginCallResult?) {
         self.call = call
         self.result = result
     }
-    
+
     func jsonPayload() -> String {
         guard let result = result else {
             return SerializationResult.undefined.rawValue
@@ -100,7 +100,7 @@ internal struct JSResultError: JSResultProtocol {
     let errorDescription: String
     let errorCode: String?
     let result: PluginCallResult
-    
+
     public init(call: JSCall, errorMessage: String, errorDescription: String, errorCode: String?, result: PluginCallResult) {
         self.call = call
         self.errorMessage = errorMessage
@@ -108,14 +108,14 @@ internal struct JSResultError: JSResultProtocol {
         self.errorCode = errorCode
         self.result = result
     }
-    
+
     func jsonPayload() -> String {
         var errorDictionary: [String: Any] = [
             "message": self.errorMessage,
-            "errorMessage":  self.errorMessage
+            "errorMessage": self.errorMessage
         ]
         errorDictionary["code"] = self.errorCode
-        
+
         do {
             if let payload = try result.jsonRepresentation(includingFields: errorDictionary) {
                 CAPLog.print("ERROR MESSAGE: ", payload.prefix(512))

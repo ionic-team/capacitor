@@ -4,11 +4,11 @@ public typealias PluginCallResultData = [String: Any]
 
 public enum PluginCallResult {
     case dictionary(PluginCallResultData)
-    
+
     enum SerializationError: Error {
         case invalidObject
     }
-    
+
     func jsonRepresentation(includingFields: PluginCallResultData? = nil) throws -> String? {
         switch self {
         case .dictionary(var dictionary):
@@ -23,33 +23,29 @@ public enum PluginCallResult {
             return String(data: data, encoding: .utf8)
         }
     }
-    
+
     private static let formatter = ISO8601DateFormatter()
-    
+
     private func prepare(dictionary: PluginCallResultData) -> PluginCallResultData {
         return dictionary.mapValues { (value) -> Any in
             if let date = value as? Date {
                 return PluginCallResult.formatter.string(from: date)
-            }
-            else if let aDictionary = value as? PluginCallResultData {
+            } else if let aDictionary = value as? PluginCallResultData {
                 return prepare(dictionary: aDictionary)
-            }
-            else if let anArray = value as? [Any] {
+            } else if let anArray = value as? [Any] {
                 return prepare(array: anArray)
             }
             return value
         }
     }
-    
+
     private func prepare(array: [Any]) -> [Any] {
         return array.map { (value) -> Any in
             if let date = value as? Date {
                 return PluginCallResult.formatter.string(from: date)
-            }
-            else if let aDictionary = value as? PluginCallResultData {
+            } else if let aDictionary = value as? PluginCallResultData {
                 return prepare(dictionary: aDictionary)
-            }
-            else if let anArray = value as? [Any] {
+            } else if let anArray = value as? [Any] {
                 return prepare(array: anArray)
             }
             return value
@@ -59,7 +55,7 @@ public enum PluginCallResult {
 
 @objc public class CAPPluginCallResult: NSObject {
     public var resultData: PluginCallResult?
-    
+
     @objc public var data: PluginCallResultData? {
         guard let result = resultData else {
             return nil
@@ -69,7 +65,7 @@ public enum PluginCallResult {
             return data
         }
     }
-    
+
     @objc(init:)
     public init(_ data: PluginCallResultData?) {
         if let data = data {
@@ -83,7 +79,7 @@ public enum PluginCallResult {
     @objc public var code: String?
     @objc public var error: Error?
     public var resultData: PluginCallResult?
-    
+
     @objc public var data: PluginCallResultData? {
         guard let result = resultData else {
             return nil
@@ -93,7 +89,7 @@ public enum PluginCallResult {
             return data
         }
     }
-    
+
     @objc(init:code:error:data:)
     public init(message: String, code: String?, error: Error?, data: PluginCallResultData?) {
         self.message = message

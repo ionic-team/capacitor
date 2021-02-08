@@ -388,20 +388,19 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             let pluginCall = CAPPluginCall(callbackId: call.callbackId,
                                            options: JSTypes.coerceDictionaryToJSObject(call.options, formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
                                            success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
-                if let result = result {
-                    self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.isSaved ?? false)
-                } else {
-                    self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.isSaved ?? false)
-                }
-            }, error: {(error: CAPPluginCallError?) -> Void in
-                if let error = error {
-                    self?.toJsError(error: JSResultError(call: call, callError: error))
-                }
-                else {
-                    self?.toJsError(error: JSResultError(call: call, errorMessage: "", errorDescription: "", errorCode: nil, result: .dictionary([:])))
-                }
-            })
-            
+                                            if let result = result {
+                                                self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.isSaved ?? false)
+                                            } else {
+                                                self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.isSaved ?? false)
+                                            }
+                                           }, error: {(error: CAPPluginCallError?) -> Void in
+                                            if let error = error {
+                                                self?.toJsError(error: JSResultError(call: call, callError: error))
+                                            } else {
+                                                self?.toJsError(error: JSResultError(call: call, errorMessage: "", errorDescription: "", errorCode: nil, result: .dictionary([:])))
+                                            }
+                                           })
+
             if let pluginCall = pluginCall {
                 plugin.perform(selector, with: pluginCall)
                 if pluginCall.isSaved {
@@ -456,7 +455,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
              success: true,
              data: \(resultJson)
              })
-            """) { (result, error) in
+            """) { (_, error) in
                 if let error = error {
                     CAPLog.print(error)
                 }
@@ -469,7 +468,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func toJsError(error: JSResultProtocol) {
         DispatchQueue.main.async {
-            self.webView?.evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(error.callbackID)', pluginId: '\(error.pluginID)', methodName: '\(error.methodName)', success: false, error: \(error.jsonPayload())})") { (result, error) in
+            self.webView?.evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(error.callbackID)', pluginId: '\(error.pluginID)', methodName: '\(error.methodName)', success: false, error: \(error.jsonPayload())})") { (_, error) in
                 if let error = error {
                     CAPLog.print(error)
                 }
