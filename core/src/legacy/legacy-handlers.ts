@@ -31,7 +31,7 @@ export const initLegacyHandlers = (
         // Add a dummy listener so Capacitor doesn't do the default
         // back button action
         cap.Plugins.App.addListener('backButton', () => {
-          /**/
+          // ignore
         });
       }
       return docAddEventListener.apply(doc, args);

@@ -12,10 +12,8 @@ export class WebPlugin implements Plugin {
    */
   config?: WebPluginConfig;
 
-  loaded = false;
-
-  listeners: { [eventName: string]: ListenerCallback[] } = {};
-  windowListeners: { [eventName: string]: WindowListenerHandle } = {};
+  protected listeners: { [eventName: string]: ListenerCallback[] } = {};
+  protected windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
   constructor(config?: WebPluginConfig) {
     if (config) {
@@ -27,32 +25,10 @@ export class WebPlugin implements Plugin {
     }
   }
 
-  protected unimplemented(msg = 'not implemented'): CapacitorException {
-    return new Capacitor.Exception(msg, ExceptionCode.Unimplemented);
-  }
-
-  protected unavailable(msg = 'not available'): CapacitorException {
-    return new Capacitor.Exception(msg, ExceptionCode.Unavailable);
-  }
-
-  private addWindowListener(handle: WindowListenerHandle): void {
-    window.addEventListener(handle.windowEventName, handle.handler);
-    handle.registered = true;
-  }
-
-  private removeWindowListener(handle: WindowListenerHandle): void {
-    if (!handle) {
-      return;
-    }
-
-    window.removeEventListener(handle.windowEventName, handle.handler);
-    handle.registered = false;
-  }
-
   addListener(
     eventName: string,
     listenerFunc: ListenerCallback,
-  ): PluginListenerHandle {
+  ): Promise<PluginListenerHandle> & PluginListenerHandle {
     const listeners = this.listeners[eventName];
     if (!listeners) {
       this.listeners[eventName] = [];
@@ -67,17 +43,65 @@ export class WebPlugin implements Plugin {
       this.addWindowListener(windowListener);
     }
 
-    return {
-      remove: () => {
-        this.removeListener(eventName, listenerFunc);
+    const remove = async () => this.removeListener(eventName, listenerFunc);
+
+    const p: any = Promise.resolve({ remove });
+
+    Object.defineProperty(p, 'remove', {
+      value: async () => {
+        console.warn(`Using addListener() without 'await' is deprecated.`);
+        await remove();
+      },
+    });
+
+    return p;
+  }
+
+  async removeAllListeners(): Promise<void> {
+    this.listeners = {};
+    for (const listener in this.windowListeners) {
+      this.removeWindowListener(this.windowListeners[listener]);
+    }
+    this.windowListeners = {};
+  }
+
+  protected notifyListeners(eventName: string, data: any): void {
+    const listeners = this.listeners[eventName];
+    if (listeners) {
+      listeners.forEach(listener => listener(data));
+    }
+  }
+
+  protected hasListeners(eventName: string): boolean {
+    return !!this.listeners[eventName].length;
+  }
+
+  protected registerWindowListener(
+    windowEventName: string,
+    pluginEventName: string,
+  ): void {
+    this.windowListeners[pluginEventName] = {
+      registered: false,
+      windowEventName,
+      pluginEventName,
+      handler: event => {
+        this.notifyListeners(pluginEventName, event);
       },
     };
   }
 
-  private removeListener(
+  protected unimplemented(msg = 'not implemented'): CapacitorException {
+    return new Capacitor.Exception(msg, ExceptionCode.Unimplemented);
+  }
+
+  protected unavailable(msg = 'not available'): CapacitorException {
+    return new Capacitor.Exception(msg, ExceptionCode.Unavailable);
+  }
+
+  private async removeListener(
     eventName: string,
     listenerFunc: ListenerCallback,
-  ): void {
+  ): Promise<void> {
     const listeners = this.listeners[eventName];
     if (!listeners) {
       return;
@@ -93,41 +117,18 @@ export class WebPlugin implements Plugin {
     }
   }
 
-  removeAllListeners(): void {
-    this.listeners = {};
-    for (const listener in this.windowListeners) {
-      this.removeWindowListener(this.windowListeners[listener]);
+  private addWindowListener(handle: WindowListenerHandle): void {
+    window.addEventListener(handle.windowEventName, handle.handler);
+    handle.registered = true;
+  }
+
+  private removeWindowListener(handle: WindowListenerHandle): void {
+    if (!handle) {
+      return;
     }
-    this.windowListeners = {};
-  }
 
-  notifyListeners(eventName: string, data: any): void {
-    const listeners = this.listeners[eventName];
-    if (listeners) {
-      listeners.forEach(listener => listener(data));
-    }
-  }
-
-  hasListeners(eventName: string): boolean {
-    return !!this.listeners[eventName].length;
-  }
-
-  registerWindowListener(
-    windowEventName: string,
-    pluginEventName: string,
-  ): void {
-    this.windowListeners[pluginEventName] = {
-      registered: false,
-      windowEventName,
-      pluginEventName,
-      handler: event => {
-        this.notifyListeners(pluginEventName, event);
-      },
-    };
-  }
-
-  load(): void {
-    this.loaded = true;
+    window.removeEventListener(handle.windowEventName, handle.handler);
+    handle.registered = false;
   }
 }
 

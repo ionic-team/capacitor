@@ -20,7 +20,7 @@ export const initEvents = (
       callback,
     );
     return {
-      remove: () => {
+      remove: async () => {
         win?.console?.debug('Removing listener', pluginName, eventName);
         cap.removeListener(pluginName, callbackId, eventName, callback);
       },
