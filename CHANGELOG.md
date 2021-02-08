@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-beta.2](https://github.com/ionic-team/capacitor/compare/3.0.0-beta.1...3.0.0-beta.2) (2021-02-08)
+
+
+### Bug Fixes
+
+* **core:** handle js.error messages to fix window error handler ([#4124](https://github.com/ionic-team/capacitor/issues/4124)) ([c0deb1d](https://github.com/ionic-team/capacitor/commit/c0deb1de349f5631af08eecbffc0ea4dea97c60d))
+* address bug in `isPluginAvailable()` for web and native ([#4114](https://github.com/ionic-team/capacitor/issues/4114)) ([2fbd954](https://github.com/ionic-team/capacitor/commit/2fbd95465a321b8f4c50d4daf22a63d8043cee9b))
+* **android:** get PermissionState enum by state value ([#4100](https://github.com/ionic-team/capacitor/issues/4100)) ([194ae86](https://github.com/ionic-team/capacitor/commit/194ae8699944bf016132fb64fe48010679a6d64e))
+* **android:** requestPermission call rejects if permission missing in manifest ([55ef5ff](https://github.com/ionic-team/capacitor/commit/55ef5ff38e87729412c44bfa4b2f29e53044cecc))
+* **core:** fix another $$typeof issue ([#4113](https://github.com/ionic-team/capacitor/issues/4113)) ([4cbae41](https://github.com/ionic-team/capacitor/commit/4cbae41908670ab843bea5850da7a2cf1082afdb))
+* **iOS:** preserve null values in bridged types ([#4072](https://github.com/ionic-team/capacitor/issues/4072)) ([6dc691e](https://github.com/ionic-team/capacitor/commit/6dc691e66a07a421d5d4b08028ea05a65b3ddd84))
+* remove USE_PUSH flag and code from iOS template ([#4070](https://github.com/ionic-team/capacitor/issues/4070)) ([6d54243](https://github.com/ionic-team/capacitor/commit/6d54243108883e0b07d725dcc7a1cb8700f1b35e))
+
+
+### Features
+
+* **android:** activity result use new API and update permission result callbacks to match ([#4127](https://github.com/ionic-team/capacitor/issues/4127)) ([002f1e5](https://github.com/ionic-team/capacitor/commit/002f1e55173a50b9fe918b4eda73b5113b713282))
+* **android:** androidxActivityVersion & androidxFragmentVersion gradle variables ([#4103](https://github.com/ionic-team/capacitor/issues/4103)) ([4f77b96](https://github.com/ionic-team/capacitor/commit/4f77b962be85fc6bfc555a106c5b3e6707526626))
+* **cli:** configurable iOS build scheme ([#4073](https://github.com/ionic-team/capacitor/issues/4073)) ([e6374dc](https://github.com/ionic-team/capacitor/commit/e6374dc88c388a30186e8bfea22ce129ca1a9e02))
+* **cli:** send config, rootDir, and webDir to custom platform hooks ([#4084](https://github.com/ionic-team/capacitor/issues/4084)) ([13e9860](https://github.com/ionic-team/capacitor/commit/13e9860468126ba3c37b25d9093ab5f6cce2df2c))
+
+
+
+
+
 # [3.0.0-beta.1](https://github.com/ionic-team/capacitor/compare/3.0.0-beta.0...3.0.0-beta.1) (2021-01-14)
 
 **Note:** Version bump only for package capacitor
