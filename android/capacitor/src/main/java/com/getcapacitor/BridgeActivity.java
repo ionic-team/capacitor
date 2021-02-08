@@ -191,15 +191,31 @@ public class BridgeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles activity results.
+     *
+     * Capacitor is backwards compatible such that plugins using legacy activity result codes
+     * may coexist with plugins using the AndroidX Activity v1.2 activity callback flow introduced
+     * in Capacitor 3.0.
+     *
+     * In this method, plugins are checked first for ownership of the legacy request code. If the
+     * {@link Bridge#onActivityResult(int, int, Intent)} method indicates it has handled the activity
+     * result, then the callback will be considered complete. Otherwise, the result will be handled
+     * using the AndroidX Activiy flow.
+     *
+     * @param requestCode the request code associated with the activity result
+     * @param resultCode the result code
+     * @param data any data included with the activity result
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
         if (this.bridge == null) {
             return;
         }
 
-        this.bridge.onActivityResult(requestCode, resultCode, data);
+        if (!bridge.onActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
