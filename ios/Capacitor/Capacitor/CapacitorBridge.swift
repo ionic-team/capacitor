@@ -369,7 +369,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 return
             }
 
-            //CAPLog.print("\n⚡️  Calling method \"\(call.method)\" on plugin \"\(plugin.getId()!)\"")
+            // CAPLog.print("\n⚡️  Calling method \"\(call.method)\" on plugin \"\(plugin.getId()!)\"")
 
             selector = method.selector
         }
@@ -383,7 +383,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         // Create a plugin call object and handle the success/error callbacks
         dispatchQueue.async { [weak self] in
-            //let startTime = CFAbsoluteTimeGetCurrent()
+            // let startTime = CFAbsoluteTimeGetCurrent()
 
             let pluginCall = CAPPluginCall(callbackId: call.callbackId,
                                            options: JSTypes.coerceDictionaryToJSObject(call.options, formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
@@ -408,8 +408,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 }
             }
 
-            //let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-            //CAPLog.print("Native call took", timeElapsed)
+            // let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+            // CAPLog.print("Native call took", timeElapsed)
         }
     }
 
