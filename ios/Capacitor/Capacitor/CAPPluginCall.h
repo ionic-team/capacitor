@@ -1,24 +1,8 @@
-
-@interface CAPPluginCallResult : NSObject
-
-@property (nonatomic, strong) NSDictionary<NSString *, id>* data;
-
-- (instancetype)init:(NSDictionary<NSString *, id>*)data;
-
-@end
-
-@interface CAPPluginCallError : NSObject
-
-@property (nonatomic, strong) NSString *message;
-@property (nonatomic, strong) NSString *code;
-@property (nonatomic, strong) NSError *error;
-@property (nonatomic, strong) NSDictionary<NSString *, id> *data;
-
-- (instancetype)initWithMessage:(NSString *)message code:(NSString *)code error:(NSError *)error data:(NSDictionary<NSString *, id>*)data;
-
-@end
+#import <Foundation/Foundation.h>
 
 @class CAPPluginCall;
+@class CAPPluginCallResult;
+@class CAPPluginCallError;
 
 typedef void(^CAPPluginCallSuccessHandler)(CAPPluginCallResult *result, CAPPluginCall* call);
 typedef void(^CAPPluginCallErrorHandler)(CAPPluginCallError *error);
@@ -35,5 +19,3 @@ typedef void(^CAPPluginCallErrorHandler)(CAPPluginCallError *error);
 
 - (void)save;
 @end
-
-
