@@ -10,7 +10,7 @@ describe('legacy', () => {
   const LegacyWebPlugin = class extends WebPlugin {};
   const orgConsoleWarn = console.warn;
   const noop = () => {
-    /**/
+    // do nothing
   };
 
   beforeAll(() => {
@@ -78,7 +78,7 @@ describe('legacy', () => {
     expect(cap.Plugins['Legacy']).toBe(Legacy);
   });
 
-  it('error registerWebPlugin() w/out config.name', () => {
+  it('error registerWebPlugin() w/out config.name', async () => {
     win = {};
     cap = createCapacitor(win) as any;
 
@@ -89,7 +89,7 @@ describe('legacy', () => {
     );
   });
 
-  it('error registerWebPlugin() w/out config', () => {
+  it('error registerWebPlugin() w/out config', async () => {
     win = {};
     cap = createCapacitor(win) as any;
 
@@ -102,13 +102,13 @@ describe('legacy', () => {
 
   it('doc.addEventListener backbutton', done => {
     const AppWeb = class {
-      addListener(eventName: string) {
+      async addListener(eventName: string) {
         expect(eventName).toBe('backButton');
         done();
       }
     };
     const bbCallback = () => {
-      /**/
+      // ignore
     };
     win = {
       document: {
@@ -129,7 +129,7 @@ describe('legacy', () => {
     win = {
       document: {
         addEventListener() {
-          /**/
+          // ignore
         },
       },
     };
