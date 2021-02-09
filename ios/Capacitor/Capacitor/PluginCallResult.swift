@@ -12,12 +12,12 @@ public enum PluginCallResult {
     func jsonRepresentation(includingFields: PluginCallResultData? = nil) throws -> String? {
         switch self {
         case .dictionary(var dictionary):
+            if let fields = includingFields {
+                dictionary.merge(fields) { (current, _) in current }
+            }
             dictionary = prepare(dictionary: dictionary)
             guard JSONSerialization.isValidJSONObject(dictionary) else {
                 throw SerializationError.invalidObject
-            }
-            if let fields = includingFields {
-                dictionary.merge(fields) { (current, _) in current }
             }
             let data = try JSONSerialization.data(withJSONObject: dictionary, options: [])
             return String(data: data, encoding: .utf8)
