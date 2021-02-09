@@ -54,7 +54,7 @@ public enum PluginCallResult {
 }
 
 @objc public class CAPPluginCallResult: NSObject {
-    public var resultData: PluginCallResult?
+    public let resultData: PluginCallResult?
 
     @objc public var data: PluginCallResultData? {
         guard let result = resultData else {
@@ -70,15 +70,17 @@ public enum PluginCallResult {
     public init(_ data: PluginCallResultData?) {
         if let data = data {
             resultData = .dictionary(data)
+        } else {
+            resultData = nil
         }
     }
 }
 
 @objc public class CAPPluginCallError: NSObject {
-    @objc public var message: String
-    @objc public var code: String?
-    @objc public var error: Error?
-    public var resultData: PluginCallResult?
+    @objc public let message: String
+    @objc public let code: String?
+    @objc public let error: Error?
+    public let resultData: PluginCallResult?
 
     @objc public var data: PluginCallResultData? {
         guard let result = resultData else {
@@ -96,7 +98,9 @@ public enum PluginCallResult {
         self.code = code
         self.error = error
         if let data = data {
-            self.resultData = .dictionary(data)
+            resultData = .dictionary(data)
+        } else {
+            resultData = nil
         }
     }
 }
