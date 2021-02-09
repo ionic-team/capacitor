@@ -138,6 +138,29 @@ class BridgedTypesTests: XCTestCase {
         XCTAssertTrue(dateObject.compare(parsedDate) == .orderedSame)
     }
     
+    func testDateCoercion() throws {
+        let stringifiedDictionary = JSTypes.coerceDictionaryToJSObject(deserializedDictionary, formattingDatesAsStrings: true)!
+        let unstringifiedDictionary = JSTypes.coerceDictionaryToJSObject(deserializedDictionary, formattingDatesAsStrings: false)!
+        let stringifiedValue = stringifiedDictionary["testDateObject"]!
+        let unstringifiedValue = unstringifiedDictionary["testDateObject"]!
+        XCTAssertTrue(type(of: stringifiedValue) == String.self)
+        XCTAssertTrue(type(of: unstringifiedValue) == Date.self)
+        XCTAssertEqual(stringifiedValue as! String, stringifiedDictionary["testDateString"] as! String)
+    }
+    
+    func testDateResultWrapping() throws {
+        let result = try PluginCallResult.dictionary(["date": unserializedDictionary["testDateObject"]!]).jsonRepresentation()
+        XCTAssertEqual(result, "{\"date\":\"\(unserializedDictionary["testDateString"] as! String)\"}")
+    }
+    
+    func testResultMerging() throws {
+        let result = try PluginCallResult.dictionary(["number": 1]).jsonRepresentation(includingFields: ["string":"foo"])
+        // ordering of the pairs should be non-deterministic
+        if result != "{\"string\":\"foo\",\"number\":1}" && result != "{\"number\":1,\"string\":\"foo\"}" {
+            XCTAssert(false)
+        }
+    }
+    
     func testNullWrapping() throws {
         let dictionary: [AnyHashable: Any] = ["testInt": 1 as Int, "testNull": NSNull()]
         let coercedDictionary = JSTypes.coerceDictionaryToJSObject(dictionary)!
