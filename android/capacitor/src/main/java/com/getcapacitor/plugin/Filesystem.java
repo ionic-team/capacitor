@@ -654,6 +654,13 @@ public class Filesystem extends Plugin {
 
     PluginCall savedCall = getSavedCall();
 
+    if (grantResults.length == 0) {
+      Logger.debug(getLogTag(), "Permission prompt was canceled.");
+      savedCall.error(PERMISSION_DENIED_ERROR);
+      this.freeSavedCall();
+      return;
+    }
+
     for (int i = 0; i < grantResults.length; i++) {
       int result = grantResults[i];
       String perm = permissions[i];
