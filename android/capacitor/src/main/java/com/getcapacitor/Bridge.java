@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -752,6 +753,7 @@ public class Bridge {
         }
     }
 
+    @Deprecated
     public void startActivityForPluginWithResult(PluginCall call, Intent intent, int requestCode) {
         Logger.debug("Starting activity for result");
 
@@ -834,7 +836,7 @@ public class Bridge {
 
         String[] permStrings = permissions.keySet().toArray(new String[0]);
 
-        if (!plugin.hasDefinedPermissions(permStrings)) {
+        if (!PermissionHelper.hasDefinedPermissions(getContext(), permStrings)) {
             StringBuilder builder = new StringBuilder();
             builder.append("Missing the following permissions in AndroidManifest.xml:\n");
             String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permStrings);
@@ -873,10 +875,13 @@ public class Bridge {
             } else {
                 for (String permString : perm.strings()) {
                     String key = perm.alias().isEmpty() ? permString : perm.alias();
-                    PermissionState permissionStatus = plugin.hasPermission(permString) ? PermissionState.GRANTED : PermissionState.PROMPT;
+                    PermissionState permissionStatus;
+                    if (ActivityCompat.checkSelfPermission(this.getContext(), permString) == PackageManager.PERMISSION_GRANTED) {
+                        permissionStatus = PermissionState.GRANTED;
+                    } else {
+                        permissionStatus = PermissionState.PROMPT;
 
-                    // Check if there is a cached permission state for the "Never ask again" state
-                    if (permissionStatus == PermissionState.PROMPT) {
+                        // Check if there is a cached permission state for the "Never ask again" state
                         SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS_NAME, Activity.MODE_PRIVATE);
                         String state = prefs.getString(permString, null);
 
