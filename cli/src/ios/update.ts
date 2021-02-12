@@ -27,10 +27,10 @@ import {
   getPlugins,
   printPlugins,
 } from '../plugin';
+import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { runCommand } from '../util/subprocess';
-import { copy as copyTask } from '../tasks/copy';
 import { extractTemplate } from '../util/template';
 
 import { getIOSPlugins } from './common';
