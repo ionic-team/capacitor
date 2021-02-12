@@ -1,4 +1,4 @@
-import { copy as fsCopy, remove, writeJSON } from '@ionic/utils-fs';
+import { copy as fsCopy, pathExists, remove, writeJSON } from '@ionic/utils-fs';
 import { basename, join, relative } from 'path';
 
 import c from '../colors';
@@ -104,14 +104,26 @@ async function copyWebDir(config: Config, nativeAbsDir: string) {
   const webRelDir = basename(webAbsDir);
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
 
-  if (config.app.extConfig.server?.url) {
-  } else {
-    await runTask(
-      `Copying web assets from ${c.strong(webRelDir)} to ${nativeRelDir}`,
-      async () => {
-        await remove(nativeAbsDir);
-        return fsCopy(webAbsDir, nativeAbsDir);
-      },
+  if (config.app.extConfig.server?.url && !(await pathExists(webAbsDir))) {
+    logger.warn(
+      `Cannot copy web assets from ${c.strong(
+        webRelDir,
+      )} to ${nativeRelDir}\n` +
+        `Web asset directory specified by ${c.input(
+          'webDir',
+        )} does not exist. This is not an error because ${c.input(
+          'server.url',
+        )} is set in config.`,
     );
+
+    return;
   }
+
+  await runTask(
+    `Copying web assets from ${c.strong(webRelDir)} to ${nativeRelDir}`,
+    async () => {
+      await remove(nativeAbsDir);
+      return fsCopy(webAbsDir, nativeAbsDir);
+    },
+  );
 }
