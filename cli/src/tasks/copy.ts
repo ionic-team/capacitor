@@ -104,11 +104,14 @@ async function copyWebDir(config: Config, nativeAbsDir: string) {
   const webRelDir = basename(webAbsDir);
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
 
-  await runTask(
-    `Copying web assets from ${c.strong(webRelDir)} to ${nativeRelDir}`,
-    async () => {
-      await remove(nativeAbsDir);
-      return fsCopy(webAbsDir, nativeAbsDir);
-    },
-  );
+  if (config.app.extConfig.server?.url) {
+  } else {
+    await runTask(
+      `Copying web assets from ${c.strong(webRelDir)} to ${nativeRelDir}`,
+      async () => {
+        await remove(nativeAbsDir);
+        return fsCopy(webAbsDir, nativeAbsDir);
+      },
+    );
+  }
 }
