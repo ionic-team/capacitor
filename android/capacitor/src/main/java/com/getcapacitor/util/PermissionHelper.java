@@ -52,6 +52,22 @@ public class PermissionHelper {
     }
 
     /**
+     * Check whether all of the given permissions have been defined in the AndroidManifest.xml
+     * @param context the app context
+     * @param permissions a list of permissions
+     * @return true only if all permissions are defined in the AndroidManifest.xml
+     */
+    public static boolean hasDefinedPermissions(Context context, String[] permissions) {
+        for (String permission : permissions) {
+            if (!PermissionHelper.hasDefinedPermission(context, permission)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Get the permissions defined in AndroidManifest.xml
      *
      * @since 3.0.0

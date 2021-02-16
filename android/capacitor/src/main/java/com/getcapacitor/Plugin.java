@@ -332,9 +332,12 @@ public class Plugin {
 
     /**
      * Check whether any of the given permissions has been defined in the AndroidManifest.xml
+     * @deprecated use {@link #isPermissionDeclared(String)}
+     *
      * @param permissions
      * @return
      */
+    @Deprecated
     public boolean hasDefinedPermissions(String[] permissions) {
         for (String permission : permissions) {
             if (!PermissionHelper.hasDefinedPermission(getContext(), permission)) {
@@ -345,60 +348,86 @@ public class Plugin {
     }
 
     /**
-     * Check whether any of the given permissions has been defined in the AndroidManifest.xml
-     * @param permissions
-     * @return
-     */
-    public boolean hasDefinedPermissions(Permission[] permissions) {
-        for (Permission perm : permissions) {
-            for (String permString : perm.strings()) {
-                if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Check if all annotated permissions have been defined in the AndroidManifest.xml
+     * @deprecated use {@link #isPermissionDeclared(String)}
      *
      * @return true if permissions are all defined in the Manifest
      */
+    @Deprecated
     public boolean hasDefinedRequiredPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
             // Check for legacy plugin annotation, @NativePlugin
             NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
             return hasDefinedPermissions(legacyAnnotation.permissions());
+        } else {
+            for (Permission perm : annotation.permissions()) {
+                for (String permString : perm.strings()) {
+                    if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
+                        return false;
+                    }
+                }
+            }
         }
 
-        return hasDefinedPermissions(annotation.permissions());
+        return true;
+    }
+
+    /**
+     * Checks if the given permission alias is correctly declared in AndroidManifest.xml
+     * @param alias a permission alias defined on the plugin
+     * @return true only if all permissions associated with the given alias are declared in the manifest
+     */
+    public boolean isPermissionDeclared(String alias) {
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation != null) {
+            for (Permission perm : annotation.permissions()) {
+                if (alias.equalsIgnoreCase(perm.alias())) {
+                    boolean result = true;
+                    for (String permString : perm.strings()) {
+                        result = result && PermissionHelper.hasDefinedPermission(getContext(), permString);
+                    }
+
+                    return result;
+                }
+            }
+        }
+
+        Logger.error(String.format("isPermissionDeclared: No alias defined for %s " + "or missing @CapacitorPlugin annotation.", alias));
+        return false;
     }
 
     /**
      * Check whether the given permission has been granted by the user
+     * @deprecated use {@link #getPermissionState(String)} and {@link #getPermissionStates()} to get
+     * the states of permissions defined on the Plugin in conjunction with the @CapacitorPlugin
+     * annotation. Use the Android API {@link ActivityCompat#checkSelfPermission(Context, String)}
+     * methods to check permissions with Android permission strings
+     *
      * @param permission
      * @return
      */
+    @Deprecated
     public boolean hasPermission(String permission) {
         return ActivityCompat.checkSelfPermission(this.getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
-     * If the {@link CapacitorPlugin} annotation specified a set of permissions,
-     * this method checks if each is granted. Note: if you are okay
-     * with a limited subset of the permissions being granted, check
-     * each one individually instead with hasPermission
+     * If the plugin annotation specified a set of permissions, this method checks if each is
+     * granted
+     * @deprecated use {@link #getPermissionState(String)} or {@link #getPermissionStates()} to
+     * check whether permissions are granted or not
+     *
      * @return
      */
+    @Deprecated
     public boolean hasRequiredPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
             // Check for legacy plugin annotation, @NativePlugin
             NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
             for (String perm : legacyAnnotation.permissions()) {
-                if (!hasPermission(perm)) {
+                if (ActivityCompat.checkSelfPermission(this.getContext(), perm) != PackageManager.PERMISSION_GRANTED) {
                     return false;
                 }
             }
@@ -408,7 +437,7 @@ public class Plugin {
 
         for (Permission perm : annotation.permissions()) {
             for (String permString : perm.strings()) {
-                if (!hasPermission(permString)) {
+                if (ActivityCompat.checkSelfPermission(this.getContext(), permString) != PackageManager.PERMISSION_GRANTED) {
                     return false;
                 }
             }
@@ -551,18 +580,6 @@ public class Plugin {
     }
 
     /**
-     * Helper for requesting specific permissions
-     *
-     * @param permissions the set of permissions to request
-     * @param requestCode the requestCode to use to associate the result with the plugin
-     * @deprecated use {@link #requestPermissions(PluginCall)} in conjunction with @CapacitorPlugin
-     */
-    @Deprecated
-    public void pluginRequestPermissions(String[] permissions, int requestCode) {
-        ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
-    }
-
-    /**
      * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
      *
      * @deprecated use {@link #requestAllPermissions(PluginCall, String)} in conjunction with @CapacitorPlugin
@@ -583,6 +600,19 @@ public class Plugin {
     @Deprecated
     public void pluginRequestPermission(String permission, int requestCode) {
         ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, requestCode);
+    }
+
+    /**
+     * Helper for requesting specific permissions
+     * @deprecated use {@link #requestPermissionForAliases(String[], PluginCall, String)} in conjunction
+     * with @CapacitorPlugin
+     *
+     * @param permissions the set of permissions to request
+     * @param requestCode the requestCode to use to associate the result with the plugin
+     */
+    @Deprecated
+    public void pluginRequestPermissions(String[] permissions, int requestCode) {
+        ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
     }
 
     /**
