@@ -19,6 +19,11 @@ export async function check(checks: CheckFunction[]): Promise<void> {
 }
 
 export async function checkWebDir(config: Config): Promise<string | null> {
+  // We can skip checking the web dir if a server URL is set.
+  if (config.app.extConfig.server?.url) {
+    return null;
+  }
+
   const invalidFolders = ['', '.', '..', '../', './'];
   if (invalidFolders.includes(config.app.webDir)) {
     return `"${config.app.webDir}" is not a valid value for webDir`;

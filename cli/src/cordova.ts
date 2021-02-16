@@ -1,6 +1,7 @@
 import {
   copy,
   ensureDir,
+  mkdirp,
   pathExists,
   readFile,
   remove,
@@ -29,7 +30,6 @@ import {
   getPlugins,
   printPlugins,
 } from './plugin';
-import { copy as copyTask } from './tasks/copy';
 import { resolveNode } from './util/node';
 import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
 
@@ -291,9 +291,9 @@ export async function handleCordovaPluginsJS(
   config: Config,
   platform: string,
 ): Promise<void> {
-  if (!(await pathExists(await getWebDir(config, platform)))) {
-    await copyTask(config, platform);
-  }
+  const webDir = await getWebDir(config, platform);
+  await mkdirp(webDir);
+
   if (cordovaPlugins.length > 0) {
     printPlugins(cordovaPlugins, platform, 'cordova');
     await copyCordovaJS(config, platform);
