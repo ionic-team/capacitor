@@ -12,7 +12,6 @@ import {
   check,
   checkAppConfig,
   checkPackage,
-  checkWebDir,
   resolvePlatform,
   runPlatformHook,
   runTask,
@@ -22,7 +21,6 @@ import {
   getProjectPlatformDirectory,
 } from '../common';
 import type { Config } from '../definitions';
-import { OS } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
 import {
@@ -30,9 +28,7 @@ import {
   checkIOSPackage,
   checkCocoaPods,
 } from '../ios/common';
-import { logger } from '../log';
-
-import { sync } from './sync';
+import { logger, logSuccess, output } from '../log';
 
 export async function addCommand(
   config: Config,
@@ -89,24 +85,10 @@ export async function addCommand(
         () => checkAppConfig(config),
         ...addChecks(config, platformName),
       ]);
-      await check([() => checkWebDir(config)]);
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
-      if (shouldSync(config, platformName)) {
-        await sync(config, platformName, false);
-      }
-
-      if (
-        platformName === config.ios.name ||
-        platformName === config.android.name
-      ) {
-        logger.info(
-          `Run ${c.input(`npx cap open ${platformName}`)} to launch ${
-            platformName === config.ios.name ? 'Xcode' : 'Android Studio'
-          }`,
-        );
-      }
+      printNextSteps(platformName);
     } catch (e) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
@@ -117,10 +99,16 @@ export async function addCommand(
   }
 }
 
-export function addChecks(
-  config: Config,
-  platformName: string,
-): CheckFunction[] {
+function printNextSteps(platform: string) {
+  logSuccess(`${c.strong(platform)} platform added!`);
+  output.write(
+    `Follow the Developer Workflow guide to get building:\n${c.strong(
+      `https://capacitorjs.com/docs/v3/basics/workflow`,
+    )}\n`,
+  );
+}
+
+function addChecks(config: Config, platformName: string): CheckFunction[] {
   if (platformName === config.ios.name) {
     return [() => checkIOSPackage(config), () => checkCocoaPods(config)];
   } else if (platformName === config.android.name) {
@@ -132,10 +120,7 @@ export function addChecks(
   }
 }
 
-export async function doAdd(
-  config: Config,
-  platformName: string,
-): Promise<void> {
+async function doAdd(config: Config, platformName: string): Promise<void> {
   await runTask(c.success(c.strong('add')), async () => {
     if (platformName === config.ios.name) {
       await addIOS(config);
@@ -151,14 +136,6 @@ async function editPlatforms(config: Config, platformName: string) {
   } else if (platformName === config.android.name) {
     await editProjectSettingsAndroid(config);
   }
-}
-
-function shouldSync(config: Config, platformName: string) {
-  // Don't sync if we're adding the iOS platform not on a mac
-  if (config.cli.os !== OS.Mac && platformName === 'ios') {
-    return false;
-  }
-  return true;
 }
 
 function webWarning() {
