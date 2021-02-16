@@ -340,7 +340,7 @@ async function determineXcodeWorkspaceDirAbs(
   if (!(await pathExists(xcodeDir))) {
     fatal(
       'Xcode workspace does not exist.\n' +
-        `Run ${c.input('npx cap add ios')} to bootstrap a new iOS project.`,
+        `https://capacitorjs.com/docs/v3/ios#adding-the-ios-platform`,
     );
   }
 

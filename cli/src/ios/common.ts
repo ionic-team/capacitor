@@ -26,17 +26,6 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkIOSProject(config: Config): Promise<string | null> {
-  const platformDir = await getProjectPlatformDirectory(config, 'ios');
-  if (!platformDir) {
-    return (
-      `${c.strong('ios')} platform has not been added yet.\n` +
-      `Use ${c.input(`npx cap add ios`)} to add the platform to your project.`
-    );
-  }
-  return null;
-}
-
 export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
   const resolved = await Promise.all(
     allPlugins.map(async plugin => await resolvePlugin(plugin)),
