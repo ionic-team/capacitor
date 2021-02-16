@@ -7,7 +7,6 @@ export const initLegacyHandlers = (
   win: WindowCapacitor,
   cap: CapacitorInstance,
 ): void => {
-
   if (cap.isNativePlatform()) {
     // define cordova if it's not there already
     win.cordova = win.cordova || {};

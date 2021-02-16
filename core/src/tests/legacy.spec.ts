@@ -7,7 +7,7 @@ import { WebPlugin } from '../web-plugin';
 describe('legacy', () => {
   let win: WindowCapacitor;
   let cap: CapacitorGlobal;
-  const LegacyWebPlugin = class extends WebPlugin { };
+  const LegacyWebPlugin = class extends WebPlugin {};
   const orgConsoleWarn = console.warn;
   const noop = () => {
     // do nothing
@@ -103,7 +103,7 @@ describe('legacy', () => {
   it('doc.addEventListener backbutton', done => {
     const AppWeb = class {
       async addListener(event: any) {
-        expect(event.eventName).toBe("backButton");
+        expect(event.eventName).toBe('backButton');
         done();
       }
     };
@@ -121,7 +121,7 @@ describe('legacy', () => {
     cap = createCapacitor(win);
     cap.registerPlugin<any>('App', {
       web: new AppWeb(),
-      android: new AppWeb()
+      android: new AppWeb(),
     });
 
     win.document.addEventListener('backbutton', bbCallback);
@@ -134,7 +134,7 @@ describe('legacy', () => {
           // ignore
         },
       },
-      androidBridge: { postMessage: noop }
+      androidBridge: { postMessage: noop },
     };
     createCapacitor(win);
     win.document.addEventListener('deviceready', done);
@@ -143,7 +143,7 @@ describe('legacy', () => {
   it('add navigator.app.exitApp', () => {
     win = {
       navigator: {},
-      androidBridge: { postMessage: noop }
+      androidBridge: { postMessage: noop },
     };
     createCapacitor(win);
     expect(win.navigator.app.exitApp).toBeDefined();
