@@ -22,6 +22,7 @@ describe.each([false, true])(
       await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
       await installPlatform(appDir, 'android');
       await run(appDir, `add android`);
+      await run(appDir, `sync android`);
       FS = new MappedFS(appDir);
     });
 
