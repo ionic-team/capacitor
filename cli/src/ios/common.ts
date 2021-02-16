@@ -2,7 +2,7 @@ import { readFile, writeFile } from '@ionic/utils-fs';
 import { resolve } from 'path';
 
 import c from '../colors';
-import { checkCapacitorPlatform, getProjectPlatformDirectory } from '../common';
+import { checkCapacitorPlatform } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
 import { OS } from '../definitions';

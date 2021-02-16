@@ -1,4 +1,3 @@
-import c from '../colors';
 import {
   check,
   checkPackage,
