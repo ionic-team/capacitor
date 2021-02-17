@@ -22,7 +22,6 @@ describe.each([false, true])('Update: iOS (monoRepoLike: %p)', monoRepoLike => {
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
     await installPlatform(appDir, 'ios');
     await run(appDir, `add ios`);
-    await run(appDir, `sync ios`);
     FS = new MappedFS(appDir);
   });
 
