@@ -124,14 +124,6 @@ function printNextSteps(platformName: string) {
   );
 }
 
-function shouldSync(config: Config, platformName: string) {
-  // Don't sync if we're adding the iOS platform not on a mac
-  if (config.cli.os !== OS.Mac && platformName === 'ios') {
-    return false;
-  }
-  return true;
-}
-
 function addChecks(config: Config, platformName: string): CheckFunction[] {
   if (platformName === config.ios.name) {
     return [() => checkIOSPackage(config), () => checkCocoaPods(config)];
@@ -160,6 +152,14 @@ async function editPlatforms(config: Config, platformName: string) {
   } else if (platformName === config.android.name) {
     await editProjectSettingsAndroid(config);
   }
+}
+
+function shouldSync(config: Config, platformName: string) {
+  // Don't sync if we're adding the iOS platform not on a mac
+  if (config.cli.os !== OS.Mac && platformName === 'ios') {
+    return false;
+  }
+  return true;
 }
 
 function webWarning() {
