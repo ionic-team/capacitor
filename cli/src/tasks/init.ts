@@ -168,9 +168,6 @@ function printNextSteps(newConfigName: string) {
   output.write(
     `\nCheck next steps: \n${c.strong(
       `https://capacitorjs.com/docs/v3/getting-started#where-to-go-next`,
-    )}\n` +
-      `And follow the Developer Workflow guide to get building:\n${c.strong(
-        `https://capacitorjs.com/docs/v3/basics/workflow`,
-      )}\n`,
+    )}\n`,
   );
 }
