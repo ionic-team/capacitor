@@ -1,3 +1,4 @@
+import { pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
 
 import { addAndroid } from '../android/add';
@@ -21,6 +22,7 @@ import {
   getProjectPlatformDirectory,
 } from '../common';
 import type { Config } from '../definitions';
+import { OS } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
 import {
@@ -29,6 +31,8 @@ import {
   checkCocoaPods,
 } from '../ios/common';
 import { logger, logSuccess, output } from '../log';
+
+import { sync } from './sync';
 
 export async function addCommand(
   config: Config,
@@ -88,6 +92,18 @@ export async function addCommand(
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
+      if (shouldSync(config, platformName)) {
+        if (await pathExists(config.app.webDirAbs)) {
+          sync(config, platformName, false);
+        } else {
+          logger.warn(
+            `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
+              config.app.webDir,
+            )} directory.`,
+          );
+        }
+      }
+
       printNextSteps(platformName);
     } catch (e) {
       if (!isFatal(e)) {
@@ -99,13 +115,21 @@ export async function addCommand(
   }
 }
 
-function printNextSteps(platform: string) {
-  logSuccess(`${c.strong(platform)} platform added!`);
+function printNextSteps(platformName: string) {
+  logSuccess(`${c.strong(platformName)} platform added!`);
   output.write(
     `Follow the Developer Workflow guide to get building:\n${c.strong(
       `https://capacitorjs.com/docs/v3/basics/workflow`,
     )}\n`,
   );
+}
+
+function shouldSync(config: Config, platformName: string) {
+  // Don't sync if we're adding the iOS platform not on a mac
+  if (config.cli.os !== OS.Mac && platformName === 'ios') {
+    return false;
+  }
+  return true;
 }
 
 function addChecks(config: Config, platformName: string): CheckFunction[] {
