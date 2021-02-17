@@ -102,8 +102,8 @@ describe('legacy', () => {
 
   it('doc.addEventListener backbutton', done => {
     const AppWeb = class {
-      async addListener(eventName: string) {
-        expect(eventName).toBe('backButton');
+      async addListener(event: any) {
+        expect(event.eventName).toBe('backButton');
         done();
       }
     };
@@ -116,10 +116,12 @@ describe('legacy', () => {
           expect(eventName).toBe('backbutton');
         },
       },
+      androidBridge: { postMessage: noop },
     };
     cap = createCapacitor(win);
     cap.registerPlugin<any>('App', {
       web: new AppWeb(),
+      android: new AppWeb(),
     });
 
     win.document.addEventListener('backbutton', bbCallback);
@@ -132,6 +134,7 @@ describe('legacy', () => {
           // ignore
         },
       },
+      androidBridge: { postMessage: noop },
     };
     createCapacitor(win);
     win.document.addEventListener('deviceready', done);
@@ -140,13 +143,16 @@ describe('legacy', () => {
   it('add navigator.app.exitApp', () => {
     win = {
       navigator: {},
+      androidBridge: { postMessage: noop },
     };
     createCapacitor(win);
     expect(win.navigator.app.exitApp).toBeDefined();
   });
 
   it('cordova global', () => {
-    win = {};
+    win = {
+      androidBridge: { postMessage: noop },
+    };
     createCapacitor(win);
     expect(win.cordova).toBeDefined();
   });
