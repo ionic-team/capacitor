@@ -340,7 +340,9 @@ async function determineXcodeWorkspaceDirAbs(
   if (!(await pathExists(xcodeDir))) {
     fatal(
       'Xcode workspace does not exist.\n' +
-        `https://capacitorjs.com/docs/v3/ios#adding-the-ios-platform`,
+        `See the docs for adding the ${c.strong('ios')} platform: ${c.strong(
+          'https://capacitorjs.com/docs/v3/ios#adding-the-ios-platform',
+        )}`,
     );
   }
 

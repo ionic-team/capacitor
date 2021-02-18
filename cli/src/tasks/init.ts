@@ -166,7 +166,7 @@ async function mergeConfig(
 function printNextSteps(newConfigName: string) {
   logSuccess(`${c.strong(newConfigName)} created!`);
   output.write(
-    `\nCheck next steps: \n${c.strong(
+    `\nNext steps: \n${c.strong(
       `https://capacitorjs.com/docs/v3/getting-started#where-to-go-next`,
     )}\n`,
   );
