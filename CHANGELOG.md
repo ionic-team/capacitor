@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-beta.3](https://github.com/ionic-team/capacitor/compare/3.0.0-beta.2...3.0.0-beta.3) (2021-02-18)
+
+
+### Bug Fixes
+
+* **cli:** do not error if webDir is missing when adding platforms ([#4215](https://github.com/ionic-team/capacitor/issues/4215)) ([4583add](https://github.com/ionic-team/capacitor/commit/4583add61f5f7ac60de8722664811d96d4095459))
+* **core:** do not add window.cordova on web apps ([#4214](https://github.com/ionic-team/capacitor/issues/4214)) ([6d673ef](https://github.com/ionic-team/capacitor/commit/6d673ef7076f00c37eac0f801c4c487415df6d4d))
+
+
+### Features
+
+* **cli:** do not require webDir when server.url is set ([#4200](https://github.com/ionic-team/capacitor/issues/4200)) ([91ddfbd](https://github.com/ionic-team/capacitor/commit/91ddfbd3cd1f598906b2ddc5cab8904420f231f6))
+* **iOS:** Add automatic Date serialization to bridge communication ([#4177](https://github.com/ionic-team/capacitor/issues/4177)) ([3dabc69](https://github.com/ionic-team/capacitor/commit/3dabc69eab1c8ce0b7734acb641b67d349ec3093))
+
+
+
+
+
 # [3.0.0-beta.2](https://github.com/ionic-team/capacitor/compare/3.0.0-beta.1...3.0.0-beta.2) (2021-02-08)
 
 
