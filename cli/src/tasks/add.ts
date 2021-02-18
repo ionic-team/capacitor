@@ -1,3 +1,4 @@
+import { pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
 
 import { addAndroid } from '../android/add';
@@ -12,7 +13,6 @@ import {
   check,
   checkAppConfig,
   checkPackage,
-  checkWebDir,
   resolvePlatform,
   runPlatformHook,
   runTask,
@@ -30,7 +30,7 @@ import {
   checkIOSPackage,
   checkCocoaPods,
 } from '../ios/common';
-import { logger } from '../log';
+import { logger, logSuccess, output } from '../log';
 
 import { sync } from './sync';
 
@@ -89,24 +89,22 @@ export async function addCommand(
         () => checkAppConfig(config),
         ...addChecks(config, platformName),
       ]);
-      await check([() => checkWebDir(config)]);
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
       if (shouldSync(config, platformName)) {
-        await sync(config, platformName, false);
+        if (await pathExists(config.app.webDirAbs)) {
+          sync(config, platformName, false);
+        } else {
+          logger.warn(
+            `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
+              config.app.webDir,
+            )} directory.`,
+          );
+        }
       }
 
-      if (
-        platformName === config.ios.name ||
-        platformName === config.android.name
-      ) {
-        logger.info(
-          `Run ${c.input(`npx cap open ${platformName}`)} to launch ${
-            platformName === config.ios.name ? 'Xcode' : 'Android Studio'
-          }`,
-        );
-      }
+      printNextSteps(platformName);
     } catch (e) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
@@ -117,10 +115,16 @@ export async function addCommand(
   }
 }
 
-export function addChecks(
-  config: Config,
-  platformName: string,
-): CheckFunction[] {
+function printNextSteps(platformName: string) {
+  logSuccess(`${c.strong(platformName)} platform added!`);
+  output.write(
+    `Follow the Developer Workflow guide to get building:\n${c.strong(
+      `https://capacitorjs.com/docs/v3/basics/workflow`,
+    )}\n`,
+  );
+}
+
+function addChecks(config: Config, platformName: string): CheckFunction[] {
   if (platformName === config.ios.name) {
     return [() => checkIOSPackage(config), () => checkCocoaPods(config)];
   } else if (platformName === config.android.name) {
@@ -132,10 +136,7 @@ export function addChecks(
   }
 }
 
-export async function doAdd(
-  config: Config,
-  platformName: string,
-): Promise<void> {
+async function doAdd(config: Config, platformName: string): Promise<void> {
   await runTask(c.success(c.strong('add')), async () => {
     if (platformName === config.ios.name) {
       await addIOS(config);
