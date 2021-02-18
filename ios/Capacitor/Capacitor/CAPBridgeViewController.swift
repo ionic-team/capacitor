@@ -121,7 +121,7 @@ import Cordova
 
     /**
      Allows any additional configuration to be performed. The `webView` and `bridge` properties will be set by this point.
-     
+
      - Note: This is called before the webview has been added to the view hierarchy. Not all operations may be possible at
      this time.
      */

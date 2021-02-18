@@ -1,6 +1,9 @@
+import Foundation
+
+@available(*, deprecated, renamed: "PluginCallResultData")
 public typealias PluginCallErrorData = [String: Any]
+@available(*, deprecated, renamed: "PluginCallResultData")
 public typealias PluginResultData = [String: Any]
-public typealias PluginEventListener = CAPPluginCall
 
 /**
  * Swift niceties for CAPPluginCall
@@ -37,24 +40,24 @@ extension CAPPluginCall: JSValueContainer {
     }
 
     @available(*, deprecated, renamed: "resolve")
-    func success(_ data: PluginResultData = [:]) {
+    func success(_ data: PluginCallResultData = [:]) {
         successHandler(CAPPluginCallResult(data), self)
     }
 
     func resolve() {
-        successHandler(CAPPluginCallResult(), self)
+        successHandler(CAPPluginCallResult(nil), self)
     }
 
-    func resolve(_ data: PluginResultData = [:]) {
+    func resolve(_ data: PluginCallResultData = [:]) {
         successHandler(CAPPluginCallResult(data), self)
     }
 
     @available(*, deprecated, renamed: "reject")
-    func error(_ message: String, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
+    func error(_ message: String, _ error: Error? = nil, _ data: PluginCallResultData = [:]) {
         errorHandler(CAPPluginCallError(message: message, code: nil, error: error, data: data))
     }
 
-    func reject(_ message: String, _ code: String? = nil, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
+    func reject(_ message: String, _ code: String? = nil, _ error: Error? = nil, _ data: PluginCallResultData = [:]) {
         errorHandler(CAPPluginCallError(message: message, code: code, error: error, data: data))
     }
 

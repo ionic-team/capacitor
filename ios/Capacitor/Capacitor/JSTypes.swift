@@ -177,20 +177,22 @@ extension JSValueContainer {
  */
 public enum JSTypes {}
 extension JSTypes {
-    public static func coerceDictionaryToJSObject(_ dictionary: NSDictionary?) -> JSObject? {
-        return coerceToJSValue(dictionary) as? JSObject
+    public static func coerceDictionaryToJSObject(_ dictionary: NSDictionary?, formattingDatesAsStrings: Bool = false) -> JSObject? {
+        return coerceToJSValue(dictionary, formattingDates: formattingDatesAsStrings) as? JSObject
     }
 
-    public static func coerceDictionaryToJSObject(_ dictionary: [AnyHashable: Any]?) -> JSObject? {
-        return coerceToJSValue(dictionary) as? JSObject
+    public static func coerceDictionaryToJSObject(_ dictionary: [AnyHashable: Any]?, formattingDatesAsStrings: Bool = false) -> JSObject? {
+        return coerceToJSValue(dictionary, formattingDates: formattingDatesAsStrings) as? JSObject
     }
-    
-    public static func coerceArrayToJSArray(_ array: [Any]?) -> JSArray? {
-        return array?.compactMap { coerceToJSValue($0) }
+
+    public static func coerceArrayToJSArray(_ array: [Any]?, formattingDatesAsStrings: Bool = false) -> JSArray? {
+        return array?.compactMap { coerceToJSValue($0, formattingDates: formattingDatesAsStrings) }
     }
 }
 
-private func coerceToJSValue(_ value: Any?) -> JSValue? {
+private let dateStringFormatter = ISO8601DateFormatter()
+
+private func coerceToJSValue(_ value: Any?, formattingDates: Bool) -> JSValue? {
     guard let value = value else {
         return nil
     }
@@ -208,16 +210,19 @@ private func coerceToJSValue(_ value: Any?) -> JSValue? {
     case let doubleValue as Double:
         return doubleValue
     case let dateValue as Date:
+        if formattingDates {
+            return dateStringFormatter.string(from: dateValue)
+        }
         return dateValue
     case let nullValue as NSNull:
         return nullValue
     case let arrayValue as NSArray:
-        return arrayValue.compactMap { coerceToJSValue($0) }
+        return arrayValue.compactMap { coerceToJSValue($0, formattingDates: formattingDates) }
     case let dictionaryValue as NSDictionary:
         let keys = dictionaryValue.allKeys.compactMap { $0 as? String }
         var result: JSObject = [:]
         for key in keys {
-            result[key] = coerceToJSValue(dictionaryValue[key])
+            result[key] = coerceToJSValue(dictionaryValue[key], formattingDates: formattingDates)
         }
         return result
     default:
