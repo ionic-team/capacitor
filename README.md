@@ -41,7 +41,9 @@ npx cap init
 Next, install any of the desired native platforms:
 
 ```
+npm install @capacitor/android
 npx cap add android
+npm install @capacitor/ios
 npx cap add ios
 ```
 

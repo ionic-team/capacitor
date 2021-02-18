@@ -34,13 +34,6 @@ export async function copyCommand(
     }
   } else {
     const platforms = await selectPlatforms(config, selectedPlatformName);
-    if (platforms.length === 0) {
-      logger.info(
-        `There are no platforms to copy yet.\n` +
-          `Add platforms with ${c.input('npx cap add')}.`,
-      );
-      return;
-    }
     try {
       await allSerial(
         platforms.map(platformName => () => copy(config, platformName)),

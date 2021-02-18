@@ -166,11 +166,8 @@ async function mergeConfig(
 function printNextSteps(newConfigName: string) {
   logSuccess(`${c.strong(newConfigName)} created!`);
   output.write(
-    `\nAdd platforms using ${c.input('npx cap add')}:\n` +
-      `  ${c.input('npx cap add android')}\n` +
-      `  ${c.input('npx cap add ios')}\n\n` +
-      `Follow the Developer Workflow guide to get building:\n${c.strong(
-        `https://capacitorjs.com/docs/v3/basics/workflow`,
-      )}\n`,
+    `\nNext steps: \n${c.strong(
+      `https://capacitorjs.com/docs/v3/getting-started#where-to-go-next`,
+    )}\n`,
   );
 }

@@ -4,7 +4,7 @@ import { fatal } from '../errors';
 import { logSuccess } from '../log';
 import { isInstalled } from '../util/subprocess';
 
-import { checkCocoaPods, checkIOSProject } from './common';
+import { checkCocoaPods } from './common';
 
 export async function doctorIOS(config: Config): Promise<void> {
   // DOCTOR ideas for iOS:
@@ -21,7 +21,6 @@ export async function doctorIOS(config: Config): Promise<void> {
   try {
     await check([
       () => checkCocoaPods(config),
-      () => checkIOSProject(config),
       () => checkWebDir(config),
       checkXcode,
     ]);

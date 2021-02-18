@@ -2,7 +2,7 @@ import { readFile, writeFile } from '@ionic/utils-fs';
 import { resolve } from 'path';
 
 import c from '../colors';
-import { checkCapacitorPlatform, getProjectPlatformDirectory } from '../common';
+import { checkCapacitorPlatform } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
 import { OS } from '../definitions';
@@ -21,17 +21,6 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
       `See this install guide: ${c.strong(
         'https://guides.cocoapods.org/using/getting-started.html#installation',
       )}`
-    );
-  }
-  return null;
-}
-
-export async function checkIOSProject(config: Config): Promise<string | null> {
-  const platformDir = await getProjectPlatformDirectory(config, 'ios');
-  if (!platformDir) {
-    return (
-      `${c.strong('ios')} platform has not been added yet.\n` +
-      `Use ${c.input(`npx cap add ios`)} to add the platform to your project.`
     );
   }
   return null;

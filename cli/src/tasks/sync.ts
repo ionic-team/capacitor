@@ -1,4 +1,3 @@
-import c from '../colors';
 import {
   check,
   checkPackage,
@@ -32,13 +31,6 @@ export async function syncCommand(
   } else {
     const then = +new Date();
     const platforms = await selectPlatforms(config, selectedPlatformName);
-    if (platforms.length === 0) {
-      logger.info(
-        `There are no platforms to sync yet.\n` +
-          `Add platforms with ${c.input('npx cap add')}.`,
-      );
-      return;
-    }
     try {
       await check([
         () => checkPackage(),
