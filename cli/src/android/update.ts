@@ -30,6 +30,7 @@ import {
   getPlugins,
   printPlugins,
 } from '../plugin';
+import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
@@ -55,6 +56,9 @@ export async function updateAndroid(config: Config): Promise<void> {
   );
   if (cordovaPlugins.length > 0) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
+  }
+  if (!(await pathExists(config.android.webDirAbs))) {
+    await copyTask(config, platform);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await checkPluginDependencies(plugins, platform);

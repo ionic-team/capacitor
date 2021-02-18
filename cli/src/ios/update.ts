@@ -1,4 +1,11 @@
-import { copy, remove, readFile, realpath, writeFile } from '@ionic/utils-fs';
+import {
+  copy,
+  remove,
+  pathExists,
+  readFile,
+  realpath,
+  writeFile,
+} from '@ionic/utils-fs';
 import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
@@ -20,6 +27,7 @@ import {
   getPlugins,
   printPlugins,
 } from '../plugin';
+import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { runCommand } from '../util/subprocess';
@@ -47,6 +55,9 @@ export async function updateIOS(
   );
   if (cordovaPlugins.length > 0) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
+  }
+  if (!(await pathExists(await config.ios.webDirAbs))) {
+    await copyTask(config, platform);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await checkPluginDependencies(plugins, platform);
