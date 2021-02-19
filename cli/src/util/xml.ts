@@ -2,20 +2,16 @@ import { readFile } from '@ionic/utils-fs';
 import xml2js from 'xml2js';
 
 export async function readXML(path: string): Promise<any> {
-  return new Promise(async (resolve, reject) => {
+  try {
+    const xmlStr = await readFile(path, { encoding: 'utf-8' });
     try {
-      const xmlStr = await readFile(path, { encoding: 'utf-8' });
-      xml2js.parseString(xmlStr, (e, result) => {
-        if (e) {
-          reject(`Error parsing: ${path}, ${e.stack ?? e}`);
-        } else {
-          resolve(result);
-        }
-      });
+      return parseString(xmlStr);
     } catch (e) {
-      throw `Unable to read: ${path}`;
+      throw `Error parsing: ${path}, ${e.stack ?? e}` ;
     }
-  });
+  } catch (e) {
+    throw `Unable to read: ${path}`;
+  }
 }
 
 export function parseXML(xmlStr: string): any {
@@ -49,4 +45,16 @@ export function buildXmlElement(configElement: any, rootName: string): string {
   });
 
   return builder.buildObject(configElement);
+}
+
+function parseString(xmlStr: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+      xml2js.parseString(xmlStr, (e, result) => {
+        if (e) {
+          reject(e);
+        } else {
+          resolve(result);
+        }
+      });
+  });
 }
