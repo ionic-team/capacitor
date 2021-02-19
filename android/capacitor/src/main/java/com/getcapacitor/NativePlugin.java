@@ -27,7 +27,7 @@ public @interface NativePlugin {
     /**
      * The request code to use when automatically requesting permissions
      */
-    int permissionRequestCode() default PluginRequestCodes.DEFAULT_CAPACITOR_REQUEST_PERMISSIONS;
+    int permissionRequestCode() default 9000;
 
     /**
      * A custom name for the plugin, otherwise uses the
