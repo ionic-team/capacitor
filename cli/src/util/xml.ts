@@ -2,16 +2,20 @@ import { readFile } from '@ionic/utils-fs';
 import xml2js from 'xml2js';
 
 export async function readXML(path: string): Promise<any> {
-  try {
-    const xmlStr = await readFile(path, { encoding: 'utf-8' });
+  return new Promise(async (resolve, reject) => {
     try {
-      return await xml2js.parseStringPromise(xmlStr);
+      const xmlStr = await readFile(path, { encoding: 'utf-8' });
+      xml2js.parseString(xmlStr, (e, result) => {
+        if (e) {
+          reject(`Error parsing: ${path}, ${e.stack ?? e}`);
+        } else {
+          resolve(result);
+        }
+      });
     } catch (e) {
-      throw `Error parsing: ${path}, ${e.stack ?? e}`;
+      throw `Unable to read: ${path}`;
     }
-  } catch (e) {
-    throw `Unable to read: ${path}`;
-  }
+  });
 }
 
 export function parseXML(xmlStr: string): any {
