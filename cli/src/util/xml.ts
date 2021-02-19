@@ -5,7 +5,7 @@ export async function readXML(path: string): Promise<any> {
   try {
     const xmlStr = await readFile(path, { encoding: 'utf-8' });
     try {
-      return parseString(xmlStr);
+      return await parseString(xmlStr);
     } catch (e) {
       throw `Error parsing: ${path}, ${e.stack ?? e}`;
     }
