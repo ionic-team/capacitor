@@ -7,7 +7,7 @@ export async function readXML(path: string): Promise<any> {
     try {
       return parseString(xmlStr);
     } catch (e) {
-      throw `Error parsing: ${path}, ${e.stack ?? e}` ;
+      throw `Error parsing: ${path}, ${e.stack ?? e}`;
     }
   } catch (e) {
     throw `Unable to read: ${path}`;
@@ -49,12 +49,12 @@ export function buildXmlElement(configElement: any, rootName: string): string {
 
 function parseString(xmlStr: string): Promise<any> {
   return new Promise((resolve, reject) => {
-      xml2js.parseString(xmlStr, (e, result) => {
-        if (e) {
-          reject(e);
-        } else {
-          resolve(result);
-        }
-      });
+    xml2js.parseString(xmlStr, (e, result) => {
+      if (e) {
+        reject(e);
+      } else {
+        resolve(result);
+      }
+    });
   });
 }
