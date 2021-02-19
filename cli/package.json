@@ -59,7 +59,7 @@
     "semver": "^7.3.2",
     "tar": "^6.0.5",
     "tslib": "^2.1.0",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@types/debug": "^4.1.5",
