@@ -240,24 +240,24 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     return proxy;
   };
   
-  if (!(cap as any).CUSTOM_PLATFORM) {
-    cap.convertFileSrc = convertFileSrc;
+  cap.convertFileSrc = convertFileSrc;
+  cap.convertFileSrc = convertFileSrc;
+  cap.getServerUrl = () => webviewServerUrl;
+  cap.handleError = handleError;
+  cap.logJs = logJs;
+  cap.pluginMethodNoop = pluginMethodNoop;
+  cap.Exception = CapacitorException;
+  cap.DEBUG = !!cap.DEBUG;
+  if (!cap.CUSTOM_PLATFORM) {
     cap.getPlatform = getPlatform;
-    cap.getServerUrl = () => webviewServerUrl;
-    cap.handleError = handleError;
     cap.isNativePlatform = isNativePlatform;
     cap.isPluginAvailable = isPluginAvailable;
-    cap.logJs = logJs;
-    cap.pluginMethodNoop = pluginMethodNoop;
     cap.registerPlugin = registerPlugin;
-    cap.Exception = CapacitorException;
-    cap.DEBUG = !!cap.DEBUG;
-
-    initBridge(win, cap);
-    initEvents(win, cap);
-    initVendor(win, cap);
-    initLegacyHandlers(win, cap);
   }
+  initBridge(win, cap);
+  initEvents(win, cap);
+  initVendor(win, cap);
+  initLegacyHandlers(win, cap);
 
   return cap;
 };
