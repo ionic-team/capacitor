@@ -277,14 +277,10 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      * - returns: the plugin, if found
      */
     func getOrLoadPlugin(pluginName: String) -> CAPPlugin? {
-        guard let plugin = self.getPlugin(pluginName: pluginName) ?? self.loadPlugin(pluginName: pluginName) else {
+        guard let plugin = self.plugin(withName: pluginName) ?? self.loadPlugin(pluginName: pluginName) else {
             return nil
         }
         return plugin
-    }
-
-    func getPlugin(pluginName: String) -> CAPPlugin? {
-        return self.plugins[pluginName]
     }
 
     func loadPlugin(pluginName: String) -> CAPPlugin? {
@@ -301,6 +297,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     func savePluginCall(_ call: CAPPluginCall) {
         storedCalls[call.callbackId] = call
+    }
+
+    // MARK: - CAPBridgeProtocol: Plugin Access
+
+    @objc public func plugin(withName: String) -> CAPPlugin? {
+        return self.plugins[withName]
     }
 
     // MARK: - CAPBridgeProtocol: Call Management
@@ -351,7 +353,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      * construct a selector, and perform that selector on the plugin instance.
      */
     func handleJSCall(call: JSCall) {
-        guard let plugin = self.getPlugin(pluginName: call.pluginId) ?? self.loadPlugin(pluginName: call.pluginId) else {
+        guard let plugin = self.plugin(withName: call.pluginId) ?? self.loadPlugin(pluginName: call.pluginId) else {
             CAPLog.print("⚡️  Error loading plugin \(call.pluginId) for call. Check that the pluginId is correct")
             return
         }
