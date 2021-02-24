@@ -81,7 +81,7 @@ internal class JSExport {
         return PluginHeaderMethod(name: method.name, rtype: rtype)
     }
 
-    public static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
+    static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
         if let pluginsJSFolder = Bundle.main.url(forResource: "public/plugins", withExtension: nil) {
             self.injectFilesForFolder(folder: pluginsJSFolder, userContentController: userContentController)
         }
