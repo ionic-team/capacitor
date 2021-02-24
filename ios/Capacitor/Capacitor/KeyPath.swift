@@ -43,19 +43,17 @@ extension KeyPath: ExpressibleByStringLiteral {
 
 extension JSObject {
     public subscript(keyPath keyPath: KeyPath) -> JSValue? {
-        get {
-            switch keyPath.headAndRemainder() {
-            case nil: // path is empty
+        switch keyPath.headAndRemainder() {
+        case nil: // path is empty
+            return nil
+        case let (head, remainder)? where remainder.isEmpty: // reached the end of the path
+            return self[head]
+        case let (head, remainder)?: // we have at least one level to traverse
+            switch self[head] {
+            case let childObject as JSObject: // iterate down the next level
+                return childObject[keyPath: remainder]
+            default: // not an object, can't go any deeper
                 return nil
-            case let (head, remainder)? where remainder.isEmpty: // reached the end of the path
-                return self[head]
-            case let (head, remainder)?: // we have at least one level to traverse
-                switch self[head] {
-                case let childObject as JSObject: // iterate down the next level
-                    return childObject[keyPath: remainder]
-                default: // not an object, can't go any deeper
-                    return nil
-                }
             }
         }
     }
