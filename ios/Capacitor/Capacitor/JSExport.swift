@@ -43,9 +43,10 @@ internal class JSExport {
     /**
      * Export the JS required to implement the given plugin.
      */
-    public static func exportJS(userContentController: WKUserContentController, pluginClassName: String, pluginType: CAPPlugin.Type) {
-        if let data = try? JSONEncoder().encode(createPluginHeader(pluginClassName: pluginClassName, pluginType: pluginType)), let header = String(data: data, encoding: .utf8) {
-            let js = """
+    static func exportJS(userContentController: WKUserContentController, pluginClassName: String, pluginType: CAPPlugin.Type) {
+        if let data = try? JSONEncoder().encode(createPluginHeader(pluginClassName: pluginClassName, pluginType: pluginType)),
+           let header = String(data: data, encoding: .utf8) {
+            let script = """
                 (function(w) {
                 var a = (w.Capacitor = w.Capacitor || {});
                 var h = (a.PluginHeaders = a.PluginHeaders || []);

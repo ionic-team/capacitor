@@ -10,13 +10,16 @@ internal extension InstanceDescriptor {
     @objc func _parseConfiguration(at capacitorURL: URL?, cordovaConfiguration cordovaURL: URL?) {
         // sanity check that the app directory is valid
         var isDirectory: ObjCBool = ObjCBool(false)
-        if warnings.contains(.missingAppDir) == false, (FileManager.default.fileExists(atPath: appLocation.path, isDirectory: &isDirectory) == false || isDirectory.boolValue == false) {
+        if warnings.contains(.missingAppDir) == false,
+           (FileManager.default.fileExists(atPath: appLocation.path, isDirectory: &isDirectory) == false || isDirectory.boolValue == false) {
             warnings.update(with: .missingAppDir)
         }
 
         // parse the capacitor configuration
         var config: JSObject?
-        if let capacitorURL = capacitorURL, FileManager.default.fileExists(atPath: capacitorURL.path, isDirectory: &isDirectory), isDirectory.boolValue == false {
+        if let capacitorURL = capacitorURL,
+           FileManager.default.fileExists(atPath: capacitorURL.path, isDirectory: &isDirectory),
+           isDirectory.boolValue == false {
             do {
                 let contents = try Data(contentsOf: capacitorURL)
                 config = JSTypes.coerceDictionaryToJSObject(try JSONSerialization.jsonObject(with: contents) as? [String: Any])
@@ -29,7 +32,9 @@ internal extension InstanceDescriptor {
 
         // parse the cordova configuration
         var configParser: XMLParser?
-        if let cordovaURL = cordovaURL, FileManager.default.fileExists(atPath: cordovaURL.path, isDirectory: &isDirectory), isDirectory.boolValue == false {
+        if let cordovaURL = cordovaURL,
+           FileManager.default.fileExists(atPath: cordovaURL.path, isDirectory: &isDirectory),
+           isDirectory.boolValue == false {
             configParser = XMLParser(contentsOf: cordovaURL)
         } else {
             warnings.update(with: .missingCordovaFile)

@@ -118,7 +118,8 @@ extension JSObjectContainer {
     }
 }
 
-public protocol JSValueContainer: JSStringContainer, JSBoolContainer, JSIntContainer, JSFloatContainer, JSDoubleContainer, JSDateContainer, JSArrayContainer, JSObjectContainer {
+public protocol JSValueContainer: JSStringContainer, JSBoolContainer, JSIntContainer, JSFloatContainer,
+                                  JSDoubleContainer, JSDateContainer, JSArrayContainer, JSObjectContainer {
     static var jsDateFormatter: ISO8601DateFormatter { get }
     var jsObjectRepresentation: JSObject { get }
 }

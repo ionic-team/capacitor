@@ -202,7 +202,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func exportCoreJS(localUrl: String) {
         do {
-            try JSExport.exportCapacitorGlobalJS(userContentController: webViewDelegationHandler.contentController, isDebug: isDevMode(), localUrl: localUrl)
+            try JSExport.exportCapacitorGlobalJS(userContentController: webViewDelegationHandler.contentController,
+                                                 isDebug: isDevMode(),
+                                                 localUrl: localUrl)
         } catch {
             type(of: self).fatalError(error, error)
         }
@@ -253,7 +255,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 if class_getSuperclass(aClass) == CDVPlugin.self {
                     injectCordovaFiles = true
                 }
-                if class_conformsToProtocol(aClass, CAPBridgedPlugin.self), let pluginType = aClass as? CAPPlugin.Type, let bridgeType = aClass as? CAPBridgedPlugin.Type {
+                if class_conformsToProtocol(aClass, CAPBridgedPlugin.self),
+                   let pluginType = aClass as? CAPPlugin.Type,
+                   let bridgeType = aClass as? CAPBridgedPlugin.Type {
                     let pluginClassName = NSStringFromClass(aClass)
                     registerPlugin(pluginClassName, bridgeType.jsName(), pluginType)
                 }
@@ -388,7 +392,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             // let startTime = CFAbsoluteTimeGetCurrent()
 
             let pluginCall = CAPPluginCall(callbackId: call.callbackId,
-                                           options: JSTypes.coerceDictionaryToJSObject(call.options, formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
+                                           options: JSTypes.coerceDictionaryToJSObject(call.options,
+                                                        formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
                                            success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
                                             if let result = result {
                                                 self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.isSaved ?? false)
@@ -399,7 +404,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                                             if let error = error {
                                                 self?.toJsError(error: JSResultError(call: call, callError: error))
                                             } else {
-                                                self?.toJsError(error: JSResultError(call: call, errorMessage: "", errorDescription: "", errorCode: nil, result: .dictionary([:])))
+                                                self?.toJsError(error: JSResultError(call: call,
+                                                                                     errorMessage: "",
+                                                                                     errorDescription: "",
+                                                                                     errorCode: nil,
+                                                                                     result: .dictionary([:])))
                                             }
                                            })
 
@@ -431,7 +440,10 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
 
             let arguments: [Any] = call.options["options"] as? [Any] ?? []
-            let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
+            let pluginCall = CDVInvokedUrlCommand(arguments: arguments,
+                                                  callbackId: call.callbackId,
+                                                  className: plugin.className,
+                                                  methodName: call.method)
             plugin.perform(selector, with: pluginCall)
 
         } else {
