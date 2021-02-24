@@ -119,7 +119,7 @@ extension InstanceDescriptor {
         }
         // now validate the server.url
         var urlValid = false
-        if let server = serverURL, let _ = URL(string: server) {
+        if let server = serverURL, URL(string: server) != nil {
             urlValid = true
         }
         if !urlValid {
