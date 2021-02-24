@@ -53,7 +53,7 @@ internal class JSExport {
                 h.push(\(header));
                 })(window);
                 """
-            let userScript = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+            let userScript = WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
             userContentController.addUserScript(userScript)
         }
     }
