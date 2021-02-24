@@ -38,6 +38,9 @@ import WebKit
     @available(*, deprecated, message: "Moved - equivalent is found on config.localURL")
     func getLocalUrl() -> String
 
+    // MARK: - Plugin Access
+    func plugin(withName: String) -> CAPPlugin?
+
     // MARK: - Call Management
     func getSavedCall(_ callbackId: String) -> CAPPluginCall?
     func releaseCall(_ call: CAPPluginCall)
