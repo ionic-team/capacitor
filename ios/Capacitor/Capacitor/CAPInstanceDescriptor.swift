@@ -5,7 +5,14 @@ public enum InstanceDescriptorDefaults {
     static let hostname = "localhost"
 }
 
+/**
+ The purpose of this function is to hide the messy details of parsing the configuration(s) so
+ the complexity is worth it. And the name starts with an underscore to match the convention of
+ private APIs in Obj-C (from which it is called).
+ */
 internal extension InstanceDescriptor {
+    // swiftlint:disable cyclomatic_complexity
+    // swiftlint:disable function_body_length
     // swiftlint:disable:next identifier_name
     @objc func _parseConfiguration(at capacitorURL: URL?, cordovaConfiguration cordovaURL: URL?) {
         // sanity check that the app directory is valid
@@ -97,6 +104,8 @@ internal extension InstanceDescriptor {
             }
         }
     }
+    // swiftlint:enable cyclomatic_complexity
+    // swiftlint:enable function_body_length
 }
 
 extension InstanceDescriptor {

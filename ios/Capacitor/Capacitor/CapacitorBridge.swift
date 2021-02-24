@@ -3,6 +3,16 @@ import Dispatch
 import WebKit
 import Cordova
 
+/**
+ An internal class adopting a public protocol means that we have a lot of `public` methods
+ but that is by design not a mistake. And since the bridge is the center of the whole project
+ its size/complexity is unavoidable.
+ 
+ Quiet these warnings for the whole file.
+ */
+// swiftlint:disable lower_acl_than_parent
+// swiftlint:disable file_length
+// swiftlint:disable type_body_length
 internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - CAPBridgeProtocol: Properties
@@ -347,9 +357,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Handle a call from JavaScript. First, find the corresponding plugin,
-     * construct a selector, and perform that selector on the plugin instance.
+     Handle a call from JavaScript. First, find the corresponding plugin, construct a selector,
+     and perform that selector on the plugin instance.
+     
+     Quiet the length warning because we don't want to refactor the function at this time.
      */
+    // swiftlint:disable:next function_body_length
     func handleJSCall(call: JSCall) {
         guard let plugin = self.plugin(withName: call.pluginId) ?? self.loadPlugin(pluginName: call.pluginId) else {
             CAPLog.print("⚡️  Error loading plugin \(call.pluginId) for call. Check that the pluginId is correct")
@@ -630,5 +643,4 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self.tmpWindow = nil
         }
     }
-
 }
