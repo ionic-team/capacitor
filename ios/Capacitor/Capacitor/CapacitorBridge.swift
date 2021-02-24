@@ -3,11 +3,6 @@ import Dispatch
 import WebKit
 import Cordova
 
-import Foundation
-import Dispatch
-import WebKit
-import Cordova
-
 internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - CAPBridgeProtocol: Properties
