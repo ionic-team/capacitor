@@ -73,8 +73,8 @@ import WebKit
 }
 
 /*
- Extensions to Obj-C protocols are not exposed to Obj-C code because of limitations in the runtime. Therefore these methods
- are implicitly Swift-only.
+ Extensions to Obj-C protocols are not exposed to Obj-C code because of limitations in the runtime.
+ Therefore these methods are implicitly Swift-only.
 
  The deprecated methods are declared here because they can be defined without colliding with the synthesized Obj-C setters
  for the respective properties (e.g. `setStatusBarVisible:` for 'statusBarVisible`).

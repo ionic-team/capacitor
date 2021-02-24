@@ -9,8 +9,7 @@ internal struct PluginHeader: Codable {
 }
 
 /**
- * PluginExport handles defining JS APIs that map to registered
- * plugins and are responsible for proxying calls to our bridge.
+ JSExport handles defining JS APIs that map to registered plugins and are responsible for proxying calls to our bridge.
  */
 internal class JSExport {
     static let catchallOptionsParameter = "_options"
@@ -41,7 +40,7 @@ internal class JSExport {
     }
 
     /**
-     * Export the JS required to implement the given plugin.
+     Export the JS required to implement the given plugin.
      */
     static func exportJS(userContentController: WKUserContentController, pluginClassName: String, pluginType: CAPPlugin.Type) {
         if let data = try? JSONEncoder().encode(createPluginHeader(pluginClassName: pluginClassName, pluginType: pluginType)),

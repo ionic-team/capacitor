@@ -143,8 +143,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // MARK: - Static Methods
 
     /**
-     * Print a hopefully informative error message to the log when something
-     * particularly dreadful happens.
+     Print a hopefully informative error message to the log when something
+     particularly dreadful happens.
      */
     static func fatalError(_ error: Error, _ originalError: Error) {
         CAPLog.print("⚡️ ❌  Capacitor: FATAL ERROR")
@@ -193,7 +193,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - Plugins
     /**
-     * Export core JavaScript to the webview
+     Export core JavaScript to the webview
      */
     func exportCoreJS(localUrl: String) {
         do {
@@ -206,8 +206,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Set up our Cordova compat by loading all known Cordova plugins and injecting
-     * their JS.
+     Set up our Cordova compat by loading all known Cordova plugins and injecting their JS.
      */
     func setupCordovaCompatibility() {
         if injectCordovaFiles {
@@ -217,7 +216,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Export the core Cordova JS runtime
+     Export the core Cordova JS runtime
      */
     func exportCordovaJS() {
         do {
@@ -228,15 +227,15 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Reset the state of the bridge between navigations to avoid
-     * sending data back to the page from a previous page.
+     Reset the state of the bridge between navigations to avoid
+     sending data back to the page from a previous page.
      */
     func reset() {
         storedCalls = [String: CAPPluginCall]()
     }
 
     /**
-     * Register all plugins that have been declared
+     Register all plugins that have been declared
      */
     func registerPlugins() {
         let classCount = objc_getClassList(nil, 0)
@@ -262,7 +261,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Register a single plugin.
+     Register a single plugin.
      */
     func registerPlugin(_ pluginClassName: String, _ jsName: String, _ pluginType: CAPPlugin.Type) {
         // let bridgeType = pluginType as! CAPBridgedPlugin.Type
@@ -272,8 +271,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * - parameter pluginId: the ID of the plugin
-     * - returns: the plugin, if found
+     - parameter pluginId: the ID of the plugin
+     - returns: the plugin, if found
      */
     func getOrLoadPlugin(pluginName: String) -> CAPPlugin? {
         guard let plugin = self.plugin(withName: pluginName) ?? self.loadPlugin(pluginName: pluginName) else {
@@ -423,8 +422,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Handle a Cordova call from JavaScript. First, find the corresponding plugin,
-     * construct a selector, and perform that selector on the plugin instance.
+     Handle a Cordova call from JavaScript. First, find the corresponding plugin,
+     construct a selector, and perform that selector on the plugin instance.
      */
     func handleCordovaJSCall(call: JSCall) {
         // Create a selector to send to the plugin
@@ -451,7 +450,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Send a successful result to the JavaScript layer.
+     Send a successful result to the JavaScript layer.
      */
     func toJs(result: JSResultProtocol, save: Bool) {
         let resultJson = result.jsonPayload()
@@ -476,7 +475,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Send an error result to the JavaScript layer.
+     Send an error result to the JavaScript layer.
      */
     func toJsError(error: JSResultProtocol) {
         DispatchQueue.main.async {
@@ -566,13 +565,13 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // MARK: - CAPBridgeProtocol: Paths, Files, Assets
 
     /**
-     * Translate a URL from the web view into a file URL for native iOS.
-     *
-     * The web view may be handling several different types of URLs:
-     *   - res:// (shortcut scheme to web assets)
-     *   - file:// (fully qualified URL to file on the local device)
-     *   - base64:// (to be implemented)
-     *   - [web view scheme]:// (already converted once to load in the web view, to be implemented)
+     Translate a URL from the web view into a file URL for native iOS.
+     
+     The web view may be handling several different types of URLs:
+       - res:// (shortcut scheme to web assets)
+       - file:// (fully qualified URL to file on the local device)
+       - base64:// (to be implemented)
+       - [web view scheme]:// (already converted once to load in the web view, to be implemented)
      */
     public func localURL(fromWebURL webURL: URL?) -> URL? {
         guard let inputURL = webURL else {
@@ -594,7 +593,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Translate a file URL for native iOS into a URL to load in the web view.
+     Translate a file URL for native iOS into a URL to load in the web view.
      */
     public func portablePath(fromLocalURL localURL: URL?) -> URL? {
         guard let inputURL = localURL else {
