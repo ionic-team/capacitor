@@ -47,8 +47,11 @@ import WebKit
     func releaseCall(callbackId: String)
 
     // MARK: - JavaScript Handling
+    // `js` is a short name but needs to be preserved for backwards compatibility.
+    // swiftlint:disable identifier_name
     func evalWithPlugin(_ plugin: CAPPlugin, js: String)
     func eval(js: String)
+    // swiftlint:enable identifier_name
 
     func triggerJSEvent(eventName: String, target: String)
     func triggerJSEvent(eventName: String, target: String, data: String)

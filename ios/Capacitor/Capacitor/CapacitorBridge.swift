@@ -488,8 +488,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // MARK: - CAPBridgeProtocol: JavaScript Handling
 
     /**
-     * Eval JS for a specific plugin.
+     Eval JS for a specific plugin.
+     
+     `js` is a short name but needs to be preserved for backwards compatibility.
      */
+    // swiftlint:disable:next identifier_name
     @objc public func evalWithPlugin(_ plugin: CAPPlugin, js: String) {
         let wrappedJs = """
         window.Capacitor.withPlugin('\(plugin.getId())', function(plugin) {
@@ -508,8 +511,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Eval JS in the web view
+     Eval JS in the web view
+     
+     `js` is a short name but needs to be preserved for backwards compatibility.
      */
+    // swiftlint:disable:next identifier_name
     @objc public func eval(js: String) {
         DispatchQueue.main.async {
             self.getWebView()?.evaluateJavaScript(js, completionHandler: { (_, error) in
