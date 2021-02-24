@@ -12,7 +12,7 @@ import {
 } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
-import { checkCocoaPods, checkIOSProject } from '../ios/common';
+import { checkCocoaPods } from '../ios/common';
 import { updateIOS } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
@@ -32,13 +32,6 @@ export async function updateCommand(
   } else {
     const then = +new Date();
     const platforms = await selectPlatforms(config, selectedPlatformName);
-    if (platforms.length === 0) {
-      logger.info(
-        `There are no platforms to update yet.\n` +
-          `Add platforms with ${c.input('npx cap add')}.`,
-      );
-      return;
-    }
     try {
       await check([() => checkPackage(), ...updateChecks(config, platforms)]);
 
@@ -67,10 +60,7 @@ export function updateChecks(
   const checks: CheckFunction[] = [];
   for (const platformName of platforms) {
     if (platformName === config.ios.name) {
-      checks.push(
-        () => checkCocoaPods(config),
-        () => checkIOSProject(config),
-      );
+      checks.push(() => checkCocoaPods(config));
     } else if (platformName === config.android.name) {
       continue;
     } else if (platformName === config.web.name) {

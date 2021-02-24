@@ -27,13 +27,7 @@ export async function openCommand(
   } else {
     const platforms = await selectPlatforms(config, selectedPlatformName);
     let platformName: string;
-    if (platforms.length === 0) {
-      logger.info(
-        `There are no platforms to open yet.\n` +
-          `Add platforms with ${c.input('npx cap add')}.`,
-      );
-      return;
-    } else if (platforms.length === 1) {
+    if (platforms.length === 1) {
       platformName = platforms[0];
     } else {
       platformName = await promptForPlatform(

@@ -304,9 +304,11 @@ export async function selectPlatforms(
       }
       fatal(
         `${c.strong(platformName)} platform has not been added yet.\n` +
-          `Use ${c.input(
-            `npx cap add ${platformName}`,
-          )} to add the platform to your project.`,
+          `See the docs for adding the ${c.strong(
+            platformName,
+          )} platform: ${c.strong(
+            `https://capacitorjs.com/docs/v3/${platformName}#adding-the-${platformName}-platform`,
+          )}`,
       );
     }
 

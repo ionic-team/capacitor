@@ -1,22 +1,26 @@
 import Foundation
 
 public class JSDate {
+    @available(*, deprecated, message: "No longer needed. Dates will be mapped to strings during serialization.")
     static func toString(_ date: Date) -> String {
         let formatter = ISO8601DateFormatter()
         return formatter.string(from: date)
     }
 }
 
+@available(*, deprecated, renamed: "PluginCallResultData")
+public typealias JSResultBody = [String: Any]
+
 /**
  * A call originating from JavaScript land
  */
-public class JSCall {
-    public var options: [String: Any] = [:]
-    public var pluginId: String = ""
-    public var method: String = ""
-    public var callbackId: String = ""
+internal struct JSCall {
+    let options: [String: Any]
+    let pluginId: String
+    let method: String
+    let callbackId: String
 
-    public init(options: [String: Any], pluginId: String, method: String, callbackId: String) {
+    init(options: [String: Any], pluginId: String, method: String, callbackId: String) {
         self.options = options
         self.pluginId = pluginId
         self.method = method
@@ -24,85 +28,115 @@ public class JSCall {
     }
 }
 
-public typealias JSResultBody = [String: Any]
+internal protocol JSResultProtocol {
+    var call: JSCall { get }
+    var callbackID: String { get }
+    var pluginID: String { get }
+    var methodName: String { get }
+    func jsonPayload() -> String
+}
+
+internal extension JSResultProtocol {
+    var callbackID: String {
+        return call.callbackId
+    }
+
+    var pluginID: String {
+        return call.pluginId
+    }
+
+    var methodName: String {
+        return call.method
+    }
+}
+
+private enum SerializationResult: String {
+    case undefined = "undefined"
+    case empty = "{}"
+}
 
 /**
  * A result of processing a JSCall, contains
  * a reference to the original call and the new result.
  */
-public class JSResult {
-    public var call: JSCall
-    public var result: JSResultBody?
 
-    public init(call: JSCall, result: JSResultBody?) {
+internal struct JSResult: JSResultProtocol {
+    let call: JSCall
+    let result: PluginCallResult?
+
+    init(call: JSCall, result: PluginCallResult?) {
         self.call = call
         self.result = result
     }
 
-    public func toJson() -> String {
-        if let result = result {
-            do {
-                if JSONSerialization.isValidJSONObject(result) {
-                    let theJSONData = try JSONSerialization.data(withJSONObject: result, options: [])
-
-                    return String(data: theJSONData,
-                                  encoding: .utf8)!
-                } else {
-                    CAPLog.print("[Capacitor Plugin Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
-                                    "Ensure that all data passed to success callback from module method is JSON serializable!")
-                }
-            } catch {
-                CAPLog.print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
-            }
-
-            return "{}"
-        } else {
-            return "undefined"
+    func jsonPayload() -> String {
+        guard let result = result else {
+            return SerializationResult.undefined.rawValue
         }
+        do {
+            if let payload = try result.jsonRepresentation() {
+                return payload
+            }
+        } catch PluginCallResult.SerializationError.invalidObject {
+            CAPLog.print("[Capacitor Plugin Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
+                            "Ensure that all data passed to success callback from module method is JSON serializable!")
+        } catch {
+            CAPLog.print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
+        }
+        return SerializationResult.empty.rawValue
     }
 }
 
-public class JSResultError {
-    var call: JSCall
-    var error: JSResultBody
-    var message: String
-    var code: String?
-    var errorMessage: String
-
-    public init(call: JSCall, message: String, errorMessage: String, error: JSResultBody, code: String? = nil) {
+internal extension JSResult {
+    init(call: JSCall, callResult: CAPPluginCallResult) {
         self.call = call
-        self.message = message
+        self.result = callResult.resultData
+    }
+}
+
+internal struct JSResultError: JSResultProtocol {
+    let call: JSCall
+    let errorMessage: String
+    let errorDescription: String
+    let errorCode: String?
+    let result: PluginCallResult
+
+    public init(call: JSCall, errorMessage: String, errorDescription: String, errorCode: String?, result: PluginCallResult) {
+        self.call = call
         self.errorMessage = errorMessage
-        self.error = error
-        self.code = code
+        self.errorDescription = errorDescription
+        self.errorCode = errorCode
+        self.result = result
     }
 
-    /**
-     * Return a linkable error that we can use to help users find help for common exceptions,
-     * much like AngularJS back in the day.
-     */
-    func getLinkableError(_ message: String) -> String? {
-        guard let data = message.data(using: .utf8)?.base64EncodedString() else {
-            return nil
-        }
+    func jsonPayload() -> String {
+        var errorDictionary: [String: Any] = [
+            "message": self.errorMessage,
+            "errorMessage": self.errorMessage
+        ]
+        errorDictionary["code"] = self.errorCode
 
-        return "\(CapacitorBridge.capacitorSite)error/ios?m=\(data)"
+        do {
+            if let payload = try result.jsonRepresentation(includingFields: errorDictionary) {
+                CAPLog.print("ERROR MESSAGE: ", payload.prefix(512))
+                return payload
+            }
+        } catch PluginCallResult.SerializationError.invalidObject {
+            CAPLog.print("[Capacitor Plugin Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
+                            "Ensure that all data passed to success callback from module method is JSON serializable!")
+        } catch {
+            CAPLog.print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
+        }
+        return SerializationResult.empty.rawValue
     }
+}
 
-    public func toJson() -> String {
-        var jsonResponse = "{}"
-
-        error["message"] = self.message
-        error["code"] = self.code
-        error["errorMessage"] = self.errorMessage
-        //error["_exlink"] = getLinkableError(self.message)
-
-        if let theJSONData = try? JSONSerialization.data(withJSONObject: error, options: []) {
-            jsonResponse = String(data: theJSONData,
-                                  encoding: .utf8)!
-            CAPLog.print("ERROR MESSAGE: ", jsonResponse.prefix(512))
-        }
-
-        return jsonResponse
+internal extension JSResultError {
+    init(call: JSCall, callError: CAPPluginCallError) {
+        self.call = call
+        errorMessage = callError.message
+        errorDescription = callError.error?.localizedDescription ?? ""
+        errorCode = callError.code
+        result = callError.resultData ?? .dictionary([:])
     }
 }

@@ -63,6 +63,7 @@
 		6296A78A253A2E49005A202A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A788253A2E49005A202A /* LaunchScreen.storyboard */; };
 		62A91C3425535F5700861508 /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A91C3325535F5700861508 /* ConfigurationTests.swift */; };
 		62A91C3F2553710E00861508 /* nonjson.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62A91C392553710300861508 /* nonjson.json */; };
+		62ADC0CA25CB678000E914DE /* PluginCallResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ADC0C925CB678000E914DE /* PluginCallResult.swift */; };
 		62D43AF02581817500673C24 /* WKWebView+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62D43AEF2581817500673C24 /* WKWebView+Capacitor.swift */; };
 		62D43B652582A13D00673C24 /* WKWebView+Capacitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 62D43B642582A13D00673C24 /* WKWebView+Capacitor.m */; };
 		62E0736125535E8700BAAADB /* server.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735225535E6500BAAADB /* server.json */; };
@@ -192,6 +193,7 @@
 		6296A78B253A2E49005A202A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62A91C3325535F5700861508 /* ConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
 		62A91C392553710300861508 /* nonjson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nonjson.json; sourceTree = "<group>"; };
+		62ADC0C925CB678000E914DE /* PluginCallResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginCallResult.swift; sourceTree = "<group>"; };
 		62D43AEF2581817500673C24 /* WKWebView+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+Capacitor.swift"; sourceTree = "<group>"; };
 		62D43B642582A13D00673C24 /* WKWebView+Capacitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WKWebView+Capacitor.m"; sourceTree = "<group>"; };
 		62E0735225535E6500BAAADB /* server.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = server.json; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 				62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */,
 				62959B062524DA7700A3D7F1 /* CAPPluginCall.m */,
 				62959AE62524DA7700A3D7F1 /* CAPPluginCall.swift */,
+				62ADC0C925CB678000E914DE /* PluginCallResult.swift */,
 				621ECCBB2542046400D3D615 /* JSTypes.swift */,
 				621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */,
 				621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */,
@@ -564,6 +567,7 @@
 				62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */,
 				62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */,
 				62959B1C2524DA7800A3D7F1 /* CAPPluginMethod.m in Sources */,
+				62ADC0CA25CB678000E914DE /* PluginCallResult.swift in Sources */,
 				62959B472524DA7800A3D7F1 /* CAPNotifications.swift in Sources */,
 				62D43B652582A13D00673C24 /* WKWebView+Capacitor.m in Sources */,
 				62959B312524DA7800A3D7F1 /* JS.swift in Sources */,

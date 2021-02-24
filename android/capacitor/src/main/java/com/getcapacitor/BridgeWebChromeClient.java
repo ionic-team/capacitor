@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -21,17 +20,15 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.EditText;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.FileProvider;
 import com.getcapacitor.util.PermissionHelper;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import org.apache.cordova.CordovaPlugin;
-import org.json.JSONException;
+import java.util.*;
 
 /**
  * Custom WebChromeClient handler, required for showing dialogs, confirms, etc. in our
@@ -39,17 +36,47 @@ import org.json.JSONException;
  */
 public class BridgeWebChromeClient extends WebChromeClient {
 
-    static final int FILE_CHOOSER = PluginRequestCodes.FILE_CHOOSER;
-    static final int FILE_CHOOSER_IMAGE_CAPTURE = PluginRequestCodes.FILE_CHOOSER_IMAGE_CAPTURE;
-    static final int FILE_CHOOSER_VIDEO_CAPTURE = PluginRequestCodes.FILE_CHOOSER_VIDEO_CAPTURE;
-    static final int FILE_CHOOSER_CAMERA_PERMISSION = PluginRequestCodes.FILE_CHOOSER_CAMERA_PERMISSION;
-    static final int GET_USER_MEDIA_PERMISSIONS = PluginRequestCodes.GET_USER_MEDIA_PERMISSIONS;
-    static final int GEOLOCATION_REQUEST_PERMISSIONS = PluginRequestCodes.GEOLOCATION_REQUEST_PERMISSIONS;
+    private interface PermissionListener {
+        void onPermissionSelect(Boolean isGranted);
+    }
+
+    private interface ActivityResultListener {
+        void onActivityResult(ActivityResult result);
+    }
+
+    private ActivityResultLauncher permissionLauncher;
+    private ActivityResultLauncher activityLauncher;
+    private PermissionListener permissionListener;
+    private ActivityResultListener activityListener;
 
     private Bridge bridge;
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
+        permissionLauncher =
+            bridge
+                .getActivity()
+                .registerForActivityResult(
+                    new ActivityResultContracts.RequestMultiplePermissions(),
+                    (Map<String, Boolean> isGranted) -> {
+                        if (permissionListener != null) {
+                            boolean granted = true;
+                            for (Map.Entry<String, Boolean> permission : isGranted.entrySet()) {
+                                if (!permission.getValue()) granted = false;
+                            }
+                            permissionListener.onPermissionSelect(granted);
+                        }
+                    }
+                );
+        activityLauncher =
+            bridge
+                .getActivity()
+                .registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        activityListener.onActivityResult(result);
+                    }
+                );
     }
 
     /**
@@ -90,24 +117,15 @@ public class BridgeWebChromeClient extends WebChromeClient {
         }
         if (!permissionList.isEmpty() && isRequestPermissionRequired) {
             String[] permissions = permissionList.toArray(new String[0]);
-            bridge.cordovaInterface.requestPermissions(
-                new CordovaPlugin() {
-                    @Override
-                    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
-                        if (GET_USER_MEDIA_PERMISSIONS == requestCode) {
-                            for (int r : grantResults) {
-                                if (r == PackageManager.PERMISSION_DENIED) {
-                                    request.deny();
-                                    return;
-                                }
-                            }
-                            request.grant(request.getResources());
-                        }
+            permissionListener =
+                isGranted -> {
+                    if (isGranted) {
+                        request.grant(request.getResources());
+                    } else {
+                        request.deny();
                     }
-                },
-                GET_USER_MEDIA_PERMISSIONS,
-                permissions
-            );
+                };
+            permissionLauncher.launch(permissions);
         } else {
             request.grant(request.getResources());
         }
@@ -260,31 +278,18 @@ public class BridgeWebChromeClient extends WebChromeClient {
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
-
         final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
         if (!PermissionHelper.hasPermissions(bridge.getContext(), geoPermissions)) {
-            this.bridge.cordovaInterface.requestPermissions(
-                    new CordovaPlugin() {
-                        @Override
-                        public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
-                            throws JSONException {
-                            if (GEOLOCATION_REQUEST_PERMISSIONS == requestCode) {
-                                List<String> list = Arrays.asList(permissions);
-
-                                if (list.contains(geoPermissions[0]) || list.contains(geoPermissions[1])) {
-                                    if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                                        callback.invoke(origin, true, false);
-                                    } else {
-                                        callback.invoke(origin, false, false);
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    GEOLOCATION_REQUEST_PERMISSIONS,
-                    geoPermissions
-                );
+            permissionListener =
+                isGranted -> {
+                    if (isGranted) {
+                        callback.invoke(origin, true, false);
+                    } else {
+                        callback.invoke(origin, false, false);
+                    }
+                };
+            permissionLauncher.launch(geoPermissions);
         } else {
             // permission is already granted
             callback.invoke(origin, true, false);
@@ -306,24 +311,17 @@ public class BridgeWebChromeClient extends WebChromeClient {
             if (isMediaCaptureSupported()) {
                 showMediaCaptureOrFilePicker(filePathCallback, fileChooserParams, captureVideo);
             } else {
-                this.bridge.cordovaInterface.requestPermission(
-                        new CordovaPlugin() {
-                            @Override
-                            public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
-                                throws JSONException {
-                                if (FILE_CHOOSER_CAMERA_PERMISSION == requestCode) {
-                                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                                        showMediaCaptureOrFilePicker(filePathCallback, fileChooserParams, captureVideo);
-                                    } else {
-                                        Logger.warn(Logger.tags("FileChooser"), "Camera permission not granted");
-                                        filePathCallback.onReceiveValue(null);
-                                    }
-                                }
-                            }
-                        },
-                        FILE_CHOOSER_CAMERA_PERMISSION,
-                        Manifest.permission.CAMERA
-                    );
+                permissionListener =
+                    isGranted -> {
+                        if (isGranted) {
+                            showMediaCaptureOrFilePicker(filePathCallback, fileChooserParams, captureVideo);
+                        } else {
+                            Logger.warn(Logger.tags("FileChooser"), "Camera permission not granted");
+                            filePathCallback.onReceiveValue(null);
+                        }
+                    };
+                final String[] camPermission = { Manifest.permission.CAMERA };
+                permissionLauncher.launch(camPermission);
             }
         } else {
             showFilePicker(filePathCallback, fileChooserParams);
@@ -373,21 +371,15 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return false;
         }
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
-
-        bridge.cordovaInterface.startActivityForResult(
-            new CordovaPlugin() {
-                @Override
-                public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-                    Uri[] result = null;
-                    if (resultCode == Activity.RESULT_OK) {
-                        result = new Uri[] { imageFileUri };
-                    }
-                    filePathCallback.onReceiveValue(result);
+        activityListener =
+            activityResult -> {
+                Uri[] result = null;
+                if (activityResult.getResultCode() == Activity.RESULT_OK) {
+                    result = new Uri[] { imageFileUri };
                 }
-            },
-            takePictureIntent,
-            FILE_CHOOSER_IMAGE_CAPTURE
-        );
+                filePathCallback.onReceiveValue(result);
+            };
+        activityLauncher.launch(takePictureIntent);
 
         return true;
     }
@@ -399,20 +391,15 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return false;
         }
 
-        bridge.cordovaInterface.startActivityForResult(
-            new CordovaPlugin() {
-                @Override
-                public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-                    Uri[] result = null;
-                    if (resultCode == Activity.RESULT_OK) {
-                        result = new Uri[] { intent.getData() };
-                    }
-                    filePathCallback.onReceiveValue(result);
+        activityListener =
+            activityResult -> {
+                Uri[] result = null;
+                if (activityResult.getResultCode() == Activity.RESULT_OK) {
+                    result = new Uri[] { activityResult.getData().getData() };
                 }
-            },
-            takeVideoIntent,
-            FILE_CHOOSER_VIDEO_CAPTURE
-        );
+                filePathCallback.onReceiveValue(result);
+            };
+        activityLauncher.launch(takeVideoIntent);
 
         return true;
     }
@@ -427,26 +414,26 @@ public class BridgeWebChromeClient extends WebChromeClient {
             intent.putExtra(Intent.EXTRA_MIME_TYPES, validTypes);
         }
         try {
-            bridge.cordovaInterface.startActivityForResult(
-                new CordovaPlugin() {
-                    @Override
-                    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-                        Uri[] result;
-                        if (resultCode == Activity.RESULT_OK && intent.getClipData() != null && intent.getClipData().getItemCount() > 1) {
-                            final int numFiles = intent.getClipData().getItemCount();
-                            result = new Uri[numFiles];
-                            for (int i = 0; i < numFiles; i++) {
-                                result[i] = intent.getClipData().getItemAt(i).getUri();
-                            }
-                        } else {
-                            result = WebChromeClient.FileChooserParams.parseResult(resultCode, intent);
+            activityListener =
+                activityResult -> {
+                    Uri[] result;
+                    Intent resultIntent = activityResult.getData();
+                    if (
+                        activityResult.getResultCode() == Activity.RESULT_OK &&
+                        resultIntent.getClipData() != null &&
+                        resultIntent.getClipData().getItemCount() > 1
+                    ) {
+                        final int numFiles = resultIntent.getClipData().getItemCount();
+                        result = new Uri[numFiles];
+                        for (int i = 0; i < numFiles; i++) {
+                            result[i] = resultIntent.getClipData().getItemAt(i).getUri();
                         }
-                        filePathCallback.onReceiveValue(result);
+                    } else {
+                        result = WebChromeClient.FileChooserParams.parseResult(activityResult.getResultCode(), resultIntent);
                     }
-                },
-                intent,
-                FILE_CHOOSER
-            );
+                    filePathCallback.onReceiveValue(result);
+                };
+            activityLauncher.launch(intent);
         } catch (ActivityNotFoundException e) {
             filePathCallback.onReceiveValue(null);
         }
