@@ -1,7 +1,10 @@
 /**
- * Notificaton types for NotificationCenter and NSNotificationCenter
+ Notificaton types for NotificationCenter and NSNotificationCenter
+ 
+ We want to include `capacitor` in the name(s) to uniquely identify these even though it can make the names long
+ and the deprecated notifications are only here for backwards compatibility.
  */
-
+// swiftlint:disable identifier_name
 extension Notification.Name {
     public static let capacitorOpenURL = Notification.Name(rawValue: "CapacitorOpenURLNotification")
     public static let capacitorOpenUniversalLink = Notification.Name(rawValue: "CapacitorOpenUniversalLinkNotification")
@@ -25,11 +28,10 @@ extension Notification.Name {
     public static let capacitorStatusBarTapped = Notification.Name.capacitorStatusBarTapped
 }
 
-/*
+/**
  Deprecated, will be removed
  */
 @objc public enum CAPNotifications: Int {
-    // swiftlint:disable identifier_name
     @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorOpenURL'")
     case URLOpen
     @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorOpenUniversalLink'")
@@ -42,7 +44,6 @@ extension Notification.Name {
     case DidFailToRegisterForRemoteNotificationsWithError
     @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorDecidePolicyForNavigationAction'")
     case DecidePolicyForNavigationAction
-    // swiftlint:enable identifier_name
 
     public func name() -> String {
         switch self {
@@ -61,3 +62,4 @@ extension Notification.Name {
         }
     }
 }
+// swiftlint:enable identifier_name
