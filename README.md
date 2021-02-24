@@ -264,7 +264,7 @@ Made possible by the Capacitor community. 💖
   <a href="https://github.com/michaeltintiuc"><img src="https://github.com/michaeltintiuc.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/moberwasserlechner"><img src="https://github.com/moberwasserlechner.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/jthoms1"><img src="https://github.com/jthoms1.png?size=100" width="50" height="50" /></a>
-  <a href="https://github.com/dwieeb"><img src="https://github.com/dwieeb.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/imhoffd"><img src="https://github.com/imhoffd.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/mykeskin"><img src="https://github.com/mykeskin.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/triniwiz"><img src="https://github.com/triniwiz.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/martinlindhe"><img src="https://github.com/martinlindhe.png?size=100" width="50" height="50" /></a>
