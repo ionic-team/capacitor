@@ -376,9 +376,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
 
         if !plugin.responds(to: selector) {
+            // we don't want to break up string literals
+            // swiftlint:disable line_length
             CAPLog.print("⚡️  Error: Plugin \(plugin.getId()) does not respond to method call \"\(call.method)\" using selector \"\(selector)\".")
             CAPLog.print("⚡️  Ensure plugin method exists, uses @objc in its declaration, and arguments match selector without callbacks in CAP_PLUGIN_METHOD.")
             CAPLog.print("⚡️  Learn more: \(docLink(DocLinks.CAPPluginMethodSelector.rawValue))")
+            // swiftlint:enable line_length
             return
         }
 
