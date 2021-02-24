@@ -1,6 +1,8 @@
 import Foundation
 import WebKit
 
+// adopting a public protocol in an internal class is by design
+// swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
 internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
     weak var bridge: CapacitorBridge?
