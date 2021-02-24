@@ -38,6 +38,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     // MARK: - WKNavigationDelegate
 
+    // The force unwrap is part of the protocol declaration, so we should keep it.
+    // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         // Reset the bridge on each navigation
         bridge?.reset()
@@ -92,6 +94,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         decisionHandler(.allow)
     }
 
+    // The force unwrap is part of the protocol declaration, so we should keep it.
+    // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         if case .initialLoad(let isOpaque) = webViewLoadingState {
             webView.isOpaque = isOpaque
@@ -100,6 +104,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         CAPLog.print("⚡️  WebView loaded")
     }
 
+    // The force unwrap is part of the protocol declaration, so we should keep it.
+    // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         if case .initialLoad(let isOpaque) = webViewLoadingState {
             webView.isOpaque = isOpaque
@@ -109,6 +115,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
     }
 
+    // The force unwrap is part of the protocol declaration, so we should keep it.
+    // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         CAPLog.print("⚡️  WebView failed provisional navigation")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
