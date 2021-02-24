@@ -101,7 +101,7 @@ internal struct JSResultError: JSResultProtocol {
     let errorCode: String?
     let result: PluginCallResult
 
-    public init(call: JSCall, errorMessage: String, errorDescription: String, errorCode: String?, result: PluginCallResult) {
+    init(call: JSCall, errorMessage: String, errorDescription: String, errorCode: String?, result: PluginCallResult) {
         self.call = call
         self.errorMessage = errorMessage
         self.errorDescription = errorDescription

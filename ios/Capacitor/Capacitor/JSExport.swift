@@ -16,13 +16,13 @@ internal class JSExport {
     static let catchallOptionsParameter = "_options"
     static let callbackParameter = "_callback"
 
-    public static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, localUrl: String) throws {
+    static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, localUrl: String) throws {
         let data = "window.Capacitor = { DEBUG: \(isDebug), Plugins: {} }; window.WEBVIEW_SERVER_URL = '\(localUrl)';"
         let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         userContentController.addUserScript(userScript)
     }
 
-    public static func exportCordovaJS(userContentController: WKUserContentController) throws {
+    static func exportCordovaJS(userContentController: WKUserContentController) throws {
         guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
             CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
             throw CapacitorBridgeError.errorExportingCoreJS
