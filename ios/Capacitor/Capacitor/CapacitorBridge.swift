@@ -7,7 +7,7 @@ import Cordova
  An internal class adopting a public protocol means that we have a lot of `public` methods
  but that is by design not a mistake. And since the bridge is the center of the whole project
  its size/complexity is unavoidable.
- 
+
  Quiet these warnings for the whole file.
  */
 // swiftlint:disable lower_acl_than_parent
@@ -359,7 +359,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     /**
      Handle a call from JavaScript. First, find the corresponding plugin, construct a selector,
      and perform that selector on the plugin instance.
-     
+
      Quiet the length warning because we don't want to refactor the function at this time.
      */
     // swiftlint:disable:next function_body_length
@@ -403,7 +403,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
             let pluginCall = CAPPluginCall(callbackId: call.callbackId,
                                            options: JSTypes.coerceDictionaryToJSObject(call.options,
-                                                        formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
+                                                                                       formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
                                            success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
                                             if let result = result {
                                                 self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.isSaved ?? false)
@@ -504,7 +504,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     /**
      Eval JS for a specific plugin.
-     
+
      `js` is a short name but needs to be preserved for backwards compatibility.
      */
     // swiftlint:disable:next identifier_name
@@ -527,7 +527,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     /**
      Eval JS in the web view
-     
+
      `js` is a short name but needs to be preserved for backwards compatibility.
      */
     // swiftlint:disable:next identifier_name
@@ -579,12 +579,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     /**
      Translate a URL from the web view into a file URL for native iOS.
-     
+
      The web view may be handling several different types of URLs:
-       - res:// (shortcut scheme to web assets)
-       - file:// (fully qualified URL to file on the local device)
-       - base64:// (to be implemented)
-       - [web view scheme]:// (already converted once to load in the web view, to be implemented)
+     - res:// (shortcut scheme to web assets)
+     - file:// (fully qualified URL to file on the local device)
+     - base64:// (to be implemented)
+     - [web view scheme]:// (already converted once to load in the web view, to be implemented)
      */
     public func localURL(fromWebURL webURL: URL?) -> URL? {
         guard let inputURL = webURL else {
