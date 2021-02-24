@@ -220,8 +220,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     }
 
     public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if navigationAction.request.url != nil {
-            UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
+        if let url = navigationAction.request.url {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
         return nil
     }

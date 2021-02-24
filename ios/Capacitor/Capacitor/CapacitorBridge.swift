@@ -365,7 +365,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             return
         }
 
-        var selector: Selector?
+        let selector: Selector
         if call.method == "addListener" || call.method == "removeListener" {
             selector = NSSelectorFromString(call.method + ":")
         } else {
@@ -381,7 +381,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
 
         if !plugin.responds(to: selector) {
-            CAPLog.print("⚡️  Error: Plugin \(plugin.getId()) does not respond to method call \"\(call.method)\" using selector \"\(selector!)\".")
+            CAPLog.print("⚡️  Error: Plugin \(plugin.getId()) does not respond to method call \"\(call.method)\" using selector \"\(selector)\".")
             CAPLog.print("⚡️  Ensure plugin method exists, uses @objc in its declaration, and arguments match selector without callbacks in CAP_PLUGIN_METHOD.")
             CAPLog.print("⚡️  Learn more: \(docLink(DocLinks.CAPPluginMethodSelector.rawValue))")
             return
@@ -434,7 +434,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
             let selector = NSSelectorFromString("\(call.method):")
             if !plugin.responds(to: selector) {
-                CAPLog.print("Error: Plugin \(plugin.className!) does not respond to method call \(selector).")
+                CAPLog.print("Error: Plugin \(plugin.className ?? "") does not respond to method call \(selector).")
                 CAPLog.print("Ensure plugin method exists and uses @objc in its declaration")
                 return
             }
@@ -505,8 +505,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         DispatchQueue.main.async {
             self.getWebView()?.evaluateJavaScript(wrappedJs, completionHandler: { (_, error) in
-                if error != nil {
-                    CAPLog.print("⚡️  JS Eval error", error!.localizedDescription)
+                if let error = error {
+                    CAPLog.print("⚡️  JS Eval error", error.localizedDescription)
                 }
             })
         }
@@ -518,8 +518,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     @objc public func eval(js: String) {
         DispatchQueue.main.async {
             self.getWebView()?.evaluateJavaScript(js, completionHandler: { (_, error) in
-                if error != nil {
-                    CAPLog.print("⚡️  JS Eval error", error!.localizedDescription)
+                if let error = error {
+                    CAPLog.print("⚡️  JS Eval error", error.localizedDescription)
                 }
             })
         }
@@ -552,8 +552,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public func logToJs(_ message: String, _ level: String = "log") {
         DispatchQueue.main.async {
             self.getWebView()?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
-                if error != nil && result != nil {
-                    CAPLog.print(result!)
+                if error != nil, let result = result {
+                    CAPLog.print(result)
                 }
             }
         }
@@ -613,9 +613,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         } else {
             self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
-            self.tmpWindow!.rootViewController = TmpViewController.init()
-            self.tmpWindow!.makeKeyAndVisible()
-            self.tmpWindow!.rootViewController!.present(viewControllerToPresent, animated: flag, completion: completion)
+            self.tmpWindow?.rootViewController = TmpViewController.init()
+            self.tmpWindow?.makeKeyAndVisible()
+            self.tmpWindow?.rootViewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         }
     }
 
@@ -623,7 +623,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if self.tmpWindow == nil {
             self.viewController?.dismiss(animated: flag, completion: completion)
         } else {
-            self.tmpWindow!.rootViewController!.dismiss(animated: flag, completion: completion)
+            self.tmpWindow?.rootViewController?.dismiss(animated: flag, completion: completion)
             self.tmpWindow = nil
         }
     }
