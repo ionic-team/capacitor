@@ -147,7 +147,7 @@ public class Plugin {
                 e.printStackTrace();
             }
 
-            if (!savedCall.isReleased() && !savedCall.isSaved()) {
+            if (!savedCall.isSaved()) {
                 savedCall.release(bridge);
             }
         }
@@ -167,7 +167,7 @@ public class Plugin {
             e.printStackTrace();
         }
 
-        if (!savedCall.isReleased() && !savedCall.isSaved()) {
+        if (!savedCall.isSaved()) {
             savedCall.release(bridge);
         }
     }
@@ -285,9 +285,7 @@ public class Plugin {
      */
     @Deprecated
     public void freeSavedCall() {
-        if (!this.savedLastCall.isReleased()) {
-            this.savedLastCall.release(bridge);
-        }
+        this.savedLastCall.release(bridge);
         this.savedLastCall = null;
     }
 

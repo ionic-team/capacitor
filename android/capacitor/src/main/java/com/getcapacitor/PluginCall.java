@@ -30,6 +30,7 @@ public class PluginCall {
     /**
      * Indicates that this PluginCall was released, and should no longer be used
      */
+    @Deprecated
     private boolean isReleased = false;
 
     public PluginCall(MessageHandler msgHandler, String pluginId, String callbackId, String methodName, JSObject data) {
@@ -355,6 +356,7 @@ public class PluginCall {
         return shouldSave;
     }
 
+    @Deprecated
     public boolean isReleased() {
         return isReleased;
     }
