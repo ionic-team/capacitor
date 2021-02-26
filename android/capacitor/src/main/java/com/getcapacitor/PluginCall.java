@@ -371,7 +371,7 @@ public class PluginCall {
      */
     @Deprecated
     public boolean isSaved() {
-        return keepAlive;
+        return isKeptAlive();
     }
 
     /**
