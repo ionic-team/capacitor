@@ -147,7 +147,7 @@ public class Plugin {
                 e.printStackTrace();
             }
 
-            if (!savedCall.isSaved()) {
+            if (!savedCall.isKeptAlive()) {
                 savedCall.release(bridge);
             }
         }
@@ -167,7 +167,7 @@ public class Plugin {
             e.printStackTrace();
         }
 
-        if (!savedCall.isSaved()) {
+        if (!savedCall.isKeptAlive()) {
             savedCall.release(bridge);
         }
     }
@@ -733,7 +733,7 @@ public class Plugin {
     @PluginMethod(returnType = PluginMethod.RETURN_NONE)
     public void addListener(PluginCall call) {
         String eventName = call.getString("eventName");
-        call.save();
+        call.setKeepAlive(true);
         addEventListener(eventName, call);
     }
 
