@@ -203,6 +203,11 @@ public class Bridge {
             }
         }
 
+        String path = this.config.getPath();
+        if (path != null && !path.trim().isEmpty()) {
+            appUrl += path;
+        }
+
         final boolean html5mode = this.config.isHTML5Mode();
 
         // Start the local web server
