@@ -1,6 +1,8 @@
 import Foundation
 import WebKit
 
+// adopting a public protocol in an internal class is by design
+// swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
 internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
     weak var bridge: CapacitorBridge?
@@ -38,6 +40,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     // MARK: - WKNavigationDelegate
 
+    // The force unwrap is part of the protocol declaration, so we should keep it.
+    // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         // Reset the bridge on each navigation
         bridge?.reset()
@@ -92,6 +96,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         decisionHandler(.allow)
     }
 
+    // The force unwrap is part of the protocol declaration, so we should keep it.
+    // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         if case .initialLoad(let isOpaque) = webViewLoadingState {
             webView.isOpaque = isOpaque
@@ -100,6 +106,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         CAPLog.print("⚡️  WebView loaded")
     }
 
+    // The force unwrap is part of the protocol declaration, so we should keep it.
+    // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         if case .initialLoad(let isOpaque) = webViewLoadingState {
             webView.isOpaque = isOpaque
@@ -109,6 +117,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
     }
 
+    // The force unwrap is part of the protocol declaration, so we should keep it.
+    // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         CAPLog.print("⚡️  WebView failed provisional navigation")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
@@ -220,8 +230,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     }
 
     public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if navigationAction.request.url != nil {
-            UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
+        if let url = navigationAction.request.url {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
         return nil
     }

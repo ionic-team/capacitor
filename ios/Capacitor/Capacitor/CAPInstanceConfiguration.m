@@ -55,7 +55,11 @@
         _handleApplicationNotifications = configuration.handleApplicationNotifications;
         _cordovaDeployDisabled = configuration.cordovaDeployDisabled;
         _contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior;
+        // we don't care about internal usage of deprecated APIs and the framework should build cleanly
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         _legacyConfig = [[configuration legacyConfig] copy];
+#pragma clang diagnostic pop
         _appStartPath = configuration.appStartPath;
         _appLocation = [location copy];
     }
