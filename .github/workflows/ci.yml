@@ -142,4 +142,4 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
-      - run: npx lerna publish from-git --dist-tag next --yes || true
+      - run: npx lerna publish from-git --force-publish --dist-tag next || true
