@@ -1,4 +1,4 @@
-import { initBridge } from './bridge';
+import { getPlatformId, initBridge } from './bridge';
 import type { CapacitorGlobal, PluginImplementations } from './definitions';
 import type {
   CapacitorInstance,
@@ -30,7 +30,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const webviewServerUrl =
     typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
 
-  const getPlatform = () => capPlatforms.currentPlatform.name;
+  const defaultGetPlatform = () => getPlatformId(win);
+  const getPlatform = capPlatforms.currentPlatform.getPlatform || defaultGetPlatform;
 
   const defaultIsNativePlatform = () => capPlatforms.currentPlatform.name !== 'web';
   const isNativePlatform = capPlatforms.currentPlatform.isNativePlatform || defaultIsNativePlatform;
