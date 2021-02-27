@@ -69,7 +69,7 @@ export const initEvents = (
           return doc.dispatchEvent(ev);
         }
       } else if (target === 'window' && win.dispatchEvent) {
-        return (win as Window).dispatchEvent(ev);
+        return (win as unknown as Window).dispatchEvent(ev);
       } else if (doc?.querySelector) {
         const targetEl: Element = doc.querySelector(target);
         if (targetEl) {

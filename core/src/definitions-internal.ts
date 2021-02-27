@@ -4,7 +4,7 @@ import type {
   PluginResultData,
   PluginResultError,
 } from './definitions';
-import { CapacitorPlatformsClass } from './platforms';
+import { CapacitorPlatformsInstance } from './platforms';
 
 export interface PluginHeaderMethod {
   readonly name: string;
@@ -139,7 +139,7 @@ export interface StoredCallback {
 
 export interface WindowCapacitor {
   Capacitor?: CapacitorInstance;
-  CapacitorPlatforms: CapacitorPlatformsClass;
+  CapacitorPlatforms: CapacitorPlatformsInstance;
   Ionic?: {
     WebView?: {
       getServerBasePath?: any;
