@@ -83,8 +83,7 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - /Applications/Xcode_12.2.app
-          - /Applications/Xcode_11.7.app
+          - /Applications/Xcode_12.4.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/setup-node@v1
@@ -143,4 +142,4 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
-      - run: npx lerna publish from-git --dist-tag next --yes || true
+      - run: npx lerna publish from-git --force-publish --dist-tag next --yes || true

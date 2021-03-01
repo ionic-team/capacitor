@@ -109,7 +109,7 @@ During Capacitor 3 development, the following workflow is used to create dev rel
     <br>
 
     ```
-    npx lerna version prerelease
+    npx lerna version prerelease --force-publish
     ```
 
 1. Wait for CI to publish the new tagged version.

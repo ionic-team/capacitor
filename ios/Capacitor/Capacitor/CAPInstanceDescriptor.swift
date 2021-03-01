@@ -5,18 +5,28 @@ public enum InstanceDescriptorDefaults {
     static let hostname = "localhost"
 }
 
+/**
+ The purpose of this function is to hide the messy details of parsing the configuration(s) so
+ the complexity is worth it. And the name starts with an underscore to match the convention of
+ private APIs in Obj-C (from which it is called).
+ */
 internal extension InstanceDescriptor {
+    // swiftlint:disable cyclomatic_complexity
+    // swiftlint:disable function_body_length
     // swiftlint:disable:next identifier_name
     @objc func _parseConfiguration(at capacitorURL: URL?, cordovaConfiguration cordovaURL: URL?) {
         // sanity check that the app directory is valid
         var isDirectory: ObjCBool = ObjCBool(false)
-        if warnings.contains(.missingAppDir) == false, (FileManager.default.fileExists(atPath: appLocation.path, isDirectory: &isDirectory) == false || isDirectory.boolValue == false) {
+        if warnings.contains(.missingAppDir) == false,
+           (FileManager.default.fileExists(atPath: appLocation.path, isDirectory: &isDirectory) == false || isDirectory.boolValue == false) {
             warnings.update(with: .missingAppDir)
         }
 
         // parse the capacitor configuration
         var config: JSObject?
-        if let capacitorURL = capacitorURL, FileManager.default.fileExists(atPath: capacitorURL.path, isDirectory: &isDirectory), isDirectory.boolValue == false {
+        if let capacitorURL = capacitorURL,
+           FileManager.default.fileExists(atPath: capacitorURL.path, isDirectory: &isDirectory),
+           isDirectory.boolValue == false {
             do {
                 let contents = try Data(contentsOf: capacitorURL)
                 config = JSTypes.coerceDictionaryToJSObject(try JSONSerialization.jsonObject(with: contents) as? [String: Any])
@@ -29,10 +39,14 @@ internal extension InstanceDescriptor {
 
         // parse the cordova configuration
         var configParser: XMLParser?
-        if let cordovaURL = cordovaURL, FileManager.default.fileExists(atPath: cordovaURL.path, isDirectory: &isDirectory), isDirectory.boolValue == false {
+        if let cordovaURL = cordovaURL,
+           FileManager.default.fileExists(atPath: cordovaURL.path, isDirectory: &isDirectory),
+           isDirectory.boolValue == false {
             configParser = XMLParser(contentsOf: cordovaURL)
         } else {
             warnings.update(with: .missingCordovaFile)
+            // we don't want to break up string literals
+            // swiftlint:disable:next line_length
             if let cordovaXML = "<?xml version='1.0' encoding='utf-8'?><widget version=\"1.0.0\" xmlns=\"http://www.w3.org/ns/widgets\" xmlns:cdv=\"http://cordova.apache.org/ns/1.0\"><access origin=\"*\" /></widget>".data(using: .utf8) {
                 configParser = XMLParser(data: cordovaXML)
             }
@@ -90,6 +104,8 @@ internal extension InstanceDescriptor {
             }
         }
     }
+    // swiftlint:enable cyclomatic_complexity
+    // swiftlint:enable function_body_length
 }
 
 extension InstanceDescriptor {
@@ -114,7 +130,7 @@ extension InstanceDescriptor {
         }
         // now validate the server.url
         var urlValid = false
-        if let server = serverURL, let _ = URL(string: server) {
+        if let server = serverURL, URL(string: server) != nil {
             urlValid = true
         }
         if !urlValid {

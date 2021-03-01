@@ -3,11 +3,16 @@ import Dispatch
 import WebKit
 import Cordova
 
-import Foundation
-import Dispatch
-import WebKit
-import Cordova
+/**
+ An internal class adopting a public protocol means that we have a lot of `public` methods
+ but that is by design not a mistake. And since the bridge is the center of the whole project
+ its size/complexity is unavoidable.
 
+ Quiet these warnings for the whole file.
+ */
+// swiftlint:disable lower_acl_than_parent
+// swiftlint:disable file_length
+// swiftlint:disable type_body_length
 internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - CAPBridgeProtocol: Properties
@@ -148,8 +153,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // MARK: - Static Methods
 
     /**
-     * Print a hopefully informative error message to the log when something
-     * particularly dreadful happens.
+     Print a hopefully informative error message to the log when something
+     particularly dreadful happens.
      */
     static func fatalError(_ error: Error, _ originalError: Error) {
         CAPLog.print("⚡️ ❌  Capacitor: FATAL ERROR")
@@ -198,19 +203,20 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - Plugins
     /**
-     * Export core JavaScript to the webview
+     Export core JavaScript to the webview
      */
     func exportCoreJS(localUrl: String) {
         do {
-            try JSExport.exportCapacitorGlobalJS(userContentController: webViewDelegationHandler.contentController, isDebug: isDevMode(), localUrl: localUrl)
+            try JSExport.exportCapacitorGlobalJS(userContentController: webViewDelegationHandler.contentController,
+                                                 isDebug: isDevMode(),
+                                                 localUrl: localUrl)
         } catch {
             type(of: self).fatalError(error, error)
         }
     }
 
     /**
-     * Set up our Cordova compat by loading all known Cordova plugins and injecting
-     * their JS.
+     Set up our Cordova compat by loading all known Cordova plugins and injecting their JS.
      */
     func setupCordovaCompatibility() {
         if injectCordovaFiles {
@@ -220,7 +226,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Export the core Cordova JS runtime
+     Export the core Cordova JS runtime
      */
     func exportCordovaJS() {
         do {
@@ -231,15 +237,15 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Reset the state of the bridge between navigations to avoid
-     * sending data back to the page from a previous page.
+     Reset the state of the bridge between navigations to avoid
+     sending data back to the page from a previous page.
      */
     func reset() {
         storedCalls = [String: CAPPluginCall]()
     }
 
     /**
-     * Register all plugins that have been declared
+     Register all plugins that have been declared
      */
     func registerPlugins() {
         let classCount = objc_getClassList(nil, 0)
@@ -253,7 +259,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 if class_getSuperclass(aClass) == CDVPlugin.self {
                     injectCordovaFiles = true
                 }
-                if class_conformsToProtocol(aClass, CAPBridgedPlugin.self), let pluginType = aClass as? CAPPlugin.Type, let bridgeType = aClass as? CAPBridgedPlugin.Type {
+                if class_conformsToProtocol(aClass, CAPBridgedPlugin.self),
+                   let pluginType = aClass as? CAPPlugin.Type,
+                   let bridgeType = aClass as? CAPBridgedPlugin.Type {
                     let pluginClassName = NSStringFromClass(aClass)
                     registerPlugin(pluginClassName, bridgeType.jsName(), pluginType)
                 }
@@ -263,7 +271,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Register a single plugin.
+     Register a single plugin.
      */
     func registerPlugin(_ pluginClassName: String, _ jsName: String, _ pluginType: CAPPlugin.Type) {
         // let bridgeType = pluginType as! CAPBridgedPlugin.Type
@@ -273,8 +281,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * - parameter pluginId: the ID of the plugin
-     * - returns: the plugin, if found
+     - parameter pluginId: the ID of the plugin
+     - returns: the plugin, if found
      */
     func getOrLoadPlugin(pluginName: String) -> CAPPlugin? {
         guard let plugin = self.plugin(withName: pluginName) ?? self.loadPlugin(pluginName: pluginName) else {
@@ -349,9 +357,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Handle a call from JavaScript. First, find the corresponding plugin,
-     * construct a selector, and perform that selector on the plugin instance.
+     Handle a call from JavaScript. First, find the corresponding plugin, construct a selector,
+     and perform that selector on the plugin instance.
+
+     Quiet the length warning because we don't want to refactor the function at this time.
      */
+    // swiftlint:disable:next function_body_length
     func handleJSCall(call: JSCall) {
         guard let plugin = self.plugin(withName: call.pluginId) ?? self.loadPlugin(pluginName: call.pluginId) else {
             CAPLog.print("⚡️  Error loading plugin \(call.pluginId) for call. Check that the pluginId is correct")
@@ -361,7 +372,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             return
         }
 
-        var selector: Selector?
+        let selector: Selector
         if call.method == "addListener" || call.method == "removeListener" {
             selector = NSSelectorFromString(call.method + ":")
         } else {
@@ -377,9 +388,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
 
         if !plugin.responds(to: selector) {
-            CAPLog.print("⚡️  Error: Plugin \(plugin.getId()) does not respond to method call \"\(call.method)\" using selector \"\(selector!)\".")
+            // we don't want to break up string literals
+            // swiftlint:disable line_length
+            CAPLog.print("⚡️  Error: Plugin \(plugin.getId()) does not respond to method call \"\(call.method)\" using selector \"\(selector)\".")
             CAPLog.print("⚡️  Ensure plugin method exists, uses @objc in its declaration, and arguments match selector without callbacks in CAP_PLUGIN_METHOD.")
             CAPLog.print("⚡️  Learn more: \(docLink(DocLinks.CAPPluginMethodSelector.rawValue))")
+            // swiftlint:enable line_length
             return
         }
 
@@ -388,7 +402,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             // let startTime = CFAbsoluteTimeGetCurrent()
 
             let pluginCall = CAPPluginCall(callbackId: call.callbackId,
-                                           options: JSTypes.coerceDictionaryToJSObject(call.options, formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
+                                           options: JSTypes.coerceDictionaryToJSObject(call.options,
+                                                                                       formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
                                            success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
                                             if let result = result {
                                                 self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.isSaved ?? false)
@@ -399,7 +414,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                                             if let error = error {
                                                 self?.toJsError(error: JSResultError(call: call, callError: error))
                                             } else {
-                                                self?.toJsError(error: JSResultError(call: call, errorMessage: "", errorDescription: "", errorCode: nil, result: .dictionary([:])))
+                                                self?.toJsError(error: JSResultError(call: call,
+                                                                                     errorMessage: "",
+                                                                                     errorDescription: "",
+                                                                                     errorCode: nil,
+                                                                                     result: .dictionary([:])))
                                             }
                                            })
 
@@ -416,8 +435,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Handle a Cordova call from JavaScript. First, find the corresponding plugin,
-     * construct a selector, and perform that selector on the plugin instance.
+     Handle a Cordova call from JavaScript. First, find the corresponding plugin,
+     construct a selector, and perform that selector on the plugin instance.
      */
     func handleCordovaJSCall(call: JSCall) {
         // Create a selector to send to the plugin
@@ -425,13 +444,16 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
             let selector = NSSelectorFromString("\(call.method):")
             if !plugin.responds(to: selector) {
-                CAPLog.print("Error: Plugin \(plugin.className!) does not respond to method call \(selector).")
+                CAPLog.print("Error: Plugin \(plugin.className ?? "") does not respond to method call \(selector).")
                 CAPLog.print("Ensure plugin method exists and uses @objc in its declaration")
                 return
             }
 
             let arguments: [Any] = call.options["options"] as? [Any] ?? []
-            let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
+            let pluginCall = CDVInvokedUrlCommand(arguments: arguments,
+                                                  callbackId: call.callbackId,
+                                                  className: plugin.className,
+                                                  methodName: call.method)
             plugin.perform(selector, with: pluginCall)
 
         } else {
@@ -441,7 +463,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Send a successful result to the JavaScript layer.
+     Send a successful result to the JavaScript layer.
      */
     func toJs(result: JSResultProtocol, save: Bool) {
         let resultJson = result.jsonPayload()
@@ -466,7 +488,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Send an error result to the JavaScript layer.
+     Send an error result to the JavaScript layer.
      */
     func toJsError(error: JSResultProtocol) {
         DispatchQueue.main.async {
@@ -481,8 +503,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // MARK: - CAPBridgeProtocol: JavaScript Handling
 
     /**
-     * Eval JS for a specific plugin.
+     Eval JS for a specific plugin.
+
+     `js` is a short name but needs to be preserved for backwards compatibility.
      */
+    // swiftlint:disable:next identifier_name
     @objc public func evalWithPlugin(_ plugin: CAPPlugin, js: String) {
         let wrappedJs = """
         window.Capacitor.withPlugin('\(plugin.getId())', function(plugin) {
@@ -493,21 +518,24 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         DispatchQueue.main.async {
             self.getWebView()?.evaluateJavaScript(wrappedJs, completionHandler: { (_, error) in
-                if error != nil {
-                    CAPLog.print("⚡️  JS Eval error", error!.localizedDescription)
+                if let error = error {
+                    CAPLog.print("⚡️  JS Eval error", error.localizedDescription)
                 }
             })
         }
     }
 
     /**
-     * Eval JS in the web view
+     Eval JS in the web view
+
+     `js` is a short name but needs to be preserved for backwards compatibility.
      */
+    // swiftlint:disable:next identifier_name
     @objc public func eval(js: String) {
         DispatchQueue.main.async {
             self.getWebView()?.evaluateJavaScript(js, completionHandler: { (_, error) in
-                if error != nil {
-                    CAPLog.print("⚡️  JS Eval error", error!.localizedDescription)
+                if let error = error {
+                    CAPLog.print("⚡️  JS Eval error", error.localizedDescription)
                 }
             })
         }
@@ -540,8 +568,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public func logToJs(_ message: String, _ level: String = "log") {
         DispatchQueue.main.async {
             self.getWebView()?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
-                if error != nil && result != nil {
-                    CAPLog.print(result!)
+                if error != nil, let result = result {
+                    CAPLog.print(result)
                 }
             }
         }
@@ -550,13 +578,13 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // MARK: - CAPBridgeProtocol: Paths, Files, Assets
 
     /**
-     * Translate a URL from the web view into a file URL for native iOS.
-     *
-     * The web view may be handling several different types of URLs:
-     *   - res:// (shortcut scheme to web assets)
-     *   - file:// (fully qualified URL to file on the local device)
-     *   - base64:// (to be implemented)
-     *   - [web view scheme]:// (already converted once to load in the web view, to be implemented)
+     Translate a URL from the web view into a file URL for native iOS.
+
+     The web view may be handling several different types of URLs:
+     - res:// (shortcut scheme to web assets)
+     - file:// (fully qualified URL to file on the local device)
+     - base64:// (to be implemented)
+     - [web view scheme]:// (already converted once to load in the web view, to be implemented)
      */
     public func localURL(fromWebURL webURL: URL?) -> URL? {
         guard let inputURL = webURL else {
@@ -578,7 +606,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /**
-     * Translate a file URL for native iOS into a URL to load in the web view.
+     Translate a file URL for native iOS into a URL to load in the web view.
      */
     public func portablePath(fromLocalURL localURL: URL?) -> URL? {
         guard let inputURL = localURL else {
@@ -601,9 +629,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         } else {
             self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
-            self.tmpWindow!.rootViewController = TmpViewController.init()
-            self.tmpWindow!.makeKeyAndVisible()
-            self.tmpWindow!.rootViewController!.present(viewControllerToPresent, animated: flag, completion: completion)
+            self.tmpWindow?.rootViewController = TmpViewController.init()
+            self.tmpWindow?.makeKeyAndVisible()
+            self.tmpWindow?.rootViewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         }
     }
 
@@ -611,9 +639,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if self.tmpWindow == nil {
             self.viewController?.dismiss(animated: flag, completion: completion)
         } else {
-            self.tmpWindow!.rootViewController!.dismiss(animated: flag, completion: completion)
+            self.tmpWindow?.rootViewController?.dismiss(animated: flag, completion: completion)
             self.tmpWindow = nil
         }
     }
-
 }
