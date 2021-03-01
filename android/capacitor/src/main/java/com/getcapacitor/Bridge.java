@@ -203,9 +203,9 @@ public class Bridge {
             }
         }
 
-        String path = this.config.getPath();
-        if (path != null && !path.trim().isEmpty()) {
-            appUrl += path;
+        String appUrlPath = this.config.getPath();
+        if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
+            appUrl += appUrlPath;
         }
 
         final boolean html5mode = this.config.isHTML5Mode();
