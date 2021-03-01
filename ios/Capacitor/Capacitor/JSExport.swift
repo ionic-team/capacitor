@@ -9,20 +9,19 @@ internal struct PluginHeader: Codable {
 }
 
 /**
- * PluginExport handles defining JS APIs that map to registered
- * plugins and are responsible for proxying calls to our bridge.
+ JSExport handles defining JS APIs that map to registered plugins and are responsible for proxying calls to our bridge.
  */
 internal class JSExport {
     static let catchallOptionsParameter = "_options"
     static let callbackParameter = "_callback"
 
-    public static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, localUrl: String) throws {
+    static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, localUrl: String) throws {
         let data = "window.Capacitor = { DEBUG: \(isDebug), Plugins: {} }; window.WEBVIEW_SERVER_URL = '\(localUrl)';"
         let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         userContentController.addUserScript(userScript)
     }
 
-    public static func exportCordovaJS(userContentController: WKUserContentController) throws {
+    static func exportCordovaJS(userContentController: WKUserContentController) throws {
         guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
             CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
             throw CapacitorBridgeError.errorExportingCoreJS
@@ -41,18 +40,19 @@ internal class JSExport {
     }
 
     /**
-     * Export the JS required to implement the given plugin.
+     Export the JS required to implement the given plugin.
      */
-    public static func exportJS(userContentController: WKUserContentController, pluginClassName: String, pluginType: CAPPlugin.Type) {
-        if let data = try? JSONEncoder().encode(createPluginHeader(pluginClassName: pluginClassName, pluginType: pluginType)), let header = String(data: data, encoding: .utf8) {
-            let js = """
+    static func exportJS(userContentController: WKUserContentController, pluginClassName: String, pluginType: CAPPlugin.Type) {
+        if let data = try? JSONEncoder().encode(createPluginHeader(pluginClassName: pluginClassName, pluginType: pluginType)),
+           let header = String(data: data, encoding: .utf8) {
+            let script = """
                 (function(w) {
                 var a = (w.Capacitor = w.Capacitor || {});
                 var h = (a.PluginHeaders = a.PluginHeaders || []);
                 h.push(\(header));
                 })(window);
                 """
-            let userScript = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+            let userScript = WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
             userContentController.addUserScript(userScript)
         }
     }
@@ -80,7 +80,7 @@ internal class JSExport {
         return PluginHeaderMethod(name: method.name, rtype: rtype)
     }
 
-    public static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
+    static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
         if let pluginsJSFolder = Bundle.main.url(forResource: "public/plugins", withExtension: nil) {
             self.injectFilesForFolder(folder: pluginsJSFolder, userContentController: userContentController)
         }

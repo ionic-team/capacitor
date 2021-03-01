@@ -118,7 +118,8 @@ extension JSObjectContainer {
     }
 }
 
-public protocol JSValueContainer: JSStringContainer, JSBoolContainer, JSIntContainer, JSFloatContainer, JSDoubleContainer, JSDateContainer, JSArrayContainer, JSObjectContainer {
+public protocol JSValueContainer: JSStringContainer, JSBoolContainer, JSIntContainer, JSFloatContainer,
+                                  JSDoubleContainer, JSDateContainer, JSArrayContainer, JSObjectContainer {
     static var jsDateFormatter: ISO8601DateFormatter { get }
     var jsObjectRepresentation: JSObject { get }
 }
@@ -192,6 +193,8 @@ extension JSTypes {
 
 private let dateStringFormatter = ISO8601DateFormatter()
 
+// We need a large switch statement because we have a lot of types.
+// swiftlint:disable:next cyclomatic_complexity
 private func coerceToJSValue(_ value: Any?, formattingDates: Bool) -> JSValue? {
     guard let value = value else {
         return nil

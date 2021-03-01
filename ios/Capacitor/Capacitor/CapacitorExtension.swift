@@ -1,9 +1,9 @@
 import Foundation
 
 public protocol CapacitorExtension {
-    associatedtype T
-    var capacitor: T { get }
-    static var capacitor: T.Type { get }
+    associatedtype CapacitorType
+    var capacitor: CapacitorType { get }
+    static var capacitor: CapacitorType.Type { get }
 }
 
 public extension CapacitorExtension {

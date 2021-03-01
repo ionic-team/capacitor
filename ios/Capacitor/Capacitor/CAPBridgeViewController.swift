@@ -191,21 +191,15 @@ import Cordova
     }
 
     override open var prefersStatusBarHidden: Bool {
-        get {
-            return !isStatusBarVisible
-        }
+        return !isStatusBarVisible
     }
 
     override open var preferredStatusBarStyle: UIStatusBarStyle {
-        get {
-            return statusBarStyle
-        }
+        return statusBarStyle
     }
 
     override open var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        get {
-            return statusBarAnimation
-        }
+        return statusBarAnimation
     }
 
     open func setStatusBarVisible(_ isStatusBarVisible: Bool) {
