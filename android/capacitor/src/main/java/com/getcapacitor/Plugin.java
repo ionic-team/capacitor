@@ -878,6 +878,20 @@ public class Plugin {
     }
 
     /**
+     * Registers the geolocation permissions used by Google Chrome if location is requested from
+     * the browser API. If an interface is registered on the Activity by an app developer using
+     * {@link BridgeActivity#registerGeolocationPermissions(BridgeWebChromeClient.GeolocationPermissionInterface)},
+     * that interface will override this one.
+     *
+     * @param geolocationPermissionInterface the implemented GeolocationPermissionInterface that
+     *                                       returns the desired Android geolocation permission strings
+     *                                       to be used by the WebChromeClient
+     */
+    public void registerGeolocationPermissions(BridgeWebChromeClient.GeolocationPermissionInterface geolocationPermissionInterface) {
+        bridge.getWebChromeClient().setGeoPermissionInterface(geolocationPermissionInterface);
+    }
+
+    /**
      * Handle request permissions result. A plugin using the deprecated {@link NativePlugin}
      * should override this to handle the result, or this method will handle the result
      * for our convenient requestPermissions call.

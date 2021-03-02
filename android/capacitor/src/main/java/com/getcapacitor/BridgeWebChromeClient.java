@@ -44,7 +44,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         void onActivityResult(ActivityResult result);
     }
 
-    private WebGeoPermissionInterface geoPermissionInterface;
+    private GeolocationPermissionInterface geoPermissionInterface;
     private ActivityResultLauncher permissionLauncher;
     private ActivityResultLauncher activityLauncher;
     private PermissionListener permissionListener;
@@ -132,7 +132,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         }
     }
 
-    void setGeoPermissionInterface(WebGeoPermissionInterface geoPermissionInterface) {
+    void setGeoPermissionInterface(GeolocationPermissionInterface geoPermissionInterface) {
         this.geoPermissionInterface = geoPermissionInterface;
     }
 
@@ -275,17 +275,37 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     /**
-     * Handle the browser geolocation permission prompt
-     * @param origin
-     * @param callback
+     * Handles the browser geolocation permission prompt in the event the web app is requesitng
+     * geolocation information using the web geolocation API and not a native plugin.
+     *
+     * @param origin the permission request origin
+     * @param callback the callback to notify the result of the permission request
      */
     @Override
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
 
-        if (geoPermissionInterface != null) {
-            geoPermissionInterface.onPermissionRequest(origin, callback);
+        if (geoPermissionInterface == null) {
+            Logger.error("App must register Geolocation Permissions to enable functionality.");
+        } else {
+            final String[] geoPermissions = geoPermissionInterface.getPermissionStrings();
+
+            if (!PermissionHelper.hasPermissions(bridge.getContext(), geoPermissions)) {
+                permissionListener =
+                    isGranted -> {
+                        if (isGranted) {
+                            callback.invoke(origin, true, false);
+                        } else {
+                            callback.invoke(origin, false, false);
+                        }
+                    };
+                permissionLauncher.launch(geoPermissions);
+            } else {
+                // permission is already granted
+                callback.invoke(origin, true, false);
+                Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
+            }
         }
     }
 
@@ -497,7 +517,17 @@ public class BridgeWebChromeClient extends WebChromeClient {
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
-    public interface WebGeoPermissionInterface {
-        void onPermissionRequest(String origin, GeolocationPermissions.Callback callback);
+    /**
+     * An interface allowing app developers to define which Geolocation permission strings
+     * should be used by the WebChromeClient in the case where the web app is requesting location
+     * information using the web geolocation API (not natively via a plugin).
+     *
+     * Android will pass this permission request to the native layer here to be handled
+     * (see {@link #onGeolocationPermissionsShowPrompt(String, GeolocationPermissions.Callback)}.
+     * The permissions are not bundled inside Capacitor because Google requires that apps using
+     * these permissions to follow guidelines that not all Capacitor apps will need to follow.
+     */
+    public interface GeolocationPermissionInterface {
+        String[] getPermissionStrings();
     }
 }
