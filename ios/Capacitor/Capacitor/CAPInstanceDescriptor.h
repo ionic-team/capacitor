@@ -33,7 +33,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *overridenUserAgentString;
 /**
- @brief The backbround color to set on the WKWebView.
+ @brief The background color to set on the web view where content is not visible.
  @discussion Set by @c backgroundColor in the configuration file.
  */
 @property (nonatomic, retain, nullable) UIColor *backgroundColor;
