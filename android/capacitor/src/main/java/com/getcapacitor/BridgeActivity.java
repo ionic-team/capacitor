@@ -239,4 +239,8 @@ public class BridgeActivity extends AppCompatActivity {
 
         this.bridge.onConfigurationChanged(newConfig);
     }
+
+    public void registerWebGeolocationPermissionHandler(BridgeWebChromeClient.WebGeoPermissionInterface webGeoPermissionInterface) {
+        bridge.getWebChromeClient().setGeoPermissionInterface(webGeoPermissionInterface);
+    }
 }

@@ -44,6 +44,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         void onActivityResult(ActivityResult result);
     }
 
+    private WebGeoPermissionInterface geoPermissionInterface;
     private ActivityResultLauncher permissionLauncher;
     private ActivityResultLauncher activityLauncher;
     private PermissionListener permissionListener;
@@ -129,6 +130,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
         } else {
             request.grant(request.getResources());
         }
+    }
+
+    void setGeoPermissionInterface(WebGeoPermissionInterface geoPermissionInterface) {
+        this.geoPermissionInterface = geoPermissionInterface;
     }
 
     /**
@@ -278,22 +283,9 @@ public class BridgeWebChromeClient extends WebChromeClient {
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
-        final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
-        if (!PermissionHelper.hasPermissions(bridge.getContext(), geoPermissions)) {
-            permissionListener =
-                isGranted -> {
-                    if (isGranted) {
-                        callback.invoke(origin, true, false);
-                    } else {
-                        callback.invoke(origin, false, false);
-                    }
-                };
-            permissionLauncher.launch(geoPermissions);
-        } else {
-            // permission is already granted
-            callback.invoke(origin, true, false);
-            Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
+        if (geoPermissionInterface != null) {
+            geoPermissionInterface.onPermissionRequest(origin, callback);
         }
     }
 
@@ -503,5 +495,9 @@ public class BridgeWebChromeClient extends WebChromeClient {
         File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         return File.createTempFile(imageFileName, ".jpg", storageDir);
+    }
+
+    public interface WebGeoPermissionInterface {
+        void onPermissionRequest(String origin, GeolocationPermissions.Callback callback);
     }
 }
