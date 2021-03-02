@@ -24,7 +24,6 @@ public class CapConfig {
     private boolean html5mode = true;
     private String serverUrl;
     private String hostname = "localhost";
-    private String path;
     private String androidScheme = CAPACITOR_HTTP_SCHEME;
     private String[] allowNavigation;
 
@@ -36,6 +35,9 @@ public class CapConfig {
     private boolean captureInput = false;
     private boolean webContentsDebuggingEnabled = false;
     private boolean hideLogs = false;
+
+    // Embedded
+    private String startPath;
 
     // Plugins
     private Map<String, PluginConfig> pluginsConfiguration = null;
@@ -98,7 +100,6 @@ public class CapConfig {
         this.html5mode = builder.html5mode;
         this.serverUrl = builder.serverUrl;
         this.hostname = builder.hostname;
-        this.path = builder.path;
         this.androidScheme = builder.androidScheme;
         this.allowNavigation = builder.allowNavigation;
 
@@ -110,6 +111,9 @@ public class CapConfig {
         this.captureInput = builder.captureInput;
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.hideLogs = builder.hideLogs;
+
+        // Embedded
+        this.startPath = builder.startPath;
 
         // Plugins Config
         this.pluginsConfiguration = builder.pluginsConfiguration;
@@ -174,8 +178,8 @@ public class CapConfig {
         return hostname;
     }
 
-    public String getPath() {
-        return path;
+    public String getStartPath() {
+        return startPath;
     }
 
     public String getAndroidScheme() {
@@ -358,7 +362,6 @@ public class CapConfig {
         private boolean html5mode = true;
         private String serverUrl;
         private String hostname = "localhost";
-        private String path = null;
         private String androidScheme = CAPACITOR_HTTP_SCHEME;
         private String[] allowNavigation;
 
@@ -370,6 +373,9 @@ public class CapConfig {
         private boolean captureInput = false;
         private Boolean webContentsDebuggingEnabled = null;
         private boolean hideLogs = false;
+
+        // Embedded
+        private String startPath = null;
 
         // Plugins Config Object
         private Map<String, PluginConfig> pluginsConfiguration = new HashMap<>();
@@ -416,8 +422,8 @@ public class CapConfig {
             return this;
         }
 
-        public Builder setPath(String path) {
-            this.path = path;
+        public Builder setStartPath(String path) {
+            this.startPath = path;
             return this;
         }
 

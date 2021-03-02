@@ -9,7 +9,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -203,7 +202,7 @@ public class Bridge {
             }
         }
 
-        String appUrlPath = this.config.getPath();
+        String appUrlPath = this.config.getStartPath();
         if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
             appUrl += appUrlPath;
         }
