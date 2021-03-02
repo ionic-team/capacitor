@@ -244,7 +244,7 @@ public class BridgeActivity extends AppCompatActivity {
      * Registers the geolocation permissions used by Google Chrome if location is requested from
      * the browser API. This registered interface will override any defined on a plugin using
      * {@link Plugin#registerGeolocationPermissions(BridgeWebChromeClient.GeolocationPermissionInterface)},
-     * if present
+     * if present.
      *
      * @param geolocationPermissionInterface the implemented GeolocationPermissionInterface that
      *                                       returns the desired Android geolocation permission strings

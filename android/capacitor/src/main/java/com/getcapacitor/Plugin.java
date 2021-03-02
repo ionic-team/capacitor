@@ -883,6 +883,9 @@ public class Plugin {
      * {@link BridgeActivity#registerGeolocationPermissions(BridgeWebChromeClient.GeolocationPermissionInterface)},
      * that interface will override this one.
      *
+     * Note: this method is not used to request geolocation permissions. To request permissions in
+     * a plugin see {@link #requestPermissionForAlias(String, PluginCall, String)}
+     *
      * @param geolocationPermissionInterface the implemented GeolocationPermissionInterface that
      *                                       returns the desired Android geolocation permission strings
      *                                       to be used by the WebChromeClient
