@@ -9,7 +9,8 @@
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
     "postinstall": "lerna bootstrap",
-    "version": "npm run sync-peer-dependencies"
+    "version": "npm run sync-peer-dependencies",
+    "release": "npm run lint && lerna run test && lerna run verify"
   },
   "prettier": "@ionic/prettier-config",
   "eslintConfig": {
