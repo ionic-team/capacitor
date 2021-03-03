@@ -25,11 +25,12 @@ public class PluginCall {
     private final String methodName;
     private final JSObject data;
 
-    private boolean shouldSave = false;
+    private boolean keepAlive = false;
 
     /**
      * Indicates that this PluginCall was released, and should no longer be used
      */
+    @Deprecated
     private boolean isReleased = false;
 
     public PluginCall(MessageHandler msgHandler, String pluginId, String callbackId, String methodName, JSObject data) {
@@ -340,21 +341,48 @@ public class PluginCall {
      * Indicate that the Bridge should cache this call in order to call
      * it again later. For example, the addListener system uses this to
      * continuously call the call's callback (😆).
+     * @deprecated use {@link #setKeepAlive(Boolean)} instead
      */
+    @Deprecated
     public void save() {
-        this.shouldSave = true;
+        setKeepAlive(true);
+    }
+
+    /**
+     * Indicate that the Bridge should cache this call in order to call
+     * it again later. For example, the addListener system uses this to
+     * continuously call the call's callback.
+     *
+     * @param keepAlive whether to keep the callback saved
+     */
+    public void setKeepAlive(Boolean keepAlive) {
+        this.keepAlive = keepAlive;
     }
 
     public void release(Bridge bridge) {
-        this.shouldSave = false;
+        this.keepAlive = false;
         bridge.releaseCall(this);
         this.isReleased = true;
     }
 
+    /**
+     * @deprecated use {@link #isKeptAlive()}
+     * @return true if the plugin call is kept alive
+     */
+    @Deprecated
     public boolean isSaved() {
-        return shouldSave;
+        return isKeptAlive();
     }
 
+    /**
+     * Gets the keepAlive value of the plugin call
+     * @return true if the plugin call is kept alive
+     */
+    public boolean isKeptAlive() {
+        return keepAlive;
+    }
+
+    @Deprecated
     public boolean isReleased() {
         return isReleased;
     }
