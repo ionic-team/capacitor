@@ -9,7 +9,8 @@ typedef void(^CAPPluginCallErrorHandler)(CAPPluginCallError *error);
 
 @interface CAPPluginCall : NSObject
 
-@property (nonatomic, assign) BOOL isSaved;
+@property (nonatomic, assign) BOOL isSaved DEPRECATED_MSG_ATTRIBUTE("Use 'keepAlive' instead.");
+@property (nonatomic, assign) BOOL keepAlive;
 @property (nonatomic, strong) NSString *callbackId;
 @property (nonatomic, strong) NSDictionary *options;
 @property (nonatomic, copy) CAPPluginCallSuccessHandler successHandler;
@@ -17,5 +18,5 @@ typedef void(^CAPPluginCallErrorHandler)(CAPPluginCallError *error);
 
 - (instancetype)initWithCallbackId:(NSString *)callbackId options:(NSDictionary *)options success:(CAPPluginCallSuccessHandler)success error:(CAPPluginCallErrorHandler)error;
 
-- (void)save;
+- (void)save DEPRECATED_MSG_ATTRIBUTE("Use the 'keepAlive' property instead.");
 @end
