@@ -303,10 +303,6 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return plugin
     }
 
-    func savePluginCall(_ call: CAPPluginCall) {
-        storedCalls[call.callbackId] = call
-    }
-
     // MARK: - CAPBridgeProtocol: Plugin Access
 
     @objc public func plugin(withName: String) -> CAPPlugin? {
@@ -315,17 +311,33 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - CAPBridgeProtocol: Call Management
 
-    @objc public func getSavedCall(_ callbackId: String) -> CAPPluginCall? {
-        return storedCalls[callbackId]
+    @objc public func saveCall(_ call: CAPPluginCall) {
+        storedCalls[call.callbackId] = call
+    }
+
+    @objc public func savedCall(withID: String) -> CAPPluginCall? {
+        return storedCalls[withID]
     }
 
     @objc public func releaseCall(_ call: CAPPluginCall) {
-        storedCalls.removeValue(forKey: call.callbackId)
+        releaseCall(withID: call.callbackId)
+    }
+
+    @objc public func releaseCall(withID: String) {
+        storedCalls.removeValue(forKey: withID)
+    }
+
+    // MARK: - Deprecated Versions
+
+    @objc public func getSavedCall(_ callbackId: String) -> CAPPluginCall? {
+        return savedCall(withID: callbackId)
     }
 
     @objc public func releaseCall(callbackId: String) {
-        storedCalls.removeValue(forKey: callbackId)
+        releaseCall(withID: callbackId)
     }
+
+    // MARK: - Internal
 
     func getDispatchQueue() -> DispatchQueue {
         return self.dispatchQueue
@@ -406,9 +418,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                                                                                        formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
                                            success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
                                             if let result = result {
-                                                self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.isSaved ?? false)
+                                                self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.keepAlive ?? false)
                                             } else {
-                                                self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.isSaved ?? false)
+                                                self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.keepAlive ?? false)
                                             }
                                            }, error: {(error: CAPPluginCallError?) -> Void in
                                             if let error = error {
@@ -424,8 +436,10 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
             if let pluginCall = pluginCall {
                 plugin.perform(selector, with: pluginCall)
-                if pluginCall.isSaved {
-                    self?.savePluginCall(pluginCall)
+                if pluginCall.keepAlive {
+                    self?.saveCall(pluginCall)
+                } else {
+                    self?.releaseCall(pluginCall)
                 }
             }
 

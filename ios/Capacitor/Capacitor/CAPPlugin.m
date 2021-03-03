@@ -111,16 +111,16 @@
 
 - (void)addListener:(CAPPluginCall *)call {
   NSString *eventName = [call.options objectForKey:@"eventName"];
-  [call setIsSaved:TRUE];
+  [call setKeepAlive:TRUE];
   [self addEventListener:eventName listener:call];
 }
 
 - (void)removeListener:(CAPPluginCall *)call {
   NSString *eventName = [call.options objectForKey:@"eventName"];
   NSString *callbackId = [call.options objectForKey:@"callbackId"];
-  CAPPluginCall *storedCall = [self.bridge getSavedCall:callbackId];
+  CAPPluginCall *storedCall = [self.bridge savedCallWithID:callbackId];
   [self removeEventListener:eventName listener:storedCall];
-  [self.bridge releaseCallWithCallbackId:callbackId];
+  [self.bridge releaseCallWithID:callbackId];
 }
 
 - (void)removeAllListeners:(CAPPluginCall *)call {
