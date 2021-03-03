@@ -11,8 +11,16 @@
   return self;
 }
 
+- (BOOL)isSaved {
+    return self.keepAlive;
+}
+
+- (void)setIsSaved:(BOOL)saved {
+    self.keepAlive = saved;
+}
+
 - (void)save {
-  self.isSaved = true;
+  self.keepAlive = true;
 }
 
 @end
