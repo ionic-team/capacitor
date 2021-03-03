@@ -9,7 +9,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -201,6 +200,11 @@ public class Bridge {
             if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
                 appUrl += "/";
             }
+        }
+
+        String appUrlPath = this.config.getStartPath();
+        if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
+            appUrl += appUrlPath;
         }
 
         final boolean html5mode = this.config.isHTML5Mode();
