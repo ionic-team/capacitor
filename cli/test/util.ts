@@ -76,15 +76,6 @@ const APP_INDEX = `
 </html>
 `;
 
-const APP_PACKAGE_JSON = `
-{
-  "name": "test-app",
-  "dependencies": {
-    "${CORDOVA_PLUGIN_ID}": "latest"
-  }
-}
-`;
-
 export async function installPlatform(
   appDir: string,
   platform: string,
@@ -102,6 +93,15 @@ export async function makeAppDir(monoRepoLike = false): Promise<void> {
   if (monoRepoLike) {
     await mkdir(rootDir);
   }
+  const cordovaPluginPath = join(tmpDir, CORDOVA_PLUGIN_ID);
+  const APP_PACKAGE_JSON = `
+{
+  "name": "test-app",
+  "dependencies": {
+    "${CORDOVA_PLUGIN_ID}": "file:${cordovaPluginPath}"
+  }
+}
+`;
   const appDir = monoRepoLike ? join(rootDir, 'test-app') : rootDir;
   await mkdir(appDir);
   // Make the web dir
@@ -120,7 +120,6 @@ export async function makeAppDir(monoRepoLike = false): Promise<void> {
   });
 
   // Make a fake cordova plugin
-  const cordovaPluginPath = join(tmpDir, CORDOVA_PLUGIN_ID);
   await makeCordovaPlugin(cordovaPluginPath);
 
   await runCommand('npm', ['install', '--save', cordovaPluginPath], {
