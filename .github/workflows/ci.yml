@@ -117,9 +117,9 @@ jobs:
       - run: npm install
       - run: npm run verify
         working-directory: ./android
-  deploy:
+  deploy-next:
     runs-on: macos-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Release') && (contains(github.event.head_commit.message, 'rc') || contains(github.event.head_commit.message, 'beta') || contains(github.event.head_commit.message, 'alpha'))
     timeout-minutes: 30
     needs:
       - setup
@@ -142,4 +142,31 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
-      - run: npx lerna publish from-git --force-publish --dist-tag next --yes || true
+      - run: npm run lerna:publish:next || true
+  deploy-latest:
+    runs-on: macos-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Release') && (!contains(github.event.head_commit.message, 'rc') && !contains(github.event.head_commit.message, 'beta') && !contains(github.event.head_commit.message, 'alpha'))
+    timeout-minutes: 30
+    needs:
+      - setup
+      - lint
+      - test-cli
+      - test-core
+      - test-ios
+      - test-android
+    steps:
+      - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Restore Dependency Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+      - run: npm install
+      - run: npm run lerna:publish:latest || true
+

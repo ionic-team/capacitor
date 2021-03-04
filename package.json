@@ -3,13 +3,19 @@
   "private": true,
   "scripts": {
     "sync-peer-dependencies": "node scripts/sync-peer-dependencies.mjs",
+    "lerna:version:rc": "lerna version prerelease --force-publish --preid rc",
+    "lerna:version:latest": "lerna version --force-publish",
+    "lerna:publish:next": "lerna publish from-git --force-publish --dist-tag next --yes",
+    "lerna:publish:latest": "lerna publish from-git --force-publish --dist-tag latest --yes",
     "lint": "npm run eslint && npm run prettier -- --check && npm run swiftlint -- lint",
     "fmt": "npm run eslint -- --fix && npm run prettier -- --write && npm run swiftlint -- autocorrect --format",
     "prettier": "prettier \"**/*.{css,html,java,js,mjs,ts}\"",
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
     "postinstall": "lerna bootstrap",
-    "version": "npm run sync-peer-dependencies"
+    "version": "npm run sync-peer-dependencies",
+    "release:rc": "npm run lerna:version:rc",
+    "release:latest": "npm run lerna:version:latest"
   },
   "prettier": "@ionic/prettier-config",
   "eslintConfig": {
