@@ -142,7 +142,7 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
-      - run: npx lerna publish from-git --force-publish --dist-tag next --yes || true
+      - run: npm run lerna:publish:next || true
   deploy-latest:
     runs-on: macos-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Release') && (!contains(github.event.head_commit.message, 'rc') && !contains(github.event.head_commit.message, 'beta') && !contains(github.event.head_commit.message, 'alpha'))
@@ -168,5 +168,5 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
-      - run: npx lerna publish from-git --force-publish --dist-tag latest --yes || true
+      - run: npm run lerna:publish:latest || true
 
