@@ -9,7 +9,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -201,6 +200,11 @@ public class Bridge {
             if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
                 appUrl += "/";
             }
+        }
+
+        String appUrlPath = this.config.getStartPath();
+        if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
+            appUrl += appUrlPath;
         }
 
         final boolean html5mode = this.config.isHTML5Mode();
@@ -545,7 +549,7 @@ public class Bridge {
                 try {
                     plugin.invoke(methodName, call);
 
-                    if (call.isSaved()) {
+                    if (call.isKeptAlive()) {
                         saveCall(call);
                     }
                 } catch (PluginLoadException | InvalidPluginMethodException ex) {
@@ -646,10 +650,18 @@ public class Bridge {
 
     /**
      * Release a retained call
-     * @param call
+     * @param call a call to release
      */
     public void releaseCall(PluginCall call) {
-        this.savedCalls.remove(call.getCallbackId());
+        releaseCall(call.getCallbackId());
+    }
+
+    /**
+     * Release a retained call by its ID
+     * @param callbackId an ID of a callback to release
+     */
+    public void releaseCall(String callbackId) {
+        this.savedCalls.remove(callbackId);
     }
 
     /**

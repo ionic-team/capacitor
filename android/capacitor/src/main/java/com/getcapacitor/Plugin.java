@@ -140,15 +140,15 @@ public class Plugin {
 
         // validate permissions and invoke the permission result callback
         if (bridge.validatePermissions(this, savedCall, permissionResultMap)) {
+            if (!savedCall.isKeptAlive()) {
+                savedCall.release(bridge);
+            }
+
             try {
                 method.setAccessible(true);
                 method.invoke(this, savedCall);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
-            }
-
-            if (!savedCall.isReleased() && !savedCall.isSaved()) {
-                savedCall.release(bridge);
             }
         }
     }
@@ -159,16 +159,16 @@ public class Plugin {
             savedCall = bridge.getPluginCallForLastActivity();
         }
 
+        if (!savedCall.isKeptAlive()) {
+            savedCall.release(bridge);
+        }
+
         // invoke the activity result callback
         try {
             method.setAccessible(true);
             method.invoke(this, savedCall, result);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-        }
-
-        if (!savedCall.isReleased() && !savedCall.isSaved()) {
-            savedCall.release(bridge);
         }
     }
 
@@ -285,9 +285,7 @@ public class Plugin {
      */
     @Deprecated
     public void freeSavedCall() {
-        if (!this.savedLastCall.isReleased()) {
-            this.savedLastCall.release(bridge);
-        }
+        this.savedLastCall.release(bridge);
         this.savedLastCall = null;
     }
 
@@ -735,7 +733,7 @@ public class Plugin {
     @PluginMethod(returnType = PluginMethod.RETURN_NONE)
     public void addListener(PluginCall call) {
         String eventName = call.getString("eventName");
-        call.save();
+        call.setKeepAlive(true);
         addEventListener(eventName, call);
     }
 
