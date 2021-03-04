@@ -140,15 +140,15 @@ public class Plugin {
 
         // validate permissions and invoke the permission result callback
         if (bridge.validatePermissions(this, savedCall, permissionResultMap)) {
+            if (!savedCall.isKeptAlive()) {
+                savedCall.release(bridge);
+            }
+
             try {
                 method.setAccessible(true);
                 method.invoke(this, savedCall);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
-            }
-
-            if (!savedCall.isKeptAlive()) {
-                savedCall.release(bridge);
             }
         }
     }
@@ -159,16 +159,16 @@ public class Plugin {
             savedCall = bridge.getPluginCallForLastActivity();
         }
 
+        if (!savedCall.isKeptAlive()) {
+            savedCall.release(bridge);
+        }
+
         // invoke the activity result callback
         try {
             method.setAccessible(true);
             method.invoke(this, savedCall, result);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-        }
-
-        if (!savedCall.isKeptAlive()) {
-            savedCall.release(bridge);
         }
     }
 
