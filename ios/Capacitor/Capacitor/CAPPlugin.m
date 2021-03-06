@@ -36,6 +36,19 @@
   return TRUE;
 }
 
+-(NSNumber *) getNumber:(CAPPluginCall *)call field:(NSString *)field defaultValue:(NSNumber *)defaultValue 
+{
+  id idVal = [call.options objectForKey:field];
+  if(![idVal isKindOfClass:[NSNumber class]]) {
+    return defaultValue;
+  }
+  NSNumber *value = (NSNumber *)idVal;
+  if(value == nil) {
+    return defaultValue;
+  }
+  return value;
+}
+
 -(NSString *) getString:(CAPPluginCall *)call field:(NSString *)field defaultValue:(NSString *)defaultValue
 {
   id idVal = [call.options objectForKey:field];
