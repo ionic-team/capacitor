@@ -28,4 +28,12 @@
     }
     return defaultValue;
 }
+
+- (NSNumber * _Nullable)getNumber:(NSString * _Nonnull)key defaultValue:(NSNumber * _Nullable)defaultValue {
+    id value = [[self dictionaryRepresentation] objectForKey:key];
+    if (value != nil && [value isKindOfClass:[NSNumber class]]) {
+        return value;
+    }
+    return defaultValue;
+}
 @end
