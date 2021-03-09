@@ -27,7 +27,8 @@
                               @"testFloat": @3.14159,
                               @"testDateObject": date,
                               @"testDateString": [formatter stringFromDate:date],
-                              @"testBool": @TRUE};
+                              @"testBoolTrue": @TRUE,
+                              @"testBoolFalse": @FALSE};
     [self setCall:[[CAPPluginCall alloc] initWithCallbackId:@"test" options:options  success:NULL error:NULL]];
 }
 
@@ -84,8 +85,22 @@
     value = [[self call] getNumber:@"badString" defaultValue:@100];
     XCTAssertEqual([value intValue], 100);
     
-    value = [[self call] getNumber:@"testBool" defaultValue:NULL];
+    value = [[self call] getNumber:@"testBoolTrue" defaultValue:NULL];
     XCTAssertNotNil(value);
     XCTAssertEqual([value boolValue], TRUE);
+}
+
+- (void)testBoolAccessor {
+    BOOL value = [[self call] getBool:@"testBoolTrue" defaultValue:false];
+    XCTAssertTrue(value);
+    
+    value = [[self call] getBool:@"testBoolFalse" defaultValue:true];
+    XCTAssertFalse(value);
+    
+    value = [[self call] getBool:@"badString" defaultValue:true];
+    XCTAssertTrue(value);
+    
+    value = [[self call] getBool:@"badString" defaultValue:false];
+    XCTAssertFalse(value);
 }
 @end

@@ -36,4 +36,8 @@
     }
     return defaultValue;
 }
+
+- (BOOL)getBool:(NSString * _Nonnull)key defaultValue:(BOOL)defaultValue {
+    return [[self getNumber:key defaultValue:[NSNumber numberWithBool:defaultValue]] boolValue];
+}
 @end
