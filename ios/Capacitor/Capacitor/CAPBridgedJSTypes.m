@@ -12,7 +12,10 @@
 
 - (NSDate * _Nullable)getDate:(NSString * _Nonnull)key defaultValue:(NSDate * _Nullable)defaultValue {
     id value = [[self dictionaryRepresentation] objectForKey:key];
-    if (value != nil && [value isKindOfClass:[NSString class]]) {
+    if (value != nil && [value isKindOfClass:[NSDate class]]) {
+        return value;
+    }
+    else if (value != nil && [value isKindOfClass:[NSString class]]) {
         return [[[self class] jsDateFormatter] dateFromString:value];
     }
     return defaultValue;
