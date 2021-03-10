@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/3.0.0-beta.6...3.0.0-rc.0) (2021-03-10)
+
+
+### Bug Fixes
+
+* **android:** calls re-saved during permission/activity result callbacks were being released ([502a2d1](https://github.com/ionic-team/capacitor/commit/502a2d18ddce870f4caf810b405f7363f2340067))
+* **android:** live reload not working when using adb reverse ([362f221](https://github.com/ionic-team/capacitor/commit/362f2219767a5f28e3ce1f6857a0e20024adc6b6))
+* **cli:** Make tests work on npm 7 ([#4297](https://github.com/ionic-team/capacitor/issues/4297)) ([676c907](https://github.com/ionic-team/capacitor/commit/676c907c7ce84fdc57d00152024144a74d24b137))
+
+
+### Features
+
+* **android:** add configurable app path for embedded capacitor ([#4264](https://github.com/ionic-team/capacitor/issues/4264)) ([e433691](https://github.com/ionic-team/capacitor/commit/e43369144f7f378edc4f5d4f8dbbafe6cff6a70d))
+* **android:** Unifying saving plugin calls ([#4254](https://github.com/ionic-team/capacitor/issues/4254)) ([a648c51](https://github.com/ionic-team/capacitor/commit/a648c51588627404b5ad30c35943fed18af4a546))
+* **iOS:** Obj-C convenience accessors on CAPPluginCall ([#4309](https://github.com/ionic-team/capacitor/issues/4309)) ([e3657d7](https://github.com/ionic-team/capacitor/commit/e3657d77647187946ffcd4c4791f4a47c768db7f))
+* **iOS:** Unifying saving plugin calls ([#4253](https://github.com/ionic-team/capacitor/issues/4253)) ([de71da5](https://github.com/ionic-team/capacitor/commit/de71da52b80ff52d0234a5301fc6cae675640a33))
+
+
+
+
+
 # [3.0.0-beta.6](https://github.com/ionic-team/capacitor/compare/3.0.0-beta.5...3.0.0-beta.6) (2021-02-27)
 
 **Note:** Version bump only for package capacitor
