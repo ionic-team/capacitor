@@ -8,12 +8,20 @@
 
 import Foundation
 
-public struct WebViewCredential {
-    public let user: String
-    public let password: String
-    public let persistence: URLCredential.Persistence
+@objc(WebViewCredential)
+open class WebViewCredential: NSObject {
+    @objc public let user: String
+    @objc public let password: String
+    @objc public let persistence: URLCredential.Persistence
 
-    public var asURLCredential: URLCredential {
+    @objc public var asURLCredential: URLCredential {
         URLCredential(user: user, password: password, persistence: persistence)
+    }
+
+    @objc public init(user: String, password: String, persistence: URLCredential.Persistence) {
+        self.user = user
+        self.password = password
+        self.persistence = persistence
+        super.init()
     }
 }
