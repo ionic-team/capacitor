@@ -10,6 +10,7 @@ import Cordova
 
     public fileprivate(set) var webView: WKWebView?
 
+    public var credential: WebViewCredential?
     public var isStatusBarVisible = true
     public var statusBarStyle: UIStatusBarStyle = .default
     public var statusBarAnimation: UIStatusBarAnimation = .slide
@@ -44,6 +45,7 @@ import Cordova
         let assetHandler = WebViewAssetHandler()
         assetHandler.setAssetPath(configuration.appLocation.path)
         let delegationHandler = WebViewDelegationHandler()
+        delegationHandler.credential = credential
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView
         // create the bridge

@@ -6,6 +6,7 @@ import WebKit
 @objc(CAPWebViewDelegationHandler)
 internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
     weak var bridge: CapacitorBridge?
+    var credential: WebViewCredential?
     fileprivate(set) var contentController = WKUserContentController()
     enum WebViewLoadingState {
         case unloaded
@@ -234,6 +235,16 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
         return nil
+    }
+
+    public func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        guard let credential = self.credential else {
+            CAPLog.print("⚡️  Error didReceive challenge. Nil credentials")
+            return
+        }
+        let urlCredential = credential.asURLCredential
+        challenge.sender?.use(urlCredential, for: challenge)
+        completionHandler(.useCredential, urlCredential)
     }
 
     // MARK: - Private

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04CF072125FFBB3F00E16E54 /* WebViewCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CF072025FFBB3F00E16E54 /* WebViewCredential.swift */; };
 		373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */; };
 		373A69F2255C95D0000A6F44 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69F1255C95D0000A6F44 /* NotificationRouter.swift */; };
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
@@ -130,6 +131,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		04CF072025FFBB3F00E16E54 /* WebViewCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewCredential.swift; sourceTree = "<group>"; };
 		373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerProtocol.swift; sourceTree = "<group>"; };
 		373A69F1255C95D0000A6F44 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
 		501CBAA61FC0A723009B0D4D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -311,6 +313,7 @@
 				62959B0A2524DA7700A3D7F1 /* CAPBridgeDelegate.swift */,
 				62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */,
 				625AF1EC258963C700869675 /* WebViewAssetHandler.swift */,
+				04CF072025FFBB3F00E16E54 /* WebViewCredential.swift */,
 				62959AEA2524DA7700A3D7F1 /* Plugins */,
 				623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */,
 				623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */,
@@ -588,6 +591,7 @@
 				623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */,
 				623D68FA254C5037002D01D1 /* KeyPath.swift in Sources */,
 				62959B222524DA7800A3D7F1 /* Console.swift in Sources */,
+				04CF072125FFBB3F00E16E54 /* WebViewCredential.swift in Sources */,
 				62959B3A2524DA7800A3D7F1 /* CAPLog.swift in Sources */,
 				6214934725509C3F006C36F9 /* CAPInstanceConfiguration.swift in Sources */,
 				623D6914254C7030002D01D1 /* CAPInstanceDescriptor.swift in Sources */,
