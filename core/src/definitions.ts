@@ -17,7 +17,7 @@ export interface CapacitorGlobal {
   /**
    * Gets the name of the platform, such as `android`, `ios`, or `web`.
    */
-  getPlatform: () => string;
+  getPlatform: () => 'android' | 'ios' | 'web';
 
   /**
    * Gets the WebView server urls set by the native web view. Defaults

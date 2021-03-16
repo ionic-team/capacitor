@@ -229,7 +229,7 @@ export const initBridge = (
   }
 };
 
-export const getPlatformId = (win: WindowCapacitor): string => {
+export const getPlatformId = (win: WindowCapacitor): 'android' | 'ios' | 'web' => {
   if (win.androidBridge) {
     return 'android';
   }
