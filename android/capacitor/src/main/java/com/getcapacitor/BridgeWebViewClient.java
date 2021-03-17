@@ -6,7 +6,16 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.List;
+
 public class BridgeWebViewClient extends WebViewClient {
+
+    /**
+     * Interface for callbacks when Bridge WebView finishes loading.
+     */
+    public interface PageLoadedListener {
+        void onPageLoaded(WebView webView);
+    }
 
     private Bridge bridge;
 
@@ -28,5 +37,18 @@ public class BridgeWebViewClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         return bridge.launchIntent(Uri.parse(url));
+    }
+
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+
+        List<PageLoadedListener> pageLoadedListeners = bridge.getPageLoadedListeners();
+
+        if (pageLoadedListeners != null && view.getProgress() == 100) {
+            for (PageLoadedListener listener : bridge.getPageLoadedListeners()) {
+                listener.onPageLoaded(view);
+            }
+        }
     }
 }

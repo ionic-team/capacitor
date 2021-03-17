@@ -120,6 +120,9 @@ public class Bridge {
     // Any URI that was passed to the app on start
     private Uri intentUri;
 
+    // A list of listeners that trigger when webView is finished loading
+    private List<BridgeWebViewClient.PageLoadedListener> pageLoadedListeners = new ArrayList<>();
+
     /**
      * Create the Bridge with a reference to the main {@link Activity} for the
      * app, and a reference to the {@link WebView} our app will use.
@@ -1107,12 +1110,21 @@ public class Bridge {
         this.webViewClient = client;
     }
 
+    List<BridgeWebViewClient.PageLoadedListener> getPageLoadedListeners() {
+        return pageLoadedListeners;
+    }
+
+    void setPageLoadedListeners(List<BridgeWebViewClient.PageLoadedListener> pageLoadedListeners) {
+        this.pageLoadedListeners = pageLoadedListeners;
+    }
+
     static class Builder {
 
         private Bundle instanceState = null;
         private CapConfig config = null;
         private List<Class<? extends Plugin>> plugins = new ArrayList<>();
         private AppCompatActivity activity;
+        private final List<BridgeWebViewClient.PageLoadedListener> pageLoadedListeners = new ArrayList<>();
 
         Builder(AppCompatActivity activity) {
             this.activity = activity;
@@ -1146,6 +1158,19 @@ public class Bridge {
             return this;
         }
 
+        public Builder addPageLoadedListener(BridgeWebViewClient.PageLoadedListener pageLoadedListener) {
+            pageLoadedListeners.add(pageLoadedListener);
+            return this;
+        }
+
+        public Builder addPageLoadedListeners(List<BridgeWebViewClient.PageLoadedListener> pageLoadedListeners) {
+            for (BridgeWebViewClient.PageLoadedListener listener : pageLoadedListeners) {
+                this.addPageLoadedListener(listener);
+            }
+
+            return this;
+        }
+
         public Bridge create() {
             // Cordova initialization
             ConfigXmlParser parser = new ConfigXmlParser();
@@ -1168,6 +1193,7 @@ public class Bridge {
             // Bridge initialization
             Bridge bridge = new Bridge(activity, webView, plugins, cordovaInterface, pluginManager, preferences, config);
             bridge.setCordovaWebView(mockWebView);
+            bridge.setPageLoadedListeners(pageLoadedListeners);
 
             if (instanceState != null) {
                 bridge.restoreInstanceState(instanceState);

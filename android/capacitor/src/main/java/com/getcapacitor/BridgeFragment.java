@@ -28,6 +28,8 @@ public class BridgeFragment extends Fragment {
     private final List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
     private CapConfig config = null;
 
+    private final List<BridgeWebViewClient.PageLoadedListener> pageLoadedListeners = new ArrayList<>();
+
     public BridgeFragment() {
         // Required empty public constructor
     }
@@ -55,6 +57,10 @@ public class BridgeFragment extends Fragment {
         this.config = config;
     }
 
+    public void addPageLoadedListener(BridgeWebViewClient.PageLoadedListener pageLoadedListener) {
+        pageLoadedListeners.add(pageLoadedListener);
+    }
+
     /**
      * Load the WebView and create the Bridge
      */
@@ -73,6 +79,7 @@ public class BridgeFragment extends Fragment {
                 .setInstanceState(savedInstanceState)
                 .setPlugins(initialPlugins)
                 .setConfig(config)
+                .addPageLoadedListeners(pageLoadedListeners)
                 .create();
 
         if (startDir != null) {
