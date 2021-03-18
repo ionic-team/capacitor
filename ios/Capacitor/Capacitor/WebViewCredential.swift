@@ -1,11 +1,3 @@
-//
-//  WebViewCredential.swift
-//  Capacitor
-//
-//  Created by Kachalov, Victor on 15.03.21.
-//  Copyright © 2021 Drifty Co. All rights reserved.
-//
-
 import Foundation
 
 @objc(WebViewCredential)
