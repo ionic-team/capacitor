@@ -88,6 +88,7 @@ export interface CliConfigApp {
    */
   bundledWebRuntime: boolean;
   assets: CliConfigPlatformAssets;
+  skipSyncOnAdd: boolean;
 }
 
 export interface CliConfigPlugins {

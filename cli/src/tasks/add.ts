@@ -122,7 +122,7 @@ async function editPlatforms(config: Config, platformName: string) {
 
 function shouldSync(config: Config, platformName: string) {
   // Don't sync if we're adding the iOS platform not on a mac
-  if (config.cli.os !== OS.Mac && platformName === 'ios') {
+  if (config.app.skipSyncOnAdd || (config.cli.os !== OS.Mac && platformName === 'ios')) {
     return false;
   }
   return true;

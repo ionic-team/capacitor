@@ -93,7 +93,8 @@ export class Config implements CliConfig {
     },
     server: {
       cleartext: false
-    }
+    },
+    skipSyncOnAdd: false
   };
 
   plugins = {
