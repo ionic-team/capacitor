@@ -11,6 +11,9 @@ let package = Package(
         .library(
             name: "Capacitor",
             targets: ["Capacitor"]),
+        .library(
+            name: "CapacitorCordova",
+            targets: ["CapacitorCordova"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -21,9 +24,12 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "Capacitor",
-            path: "capacitor/ios/Capacitor/Capacitor"),
+            path: "ios/Capacitor/Capacitor"),
         .testTarget(
             name: "CapacitorTests",
-            path: "capacitor/ios/Capacitor/CapacitorTests"),
+            path: "ios/Capacitor/CapacitorTests"),
+        .target(
+            name: "CapacitorCordova",
+            path: "ios/CapacitorCordova/CapacitorCordova"),
     ]
 )
