@@ -48,7 +48,7 @@
     "@ionic/utils-fs": "^3.1.5",
     "@ionic/utils-subprocess": "^2.1.6",
     "@ionic/utils-terminal": "^2.3.0",
-    "commander": "^6.0.0",
+    "commander": "^7.1.0",
     "debug": "^4.2.0",
     "env-paths": "^2.2.0",
     "kleur": "^4.1.1",
