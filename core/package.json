@@ -35,7 +35,7 @@
     "tslib": "^2.1.0"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^10.0.0",
+    "@rollup/plugin-node-resolve": "^11.2.0",
     "@types/jest": "^26.0.4",
     "jest": "^26.1.0",
     "rimraf": "^3.0.2",
