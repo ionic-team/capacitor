@@ -1,5 +1,8 @@
 module.exports = {
   ...require('@ionic/swiftlint-config'),
-  included: ['ios', 'ios-template'],
-  excluded: ['ios/Capacitor/CapacitorTests', 'ios/Capacitor/TestsHostApp'],
+  included: ['${PWD}/ios', '${PWD}/ios-template'],
+  excluded: [
+    '${PWD}/ios/Capacitor/CapacitorTests',
+    '${PWD}/ios/Capacitor/TestsHostApp',
+  ],
 };
