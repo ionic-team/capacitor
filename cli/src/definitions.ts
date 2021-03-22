@@ -68,6 +68,7 @@ export interface AppConfig {
    * module imports, set this to "true" and import "capacitor.js" manually.
    */
   readonly bundledWebRuntime: boolean;
+  readonly skipSyncOnAdd: boolean;
 }
 
 export interface AndroidConfig extends PlatformConfig {

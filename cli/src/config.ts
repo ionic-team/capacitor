@@ -59,6 +59,7 @@ export async function loadConfig(): Promise<Config> {
       },
       ...conf,
       bundledWebRuntime: conf.extConfig.bundledWebRuntime ?? false,
+      skipSyncOnAdd: conf.extConfig.skipSyncOnAdd ?? false,
     },
   };
 
