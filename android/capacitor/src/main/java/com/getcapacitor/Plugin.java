@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.Lifecycle;
 import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
@@ -111,26 +112,52 @@ public class Plugin {
         for (final Method method : pluginClassMethods) {
             if (method.isAnnotationPresent(ActivityCallback.class)) {
                 // register callbacks annotated with ActivityCallback for activity results
-                activityLaunchers.put(
-                    method.getName(),
-                    bridge
-                        .getActivity()
-                        .registerForActivityResult(
-                            new ActivityResultContracts.StartActivityForResult(),
-                            result -> triggerActivityCallback(method, result)
-                        )
-                );
+                ActivityResultLauncher<Intent> launcher;
+
+                if (bridge.getFragment() != null) {
+                    launcher =
+                        bridge
+                            .getFragment()
+                            .registerForActivityResult(
+                                new ActivityResultContracts.StartActivityForResult(),
+                                result -> triggerActivityCallback(method, result)
+                            );
+                } else {
+                    launcher =
+                        bridge
+                            .getActivity()
+                            .registerForActivityResult(
+                                new ActivityResultContracts.StartActivityForResult(),
+                                result -> triggerActivityCallback(method, result)
+                            );
+                }
+
+                activityLaunchers.put(method.getName(), launcher);
             } else if (method.isAnnotationPresent(PermissionCallback.class)) {
                 // register callbacks annotated with PermissionCallback for permission results
-                permissionLaunchers.put(
-                    method.getName(),
-                    bridge
-                        .getActivity()
-                        .registerForActivityResult(
-                            new ActivityResultContracts.RequestMultiplePermissions(),
-                            permissions -> triggerPermissionCallback(method, permissions)
-                        )
-                );
+                ActivityResultLauncher<String[]> launcher;
+
+                if (bridge.getFragment() != null) {
+                    launcher =
+                        bridge
+                            .getFragment()
+                            .registerForActivityResult(
+                                new ActivityResultContracts.RequestMultiplePermissions(),
+                                permissions -> triggerPermissionCallback(method, permissions)
+                            );
+                } else {
+                    launcher =
+                        bridge
+                            .getActivity()
+                            .registerForActivityResult(
+                                new ActivityResultContracts.RequestMultiplePermissions(),
+                                permissions -> triggerPermissionCallback(method, permissions)
+                            );
+                }
+
+                if (!bridge.getActivity().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                    permissionLaunchers.put(method.getName(), launcher);
+                }
             }
         }
     }
