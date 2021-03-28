@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.Lifecycle;
 import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
@@ -155,9 +154,7 @@ public class Plugin {
                             );
                 }
 
-                if (!bridge.getActivity().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-                    permissionLaunchers.put(method.getName(), launcher);
-                }
+                permissionLaunchers.put(method.getName(), launcher);
             }
         }
     }

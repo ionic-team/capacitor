@@ -58,7 +58,7 @@ public class BridgeFragment extends Fragment {
      * Load the WebView and create the Bridge
      */
     protected void load(Bundle savedInstanceState) {
-        Logger.debug("Starting BridgeActivity");
+        Logger.debug("Loading Bridge with BridgeFragment");
 
         Bundle args = getArguments();
         String startDir = null;
