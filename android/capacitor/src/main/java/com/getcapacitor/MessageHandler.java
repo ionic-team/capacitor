@@ -109,6 +109,9 @@ public class MessageHandler {
         } catch (Exception ex) {
             Logger.error("sendResponseMessage: error: " + ex);
         }
+        if (!call.isKeptAlive()) {
+            call.release(bridge);
+        }
     }
 
     private void callPluginMethod(String callbackId, String pluginId, String methodName, JSObject methodData) {
