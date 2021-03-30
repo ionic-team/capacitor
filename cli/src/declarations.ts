@@ -45,9 +45,19 @@ export interface CapacitorConfig {
    * Hide or show the native logs for iOS and Android.
    *
    * @since 2.1.0
+   * @deprecated 3.0.0
    * @default false
    */
   hideLogs?: boolean;
+
+  /**
+   * The build configuration under which Capacitor will generate logs.
+   * 'production' also implies logging in debug.
+   *
+   * @since 3.0.0
+   * @default debug
+   */
+  loggingBehavior?: 'none' | 'debug' | 'production';
 
   /**
    * User agent of Capacitor Web View.
@@ -152,9 +162,20 @@ export interface CapacitorConfig {
      * Overrides global `hideLogs` option.
      *
      * @since 2.1.0
+     * @deprecated 3.0.0
      * @default false
      */
     hideLogs?: boolean;
+
+    /**
+     * The build configuration under which Capacitor will generate logs.
+     *
+     * Overrides global `loggingBehavior` option.
+     *
+     * @since 3.0.0
+     * @default debug
+     */
+    loggingBehavior?: 'none' | 'debug' | 'production';
 
     /**
      * Allowlist of plugins to include during `npx cap sync` for Android.
@@ -268,10 +289,21 @@ export interface CapacitorConfig {
      *
      * Overrides global `hideLogs` option.
      *
-     * @since 1.1.0
+     * @since 2.1.0
+     * @deprecated 3.0.0
      * @default false
      */
     hideLogs?: boolean;
+
+    /**
+     * The build configuration under which Capacitor will generate logs.
+     *
+     * Overrides global `loggingBehavior` option.
+     *
+     * @since 3.0.0
+     * @default debug
+     */
+    loggingBehavior?: 'none' | 'debug' | 'production';
 
     /**
      * Allowlist of plugins to include during `npx cap sync` for iOS.
