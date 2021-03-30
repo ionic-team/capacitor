@@ -8,6 +8,7 @@
   "appendUserAgent": "level 1 append",
   "backgroundColor": "#ffffff",
   "hideLogs": true,
+  "loggingBehavior": "production",
   "server": {
   	"iosScheme": "override",
   	"allowNavigation": ["*.capacitorjs.com", "ionic.io", "192.168.0.1", "subdomain.*.ionicframework.com"],
