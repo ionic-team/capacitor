@@ -29,7 +29,7 @@ import Cordova
     override public final func loadView() {
         // load the configuration and set the logging flag
         let configDescriptor = instanceDescriptor()
-        let configuration = InstanceConfiguration(with: configDescriptor)
+        let configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)
         CAPLog.enableLogging = configuration.enableLogging
         logWarnings(for: configDescriptor)
 

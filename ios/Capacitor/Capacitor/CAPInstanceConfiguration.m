@@ -8,7 +8,7 @@
 
 @implementation CAPInstanceConfiguration
 
-- (instancetype)initWithDescriptor:(CAPInstanceDescriptor *)descriptor {
+- (instancetype)initWithDescriptor:(CAPInstanceDescriptor *)descriptor isDebug:(BOOL)debug {
     if (self = [super init]) {
         // first, give the descriptor a chance to make itself internally consistent
         [descriptor normalize];
@@ -17,7 +17,17 @@
         _overridenUserAgentString = descriptor.overridenUserAgentString;
         _backgroundColor = descriptor.backgroundColor;
         _allowedNavigationHostnames = descriptor.allowedNavigationHostnames;
-        _enableLogging = descriptor.enableLogging;
+        switch (descriptor.loggingBehavior) {
+            case CAPInstanceLoggingBehaviorProduction:
+                _enableLogging = true;
+                break;
+            case CAPInstanceLoggingBehaviorDebug:
+                _enableLogging = debug;
+                break;
+            default:
+                _enableLogging = false;
+                break;
+        }
         _enableScrolling = descriptor.enableScrolling;
         _allowLinkPreviews = descriptor.allowLinkPreviews;
         _handleApplicationNotifications = descriptor.handleApplicationNotifications;
