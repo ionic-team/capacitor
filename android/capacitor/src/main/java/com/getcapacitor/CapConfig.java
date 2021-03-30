@@ -20,6 +20,10 @@ import org.json.JSONObject;
  */
 public class CapConfig {
 
+    private static final String LOG_BEHAVIOR_NONE = "none";
+    private static final String LOG_BEHAVIOR_DEBUG = "debug";
+    private static final String LOG_BEHAVIOR_PRODUCTION = "production";
+
     // Server Config
     private boolean html5mode = true;
     private String serverUrl;
@@ -34,7 +38,7 @@ public class CapConfig {
     private boolean allowMixedContent = false;
     private boolean captureInput = false;
     private boolean webContentsDebuggingEnabled = false;
-    private boolean hideLogs = false;
+    private boolean enableLogging = true;
 
     // Embedded
     private String startPath;
@@ -110,7 +114,7 @@ public class CapConfig {
         this.allowMixedContent = builder.allowMixedContent;
         this.captureInput = builder.captureInput;
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
-        this.hideLogs = builder.hideLogs;
+        this.enableLogging = builder.enableLogging;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -137,6 +141,8 @@ public class CapConfig {
      * Deserializes the config from JSON into a Capacitor Configuration object.
      */
     private void deserializeConfig(@Nullable Context context) {
+        boolean isDebug = context != null && (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+
         // Server
         html5mode = JSONUtils.getBoolean(configJSON, "server.html5mode", html5mode);
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
@@ -158,9 +164,23 @@ public class CapConfig {
                 JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
             );
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
-        hideLogs = JSONUtils.getBoolean(configJSON, "android.hideLogs", JSONUtils.getBoolean(configJSON, "hideLogs", hideLogs));
-        webContentsDebuggingEnabled = context != null && (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
-        webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
+        webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
+
+        String logBehavior = JSONUtils.getString(configJSON, "android.loggingBehavior", JSONUtils.getString(configJSON, "loggingBehavior", null));
+        if (logBehavior == null) {
+            boolean hideLogs = JSONUtils.getBoolean(configJSON, "android.hideLogs", JSONUtils.getBoolean(configJSON, "hideLogs", false));
+            logBehavior = hideLogs ? LOG_BEHAVIOR_NONE : LOG_BEHAVIOR_DEBUG;
+        }
+        switch (logBehavior.toLowerCase()) {
+            case LOG_BEHAVIOR_PRODUCTION:
+                enableLogging = true;
+                break;
+            case LOG_BEHAVIOR_NONE:
+                enableLogging = false;
+                break;
+            default: // LOG_BEHAVIOR_DEBUG
+                enableLogging = isDebug;
+        }
 
         // Plugins
         pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
@@ -214,8 +234,8 @@ public class CapConfig {
         return webContentsDebuggingEnabled;
     }
 
-    public boolean isLogsHidden() {
-        return hideLogs;
+    public boolean isLoggingEnabled() {
+        return enableLogging;
     }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
@@ -372,7 +392,7 @@ public class CapConfig {
         private boolean allowMixedContent = false;
         private boolean captureInput = false;
         private Boolean webContentsDebuggingEnabled = null;
-        private boolean hideLogs = false;
+        private boolean enableLogging = true;
 
         // Embedded
         private String startPath = null;
@@ -467,8 +487,8 @@ public class CapConfig {
             return this;
         }
 
-        public Builder setLogsHidden(boolean hideLogs) {
-            this.hideLogs = hideLogs;
+        public Builder setEnableLogging(boolean enableLogging) {
+            this.enableLogging = enableLogging;
             return this;
         }
     }
