@@ -2,7 +2,9 @@ package com.getcapacitor;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import com.getcapacitor.android.R;
 import java.util.ArrayList;
@@ -22,6 +24,9 @@ public class BridgeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bridgeBuilder.setInstanceState(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
     }
 
     /**
