@@ -16,15 +16,6 @@ public abstract class WebViewListener {
         throw new NotImplementedException();
     }
 
-    /**
-     * Callback for page error event.
-     *
-     * @param webView
-     */
-    public void onPageError(WebView webView) throws NotImplementedException {
-        throw new NotImplementedException();
-    }
-
     static class NotImplementedException extends Exception {
         // Empty
     }
