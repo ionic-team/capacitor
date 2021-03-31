@@ -251,6 +251,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   cap.registerPlugin = registerPlugin;
   cap.Exception = CapacitorException;
   cap.DEBUG = !!cap.DEBUG;
+  cap.isLoggingEnabled = !!cap.isLoggingEnabled;
 
   initBridge(win, cap);
   initEvents(win, cap);
