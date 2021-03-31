@@ -45,11 +45,7 @@ public class BridgeWebViewClient extends WebViewClient {
 
         if (webViewListeners != null && view.getProgress() == 100) {
             for (WebViewListener listener : bridge.getWebViewListeners()) {
-                try {
-                    listener.onPageLoaded(view);
-                } catch (WebViewListener.NotImplementedException e) {
-                    // Fail quietly when event not used
-                }
+                listener.onPageLoaded(view);
             }
         }
     }
