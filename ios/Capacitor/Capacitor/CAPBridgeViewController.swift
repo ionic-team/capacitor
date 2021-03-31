@@ -30,7 +30,7 @@ import Cordova
         // load the configuration and set the logging flag
         let configDescriptor = instanceDescriptor()
         let configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)
-        CAPLog.enableLogging = configuration.enableLogging
+        CAPLog.enableLogging = configuration.loggingEnabled
         logWarnings(for: configDescriptor)
 
         if configDescriptor.instanceType == .fixed {
@@ -276,7 +276,7 @@ extension CAPBridgeViewController {
         aWebView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
         aWebView.allowsLinkPreview = configuration.allowLinkPreviews
         aWebView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
-        aWebView.scrollView.isScrollEnabled = configuration.enableScrolling
+        aWebView.scrollView.isScrollEnabled = configuration.scrollingEnabled
         if let overrideUserAgent = configuration.overridenUserAgentString {
             aWebView.customUserAgent = overrideUserAgent
         }

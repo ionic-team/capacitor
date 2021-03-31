@@ -108,8 +108,8 @@ internal extension InstanceDescriptor {
             if let allowPreviews = config[keyPath: "ios.allowsLinkPreview"] as? Bool {
                 allowLinkPreviews = allowPreviews
             }
-            if let scrollEnabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
-                enableScrolling = scrollEnabled
+            if let enabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
+                scrollingEnabled = enabled
             }
             if let pluginConfig = config[keyPath: "plugins"] as? JSObject {
                 pluginConfigurations = pluginConfig
@@ -119,8 +119,7 @@ internal extension InstanceDescriptor {
                 if let behavior = InstanceLoggingBehavior.behavior(from: value) {
                     loggingBehavior = behavior
                 }
-            }
-            else if let hideLogs = (config[keyPath: "ios.hideLogs"] as? Bool) ?? (config[keyPath: "hideLogs"] as? Bool), hideLogs {
+            } else if let hideLogs = (config[keyPath: "ios.hideLogs"] as? Bool) ?? (config[keyPath: "hideLogs"] as? Bool), hideLogs {
                 loggingBehavior = .none
             }
         }

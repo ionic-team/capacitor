@@ -19,16 +19,16 @@
         _allowedNavigationHostnames = descriptor.allowedNavigationHostnames;
         switch (descriptor.loggingBehavior) {
             case CAPInstanceLoggingBehaviorProduction:
-                _enableLogging = true;
+                _loggingEnabled = true;
                 break;
             case CAPInstanceLoggingBehaviorDebug:
-                _enableLogging = debug;
+                _loggingEnabled = debug;
                 break;
             default:
-                _enableLogging = false;
+                _loggingEnabled = false;
                 break;
         }
-        _enableScrolling = descriptor.enableScrolling;
+        _scrollingEnabled = descriptor.scrollingEnabled;
         _allowLinkPreviews = descriptor.allowLinkPreviews;
         _handleApplicationNotifications = descriptor.handleApplicationNotifications;
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
@@ -59,8 +59,8 @@
         _localURL = [[configuration localURL] copy];
         _serverURL = [[configuration serverURL] copy];
         _pluginConfigurations = [[configuration pluginConfigurations] copy];
-        _enableLogging = configuration.enableLogging;
-        _enableScrolling = configuration.enableScrolling;
+        _loggingEnabled = configuration.loggingEnabled;
+        _scrollingEnabled = configuration.scrollingEnabled;
         _allowLinkPreviews = configuration.allowLinkPreviews;
         _handleApplicationNotifications = configuration.handleApplicationNotifications;
         _cordovaDeployDisabled = configuration.cordovaDeployDisabled;
