@@ -38,7 +38,7 @@ public class CapConfig {
     private boolean allowMixedContent = false;
     private boolean captureInput = false;
     private boolean webContentsDebuggingEnabled = false;
-    private boolean enableLogging = true;
+    private boolean loggingEnabled = true;
 
     // Embedded
     private String startPath;
@@ -114,7 +114,7 @@ public class CapConfig {
         this.allowMixedContent = builder.allowMixedContent;
         this.captureInput = builder.captureInput;
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
-        this.enableLogging = builder.enableLogging;
+        this.loggingEnabled = builder.loggingEnabled;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -166,20 +166,24 @@ public class CapConfig {
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
 
-        String logBehavior = JSONUtils.getString(configJSON, "android.loggingBehavior", JSONUtils.getString(configJSON, "loggingBehavior", null));
+        String logBehavior = JSONUtils.getString(
+            configJSON,
+            "android.loggingBehavior",
+            JSONUtils.getString(configJSON, "loggingBehavior", null)
+        );
         if (logBehavior == null) {
             boolean hideLogs = JSONUtils.getBoolean(configJSON, "android.hideLogs", JSONUtils.getBoolean(configJSON, "hideLogs", false));
             logBehavior = hideLogs ? LOG_BEHAVIOR_NONE : LOG_BEHAVIOR_DEBUG;
         }
         switch (logBehavior.toLowerCase()) {
             case LOG_BEHAVIOR_PRODUCTION:
-                enableLogging = true;
+                loggingEnabled = true;
                 break;
             case LOG_BEHAVIOR_NONE:
-                enableLogging = false;
+                loggingEnabled = false;
                 break;
             default: // LOG_BEHAVIOR_DEBUG
-                enableLogging = isDebug;
+                loggingEnabled = isDebug;
         }
 
         // Plugins
@@ -235,7 +239,7 @@ public class CapConfig {
     }
 
     public boolean isLoggingEnabled() {
-        return enableLogging;
+        return loggingEnabled;
     }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
@@ -392,7 +396,7 @@ public class CapConfig {
         private boolean allowMixedContent = false;
         private boolean captureInput = false;
         private Boolean webContentsDebuggingEnabled = null;
-        private boolean enableLogging = true;
+        private boolean loggingEnabled = true;
 
         // Embedded
         private String startPath = null;
@@ -487,8 +491,8 @@ public class CapConfig {
             return this;
         }
 
-        public Builder setEnableLogging(boolean enableLogging) {
-            this.enableLogging = enableLogging;
+        public Builder setLoggingEnabled(boolean enabled) {
+            this.loggingEnabled = enabled;
             return this;
         }
     }

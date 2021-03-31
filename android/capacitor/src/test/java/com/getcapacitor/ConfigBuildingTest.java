@@ -46,7 +46,7 @@ public class ConfigBuildingTest {
                     .setAllowNavigation(new String[] { "http://www.google.com" })
                     .setAndroidScheme("test")
                     .setCaptureInput(true)
-                    .setEnableLogging(true)
+                    .setLoggingEnabled(true)
                     .setHTML5mode(false)
                     .setOverriddenUserAgentString("test-user-agent")
                     .setAppendedUserAgentString("test-append")
