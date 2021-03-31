@@ -140,10 +140,6 @@ public class Plugin {
 
         // validate permissions and invoke the permission result callback
         if (bridge.validatePermissions(this, savedCall, permissionResultMap)) {
-            if (!savedCall.isKeptAlive()) {
-                savedCall.release(bridge);
-            }
-
             try {
                 method.setAccessible(true);
                 method.invoke(this, savedCall);
@@ -158,11 +154,6 @@ public class Plugin {
         if (savedCall == null) {
             savedCall = bridge.getPluginCallForLastActivity();
         }
-
-        if (!savedCall.isKeptAlive()) {
-            savedCall.release(bridge);
-        }
-
         // invoke the activity result callback
         try {
             method.setAccessible(true);
