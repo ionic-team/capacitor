@@ -1,7 +1,6 @@
 package com.getcapacitor;
 
 import android.net.Uri;
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
