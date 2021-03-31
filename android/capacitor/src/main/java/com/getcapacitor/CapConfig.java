@@ -11,6 +11,7 @@ import com.getcapacitor.util.JSONUtils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -175,7 +176,7 @@ public class CapConfig {
             boolean hideLogs = JSONUtils.getBoolean(configJSON, "android.hideLogs", JSONUtils.getBoolean(configJSON, "hideLogs", false));
             logBehavior = hideLogs ? LOG_BEHAVIOR_NONE : LOG_BEHAVIOR_DEBUG;
         }
-        switch (logBehavior.toLowerCase()) {
+        switch (logBehavior.toLowerCase(Locale.ROOT)) {
             case LOG_BEHAVIOR_PRODUCTION:
                 loggingEnabled = true;
                 break;
