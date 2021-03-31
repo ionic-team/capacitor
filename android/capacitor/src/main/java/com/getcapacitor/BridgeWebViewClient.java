@@ -33,11 +33,6 @@ public class BridgeWebViewClient extends WebViewClient {
     }
 
     @Override
-    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-        super.onReceivedError(view, request, error);
-    }
-
-    @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
 
