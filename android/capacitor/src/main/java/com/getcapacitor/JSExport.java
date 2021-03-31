@@ -11,8 +11,8 @@ import org.json.JSONObject;
 
 public class JSExport {
 
-    public static String getGlobalJS(Context context, boolean isDebug) {
-        return "window.Capacitor = { DEBUG: " + isDebug + ", Plugins: {} };";
+    public static String getGlobalJS(Context context, boolean loggingEnabled, boolean isDebug) {
+        return "window.Capacitor = { DEBUG: " + isDebug + ", isLoggingEnabled: " + loggingEnabled + ", Plugins: {} };";
     }
 
     public static String getCordovaJS(Context context) {

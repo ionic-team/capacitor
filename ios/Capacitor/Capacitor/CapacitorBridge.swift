@@ -215,6 +215,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         do {
             try JSExport.exportCapacitorGlobalJS(userContentController: webViewDelegationHandler.contentController,
                                                  isDebug: isDevMode(),
+                                                 loggingEnabled: config.loggingEnabled,
                                                  localUrl: localUrl)
         } catch {
             type(of: self).fatalError(error, error)
