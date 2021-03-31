@@ -121,7 +121,7 @@ public class Bridge {
     private Uri intentUri;
 
     // A list of listeners that trigger when webView is finished loading
-    private List<BridgeWebViewClient.PageLoadedListener> pageLoadedListeners = new ArrayList<>();
+    private List<WebViewListener> webViewListeners = new ArrayList<>();
 
     /**
      * Create the Bridge with a reference to the main {@link Activity} for the
@@ -1110,12 +1110,12 @@ public class Bridge {
         this.webViewClient = client;
     }
 
-    List<BridgeWebViewClient.PageLoadedListener> getPageLoadedListeners() {
-        return pageLoadedListeners;
+    List<WebViewListener> getWebViewListeners() {
+        return webViewListeners;
     }
 
-    void setPageLoadedListeners(List<BridgeWebViewClient.PageLoadedListener> pageLoadedListeners) {
-        this.pageLoadedListeners = pageLoadedListeners;
+    void setWebViewListeners(List<WebViewListener> webViewListeners) {
+        this.webViewListeners = webViewListeners;
     }
 
     static class Builder {
@@ -1124,7 +1124,7 @@ public class Bridge {
         private CapConfig config = null;
         private List<Class<? extends Plugin>> plugins = new ArrayList<>();
         private AppCompatActivity activity;
-        private final List<BridgeWebViewClient.PageLoadedListener> pageLoadedListeners = new ArrayList<>();
+        private final List<WebViewListener> webViewListeners = new ArrayList<>();
 
         Builder(AppCompatActivity activity) {
             this.activity = activity;
@@ -1158,14 +1158,14 @@ public class Bridge {
             return this;
         }
 
-        public Builder addPageLoadedListener(BridgeWebViewClient.PageLoadedListener pageLoadedListener) {
-            pageLoadedListeners.add(pageLoadedListener);
+        public Builder addWebViewListener(WebViewListener webViewListener) {
+            webViewListeners.add(webViewListener);
             return this;
         }
 
-        public Builder addPageLoadedListeners(List<BridgeWebViewClient.PageLoadedListener> pageLoadedListeners) {
-            for (BridgeWebViewClient.PageLoadedListener listener : pageLoadedListeners) {
-                this.addPageLoadedListener(listener);
+        public Builder addWebViewListeners(List<WebViewListener> webViewListeners) {
+            for (WebViewListener listener : webViewListeners) {
+                this.addWebViewListener(listener);
             }
 
             return this;
@@ -1193,7 +1193,7 @@ public class Bridge {
             // Bridge initialization
             Bridge bridge = new Bridge(activity, webView, plugins, cordovaInterface, pluginManager, preferences, config);
             bridge.setCordovaWebView(mockWebView);
-            bridge.setPageLoadedListeners(pageLoadedListeners);
+            bridge.setWebViewListeners(webViewListeners);
 
             if (instanceState != null) {
                 bridge.restoreInstanceState(instanceState);
