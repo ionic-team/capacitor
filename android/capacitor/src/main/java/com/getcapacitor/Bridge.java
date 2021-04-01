@@ -123,6 +123,9 @@ public class Bridge {
     // Any URI that was passed to the app on start
     private Uri intentUri;
 
+    // A list of listeners that trigger when webView is finished loading
+    private List<WebViewListener> webViewListeners = new ArrayList<>();
+
     /**
      * Create the Bridge with a reference to the main {@link Activity} for the
      * app, and a reference to the {@link WebView} our app will use.
@@ -1134,6 +1137,14 @@ public class Bridge {
         this.webViewClient = client;
     }
 
+    List<WebViewListener> getWebViewListeners() {
+        return webViewListeners;
+    }
+
+    void setWebViewListeners(List<WebViewListener> webViewListeners) {
+        this.webViewListeners = webViewListeners;
+    }
+
     static class Builder {
 
         private Bundle instanceState = null;
@@ -1141,6 +1152,7 @@ public class Bridge {
         private List<Class<? extends Plugin>> plugins = new ArrayList<>();
         private AppCompatActivity activity;
         private Fragment fragment;
+        private final List<WebViewListener> webViewListeners = new ArrayList<>();
 
         Builder(AppCompatActivity activity) {
             this.activity = activity;
@@ -1179,6 +1191,19 @@ public class Bridge {
             return this;
         }
 
+        public Builder addWebViewListener(WebViewListener webViewListener) {
+            webViewListeners.add(webViewListener);
+            return this;
+        }
+
+        public Builder addWebViewListeners(List<WebViewListener> webViewListeners) {
+            for (WebViewListener listener : webViewListeners) {
+                this.addWebViewListener(listener);
+            }
+
+            return this;
+        }
+
         public Bridge create() {
             // Cordova initialization
             ConfigXmlParser parser = new ConfigXmlParser();
@@ -1201,6 +1226,7 @@ public class Bridge {
             // Bridge initialization
             Bridge bridge = new Bridge(activity, fragment, webView, plugins, cordovaInterface, pluginManager, preferences, config);
             bridge.setCordovaWebView(mockWebView);
+            bridge.setWebViewListeners(webViewListeners);
 
             if (instanceState != null) {
                 bridge.restoreInstanceState(instanceState);

@@ -27,6 +27,8 @@ public class BridgeFragment extends Fragment {
     private final List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
     private CapConfig config = null;
 
+    private final List<WebViewListener> webViewListeners = new ArrayList<>();
+
     public BridgeFragment() {
         // Required empty public constructor
     }
@@ -54,6 +56,10 @@ public class BridgeFragment extends Fragment {
         this.config = config;
     }
 
+    public void addWebViewListener(WebViewListener webViewListener) {
+        webViewListeners.add(webViewListener);
+    }
+
     /**
      * Load the WebView and create the Bridge
      */
@@ -67,7 +73,13 @@ public class BridgeFragment extends Fragment {
             startDir = getArguments().getString(ARG_START_DIR);
         }
 
-        bridge = new Bridge.Builder(this).setInstanceState(savedInstanceState).setPlugins(initialPlugins).setConfig(config).create();
+        bridge =
+            new Bridge.Builder(this)
+                .setInstanceState(savedInstanceState)
+                .setPlugins(initialPlugins)
+                .setConfig(config)
+                .addWebViewListeners(webViewListeners)
+                .create();
 
         if (startDir != null) {
             bridge.setServerAssetPath(startDir);
