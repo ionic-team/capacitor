@@ -289,7 +289,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `hideLogs` option.
      *
-     * @since 2.1.0
+     * @since 1.1.0
      * @deprecated 3.0.0
      * @default false
      */
