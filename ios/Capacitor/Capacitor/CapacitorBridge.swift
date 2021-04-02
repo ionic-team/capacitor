@@ -212,7 +212,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     func exportCoreJS(localUrl: String) {
         do {
             try JSExport.exportCapacitorGlobalJS(userContentController: webViewDelegationHandler.contentController,
-                                                 isDebug: isDevMode(),
+                                                 isDebug: isDevEnvironment,
                                                  loggingEnabled: config.loggingEnabled,
                                                  localUrl: localUrl)
         } catch {
