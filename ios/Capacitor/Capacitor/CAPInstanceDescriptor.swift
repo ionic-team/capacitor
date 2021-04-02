@@ -97,7 +97,7 @@ internal extension InstanceDescriptor {
                 allowLinkPreviews = allowPreviews
             }
             if let scrollEnabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
-                enableScrolling = scrollEnabled
+                scrollingEnabled = scrollEnabled
             }
             if let pluginConfig = config[keyPath: "plugins"] as? JSObject {
                 pluginConfigurations = pluginConfig

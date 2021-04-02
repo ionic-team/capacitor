@@ -55,7 +55,7 @@ class ConfigurationTests: XCTestCase {
         XCTAssertEqual(descriptor.urlScheme, "capacitor")
         XCTAssertEqual(descriptor.urlHostname, "localhost")
         XCTAssertNil(descriptor.serverURL)
-        XCTAssertTrue(descriptor.enableScrolling)
+        XCTAssertTrue(descriptor.scrollingEnabled)
         XCTAssertTrue(descriptor.enableLogging)
         XCTAssertTrue(descriptor.allowLinkPreviews)
         XCTAssertEqual(descriptor.contentInsetAdjustmentBehavior, .never)
@@ -77,7 +77,7 @@ class ConfigurationTests: XCTestCase {
         XCTAssertEqual(descriptor.overridenUserAgentString, "level 2 override")
         XCTAssertEqual(descriptor.appendedUserAgentString, "level 2 append")
         XCTAssertTrue(descriptor.enableLogging)
-        XCTAssertFalse(descriptor.enableScrolling)
+        XCTAssertFalse(descriptor.scrollingEnabled)
         XCTAssertEqual(descriptor.contentInsetAdjustmentBehavior, .scrollableAxes)
     }
     
