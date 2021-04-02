@@ -28,7 +28,7 @@
                 _loggingEnabled = false;
                 break;
         }
-        _scrollingEnabled = descriptor.scrollingEnabled;
+        _enableScrolling = descriptor.enableScrolling;
         _allowLinkPreviews = descriptor.allowLinkPreviews;
         _handleApplicationNotifications = descriptor.handleApplicationNotifications;
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
@@ -60,7 +60,7 @@
         _serverURL = [[configuration serverURL] copy];
         _pluginConfigurations = [[configuration pluginConfigurations] copy];
         _loggingEnabled = configuration.loggingEnabled;
-        _scrollingEnabled = configuration.scrollingEnabled;
+        _enableScrolling = configuration.enableScrolling;
         _allowLinkPreviews = configuration.allowLinkPreviews;
         _handleApplicationNotifications = configuration.handleApplicationNotifications;
         _cordovaDeployDisabled = configuration.cordovaDeployDisabled;

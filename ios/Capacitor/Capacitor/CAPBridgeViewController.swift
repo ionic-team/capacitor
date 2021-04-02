@@ -276,7 +276,7 @@ extension CAPBridgeViewController {
         aWebView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
         aWebView.allowsLinkPreview = configuration.allowLinkPreviews
         aWebView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
-        aWebView.scrollView.isScrollEnabled = configuration.scrollingEnabled
+        aWebView.scrollView.isScrollEnabled = configuration.enableScrolling
         if let overrideUserAgent = configuration.overridenUserAgentString {
             aWebView.customUserAgent = overrideUserAgent
         }
