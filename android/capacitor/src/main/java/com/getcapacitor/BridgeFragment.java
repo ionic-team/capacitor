@@ -56,6 +56,10 @@ public class BridgeFragment extends Fragment {
         this.config = config;
     }
 
+    public Bridge getBridge() {
+        return bridge;
+    }
+
     public void addWebViewListener(WebViewListener webViewListener) {
         webViewListeners.add(webViewListener);
     }
