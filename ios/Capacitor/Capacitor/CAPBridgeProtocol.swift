@@ -9,7 +9,6 @@ import WebKit
     var notificationRouter: NotificationRouter { get }
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
-    @available(iOS 12.0, *)
     var userInterfaceStyle: UIUserInterfaceStyle { get }
     var statusBarVisible: Bool { get set }
     var statusBarStyle: UIStatusBarStyle { get set }
@@ -31,7 +30,6 @@ import WebKit
     @available(*, deprecated, renamed: "statusBarStyle")
     func getStatusBarStyle() -> UIStatusBarStyle
 
-    @available(iOS 12.0, *)
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
 

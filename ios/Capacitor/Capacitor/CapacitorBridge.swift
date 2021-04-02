@@ -45,7 +45,6 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return CapacitorBridge.isDevEnvironment
     }
 
-    @available(iOS 12.0, *)
     public var userInterfaceStyle: UIUserInterfaceStyle {
         return viewController?.traitCollection.userInterfaceStyle ?? .unspecified
     }
@@ -143,7 +142,6 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         statusBarStyle = style
     }
 
-    @available(iOS 12.0, *)
     public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
         return userInterfaceStyle
     }
