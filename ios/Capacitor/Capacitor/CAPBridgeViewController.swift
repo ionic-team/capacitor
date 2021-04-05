@@ -13,7 +13,7 @@ import Cordova
     public var isStatusBarVisible = true
     public var statusBarStyle: UIStatusBarStyle = .default
     public var statusBarAnimation: UIStatusBarAnimation = .slide
-    public var supportedOrientations: [Int] = []
+    @objc public var supportedOrientations: [Int] = []
 
     public lazy final var isNewBinary: Bool = {
         if let curVersionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,

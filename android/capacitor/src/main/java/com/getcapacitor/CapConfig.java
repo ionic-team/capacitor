@@ -36,6 +36,9 @@ public class CapConfig {
     private boolean webContentsDebuggingEnabled = false;
     private boolean hideLogs = false;
 
+    // Embedded
+    private String startPath;
+
     // Plugins
     private Map<String, PluginConfig> pluginsConfiguration = null;
 
@@ -109,6 +112,9 @@ public class CapConfig {
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.hideLogs = builder.hideLogs;
 
+        // Embedded
+        this.startPath = builder.startPath;
+
         // Plugins Config
         this.pluginsConfiguration = builder.pluginsConfiguration;
     }
@@ -170,6 +176,10 @@ public class CapConfig {
 
     public String getHostname() {
         return hostname;
+    }
+
+    public String getStartPath() {
+        return startPath;
     }
 
     public String getAndroidScheme() {
@@ -364,6 +374,9 @@ public class CapConfig {
         private Boolean webContentsDebuggingEnabled = null;
         private boolean hideLogs = false;
 
+        // Embedded
+        private String startPath = null;
+
         // Plugins Config Object
         private Map<String, PluginConfig> pluginsConfiguration = new HashMap<>();
 
@@ -406,6 +419,11 @@ public class CapConfig {
 
         public Builder setHostname(String hostname) {
             this.hostname = hostname;
+            return this;
+        }
+
+        public Builder setStartPath(String path) {
+            this.startPath = path;
             return this;
         }
 

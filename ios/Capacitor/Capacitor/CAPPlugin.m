@@ -1,4 +1,5 @@
 #import "CAPPlugin.h"
+#import "CAPBridgedJSTypes.h"
 #import <Capacitor/Capacitor-Swift.h>
 #import <Foundation/Foundation.h>
 
@@ -19,34 +20,13 @@
   return self.pluginName;
 }
 
--(BOOL) getBool:(CAPPluginCall *)call field:(NSString *)field defaultValue:(BOOL)defaultValue {
-  id idVal = [call.options objectForKey:field];
-  
-  if(![idVal isKindOfClass:[NSNumber class]]) {
-    return defaultValue;
-  }
-  
-  NSNumber *value = (NSNumber *)idVal;
-  if(value == nil) {
-    return defaultValue;
-  }
-  if(value.integerValue == 0) {
-    return FALSE;
-  }
-  return TRUE;
+- (BOOL)getBool:(CAPPluginCall *)call field:(NSString *)field defaultValue:(BOOL)defaultValue {
+  NSNumber* value = [call getNumber:field defaultValue:[NSNumber numberWithBool:defaultValue]];
+  return [value boolValue];
 }
 
--(NSString *) getString:(CAPPluginCall *)call field:(NSString *)field defaultValue:(NSString *)defaultValue
-{
-  id idVal = [call.options objectForKey:field];
-  if(![idVal isKindOfClass:[NSString class]]) {
-    return defaultValue;
-  }
-  NSString *value = (NSString *)idVal;
-  if(value == nil) {
-    return defaultValue;
-  }
-  return value;
+- (NSString *) getString:(CAPPluginCall *)call field:(NSString *)field defaultValue:(NSString *)defaultValue {
+  return [call getString:field defaultValue:defaultValue];
 }
 
 -(id)getConfigValue:(NSString *)key {
@@ -111,16 +91,16 @@
 
 - (void)addListener:(CAPPluginCall *)call {
   NSString *eventName = [call.options objectForKey:@"eventName"];
-  [call setIsSaved:TRUE];
+  [call setKeepAlive:TRUE];
   [self addEventListener:eventName listener:call];
 }
 
 - (void)removeListener:(CAPPluginCall *)call {
   NSString *eventName = [call.options objectForKey:@"eventName"];
   NSString *callbackId = [call.options objectForKey:@"callbackId"];
-  CAPPluginCall *storedCall = [self.bridge getSavedCall:callbackId];
+  CAPPluginCall *storedCall = [self.bridge savedCallWithID:callbackId];
   [self removeEventListener:eventName listener:storedCall];
-  [self.bridge releaseCallWithCallbackId:callbackId];
+  [self.bridge releaseCallWithID:callbackId];
 }
 
 - (void)removeAllListeners:(CAPPluginCall *)call {
