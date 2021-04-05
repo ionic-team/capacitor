@@ -9,7 +9,6 @@ import WebKit
     var notificationRouter: NotificationRouter { get }
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
-    @available(iOS 12.0, *)
     var userInterfaceStyle: UIUserInterfaceStyle { get }
     var statusBarVisible: Bool { get set }
     var statusBarStyle: UIStatusBarStyle { get set }
@@ -31,20 +30,26 @@ import WebKit
     @available(*, deprecated, renamed: "statusBarStyle")
     func getStatusBarStyle() -> UIStatusBarStyle
 
-    @available(iOS 12.0, *)
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
 
     @available(*, deprecated, message: "Moved - equivalent is found on config.localURL")
     func getLocalUrl() -> String
 
+    @available(*, deprecated, renamed: "savedCall(withID:)")
+    func getSavedCall(_ callbackId: String) -> CAPPluginCall?
+
+    @available(*, deprecated, renamed: "releaseCall(withID:)")
+    func releaseCall(callbackId: String)
+
     // MARK: - Plugin Access
     func plugin(withName: String) -> CAPPlugin?
 
     // MARK: - Call Management
-    func getSavedCall(_ callbackId: String) -> CAPPluginCall?
+    func saveCall(_ call: CAPPluginCall)
+    func savedCall(withID: String) -> CAPPluginCall?
     func releaseCall(_ call: CAPPluginCall)
-    func releaseCall(callbackId: String)
+    func releaseCall(withID: String)
 
     // MARK: - JavaScript Handling
     // `js` is a short name but needs to be preserved for backwards compatibility.

@@ -81,7 +81,7 @@ public class MessageHandler {
     public void sendResponseMessage(PluginCall call, PluginResult successResult, PluginResult errorResult) {
         try {
             PluginResult data = new PluginResult();
-            data.put("save", call.isSaved());
+            data.put("save", call.isKeptAlive());
             data.put("callbackId", call.getCallbackId());
             data.put("pluginId", call.getPluginId());
             data.put("methodName", call.getMethodName());
@@ -108,6 +108,9 @@ public class MessageHandler {
             }
         } catch (Exception ex) {
             Logger.error("sendResponseMessage: error: " + ex);
+        }
+        if (!call.isKeptAlive()) {
+            call.release(bridge);
         }
     }
 
