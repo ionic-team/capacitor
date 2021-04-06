@@ -51,8 +51,16 @@ export interface CapacitorConfig {
   hideLogs?: boolean;
 
   /**
-   * The build configuration under which Capacitor will generate logs.
-   * 'production' also implies logging in debug.
+   * The build configuration (as defined by the native app) under which Capacitor
+   * will send statements to the log system. This applies to log statements in
+   * native code as well as statements redirected from JavaScript (`console.debug`,
+   * `console.error`, etc.). Enabling logging will let statements render in the
+   * Xcode and Android Studio windows but can leak information on device if enabled
+   * in released builds.
+   * 
+   * 'none' = logs are never produced
+   * 'debug' = logs are produced in debug builds but not production builds
+   * 'production' = logs are always produced
    *
    * @since 3.0.0
    * @default debug
