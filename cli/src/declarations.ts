@@ -57,7 +57,7 @@ export interface CapacitorConfig {
    * `console.error`, etc.). Enabling logging will let statements render in the
    * Xcode and Android Studio windows but can leak information on device if enabled
    * in released builds.
-   * 
+   *
    * 'none' = logs are never produced
    * 'debug' = logs are produced in debug builds but not production builds
    * 'production' = logs are always produced
