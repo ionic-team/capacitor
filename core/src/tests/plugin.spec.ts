@@ -46,6 +46,7 @@ describe('plugin', () => {
     }
   });
 
+
   it('native implementation', async () => {
     // mock the global with the android bridge
     mockAndroidBridge();

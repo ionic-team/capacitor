@@ -32,6 +32,7 @@ const convertFileSrcServerUrl = (webviewServerUrl, filePath) => {
 class CapacitorException extends Error {
   constructor(message, code) {
     super(message);
+    this.code = code;
   }
 }
 
@@ -522,7 +523,7 @@ const initBridge = (win, cap) => {
 // The meat and potatoes!
 const createCapacitor = win => {
   const cap = win.Capacitor || {};
-  const Plugins = (cap.Plugins = cap.Plugins || {});
+  cap.Plugins = cap.Plugins || {};
 
   const webviewServerUrl =
     typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
@@ -532,9 +533,9 @@ const createCapacitor = win => {
   const isNativePlatform = () => getPlatformId(win) !== 'web';
 
   const isPluginAvailable = pluginName => {
-    const plugin = registeredPlugins.get(pluginName);
+    const plugin = registeredPlugins[pluginName];
 
-    if (plugin && plugin.platforms && plugin.platforms.has(getPlatform())) {
+    if (plugin?.platforms.has(getPlatform())) {
       // JS implementation available for the current platform.
       return true;
     }
@@ -547,13 +548,7 @@ const createCapacitor = win => {
     return false;
   };
 
-  const getPluginHeader = pluginName => {
-    if (cap.PluginHeaders && cap.PluginHeaders.find) {
-      cap.PluginHeaders.find(h => h.name === pluginName);
-    }
-
-    return undefined;
-  };
+  const getPluginHeader = (pluginName) => cap.PluginHeaders?.find(h => h.name === pluginName);
 
   const convertFileSrc = filePath =>
     convertFileSrcServerUrl(webviewServerUrl, filePath);
@@ -584,8 +579,9 @@ const createCapacitor = win => {
 
   const registeredPlugins = new Map();
 
-  const registerPlugin = (pluginName, jsImplementations) => {
+  const registerPlugin = (pluginName, jsImplementations = {}) => {
     const registeredPlugin = registeredPlugins.get(pluginName);
+
     if (registeredPlugin) {
       console.warn(
         `Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`,
@@ -611,15 +607,13 @@ const createCapacitor = win => {
 
     const createPluginMethod = (impl, prop) => {
       if (impl) {
-        if (impl && impl[prop]) {
-          return impl[prop].bind(impl);
-        }
+        return impl[prop]?.bind(impl);
       } else if (pluginHeader) {
         const methodHeader = pluginHeader.methods.find(m => prop === m.name);
 
         if (methodHeader) {
           if (methodHeader.rtype === 'promise') {
-            return options =>
+            return (options) =>
               cap.nativePromise(pluginName, prop.toString(), options);
           } else {
             return (options, callback) =>
@@ -639,7 +633,7 @@ const createCapacitor = win => {
       }
     };
 
-    const createPluginMethodWrapper = prop => {
+    const createPluginMethodWrapper = (prop) => {
       let remove;
       const wrapper = (...args) => {
         const p = loadPluginImplementation().then(impl => {
@@ -647,9 +641,7 @@ const createCapacitor = win => {
 
           if (fn) {
             const p = fn(...args);
-            if (p && p.remove) {
-              remove = p.remove;
-            }
+            remove = p?.remove;
             return p;
           } else {
             throw new CapacitorException(
@@ -722,7 +714,7 @@ const createCapacitor = win => {
       },
     );
 
-    Plugins[pluginName] = proxy;
+    cap.Plugins[pluginName] = proxy;
 
     registeredPlugins.set(pluginName, {
       name: pluginName,
