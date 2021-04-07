@@ -1,5 +1,3 @@
-const createCapacitor = require('../../native-bridge');
-
 import type { Plugin } from '../definitions';
 import type {
   CapacitorInstance,
@@ -7,6 +5,9 @@ import type {
 } from '../definitions-internal';
 import { ExceptionCode } from '../util';
 import { WebPlugin } from '../web-plugin';
+
+// eslint-disable-next-line
+const createCapacitor = require('../../native-bridge');
 
 describe('plugin', () => {
   let win: WindowCapacitor;
@@ -45,7 +46,6 @@ describe('plugin', () => {
       done();
     }
   });
-
 
   it('native implementation', async () => {
     // mock the global with the android bridge

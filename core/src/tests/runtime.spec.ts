@@ -1,9 +1,10 @@
-const createCapacitor = require('../../native-bridge');
-
 import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
+
+// eslint-disable-next-line
+const createCapacitor = require('../../native-bridge');
 
 describe('runtime', () => {
   let win: WindowCapacitor;
@@ -60,7 +61,6 @@ describe('runtime', () => {
     cap = createCapacitor(win);
     expect(cap.getServerUrl()).toBe('');
   });
-
 
   // Remove global instance creation tests for now because this will always be done pre-modules
   /*

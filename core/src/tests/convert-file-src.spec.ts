@@ -3,6 +3,7 @@ import type {
   WindowCapacitor,
 } from '../definitions-internal';
 
+// eslint-disable-next-line
 const createCapacitor = require('../../native-bridge');
 
 describe('convertFileSrc', () => {

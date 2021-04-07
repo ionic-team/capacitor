@@ -548,7 +548,8 @@ const createCapacitor = win => {
     return false;
   };
 
-  const getPluginHeader = (pluginName) => cap.PluginHeaders?.find(h => h.name === pluginName);
+  const getPluginHeader = pluginName =>
+    cap.PluginHeaders?.find(h => h.name === pluginName);
 
   const convertFileSrc = filePath =>
     convertFileSrcServerUrl(webviewServerUrl, filePath);
@@ -613,7 +614,7 @@ const createCapacitor = win => {
 
         if (methodHeader) {
           if (methodHeader.rtype === 'promise') {
-            return (options) =>
+            return options =>
               cap.nativePromise(pluginName, prop.toString(), options);
           } else {
             return (options, callback) =>
@@ -633,7 +634,7 @@ const createCapacitor = win => {
       }
     };
 
-    const createPluginMethodWrapper = (prop) => {
+    const createPluginMethodWrapper = prop => {
       let remove;
       const wrapper = (...args) => {
         const p = loadPluginImplementation().then(impl => {
@@ -777,6 +778,6 @@ createCapacitor(
   } else {
     root.returnExports = factory();
   }
-}(this, function () {
+})(this, function () {
   return createCapacitor;
-}));
+});

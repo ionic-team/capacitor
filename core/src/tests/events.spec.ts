@@ -1,9 +1,10 @@
-const createCapacitor = require('../../native-bridge');
-
 import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
+
+// eslint-disable-next-line
+const createCapacitor = require('../../native-bridge');
 
 describe('plugin', () => {
   let win: WindowCapacitor;

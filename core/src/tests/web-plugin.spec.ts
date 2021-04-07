@@ -1,7 +1,9 @@
-const createCapacitor = require('../../native-bridge');
-createCapacitor(globalThis);
-
 import { WebPlugin } from '../web-plugin';
+
+// eslint-disable-next-line
+const createCapacitor = require('../../native-bridge');
+
+createCapacitor(globalThis);
 
 class MockPlugin extends WebPlugin {
   trigger() {
