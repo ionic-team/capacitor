@@ -1,8 +1,8 @@
+import { createCapacitor } from '../../native-bridge';
 import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor } from '../../native-bridge';
 
 describe('plugin', () => {
   let win: WindowCapacitor;

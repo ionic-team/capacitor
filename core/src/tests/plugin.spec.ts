@@ -1,9 +1,9 @@
+import { createCapacitor } from '../../native-bridge';
 import type { Plugin } from '../definitions';
 import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor } from '../../native-bridge';
 import { ExceptionCode } from '../util';
 import { WebPlugin } from '../web-plugin';
 

@@ -1,10 +1,11 @@
-const getPlatformId = (win) => {
+const getPlatformId = win => {
   if (win.androidBridge) {
     return 'android';
   } else if (
-    win.webkit && 
+    win.webkit &&
     win.webkit.messageHandlers &&
-    win.webkit.messageHandlers.bridge) {
+    win.webkit.messageHandlers.bridge
+  ) {
     return 'ios';
   } else {
     return 'web';
@@ -44,14 +45,14 @@ const initLogger = (win, cap) => {
     'warn',
   ];
 
-  const createLogFromNative = (c) => (result) => {
+  const createLogFromNative = c => result => {
     if (isFullConsole(c)) {
       const success = result.success === true;
-  
+
       const tagStyles = success
         ? 'font-style: italic; font-weight: lighter; color: gray'
         : 'font-style: italic; font-weight: lighter; color: red';
-  
+
       c.groupCollapsed(
         '%cresult %c' +
           result.pluginId +
@@ -78,7 +79,7 @@ const initLogger = (win, cap) => {
     }
   };
 
-  const createLogToNative = (c) => (call) => {
+  const createLogToNative = c => call => {
     if (isFullConsole(c)) {
       c.groupCollapsed(
         '%cnative %c' +
@@ -98,11 +99,11 @@ const initLogger = (win, cap) => {
     }
   };
 
-  const isFullConsole = (c) => {
+  const isFullConsole = c => {
     if (!c) {
       return false;
     }
-  
+
     return (
       typeof c.groupCollapsed === 'function' ||
       typeof c.groupEnd === 'function' ||
@@ -110,7 +111,7 @@ const initLogger = (win, cap) => {
     );
   };
 
-  const serializeConsoleMessage = (msg) => {
+  const serializeConsoleMessage = msg => {
     if (typeof msg === 'object') {
       try {
         msg = JSON.stringify(msg);
@@ -118,7 +119,7 @@ const initLogger = (win, cap) => {
         // ignore
       }
     }
-  
+
     return String(msg);
   };
 
@@ -232,7 +233,7 @@ const initVendor = (win, cap) => {
   const IonicWebView = (Ionic.WebView = Ionic.WebView || {});
   const Plugins = cap.Plugins;
 
-  IonicWebView.getServerBasePath = (callback) => {
+  IonicWebView.getServerBasePath = callback => {
     if (Plugins && Plugins.WebView && Plugins.WebView.getServerBasePath) {
       Plugins.WebView.getServerBasePath().then(result => {
         callback(result.path);
@@ -240,7 +241,7 @@ const initVendor = (win, cap) => {
     }
   };
 
-  IonicWebView.setServerBasePath = (path) => {
+  IonicWebView.setServerBasePath = path => {
     if (Plugins && Plugins.WebView && Plugins.WebView.setServerBasePath) {
       Plugins.WebView.setServerBasePath({ path });
     }
@@ -252,7 +253,7 @@ const initVendor = (win, cap) => {
     }
   };
 
-  IonicWebView.convertFileSrc = (url) => cap.convertFileSrc(url);
+  IonicWebView.convertFileSrc = url => cap.convertFileSrc(url);
 };
 
 const initLegacyHandlers = (win, cap) => {
@@ -294,7 +295,7 @@ const initLegacyHandlers = (win, cap) => {
   cap.isNative = cap.isNativePlatform();
 };
 
-const initBridge = (win, cap,) => {
+const initBridge = (win, cap) => {
   // keep a collection of callbacks for native response data
   const callbacks = new Map();
 
@@ -369,12 +370,7 @@ const initBridge = (win, cap,) => {
   /**
    * Send a plugin method call to the native layer
    */
-  cap.toNative = (
-    pluginName,
-    methodName,
-    options,
-    storedCallback,
-  ) => {
+  cap.toNative = (pluginName, methodName, options, storedCallback) => {
     try {
       if (typeof postToNative === 'function') {
         let callbackId = '-1';
@@ -408,7 +404,6 @@ const initBridge = (win, cap,) => {
         if (win && win.console && win.console.warn) {
           win.console.warn(`implementation unavailable for: ${pluginName}`);
         }
-
       }
     } catch (e) {
       if (win && win.console && win.console.error) {
@@ -422,7 +417,7 @@ const initBridge = (win, cap,) => {
   /**
    * Process a response from the native layer.
    */
-  cap.fromNative = (result) => {
+  cap.fromNative = result => {
     if (cap.DEBUG && result.pluginId !== 'Console') {
       cap.logFromNative(result);
     }
@@ -525,7 +520,7 @@ const initBridge = (win, cap,) => {
 };
 
 // The meat and potatoes!
-export const createCapacitor = (win) => {
+export const createCapacitor = win => {
   const cap = win.Capacitor || {};
   const Plugins = (cap.Plugins = cap.Plugins || {});
 
@@ -536,7 +531,7 @@ export const createCapacitor = (win) => {
 
   const isNativePlatform = () => getPlatformId(win) !== 'web';
 
-  const isPluginAvailable = (pluginName) => {
+  const isPluginAvailable = pluginName => {
     const plugin = registeredPlugins.get(pluginName);
 
     if (plugin && plugin.platforms && plugin.platforms.has(getPlatform())) {
@@ -552,15 +547,15 @@ export const createCapacitor = (win) => {
     return false;
   };
 
-  const getPluginHeader = (pluginName) => {
+  const getPluginHeader = pluginName => {
     if (cap.PluginHeaders && cap.PluginHeaders.find) {
       cap.PluginHeaders.find(h => h.name === pluginName);
     }
 
     return undefined;
-  }
+  };
 
-  const convertFileSrc = (filePath) =>
+  const convertFileSrc = filePath =>
     convertFileSrcServerUrl(webviewServerUrl, filePath);
 
   const logJs = (msg, level) => {
@@ -579,7 +574,7 @@ export const createCapacitor = (win) => {
     }
   };
 
-  const handleError = (err) => win.console.error(err);
+  const handleError = err => win.console.error(err);
 
   const pluginMethodNoop = (_target, prop, pluginName) => {
     return Promise.reject(
@@ -624,7 +619,7 @@ export const createCapacitor = (win) => {
 
         if (methodHeader) {
           if (methodHeader.rtype === 'promise') {
-            return (options) =>
+            return options =>
               cap.nativePromise(pluginName, prop.toString(), options);
           } else {
             return (options, callback) =>
@@ -644,7 +639,7 @@ export const createCapacitor = (win) => {
       }
     };
 
-    const createPluginMethodWrapper = (prop) => {
+    const createPluginMethodWrapper = prop => {
       let remove;
       const wrapper = (...args) => {
         const p = loadPluginImplementation().then(impl => {
@@ -761,15 +756,14 @@ export const createCapacitor = (win) => {
   return cap;
 };
 
-
 window.Capacitor = createCapacitor(
-  (typeof globalThis !== 'undefined' ? 
-  globalThis
-  : typeof self !== 'undefined'
-  ? self
-  : typeof window !== 'undefined'
-  ? window
-  : typeof global !== 'undefined'
-  ? global
-  : {})
+  typeof globalThis !== 'undefined'
+    ? globalThis
+    : typeof self !== 'undefined'
+    ? self
+    : typeof window !== 'undefined'
+    ? window
+    : typeof global !== 'undefined'
+    ? global
+    : {},
 );

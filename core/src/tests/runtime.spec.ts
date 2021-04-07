@@ -1,9 +1,8 @@
+import { createCapacitor } from '../../native-bridge';
 import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
-// @ts-ignore
-import { createCapacitor } from '../../native-bridge';
 // import { Capacitor } from '../global'
 
 describe('runtime', () => {

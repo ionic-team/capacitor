@@ -1,8 +1,8 @@
+import type { WindowCapacitor } from './definitions-internal';
 import { legacyRegisterWebPlugin } from './legacy/legacy-web-plugin-merge';
 import type { WebPlugin } from './web-plugin';
-import type { WindowCapacitor } from './definitions-internal'
 
-export const Capacitor = (window as WindowCapacitor).Capacitor
+export const Capacitor = (window as WindowCapacitor).Capacitor;
 
 export const registerPlugin = Capacitor.registerPlugin;
 
