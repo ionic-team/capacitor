@@ -1,18 +1,8 @@
 import { legacyRegisterWebPlugin } from './legacy/legacy-web-plugin-merge';
-import { initCapacitorGlobal } from './runtime';
 import type { WebPlugin } from './web-plugin';
+import type { WindowCapacitor } from './definitions-internal'
 
-export const Capacitor = /*#__PURE__*/ initCapacitorGlobal(
-  (typeof globalThis !== 'undefined'
-    ? globalThis
-    : typeof self !== 'undefined'
-    ? self
-    : typeof window !== 'undefined'
-    ? window
-    : typeof global !== 'undefined'
-    ? global
-    : {}) as any,
-);
+export const Capacitor = (window as WindowCapacitor).Capacitor
 
 export const registerPlugin = Capacitor.registerPlugin;
 

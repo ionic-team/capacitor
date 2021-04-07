@@ -3,7 +3,8 @@ import type {
   PluginResult,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor } from '../runtime';
+import { createCapacitor } from '../../native-bridge';
+import { Capacitor } from '../global';
 
 describe('bridge', () => {
   let win: WindowCapacitor;

@@ -2,7 +2,9 @@ import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor, initCapacitorGlobal } from '../runtime';
+// @ts-ignore
+import { createCapacitor } from '../../native-bridge';
+// import { Capacitor } from '../global'
 
 describe('runtime', () => {
   let win: WindowCapacitor;
@@ -70,6 +72,8 @@ describe('runtime', () => {
   it('existing Capacitor global updated', () => {
     const Plugins: any = {};
     const old = (win.Capacitor = { Plugins: Plugins } as any);
+    createCapacitor(win);
+
     cap = initCapacitorGlobal(win) as any;
     expect(win.Capacitor).toBe(cap);
     expect(win.Capacitor).toBe(old);

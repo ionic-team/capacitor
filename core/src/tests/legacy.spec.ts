@@ -1,7 +1,7 @@
 import type { CapacitorGlobal } from '../definitions';
 import type { WindowCapacitor } from '../definitions-internal';
 import { legacyRegisterWebPlugin } from '../legacy/legacy-web-plugin-merge';
-import { createCapacitor } from '../runtime';
+import { createCapacitor } from '../../native-bridge';
 import { WebPlugin } from '../web-plugin';
 
 describe('legacy', () => {

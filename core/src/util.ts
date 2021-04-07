@@ -1,25 +1,3 @@
-export const convertFileSrcServerUrl = (
-  webviewServerUrl: string,
-  filePath: string,
-): string => {
-  if (typeof filePath === 'string') {
-    if (filePath.startsWith('/')) {
-      return webviewServerUrl + '/_capacitor_file_' + filePath;
-    }
-    if (filePath.startsWith('file://')) {
-      return (
-        webviewServerUrl + filePath.replace('file://', '/_capacitor_file_')
-      );
-    }
-    if (filePath.startsWith('content://')) {
-      return (
-        webviewServerUrl + filePath.replace('content:/', '/_capacitor_content_')
-      );
-    }
-  }
-  return filePath;
-};
-
 export enum ExceptionCode {
   /**
    * API is not implemented.

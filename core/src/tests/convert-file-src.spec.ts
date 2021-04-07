@@ -2,7 +2,7 @@ import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor } from '../runtime';
+import { createCapacitor } from '../../native-bridge';
 
 describe('convertFileSrc', () => {
   const win: WindowCapacitor = {
