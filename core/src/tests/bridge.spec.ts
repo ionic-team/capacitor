@@ -1,10 +1,10 @@
-import { createCapacitor } from '../../native-bridge';
+const createCapacitor = require('../../native-bridge');
+
 import type {
   CapacitorInstance,
   PluginResult,
   WindowCapacitor,
 } from '../definitions-internal';
-import { Capacitor } from '../global';
 
 describe('bridge', () => {
   let win: WindowCapacitor;

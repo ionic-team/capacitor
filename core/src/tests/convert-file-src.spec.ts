@@ -1,8 +1,9 @@
-import { createCapacitor } from '../../native-bridge';
 import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
+
+const createCapacitor = require('../../native-bridge');
 
 describe('convertFileSrc', () => {
   const win: WindowCapacitor = {

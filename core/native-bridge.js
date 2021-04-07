@@ -307,7 +307,7 @@ const initBridge = (win, cap) => {
   let postToNative = null;
 
   // create the postToNative() fn if needed
-  if (getPlatformId() === 'android') {
+  if (getPlatformId(win) === 'android') {
     // android platform
     postToNative = data => {
       try {
@@ -318,7 +318,7 @@ const initBridge = (win, cap) => {
         }
       }
     };
-  } else if (getPlatformId() === 'ios') {
+  } else if (getPlatformId(win) === 'ios') {
     // ios platform
     postToNative = data => {
       try {
@@ -520,7 +520,7 @@ const initBridge = (win, cap) => {
 };
 
 // The meat and potatoes!
-export const createCapacitor = win => {
+const createCapacitor = win => {
   const cap = win.Capacitor || {};
   const Plugins = (cap.Plugins = cap.Plugins || {});
 
@@ -753,10 +753,18 @@ export const createCapacitor = win => {
   initVendor(win, cap);
   initLegacyHandlers(win, cap);
 
+  win.cap = cap;
+
+  // Explicitly set globals
+  if (typeof globalThis !== 'undefined') globalThis.Capacitor = cap;
+  if (typeof self !== 'undefined') self.Capacitor = cap;
+  if (typeof window !== 'undefined') window.Capacitor = cap;
+  if (typeof global !== 'undefined') global.Capacitor = cap;
+
   return cap;
 };
 
-window.Capacitor = createCapacitor(
+createCapacitor(
   typeof globalThis !== 'undefined'
     ? globalThis
     : typeof self !== 'undefined'
@@ -767,3 +775,16 @@ window.Capacitor = createCapacitor(
     ? global
     : {},
 );
+
+// UMD export for tests
+(function (root, factory) {
+  if (typeof exports === 'object') {
+    module.exports = factory();
+  } else if (typeof define === 'function' && define.amd) {
+    define(factory);
+  } else {
+    root.returnExports = factory();
+  }
+}(this, function () {
+  return createCapacitor;
+}));

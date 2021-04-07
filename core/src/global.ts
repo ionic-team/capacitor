@@ -1,8 +1,37 @@
-import type { WindowCapacitor } from './definitions-internal';
+import type { CapacitorInstance, WindowCapacitor } from './definitions-internal';
 import { legacyRegisterWebPlugin } from './legacy/legacy-web-plugin-merge';
 import type { WebPlugin } from './web-plugin';
 
-export const Capacitor = (window as WindowCapacitor).Capacitor;
+const createCapacitor = require('../native-bridge');
+
+const getCapacitorValue = (): CapacitorInstance => {
+  const globalCapacitor = (typeof globalThis !== 'undefined'
+    ? globalThis as WindowCapacitor
+    : typeof self !== 'undefined'
+    ? self as WindowCapacitor
+    : typeof window !== 'undefined'
+    ? window as WindowCapacitor
+    : global as WindowCapacitor).Capacitor;
+
+  if (!globalCapacitor) {
+    const cap = createCapacitor(
+      typeof globalThis !== 'undefined'
+        ? globalThis
+        : typeof self !== 'undefined'
+        ? self
+        : typeof window !== 'undefined'
+        ? window
+        : typeof global !== 'undefined'
+        ? global
+        : {},
+    )
+    return cap;
+  }
+
+  return globalCapacitor;
+}
+
+export const Capacitor = getCapacitorValue();
 
 export const registerPlugin = Capacitor.registerPlugin;
 

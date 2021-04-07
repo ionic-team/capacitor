@@ -1,4 +1,5 @@
-import { createCapacitor } from '../../native-bridge';
+const createCapacitor = require('../../native-bridge');
+
 import type {
   CapacitorInstance,
   WindowCapacitor,

@@ -1,4 +1,5 @@
-import { createCapacitor } from '../../native-bridge';
+const createCapacitor = require('../../native-bridge');
+
 import type { CapacitorGlobal } from '../definitions';
 import type { WindowCapacitor } from '../definitions-internal';
 import { legacyRegisterWebPlugin } from '../legacy/legacy-web-plugin-merge';

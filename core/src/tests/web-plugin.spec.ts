@@ -1,3 +1,6 @@
+const createCapacitor = require('../../native-bridge');
+createCapacitor(globalThis);
+
 import { WebPlugin } from '../web-plugin';
 
 class MockPlugin extends WebPlugin {
