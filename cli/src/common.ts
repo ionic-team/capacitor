@@ -390,10 +390,10 @@ export async function promptForPlatformTarget(
   selectedTarget?: string,
 ): Promise<PlatformTarget> {
   const { prompt } = await import('prompts');
-
+  const validTargets = targets.filter(t => t.id !== undefined);
   if (!selectedTarget) {
-    if (targets.length === 1) {
-      return targets[0];
+    if (validTargets.length === 1) {
+      return validTargets[0];
     } else {
       const answers = await prompt(
         [
@@ -401,7 +401,7 @@ export async function promptForPlatformTarget(
             type: 'select',
             name: 'target',
             message: 'Please choose a target device:',
-            choices: targets.map(t => ({
+            choices: validTargets.map(t => ({
               title: `${getPlatformTargetName(t)} (${t.id})`,
               value: t,
             })),

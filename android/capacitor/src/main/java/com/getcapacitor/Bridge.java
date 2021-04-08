@@ -123,7 +123,7 @@ public class Bridge {
     // Any URI that was passed to the app on start
     private Uri intentUri;
 
-    // A list of listeners that trigger when webView is finished loading
+    // A list of listeners that trigger when webView events occur
     private List<WebViewListener> webViewListeners = new ArrayList<>();
 
     /**
@@ -1143,6 +1143,22 @@ public class Bridge {
 
     void setWebViewListeners(List<WebViewListener> webViewListeners) {
         this.webViewListeners = webViewListeners;
+    }
+
+    /**
+     * Add a listener that the WebViewClient can trigger on certain events.
+     * @param webViewListener A {@link WebViewListener} to add.
+     */
+    public void addWebViewListener(WebViewListener webViewListener) {
+        webViewListeners.add(webViewListener);
+    }
+
+    /**
+     * Remove a listener that the WebViewClient triggers on certain events.
+     * @param webViewListener A {@link WebViewListener} to remove.
+     */
+    public void removeWebViewListener(WebViewListener webViewListener) {
+        webViewListeners.remove(webViewListener);
     }
 
     static class Builder {
