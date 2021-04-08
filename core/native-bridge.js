@@ -323,7 +323,7 @@ const initBridge = (win, cap) => {
     // ios platform
     postToNative = data => {
       try {
-        data.type = data.type ?? 'message';
+        data.type = data.type ? data.type : 'message';
         win.webkit.messageHandlers.bridge.postMessage(data);
       } catch (e) {
         if (win && win.console && win.console.error) {
@@ -535,7 +535,7 @@ const createCapacitor = win => {
   const isPluginAvailable = pluginName => {
     const plugin = registeredPlugins[pluginName];
 
-    if (plugin?.platforms.has(getPlatform())) {
+    if (typeof plugin !== 'undefined' && plugin.platforms.has(getPlatform())) {
       // JS implementation available for the current platform.
       return true;
     }
@@ -548,8 +548,11 @@ const createCapacitor = win => {
     return false;
   };
 
-  const getPluginHeader = pluginName =>
-    cap.PluginHeaders?.find(h => h.name === pluginName);
+  const getPluginHeader = pluginName => {
+    if (typeof cap.PluginHeaders !== 'undefined') {
+      return cap.PluginHeaders.find(h => h.name === pluginName);
+    }
+  }
 
   const convertFileSrc = filePath =>
     convertFileSrcServerUrl(webviewServerUrl, filePath);
@@ -607,8 +610,8 @@ const createCapacitor = win => {
     };
 
     const createPluginMethod = (impl, prop) => {
-      if (impl) {
-        return impl[prop]?.bind(impl);
+      if (impl && impl[prop]) {
+        return impl[prop].bind(impl);
       } else if (pluginHeader) {
         const methodHeader = pluginHeader.methods.find(m => prop === m.name);
 
@@ -642,7 +645,9 @@ const createCapacitor = win => {
 
           if (fn) {
             const p = fn(...args);
-            remove = p?.remove;
+            if (typeof p.remove !== 'undefined') {
+              remove = p.remove;
+            }
             return p;
           } else {
             throw new CapacitorException(
@@ -770,6 +775,7 @@ createCapacitor(
 );
 
 // UMD export for tests
+
 (function (root, factory) {
   if (typeof exports === 'object') {
     module.exports = factory();

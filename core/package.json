@@ -23,6 +23,7 @@
   "unpkg": "dist/capacitor.js",
   "scripts": {
     "build": "npm run clean && npm run transpile && npm run rollup",
+    "postbuild": "cp native-bridge.js ../ios/Capacitor/Capacitor/assets/ && cp native-bridge.js ../android/capacitor/src/main/assets/",
     "clean": "rimraf dist",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
