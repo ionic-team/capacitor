@@ -552,7 +552,7 @@ const createCapacitor = win => {
     if (typeof cap.PluginHeaders !== 'undefined') {
       return cap.PluginHeaders.find(h => h.name === pluginName);
     }
-  }
+  };
 
   const convertFileSrc = filePath =>
     convertFileSrcServerUrl(webviewServerUrl, filePath);
@@ -610,6 +610,9 @@ const createCapacitor = win => {
     };
 
     const createPluginMethod = (impl, prop) => {
+      console.log(impl);
+      console.log(prop);
+      console.log(pluginHeader);
       if (impl && impl[prop]) {
         return impl[prop].bind(impl);
       } else if (pluginHeader) {
@@ -730,6 +733,8 @@ const createCapacitor = win => {
         ...(pluginHeader ? [platform] : []),
       ]),
     });
+
+    console.log(proxy);
 
     return proxy;
   };
