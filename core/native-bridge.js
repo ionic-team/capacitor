@@ -523,7 +523,7 @@ const initBridge = (win, cap) => {
 // The meat and potatoes!
 const createCapacitor = win => {
   const cap = win.Capacitor || {};
-  cap.Plugins = cap.Plugins || {};
+  const Plugins = (cap.Plugins = cap.Plugins || {});
 
   const webviewServerUrl =
     typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
@@ -610,11 +610,12 @@ const createCapacitor = win => {
     };
 
     const createPluginMethod = (impl, prop) => {
-      console.log(impl);
-      console.log(prop);
-      console.log(pluginHeader);
-      if (impl && impl[prop]) {
-        return impl[prop].bind(impl);
+      if (impl) {
+        if (impl[prop]) {
+          return impl[prop].bind(impl);
+        } else {
+          return undefined;
+        }
       } else if (pluginHeader) {
         const methodHeader = pluginHeader.methods.find(m => prop === m.name);
 
@@ -723,7 +724,7 @@ const createCapacitor = win => {
       },
     );
 
-    cap.Plugins[pluginName] = proxy;
+    Plugins[pluginName] = proxy;
 
     registeredPlugins.set(pluginName, {
       name: pluginName,
@@ -733,8 +734,6 @@ const createCapacitor = win => {
         ...(pluginHeader ? [platform] : []),
       ]),
     });
-
-    console.log(proxy);
 
     return proxy;
   };
