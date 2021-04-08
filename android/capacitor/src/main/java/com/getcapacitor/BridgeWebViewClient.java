@@ -5,6 +5,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import java.util.List;
 
 public class BridgeWebViewClient extends WebViewClient {
 
@@ -28,5 +29,18 @@ public class BridgeWebViewClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         return bridge.launchIntent(Uri.parse(url));
+    }
+
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+
+        List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
+
+        if (webViewListeners != null && view.getProgress() == 100) {
+            for (WebViewListener listener : bridge.getWebViewListeners()) {
+                listener.onPageLoaded(view);
+            }
+        }
     }
 }
