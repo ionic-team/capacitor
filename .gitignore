@@ -23,4 +23,3 @@ android-template/app/app.iml
 .settings/
 .project
 .env
-ios/Capacitor/Capacitor/assets/native-bridge.js

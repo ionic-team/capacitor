@@ -7,4 +7,3 @@
 /build
 /captures
 .externalNativeBuild
-capacitor/src/main/assets/native-bridge.js
