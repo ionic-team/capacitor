@@ -16,6 +16,10 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -723,6 +727,25 @@ public class Bridge {
 
             savedPermissionCallIds.get(call.getPluginId()).add(call.getCallbackId());
             saveCall(call);
+        }
+    }
+
+    /**
+     * Register an Activity Result Launcher to the containing Fragment or Activity.
+     *
+     * @param contract A contract specifying that an activity can be called with an input of
+     *                 type I and produce an output of type O.
+     * @param callback The callback run on Activity Result.
+     * @return A registered Activity Result Launcher.
+     */
+    public <I, O> ActivityResultLauncher<I> registerForActivityResult(
+        @NonNull final ActivityResultContract<I, O> contract,
+        @NonNull final ActivityResultCallback<O> callback
+    ) {
+        if (fragment != null) {
+            return fragment.registerForActivityResult(contract, callback);
+        } else {
+            return context.registerForActivityResult(contract, callback);
         }
     }
 

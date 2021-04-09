@@ -111,48 +111,18 @@ public class Plugin {
         for (final Method method : pluginClassMethods) {
             if (method.isAnnotationPresent(ActivityCallback.class)) {
                 // register callbacks annotated with ActivityCallback for activity results
-                ActivityResultLauncher<Intent> launcher;
-
-                if (bridge.getFragment() != null) {
-                    launcher =
-                        bridge
-                            .getFragment()
-                            .registerForActivityResult(
-                                new ActivityResultContracts.StartActivityForResult(),
-                                result -> triggerActivityCallback(method, result)
-                            );
-                } else {
-                    launcher =
-                        bridge
-                            .getActivity()
-                            .registerForActivityResult(
-                                new ActivityResultContracts.StartActivityForResult(),
-                                result -> triggerActivityCallback(method, result)
-                            );
-                }
+                ActivityResultLauncher<Intent> launcher = bridge.registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> triggerActivityCallback(method, result)
+                );
 
                 activityLaunchers.put(method.getName(), launcher);
             } else if (method.isAnnotationPresent(PermissionCallback.class)) {
                 // register callbacks annotated with PermissionCallback for permission results
-                ActivityResultLauncher<String[]> launcher;
-
-                if (bridge.getFragment() != null) {
-                    launcher =
-                        bridge
-                            .getFragment()
-                            .registerForActivityResult(
-                                new ActivityResultContracts.RequestMultiplePermissions(),
-                                permissions -> triggerPermissionCallback(method, permissions)
-                            );
-                } else {
-                    launcher =
-                        bridge
-                            .getActivity()
-                            .registerForActivityResult(
-                                new ActivityResultContracts.RequestMultiplePermissions(),
-                                permissions -> triggerPermissionCallback(method, permissions)
-                            );
-                }
+                ActivityResultLauncher<String[]> launcher = bridge.registerForActivityResult(
+                    new ActivityResultContracts.RequestMultiplePermissions(),
+                    permissions -> triggerPermissionCallback(method, permissions)
+                );
 
                 permissionLaunchers.put(method.getName(), launcher);
             }
