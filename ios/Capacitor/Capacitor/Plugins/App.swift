@@ -45,6 +45,7 @@ public class CAPAppPlugin : CAPPlugin {
   }
   
   public func fireChange(isActive: Bool) {
+    self.bridge.triggerDocumentJSEvent(eventName: isActive ? "resume" : "pause")
     notifyListeners("appStateChange", data: [
       "isActive": isActive
     ])
