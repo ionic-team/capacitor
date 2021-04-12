@@ -65,31 +65,12 @@ public class BridgeWebChromeClient extends WebChromeClient {
             }
         };
 
-        if (bridge.getFragment() != null) {
-            permissionLauncher =
-                bridge
-                    .getFragment()
-                    .registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissionCallback);
-            activityLauncher =
-                bridge
-                    .getFragment()
-                    .registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        result -> activityListener.onActivityResult(result)
-                    );
-        } else {
-            permissionLauncher =
-                bridge
-                    .getActivity()
-                    .registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissionCallback);
-            activityLauncher =
-                bridge
-                    .getActivity()
-                    .registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        result -> activityListener.onActivityResult(result)
-                    );
-        }
+        permissionLauncher = bridge.registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissionCallback);
+        activityLauncher =
+            bridge.registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> activityListener.onActivityResult(result)
+            );
     }
 
     /**
