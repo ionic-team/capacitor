@@ -21,6 +21,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.EditText;
 import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.FileProvider;
@@ -53,30 +54,23 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
-        permissionLauncher =
-            bridge
-                .getActivity()
-                .registerForActivityResult(
-                    new ActivityResultContracts.RequestMultiplePermissions(),
-                    (Map<String, Boolean> isGranted) -> {
-                        if (permissionListener != null) {
-                            boolean granted = true;
-                            for (Map.Entry<String, Boolean> permission : isGranted.entrySet()) {
-                                if (!permission.getValue()) granted = false;
-                            }
-                            permissionListener.onPermissionSelect(granted);
-                        }
-                    }
-                );
+
+        ActivityResultCallback<Map<String, Boolean>> permissionCallback = (Map<String, Boolean> isGranted) -> {
+            if (permissionListener != null) {
+                boolean granted = true;
+                for (Map.Entry<String, Boolean> permission : isGranted.entrySet()) {
+                    if (!permission.getValue()) granted = false;
+                }
+                permissionListener.onPermissionSelect(granted);
+            }
+        };
+
+        permissionLauncher = bridge.registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissionCallback);
         activityLauncher =
-            bridge
-                .getActivity()
-                .registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        activityListener.onActivityResult(result);
-                    }
-                );
+            bridge.registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> activityListener.onActivityResult(result)
+            );
     }
 
     /**
