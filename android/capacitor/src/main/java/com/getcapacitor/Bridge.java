@@ -16,8 +16,13 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
@@ -80,6 +85,8 @@ public class Bridge {
 
     // A reference to the main activity for the app
     private final AppCompatActivity context;
+    // A reference to the containing Fragment if used
+    private final Fragment fragment;
     private WebViewLocalServer localServer;
     private String localUrl;
     private String appUrl;
@@ -140,8 +147,22 @@ public class Bridge {
         CordovaPreferences preferences,
         CapConfig config
     ) {
+        this(context, null, webView, initialPlugins, cordovaInterface, pluginManager, preferences, config);
+    }
+
+    private Bridge(
+        AppCompatActivity context,
+        Fragment fragment,
+        WebView webView,
+        List<Class<? extends Plugin>> initialPlugins,
+        MockCordovaInterfaceImpl cordovaInterface,
+        PluginManager pluginManager,
+        CordovaPreferences preferences,
+        CapConfig config
+    ) {
         this.app = new App();
         this.context = context;
+        this.fragment = fragment;
         this.webView = webView;
         this.webViewClient = new BridgeWebViewClient(this);
         this.initialPlugins = initialPlugins;
@@ -328,6 +349,16 @@ public class Bridge {
      */
     public AppCompatActivity getActivity() {
         return this.context;
+    }
+
+    /**
+     * Get the fragment for the app, if applicable. This will likely be null unless Capacitor
+     * is being used embedded in a Native Android app.
+     *
+     * @return The fragment containing the Capacitor WebView.
+     */
+    public Fragment getFragment() {
+        return this.fragment;
     }
 
     /**
@@ -696,6 +727,25 @@ public class Bridge {
 
             savedPermissionCallIds.get(call.getPluginId()).add(call.getCallbackId());
             saveCall(call);
+        }
+    }
+
+    /**
+     * Register an Activity Result Launcher to the containing Fragment or Activity.
+     *
+     * @param contract A contract specifying that an activity can be called with an input of
+     *                 type I and produce an output of type O.
+     * @param callback The callback run on Activity Result.
+     * @return A registered Activity Result Launcher.
+     */
+    public <I, O> ActivityResultLauncher<I> registerForActivityResult(
+        @NonNull final ActivityResultContract<I, O> contract,
+        @NonNull final ActivityResultCallback<O> callback
+    ) {
+        if (fragment != null) {
+            return fragment.registerForActivityResult(contract, callback);
+        } else {
+            return context.registerForActivityResult(contract, callback);
         }
     }
 
@@ -1140,10 +1190,16 @@ public class Bridge {
         private CapConfig config = null;
         private List<Class<? extends Plugin>> plugins = new ArrayList<>();
         private AppCompatActivity activity;
+        private Fragment fragment;
         private final List<WebViewListener> webViewListeners = new ArrayList<>();
 
         Builder(AppCompatActivity activity) {
             this.activity = activity;
+        }
+
+        Builder(Fragment fragment) {
+            this.activity = (AppCompatActivity) fragment.getActivity();
+            this.fragment = fragment;
         }
 
         public Builder setInstanceState(Bundle instanceState) {
@@ -1200,14 +1256,14 @@ public class Bridge {
                 cordovaInterface.restoreInstanceState(instanceState);
             }
 
-            WebView webView = activity.findViewById(R.id.webview);
+            WebView webView = this.fragment != null ? fragment.getView().findViewById(R.id.webview) : activity.findViewById(R.id.webview);
             MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(activity.getApplicationContext());
             mockWebView.init(cordovaInterface, pluginEntries, preferences, webView);
             PluginManager pluginManager = mockWebView.getPluginManager();
             cordovaInterface.onCordovaInit(pluginManager);
 
             // Bridge initialization
-            Bridge bridge = new Bridge(activity, webView, plugins, cordovaInterface, pluginManager, preferences, config);
+            Bridge bridge = new Bridge(activity, fragment, webView, plugins, cordovaInterface, pluginManager, preferences, config);
             bridge.setCordovaWebView(mockWebView);
             bridge.setWebViewListeners(webViewListeners);
 
