@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.getcapacitor.android.R;
 import java.util.ArrayList;
@@ -57,6 +56,10 @@ public class BridgeFragment extends Fragment {
         this.config = config;
     }
 
+    public Bridge getBridge() {
+        return bridge;
+    }
+
     public void addWebViewListener(WebViewListener webViewListener) {
         webViewListeners.add(webViewListener);
     }
@@ -65,7 +68,7 @@ public class BridgeFragment extends Fragment {
      * Load the WebView and create the Bridge
      */
     protected void load(Bundle savedInstanceState) {
-        Logger.debug("Starting BridgeActivity");
+        Logger.debug("Loading Bridge with BridgeFragment");
 
         Bundle args = getArguments();
         String startDir = null;
@@ -75,7 +78,7 @@ public class BridgeFragment extends Fragment {
         }
 
         bridge =
-            new Bridge.Builder((AppCompatActivity) getActivity())
+            new Bridge.Builder(this)
                 .setInstanceState(savedInstanceState)
                 .setPlugins(initialPlugins)
                 .setConfig(config)
@@ -116,8 +119,8 @@ public class BridgeFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         this.load(savedInstanceState);
     }
 
