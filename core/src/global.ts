@@ -1,43 +1,37 @@
-import type {
-  CapacitorInstance,
-  WindowCapacitor,
-} from './definitions-internal';
-import { legacyRegisterWebPlugin } from './legacy/legacy-web-plugin-merge';
+import type { WindowCapacitor } from './definitions-internal';
 import type { WebPlugin } from './web-plugin';
+import { legacyRegisterWebPlugin } from './legacy/legacy-web-plugin-merge';
 
-// eslint-disable-next-line
-const createCapacitor = require('../native-bridge');
-
-const getCapacitorValue = (): CapacitorInstance => {
-  const globalCapacitor = (typeof globalThis !== 'undefined'
+const getCapacitorProxy = () => {
+  const initialGlobalCapacitor = (typeof globalThis !== 'undefined'
     ? (globalThis as WindowCapacitor)
     : typeof self !== 'undefined'
     ? (self as WindowCapacitor)
     : typeof window !== 'undefined'
     ? (window as WindowCapacitor)
     : (global as WindowCapacitor)
-  ).Capacitor;
+  ).Capacitor || {} as any;
 
-  // In case script wasn't injected correctly (and for tests)
-  if (!globalCapacitor) {
-    const cap = createCapacitor(
-      typeof globalThis !== 'undefined'
-        ? globalThis
-        : typeof self !== 'undefined'
-        ? self
-        : typeof window !== 'undefined'
-        ? window
-        : typeof global !== 'undefined'
-        ? global
-        : {},
-    );
-    return cap;
-  }
-
-  return globalCapacitor;
+  return new Proxy(
+    initialGlobalCapacitor,
+    {
+      get() {
+        const currentGlobalCapacitor = (typeof globalThis !== 'undefined'
+          ? (globalThis as WindowCapacitor)
+          : typeof self !== 'undefined'
+          ? (self as WindowCapacitor)
+          : typeof window !== 'undefined'
+          ? (window as WindowCapacitor)
+          : (global as WindowCapacitor)
+        ).Capacitor;
+        return currentGlobalCapacitor;
+      },
+    },
+  )
 };
 
-export const Capacitor = getCapacitorValue();
+
+export const Capacitor = getCapacitorProxy();
 
 export const registerPlugin = Capacitor.registerPlugin;
 

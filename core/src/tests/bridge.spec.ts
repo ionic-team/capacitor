@@ -3,9 +3,10 @@ import type {
   PluginResult,
   WindowCapacitor,
 } from '../definitions-internal';
+import { createCapacitor } from '../runtime';
 
 // eslint-disable-next-line
-const createCapacitor = require('../../native-bridge');
+const initBridge = require('../../native-bridge');
 
 describe('bridge', () => {
   let win: WindowCapacitor;
@@ -13,7 +14,7 @@ describe('bridge', () => {
 
   beforeEach(() => {
     win = {};
-    createCapacitor(win);
+    initBridge(win);
   });
 
   it('android nativePromise error', done => {
@@ -22,6 +23,7 @@ describe('bridge', () => {
       data: null,
       error: { message: 'darn it' },
     });
+    initBridge(win);
 
     cap = createCapacitor(win);
     expect(cap.getPlatform()).toBe('android');
@@ -47,6 +49,7 @@ describe('bridge', () => {
       success: true,
       data: { mph: 88 },
     });
+    initBridge(win);
 
     cap = createCapacitor(win);
     expect(cap.getPlatform()).toBe('android');
@@ -71,6 +74,7 @@ describe('bridge', () => {
       success: false,
       error: { message: 'darn it' },
     });
+    initBridge(win);
 
     cap = createCapacitor(win);
     expect(cap.getPlatform()).toBe('ios');
@@ -92,6 +96,7 @@ describe('bridge', () => {
       data: { mph: 88 },
       success: true,
     });
+    initBridge(win);
 
     cap = createCapacitor(win);
     expect(cap.getPlatform()).toBe('ios');

@@ -2,9 +2,10 @@ import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
+import { createCapacitor } from '../runtime'
 
 // eslint-disable-next-line
-const createCapacitor = require('../../native-bridge');
+const initBridge = require('../../native-bridge');
 
 describe('runtime', () => {
   let win: WindowCapacitor;
@@ -12,6 +13,7 @@ describe('runtime', () => {
 
   beforeEach(() => {
     win = {};
+    initBridge(win);
     createCapacitor(win);
   });
 

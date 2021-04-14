@@ -2,9 +2,10 @@ import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
+import { createCapacitor } from '../runtime';
 
 // eslint-disable-next-line
-const createCapacitor = require('../../native-bridge');
+const initBridge = require('../../native-bridge');
 
 describe('convertFileSrc', () => {
   let win: WindowCapacitor;
@@ -14,6 +15,7 @@ describe('convertFileSrc', () => {
     win = {
       WEBVIEW_SERVER_URL: 'webviewSeverUrl',
     };
+    initBridge(win);
     cap = createCapacitor(win);
   });
 

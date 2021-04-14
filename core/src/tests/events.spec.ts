@@ -2,9 +2,10 @@ import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
+import { createCapacitor } from '../runtime';
 
 // eslint-disable-next-line
-const createCapacitor = require('../../native-bridge');
+const initBridge = require('../../native-bridge');
 
 describe('plugin', () => {
   let win: WindowCapacitor;
@@ -25,7 +26,7 @@ describe('plugin', () => {
         },
       },
     };
-    createCapacitor(win);
+    initBridge(win);
   });
 
   it('createEvent from document api', () => {

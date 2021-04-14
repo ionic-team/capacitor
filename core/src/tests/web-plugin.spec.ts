@@ -1,11 +1,12 @@
 import type { WindowCapacitor } from '../definitions-internal';
 import { WebPlugin } from '../web-plugin';
+import { createCapacitor } from '../runtime'
 
 // eslint-disable-next-line
-const createCapacitor = require('../../native-bridge');
+const initBridge = require('../../native-bridge');
 
 const win = {};
-createCapacitor(win);
+initBridge(win);
 
 class MockPlugin extends WebPlugin {
   trigger() {
