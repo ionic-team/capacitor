@@ -1,4 +1,4 @@
-import { WindowCapacitor } from "./definitions-internal";
+import type { WindowCapacitor } from './definitions-internal';
 
 export enum ExceptionCode {
   /**
@@ -25,21 +25,22 @@ export class CapacitorException extends Error {
   }
 }
 
-export const getPlatformId = (win: WindowCapacitor) => {
-  if (win.androidBridge) {
+export const getPlatformId = (
+  win: WindowCapacitor,
+): 'android' | 'ios' | 'web' => {
+  if (win?.androidBridge) {
     return 'android';
-  } else if (
-    win.webkit &&
-    win.webkit.messageHandlers &&
-    win.webkit.messageHandlers.bridge
-  ) {
+  } else if (win?.webkit?.messageHandlers?.bridge) {
     return 'ios';
   } else {
     return 'web';
   }
 };
 
-export const convertFileSrcServerUrl = (webviewServerUrl: string, filePath: string) => {
+export const convertFileSrcServerUrl = (
+  webviewServerUrl: string,
+  filePath: string,
+): string => {
   if (typeof filePath === 'string') {
     if (filePath.startsWith('/')) {
       return webviewServerUrl + '/_capacitor_file_' + filePath;

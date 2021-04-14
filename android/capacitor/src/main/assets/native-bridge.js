@@ -4,7 +4,7 @@ class CapacitorException extends Error {
   }
 }
 
-const getPlatformId = (win) => {
+const getPlatformId = win => {
   if (win.androidBridge) {
     return 'android';
   } else if (
@@ -18,7 +18,7 @@ const getPlatformId = (win) => {
   }
 };
 
-const initLogger = (win) => {
+const initLogger = win => {
   const cap = win.Capacitor || {};
 
   const BRIDGED_CONSOLE_METHODS = [
@@ -135,10 +135,12 @@ const initLogger = (win) => {
   cap.logToNative = createLogToNative(win.console);
   cap.logFromNative = createLogFromNative(win.console);
 
+  cap.handleError = err => win.console.error(err);
+
   win.Capacitor = cap;
 };
 
-const initBridge = (win) => {
+function initBridge(win) {
   const cap = win.Capacitor || {};
 
   // keep a collection of callbacks for native response data
@@ -364,28 +366,21 @@ const initBridge = (win) => {
   }
 
   win.Capacitor = cap;
-};
+}
 
-initBridge(typeof globalThis !== 'undefined'
-  ? globalThis
-  : typeof self !== 'undefined'
-  ? self
-  : typeof window !== 'undefined'
-  ? window
-  : typeof global !== 'undefined'
-  ? global
-  : {}
-)
+initBridge(
+  typeof globalThis !== 'undefined'
+    ? globalThis
+    : typeof self !== 'undefined'
+    ? self
+    : typeof window !== 'undefined'
+    ? window
+    : typeof global !== 'undefined'
+    ? global
+    : {},
+);
 
-// UMD export for tests
-(function (root, factory) {
-  if (typeof exports === 'object') {
-    module.exports = factory();
-  } else if (typeof define === 'function' && define.amd) {
-    define(factory);
-  } else {
-    root.returnExports = factory();
-  }
-})(this, function () {
-  return initBridge;
-});
+// export for tests only
+if (typeof exports === 'object') {
+  module.exports = initBridge;
+}

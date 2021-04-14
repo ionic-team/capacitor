@@ -1,6 +1,6 @@
 import type { WindowCapacitor } from '../definitions-internal';
+import { createCapacitor } from '../runtime';
 import { WebPlugin } from '../web-plugin';
-import { createCapacitor } from '../runtime'
 
 // eslint-disable-next-line
 const initBridge = require('../../native-bridge');

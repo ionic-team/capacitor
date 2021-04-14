@@ -1,5 +1,9 @@
 import type { CapacitorGlobal, PluginImplementations } from './definitions';
-import type { CapacitorInstance, PluginHeader, WindowCapacitor } from './definitions-internal';
+import type {
+  CapacitorInstance,
+  PluginHeader,
+  WindowCapacitor,
+} from './definitions-internal';
 import { initEvents } from './events';
 import { initLegacyHandlers } from './legacy/legacy-handlers';
 import {
@@ -20,8 +24,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
   const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
 
-  const webviewServerUrl = typeof win.WEBVIEW_SERVER_URL === 'string' ? 
-    win.WEBVIEW_SERVER_URL : '';
+  const webviewServerUrl =
+    typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
 
   const getPlatform = () => getPlatformId(win);
 
@@ -257,12 +261,13 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   }
 
   if (cap.nativePromise === null || cap.nativePromise === undefined) {
-    cap.nativePromise = () => Promise.reject(
-      new CapacitorException(
-        `nativePromise() not implemented`,
-        ExceptionCode.Unimplemented,
-      ),
-    );
+    cap.nativePromise = () =>
+      Promise.reject(
+        new CapacitorException(
+          `nativePromise() not implemented`,
+          ExceptionCode.Unimplemented,
+        ),
+      );
   }
 
   initEvents(win, cap);

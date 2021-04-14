@@ -1,9 +1,15 @@
-import { CapacitorInstance, WindowCapacitor } from "./definitions-internal";
+import type {
+  CapacitorInstance,
+  WindowCapacitor,
+} from './definitions-internal';
 
-export const initEvents = (win: WindowCapacitor, cap: CapacitorInstance) => {
-  const doc = win.document;
+export const initEvents = (
+  win: WindowCapacitor,
+  cap: CapacitorInstance,
+): void => {
+  const doc: Document = win.document;
   const cordova = win.cordova;
-  
+
   cap.addListener = (pluginName, eventName, callback) => {
     const callbackId = cap.nativeCallback(
       pluginName,
@@ -15,9 +21,7 @@ export const initEvents = (win: WindowCapacitor, cap: CapacitorInstance) => {
     );
     return {
       remove: async () => {
-        if (win.console && win.console.debug) {
-          win.console.debug('Removing listener', pluginName, eventName);
-        }
+        win?.console?.debug('Removing listener', pluginName, eventName);
         cap.removeListener(pluginName, callbackId, eventName, callback);
       },
     };
@@ -43,7 +47,7 @@ export const initEvents = (win: WindowCapacitor, cap: CapacitorInstance) => {
         for (const i in eventData) {
           // eslint-disable-next-line no-prototype-builtins
           if (eventData.hasOwnProperty(i)) {
-            ev[i] = eventData[i];
+            (ev as any)[i] = eventData[i];
           }
         }
       }
@@ -58,16 +62,16 @@ export const initEvents = (win: WindowCapacitor, cap: CapacitorInstance) => {
 
     if (ev) {
       if (target === 'document') {
-        if (cordova && cordova.fireDocumentEvent) {
+        if (cordova?.fireDocumentEvent) {
           cordova.fireDocumentEvent(eventName, eventData);
           return true;
-        } else if (doc && doc.dispatchEvent) {
+        } else if (doc?.dispatchEvent) {
           return doc.dispatchEvent(ev);
         }
       } else if (target === 'window' && win.dispatchEvent) {
-        return win.dispatchEvent(ev);
-      } else if (doc && doc.querySelector) {
-        const targetEl = doc.querySelector(target);
+        return (win as Window).dispatchEvent(ev);
+      } else if (doc?.querySelector) {
+        const targetEl: Element = doc.querySelector(target);
         if (targetEl) {
           return targetEl.dispatchEvent(ev);
         }

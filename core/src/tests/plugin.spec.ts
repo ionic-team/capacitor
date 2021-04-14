@@ -1,8 +1,8 @@
 import type { CapacitorGlobal, Plugin } from '../definitions';
 import type { WindowCapacitor } from '../definitions-internal';
+import { initCapacitorGlobal } from '../runtime';
 import { ExceptionCode } from '../util';
 import { WebPlugin } from '../web-plugin';
-import { initCapacitorGlobal } from '../runtime'
 
 // eslint-disable-next-line
 const initBridge = require('../../native-bridge');
@@ -18,7 +18,7 @@ describe('plugin', () => {
   it('error from missing method from native implementation', async done => {
     // mock the global with the android bridge
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
 
     // simulate native adding the plugin header with a garbage method before
     // the core runtime
@@ -49,7 +49,7 @@ describe('plugin', () => {
   it('native implementation', async () => {
     // mock the global with the android bridge
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
 
     // simulate native adding the plugin header before the core runtime
     mockAndroidPlugin('Awesome', 'mph');
@@ -71,7 +71,7 @@ describe('plugin', () => {
   it('error from missing native implementation', async done => {
     // mock the global with the android bridge
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
 
     // do not simulate native adding the bridge before the core runtime
 
@@ -99,7 +99,7 @@ describe('plugin', () => {
 
   it('error lazy loading implementation', async done => {
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
 
     cap = initCapacitorGlobal(win);
 
@@ -127,7 +127,7 @@ describe('plugin', () => {
 
   it('call method on lazy loaded implementation', async () => {
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
 
     cap = initCapacitorGlobal(win);
 
@@ -153,7 +153,7 @@ describe('plugin', () => {
 
   it('call method on already loaded implementation', async () => {
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
 
     cap = initCapacitorGlobal(win);
 
@@ -223,7 +223,7 @@ describe('plugin', () => {
 
   it('missing method on already loaded implementation', async done => {
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
 
     cap = initCapacitorGlobal(win);
 
@@ -275,7 +275,7 @@ describe('plugin', () => {
 
   it('no native platform implementation', async done => {
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
 
     cap = initCapacitorGlobal(win);
     expect(cap.getPlatform()).toBe('android');
@@ -304,7 +304,7 @@ describe('plugin', () => {
 
   it('do not double register a plugin', () => {
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
     mockAndroidPlugin('Awesome', 'mph');
 
     cap = initCapacitorGlobal(win);
@@ -341,7 +341,7 @@ describe('plugin', () => {
 
   it('sync addListener on android', async () => {
     mockAndroidBridge();
-    initBridge(win)
+    initBridge(win);
     mockAndroidPlugin('Awesome', 'mph');
 
     cap = initCapacitorGlobal(win);
