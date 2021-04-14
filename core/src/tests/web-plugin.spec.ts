@@ -1,9 +1,11 @@
+import type { WindowCapacitor } from '../definitions-internal';
 import { WebPlugin } from '../web-plugin';
 
 // eslint-disable-next-line
 const createCapacitor = require('../../native-bridge');
 
-createCapacitor(globalThis);
+const win = {};
+createCapacitor(win);
 
 class MockPlugin extends WebPlugin {
   trigger() {
@@ -27,8 +29,11 @@ class MockPlugin extends WebPlugin {
 
 describe('Web Plugin', () => {
   let plugin: MockPlugin;
+  let win: WindowCapacitor;
 
   beforeEach(() => {
+    win = {};
+    createCapacitor(win);
     plugin = new MockPlugin();
   });
 

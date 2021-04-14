@@ -17,6 +17,8 @@ describe('legacy', () => {
 
   beforeAll(() => {
     console.warn = noop;
+    win = {};
+    createCapacitor(win);
   });
 
   afterAll(() => {

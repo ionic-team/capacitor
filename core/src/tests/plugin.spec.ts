@@ -15,6 +15,7 @@ describe('plugin', () => {
 
   beforeEach(() => {
     win = {};
+    createCapacitor(win);
   });
 
   it('error from missing method from native implementation', async done => {

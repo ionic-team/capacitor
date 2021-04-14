@@ -7,12 +7,13 @@ import type {
 const createCapacitor = require('../../native-bridge');
 
 describe('convertFileSrc', () => {
-  const win: WindowCapacitor = {
-    WEBVIEW_SERVER_URL: 'webviewSeverUrl',
-  };
+  let win: WindowCapacitor;
   let cap: CapacitorInstance;
 
   beforeEach(() => {
+    win = {
+      WEBVIEW_SERVER_URL: 'webviewSeverUrl',
+    };
     cap = createCapacitor(win);
   });
 

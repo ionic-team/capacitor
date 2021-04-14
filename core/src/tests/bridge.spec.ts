@@ -13,6 +13,7 @@ describe('bridge', () => {
 
   beforeEach(() => {
     win = {};
+    createCapacitor(win);
   });
 
   it('android nativePromise error', done => {

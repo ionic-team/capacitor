@@ -12,6 +12,7 @@ describe('runtime', () => {
 
   beforeEach(() => {
     win = {};
+    createCapacitor(win);
   });
 
   it('default methods/props', () => {

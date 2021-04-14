@@ -25,6 +25,7 @@ describe('plugin', () => {
         },
       },
     };
+    createCapacitor(win);
   });
 
   it('createEvent from document api', () => {
