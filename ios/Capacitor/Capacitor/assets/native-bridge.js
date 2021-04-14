@@ -1,4 +1,10 @@
-const getPlatformId = win => {
+class CapacitorException extends Error {
+  constructor(message, code) {
+    super(message);
+  }
+}
+
+const getPlatformId = (win) => {
   if (win.androidBridge) {
     return 'android';
   } else if (
@@ -12,31 +18,9 @@ const getPlatformId = win => {
   }
 };
 
-const convertFileSrcServerUrl = (webviewServerUrl, filePath) => {
-  if (typeof filePath === 'string') {
-    if (filePath.startsWith('/')) {
-      return webviewServerUrl + '/_capacitor_file_' + filePath;
-    } else if (filePath.startsWith('file://')) {
-      return (
-        webviewServerUrl + filePath.replace('file://', '/_capacitor_file_')
-      );
-    } else if (filePath.startsWith('content://')) {
-      return (
-        webviewServerUrl + filePath.replace('content:/', '/_capacitor_content_')
-      );
-    }
-  }
-  return filePath;
-};
+const initLogger = (win) => {
+  const cap = win.Capacitor || {};
 
-class CapacitorException extends Error {
-  constructor(message, code) {
-    super(message);
-    this.code = code;
-  }
-}
-
-const initLogger = (win, cap) => {
   const BRIDGED_CONSOLE_METHODS = [
     'debug',
     'error',
@@ -125,7 +109,7 @@ const initLogger = (win, cap) => {
   };
 
   // patch window.console on iOS and store original console fns
-  const isIos = cap.getPlatform() === 'ios';
+  const isIos = getPlatformId(win) === 'ios';
   const originalConsole = { ...win.console };
 
   if (win.console && isIos) {
@@ -150,153 +134,13 @@ const initLogger = (win, cap) => {
 
   cap.logToNative = createLogToNative(win.console);
   cap.logFromNative = createLogFromNative(win.console);
+
+  win.Capacitor = cap;
 };
 
-const initEvents = (win, cap) => {
-  const doc = win.document;
-  const cordova = win.cordova;
+const initBridge = (win) => {
+  const cap = win.Capacitor || {};
 
-  cap.addListener = (pluginName, eventName, callback) => {
-    const callbackId = cap.nativeCallback(
-      pluginName,
-      'addListener',
-      {
-        eventName: eventName,
-      },
-      callback,
-    );
-    return {
-      remove: async () => {
-        if (win.console && win.console.debug) {
-          win.console.debug('Removing listener', pluginName, eventName);
-        }
-        cap.removeListener(pluginName, callbackId, eventName, callback);
-      },
-    };
-  };
-
-  cap.removeListener = (pluginName, callbackId, eventName, callback) => {
-    cap.nativeCallback(
-      pluginName,
-      'removeListener',
-      {
-        callbackId: callbackId,
-        eventName: eventName,
-      },
-      callback,
-    );
-  };
-
-  cap.createEvent = (eventName, eventData) => {
-    if (doc) {
-      const ev = doc.createEvent('Events');
-      ev.initEvent(eventName, false, false);
-      if (eventData && typeof eventData === 'object') {
-        for (const i in eventData) {
-          // eslint-disable-next-line no-prototype-builtins
-          if (eventData.hasOwnProperty(i)) {
-            ev[i] = eventData[i];
-          }
-        }
-      }
-      return ev;
-    }
-    return null;
-  };
-
-  cap.triggerEvent = (eventName, target, eventData) => {
-    eventData = eventData || {};
-    const ev = cap.createEvent(eventName, eventData);
-
-    if (ev) {
-      if (target === 'document') {
-        if (cordova && cordova.fireDocumentEvent) {
-          cordova.fireDocumentEvent(eventName, eventData);
-          return true;
-        } else if (doc && doc.dispatchEvent) {
-          return doc.dispatchEvent(ev);
-        }
-      } else if (target === 'window' && win.dispatchEvent) {
-        return win.dispatchEvent(ev);
-      } else if (doc && doc.querySelector) {
-        const targetEl = doc.querySelector(target);
-        if (targetEl) {
-          return targetEl.dispatchEvent(ev);
-        }
-      }
-    }
-    return false;
-  };
-};
-
-const initVendor = (win, cap) => {
-  const Ionic = (win.Ionic = win.Ionic || {});
-  const IonicWebView = (Ionic.WebView = Ionic.WebView || {});
-  const Plugins = cap.Plugins;
-
-  IonicWebView.getServerBasePath = callback => {
-    if (Plugins && Plugins.WebView && Plugins.WebView.getServerBasePath) {
-      Plugins.WebView.getServerBasePath().then(result => {
-        callback(result.path);
-      });
-    }
-  };
-
-  IonicWebView.setServerBasePath = path => {
-    if (Plugins && Plugins.WebView && Plugins.WebView.setServerBasePath) {
-      Plugins.WebView.setServerBasePath({ path });
-    }
-  };
-
-  IonicWebView.persistServerBasePath = () => {
-    if (Plugins && Plugins.WebView && Plugins.WebView.persistServerBasePath) {
-      Plugins.WebView.persistServerBasePath();
-    }
-  };
-
-  IonicWebView.convertFileSrc = url => cap.convertFileSrc(url);
-};
-
-const initLegacyHandlers = (win, cap) => {
-  if (cap.isNativePlatform()) {
-    // define cordova if it's not there already
-    win.cordova = win.cordova || {};
-
-    const doc = win.document;
-    const nav = win.navigator;
-
-    if (nav) {
-      nav.app = nav.app || {};
-      nav.app.exitApp = () => {
-        cap.nativeCallback('App', 'exitApp', {});
-      };
-    }
-
-    if (doc) {
-      const docAddEventListener = doc.addEventListener;
-      doc.addEventListener = (...args) => {
-        const eventName = args[0];
-        const handler = args[1];
-        if (eventName === 'deviceready' && handler) {
-          Promise.resolve().then(handler);
-        } else if (eventName === 'backbutton' && cap.Plugins.App) {
-          // Add a dummy listener so Capacitor doesn't do the default
-          // back button action
-          cap.Plugins.App.addListener('backButton', () => {
-            // ignore
-          });
-        }
-        return docAddEventListener.apply(doc, args);
-      };
-    }
-  }
-
-  // deprecated in v3, remove from v4
-  cap.platform = cap.getPlatform();
-  cap.isNative = cap.isNativePlatform();
-};
-
-const initBridge = (win, cap) => {
   // keep a collection of callbacks for native response data
   const callbacks = new Map();
 
@@ -518,268 +362,22 @@ const initBridge = (win, cap) => {
         ),
       );
   }
+
+  win.Capacitor = cap;
 };
 
-// The meat and potatoes!
-const createCapacitor = win => {
-  const cap = win.Capacitor || {};
-  const Plugins = (cap.Plugins = cap.Plugins || {});
-
-  const webviewServerUrl =
-    typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
-
-  const getPlatform = () => getPlatformId(win);
-
-  const isNativePlatform = () => getPlatformId(win) !== 'web';
-
-  const isPluginAvailable = pluginName => {
-    const plugin = registeredPlugins[pluginName];
-
-    if (typeof plugin !== 'undefined' && plugin.platforms.has(getPlatform())) {
-      // JS implementation available for the current platform.
-      return true;
-    }
-
-    if (getPluginHeader(pluginName)) {
-      // Native implementation available.
-      return true;
-    }
-
-    return false;
-  };
-
-  const getPluginHeader = pluginName => {
-    if (typeof cap.PluginHeaders !== 'undefined') {
-      return cap.PluginHeaders.find(h => h.name === pluginName);
-    }
-  };
-
-  const convertFileSrc = filePath =>
-    convertFileSrcServerUrl(webviewServerUrl, filePath);
-
-  const logJs = (msg, level) => {
-    switch (level) {
-      case 'error':
-        win.console.error(msg);
-        break;
-      case 'warn':
-        win.console.warn(msg);
-        break;
-      case 'info':
-        win.console.info(msg);
-        break;
-      default:
-        win.console.log(msg);
-    }
-  };
-
-  const handleError = err => win.console.error(err);
-
-  const pluginMethodNoop = (_target, prop, pluginName) => {
-    return Promise.reject(
-      `${pluginName} does not have an implementation of "${prop}".`,
-    );
-  };
-
-  const registeredPlugins = new Map();
-
-  const registerPlugin = (pluginName, jsImplementations = {}) => {
-    const registeredPlugin = registeredPlugins.get(pluginName);
-
-    if (registeredPlugin) {
-      console.warn(
-        `Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`,
-      );
-
-      return registeredPlugin.proxy;
-    }
-
-    const platform = getPlatform();
-    const pluginHeader = getPluginHeader(pluginName);
-    let jsImplementation;
-
-    const loadPluginImplementation = async () => {
-      if (!jsImplementation && platform in jsImplementations) {
-        jsImplementation =
-          typeof jsImplementations[platform] === 'function'
-            ? (jsImplementation = await jsImplementations[platform]())
-            : (jsImplementation = jsImplementations[platform]);
-      }
-
-      return jsImplementation;
-    };
-
-    const createPluginMethod = (impl, prop) => {
-      if (impl) {
-        if (impl[prop]) {
-          return impl[prop].bind(impl);
-        } else {
-          return undefined;
-        }
-      } else if (pluginHeader) {
-        const methodHeader = pluginHeader.methods.find(m => prop === m.name);
-
-        if (methodHeader) {
-          if (methodHeader.rtype === 'promise') {
-            return options =>
-              cap.nativePromise(pluginName, prop.toString(), options);
-          } else {
-            return (options, callback) =>
-              cap.nativeCallback(
-                pluginName,
-                prop.toString(),
-                options,
-                callback,
-              );
-          }
-        }
-      } else {
-        throw new CapacitorException(
-          `"${pluginName}" plugin is not implemented on ${platform}`,
-          'UNIMPLEMENTED',
-        );
-      }
-    };
-
-    const createPluginMethodWrapper = prop => {
-      let remove;
-      const wrapper = (...args) => {
-        const p = loadPluginImplementation().then(impl => {
-          const fn = createPluginMethod(impl, prop);
-
-          if (fn) {
-            const p = fn(...args);
-            if (typeof p.remove !== 'undefined') {
-              remove = p.remove;
-            }
-            return p;
-          } else {
-            throw new CapacitorException(
-              `"${pluginName}.${prop}()" is not implemented on ${platform}`,
-              'UNIMPLEMENTED',
-            );
-          }
-        });
-
-        if (prop === 'addListener') {
-          p.remove = async () => remove();
-        }
-
-        return p;
-      };
-
-      // Some flair ✨
-      wrapper.toString = () => `${prop.toString()}() { [capacitor code] }`;
-      Object.defineProperty(wrapper, 'name', {
-        value: prop,
-        writable: false,
-        configurable: false,
-      });
-
-      return wrapper;
-    };
-
-    const addListener = createPluginMethodWrapper('addListener');
-    const removeListener = createPluginMethodWrapper('removeListener');
-    const addListenerNative = (eventName, callback) => {
-      const call = addListener({ eventName }, callback);
-      const remove = async () => {
-        const callbackId = await call;
-
-        removeListener(
-          {
-            eventName,
-            callbackId,
-          },
-          callback,
-        );
-      };
-
-      const p = new Promise(resolve => call.then(() => resolve({ remove })));
-
-      p.remove = async () => {
-        console.warn(`Using addListener() without 'await' is deprecated.`);
-        await remove();
-      };
-
-      return p;
-    };
-
-    const proxy = new Proxy(
-      {},
-      {
-        get(_, prop) {
-          switch (prop) {
-            // https://github.com/facebook/react/issues/20030
-            case '$$typeof':
-              return undefined;
-            case 'addListener':
-              return isNativePlatform() ? addListenerNative : addListener;
-            case 'removeListener':
-              return removeListener;
-            default:
-              return createPluginMethodWrapper(prop);
-          }
-        },
-      },
-    );
-
-    Plugins[pluginName] = proxy;
-
-    registeredPlugins.set(pluginName, {
-      name: pluginName,
-      proxy,
-      platforms: new Set([
-        ...Object.keys(jsImplementations),
-        ...(pluginHeader ? [platform] : []),
-      ]),
-    });
-
-    return proxy;
-  };
-
-  cap.convertFileSrc = convertFileSrc;
-  cap.getPlatform = getPlatform;
-  cap.getServerUrl = () => webviewServerUrl;
-  cap.handleError = handleError;
-  cap.isNativePlatform = isNativePlatform;
-  cap.isPluginAvailable = isPluginAvailable;
-  cap.logJs = logJs;
-  cap.pluginMethodNoop = pluginMethodNoop;
-  cap.registerPlugin = registerPlugin;
-  cap.Exception = CapacitorException;
-  cap.DEBUG = !!cap.DEBUG;
-
-  initBridge(win, cap);
-  initEvents(win, cap);
-  initVendor(win, cap);
-  initLegacyHandlers(win, cap);
-
-  win.cap = cap;
-
-  // Explicitly set globals
-  if (typeof globalThis !== 'undefined') globalThis.Capacitor = cap;
-  if (typeof self !== 'undefined') self.Capacitor = cap;
-  if (typeof window !== 'undefined') window.Capacitor = cap;
-  if (typeof global !== 'undefined') global.Capacitor = cap;
-
-  return cap;
-};
-
-createCapacitor(
-  typeof globalThis !== 'undefined'
-    ? globalThis
-    : typeof self !== 'undefined'
-    ? self
-    : typeof window !== 'undefined'
-    ? window
-    : typeof global !== 'undefined'
-    ? global
-    : {},
-);
+initBridge(typeof globalThis !== 'undefined'
+  ? globalThis
+  : typeof self !== 'undefined'
+  ? self
+  : typeof window !== 'undefined'
+  ? window
+  : typeof global !== 'undefined'
+  ? global
+  : {}
+)
 
 // UMD export for tests
-
 (function (root, factory) {
   if (typeof exports === 'object') {
     module.exports = factory();
@@ -789,5 +387,5 @@ createCapacitor(
     root.returnExports = factory();
   }
 })(this, function () {
-  return createCapacitor;
+  return initBridge;
 });
