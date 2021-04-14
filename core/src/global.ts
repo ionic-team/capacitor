@@ -1,37 +1,18 @@
-import type { WindowCapacitor } from './definitions-internal';
 import type { WebPlugin } from './web-plugin';
+import { initCapacitorGlobal } from './runtime';
 import { legacyRegisterWebPlugin } from './legacy/legacy-web-plugin-merge';
 
-const getCapacitorProxy = () => {
-  const initialGlobalCapacitor = (typeof globalThis !== 'undefined'
-    ? (globalThis as WindowCapacitor)
+export const Capacitor =  /*#__PURE__*/ initCapacitorGlobal(
+  typeof globalThis !== 'undefined'
+    ? globalThis
     : typeof self !== 'undefined'
-    ? (self as WindowCapacitor)
+    ? self
     : typeof window !== 'undefined'
-    ? (window as WindowCapacitor)
-    : (global as WindowCapacitor)
-  ).Capacitor || {} as any;
-
-  return new Proxy(
-    initialGlobalCapacitor,
-    {
-      get() {
-        const currentGlobalCapacitor = (typeof globalThis !== 'undefined'
-          ? (globalThis as WindowCapacitor)
-          : typeof self !== 'undefined'
-          ? (self as WindowCapacitor)
-          : typeof window !== 'undefined'
-          ? (window as WindowCapacitor)
-          : (global as WindowCapacitor)
-        ).Capacitor;
-        return currentGlobalCapacitor;
-      },
-    },
-  )
-};
-
-
-export const Capacitor = getCapacitorProxy();
+    ? window
+    : typeof global !== 'undefined'
+    ? global
+    : {},
+);
 
 export const registerPlugin = Capacitor.registerPlugin;
 

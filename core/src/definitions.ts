@@ -97,8 +97,8 @@ export interface CapacitorGlobal {
   pluginMethodNoop: (
     target: any,
     key: PropertyKey,
-    pluginName: PropertyKey,
-  ) => void;
+    pluginName: string,
+  ) => Promise<never>;
 
   /**
    * @deprecated Use `isNativePlatform()` instead

@@ -7,7 +7,7 @@
     "module": "es2015",
     "moduleResolution": "node",
     "noEmitHelpers": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "build",
