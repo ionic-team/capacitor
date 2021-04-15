@@ -81,7 +81,7 @@ const initEvents = (win, cap) => {
           return doc.dispatchEvent(ev);
         }
       } else if (target === 'window' && win.dispatchEvent) {
-        return (win).dispatchEvent(ev);
+        return win.dispatchEvent(ev);
       } else if (doc?.querySelector) {
         const targetEl = doc.querySelector(target);
         if (targetEl) {
@@ -92,7 +92,6 @@ const initEvents = (win, cap) => {
     return false;
   };
 };
-
 
 const initLogger = win => {
   const cap = win.Capacitor || {};
