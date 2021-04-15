@@ -37,7 +37,8 @@ describe('plugin', () => {
   });
 
   it('createEvent, null when no document', () => {
-    delete win.document;
+    win = {};
+    initBridge(win);
     cap = createCapacitor(win);
     const ev = cap.createEvent('eventName', { mph: 88 });
     expect(ev).toBe(null);
@@ -68,6 +69,8 @@ describe('plugin', () => {
         cordovaTrigger = true;
       },
     };
+    initBridge(win);
+
     cap = createCapacitor(win);
     const ev = cap.triggerEvent('eventName', 'document');
     expect(ev).toBe(true);
@@ -82,6 +85,8 @@ describe('plugin', () => {
 
   it('triggerEvent, document false', () => {
     delete win.document;
+    initBridge(win);
+
     cap = createCapacitor(win);
     const ev = cap.triggerEvent('eventName', 'document');
     expect(ev).toBe(false);

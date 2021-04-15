@@ -4,7 +4,6 @@ import type {
   PluginHeader,
   WindowCapacitor,
 } from './definitions-internal';
-import { initEvents } from './events';
 import { initLegacyHandlers } from './legacy/legacy-handlers';
 import {
   CapacitorException,
@@ -253,7 +252,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       );
   }
 
-  initEvents(win, cap);
   initVendor(win, cap);
   initLegacyHandlers(win, cap);
 
