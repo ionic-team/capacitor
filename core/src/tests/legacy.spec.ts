@@ -123,6 +123,7 @@ describe('legacy', () => {
       },
       androidBridge: { postMessage: noop },
     };
+    initBridge(win);
     cap = createCapacitor(win);
     cap.registerPlugin<any>('App', {
       web: new AppWeb(),
@@ -141,6 +142,7 @@ describe('legacy', () => {
       },
       androidBridge: { postMessage: noop },
     };
+    initBridge(win);
     createCapacitor(win);
     win.document.addEventListener('deviceready', done);
   });
@@ -150,6 +152,7 @@ describe('legacy', () => {
       navigator: {},
       androidBridge: { postMessage: noop },
     };
+    initBridge(win);
     createCapacitor(win);
     expect(win.navigator.app.exitApp).toBeDefined();
   });
@@ -158,6 +161,7 @@ describe('legacy', () => {
     win = {
       androidBridge: { postMessage: noop },
     };
+    initBridge(win);
     createCapacitor(win);
     expect(win.cordova).toBeDefined();
   });
@@ -167,6 +171,7 @@ describe('legacy', () => {
     win = {
       cordova: existingCordova,
     };
+    initBridge(win);
     createCapacitor(win);
     expect(win.cordova).toBe(existingCordova);
   });

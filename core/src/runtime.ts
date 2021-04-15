@@ -4,14 +4,12 @@ import type {
   PluginHeader,
   WindowCapacitor,
 } from './definitions-internal';
-import { initLegacyHandlers } from './legacy/legacy-handlers';
 import {
   CapacitorException,
   convertFileSrcServerUrl,
   getPlatformId,
   ExceptionCode,
 } from './util';
-import { initVendor } from './vendor';
 
 export interface RegisteredPlugin {
   readonly name: string;
@@ -251,9 +249,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         ),
       );
   }
-
-  initVendor(win, cap);
-  initLegacyHandlers(win, cap);
 
   return cap;
 };

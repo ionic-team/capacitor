@@ -33,7 +33,9 @@ const initEvents = (win, cap) => {
     );
     return {
       remove: async () => {
-        win?.console?.debug('Removing listener', pluginName, eventName);
+        if (win && win.console && win.console.debug) {
+          win.console.debug('Removing listener', pluginName, eventName);
+        }
         cap.removeListener(pluginName, callbackId, eventName, callback);
       },
     };
@@ -74,15 +76,15 @@ const initEvents = (win, cap) => {
 
     if (ev) {
       if (target === 'document') {
-        if (cordova?.fireDocumentEvent) {
+        if (cordova && cordova.fireDocumentEvent) {
           cordova.fireDocumentEvent(eventName, eventData);
           return true;
-        } else if (doc?.dispatchEvent) {
+        } else if (doc && doc.dispatchEvent) {
           return doc.dispatchEvent(ev);
         }
       } else if (target === 'window' && win.dispatchEvent) {
         return win.dispatchEvent(ev);
-      } else if (doc?.querySelector) {
+      } else if (doc && doc.querySelector) {
         const targetEl = doc.querySelector(target);
         if (targetEl) {
           return targetEl.dispatchEvent(ev);
@@ -91,6 +93,80 @@ const initEvents = (win, cap) => {
     }
     return false;
   };
+
+  win.Capacitor = cap;
+};
+
+const initLegacyHandlers = (win, cap) => {
+  if (cap.isNativePlatform()) {
+    // define cordova if it's not there already
+    win.cordova = win.cordova || {};
+
+    const doc = win.document;
+    const nav = win.navigator;
+
+    if (nav) {
+      nav.app = nav.app || {};
+      nav.app.exitApp = () => {
+        cap.nativeCallback('App', 'exitApp', {});
+      };
+    }
+
+    if (doc) {
+      const docAddEventListener = doc.addEventListener;
+      doc.addEventListener = (...args) => {
+        const eventName = args[0];
+        const handler = args[1];
+        if (eventName === 'deviceready' && handler) {
+          Promise.resolve().then(handler);
+        } else if (eventName === 'backbutton' && cap.Plugins.App) {
+          // Add a dummy listener so Capacitor doesn't do the default
+          // back button action
+          cap.Plugins.App.addListener('backButton', () => {
+            // ignore
+          });
+        }
+        return docAddEventListener.apply(doc, args);
+      };
+    }
+  }
+
+  // deprecated in v3, remove from v4
+  cap.platform = cap.getPlatform();
+  cap.isNative = cap.isNativePlatform();
+
+  win.Capacitor = cap;
+};
+
+const initVendor = (win, cap) => {
+  const Ionic = (win.Ionic = win.Ionic || {});
+  const IonicWebView = (Ionic.WebView = Ionic.WebView || {});
+  const Plugins = cap.Plugin;
+
+  IonicWebView.getServerBasePath = callback => {
+    if (Plugins && Plugins.WebView && Plugins.WebView.getServerBasePath) {
+      Plugins.WebView.getServerBasePath().then(result => {
+        callback(result.path);
+      });
+    }
+  };
+
+  IonicWebView.setServerBasePath = path => {
+    if (Plugins && Plugins.WebView && Plugins.WebView.setServerBasePath) {
+      Plugins.WebView.setServerBasePath({ path });
+    }
+  };
+
+  IonicWebView.persistServerBasePath = () => {
+    if (Plugins && Plugins.WebView && Plugins.WebView.persistServerBasePath) {
+      Plugins.WebView.persistServerBasePath();
+    }
+  };
+
+  IonicWebView.convertFileSrc = url => cap.convertFileSrc(url);
+
+  win.Capacitor = cap;
+  win.Ionic.WebView = IonicWebView;
 };
 
 const initLogger = win => {
@@ -243,6 +319,12 @@ function initBridge(win) {
   let callbackIdCount = Math.floor(Math.random() * 134217728);
 
   let postToNative = null;
+
+  const isNativePlatform = () => getPlatformId(win) !== 'web';
+  const getPlatform = () => getPlatformId(win);
+
+  cap.getPlatform = getPlatform;
+  cap.isNativePlatform = isNativePlatform;
 
   // create the postToNative() fn if needed
   if (getPlatformId(win) === 'android') {
@@ -457,6 +539,8 @@ function initBridge(win) {
   }
 
   initEvents(win, cap);
+  initLegacyHandlers(win, cap);
+  initVendor(win, cap);
 
   win.Capacitor = cap;
 }
