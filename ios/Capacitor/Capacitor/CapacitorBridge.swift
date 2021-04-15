@@ -220,6 +220,13 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if injectCordovaFiles {
             exportCordovaJS()
             registerCordovaPlugins()
+        } else {
+            NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
+                self?.triggerDocumentJSEvent(eventName: "resume")
+            }
+            NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
+                self?.triggerDocumentJSEvent(eventName: "pause")
+            }
         }
     }
 
