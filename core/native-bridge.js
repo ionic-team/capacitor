@@ -132,6 +132,22 @@ const initLogger = win => {
     }
   }
 
+  cap.logJs = (msg, level) => {
+    switch (level) {
+      case 'error':
+        win.console.error(msg);
+        break;
+      case 'warn':
+        win.console.warn(msg);
+        break;
+      case 'info':
+        win.console.info(msg);
+        break;
+      default:
+        win.console.log(msg);
+    }
+  };
+
   cap.logToNative = createLogToNative(win.console);
   cap.logFromNative = createLogFromNative(win.console);
 

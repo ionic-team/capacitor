@@ -53,22 +53,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const convertFileSrc = (filePath: string) =>
     convertFileSrcServerUrl(webviewServerUrl, filePath);
 
-  const logJs = (msg: string, level: 'error' | 'warn' | 'info' | 'log') => {
-    switch (level) {
-      case 'error':
-        win.console.error(msg);
-        break;
-      case 'warn':
-        win.console.warn(msg);
-        break;
-      case 'info':
-        win.console.info(msg);
-        break;
-      default:
-        win.console.log(msg);
-    }
-  };
-
   const handleError = (err: Error) => win.console.error(err);
 
   const pluginMethodNoop = (
@@ -245,7 +229,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   cap.handleError = handleError;
   cap.isNativePlatform = isNativePlatform;
   cap.isPluginAvailable = isPluginAvailable;
-  cap.logJs = logJs;
   cap.pluginMethodNoop = pluginMethodNoop;
   cap.registerPlugin = registerPlugin;
   cap.Exception = CapacitorException;
