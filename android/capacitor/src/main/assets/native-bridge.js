@@ -371,9 +371,7 @@ function initBridge(win) {
         cap.handleError(err);
       }
 
-      if (postToNative) {
-        postToNative(errObj);
-      }
+      postToNative(errObj);
     }
 
     return false;
@@ -496,45 +494,29 @@ function initBridge(win) {
     delete result.error;
   };
 
-  if (typeof postToNative === 'function') {
-    // toNative bridge found
-    cap.nativeCallback = (pluginName, methodName, options, callback) => {
-      if (typeof options === 'function') {
-        console.warn(
-          `Using a callback as the 'options' parameter of 'nativeCallback()' is deprecated.`,
-        );
+  cap.nativeCallback = (pluginName, methodName, options, callback) => {
+    if (typeof options === 'function') {
+      console.warn(
+        `Using a callback as the 'options' parameter of 'nativeCallback()' is deprecated.`,
+      );
 
-        callback = options;
-        options = null;
-      }
+      callback = options;
+      options = null;
+    }
 
-      return cap.toNative(pluginName, methodName, options, { callback });
-    };
+    return cap.toNative(pluginName, methodName, options, { callback });
+  };
 
-    cap.nativePromise = (pluginName, methodName, options) => {
-      return new Promise((resolve, reject) => {
-        cap.toNative(pluginName, methodName, options, {
-          resolve: resolve,
-          reject: reject,
-        });
+  cap.nativePromise = (pluginName, methodName, options) => {
+    return new Promise((resolve, reject) => {
+      cap.toNative(pluginName, methodName, options, {
+        resolve: resolve,
+        reject: reject,
       });
-    };
-  } else {
-    // no native bridge created
-    cap.nativeCallback = () => {
-      throw new CapacitorException(
-        `nativeCallback() not implemented`,
-        'UNIMPLEMENTED',
-      );
-    };
-    cap.nativePromise = () =>
-      Promise.reject(
-        new CapacitorException(
-          `nativePromise() not implemented`,
-          'UNIMPLEMENTED',
-        ),
-      );
-  }
+    });
+  };
+
+  cap.withPlugin = (_pluginId, _fn) => {};
 
   initEvents(win, cap);
   initLegacyHandlers(win, cap);
