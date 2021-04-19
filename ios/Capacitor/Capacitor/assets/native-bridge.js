@@ -1,3 +1,4 @@
+//Do not edit
 class CapacitorException extends Error {
   constructor(message, code) {
     super(message);
