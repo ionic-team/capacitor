@@ -320,7 +320,7 @@ function initBridge(win) {
 
   let postToNative = null;
 
-  const isNativePlatform = () => getPlatformId(win) !== 'web';
+  const isNativePlatform = () => true;
   const getPlatform = () => getPlatformId(win);
 
   cap.getPlatform = getPlatform;
