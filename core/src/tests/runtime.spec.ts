@@ -49,6 +49,7 @@ describe('runtime', () => {
 
   it('cannot reset server url after initializing capacitor', () => {
     win.WEBVIEW_SERVER_URL = 'whatever://home';
+    initBridge(win);
     cap = createCapacitor(win);
     win.WEBVIEW_SERVER_URL = 'CHANGED!!!';
     expect(cap.getServerUrl()).toBe('whatever://home');
@@ -56,6 +57,7 @@ describe('runtime', () => {
 
   it('server url set from window.WEBVIEW_SERVER_URL', () => {
     win.WEBVIEW_SERVER_URL = 'whatever://home';
+    initBridge(win);
     cap = createCapacitor(win);
     expect(cap.getServerUrl()).toBe('whatever://home');
   });
