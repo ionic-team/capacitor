@@ -159,7 +159,7 @@ const initLegacyHandlers = (win, cap) => {
 const initVendor = (win, cap) => {
   const Ionic = (win.Ionic = win.Ionic || {});
   const IonicWebView = (Ionic.WebView = Ionic.WebView || {});
-  const Plugins = cap.Plugin;
+  const Plugins = cap.Plugins;
 
   IonicWebView.getServerBasePath = callback => {
     if (Plugins && Plugins.WebView && Plugins.WebView.getServerBasePath) {
