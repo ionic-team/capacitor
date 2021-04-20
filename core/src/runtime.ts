@@ -211,7 +211,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   // Add in convertFileSrc for web, it will already be available in native context
   if (!cap.convertFileSrc) {
-    cap.convertFileSrc = filePath => filePath
+    cap.convertFileSrc = filePath => filePath;
   }
 
   cap.getPlatform = getPlatform;

@@ -12,7 +12,7 @@ export interface CapacitorGlobal {
    * Utility function to convert a file path into a usable src depending
    * on the native WebView implementation value and environment.
    */
-   convertFileSrc: (filePath: string) => string;
+  convertFileSrc: (filePath: string) => string;
 
   /**
    * Gets the name of the platform, such as `android`, `ios`, or `web`.

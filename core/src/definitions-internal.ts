@@ -53,27 +53,27 @@ export interface CapacitorInstance extends CapacitorGlobal {
     storedCallback?: StoredCallback,
   ) => string;
 
-    /**
+  /**
    * Sends data over the bridge to the native layer.
    * Returns the Callback Id.
    */
-     nativeCallback: <O>(
-      pluginName: string,
-      methodName: string,
-      options?: O,
-      callback?: PluginCallback,
-    ) => string;
-  
-    /**
-     * Sends data over the bridge to the native layer and
-     * resolves the promise when it receives the data from
-     * the native implementation.
-     */
-    nativePromise: <O, R>(
-      pluginName: string,
-      methodName: string,
-      options?: O,
-    ) => Promise<R>;
+  nativeCallback: <O>(
+    pluginName: string,
+    methodName: string,
+    options?: O,
+    callback?: PluginCallback,
+  ) => string;
+
+  /**
+   * Sends data over the bridge to the native layer and
+   * resolves the promise when it receives the data from
+   * the native implementation.
+   */
+  nativePromise: <O, R>(
+    pluginName: string,
+    methodName: string,
+    options?: O,
+  ) => Promise<R>;
 
   /**
    * Low-level API used by the native layers to send
