@@ -211,23 +211,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   // Add in convertFileSrc for web, it will already be available in native context
   if (!cap.convertFileSrc) {
-    const webviewServerUrl = typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
-    cap.convertFileSrc = (filePath) => {
-      if (typeof filePath === 'string') {
-        if (filePath.startsWith('/')) {
-          return webviewServerUrl + '/_capacitor_file_' + filePath;
-        } else if (filePath.startsWith('file://')) {
-          return (
-            webviewServerUrl + filePath.replace('file://', '/_capacitor_file_')
-          );
-        } else if (filePath.startsWith('content://')) {
-          return (
-            webviewServerUrl + filePath.replace('content:/', '/_capacitor_content_')
-          );
-        }
-      }
-      return filePath;
-    };
+    cap.convertFileSrc = filePath => filePath
   }
 
   cap.getPlatform = getPlatform;
