@@ -218,25 +218,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   cap.Exception = CapacitorException;
   cap.DEBUG = !!cap.DEBUG;
 
-  if (cap.nativeCallback === null || cap.nativeCallback === undefined) {
-    cap.nativeCallback = () => {
-      throw new CapacitorException(
-        `nativeCallback() not implemented`,
-        ExceptionCode.Unimplemented,
-      );
-    };
-  }
-
-  if (cap.nativePromise === null || cap.nativePromise === undefined) {
-    cap.nativePromise = () =>
-      Promise.reject(
-        new CapacitorException(
-          `nativePromise() not implemented`,
-          ExceptionCode.Unimplemented,
-        ),
-      );
-  }
-
   return cap;
 };
 
