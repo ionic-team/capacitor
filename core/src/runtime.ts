@@ -4,11 +4,7 @@ import type {
   PluginHeader,
   WindowCapacitor,
 } from './definitions-internal';
-import {
-  CapacitorException,
-  getPlatformId,
-  ExceptionCode,
-} from './util';
+import { CapacitorException, getPlatformId, ExceptionCode } from './util';
 
 export interface RegisteredPlugin {
   readonly name: string;

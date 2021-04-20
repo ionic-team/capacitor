@@ -119,7 +119,7 @@ const initLegacyHandlers = (win, cap) => {
     nav.app = nav.app || {};
     nav.app.exitApp = () => {
       if (!cap.Plugins || !cap.Plugins.App) {
-        win.console.warn('App plugin not installed', 'warn')
+        win.console.warn('App plugin not installed', 'warn');
       } else {
         cap.nativeCallback('App', 'exitApp', {});
       }
@@ -137,7 +137,7 @@ const initLegacyHandlers = (win, cap) => {
         // Add a dummy listener so Capacitor doesn't do the default
         // back button action
         if (!cap.Plugins || !cap.Plugins.App) {
-          win.console.warn('App plugin not installed', 'warn')
+          win.console.warn('App plugin not installed', 'warn');
         } else {
           cap.Plugins.App.addListener('backButton', () => {
             // ignore
@@ -330,9 +330,11 @@ function initBridge(win) {
   // keep a collection of callbacks for native response data
   const callbacks = new Map();
 
-  const webviewServerUrl = typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
+  const webviewServerUrl =
+    typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
   cap.getServerUrl = () => webviewServerUrl;
-  cap.convertFileSrc = (filePath) => convertFileSrcServerUrl(webviewServerUrl, filePath);
+  cap.convertFileSrc = filePath =>
+    convertFileSrcServerUrl(webviewServerUrl, filePath);
 
   // Counter of callback ids, randomized to avoid
   // any issues during reloads if a call comes back with
