@@ -223,6 +223,10 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   cap.Exception = CapacitorException;
   cap.DEBUG = !!cap.DEBUG;
 
+  // Deprecated props
+  cap.platform = cap.getPlatform();
+  cap.isNative = cap.isNativePlatform();
+
   return cap;
 };
 

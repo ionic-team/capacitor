@@ -181,6 +181,6 @@ describe('legacy', () => {
     expect((cap as any).platform).toBe('web');
 
     // isNative is deprecated. Don't test anymore
-    // expect((cap as any).isNative).toBe(false);
+    expect((cap as any).isNative).toBe(false);
   });
 });
