@@ -119,7 +119,7 @@ const initLegacyHandlers = (win, cap) => {
     nav.app = nav.app || {};
     nav.app.exitApp = () => {
       if (!cap.Plugins || !cap.Plugins.App) {
-        win.console.warn('App plugin not installed', 'warn');
+        win.console.warn('App plugin not installed');
       } else {
         cap.nativeCallback('App', 'exitApp', {});
       }
@@ -137,7 +137,7 @@ const initLegacyHandlers = (win, cap) => {
         // Add a dummy listener so Capacitor doesn't do the default
         // back button action
         if (!cap.Plugins || !cap.Plugins.App) {
-          win.console.warn('App plugin not installed', 'warn');
+          win.console.warn('App plugin not installed');
         } else {
           cap.Plugins.App.addListener('backButton', () => {
             // ignore
