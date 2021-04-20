@@ -1,10 +1,4 @@
 //Do not edit
-class CapacitorException extends Error {
-  constructor(message, code) {
-    super(message);
-  }
-}
-
 const getPlatformId = win => {
   if (win.androidBridge) {
     return 'android';
@@ -17,6 +11,23 @@ const getPlatformId = win => {
   } else {
     return 'web';
   }
+};
+
+const convertFileSrcServerUrl = (webviewServerUrl, filePath) => {
+  if (typeof filePath === 'string') {
+    if (filePath.startsWith('/')) {
+      return webviewServerUrl + '/_capacitor_file_' + filePath;
+    } else if (filePath.startsWith('file://')) {
+      return (
+        webviewServerUrl + filePath.replace('file://', '/_capacitor_file_')
+      );
+    } else if (filePath.startsWith('content://')) {
+      return (
+        webviewServerUrl + filePath.replace('content:/', '/_capacitor_content_')
+      );
+    }
+  }
+  return filePath;
 };
 
 const initEvents = (win, cap) => {
@@ -108,7 +119,11 @@ const initLegacyHandlers = (win, cap) => {
   if (nav) {
     nav.app = nav.app || {};
     nav.app.exitApp = () => {
-      cap.nativeCallback('App', 'exitApp', {});
+      if (!cap.Plugins || !cap.Plugins.App) {
+        win.console.warn('App plugin not installed', 'warn')
+      } else {
+        cap.nativeCallback('App', 'exitApp', {});
+      }
     };
   }
 
@@ -122,9 +137,13 @@ const initLegacyHandlers = (win, cap) => {
       } else if (eventName === 'backbutton' && cap.Plugins.App) {
         // Add a dummy listener so Capacitor doesn't do the default
         // back button action
-        cap.Plugins.App.addListener('backButton', () => {
-          // ignore
-        });
+        if (!cap.Plugins || !cap.Plugins.App) {
+          win.console.warn('App plugin not installed', 'warn')
+        } else {
+          cap.Plugins.App.addListener('backButton', () => {
+            // ignore
+          });
+        }
       }
       return docAddEventListener.apply(doc, args);
     };
@@ -311,6 +330,10 @@ function initBridge(win) {
 
   // keep a collection of callbacks for native response data
   const callbacks = new Map();
+
+  const webviewServerUrl = typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
+  cap.getServerUrl = () => webviewServerUrl;
+  cap.convertFileSrc = (filePath) => convertFileSrcServerUrl(webviewServerUrl, filePath);
 
   // Counter of callback ids, randomized to avoid
   // any issues during reloads if a call comes back with

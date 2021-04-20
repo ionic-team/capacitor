@@ -6,7 +6,6 @@ import type {
 } from './definitions-internal';
 import {
   CapacitorException,
-  convertFileSrcServerUrl,
   getPlatformId,
   ExceptionCode,
 } from './util';
@@ -20,9 +19,6 @@ export interface RegisteredPlugin {
 export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
   const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
-
-  const webviewServerUrl =
-    typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
 
   const getPlatform = () => getPlatformId(win);
 
@@ -46,9 +42,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   const getPluginHeader = (pluginName: string): PluginHeader | undefined =>
     cap.PluginHeaders?.find(h => h.name === pluginName);
-
-  const convertFileSrc = (filePath: string) =>
-    convertFileSrcServerUrl(webviewServerUrl, filePath);
 
   const handleError = (err: Error) => win.console.error(err);
 
@@ -220,9 +213,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     return proxy;
   };
 
-  cap.convertFileSrc = convertFileSrc;
   cap.getPlatform = getPlatform;
-  cap.getServerUrl = () => webviewServerUrl;
   cap.handleError = handleError;
   cap.isNativePlatform = isNativePlatform;
   cap.isPluginAvailable = isPluginAvailable;
