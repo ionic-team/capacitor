@@ -66,31 +66,4 @@ describe('runtime', () => {
     cap = createCapacitor(win);
     expect(cap.getServerUrl()).toBe('');
   });
-
-  // Remove global instance creation tests for now because this will always be done pre-modules
-  /*
-  it('new Capacitor global created', () => {
-    import('../global')
-      .then(value => {
-        const { Capacitor } = value;
-        expect(win.Capacitor).not.toBeDefined();
-        cap = createCapacitor(win);
-        expect(Capacitor).toBe(cap);
-        expect(win.Capacitor.Plugins).toEqual({});
-      })
-      .catch(err => {
-        console.error(err);
-      })
-  });
-  
-  it('existing Capacitor global updated', () => {
-    const Plugins: any = {};
-    const old = (win.Capacitor = { Plugins: Plugins } as any);
-    createCapacitor(win);
-    cap = Capacitor;
-    expect(win.Capacitor).toBe(cap);
-    expect(win.Capacitor).toBe(old);
-    expect(win.Capacitor.Plugins).toBe(Plugins);
-  });
-  */
 });
