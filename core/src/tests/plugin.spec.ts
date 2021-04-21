@@ -1,5 +1,8 @@
 import type { CapacitorGlobal, Plugin } from '../definitions';
-import type { WindowCapacitor, CapacitorInstance } from '../definitions-internal';
+import type {
+  WindowCapacitor,
+  CapacitorInstance,
+} from '../definitions-internal';
 import { initCapacitorGlobal } from '../runtime';
 import { ExceptionCode } from '../util';
 import { WebPlugin } from '../web-plugin';
