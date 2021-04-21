@@ -1,4 +1,4 @@
-//Do not edit
+// Do not edit
 const getPlatformId = win => {
   if (win.androidBridge) {
     return 'android';
