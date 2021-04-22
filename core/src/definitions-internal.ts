@@ -98,7 +98,7 @@ export interface CapacitorInstance extends CapacitorGlobal {
   handleError: (err: Error) => void;
 
   handleWindowError: (
-    msg: string,
+    msg: string | Event,
     url: string,
     lineNo: number,
     columnNo: number,
