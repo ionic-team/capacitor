@@ -216,7 +216,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
             case '$$typeof':
               return undefined;
             case 'addListener':
-              return isNativePlatform() ? addListenerNative : addListener;
+              return pluginHeader ? addListenerNative : addListener;
             case 'removeListener':
               return removeListener;
             default:
