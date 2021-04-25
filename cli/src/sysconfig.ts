@@ -22,6 +22,13 @@ export interface SystemConfig {
    * If undefined, a choice has not yet been made.
    */
   readonly telemetry?: boolean;
+
+  /**
+   * Wheter the user choose to signup or not.
+   *
+   * If undefined, the prompt has not been shown.
+   */
+  readonly signup?: boolean;
 }
 
 export async function readConfig(): Promise<SystemConfig> {
