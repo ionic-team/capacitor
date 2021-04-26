@@ -96,6 +96,7 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
+      - run: cd ../core && npm run build && cd ../ios
       - run: npm run verify
         working-directory: ./ios
   test-android:
