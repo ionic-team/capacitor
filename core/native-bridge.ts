@@ -7,10 +7,11 @@ import type {
   WindowCapacitor,
 } from './src/definitions-internal';
 
-const initBridge = (w: any): void => {
-  // For removing exports for iOS/Android
-  const dummy = {};
+// For removing exports for iOS/Android, keep let for reassignment
+// eslint-disable-line
+const dummy = {};
 
+const initBridge = (w: any): void => {
   const getPlatformId = (win: WindowCapacitor): 'android' | 'ios' | 'web' => {
     if (win.androidBridge) {
       return 'android';
