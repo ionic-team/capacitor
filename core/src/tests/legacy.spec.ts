@@ -102,8 +102,8 @@ describe('legacy', () => {
 
   it('doc.addEventListener backbutton', done => {
     const AppWeb = class {
-      async addListener(event: any) {
-        expect(event.eventName).toBe('backButton');
+      async addListener(eventName: string) {
+        expect(eventName).toBe('backButton');
         done();
       }
     };
