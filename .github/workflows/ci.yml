@@ -96,7 +96,6 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
-      - run: touch ./Capacitor/Capacitor/assets/native-bridge.js # Stub file
       - run: npm run verify
         working-directory: ./ios
   test-android:

@@ -23,4 +23,3 @@ android-template/app/app.iml
 .settings/
 .project
 .env
-native-bridge.js
