@@ -123,12 +123,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
             cap.nativePromise(pluginName, prop.toString(), options);
         } else {
           return (options: any, callback: any) =>
-            cap.nativeCallback(
-              pluginName,
-              prop.toString(),
-              options,
-              callback,
-            );
+            cap.nativeCallback(pluginName, prop.toString(), options, callback);
         }
       } else if (impl) {
         return impl[prop]?.bind(impl);
