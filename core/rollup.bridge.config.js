@@ -1,9 +1,6 @@
 import replace from '@rollup/plugin-replace';
 
-const banner = `
-/*! Capacitor: https://capacitorjs.com/ - MIT License */
-/*! Generated file. Do not edit */
-`;
+const banner = `/*! Capacitor: https://capacitorjs.com/ - MIT License */`;
 
 export default {
   input: 'build/native-bridge.js',
