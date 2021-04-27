@@ -9,8 +9,8 @@ import type {
 import { getPlatformId } from './src/util';
 
 // For removing exports for iOS/Android, keep let for reassignment
-// eslint-disable-line
-const dummy = {};
+// eslint-disable-next-line
+let dummy = {};
 
 const initBridge = (w: any): void => {
   const convertFileSrcServerUrl = (
