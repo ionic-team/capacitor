@@ -16,8 +16,7 @@
     "Capacitor/Capacitor/",
     "CapacitorCordova/CapacitorCordova/",
     "Capacitor.podspec",
-    "CapacitorCordova.podspec",
-    "Capacitor/Capacitor/assets/native-bridge.js"
+    "CapacitorCordova.podspec"
   ],
   "scripts": {
     "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova && npm run pod:lint:Capacitor && npm run pod:lint:CapacitorCordova",

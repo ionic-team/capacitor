@@ -16,8 +16,7 @@
     "capacitor/build.gradle",
     "capacitor/lint-baseline.xml",
     "capacitor/lint.xml",
-    "capacitor/src/main/",
-    "capacitor/src/main/assets/native-bridge.js"
+    "capacitor/src/main/"
   ],
   "scripts": {
     "verify": "./gradlew clean lint build test -b capacitor/build.gradle"
