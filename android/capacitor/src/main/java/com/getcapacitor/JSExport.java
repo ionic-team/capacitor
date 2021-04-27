@@ -99,4 +99,8 @@ public class JSExport {
 
         return methodObj;
     }
+
+    public static String getBridgeJS(Context context) throws JSExportException {
+        return getFilesContent(context, "native-bridge.js");
+    }
 }
