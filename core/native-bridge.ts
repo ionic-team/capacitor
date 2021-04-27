@@ -6,22 +6,13 @@ import type {
   PluginResult,
   WindowCapacitor,
 } from './src/definitions-internal';
+import { getPlatformId } from './src/util';
 
 // For removing exports for iOS/Android, keep let for reassignment
 // eslint-disable-line
 const dummy = {};
 
 const initBridge = (w: any): void => {
-  const getPlatformId = (win: WindowCapacitor): 'android' | 'ios' | 'web' => {
-    if (win.androidBridge) {
-      return 'android';
-    } else if (win?.webkit?.messageHandlers?.bridge) {
-      return 'ios';
-    } else {
-      return 'web';
-    }
-  };
-
   const convertFileSrcServerUrl = (
     webviewServerUrl: string,
     filePath: string,
