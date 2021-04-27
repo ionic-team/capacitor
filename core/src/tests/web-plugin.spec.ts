@@ -1,4 +1,10 @@
+import { initBridge } from '../../native-bridge';
+import type { WindowCapacitor } from '../definitions-internal';
+import { createCapacitor } from '../runtime';
 import { WebPlugin } from '../web-plugin';
+
+const win = {};
+initBridge(win);
 
 class MockPlugin extends WebPlugin {
   trigger() {
@@ -22,8 +28,11 @@ class MockPlugin extends WebPlugin {
 
 describe('Web Plugin', () => {
   let plugin: MockPlugin;
+  let win: WindowCapacitor;
 
   beforeEach(() => {
+    win = {};
+    createCapacitor(win);
     plugin = new MockPlugin();
   });
 

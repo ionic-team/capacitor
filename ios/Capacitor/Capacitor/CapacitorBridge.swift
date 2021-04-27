@@ -112,6 +112,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // Background dispatch queue for plugin calls
     var dispatchQueue = DispatchQueue(label: "bridge")
+    // Array of block based observers
+    var observers: [NSObjectProtocol] = []
 
     // MARK: - CAPBridgeProtocol: Deprecated
 
@@ -195,14 +197,17 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
         setupCordovaCompatibility()
-        NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
+        observers.append(NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
             self?.tmpWindow = nil
-        }
+        })
     }
 
     deinit {
         // the message handler needs to removed to avoid any retain cycles
         webViewDelegationHandler.cleanUp()
+        for observer in observers {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 
     // MARK: - Plugins
@@ -215,6 +220,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                                                  isDebug: isDevEnvironment,
                                                  loggingEnabled: config.loggingEnabled,
                                                  localUrl: localUrl)
+            try JSExport.exportBridgeJS(userContentController: webViewDelegationHandler.contentController)
         } catch {
             type(of: self).fatalError(error, error)
         }
@@ -227,6 +233,13 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if injectCordovaFiles {
             exportCordovaJS()
             registerCordovaPlugins()
+        } else {
+            observers.append(NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
+                self?.triggerDocumentJSEvent(eventName: "resume")
+            })
+            observers.append(NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
+                self?.triggerDocumentJSEvent(eventName: "pause")
+            })
         }
     }
 

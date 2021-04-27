@@ -22,7 +22,9 @@
   "types": "types/index.d.ts",
   "unpkg": "dist/capacitor.js",
   "scripts": {
-    "build": "npm run clean && npm run transpile && npm run rollup",
+    "build": "npm run build.runtime && npm run build.bridge",
+    "build.runtime": "npm run clean && npm run transpile && npm run rollup",
+    "build.bridge": "tsc native-bridge.ts --target es2017 --moduleResolution node --outDir build && rollup --config rollup.bridge.config.js",
     "clean": "rimraf dist",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
@@ -36,6 +38,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^10.0.0",
+    "@rollup/plugin-replace": "^2.4.2",
     "@types/jest": "^26.0.4",
     "jest": "^26.1.0",
     "rimraf": "^3.0.2",

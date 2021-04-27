@@ -189,12 +189,12 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
         let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
 
-        alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-            completionHandler(true)
-        }))
-
         alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
             completionHandler(false)
+        }))
+
+        alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
+            completionHandler(true)
         }))
 
         viewController.present(alertController, animated: true, completion: nil)
@@ -211,19 +211,16 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
             textField.text = defaultText
         }
 
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
+            completionHandler(nil)
+        }))
+
         alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
             if let text = alertController.textFields?.first?.text {
                 completionHandler(text)
             } else {
                 completionHandler(defaultText)
             }
-
-        }))
-
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
-
-            completionHandler(nil)
-
         }))
 
         viewController.present(alertController, animated: true, completion: nil)

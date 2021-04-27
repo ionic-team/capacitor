@@ -1,3 +1,4 @@
+import open from 'open';
 import { basename, dirname, resolve } from 'path';
 
 import c from '../colors';
@@ -11,6 +12,7 @@ import { getCordovaPreferences } from '../cordova';
 import type { Config, ExternalConfig } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { output, logSuccess, logPrompt } from '../log';
+import { readConfig, writeConfig as sysWriteConfig } from '../sysconfig';
 import { resolveNode } from '../util/node';
 import { checkInteractive, isInteractive } from '../util/term';
 
@@ -150,6 +152,14 @@ async function runMergeConfig(
   );
 
   printNextSteps(basename(newConfigPath));
+  if (isInteractive()) {
+    let sysconfig = await readConfig();
+    if (typeof sysconfig.signup === 'undefined') {
+      const signup = await promptToSignup();
+      sysconfig = { ...sysconfig, signup };
+      await sysWriteConfig(sysconfig);
+    }
+  }
 }
 
 async function mergeConfig(
@@ -170,4 +180,22 @@ function printNextSteps(newConfigName: string) {
       `https://capacitorjs.com/docs/v3/getting-started#where-to-go-next`,
     )}\n`,
   );
+}
+
+async function promptToSignup(): Promise<boolean> {
+  const answers = await logPrompt(
+    `Join the Ionic Community! 💙\n` +
+      `Connect with millions of developers on the Ionic Forum and get access to live events, news updates, and more.`,
+    {
+      type: 'confirm',
+      name: 'create',
+      message: `Create free Ionic account?`,
+      initial: true,
+    },
+  );
+
+  if (answers.create) {
+    open(`http://ionicframework.com/signup?source=capacitor`);
+  }
+  return answers.create;
 }

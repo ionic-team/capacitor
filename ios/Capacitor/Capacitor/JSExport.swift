@@ -21,6 +21,30 @@ internal class JSExport {
         userContentController.addUserScript(userScript)
     }
 
+    static func exportBridgeJS(userContentController: WKUserContentController) throws {
+        let capBundle = Bundle(for: Self.self)
+        guard let resourceBundleURL = capBundle.url(
+                forResource: "CapBridge", withExtension: "bundle") else {
+            CAPLog.print("ERROR: CapBridge.bundle not found! Bridge will not function!")
+            throw CapacitorBridgeError.errorExportingCoreJS
+        }
+        guard let resourceBundle = Bundle(url: resourceBundleURL) else {
+            CAPLog.print("ERROR: Cannot access CapBridge.bundle! Bridge will not function!")
+            throw CapacitorBridgeError.errorExportingCoreJS
+
+        }
+        guard let jsUrl = resourceBundle.url(forResource: "native-bridge", withExtension: "js") else {
+            CAPLog.print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")
+            throw CapacitorBridgeError.errorExportingCoreJS
+        }
+        do {
+            try self.injectFile(fileURL: jsUrl, userContentController: userContentController)
+        } catch {
+            CAPLog.print("ERROR: Unable to read required native-bridge.js file from the Capacitor framework. Bridge will not function!")
+            throw CapacitorBridgeError.errorExportingCoreJS
+        }
+    }
+
     static func exportCordovaJS(userContentController: WKUserContentController) throws {
         guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
             CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
