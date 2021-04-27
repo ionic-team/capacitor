@@ -116,11 +116,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       impl: any,
       prop: PropertyKey,
     ): ((...args: any[]) => any) => {
-      if (impl) {
-        return impl[prop]?.bind(impl);
-      } else if (pluginHeader) {
-        const methodHeader = pluginHeader.methods.find(m => prop === m.name);
-
+      if (pluginHeader) {
+        const methodHeader = pluginHeader?.methods.find(m => prop === m.name);
         if (methodHeader) {
           if (methodHeader.rtype === 'promise') {
             return (options: any) =>
@@ -134,7 +131,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                 callback,
               );
           }
+        } else if (impl) {
+          return impl[prop]?.bind(impl);
         }
+      } else if (impl) {
+        return impl[prop]?.bind(impl);
       } else {
         throw new CapacitorException(
           `"${pluginName}" plugin is not implemented on ${platform}`,
