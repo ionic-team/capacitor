@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 class JSInjector {
 
     private String globalJS;
+    private String bridgeJS;
     private String pluginJS;
     private String cordovaJS;
     private String cordovaPluginsJS;
@@ -22,6 +23,7 @@ class JSInjector {
 
     public JSInjector(
         String globalJS,
+        String bridgeJS,
         String pluginJS,
         String cordovaJS,
         String cordovaPluginsJS,
@@ -29,6 +31,7 @@ class JSInjector {
         String localUrlJS
     ) {
         this.globalJS = globalJS;
+        this.bridgeJS = bridgeJS;
         this.pluginJS = pluginJS;
         this.cordovaJS = cordovaJS;
         this.cordovaPluginsJS = cordovaPluginsJS;
@@ -44,6 +47,8 @@ class JSInjector {
     public String getScriptString() {
         return (
             globalJS +
+            "\n\n" +
+            bridgeJS +
             "\n\n" +
             pluginJS +
             "\n\n" +

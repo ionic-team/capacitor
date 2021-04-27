@@ -18,7 +18,7 @@ android {
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 30
     defaultConfig {
         minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 21
-        targetSdkVersion targetSdkVersion = project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 30
+        targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 30
         versionCode 1
         versionName "1.0"
     }

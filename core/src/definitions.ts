@@ -3,27 +3,21 @@ import type { CapacitorException } from './util';
 
 export interface CapacitorGlobal {
   /**
-   * Utility function to convert a file path into a usable src depending
-   * on the native WebView implementation value and environment.
-   */
-  convertFileSrc: (filePath: string) => string;
-
-  /**
    * The Exception class used when generating plugin Exceptions
    * from bridge calls.
    */
   Exception: typeof CapacitorException;
 
   /**
+   * Utility function to convert a file path into a usable src depending
+   * on the native WebView implementation value and environment.
+   */
+  convertFileSrc: (filePath: string) => string;
+
+  /**
    * Gets the name of the platform, such as `android`, `ios`, or `web`.
    */
   getPlatform: () => string;
-
-  /**
-   * Gets the WebView server urls set by the native web view. Defaults
-   * to "" if not running from a native platform.
-   */
-  getServerUrl: () => string;
 
   /**
    * Boolean if the platform is native or not. `android` and `ios`
@@ -35,28 +29,6 @@ export interface CapacitorGlobal {
    * Used to check if a platform is registered and available.
    */
   isPluginAvailable: (name: string) => boolean;
-
-  /**
-   * Sends data over the bridge to the native layer.
-   * Returns the Callback Id.
-   */
-  nativeCallback: <O>(
-    pluginName: string,
-    methodName: string,
-    options?: O,
-    callback?: PluginCallback,
-  ) => string;
-
-  /**
-   * Sends data over the bridge to the native layer and
-   * resolves the promise when it receives the data from
-   * the native implementation.
-   */
-  nativePromise: <O, R>(
-    pluginName: string,
-    methodName: string,
-    options?: O,
-  ) => Promise<R>;
 
   registerPlugin: RegisterPlugin;
 
@@ -97,8 +69,8 @@ export interface CapacitorGlobal {
   pluginMethodNoop: (
     target: any,
     key: PropertyKey,
-    pluginName: PropertyKey,
-  ) => void;
+    pluginName: string,
+  ) => Promise<never>;
 
   /**
    * @deprecated Use `isNativePlatform()` instead
