@@ -1,18 +1,10 @@
-import { getPlatformId, initBridge } from './bridge';
 import type { CapacitorGlobal, PluginImplementations } from './definitions';
 import type {
   CapacitorInstance,
   PluginHeader,
   WindowCapacitor,
 } from './definitions-internal';
-import { initEvents } from './events';
-import { initLegacyHandlers } from './legacy/legacy-handlers';
-import {
-  CapacitorException,
-  convertFileSrcServerUrl,
-  ExceptionCode,
-} from './util';
-import { initVendor } from './vendor';
+import { CapacitorException, getPlatformId, ExceptionCode } from './util';
 
 export interface RegisteredPlugin {
   readonly name: string;
@@ -22,11 +14,7 @@ export interface RegisteredPlugin {
 
 export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
-
   const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
-
-  const webviewServerUrl =
-    typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
 
   const getPlatform = () => getPlatformId(win);
 
@@ -50,25 +38,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   const getPluginHeader = (pluginName: string): PluginHeader | undefined =>
     cap.PluginHeaders?.find(h => h.name === pluginName);
-
-  const convertFileSrc = (filePath: string) =>
-    convertFileSrcServerUrl(webviewServerUrl, filePath);
-
-  const logJs = (msg: string, level: 'error' | 'warn' | 'info' | 'log') => {
-    switch (level) {
-      case 'error':
-        win.console.error(msg);
-        break;
-      case 'warn':
-        win.console.warn(msg);
-        break;
-      case 'info':
-        win.console.info(msg);
-        break;
-      default:
-        win.console.log(msg);
-    }
-  };
 
   const handleError = (err: Error) => win.console.error(err);
 
@@ -241,22 +210,23 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     return proxy;
   };
 
-  cap.convertFileSrc = convertFileSrc;
+  // Add in convertFileSrc for web, it will already be available in native context
+  if (!cap.convertFileSrc) {
+    cap.convertFileSrc = filePath => filePath;
+  }
+
   cap.getPlatform = getPlatform;
-  cap.getServerUrl = () => webviewServerUrl;
   cap.handleError = handleError;
   cap.isNativePlatform = isNativePlatform;
   cap.isPluginAvailable = isPluginAvailable;
-  cap.logJs = logJs;
   cap.pluginMethodNoop = pluginMethodNoop;
   cap.registerPlugin = registerPlugin;
   cap.Exception = CapacitorException;
   cap.DEBUG = !!cap.DEBUG;
 
-  initBridge(win, cap);
-  initEvents(win, cap);
-  initVendor(win, cap);
-  initLegacyHandlers(win, cap);
+  // Deprecated props
+  cap.platform = cap.getPlatform();
+  cap.isNative = cap.isNativePlatform();
 
   return cap;
 };

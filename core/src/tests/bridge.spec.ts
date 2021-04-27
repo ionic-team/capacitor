@@ -1,3 +1,4 @@
+import { initBridge } from '../../native-bridge';
 import type {
   CapacitorInstance,
   PluginResult,
@@ -11,6 +12,7 @@ describe('bridge', () => {
 
   beforeEach(() => {
     win = {};
+    initBridge(win);
   });
 
   it('android nativePromise error', done => {
@@ -19,6 +21,7 @@ describe('bridge', () => {
       data: null,
       error: { message: 'darn it' },
     });
+    initBridge(win);
 
     cap = createCapacitor(win);
     expect(cap.getPlatform()).toBe('android');
@@ -44,6 +47,7 @@ describe('bridge', () => {
       success: true,
       data: { mph: 88 },
     });
+    initBridge(win);
 
     cap = createCapacitor(win);
     expect(cap.getPlatform()).toBe('android');
@@ -68,6 +72,7 @@ describe('bridge', () => {
       success: false,
       error: { message: 'darn it' },
     });
+    initBridge(win);
 
     cap = createCapacitor(win);
     expect(cap.getPlatform()).toBe('ios');
@@ -89,6 +94,7 @@ describe('bridge', () => {
       data: { mph: 88 },
       success: true,
     });
+    initBridge(win);
 
     cap = createCapacitor(win);
     expect(cap.getPlatform()).toBe('ios');
@@ -103,36 +109,6 @@ describe('bridge', () => {
         done(e);
       }
     });
-  });
-
-  it('no nativeCallback bridge created', done => {
-    cap = createCapacitor(win);
-    expect(cap.getPlatform()).toBe('web');
-    expect(cap.isNativePlatform()).toBe(false);
-
-    try {
-      cap.nativeCallback('pluginName', 'methodName', {}, () => {
-        // ignore
-      });
-      done('did not throw');
-    } catch (e) {
-      expect(e.message).toBe('nativeCallback() not implemented');
-      done();
-    }
-  });
-
-  it('no nativePromise bridge created', async done => {
-    cap = createCapacitor(win);
-    expect(cap.getPlatform()).toBe('web');
-    expect(cap.isNativePlatform()).toBe(false);
-
-    try {
-      await cap.nativePromise('pluginName', 'methodName', {});
-      done('did not throw');
-    } catch (e) {
-      expect(e.message).toBe('nativePromise() not implemented');
-      done();
-    }
   });
 
   const mockAndroidPluginResult = (pluginResult: PluginResult) => {
