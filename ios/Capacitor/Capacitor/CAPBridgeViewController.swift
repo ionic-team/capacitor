@@ -213,7 +213,7 @@ import Cordova
     _ = webView?.load(request)
   }
 
-  @objc public func setServerPath(path: String) {
+  func setServerPath(path: String) {
     self.basePath = path
     self.handler?.setAssetPath(path)
   }
@@ -556,7 +556,7 @@ import Cordova
     return self.basePath
   }
 
-  public func setServerBasePath(path: String) {
+  @objc public func setServerBasePath(path: String) {
     setServerPath(path: path)
     let request = URLRequest(url: URL(string: hostname!)!)
     DispatchQueue.main.async {
