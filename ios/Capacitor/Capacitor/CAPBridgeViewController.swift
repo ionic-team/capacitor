@@ -213,7 +213,7 @@ import Cordova
     _ = webView?.load(request)
   }
 
-  @objc func setServerPath(path: String) {
+  @objc public func setServerPath(path: String) {
     self.basePath = path
     self.handler?.setAssetPath(path)
   }
