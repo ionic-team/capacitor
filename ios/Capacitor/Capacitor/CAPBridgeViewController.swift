@@ -7,7 +7,7 @@ import UIKit
 import WebKit
 import Cordova
 
-public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
+@objc open class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
   
@@ -213,7 +213,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     _ = webView?.load(request)
   }
 
-  func setServerPath(path: String) {
+  @objc func setServerPath(path: String) {
     self.basePath = path
     self.handler?.setAssetPath(path)
   }
