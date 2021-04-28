@@ -205,7 +205,6 @@
 		62E0735425535E6500BAAADB /* flat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = flat.json; sourceTree = "<group>"; };
 		62E0735525535E6500BAAADB /* hierarchy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hierarchy.json; sourceTree = "<group>"; };
 		62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewDelegationHandler.swift; sourceTree = "<group>"; };
-		62E79C352638AD9500414164 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62E79C572638AF7500414164 /* native-bridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "native-bridge.js"; sourceTree = "<group>"; };
 		62E79C712638B23300414164 /* JSExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSExportTests.swift; sourceTree = "<group>"; };
 		62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Capacitor.swift"; sourceTree = "<group>"; };
@@ -257,7 +256,6 @@
 				62959AE12524DA7700A3D7F1 /* Capacitor */,
 				50503EEC1FC08595003606DC /* CapacitorTests */,
 				6296A77C253A2E49005A202A /* TestsHostApp */,
-				62E79C342638AD9500414164 /* CapBridge */,
 				50503EE01FC08594003606DC /* Products */,
 				501CBAA51FC0A723009B0D4D /* Frameworks */,
 			);
@@ -388,14 +386,6 @@
 				62A91C392553710300861508 /* nonjson.json */,
 			);
 			path = configurations;
-			sourceTree = "<group>";
-		};
-		62E79C342638AD9500414164 /* CapBridge */ = {
-			isa = PBXGroup;
-			children = (
-				62E79C352638AD9500414164 /* Info.plist */,
-			);
-			path = CapBridge;
 			sourceTree = "<group>";
 		};
 		62E79C562638AF7500414164 /* assets */ = {
