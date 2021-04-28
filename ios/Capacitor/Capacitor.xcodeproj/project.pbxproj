@@ -72,9 +72,8 @@
 		62E0736325535E8700BAAADB /* flat.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735425535E6500BAAADB /* flat.json */; };
 		62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735525535E6500BAAADB /* hierarchy.json */; };
 		62E207AE2588234500A78983 /* WebViewDelegationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */; };
-		62E79C422638AE8900414164 /* CapBridge.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 62E79C332638AD9500414164 /* CapBridge.bundle */; };
-		62E79C5C2638AF8100414164 /* native-bridge.js in Resources */ = {isa = PBXBuildFile; fileRef = 62E79C572638AF7500414164 /* native-bridge.js */; };
 		62E79C722638B23300414164 /* JSExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E79C712638B23300414164 /* JSExportTests.swift */; };
+		62E79CD7263A178B00414164 /* native-bridge.js in Resources */ = {isa = PBXBuildFile; fileRef = 62E79C572638AF7500414164 /* native-bridge.js */; };
 		62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */; };
 		62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */; };
 		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
@@ -101,13 +100,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6296A77A253A2E49005A202A;
 			remoteInfo = TestsHostApp;
-		};
-		62E79C402638AE7F00414164 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 50503ED61FC08594003606DC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 62E79C322638AD9500414164;
-			remoteInfo = CapBridge;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -213,7 +205,6 @@
 		62E0735425535E6500BAAADB /* flat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = flat.json; sourceTree = "<group>"; };
 		62E0735525535E6500BAAADB /* hierarchy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hierarchy.json; sourceTree = "<group>"; };
 		62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewDelegationHandler.swift; sourceTree = "<group>"; };
-		62E79C332638AD9500414164 /* CapBridge.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapBridge.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		62E79C352638AD9500414164 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62E79C572638AF7500414164 /* native-bridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "native-bridge.js"; sourceTree = "<group>"; };
 		62E79C712638B23300414164 /* JSExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSExportTests.swift; sourceTree = "<group>"; };
@@ -241,13 +232,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6296A778253A2E49005A202A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		62E79C302638AD9500414164 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -285,7 +269,6 @@
 				50503EDF1FC08594003606DC /* Capacitor.framework */,
 				50503EE81FC08595003606DC /* CapacitorTests.xctest */,
 				6296A77B253A2E49005A202A /* TestsHostApp.app */,
-				62E79C332638AD9500414164 /* CapBridge.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -457,7 +440,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				62E79C412638AE7F00414164 /* PBXTargetDependency */,
 			);
 			name = Capacitor;
 			productName = Avocado;
@@ -501,23 +483,6 @@
 			productReference = 6296A77B253A2E49005A202A /* TestsHostApp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		62E79C322638AD9500414164 /* CapBridge */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 62E79C392638AD9500414164 /* Build configuration list for PBXNativeTarget "CapBridge" */;
-			buildPhases = (
-				62E79C2F2638AD9500414164 /* Sources */,
-				62E79C302638AD9500414164 /* Frameworks */,
-				62E79C312638AD9500414164 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = CapBridge;
-			productName = CapBridge;
-			productReference = 62E79C332638AD9500414164 /* CapBridge.bundle */;
-			productType = "com.apple.product-type.bundle";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -543,10 +508,6 @@
 						CreatedOnToolsVersion = 12.0;
 						ProvisioningStyle = Automatic;
 					};
-					62E79C322638AD9500414164 = {
-						CreatedOnToolsVersion = 12.4;
-						ProvisioningStyle = Automatic;
-					};
 				};
 			};
 			buildConfigurationList = 50503ED91FC08594003606DC /* Build configuration list for PBXProject "Capacitor" */;
@@ -569,7 +530,6 @@
 			projectRoot = "";
 			targets = (
 				50503EDE1FC08594003606DC /* Capacitor */,
-				62E79C322638AD9500414164 /* CapBridge */,
 				50503EE71FC08595003606DC /* CapacitorTests */,
 				6296A77A253A2E49005A202A /* TestsHostApp */,
 			);
@@ -591,7 +551,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				62E79C422638AE8900414164 /* CapBridge.bundle in Resources */,
+				62E79CD7263A178B00414164 /* native-bridge.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -609,14 +569,6 @@
 				6296A78A253A2E49005A202A /* LaunchScreen.storyboard in Resources */,
 				6296A787253A2E49005A202A /* Assets.xcassets in Resources */,
 				6296A785253A2E49005A202A /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		62E79C312638AD9500414164 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				62E79C5C2638AF8100414164 /* native-bridge.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -693,13 +645,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		62E79C2F2638AD9500414164 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -712,11 +657,6 @@
 			isa = PBXTargetDependency;
 			target = 6296A77A253A2E49005A202A /* TestsHostApp */;
 			targetProxy = 6296A796253A2EAE005A202A /* PBXContainerItemProxy */;
-		};
-		62E79C412638AE7F00414164 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 62E79C322638AD9500414164 /* CapBridge */;
-			targetProxy = 62E79C402638AE7F00414164 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -998,49 +938,6 @@
 			};
 			name = Release;
 		};
-		62E79C362638AD9500414164 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = CapBridge/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapBridge;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Debug;
-		};
-		62E79C372638AD9500414164 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = CapBridge/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapBridge;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1076,15 +973,6 @@
 			buildConfigurations = (
 				6296A78C253A2E49005A202A /* Debug */,
 				6296A78D253A2E49005A202A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		62E79C392638AD9500414164 /* Build configuration list for PBXNativeTarget "CapBridge" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				62E79C362638AD9500414164 /* Debug */,
-				62E79C372638AD9500414164 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
