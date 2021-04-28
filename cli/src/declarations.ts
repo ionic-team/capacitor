@@ -176,7 +176,7 @@ export interface CapacitorConfig {
     hideLogs?: boolean;
 
     /**
-     * The build configuration under which Capacitor will generate logs.
+     * The build configuration under which Capacitor will generate logs on Android.
      *
      * Overrides global `loggingBehavior` option.
      *
@@ -304,7 +304,7 @@ export interface CapacitorConfig {
     hideLogs?: boolean;
 
     /**
-     * The build configuration under which Capacitor will generate logs.
+     * The build configuration under which Capacitor will generate logs on iOS.
      *
      * Overrides global `loggingBehavior` option.
      *
