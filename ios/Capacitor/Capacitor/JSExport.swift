@@ -67,18 +67,39 @@ internal class JSExport {
      Export the JS required to implement the given plugin.
      */
     static func exportJS(userContentController: WKUserContentController, pluginClassName: String, pluginType: CAPPlugin.Type) {
+        var lines = [String]()
+
+        lines.append("""
+                    (function(w) {
+                    var a = (w.Capacitor = w.Capacitor || {});
+                    var p = (a.Plugins = a.Plugins || {});
+                    var t = (p['\(pluginClassName)'] = {});
+                    t.addListener = function(eventName, callback) {
+                    return w.Capacitor.addListener('\(pluginClassName)', eventName, callback);
+                    }
+                    """)
+        if let bridgeType = pluginType as? CAPBridgedPlugin.Type, let methods = bridgeType.pluginMethods() as? [CAPPluginMethod] {
+            for method in methods {
+                lines.append(generateMethod(pluginClassName: pluginClassName, method: method))
+            }
+        }
+
+        lines.append("""
+            })(window);
+            """)
         if let data = try? JSONEncoder().encode(createPluginHeader(pluginClassName: pluginClassName, pluginType: pluginType)),
            let header = String(data: data, encoding: .utf8) {
-            let script = """
+            lines.append("""
                 (function(w) {
                 var a = (w.Capacitor = w.Capacitor || {});
                 var h = (a.PluginHeaders = a.PluginHeaders || []);
                 h.push(\(header));
                 })(window);
-                """
-            let userScript = WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-            userContentController.addUserScript(userScript)
+                """)
         }
+        let js = lines.joined(separator: "\n")
+        let userScript = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+        userContentController.addUserScript(userScript)
     }
 
     private static func createPluginHeader(pluginClassName: String, pluginType: CAPPlugin.Type) -> PluginHeader? {
@@ -102,6 +123,58 @@ internal class JSExport {
             rtype = nil
         }
         return PluginHeaderMethod(name: method.name, rtype: rtype)
+    }
+
+    private static func generateMethod(pluginClassName: String, method: CAPPluginMethod) -> String {
+        let methodName = method.name!
+        let returnType = method.returnType!
+        var paramList = [String]()
+
+        // add the catch-all
+        // options argument which takes a full object and converts each
+        // key/value pair into an option for plugin call.
+        paramList.append(catchallOptionsParameter)
+
+        // Automatically add the _callback param if returning data through a callback
+        if returnType == CAPPluginReturnCallback {
+            paramList.append(callbackParameter)
+        }
+
+        // Create a param string of the form "param1, param2, param3"
+        let paramString = paramList.joined(separator: ", ")
+
+        // Generate the argument object that will be sent on each call
+        let argObjectString = catchallOptionsParameter
+
+        var lines = [String]()
+
+        // Create the function declaration
+        lines.append("t['\(method.name!)'] = function(\(paramString)) {")
+
+        // Create the call to Capacitor ...
+        if returnType == CAPPluginReturnNone {
+            // ...using none
+            lines.append("""
+                    return w.Capacitor.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString));
+                    """)
+        } else if returnType == CAPPluginReturnPromise {
+
+            // ...using a promise
+            lines.append("""
+                    return w.Capacitor.nativePromise('\(pluginClassName)', '\(methodName)', \(argObjectString));
+                    """)
+        } else if returnType == CAPPluginReturnCallback {
+            // ...using a callback
+            lines.append("""
+                    return w.Capacitor.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString), \(callbackParameter));
+                    """)
+        } else {
+            CAPLog.print("Error: plugin method return type \(returnType) is not supported!")
+        }
+
+        // Close the function
+        lines.append("}")
+        return lines.joined(separator: "\n")
     }
 
     static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
