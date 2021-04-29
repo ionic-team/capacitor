@@ -437,7 +437,7 @@ const initBridge = (w: any): void => {
             options: options || {},
           };
 
-          if (cap.DEBUG && pluginName !== 'Console') {
+          if (cap.isLoggingEnabled && pluginName !== 'Console') {
             cap.logToNative(callData);
           }
 
@@ -459,7 +459,7 @@ const initBridge = (w: any): void => {
      * Process a response from the native layer.
      */
     cap.fromNative = result => {
-      if (cap.DEBUG && result.pluginId !== 'Console') {
+      if (cap.isLoggingEnabled && result.pluginId !== 'Console') {
         cap.logFromNative(result);
       }
 

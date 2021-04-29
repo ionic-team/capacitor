@@ -46,7 +46,7 @@ public class ConfigBuildingTest {
                     .setAllowNavigation(new String[] { "http://www.google.com" })
                     .setAndroidScheme("test")
                     .setCaptureInput(true)
-                    .setLogsHidden(true)
+                    .setLoggingEnabled(true)
                     .setHTML5mode(false)
                     .setOverriddenUserAgentString("test-user-agent")
                     .setAppendedUserAgentString("test-append")
@@ -66,7 +66,7 @@ public class ConfigBuildingTest {
         assertArrayEquals(new String[] { "http://www.google.com" }, config.getAllowNavigation());
         assertEquals("test", config.getAndroidScheme());
         assertTrue(config.isInputCaptured());
-        assertTrue(config.isLogsHidden());
+        assertTrue(config.isLoggingEnabled());
         assertFalse(config.isHTML5Mode());
         assertEquals("test-user-agent", config.getOverriddenUserAgentString());
         assertEquals("test-append", config.getAppendedUserAgentString());

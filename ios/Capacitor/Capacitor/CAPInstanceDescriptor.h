@@ -17,6 +17,12 @@ typedef NS_OPTIONS(NSUInteger, CAPInstanceWarning) {
     CAPInstanceWarningInvalidCordovaFile  NS_SWIFT_NAME(invalidCordovaFile) = 1 << 4
 } NS_SWIFT_NAME(InstanceWarning);
 
+typedef NS_OPTIONS(NSUInteger, CAPInstanceLoggingBehavior) {
+    CAPInstanceLoggingBehaviorNone          NS_SWIFT_NAME(none)         = 1 << 0,
+    CAPInstanceLoggingBehaviorDebug         NS_SWIFT_NAME(debug)        = 1 << 1,
+    CAPInstanceLoggingBehaviorProduction    NS_SWIFT_NAME(production)   = 1 << 2,
+} NS_SWIFT_NAME(InstanceLoggingBehavior);
+
 extern NSString * _Nonnull const CAPInstanceDescriptorDefaultScheme NS_SWIFT_UNAVAILABLE("Use InstanceDescriptorDefaults");
 extern NSString * _Nonnull const CAPInstanceDescriptorDefaultHostname NS_SWIFT_UNAVAILABLE("Use InstanceDescriptorDefaults");
 
@@ -63,10 +69,10 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, retain, nonnull) NSDictionary *pluginConfigurations;
 /**
- @brief Whether or not logging is turned on.
- @discussion Set by @c hideLogs in the configuration file.
+ @brief The build configurations under which logging should be enabled.
+ @discussion Defaults to @c debug. Set by @c loggingBehavior in the configuration file but will inherit the deprecated @c hideLogs flag if @c loggingBehavior is absent.
  */
-@property (nonatomic, assign) BOOL enableLogging;
+@property (nonatomic, assign) CAPInstanceLoggingBehavior loggingBehavior;
 /**
  @brief Whether or not the web view can scroll.
  @discussion Set by @c ios.scrollEnabled in the configuration file. Corresponds to @c isScrollEnabled on WKWebView.
