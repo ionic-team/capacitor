@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F954ED82614C99400176C96 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 2F954ED72614C99400176C96 /* assets */; };
 		373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */; };
 		373A69F2255C95D0000A6F44 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69F1255C95D0000A6F44 /* NotificationRouter.swift */; };
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
@@ -73,6 +72,8 @@
 		62E0736325535E8700BAAADB /* flat.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735425535E6500BAAADB /* flat.json */; };
 		62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735525535E6500BAAADB /* hierarchy.json */; };
 		62E207AE2588234500A78983 /* WebViewDelegationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */; };
+		62E79C722638B23300414164 /* JSExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E79C712638B23300414164 /* JSExportTests.swift */; };
+		62E79CD7263A178B00414164 /* native-bridge.js in Resources */ = {isa = PBXBuildFile; fileRef = 62E79C572638AF7500414164 /* native-bridge.js */; };
 		62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */; };
 		62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */; };
 		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
@@ -131,7 +132,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2F954ED72614C99400176C96 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerProtocol.swift; sourceTree = "<group>"; };
 		373A69F1255C95D0000A6F44 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
 		501CBAA61FC0A723009B0D4D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -205,6 +205,8 @@
 		62E0735425535E6500BAAADB /* flat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = flat.json; sourceTree = "<group>"; };
 		62E0735525535E6500BAAADB /* hierarchy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hierarchy.json; sourceTree = "<group>"; };
 		62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewDelegationHandler.swift; sourceTree = "<group>"; };
+		62E79C572638AF7500414164 /* native-bridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "native-bridge.js"; sourceTree = "<group>"; };
+		62E79C712638B23300414164 /* JSExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSExportTests.swift; sourceTree = "<group>"; };
 		62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Capacitor.swift"; sourceTree = "<group>"; };
 		62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgedTypesTests.m; sourceTree = "<group>"; };
 		62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesHelper.swift; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */,
 				6263685F25F6EC0100576C1C /* PluginCallAccessorTests.m */,
 				621ECCCD254204C400D3D615 /* CapacitorTests-Bridging-Header.h */,
+				62E79C712638B23300414164 /* JSExportTests.swift */,
 				62959BBD2526510200A3D7F1 /* Info.plist */,
 			);
 			path = CapacitorTests;
@@ -289,7 +292,6 @@
 		62959AE12524DA7700A3D7F1 /* Capacitor */ = {
 			isa = PBXGroup;
 			children = (
-				2F954ED72614C99400176C96 /* assets */,
 				62959B0F2524DA7700A3D7F1 /* Capacitor.h */,
 				62959B132524DA7700A3D7F1 /* CAPPlugin.h */,
 				62959B012524DA7700A3D7F1 /* CAPPlugin.m */,
@@ -337,6 +339,7 @@
 				62959B8225253A9500A3D7F1 /* Capacitor.modulemap */,
 				373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */,
 				373A69F1255C95D0000A6F44 /* NotificationRouter.swift */,
+				62E79C562638AF7500414164 /* assets */,
 			);
 			path = Capacitor;
 			sourceTree = "<group>";
@@ -383,6 +386,14 @@
 				62A91C392553710300861508 /* nonjson.json */,
 			);
 			path = configurations;
+			sourceTree = "<group>";
+		};
+		62E79C562638AF7500414164 /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				62E79C572638AF7500414164 /* native-bridge.js */,
+			);
+			path = assets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -530,7 +541,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F954ED82614C99400176C96 /* assets in Resources */,
+				62E79CD7263A178B00414164 /* native-bridge.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -604,6 +615,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62E79C722638B23300414164 /* JSExportTests.swift in Sources */,
 				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
 				62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */,
 				621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */,
@@ -881,7 +893,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9YN2HU59K8;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TestsHostApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -904,7 +916,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9YN2HU59K8;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TestsHostApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
