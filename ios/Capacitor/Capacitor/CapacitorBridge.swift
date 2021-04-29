@@ -15,6 +15,16 @@ import Cordova
 // swiftlint:disable type_body_length
 internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
+    // this decision is needed before the bridge is instantiated,
+    // so we need a class property to avoid duplication
+    internal static var isDevEnvironment: Bool {
+        #if DEBUG
+        return true
+        #else
+        return false
+        #endif
+    }
+
     // MARK: - CAPBridgeProtocol: Properties
 
     public var webView: WKWebView? {
@@ -32,11 +42,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     public var isDevEnvironment: Bool {
-        #if DEBUG
-        return true
-        #else
-        return false
-        #endif
+        return CapacitorBridge.isDevEnvironment
     }
 
     public var userInterfaceStyle: UIUserInterfaceStyle {
@@ -211,7 +217,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     func exportCoreJS(localUrl: String) {
         do {
             try JSExport.exportCapacitorGlobalJS(userContentController: webViewDelegationHandler.contentController,
-                                                 isDebug: isDevMode(),
+                                                 isDebug: isDevEnvironment,
+                                                 loggingEnabled: config.loggingEnabled,
                                                  localUrl: localUrl)
             try JSExport.exportBridgeJS(userContentController: webViewDelegationHandler.contentController)
         } catch {

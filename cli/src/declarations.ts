@@ -45,9 +45,27 @@ export interface CapacitorConfig {
    * Hide or show the native logs for iOS and Android.
    *
    * @since 2.1.0
+   * @deprecated 3.0.0
    * @default false
    */
   hideLogs?: boolean;
+
+  /**
+   * The build configuration (as defined by the native app) under which Capacitor
+   * will send statements to the log system. This applies to log statements in
+   * native code as well as statements redirected from JavaScript (`console.debug`,
+   * `console.error`, etc.). Enabling logging will let statements render in the
+   * Xcode and Android Studio windows but can leak information on device if enabled
+   * in released builds.
+   *
+   * 'none' = logs are never produced
+   * 'debug' = logs are produced in debug builds but not production builds
+   * 'production' = logs are always produced
+   *
+   * @since 3.0.0
+   * @default debug
+   */
+  loggingBehavior?: 'none' | 'debug' | 'production';
 
   /**
    * User agent of Capacitor Web View.
@@ -152,9 +170,20 @@ export interface CapacitorConfig {
      * Overrides global `hideLogs` option.
      *
      * @since 2.1.0
+     * @deprecated 3.0.0
      * @default false
      */
     hideLogs?: boolean;
+
+    /**
+     * The build configuration under which Capacitor will generate logs on Android.
+     *
+     * Overrides global `loggingBehavior` option.
+     *
+     * @since 3.0.0
+     * @default debug
+     */
+    loggingBehavior?: 'none' | 'debug' | 'production';
 
     /**
      * Allowlist of plugins to include during `npx cap sync` for Android.
@@ -269,9 +298,20 @@ export interface CapacitorConfig {
      * Overrides global `hideLogs` option.
      *
      * @since 1.1.0
+     * @deprecated 3.0.0
      * @default false
      */
     hideLogs?: boolean;
+
+    /**
+     * The build configuration under which Capacitor will generate logs on iOS.
+     *
+     * Overrides global `loggingBehavior` option.
+     *
+     * @since 3.0.0
+     * @default debug
+     */
+    loggingBehavior?: 'none' | 'debug' | 'production';
 
     /**
      * Allowlist of plugins to include during `npx cap sync` for iOS.

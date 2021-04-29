@@ -5,6 +5,21 @@ public enum InstanceDescriptorDefaults {
     static let hostname = "localhost"
 }
 
+private extension InstanceLoggingBehavior {
+    static func behavior(from: String) -> InstanceLoggingBehavior? {
+        switch from.lowercased() {
+        case "none":
+            return InstanceLoggingBehavior.none
+        case "debug":
+            return InstanceLoggingBehavior.debug
+        case "production":
+            return InstanceLoggingBehavior.production
+        default:
+            return nil
+        }
+    }
+}
+
 /**
  The purpose of this function is to hide the messy details of parsing the configuration(s) so
  the complexity is worth it. And the name starts with an underscore to match the convention of
@@ -69,9 +84,6 @@ internal extension InstanceDescriptor {
                let color = UIColor.capacitor.color(fromHex: colorString) {
                 backgroundColor = color
             }
-            if let hideLogs = (config[keyPath: "ios.hideLogs"] as? Bool) ?? (config[keyPath: "hideLogs"] as? Bool) {
-                enableLogging = !hideLogs
-            }
             if let allowNav = config[keyPath: "server.allowNavigation"] as? [String] {
                 allowedNavigationHostnames = allowNav
             }
@@ -96,11 +108,19 @@ internal extension InstanceDescriptor {
             if let allowPreviews = config[keyPath: "ios.allowsLinkPreview"] as? Bool {
                 allowLinkPreviews = allowPreviews
             }
-            if let scrollEnabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
-                enableScrolling = scrollEnabled
+            if let enabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
+                enableScrolling = enabled
             }
             if let pluginConfig = config[keyPath: "plugins"] as? JSObject {
                 pluginConfigurations = pluginConfig
+            }
+            // `hideLogs` is deprecated so it's used as a fallback option
+            if let value = (config[keyPath: "ios.loggingBehavior"] as? String) ?? (config[keyPath: "loggingBehavior"] as? String) {
+                if let behavior = InstanceLoggingBehavior.behavior(from: value) {
+                    loggingBehavior = behavior
+                }
+            } else if let hideLogs = (config[keyPath: "ios.hideLogs"] as? Bool) ?? (config[keyPath: "hideLogs"] as? Bool), hideLogs {
+                loggingBehavior = .none
             }
         }
     }

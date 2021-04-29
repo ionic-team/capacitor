@@ -14,7 +14,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly, nonnull) NSURL *localURL;
 @property (nonatomic, readonly, nonnull) NSURL *serverURL;
 @property (nonatomic, readonly, nonnull) NSDictionary *pluginConfigurations;
-@property (nonatomic, readonly) BOOL enableLogging;
+@property (nonatomic, readonly) BOOL loggingEnabled;
 @property (nonatomic, readonly) BOOL enableScrolling;
 @property (nonatomic, readonly) BOOL allowLinkPreviews;
 @property (nonatomic, readonly) BOOL handleApplicationNotifications;
@@ -25,7 +25,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 
 @property (nonatomic, readonly, nonnull) NSDictionary *legacyConfig DEPRECATED_MSG_ATTRIBUTE("Use direct properties instead");
 
-- (instancetype _Nonnull)initWithDescriptor:(CAPInstanceDescriptor* _Nonnull)descriptor NS_SWIFT_NAME(init(with:));
+- (instancetype _Nonnull)initWithDescriptor:(CAPInstanceDescriptor* _Nonnull)descriptor isDebug:(BOOL)debug NS_SWIFT_NAME(init(with:isDebug:));
 - (instancetype _Nonnull)updatingAppLocation:(NSURL* _Nonnull)location NS_SWIFT_NAME(updatingAppLocation(_:));
 @end
 

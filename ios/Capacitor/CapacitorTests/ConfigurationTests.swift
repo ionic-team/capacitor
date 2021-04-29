@@ -8,6 +8,7 @@ class ConfigurationTests: XCTestCase {
         case nested = "hierarchy"
         case server = "server"
         case invalid = "bad"
+        case deprecated = "hidinglogs"
         case nonparsable = "nonjson"
     }
     static var files: [ConfigFile: URL] = [:]
@@ -56,9 +57,21 @@ class ConfigurationTests: XCTestCase {
         XCTAssertEqual(descriptor.urlHostname, "localhost")
         XCTAssertNil(descriptor.serverURL)
         XCTAssertTrue(descriptor.enableScrolling)
-        XCTAssertTrue(descriptor.enableLogging)
+        XCTAssertEqual(descriptor.loggingBehavior, .debug)
         XCTAssertTrue(descriptor.allowLinkPreviews)
         XCTAssertEqual(descriptor.contentInsetAdjustmentBehavior, .never)
+    }
+    
+    func testDeprecatedParsing() throws {
+        let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
+        let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.deprecated], cordovaConfiguration: nil)
+        XCTAssertEqual(descriptor.loggingBehavior, .none)
+    }
+    
+    func testDeprecatedOverrideParsing() throws {
+        let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
+        let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.server], cordovaConfiguration: nil)
+        XCTAssertEqual(descriptor.loggingBehavior, .production)
     }
     
     func testTopLevelParsing() throws {
@@ -67,7 +80,7 @@ class ConfigurationTests: XCTestCase {
         XCTAssertEqual(descriptor.backgroundColor, UIColor(red: 1, green: 1, blue: 1, alpha: 1))
         XCTAssertEqual(descriptor.overridenUserAgentString, "level 1 override")
         XCTAssertEqual(descriptor.appendedUserAgentString, "level 1 append")
-        XCTAssertFalse(descriptor.enableLogging)
+        XCTAssertEqual(descriptor.loggingBehavior, .debug)
     }
     
     func testNestedParsing() throws {
@@ -76,7 +89,7 @@ class ConfigurationTests: XCTestCase {
         XCTAssertEqual(descriptor.backgroundColor, UIColor(red: 0, green: 0, blue: 0, alpha: 1))
         XCTAssertEqual(descriptor.overridenUserAgentString, "level 2 override")
         XCTAssertEqual(descriptor.appendedUserAgentString, "level 2 append")
-        XCTAssertTrue(descriptor.enableLogging)
+        XCTAssertEqual(descriptor.loggingBehavior, .none)
         XCTAssertFalse(descriptor.enableScrolling)
         XCTAssertEqual(descriptor.contentInsetAdjustmentBehavior, .scrollableAxes)
     }
@@ -93,21 +106,21 @@ class ConfigurationTests: XCTestCase {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.invalid], cordovaConfiguration: nil)
         XCTAssertNil(descriptor.backgroundColor)
-        XCTAssertTrue(descriptor.enableLogging)
+        XCTAssertEqual(descriptor.loggingBehavior, .debug)
         XCTAssertEqual(descriptor.contentInsetAdjustmentBehavior, .never)
     }
     
     func testBadDataTransformation() throws {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.invalid], cordovaConfiguration: nil)
-        let configuration = InstanceConfiguration(with: descriptor)
+        let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         XCTAssertEqual(configuration.serverURL, URL(string: "capacitor://myhost"), "Invalid server.url and invalid ioScheme were not ignored")
     }
     
     func testServerTransformation() throws {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.server], cordovaConfiguration: nil)
-        let configuration = InstanceConfiguration(with: descriptor)
+        let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         XCTAssertEqual(configuration.serverURL, URL(string: "http://192.168.100.1:2057"))
         XCTAssertEqual(configuration.localURL, URL(string: "override://myhost"))
     }
@@ -115,7 +128,7 @@ class ConfigurationTests: XCTestCase {
     func testPluginConfig() throws {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.flat], cordovaConfiguration: nil)
-        let configuration = InstanceConfiguration(with: descriptor)
+        let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         let value = configuration.getPluginConfigValue("SplashScreen", "launchShowDuration") as? Int
         XCTAssertNotNil(value)
         XCTAssertTrue(value == 1)
@@ -124,7 +137,7 @@ class ConfigurationTests: XCTestCase {
     func testLegacyConfig() throws {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.nested], cordovaConfiguration: nil)
-        let configuration = InstanceConfiguration(with: descriptor)
+        let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         var value = configuration.getValue("overrideUserAgent") as? String
         XCTAssertEqual(value, "level 1 override")
         value = configuration.getValue("ios.overrideUserAgent") as? String
@@ -134,7 +147,7 @@ class ConfigurationTests: XCTestCase {
     func testNavigationRules() throws {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.server], cordovaConfiguration: nil)
-        let configuration = InstanceConfiguration(with: descriptor)
+        let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         XCTAssertTrue(configuration.shouldAllowNavigation(to: "ionic.io"))
         XCTAssertTrue(configuration.shouldAllowNavigation(to: "ionic.io".uppercased()))
         XCTAssertTrue(configuration.shouldAllowNavigation(to: "test.capacitorjs.com"))
@@ -143,5 +156,35 @@ class ConfigurationTests: XCTestCase {
         XCTAssertFalse(configuration.shouldAllowNavigation(to: "google.com"))
         XCTAssertFalse(configuration.shouldAllowNavigation(to: "192.168.0.2"))
         XCTAssertFalse(configuration.shouldAllowNavigation(to: "ionicframework.com"))
+    }
+    
+    func testNoLoggingTransformation() throws {
+        let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
+        let descriptor = InstanceDescriptor.init(at: url, configuration: nil, cordovaConfiguration: nil)
+        descriptor.loggingBehavior = .none
+        var configuration = InstanceConfiguration(with: descriptor, isDebug: false)
+        XCTAssertFalse(configuration.loggingEnabled)
+        configuration = InstanceConfiguration(with: descriptor, isDebug: true)
+        XCTAssertFalse(configuration.loggingEnabled)
+    }
+    
+    func testDebugLoggingTransformation() throws {
+        let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
+        let descriptor = InstanceDescriptor.init(at: url, configuration: nil, cordovaConfiguration: nil)
+        descriptor.loggingBehavior = .debug
+        var configuration = InstanceConfiguration(with: descriptor, isDebug: false)
+        XCTAssertFalse(configuration.loggingEnabled)
+        configuration = InstanceConfiguration(with: descriptor, isDebug: true)
+        XCTAssertTrue(configuration.loggingEnabled)
+    }
+    
+    func testProductionLoggingTransformation() throws {
+        let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
+        let descriptor = InstanceDescriptor.init(at: url, configuration: nil, cordovaConfiguration: nil)
+        descriptor.loggingBehavior = .production
+        var configuration = InstanceConfiguration(with: descriptor, isDebug: false)
+        XCTAssertTrue(configuration.loggingEnabled)
+        configuration = InstanceConfiguration(with: descriptor, isDebug: true)
+        XCTAssertTrue(configuration.loggingEnabled)
     }
 }

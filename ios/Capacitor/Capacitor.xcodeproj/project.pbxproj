@@ -29,6 +29,7 @@
 		623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */; };
 		625AF1ED258963C700869675 /* WebViewAssetHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625AF1EC258963C700869675 /* WebViewAssetHandler.swift */; };
 		6263686025F6EC0100576C1C /* PluginCallAccessorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6263685F25F6EC0100576C1C /* PluginCallAccessorTests.m */; };
+		626D2D992613B61E0046CE81 /* hidinglogs.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 626D2D902613B4BB0046CE81 /* hidinglogs.json */; };
 		62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AE32524DA7700A3D7F1 /* JSExport.swift */; };
 		62959B192524DA7800A3D7F1 /* CAPBridgedPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -110,6 +111,7 @@
 			dstPath = configurations;
 			dstSubfolderSpec = 1;
 			files = (
+				626D2D992613B61E0046CE81 /* hidinglogs.json in CopyFiles */,
 				62A91C3F2553710E00861508 /* nonjson.json in CopyFiles */,
 				62E0736125535E8700BAAADB /* server.json in CopyFiles */,
 				62E0736225535E8700BAAADB /* bad.json in CopyFiles */,
@@ -157,6 +159,7 @@
 		623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CAPInstanceConfiguration.m; sourceTree = "<group>"; };
 		625AF1EC258963C700869675 /* WebViewAssetHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewAssetHandler.swift; sourceTree = "<group>"; };
 		6263685F25F6EC0100576C1C /* PluginCallAccessorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginCallAccessorTests.m; sourceTree = "<group>"; };
+		626D2D902613B4BB0046CE81 /* hidinglogs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hidinglogs.json; sourceTree = "<group>"; };
 		62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPluginCall.h; sourceTree = "<group>"; };
 		62959AE32524DA7700A3D7F1 /* JSExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSExport.swift; sourceTree = "<group>"; };
 		62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPBridgedPlugin.h; sourceTree = "<group>"; };
@@ -382,6 +385,7 @@
 				62E0735225535E6500BAAADB /* server.json */,
 				62E0735325535E6500BAAADB /* bad.json */,
 				62E0735425535E6500BAAADB /* flat.json */,
+				626D2D902613B4BB0046CE81 /* hidinglogs.json */,
 				62E0735525535E6500BAAADB /* hierarchy.json */,
 				62A91C392553710300861508 /* nonjson.json */,
 			);

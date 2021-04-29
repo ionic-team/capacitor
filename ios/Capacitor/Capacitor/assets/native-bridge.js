@@ -369,7 +369,7 @@ const nativeBridge = (function (exports) {
                             methodName: methodName,
                             options: options || {},
                         };
-                        if (cap.DEBUG && pluginName !== 'Console') {
+                        if (cap.isLoggingEnabled && pluginName !== 'Console') {
                             cap.logToNative(callData);
                         }
                         // post the call data to native
@@ -390,7 +390,7 @@ const nativeBridge = (function (exports) {
              */
             cap.fromNative = result => {
                 var _a, _b;
-                if (cap.DEBUG && result.pluginId !== 'Console') {
+                if (cap.isLoggingEnabled && result.pluginId !== 'Console') {
                     cap.logFromNative(result);
                 }
                 // get the stored call, if it exists

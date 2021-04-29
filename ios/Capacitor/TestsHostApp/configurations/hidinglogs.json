@@ -7,19 +7,10 @@
   "overrideUserAgent": "level 1 override",
   "appendUserAgent": "level 1 append",
   "backgroundColor": "#ffffff",
-  "loggingBehavior": "none",
-  "ios": {
-    "overrideUserAgent": "level 2 override",
-  	"appendUserAgent": "level 2 append",
-  	"backgroundColor": "#000000",
-  	"hideLogs": false,
-  	"allowsLinkPreview": false,
-  	"scrollEnabled": false,
-  	"contentInset": "scrollableAxes"
-  },
+  "hideLogs": true,
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 0
+      "launchShowDuration": 1
     }
   },
   "cordova": {}
