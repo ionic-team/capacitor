@@ -77,7 +77,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @brief Whether or not the web view can scroll.
  @discussion Set by @c ios.scrollEnabled in the configuration file. Corresponds to @c isScrollEnabled on WKWebView.
  */
-@property (nonatomic, assign) BOOL enableScrolling;
+@property (nonatomic, assign) BOOL scrollingEnabled;
 /**
  @brief Whether or not the web view will preview links.
  @discussion Set by @c ios.allowsLinkPreview in the configuration file. Corresponds to @c allowsLinkPreview on WKWebView.

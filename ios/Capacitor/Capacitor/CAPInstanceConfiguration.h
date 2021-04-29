@@ -15,7 +15,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly, nonnull) NSURL *serverURL;
 @property (nonatomic, readonly, nonnull) NSDictionary *pluginConfigurations;
 @property (nonatomic, readonly) BOOL loggingEnabled;
-@property (nonatomic, readonly) BOOL enableScrolling;
+@property (nonatomic, readonly) BOOL scrollingEnabled;
 @property (nonatomic, readonly) BOOL allowLinkPreviews;
 @property (nonatomic, readonly) BOOL handleApplicationNotifications;
 @property (nonatomic, readonly) BOOL cordovaDeployDisabled;
