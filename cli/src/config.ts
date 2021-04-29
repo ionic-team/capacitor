@@ -62,6 +62,8 @@ export async function loadConfig(): Promise<Config> {
     },
   };
 
+  checkExternalConfig(conf);
+
   debug('config: %O', config);
 
   return config;
@@ -434,4 +436,17 @@ function formatConfigTS(extConfig: ExternalConfig): string {
 const config: CapacitorConfig = ${formatJSObject(extConfig)};
 
 export default config;\n`;
+}
+
+function checkExternalConfig(config: ExtConfigPairs): void {
+  if (
+    typeof config.extConfig.hideLogs !== 'undefined' ||
+    typeof config.extConfig.android?.hideLogs !== 'undefined' ||
+    typeof config.extConfig.ios?.hideLogs !== 'undefined'
+  ) {
+    logger.warn(
+      `The ${c.strong('hideLogs')} configuration option has been deprecated. ` +
+        `Please update to use ${c.strong('loggingBehavior')} instead.`,
+    );
+  }
 }

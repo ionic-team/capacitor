@@ -45,6 +45,19 @@ describe('runtime', () => {
     expect(cap.DEBUG).toBe(true);
   });
 
+  it('isLoggingEnabled false default', () => {
+    cap = createCapacitor(win);
+    expect(cap.isLoggingEnabled).toBe(false);
+  });
+
+  it('isLoggingEnabled set from window.Capacitor.isLoggingEnabled', () => {
+    (win as any).Capacitor = {
+      isLoggingEnabled: true,
+    };
+    cap = createCapacitor(win);
+    expect(cap.isLoggingEnabled).toBe(true);
+  });
+
   it('cannot reset server url after initializing capacitor', () => {
     win.WEBVIEW_SERVER_URL = 'whatever://home';
     initBridge(win);

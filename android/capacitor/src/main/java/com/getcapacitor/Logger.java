@@ -98,6 +98,6 @@ public class Logger {
     }
 
     protected static boolean shouldLog() {
-        return config == null || !config.isLogsHidden();
+        return config == null || config.isLoggingEnabled();
     }
 }

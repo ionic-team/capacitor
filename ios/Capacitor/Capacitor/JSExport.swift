@@ -15,25 +15,15 @@ internal class JSExport {
     static let catchallOptionsParameter = "_options"
     static let callbackParameter = "_callback"
 
-    static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, localUrl: String) throws {
-        let data = "window.Capacitor = { DEBUG: \(isDebug), Plugins: {} }; window.WEBVIEW_SERVER_URL = '\(localUrl)';"
+    static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, loggingEnabled: Bool, localUrl: String) throws {
+        let data = "window.Capacitor = { DEBUG: \(isDebug), isLoggingEnabled: \(loggingEnabled), Plugins: {} }; window.WEBVIEW_SERVER_URL = '\(localUrl)';"
         let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         userContentController.addUserScript(userScript)
     }
 
     static func exportBridgeJS(userContentController: WKUserContentController) throws {
         let capBundle = Bundle(for: Self.self)
-        guard let resourceBundleURL = capBundle.url(
-                forResource: "CapBridge", withExtension: "bundle") else {
-            CAPLog.print("ERROR: CapBridge.bundle not found! Bridge will not function!")
-            throw CapacitorBridgeError.errorExportingCoreJS
-        }
-        guard let resourceBundle = Bundle(url: resourceBundleURL) else {
-            CAPLog.print("ERROR: Cannot access CapBridge.bundle! Bridge will not function!")
-            throw CapacitorBridgeError.errorExportingCoreJS
-
-        }
-        guard let jsUrl = resourceBundle.url(forResource: "native-bridge", withExtension: "js") else {
+        guard let jsUrl = capBundle.url(forResource: "native-bridge", withExtension: "js") else {
             CAPLog.print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")
             throw CapacitorBridgeError.errorExportingCoreJS
         }

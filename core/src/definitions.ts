@@ -52,6 +52,7 @@ export interface CapacitorGlobal {
   ) => void;
 
   DEBUG?: boolean;
+  isLoggingEnabled?: boolean;
 
   // Deprecated in v3, will be removed from v4
 

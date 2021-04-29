@@ -223,6 +223,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   cap.registerPlugin = registerPlugin;
   cap.Exception = CapacitorException;
   cap.DEBUG = !!cap.DEBUG;
+  cap.isLoggingEnabled = !!cap.isLoggingEnabled;
 
   // Deprecated props
   cap.platform = cap.getPlatform();
