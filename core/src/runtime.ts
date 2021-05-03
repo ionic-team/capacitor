@@ -20,11 +20,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   const defaultGetPlatform = () => getPlatformId(win);
   const getPlatform =
-    capPlatforms.currentPlatform.getPlatform || defaultGetPlatform;
+    capPlatforms?.currentPlatform?.getPlatform || defaultGetPlatform;
 
   const defaultIsNativePlatform = () => getPlatformId(win) !== 'web';
   const isNativePlatform =
-    capPlatforms.currentPlatform.isNativePlatform || defaultIsNativePlatform;
+    capPlatforms?.currentPlatform?.isNativePlatform || defaultIsNativePlatform;
 
   const defaultIsPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
@@ -42,14 +42,15 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     return false;
   };
   const isPluginAvailable =
-    capPlatforms.currentPlatform.isPluginAvailable || defaultIsPluginAvailable;
+    capPlatforms?.currentPlatform?.isPluginAvailable ||
+    defaultIsPluginAvailable;
 
   const defaultGetPluginHeader = (
     pluginName: string,
   ): PluginHeader | undefined =>
     cap.PluginHeaders?.find(h => h.name === pluginName);
   const getPluginHeader =
-    capPlatforms.currentPlatform.getPluginHeader || defaultGetPluginHeader;
+    capPlatforms?.currentPlatform?.getPluginHeader || defaultGetPluginHeader;
 
   const handleError = (err: Error) => win.console.error(err);
 
@@ -222,7 +223,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     return proxy;
   };
   const registerPlugin =
-    capPlatforms.currentPlatform.registerPlugin || defaultRegisterPlugin;
+    capPlatforms?.currentPlatform?.registerPlugin || defaultRegisterPlugin;
 
   // Add in convertFileSrc for web, it will already be available in native context
   if (!cap.convertFileSrc) {

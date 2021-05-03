@@ -167,7 +167,7 @@ export interface StoredCallback {
 
 export interface WindowCapacitor {
   Capacitor?: CapacitorInstance;
-  CapacitorPlatforms: CapacitorPlatformsInstance;
+  CapacitorPlatforms?: CapacitorPlatformsInstance;
   Ionic?: {
     WebView?: {
       getServerBasePath?: any;
