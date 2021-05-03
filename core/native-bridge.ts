@@ -559,7 +559,7 @@ initBridge(
     ? (window as any)
     : typeof global !== 'undefined'
     ? (global as any)
-    : ({} as WindowCapacitor),
+    : ({} as any),
 );
 
 // Export only for tests

@@ -4,7 +4,7 @@ import type {
   PluginResultData,
   PluginResultError,
 } from './definitions';
-import { CapacitorPlatformsInstance } from './platforms';
+import type { CapacitorPlatformsInstance } from './platforms';
 
 export interface PluginHeaderMethod {
   readonly name: string;
