@@ -5,6 +5,7 @@ import type {
   WindowCapacitor,
 } from './definitions-internal';
 import { CapacitorException, getPlatformId, ExceptionCode } from './util';
+import type { CapacitorPlatformsInstance } from './platforms';
 
 export interface RegisteredPlugin {
   readonly name: string;
@@ -15,12 +16,15 @@ export interface RegisteredPlugin {
 export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
   const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
+  const capPlatforms: CapacitorPlatformsInstance = win.CapacitorPlatforms;
 
-  const getPlatform = () => getPlatformId(win);
+  const defaultGetPlatform = () => getPlatformId(win);
+  const getPlatform = capPlatforms.currentPlatform.getPlatform || defaultGetPlatform;
 
-  const isNativePlatform = () => getPlatformId(win) !== 'web';
+  const defaultIsNativePlatform = () => getPlatformId(win) !== 'web';
+  const isNativePlatform = capPlatforms.currentPlatform.isNativePlatform || defaultIsNativePlatform;
 
-  const isPluginAvailable = (pluginName: string): boolean => {
+  const defaultIsPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
 
     if (plugin?.platforms.has(getPlatform())) {
@@ -35,9 +39,10 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
     return false;
   };
+  const isPluginAvailable = capPlatforms.currentPlatform.isPluginAvailable || defaultIsPluginAvailable;
 
-  const getPluginHeader = (pluginName: string): PluginHeader | undefined =>
-    cap.PluginHeaders?.find(h => h.name === pluginName);
+  const defaultGetPluginHeader = (pluginName: string): PluginHeader | undefined => cap.PluginHeaders?.find(h => h.name === pluginName);
+  const getPluginHeader = capPlatforms.currentPlatform.getPluginHeader || defaultGetPluginHeader;
 
   const handleError = (err: Error) => win.console.error(err);
 
@@ -53,7 +58,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   const registeredPlugins = new Map<string, RegisteredPlugin>();
 
-  const registerPlugin = (
+  const defaultRegisterPlugin = (
     pluginName: string,
     jsImplementations: PluginImplementations = {},
   ): any => {
@@ -209,6 +214,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
     return proxy;
   };
+  const registerPlugin = capPlatforms.currentPlatform.registerPlugin || defaultRegisterPlugin;
 
   // Add in convertFileSrc for web, it will already be available in native context
   if (!cap.convertFileSrc) {
