@@ -552,13 +552,13 @@ const initBridge = (w: any): void => {
 
 initBridge(
   typeof globalThis !== 'undefined'
-    ? (globalThis as WindowCapacitor)
+    ? (globalThis as any)
     : typeof self !== 'undefined'
-    ? (self as WindowCapacitor)
+    ? (self as any)
     : typeof window !== 'undefined'
-    ? (window as WindowCapacitor)
+    ? (window as any)
     : typeof global !== 'undefined'
-    ? (global as WindowCapacitor)
+    ? (global as any)
     : ({} as WindowCapacitor),
 );
 
