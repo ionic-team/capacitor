@@ -1,49 +1,52 @@
-import { PluginImplementations } from "./definitions";
-import { PluginHeader } from "./definitions-internal";
+import type { PluginImplementations } from './definitions';
+import type { PluginHeader } from './definitions-internal';
 
 export interface CapacitorPlatform {
   name: string;
   getPlatform?(): string;
   isPluginAvailable?(pluginName: string): boolean;
   getPluginHeader?(pluginName: string): PluginHeader | undefined;
-  registerPlugin?(pluginName: string, jsImplementations: PluginImplementations): any;
+  registerPlugin?(
+    pluginName: string,
+    jsImplementations: PluginImplementations,
+  ): any;
   isNativePlatform?(): boolean;
 }
 
 export interface CapacitorPlatformsInstance {
   currentPlatform: CapacitorPlatform;
-  platforms: Map<string, CapacitorPlatform>,
+  platforms: Map<string, CapacitorPlatform>;
   addPlatform(name: string, platform: CapacitorPlatform): void;
   setPlatform(name: string): void;
 }
 
-
 const createCapacitorPlatforms = (win: any): CapacitorPlatformsInstance => {
   const defaultPlatformMap = new Map<string, CapacitorPlatform>();
-  defaultPlatformMap.set('web', {name: 'web'});
-  
+  defaultPlatformMap.set('web', { name: 'web' });
+
   const capPlatforms: CapacitorPlatformsInstance = win.CapacitorPlatforms || {
-    currentPlatform: {name: 'web'},
+    currentPlatform: { name: 'web' },
     platforms: defaultPlatformMap,
   };
 
   const addPlatform = (name: string, platform: CapacitorPlatform) => {
     capPlatforms.platforms.set(name, platform);
-  }
+  };
 
   const setPlatform = (name: string) => {
     if (capPlatforms.platforms.has(name)) {
       capPlatforms.currentPlatform = capPlatforms.platforms.get(name);
     }
-  }
+  };
 
   capPlatforms.addPlatform = addPlatform;
   capPlatforms.setPlatform = setPlatform;
 
-  return capPlatforms
-}
+  return capPlatforms;
+};
 
-const initPlatforms = (win: any) => (win.CapacitorPlatforms = createCapacitorPlatforms(win))
+const initPlatforms = (win: any) =>
+  (win.CapacitorPlatforms = createCapacitorPlatforms(win));
 
 export const CapacitorPlatforms = /*#__PURE__*/ initPlatforms(
   (typeof globalThis !== 'undefined'
