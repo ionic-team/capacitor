@@ -4,20 +4,8 @@ import type {
   PluginHeader,
   WindowCapacitor,
 } from './definitions-internal';
-<<<<<<< HEAD
 import { CapacitorException, getPlatformId, ExceptionCode } from './util';
 import type { CapacitorPlatformsInstance } from './platforms';
-=======
-import { initEvents } from './events';
-import { initLegacyHandlers } from './legacy/legacy-handlers';
-import type { CapacitorPlatformsInstance } from './platforms';
-import {
-  CapacitorException,
-  convertFileSrcServerUrl,
-  ExceptionCode,
-} from './util';
-import { initVendor } from './vendor';
->>>>>>> 947e350cf9e7358cd2d082fe30530102f64d23a6
 
 export interface RegisteredPlugin {
   readonly name: string;
@@ -27,28 +15,13 @@ export interface RegisteredPlugin {
 
 export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
-<<<<<<< HEAD
-=======
-  const capPlatforms: CapacitorPlatformsInstance = win.CapacitorPlatforms;
-
->>>>>>> 947e350cf9e7358cd2d082fe30530102f64d23a6
   const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
   const capPlatforms: CapacitorPlatformsInstance = win.CapacitorPlatforms;
 
-<<<<<<< HEAD
   const defaultGetPlatform = () => getPlatformId(win);
   const getPlatform = capPlatforms.currentPlatform.getPlatform || defaultGetPlatform;
 
   const defaultIsNativePlatform = () => getPlatformId(win) !== 'web';
-=======
-  const webviewServerUrl =
-    typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
-
-  const defaultGetPlatform = () => getPlatformId(win);
-  const getPlatform = capPlatforms.currentPlatform.getPlatform || defaultGetPlatform;
-
-  const defaultIsNativePlatform = () => capPlatforms.currentPlatform.name !== 'web';
->>>>>>> 947e350cf9e7358cd2d082fe30530102f64d23a6
   const isNativePlatform = capPlatforms.currentPlatform.isNativePlatform || defaultIsNativePlatform;
 
   const defaultIsPluginAvailable = (pluginName: string): boolean => {
@@ -70,28 +43,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   const defaultGetPluginHeader = (pluginName: string): PluginHeader | undefined => cap.PluginHeaders?.find(h => h.name === pluginName);
   const getPluginHeader = capPlatforms.currentPlatform.getPluginHeader || defaultGetPluginHeader;
-<<<<<<< HEAD
-=======
-
-  const convertFileSrc = (filePath: string) =>
-    convertFileSrcServerUrl(webviewServerUrl, filePath);
-
-  const logJs = (msg: string, level: 'error' | 'warn' | 'info' | 'log') => {
-    switch (level) {
-      case 'error':
-        win.console.error(msg);
-        break;
-      case 'warn':
-        win.console.warn(msg);
-        break;
-      case 'info':
-        win.console.info(msg);
-        break;
-      default:
-        win.console.log(msg);
-    }
-  };
->>>>>>> 947e350cf9e7358cd2d082fe30530102f64d23a6
 
   const handleError = (err: Error) => win.console.error(err);
 
@@ -264,7 +215,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     return proxy;
   };
   const registerPlugin = capPlatforms.currentPlatform.registerPlugin || defaultRegisterPlugin;
-<<<<<<< HEAD
 
   // Add in convertFileSrc for web, it will already be available in native context
   if (!cap.convertFileSrc) {
@@ -275,16 +225,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   cap.handleError = handleError;
   cap.isNativePlatform = isNativePlatform;
   cap.isPluginAvailable = isPluginAvailable;
-=======
-
-  cap.getServerUrl = () => webviewServerUrl;
-  cap.getPlatform = getPlatform;
-  cap.isNativePlatform = isNativePlatform;
-  cap.isPluginAvailable = isPluginAvailable;
-  cap.convertFileSrc = convertFileSrc;
-  cap.logJs = logJs;
-  cap.handleError = handleError;
->>>>>>> 947e350cf9e7358cd2d082fe30530102f64d23a6
   cap.pluginMethodNoop = pluginMethodNoop;
   cap.registerPlugin = registerPlugin;
   cap.Exception = CapacitorException;
