@@ -7,7 +7,7 @@
   "overrideUserAgent": "level 1 override",
   "appendUserAgent": "level 1 append",
   "backgroundColor": "#ffffff",
-  "hideLogs": true,
+  "loggingBehavior": "debug",
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 1

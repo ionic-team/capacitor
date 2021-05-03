@@ -1,15 +1,16 @@
-import type { Plugin } from '../definitions';
+import { initBridge } from '../../native-bridge';
+import type { CapacitorGlobal, Plugin } from '../definitions';
 import type {
-  CapacitorInstance,
   WindowCapacitor,
+  CapacitorInstance,
 } from '../definitions-internal';
-import { createCapacitor } from '../runtime';
+import { initCapacitorGlobal } from '../runtime';
 import { ExceptionCode } from '../util';
 import { WebPlugin } from '../web-plugin';
 
 describe('plugin', () => {
   let win: WindowCapacitor;
-  let cap: CapacitorInstance;
+  let cap: CapacitorGlobal;
 
   beforeEach(() => {
     win = {};
@@ -18,13 +19,14 @@ describe('plugin', () => {
   it('error from missing method from native implementation', async done => {
     // mock the global with the android bridge
     mockAndroidBridge();
+    initBridge(win);
 
     // simulate native adding the plugin header with a garbage method before
     // the core runtime
     mockAndroidPlugin('Awesome', 'whatever');
 
     // core runtime creates the actual Capacitor instance
-    cap = createCapacitor(win);
+    cap = initCapacitorGlobal(win);
 
     try {
       const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
@@ -48,13 +50,14 @@ describe('plugin', () => {
   it('native implementation', async () => {
     // mock the global with the android bridge
     mockAndroidBridge();
+    initBridge(win);
 
     // simulate native adding the plugin header before the core runtime
     mockAndroidPlugin('Awesome', 'mph');
 
     // core runtime creates the actual Capacitor instance
-    cap = createCapacitor(win);
-    cap.nativePromise = async () => 88 as any;
+    cap = initCapacitorGlobal(win);
+    (cap as CapacitorInstance).nativePromise = async () => 88 as any;
 
     // user runtime registers the plugin
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
@@ -69,11 +72,12 @@ describe('plugin', () => {
   it('error from missing native implementation', async done => {
     // mock the global with the android bridge
     mockAndroidBridge();
+    initBridge(win);
 
     // do not simulate native adding the bridge before the core runtime
 
     // core runtime creates the actual Capacitor instance
-    cap = createCapacitor(win);
+    cap = initCapacitorGlobal(win);
 
     try {
       const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
@@ -96,7 +100,9 @@ describe('plugin', () => {
 
   it('error lazy loading implementation', async done => {
     mockAndroidBridge();
-    cap = createCapacitor(win);
+    initBridge(win);
+
+    cap = initCapacitorGlobal(win);
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: async () => {
@@ -122,7 +128,9 @@ describe('plugin', () => {
 
   it('call method on lazy loaded implementation', async () => {
     mockAndroidBridge();
-    cap = createCapacitor(win);
+    initBridge(win);
+
+    cap = initCapacitorGlobal(win);
 
     const AwesomePlugin = class {
       val = 88;
@@ -146,7 +154,9 @@ describe('plugin', () => {
 
   it('call method on already loaded implementation', async () => {
     mockAndroidBridge();
-    cap = createCapacitor(win);
+    initBridge(win);
+
+    cap = initCapacitorGlobal(win);
 
     const AwesomePlugin = class {
       val = 88;
@@ -171,7 +181,9 @@ describe('plugin', () => {
 
   it('call method that had an error', async () => {
     mockAndroidBridge();
-    cap = createCapacitor(win);
+    initBridge(win);
+
+    cap = initCapacitorGlobal(win);
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: {
@@ -186,7 +198,7 @@ describe('plugin', () => {
   });
 
   it('missing method on lazy loaded implementation', async done => {
-    cap = createCapacitor(win);
+    cap = initCapacitorGlobal(win);
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       web: async () => ({}),
@@ -212,7 +224,9 @@ describe('plugin', () => {
 
   it('missing method on already loaded implementation', async done => {
     mockAndroidBridge();
-    cap = createCapacitor(win);
+    initBridge(win);
+
+    cap = initCapacitorGlobal(win);
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: {},
@@ -237,7 +251,7 @@ describe('plugin', () => {
   });
 
   it('no web platform implementation', async done => {
-    cap = createCapacitor(win);
+    cap = initCapacitorGlobal(win);
     expect(cap.getPlatform()).toBe('web');
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
@@ -262,7 +276,9 @@ describe('plugin', () => {
 
   it('no native platform implementation', async done => {
     mockAndroidBridge();
-    cap = createCapacitor(win);
+    initBridge(win);
+
+    cap = initCapacitorGlobal(win);
     expect(cap.getPlatform()).toBe('android');
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
@@ -289,8 +305,10 @@ describe('plugin', () => {
 
   it('do not double register a plugin', () => {
     mockAndroidBridge();
+    initBridge(win);
     mockAndroidPlugin('Awesome', 'mph');
-    cap = createCapacitor(win);
+
+    cap = initCapacitorGlobal(win);
     expect(cap.getPlatform()).toBe('android');
 
     const Awesome1 = cap.registerPlugin<AwesomePlugin>('Awesome');
@@ -307,7 +325,7 @@ describe('plugin', () => {
       }
     };
 
-    cap = createCapacitor(win);
+    cap = initCapacitorGlobal(win);
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       web: async () => new LazyWeb(),
     });
@@ -324,8 +342,10 @@ describe('plugin', () => {
 
   it('sync addListener on android', async () => {
     mockAndroidBridge();
+    initBridge(win);
     mockAndroidPlugin('Awesome', 'mph');
-    cap = createCapacitor(win);
+
+    cap = initCapacitorGlobal(win);
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
 
@@ -339,8 +359,10 @@ describe('plugin', () => {
 
   it('async addListener on android', async () => {
     mockAndroidBridge();
+    initBridge(win);
     mockAndroidPlugin('Awesome', 'mph');
-    cap = createCapacitor(win);
+
+    cap = initCapacitorGlobal(win);
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
 
@@ -358,7 +380,7 @@ describe('plugin', () => {
         setImmediate(() => done());
       }
     };
-    cap = createCapacitor(win);
+    cap = initCapacitorGlobal(win);
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       web: async () => new AwesomeWeb(),
     });

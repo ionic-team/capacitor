@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.0...3.0.0-rc.1) (2021-04-29)
+
+
+### Bug Fixes
+
+* generate Capacitor.Plugins object ([#4496](https://github.com/ionic-team/capacitor/issues/4496)) ([1c71b7a](https://github.com/ionic-team/capacitor/commit/1c71b7adb2c325e34d980dbf578dc22afb2c332b))
+* **android:** Release the call after reject/resolve ([#4318](https://github.com/ionic-team/capacitor/issues/4318)) ([a9f30a8](https://github.com/ionic-team/capacitor/commit/a9f30a88bf3cf239a59c4e901e2a9a2a141a9044))
+* **android:** resolve issue with activity result API registration for fragments ([#4402](https://github.com/ionic-team/capacitor/issues/4402)) ([ac6c6bc](https://github.com/ionic-team/capacitor/commit/ac6c6bc031e0c8236004dfb9e1b04f1f849c1519))
+
+
+### Features
+
+* Unify logging behavior across environments  ([#4416](https://github.com/ionic-team/capacitor/issues/4416)) ([bae0f3d](https://github.com/ionic-team/capacitor/commit/bae0f3d2cee84978636d0f589bc7e2f745671baf))
+* **android:** ability to add listeners to the Capacitor WebView ([#4405](https://github.com/ionic-team/capacitor/issues/4405)) ([7bdcc15](https://github.com/ionic-team/capacitor/commit/7bdcc15a20248fc17b5867b215bba0c43e29b2c0))
+
+
+
+
+
 # [3.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/3.0.0-beta.6...3.0.0-rc.0) (2021-03-10)
 
 

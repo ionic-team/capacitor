@@ -2,3 +2,5 @@ build
 cli/assets
 dist
 types
+android/capacitor/src/main/assets/native-bridge.js
+ios/Capacitor/Capacitor/assets/native-bridge.js

@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.0...3.0.0-rc.1) (2021-04-29)
+
+
+### Bug Fixes
+
+* generate Capacitor.Plugins object ([#4496](https://github.com/ionic-team/capacitor/issues/4496)) ([1c71b7a](https://github.com/ionic-team/capacitor/commit/1c71b7adb2c325e34d980dbf578dc22afb2c332b))
+* **android:** Release the call after reject/resolve ([#4318](https://github.com/ionic-team/capacitor/issues/4318)) ([a9f30a8](https://github.com/ionic-team/capacitor/commit/a9f30a88bf3cf239a59c4e901e2a9a2a141a9044))
+* **android:** resolve issue with activity result API registration for fragments ([#4402](https://github.com/ionic-team/capacitor/issues/4402)) ([ac6c6bc](https://github.com/ionic-team/capacitor/commit/ac6c6bc031e0c8236004dfb9e1b04f1f849c1519))
+* **cli:** Allow prereleases on node version check ([#4469](https://github.com/ionic-team/capacitor/issues/4469)) ([dd26a98](https://github.com/ionic-team/capacitor/commit/dd26a98bde9c4487178bc4ee45587f86ec53df2a))
+* **cli:** filter targets without id from run device list ([#4397](https://github.com/ionic-team/capacitor/issues/4397)) ([9ec444f](https://github.com/ionic-team/capacitor/commit/9ec444f034d435c7c945e9a20e3ca99a3b1f54d6))
+* **cordova:** use proper targetSdkVersion ([#4498](https://github.com/ionic-team/capacitor/issues/4498)) ([7d48be8](https://github.com/ionic-team/capacitor/commit/7d48be8ce77e1f19e5bb267abdc61eb98b4d0f3c))
+* **core:** Call native implementation before web implementation ([#4493](https://github.com/ionic-team/capacitor/issues/4493)) ([febd606](https://github.com/ionic-team/capacitor/commit/febd60617ab60a3b34132f68f212e9a867d1b434))
+* **core:** Use web listener if there is no native implementation ([#4488](https://github.com/ionic-team/capacitor/issues/4488)) ([196d843](https://github.com/ionic-team/capacitor/commit/196d843a3c9442c5dc6cf61bfe3494fa399dec4f))
+* **ios:** cordova-plugin-screen-orientation compatibility ([#4367](https://github.com/ionic-team/capacitor/issues/4367)) ([b893a57](https://github.com/ionic-team/capacitor/commit/b893a57aaaf3a16e13db9c33037a12f1a5ac92e0))
+* **ios:** fire resume/pause events if no cordova plugins installed ([#4467](https://github.com/ionic-team/capacitor/issues/4467)) ([0105f7a](https://github.com/ionic-team/capacitor/commit/0105f7a2c68f2e7bec16ca23384b6acbb2f3057b))
+* **ios:** put cancel button of confirm/prompt on the left ([#4464](https://github.com/ionic-team/capacitor/issues/4464)) ([e5b53aa](https://github.com/ionic-team/capacitor/commit/e5b53aa687a70938994802c7b1367cfcbb1e3811))
+
+
+### Features
+
+* Unify logging behavior across environments  ([#4416](https://github.com/ionic-team/capacitor/issues/4416)) ([bae0f3d](https://github.com/ionic-team/capacitor/commit/bae0f3d2cee84978636d0f589bc7e2f745671baf))
+* **android:** ability to add listeners to the Capacitor WebView ([#4405](https://github.com/ionic-team/capacitor/issues/4405)) ([7bdcc15](https://github.com/ionic-team/capacitor/commit/7bdcc15a20248fc17b5867b215bba0c43e29b2c0))
+* **cli:** Add signup prompt on first init ([#4440](https://github.com/ionic-team/capacitor/issues/4440)) ([b3faa97](https://github.com/ionic-team/capacitor/commit/b3faa97d9b0ee542a8d90f433545f7e83402c485))
+* **iOS:** Include native-bridge.js as a resource in both Cocoapods and direct build ([#4505](https://github.com/ionic-team/capacitor/issues/4505)) ([c16ccc0](https://github.com/ionic-team/capacitor/commit/c16ccc0118aec57dc23649894bc3bcd83827f89f))
+
+
+
+
+
 # [3.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/3.0.0-beta.6...3.0.0-rc.0) (2021-03-10)
 
 

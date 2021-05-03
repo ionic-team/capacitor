@@ -1,3 +1,4 @@
+import { initBridge } from '../../native-bridge';
 import type { CapacitorGlobal } from '../definitions';
 import type { WindowCapacitor } from '../definitions-internal';
 import { legacyRegisterWebPlugin } from '../legacy/legacy-web-plugin-merge';
@@ -15,6 +16,8 @@ describe('legacy', () => {
 
   beforeAll(() => {
     console.warn = noop;
+    win = {};
+    initBridge(win);
   });
 
   afterAll(() => {
@@ -102,8 +105,8 @@ describe('legacy', () => {
 
   it('doc.addEventListener backbutton', done => {
     const AppWeb = class {
-      async addListener(event: any) {
-        expect(event.eventName).toBe('backButton');
+      async addListener(eventName: string) {
+        expect(eventName).toBe('backButton');
         done();
       }
     };
@@ -118,6 +121,7 @@ describe('legacy', () => {
       },
       androidBridge: { postMessage: noop },
     };
+    initBridge(win);
     cap = createCapacitor(win);
     cap.registerPlugin<any>('App', {
       web: new AppWeb(),
@@ -136,6 +140,7 @@ describe('legacy', () => {
       },
       androidBridge: { postMessage: noop },
     };
+    initBridge(win);
     createCapacitor(win);
     win.document.addEventListener('deviceready', done);
   });
@@ -145,6 +150,7 @@ describe('legacy', () => {
       navigator: {},
       androidBridge: { postMessage: noop },
     };
+    initBridge(win);
     createCapacitor(win);
     expect(win.navigator.app.exitApp).toBeDefined();
   });
@@ -153,6 +159,7 @@ describe('legacy', () => {
     win = {
       androidBridge: { postMessage: noop },
     };
+    initBridge(win);
     createCapacitor(win);
     expect(win.cordova).toBeDefined();
   });
@@ -162,6 +169,7 @@ describe('legacy', () => {
     win = {
       cordova: existingCordova,
     };
+    initBridge(win);
     createCapacitor(win);
     expect(win.cordova).toBe(existingCordova);
   });

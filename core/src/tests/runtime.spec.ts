@@ -1,8 +1,9 @@
+import { initBridge } from '../../native-bridge';
 import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor, initCapacitorGlobal } from '../runtime';
+import { createCapacitor } from '../runtime';
 
 describe('runtime', () => {
   let win: WindowCapacitor;
@@ -10,6 +11,8 @@ describe('runtime', () => {
 
   beforeEach(() => {
     win = {};
+    initBridge(win);
+    createCapacitor(win);
   });
 
   it('default methods/props', () => {
@@ -42,8 +45,22 @@ describe('runtime', () => {
     expect(cap.DEBUG).toBe(true);
   });
 
+  it('isLoggingEnabled false default', () => {
+    cap = createCapacitor(win);
+    expect(cap.isLoggingEnabled).toBe(false);
+  });
+
+  it('isLoggingEnabled set from window.Capacitor.isLoggingEnabled', () => {
+    (win as any).Capacitor = {
+      isLoggingEnabled: true,
+    };
+    cap = createCapacitor(win);
+    expect(cap.isLoggingEnabled).toBe(true);
+  });
+
   it('cannot reset server url after initializing capacitor', () => {
     win.WEBVIEW_SERVER_URL = 'whatever://home';
+    initBridge(win);
     cap = createCapacitor(win);
     win.WEBVIEW_SERVER_URL = 'CHANGED!!!';
     expect(cap.getServerUrl()).toBe('whatever://home');
@@ -51,6 +68,7 @@ describe('runtime', () => {
 
   it('server url set from window.WEBVIEW_SERVER_URL', () => {
     win.WEBVIEW_SERVER_URL = 'whatever://home';
+    initBridge(win);
     cap = createCapacitor(win);
     expect(cap.getServerUrl()).toBe('whatever://home');
   });
@@ -58,21 +76,5 @@ describe('runtime', () => {
   it('server url default w/out window.WEBVIEW_SERVER_URL set', () => {
     cap = createCapacitor(win);
     expect(cap.getServerUrl()).toBe('');
-  });
-
-  it('new Capacitor global created', () => {
-    expect(win.Capacitor).not.toBeDefined();
-    cap = initCapacitorGlobal(win) as any;
-    expect(win.Capacitor).toBe(cap);
-    expect(win.Capacitor.Plugins).toEqual({});
-  });
-
-  it('existing Capacitor global updated', () => {
-    const Plugins: any = {};
-    const old = (win.Capacitor = { Plugins: Plugins } as any);
-    cap = initCapacitorGlobal(win) as any;
-    expect(win.Capacitor).toBe(cap);
-    expect(win.Capacitor).toBe(old);
-    expect(win.Capacitor.Plugins).toBe(Plugins);
   });
 });

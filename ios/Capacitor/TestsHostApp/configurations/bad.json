@@ -7,7 +7,7 @@
   "overrideUserAgent": "level 1 override",
   "appendUserAgent": "level 1 append",
   "backgroundColor": "invalid string",
-  "hideLogs": "yep",
+  "loggingBehavior": "foo",
   "ios": {
   	"allowsLinkPreview": false,
   	"scrollEnabled": false,
