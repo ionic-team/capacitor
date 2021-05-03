@@ -105,7 +105,12 @@ import Cordova
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
         webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
-            webViewConfiguration.applicationNameForUserAgent = appendUserAgent
+            guard webViewConfiguration.applicationNameForUserAgent != nil else {
+                webViewConfiguration.applicationNameForUserAgent = appendUserAgent
+                return webViewConfiguration;
+            };
+            
+            webViewConfiguration.applicationNameForUserAgent! += " " + appendUserAgent;
         }
         return webViewConfiguration
     }
