@@ -13,6 +13,9 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
+if(project.hasProperty('kotlin_version')) {
+    apply plugin: 'kotlin-android'
+}
 
 android {
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 30
@@ -43,8 +46,12 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'src/main/libs', include: ['*.jar'])
     implementation "org.apache.cordova:framework:$cordovaAndroidVersion"
+    if(project.hasProperty('kotlin_version')) {
+        implementation "androidx.core:core-ktx:+"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    }
     // SUB-PROJECT DEPENDENCIES START
-    
+
     // SUB-PROJECT DEPENDENCIES END
 }
 
