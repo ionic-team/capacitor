@@ -456,8 +456,6 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 plugin.perform(selector, with: pluginCall)
                 if pluginCall.keepAlive {
                     self?.saveCall(pluginCall)
-                } else {
-                    self?.releaseCall(pluginCall)
                 }
             }
 
