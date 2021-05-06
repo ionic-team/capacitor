@@ -371,7 +371,7 @@ const initBridge = (w: any): void => {
       // android platform
       postToNative = data => {
         try {
-          win.androidBridge.postMessage(JSON.stringify(data));
+          win.androidBridge.postMessage(safeStringify(data));
         } catch (e) {
           win?.console?.error(e);
         }
@@ -401,7 +401,7 @@ const initBridge = (w: any): void => {
             url: url,
             line: lineNo,
             col: columnNo,
-            errorObject: JSON.stringify(err),
+            errorObject: safeStringify(err),
           },
         };
 
