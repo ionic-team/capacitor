@@ -193,13 +193,17 @@ const initBridge = (w: any): void => {
   };
 
   const safeStringify = (value: any): string => {
-    const seen = new Set()
+    const seen = new Set();
     return JSON.stringify(value, (_k, v) => {
-      if (seen.has(v)) { return '...' }
-      if (typeof v === 'object') { seen.add(v) }
-      return v
-    })
-  }
+      if (seen.has(v)) {
+        return '...';
+      }
+      if (typeof v === 'object') {
+        seen.add(v);
+      }
+      return v;
+    });
+  };
 
   const initLogger = (win: WindowCapacitor, cap: CapacitorInstance) => {
     const BRIDGED_CONSOLE_METHODS: (keyof Console)[] = [
@@ -280,7 +284,7 @@ const initBridge = (w: any): void => {
         typeof c.dir === 'function'
       );
     };
-    
+
     const serializeConsoleMessage = (msg: any): string => {
       if (typeof msg === 'object') {
         try {
