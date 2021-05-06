@@ -192,6 +192,15 @@ const initBridge = (w: any): void => {
     win.Ionic.WebView = IonicWebView;
   };
 
+  const safeStringify = (value: any): string => {
+    const seen = new Set()
+    return JSON.stringify(value, (_k, v) => {
+      if (seen.has(v)) { return '...' }
+      if (typeof v === 'object') { seen.add(v) }
+      return v
+    })
+  }
+
   const initLogger = (win: WindowCapacitor, cap: CapacitorInstance) => {
     const BRIDGED_CONSOLE_METHODS: (keyof Console)[] = [
       'debug',
@@ -271,15 +280,6 @@ const initBridge = (w: any): void => {
         typeof c.dir === 'function'
       );
     };
-
-    const safeStringify = (value: any): string => {
-      const seen = new Set()
-      return JSON.stringify(value, (_k, v) => {
-        if (seen.has(v)) { return '...' }
-        if (typeof v === 'object') { seen.add(v) }
-        return v
-      })
-    }
     
     const serializeConsoleMessage = (msg: any): string => {
       if (typeof msg === 'object') {
