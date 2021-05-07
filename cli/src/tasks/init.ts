@@ -1,5 +1,6 @@
 import open from 'open';
 import { basename, dirname, resolve } from 'path';
+import { detectFramework } from '../framework-configs';
 
 import c from '../colors';
 import { check, checkAppId, checkAppName, runTask } from '../common';
@@ -114,6 +115,11 @@ async function getAppId(config: Config, id: string) {
 
 async function getWebDir(config: Config, webDir?: string) {
   if (!webDir) {
+    const framework = detectFramework(config);
+    if (framework?.webDir) {
+      return framework.webDir;
+    }
+
     const answers = await logPrompt(
       `${c.strong(`What is the web asset directory for your app?`)}\n` +
         `This directory should contain the final ${c.strong(
