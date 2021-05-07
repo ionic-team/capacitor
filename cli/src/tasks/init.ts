@@ -1,6 +1,5 @@
 import open from 'open';
 import { basename, dirname, resolve } from 'path';
-import { detectFramework } from '../framework-configs';
 
 import c from '../colors';
 import { check, checkAppId, checkAppName, runTask } from '../common';
@@ -12,6 +11,7 @@ import {
 import { getCordovaPreferences } from '../cordova';
 import type { Config, ExternalConfig } from '../definitions';
 import { fatal, isFatal } from '../errors';
+import { detectFramework } from '../framework-configs';
 import { output, logSuccess, logPrompt } from '../log';
 import { readConfig, writeConfig as sysWriteConfig } from '../sysconfig';
 import { resolveNode } from '../util/node';

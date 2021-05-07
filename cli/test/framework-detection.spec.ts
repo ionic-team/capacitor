@@ -1,6 +1,7 @@
-import { detectFramework } from '../../cli/src/framework-configs';
-import { Config } from '../src/definitions';
 import { resolve } from 'path';
+
+import { detectFramework } from '../../cli/src/framework-configs';
+import type { Config } from '../src/definitions';
 
 describe('framework detection', () => {
   let config: Config;

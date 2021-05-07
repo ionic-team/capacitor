@@ -71,16 +71,16 @@ const FRAMEWORK_CONFIGS: FrameworkConfig[] = [
   },
 ];
 
-export function detectFramework(config: Config) {
+export function detectFramework(config: Config): FrameworkConfig | undefined {
   return FRAMEWORK_CONFIGS.find(f => f.isMatch(config));
 }
 
-function hasDependency(config: Config, depName: string) {
+function hasDependency(config: Config, depName: string): boolean {
   const deps = getDependencies(config);
   return deps.includes(depName);
 }
 
-function getDependencies(config: Config) {
+function getDependencies(config: Config): string[] {
   const deps: string[] = [];
   if (config?.app?.package?.dependencies) {
     deps.push(...Object.keys(config.app.package.dependencies));
