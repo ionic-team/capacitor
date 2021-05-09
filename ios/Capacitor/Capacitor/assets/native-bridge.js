@@ -166,6 +166,33 @@ const nativeBridge = (function (exports) {
             win.Capacitor = cap;
             win.Ionic.WebView = IonicWebView;
         };
+        const isReactive = (value) => {
+            if (isReadonly(value)) {
+                return isReactive(value["__v_raw" /* RAW */]);
+            }
+            return !!(value && value["__v_isReactive" /* IS_REACTIVE */]);
+        };
+        const isReadonly = (value) => {
+            return !!(value && value["__v_isReadonly" /* IS_READONLY */]);
+        };
+        const isProxy = (value) => {
+            return isReactive(value) || isReadonly(value);
+        };
+        const safeStringify = (value) => {
+            const seen = new Set();
+            return JSON.stringify(value, (_k, v) => {
+                if (isProxy(v)) {
+                    return "proxy";
+                }
+                if (seen.has(v)) {
+                    return '...';
+                }
+                if (typeof v === 'object') {
+                    seen.add(v);
+                }
+                return v;
+            });
+        };
         const initLogger = (win, cap) => {
             const BRIDGED_CONSOLE_METHODS = [
                 'debug',
@@ -230,9 +257,12 @@ const nativeBridge = (function (exports) {
                     typeof c.dir === 'function');
             };
             const serializeConsoleMessage = (msg) => {
+                if (isProxy(msg)) {
+                    return "proxy";
+                }
                 if (typeof msg === 'object') {
                     try {
-                        msg = JSON.stringify(msg);
+                        msg = safeStringify(msg);
                     }
                     catch (e) {
                         // ignore
@@ -303,7 +333,7 @@ const nativeBridge = (function (exports) {
                 postToNative = data => {
                     var _a;
                     try {
-                        win.androidBridge.postMessage(JSON.stringify(data));
+                        win.androidBridge.postMessage(safeStringify(data));
                     }
                     catch (e) {
                         (_a = win === null || win === void 0 ? void 0 : win.console) === null || _a === void 0 ? void 0 : _a.error(e);
@@ -334,7 +364,7 @@ const nativeBridge = (function (exports) {
                             url: url,
                             line: lineNo,
                             col: columnNo,
-                            errorObject: JSON.stringify(err),
+                            errorObject: safeStringify(err),
                         },
                     };
                     if (err !== null) {

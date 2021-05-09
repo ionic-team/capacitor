@@ -192,9 +192,40 @@ const initBridge = (w: any): void => {
     win.Ionic.WebView = IonicWebView;
   };
 
+  const enum ReactiveFlags {
+    SKIP = '__v_skip',
+    IS_REACTIVE = '__v_isReactive',
+    IS_READONLY = '__v_isReadonly',
+    RAW = '__v_raw'
+  }
+  
+  interface Target {
+    [ReactiveFlags.SKIP]?: boolean
+    [ReactiveFlags.IS_REACTIVE]?: boolean
+    [ReactiveFlags.IS_READONLY]?: boolean
+    [ReactiveFlags.RAW]?: any
+  }
+
+  const isReactive = (value: unknown): boolean => {
+    if (isReadonly(value)) {
+      return isReactive((value as Target)[ReactiveFlags.RAW])
+    }
+    return !!(value && (value as Target)[ReactiveFlags.IS_REACTIVE])
+  }
+  
+  const isReadonly = (value: unknown): boolean => {
+    return !!(value && (value as Target)[ReactiveFlags.IS_READONLY])
+  }
+  
+  const isProxy = (value: unknown): boolean => {
+    return isReactive(value) || isReadonly(value)
+  }
+  
+
   const safeStringify = (value: any): string => {
     const seen = new Set()
     return JSON.stringify(value, (_k, v) => {
+      if (isProxy(v)) { return "proxy" }
       if (seen.has(v)) { return '...' }
       if (typeof v === 'object') { seen.add(v) }
       return v
@@ -282,6 +313,7 @@ const initBridge = (w: any): void => {
     };
     
     const serializeConsoleMessage = (msg: any): string => {
+      if (isProxy(msg)) { return "proxy" }
       if (typeof msg === 'object') {
         try {
           msg = safeStringify(msg);
