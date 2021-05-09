@@ -221,16 +221,21 @@ const initBridge = (w: any): void => {
     return isReactive(value) || isReadonly(value)
   }
   
-
   const safeStringify = (value: any): string => {
-    const seen = new Set()
+    const seen = new Set();
     return JSON.stringify(value, (_k, v) => {
-      if (isProxy(v)) { return "proxy" }
-      if (seen.has(v)) { return '...' }
-      if (typeof v === 'object') { seen.add(v) }
-      return v
-    })
-  }
+      if (isProxy(v)) {
+        return "proxy"
+      }
+      if (seen.has(v)) {
+        return '...';
+      }
+      if (typeof v === 'object') {
+        seen.add(v);
+      }
+      return v;
+    });
+  };
 
   const initLogger = (win: WindowCapacitor, cap: CapacitorInstance) => {
     const BRIDGED_CONSOLE_METHODS: (keyof Console)[] = [
