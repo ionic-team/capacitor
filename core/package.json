@@ -22,9 +22,8 @@
   "types": "types/index.d.ts",
   "unpkg": "dist/capacitor.js",
   "scripts": {
-    "build": "npm run build.runtime && npm run build.bridge",
-    "build.runtime": "npm run clean && npm run transpile && npm run rollup",
-    "build.bridge": "tsc native-bridge.ts --target es2017 --moduleResolution node --outDir build && rollup --config rollup.bridge.config.js",
+    "build": "npm run clean && npm run transpile && npm run rollup",
+    "build:nativebridge": "tsc native-bridge.ts --target es2017 --moduleResolution node --outDir build && rollup --config rollup.bridge.config.js",
     "clean": "rimraf dist",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
