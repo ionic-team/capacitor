@@ -39,7 +39,7 @@
     "build": "npm run clean && npm run assets && tsc",
     "clean": "rimraf ./dist",
     "assets": "node ../scripts/pack-cli-assets.mjs",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly2": "npm run build",
     "test": "jest -i",
     "watch": "npm run assets && tsc -w"
   },

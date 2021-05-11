@@ -15,7 +15,7 @@
     "swiftlint": "node-swiftlint",
     "postinstall": "lerna bootstrap",
     "version": "npm run sync-peer-dependencies",
-    "release:dev": "lerna run test && npm run lerna:publish:dev",
+    "release:dev": "lerna run test && lerna run build && npm run lerna:publish:dev",
     "release:rc": "npm run lerna:version:rc",
     "release:latest": "npm run lerna:version:latest"
   },
