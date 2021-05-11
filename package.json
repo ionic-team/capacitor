@@ -13,11 +13,11 @@
     "prettier": "prettier \"**/*.{css,html,java,js,mjs,ts}\"",
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
-    "postinstall": "lerna bootstrap",
-    "version": "npm run sync-peer-dependencies",
+    "postinstall": "lerna bootstrap",    
     "release:dev": "lerna run test && lerna run build && npm run lerna:publish:dev",
     "release:rc": "npm run lerna:version:rc",
-    "release:latest": "npm run lerna:version:latest"
+    "release:latest": "npm run lerna:version:latest",
+    "version": "npm run sync-peer-dependencies && lerna run build:nativebridge && git add ."
   },
   "prettier": "@ionic/prettier-config",
   "eslintConfig": {
