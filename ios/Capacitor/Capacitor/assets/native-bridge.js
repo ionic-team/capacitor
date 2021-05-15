@@ -166,19 +166,49 @@ const nativeBridge = (function (exports) {
             win.Capacitor = cap;
             win.Ionic.WebView = IonicWebView;
         };
-        const isReactive = (value) => {
-            if (isReadonly(value)) {
-                return isReactive(value["__v_raw" /* RAW */]);
+        const shouldBeCloneable = (o) => {
+            const type = typeof o;
+            return (type === "undefined" ||
+                o === null ||
+                type === "boolean" ||
+                type === "number" ||
+                type === "string" ||
+                o instanceof Date ||
+                o instanceof RegExp ||
+                o instanceof Blob ||
+                o instanceof File ||
+                o instanceof FileList ||
+                o instanceof ArrayBuffer ||
+                o instanceof Array ||
+                o instanceof Map ||
+                o instanceof Set);
+        };
+        const isCloneable = (obj) => {
+            try {
+                postMessage(obj, "*");
             }
-            return !!(value && value["__v_isReactive" /* IS_REACTIVE */]);
+            catch (error) {
+                if ((error === null || error === void 0 ? void 0 : error.code) === 25)
+                    return false; // DATA_CLONE_ERR
+            }
+            return true;
         };
-        const isReadonly = (value) => {
-            return !!(value && value["__v_isReadonly" /* IS_READONLY */]);
-        };
-        const isProxy = (value) => {
-            return isReactive(value) || isReadonly(value);
+        // https://stackoverflow.com/a/62544968
+        const isProxy = (obj) => {
+            const _shouldBeCloneable = shouldBeCloneable(obj);
+            const _isCloneable = isCloneable(obj);
+            if (_isCloneable) {
+                return false;
+            }
+            if (!_shouldBeCloneable) {
+                return "maybe";
+            }
+            return _shouldBeCloneable && !_isCloneable;
         };
         const safeStringify = (value) => {
+            if (isProxy(value)) {
+                return "proxy";
+            }
             const seen = new Set();
             return JSON.stringify(value, (_k, v) => {
                 if (isProxy(v)) {

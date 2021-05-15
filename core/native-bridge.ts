@@ -192,36 +192,54 @@ const initBridge = (w: any): void => {
     win.Ionic.WebView = IonicWebView;
   };
 
-  const enum ReactiveFlags {
-    SKIP = '__v_skip',
-    IS_REACTIVE = '__v_isReactive',
-    IS_READONLY = '__v_isReadonly',
-    RAW = '__v_raw'
-  }
-  
-  interface Target {
-    [ReactiveFlags.SKIP]?: boolean
-    [ReactiveFlags.IS_REACTIVE]?: boolean
-    [ReactiveFlags.IS_READONLY]?: boolean
-    [ReactiveFlags.RAW]?: any
+  const shouldBeCloneable = (o: any): boolean => {
+    const type = typeof o;
+    return (
+        type === "undefined" ||
+        o === null ||
+        type === "boolean" ||
+        type === "number" ||
+        type === "string" ||
+        o instanceof Date ||
+        o instanceof RegExp ||
+        o instanceof Blob ||
+        o instanceof File ||
+        o instanceof FileList ||
+        o instanceof ArrayBuffer ||
+        o instanceof Array ||
+        o instanceof Map ||
+        o instanceof Set
+    );
   }
 
-  const isReactive = (value: unknown): boolean => {
-    if (isReadonly(value)) {
-      return isReactive((value as Target)[ReactiveFlags.RAW])
-    }
-    return !!(value && (value as Target)[ReactiveFlags.IS_REACTIVE])
+  const isCloneable = (obj: any): boolean => {
+      try {
+          postMessage(obj, "*");
+      } catch (error) {
+          if (error?.code === 25) return false; // DATA_CLONE_ERR
+      }
+
+      return true;
   }
-  
-  const isReadonly = (value: unknown): boolean => {
-    return !!(value && (value as Target)[ReactiveFlags.IS_READONLY])
+
+  // https://stackoverflow.com/a/62544968
+  const isProxy = (obj: any): string | boolean => {
+      const _shouldBeCloneable = shouldBeCloneable(obj);
+      const _isCloneable = isCloneable(obj);
+
+      if(_isCloneable) {
+        return false;
+      }
+
+      if(!_shouldBeCloneable) {
+        return "maybe";
+      }
+      
+      return _shouldBeCloneable && !_isCloneable;
   }
-  
-  const isProxy = (value: unknown): boolean => {
-    return isReactive(value) || isReadonly(value)
-  }
-  
+    
   const safeStringify = (value: any): string => {
+    if (isProxy(value)) { return "proxy" }
     const seen = new Set();
     return JSON.stringify(value, (_k, v) => {
       if (isProxy(v)) {
