@@ -337,14 +337,14 @@ const initBridge = (w: any): void => {
     if (win.console && isIos) {
       for (const logfn of BRIDGED_CONSOLE_METHODS) {
         win.console[logfn] = (...args: any[]) => {
-          const msgs = [...args];
 
-          originalConsole[logfn](...msgs);
+          // eslint-disable-next-line prefer-spread
+          originalConsole[logfn].apply(originalConsole, args);
 
           try {
             cap.toNative('Console', 'log', {
               level: logfn,
-              message: msgs.map(serializeConsoleMessage).join(' '),
+              message: args.map(serializeConsoleMessage).join(' '),
             });
           } catch (e) {
             // error converting/posting console messages
