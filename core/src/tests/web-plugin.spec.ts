@@ -1,7 +1,8 @@
 import { initBridge } from '../../native-bridge';
-import type { WindowCapacitor } from '../definitions-internal';
 import { createCapacitor } from '../runtime';
 import { WebPlugin } from '../web-plugin';
+
+import type { WindowCapacitor } from '../definitions-internal';
 
 const win = {};
 initBridge(win);

@@ -4,8 +4,9 @@ import Debug from 'debug';
 import { request } from 'https';
 import { resolve } from 'path';
 
-import type { Metric } from './telemetry';
 import { ENV_PATHS } from './util/cli';
+
+import type { Metric } from './telemetry';
 
 const debug = Debug('capacitor:ipc');
 

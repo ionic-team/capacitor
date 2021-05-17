@@ -8,17 +8,14 @@ import {
   writeFile,
 } from '@ionic/utils-fs';
 import { basename, extname, join, resolve } from 'path';
-import type { PlistObject } from 'plist';
 import plist from 'plist';
 import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
 import c from './colors';
-import type { Config } from './definitions';
 import { fatal } from './errors';
 import { getIOSPlugins } from './ios/common';
 import { logger, logPrompt } from './log';
-import type { Plugin } from './plugin';
 import {
   PluginType,
   getAllElements,
@@ -32,6 +29,10 @@ import {
 } from './plugin';
 import { resolveNode } from './util/node';
 import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
+
+import type { Config } from './definitions';
+import type { Plugin } from './plugin';
+import type { PlistObject } from 'plist';
 
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.

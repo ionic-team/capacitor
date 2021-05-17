@@ -13,7 +13,7 @@
     "prettier": "prettier \"**/*.{css,html,java,js,mjs,ts}\"",
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
-    "postinstall": "lerna bootstrap",    
+    "postinstall": "lerna bootstrap",
     "release:dev": "lerna run test && lerna run build && npm run lerna:publish:dev",
     "release:rc": "npm run lerna:version:rc",
     "release:latest": "npm run lerna:version:latest",

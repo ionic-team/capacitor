@@ -9,12 +9,13 @@ import {
   writeConfig,
 } from '../config';
 import { getCordovaPreferences } from '../cordova';
-import type { Config, ExternalConfig } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { output, logSuccess, logPrompt } from '../log';
 import { readConfig, writeConfig as sysWriteConfig } from '../sysconfig';
 import { resolveNode } from '../util/node';
 import { checkInteractive, isInteractive } from '../util/term';
+
+import type { Config, ExternalConfig } from '../definitions';
 
 export async function initCommand(
   config: Config,

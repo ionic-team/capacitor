@@ -1,14 +1,15 @@
-import type { LoggerLevelWeight } from '@ionic/cli-framework-output';
 import {
   LOGGER_LEVELS,
   StreamOutputStrategy,
   TTYOutputStrategy,
   createDefaultLogger,
 } from '@ionic/cli-framework-output';
-import type { Answers, PromptObject } from 'prompts';
 
 import c from './colors';
 import { isInteractive } from './util/term';
+
+import type { LoggerLevelWeight } from '@ionic/cli-framework-output';
+import type { Answers, PromptObject } from 'prompts';
 
 const options = {
   colors: c,

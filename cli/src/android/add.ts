@@ -4,9 +4,10 @@ import { join } from 'path';
 
 import c from '../colors';
 import { runTask } from '../common';
-import type { Config } from '../definitions';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
+
+import type { Config } from '../definitions';
 
 export async function addAndroid(config: Config): Promise<void> {
   await runTask(

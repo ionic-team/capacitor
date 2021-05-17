@@ -3,8 +3,9 @@ import Debug from 'debug';
 import open from 'open';
 
 import c from '../colors';
-import type { Config } from '../definitions';
 import { logger } from '../log';
+
+import type { Config } from '../definitions';
 
 const debug = Debug('capacitor:android:open');
 

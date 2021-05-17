@@ -4,10 +4,11 @@ import { join } from 'path';
 
 import c from '../colors';
 import { check } from '../common';
-import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { logSuccess } from '../log';
 import { readXML } from '../util/xml';
+
+import type { Config } from '../definitions';
 
 export async function doctorAndroid(config: Config): Promise<void> {
   try {
