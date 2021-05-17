@@ -9,6 +9,14 @@ import Debug from 'debug';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
+import { OS } from './definitions';
+import { fatal, isFatal } from './errors';
+import { logger } from './log';
+import { tryFn } from './util/fn';
+import { formatJSObject } from './util/js';
+import { resolveNode, requireTS } from './util/node';
+import { lazy } from './util/promise';
+
 import type {
   AndroidConfig,
   AppConfig,
@@ -18,13 +26,6 @@ import type {
   IOSConfig,
   WebConfig,
 } from './definitions';
-import { OS } from './definitions';
-import { fatal, isFatal } from './errors';
-import { logger } from './log';
-import { tryFn } from './util/fn';
-import { formatJSObject } from './util/js';
-import { resolveNode, requireTS } from './util/node';
-import { lazy } from './util/promise';
 
 const debug = Debug('capacitor:config');
 

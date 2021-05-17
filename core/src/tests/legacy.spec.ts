@@ -1,9 +1,10 @@
 import { initBridge } from '../../native-bridge';
-import type { CapacitorGlobal } from '../definitions';
-import type { WindowCapacitor } from '../definitions-internal';
 import { legacyRegisterWebPlugin } from '../legacy/legacy-web-plugin-merge';
 import { createCapacitor } from '../runtime';
 import { WebPlugin } from '../web-plugin';
+
+import type { CapacitorGlobal } from '../definitions';
+import type { WindowCapacitor } from '../definitions-internal';
 
 describe('legacy', () => {
   let win: WindowCapacitor;

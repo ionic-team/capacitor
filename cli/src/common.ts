@@ -3,10 +3,11 @@ import { prettyPath } from '@ionic/utils-terminal';
 import { dirname, join } from 'path';
 
 import c from './colors';
-import type { Config, PackageJson } from './definitions';
 import { fatal } from './errors';
 import { output, logger } from './log';
 import { resolveNode } from './util/node';
+
+import type { Config, PackageJson } from './definitions';
 
 export type CheckFunction = () => Promise<string | null>;
 

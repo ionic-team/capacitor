@@ -1,7 +1,8 @@
 import c from '../colors';
 import { runTask } from '../common';
-import type { Config } from '../definitions';
 import { extractTemplate } from '../util/template';
+
+import type { Config } from '../definitions';
 
 export async function addIOS(config: Config): Promise<void> {
   await runTask(
