@@ -7,7 +7,6 @@ import {
   checkAndroidPackage,
 } from '../android/common';
 import c from '../colors';
-import type { CheckFunction } from '../common';
 import {
   getKnownPlatforms,
   check,
@@ -21,7 +20,6 @@ import {
   promptForPlatform,
   getProjectPlatformDirectory,
 } from '../common';
-import type { Config } from '../definitions';
 import { OS } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
@@ -33,6 +31,9 @@ import {
 import { logger, logSuccess, output } from '../log';
 
 import { sync } from './sync';
+
+import type { CheckFunction } from '../common';
+import type { Config } from '../definitions';
 
 export async function addCommand(
   config: Config,

@@ -10,13 +10,14 @@ import {
   promptForPlatform,
   getPlatformTargetName,
 } from '../common';
-import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { runIOS } from '../ios/run';
 import { logger, output } from '../log';
 import { getPlatformTargets } from '../util/native-run';
 
 import { sync } from './sync';
+
+import type { Config } from '../definitions';
 
 export interface RunCommandOptions {
   list?: boolean;
