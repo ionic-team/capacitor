@@ -8,10 +8,11 @@ import {
   selectPlatforms,
   promptForPlatform,
 } from '../common';
-import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { openIOS } from '../ios/open';
 import { logger } from '../log';
+
+import type { Config } from '../definitions';
 
 export async function openCommand(
   config: Config,

@@ -3,9 +3,10 @@ import { join } from 'path';
 
 import c from '../colors';
 import { runTask } from '../common';
-import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { resolveNode } from '../util/node';
+
+import type { Config } from '../definitions';
 
 export async function copyWeb(config: Config): Promise<void> {
   if (config.app.bundledWebRuntime) {

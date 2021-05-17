@@ -17,9 +17,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import type { Config } from '../definitions';
 import { fatal } from '../errors';
-import type { Plugin } from '../plugin';
 import {
   PluginType,
   getAllElements,
@@ -36,6 +34,9 @@ import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
 
 import { getAndroidPlugins } from './common';
+
+import type { Config } from '../definitions';
+import type { Plugin } from '../plugin';
 
 const platform = 'android';
 const debug = Debug('capacitor:android:update');

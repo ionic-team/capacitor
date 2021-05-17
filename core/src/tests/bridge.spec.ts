@@ -1,10 +1,11 @@
 import { initBridge } from '../../native-bridge';
+import { createCapacitor } from '../runtime';
+
 import type {
   CapacitorInstance,
   PluginResult,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor } from '../runtime';
 
 describe('bridge', () => {
   let win: WindowCapacitor;

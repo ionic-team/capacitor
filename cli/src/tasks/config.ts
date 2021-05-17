@@ -1,7 +1,8 @@
 import util from 'util';
 
-import type { Config } from '../definitions';
 import { output } from '../log';
+
+import type { Config } from '../definitions';
 
 export async function configCommand(
   config: Config,

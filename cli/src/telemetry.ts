@@ -2,13 +2,14 @@ import { Command } from 'commander';
 import Debug from 'debug';
 
 import c from './colors';
-import type { Config } from './definitions';
 import { send } from './ipc';
 import { logPrompt, output } from './log';
-import type { SystemConfig } from './sysconfig';
 import { readConfig, writeConfig } from './sysconfig';
 import { getCommandOutput } from './util/subprocess';
 import { isInteractive } from './util/term';
+
+import type { Config } from './definitions';
+import type { SystemConfig } from './sysconfig';
 
 const debug = Debug('capacitor:telemetry');
 
