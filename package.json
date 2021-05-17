@@ -29,7 +29,7 @@
     "@ionic/swiftlint-config": "^1.1.2",
     "@types/tar": "^4.0.4",
     "eslint": "^7.11.0",
-    "lerna": "^3.22.1",
+    "lerna": "^4.0.0",
     "prettier": "~2.2.0",
     "prettier-plugin-java": "~1.0.0",
     "swiftlint": "^1.0.1",
