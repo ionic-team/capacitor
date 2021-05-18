@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-rc.4](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.3...3.0.0-rc.4) (2021-05-18)
+
+
+### Features
+
+* **cli:** auto detect framework's webDir ([#4550](https://github.com/ionic-team/capacitor/issues/4550)) ([329448a](https://github.com/ionic-team/capacitor/commit/329448a26846b5167b16f9169d62a9ff61eef87d))
+
+
+
+
+
 # [3.0.0-rc.3](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.2...3.0.0-rc.3) (2021-05-11)
 
 **Note:** Version bump only for package @capacitor/cli
