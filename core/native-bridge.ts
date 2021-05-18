@@ -231,12 +231,12 @@ const initBridge = (w: any): void => {
 
         c.groupCollapsed(
           '%cresult %c' +
-          result.pluginId +
-          '.' +
-          result.methodName +
-          ' (#' +
-          result.callbackId +
-          ')',
+            result.pluginId +
+            '.' +
+            result.methodName +
+            ' (#' +
+            result.callbackId +
+            ')',
           tagStyles,
           'font-style: italic; font-weight: bold; color: #444',
         );
@@ -261,12 +261,12 @@ const initBridge = (w: any): void => {
       if (isFullConsole(c)) {
         c.groupCollapsed(
           '%cnative %c' +
-          call.pluginId +
-          '.' +
-          call.methodName +
-          ' (#' +
-          call.callbackId +
-          ')',
+            call.pluginId +
+            '.' +
+            call.methodName +
+            ' (#' +
+            call.callbackId +
+            ')',
           'font-weight: lighter; color: gray',
           'font-weight: bold; color: #000',
         );
@@ -571,12 +571,12 @@ initBridge(
   typeof globalThis !== 'undefined'
     ? (globalThis as WindowCapacitor)
     : typeof self !== 'undefined'
-      ? (self as WindowCapacitor)
-      : typeof window !== 'undefined'
-        ? (window as WindowCapacitor)
-        : typeof global !== 'undefined'
-          ? (global as WindowCapacitor)
-          : ({} as WindowCapacitor),
+    ? (self as WindowCapacitor)
+    : typeof window !== 'undefined'
+    ? (window as WindowCapacitor)
+    : typeof global !== 'undefined'
+    ? (global as WindowCapacitor)
+    : ({} as WindowCapacitor),
 );
 
 // Export only for tests
