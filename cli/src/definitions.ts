@@ -118,3 +118,9 @@ export interface Config {
   readonly cli: CLIConfig;
   readonly app: AppConfig;
 }
+
+export interface FrameworkConfig {
+  name: string;
+  isMatch: (config: Config) => boolean;
+  webDir: string;
+}

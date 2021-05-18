@@ -10,6 +10,7 @@ import {
 } from '../config';
 import { getCordovaPreferences } from '../cordova';
 import { fatal, isFatal } from '../errors';
+import { detectFramework } from '../framework-configs';
 import { output, logSuccess, logPrompt } from '../log';
 import { readConfig, writeConfig as sysWriteConfig } from '../sysconfig';
 import { resolveNode } from '../util/node';
@@ -115,6 +116,11 @@ async function getAppId(config: Config, id: string) {
 
 async function getWebDir(config: Config, webDir?: string) {
   if (!webDir) {
+    const framework = detectFramework(config);
+    if (framework?.webDir) {
+      return framework.webDir;
+    }
+
     const answers = await logPrompt(
       `${c.strong(`What is the web asset directory for your app?`)}\n` +
         `This directory should contain the final ${c.strong(
