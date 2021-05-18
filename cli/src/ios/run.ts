@@ -3,10 +3,11 @@ import { basename, resolve } from 'path';
 
 import c from '../colors';
 import { promptForPlatformTarget, runTask } from '../common';
-import type { Config } from '../definitions';
-import type { RunCommandOptions } from '../tasks/run';
 import { runNativeRun, getPlatformTargets } from '../util/native-run';
 import { runCommand } from '../util/subprocess';
+
+import type { Config } from '../definitions';
+import type { RunCommandOptions } from '../tasks/run';
 
 const debug = Debug('capacitor:ios:run');
 

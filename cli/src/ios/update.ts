@@ -15,9 +15,7 @@ import {
   handleCordovaPluginsJS,
   logCordovaManualSteps,
 } from '../cordova';
-import type { Config } from '../definitions';
 import { fatal } from '../errors';
-import type { Plugin } from '../plugin';
 import {
   PluginType,
   getAllElements,
@@ -34,6 +32,9 @@ import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
 import { getIOSPlugins } from './common';
+
+import type { Config } from '../definitions';
+import type { Plugin } from '../plugin';
 
 const platform = 'ios';
 

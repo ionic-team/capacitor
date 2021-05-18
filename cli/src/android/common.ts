@@ -10,10 +10,11 @@ import { join, resolve } from 'path';
 
 import { checkCapacitorPlatform } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
-import type { Config } from '../definitions';
-import type { Plugin } from '../plugin';
 import { PluginType, getPluginPlatform } from '../plugin';
 import { convertToUnixPath } from '../util/fs';
+
+import type { Config } from '../definitions';
+import type { Plugin } from '../plugin';
 
 export async function checkAndroidPackage(
   config: Config,

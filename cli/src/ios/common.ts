@@ -4,11 +4,12 @@ import { resolve } from 'path';
 import c from '../colors';
 import { checkCapacitorPlatform } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
-import type { Config } from '../definitions';
 import { OS } from '../definitions';
-import type { Plugin } from '../plugin';
 import { PluginType, getPluginPlatform } from '../plugin';
 import { isInstalled } from '../util/subprocess';
+
+import type { Config } from '../definitions';
+import type { Plugin } from '../plugin';
 
 export async function checkIOSPackage(config: Config): Promise<string | null> {
   return checkCapacitorPlatform(config, 'ios');

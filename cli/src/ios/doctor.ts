@@ -1,10 +1,11 @@
 import { check, checkWebDir } from '../common';
-import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logSuccess } from '../log';
 import { isInstalled } from '../util/subprocess';
 
 import { checkCocoaPods } from './common';
+
+import type { Config } from '../definitions';
 
 export async function doctorIOS(config: Config): Promise<void> {
   // DOCTOR ideas for iOS:
