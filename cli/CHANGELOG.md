@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.4...3.0.0) (2021-05-18)
+
+
+### Bug Fixes
+
+* **cli:** create-react-app framework detection should not look for react-dev-utils ([#4585](https://github.com/ionic-team/capacitor/issues/4585)) ([9f7910e](https://github.com/ionic-team/capacitor/commit/9f7910ee39ea7721d01428ec65b3d101b8ba963e))
+
+
+
+
+
 # [3.0.0-rc.4](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.3...3.0.0-rc.4) (2021-05-18)
 
 
