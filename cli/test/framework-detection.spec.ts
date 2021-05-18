@@ -39,9 +39,8 @@ describe('framework detection', () => {
     expect(f?.webDir).toBe('dist');
   });
 
-  it('Create React App', () => {
+  it.only('Create React App', () => {
     addDep(config, 'react-scripts');
-    addDep(config, 'react-dev-utils');
     const f = detectFramework(config);
     expect(f?.name).toBe('Create React App');
     expect(f?.webDir).toBe('build');

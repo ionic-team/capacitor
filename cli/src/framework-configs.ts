@@ -12,7 +12,6 @@ const FRAMEWORK_CONFIGS: FrameworkConfig[] = [
     name: 'Create React App',
     isMatch: config =>
       hasDependency(config, 'react-scripts') &&
-      hasDependency(config, 'react-dev-utils') &&
       !hasDependency(config, '@ionic/react'),
     webDir: 'build',
   },
