@@ -372,6 +372,8 @@ const initBridge = (w: any): void => {
     const getPlatform = () => getPlatformId(win);
 
     cap.getPlatform = getPlatform;
+    cap.isPluginAvailable = name =>
+      Object.prototype.hasOwnProperty.call(cap.Plugins, name);
     cap.isNativePlatform = isNativePlatform;
 
     // create the postToNative() fn if needed
