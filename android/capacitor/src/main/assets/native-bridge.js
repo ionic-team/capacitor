@@ -308,6 +308,7 @@ const nativeBridge = (function (exports) {
             const isNativePlatform = () => true;
             const getPlatform = () => getPlatformId(win);
             cap.getPlatform = getPlatform;
+            cap.isPluginAvailable = (name) => cap.Plugins.hasOwnProperty(name);
             cap.isNativePlatform = isNativePlatform;
             // create the postToNative() fn if needed
             if (getPlatformId(win) === 'android') {
