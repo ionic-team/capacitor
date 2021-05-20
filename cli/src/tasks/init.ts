@@ -184,7 +184,7 @@ function printNextSteps(newConfigName: string) {
   logSuccess(`${c.strong(newConfigName)} created!`);
   output.write(
     `\nNext steps: \n${c.strong(
-      `https://capacitorjs.com/docs/v3/getting-started#where-to-go-next`,
+      `https://capacitorjs.com/docs/getting-started#where-to-go-next`,
     )}\n`,
   );
 }
