@@ -1,6 +1,7 @@
 package com.getcapacitor;
 
 import android.net.Uri;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -43,4 +44,30 @@ public class BridgeWebViewClient extends WebViewClient {
             }
         }
     }
+
+    @Override
+    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+        super.onReceivedError(view, request, error);
+
+        List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
+        if (webViewListeners != null) {
+            for (WebViewListener listener : bridge.getWebViewListeners()) {
+                listener.onReceivedError(view);
+            }
+        }
+    }
+
+    @Override
+    public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+        super.onReceivedHttpError(view, request, errorResponse);
+
+        List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
+        if (webViewListeners != null) {
+            for (WebViewListener listener : bridge.getWebViewListeners()) {
+                listener.onReceivedHttpError(view);
+            }
+        }
+    }
+
+
 }
