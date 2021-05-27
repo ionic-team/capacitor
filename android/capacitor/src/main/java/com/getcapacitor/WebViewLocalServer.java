@@ -266,7 +266,6 @@ public class WebViewLocalServer {
 
             responseStream = jsInjector.getInjectedStream(responseStream);
 
-            bridge.reset();
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
             return new WebResourceResponse(
                 "text/html",
@@ -295,7 +294,6 @@ public class WebViewLocalServer {
             // TODO: Conjure up a bit more subtlety than this
             if (ext.equals(".html")) {
                 responseStream = jsInjector.getInjectedStream(responseStream);
-                bridge.reset();
             }
 
             String mimeType = getMimeType(path, responseStream);
@@ -351,7 +349,6 @@ public class WebViewLocalServer {
                     }
                     InputStream responseStream = conn.getInputStream();
                     responseStream = jsInjector.getInjectedStream(responseStream);
-                    bridge.reset();
                     return new WebResourceResponse(
                         "text/html",
                         handler.getEncoding(),
