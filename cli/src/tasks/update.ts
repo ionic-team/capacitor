@@ -1,6 +1,5 @@
 import { updateAndroid } from '../android/update';
 import c from '../colors';
-import type { CheckFunction } from '../common';
 import {
   check,
   checkPackage,
@@ -10,6 +9,7 @@ import {
   selectPlatforms,
   isValidPlatform,
 } from '../common';
+import type { CheckFunction } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { checkCocoaPods } from '../ios/common';
@@ -36,8 +36,9 @@ export async function updateCommand(
       await check([() => checkPackage(), ...updateChecks(config, platforms)]);
 
       await allSerial(
-        platforms.map(platformName => async () =>
-          await update(config, platformName, deployment),
+        platforms.map(
+          platformName => async () =>
+            await update(config, platformName, deployment),
         ),
       );
       const now = +new Date();

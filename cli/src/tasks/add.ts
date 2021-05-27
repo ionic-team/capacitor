@@ -7,7 +7,6 @@ import {
   checkAndroidPackage,
 } from '../android/common';
 import c from '../colors';
-import type { CheckFunction } from '../common';
 import {
   getKnownPlatforms,
   check,
@@ -21,8 +20,9 @@ import {
   promptForPlatform,
   getProjectPlatformDirectory,
 } from '../common';
-import type { Config } from '../definitions';
+import type { CheckFunction } from '../common';
 import { OS } from '../definitions';
+import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
 import {
@@ -119,7 +119,7 @@ function printNextSteps(platformName: string) {
   logSuccess(`${c.strong(platformName)} platform added!`);
   output.write(
     `Follow the Developer Workflow guide to get building:\n${c.strong(
-      `https://capacitorjs.com/docs/v3/basics/workflow`,
+      `https://capacitorjs.com/docs/basics/workflow`,
     )}\n`,
   );
 }
@@ -167,7 +167,7 @@ function webWarning() {
     `Not adding platform ${c.strong('web')}.\n` +
       `In Capacitor, the web platform is just your web app! For example, if you have a React or Angular project, the web platform is that project.\n` +
       `To add Capacitor functionality to your web app, follow the Web Getting Started Guide: ${c.strong(
-        'https://capacitorjs.com/docs/v3/web',
+        'https://capacitorjs.com/docs/web',
       )}`,
   );
 }

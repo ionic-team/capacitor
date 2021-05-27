@@ -38,8 +38,8 @@ export async function syncCommand(
         ...updateChecks(config, platforms),
       ]);
       await allSerial(
-        platforms.map(platformName => () =>
-          sync(config, platformName, deployment),
+        platforms.map(
+          platformName => () => sync(config, platformName, deployment),
         ),
       );
       const now = +new Date();

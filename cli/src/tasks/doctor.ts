@@ -29,17 +29,13 @@ export async function doctorCommand(
 }
 
 export async function doctorCore(config: Config): Promise<void> {
-  const [
-    cliVersion,
-    coreVersion,
-    androidVersion,
-    iosVersion,
-  ] = await Promise.all([
-    getCommandOutput('npm', ['info', '@capacitor/cli', 'version']),
-    getCommandOutput('npm', ['info', '@capacitor/core', 'version']),
-    getCommandOutput('npm', ['info', '@capacitor/android', 'version']),
-    getCommandOutput('npm', ['info', '@capacitor/ios', 'version']),
-  ]);
+  const [cliVersion, coreVersion, androidVersion, iosVersion] =
+    await Promise.all([
+      getCommandOutput('npm', ['info', '@capacitor/cli', 'version']),
+      getCommandOutput('npm', ['info', '@capacitor/core', 'version']),
+      getCommandOutput('npm', ['info', '@capacitor/android', 'version']),
+      getCommandOutput('npm', ['info', '@capacitor/ios', 'version']),
+    ]);
 
   output.write(
     `${c.strong('Latest Dependencies:')}\n\n` +

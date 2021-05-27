@@ -17,7 +17,6 @@ import {
 } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
-import type { Plugin } from '../plugin';
 import {
   PluginType,
   getAllElements,
@@ -27,6 +26,7 @@ import {
   getPlugins,
   printPlugins,
 } from '../plugin';
+import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';

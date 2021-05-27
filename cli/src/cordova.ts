@@ -8,8 +8,8 @@ import {
   writeFile,
 } from '@ionic/utils-fs';
 import { basename, extname, join, resolve } from 'path';
-import type { PlistObject } from 'plist';
 import plist from 'plist';
+import type { PlistObject } from 'plist';
 import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
@@ -18,7 +18,6 @@ import type { Config } from './definitions';
 import { fatal } from './errors';
 import { getIOSPlugins } from './ios/common';
 import { logger, logPrompt } from './log';
-import type { Plugin } from './plugin';
 import {
   PluginType,
   getAllElements,
@@ -30,6 +29,7 @@ import {
   getPlugins,
   printPlugins,
 } from './plugin';
+import type { Plugin } from './plugin';
 import { resolveNode } from './util/node';
 import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
 
@@ -249,12 +249,10 @@ export async function autoGenerateConfig(
   });
 
   const pluginEntriesString: string[] = await Promise.all(
-    pluginEntries.map(
-      async (item): Promise<string> => {
-        const xmlString = await writeXML(item);
-        return xmlString;
-      },
-    ),
+    pluginEntries.map(async (item): Promise<string> => {
+      const xmlString = await writeXML(item);
+      return xmlString;
+    }),
   );
   let pluginPreferencesString: string[] = [];
   if (config.app.extConfig?.cordova?.preferences) {
@@ -525,7 +523,7 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
           'config.xml',
         )}. There may be more work to do.\n` +
         `More info: ${c.strong(
-          'https://capacitorjs.com/docs/v3/cordova/migrating-from-cordova-to-capacitor',
+          'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
         )}`,
       {
         type: 'confirm',

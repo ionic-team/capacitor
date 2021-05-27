@@ -5,8 +5,8 @@ import type { PlatformTarget } from '../common';
 import { fatal } from '../errors';
 
 import { resolveNode } from './node';
-import type { RunCommandOptions } from './subprocess';
 import { runCommand } from './subprocess';
+import type { RunCommandOptions } from './subprocess';
 
 export async function runNativeRun(
   args: readonly string[],

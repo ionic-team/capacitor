@@ -7,8 +7,8 @@ import {
 } from '@ionic/utils-fs';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
-import type { DirCallback } from 'tmp';
 import tmp from 'tmp';
+import type { DirCallback } from 'tmp';
 
 import { loadConfig } from '../src/config';
 import type { Config } from '../src/definitions';
