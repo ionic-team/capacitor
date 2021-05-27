@@ -1,5 +1,3 @@
-import { CapacitorException, getPlatformId, ExceptionCode } from './util';
-
 import type { CapacitorGlobal, PluginImplementations } from './definitions';
 import type {
   CapacitorInstance,
@@ -7,6 +5,7 @@ import type {
   WindowCapacitor,
 } from './definitions-internal';
 import type { CapacitorPlatformsInstance } from './platforms';
+import { CapacitorException, getPlatformId, ExceptionCode } from './util';
 
 export interface RegisteredPlugin {
   readonly name: string;

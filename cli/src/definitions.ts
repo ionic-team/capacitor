@@ -123,4 +123,12 @@ export interface FrameworkConfig {
   name: string;
   isMatch: (config: Config) => boolean;
   webDir: string;
+  /**
+   * Specific UI libraries (Ionic) and higher-level frameworks (NextJs/Gatsby)
+   * should be prioritorized over a more generic framework like React/Angular/Vue.
+   * Lower the priorty number the more important it is (1 has more priority over 2).
+   * This helps to make sure a specific framework like "NextJs" is chosen before
+   * the more generic "React".
+   */
+  priority: number;
 }

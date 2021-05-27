@@ -1,7 +1,6 @@
+import type { PluginListenerHandle, Plugin } from './definitions';
 import { Capacitor } from './global';
 import { ExceptionCode } from './util';
-
-import type { PluginListenerHandle, Plugin } from './definitions';
 import type { CapacitorException } from './util';
 
 /**

@@ -10,13 +10,6 @@ import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
 import { OS } from './definitions';
-import { fatal, isFatal } from './errors';
-import { logger } from './log';
-import { tryFn } from './util/fn';
-import { formatJSObject } from './util/js';
-import { resolveNode, requireTS } from './util/node';
-import { lazy } from './util/promise';
-
 import type {
   AndroidConfig,
   AppConfig,
@@ -26,6 +19,12 @@ import type {
   IOSConfig,
   WebConfig,
 } from './definitions';
+import { fatal, isFatal } from './errors';
+import { logger } from './log';
+import { tryFn } from './util/fn';
+import { formatJSObject } from './util/js';
+import { resolveNode, requireTS } from './util/node';
+import { lazy } from './util/promise';
 
 const debug = Debug('capacitor:config');
 
@@ -344,7 +343,7 @@ async function determineXcodeWorkspaceDirAbs(
     fatal(
       'Xcode workspace does not exist.\n' +
         `See the docs for adding the ${c.strong('ios')} platform: ${c.strong(
-          'https://capacitorjs.com/docs/v3/ios#adding-the-ios-platform',
+          'https://capacitorjs.com/docs/ios#adding-the-ios-platform',
         )}`,
     );
   }
@@ -371,7 +370,7 @@ async function determineIOSWebDirAbs(
         `Please follow the Upgrade Guide to move ${c.strong(
           'public',
         )} inside the iOS target directory: ${c.strong(
-          'https://capacitorjs.com/docs/v3/updating/3-0#move-public-into-the-ios-target-directory',
+          'https://capacitorjs.com/docs/updating/3-0#move-public-into-the-ios-target-directory',
         )}`,
     );
 

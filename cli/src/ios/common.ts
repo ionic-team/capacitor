@@ -5,11 +5,10 @@ import c from '../colors';
 import { checkCapacitorPlatform } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import { OS } from '../definitions';
-import { PluginType, getPluginPlatform } from '../plugin';
-import { isInstalled } from '../util/subprocess';
-
 import type { Config } from '../definitions';
+import { PluginType, getPluginPlatform } from '../plugin';
 import type { Plugin } from '../plugin';
+import { isInstalled } from '../util/subprocess';
 
 export async function checkIOSPackage(config: Config): Promise<string | null> {
   return checkCapacitorPlatform(config, 'ios');
