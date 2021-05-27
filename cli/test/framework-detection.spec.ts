@@ -38,7 +38,7 @@ describe('framework detection', () => {
     expect(f?.webDir).toBe('dist');
   });
 
-  it.only('Create React App', () => {
+  it('Create React App', () => {
     addDep(config, 'react-scripts');
     const f = detectFramework(config);
     expect(f?.name).toBe('Create React App');
@@ -53,6 +53,7 @@ describe('framework detection', () => {
   });
 
   it('Gatsby', () => {
+    addDep(config, 'react-scripts');
     addDep(config, 'gatsby');
     const f = detectFramework(config);
     expect(f?.name).toBe('Gatsby');
@@ -76,6 +77,7 @@ describe('framework detection', () => {
 
   it('Ionic React', () => {
     addDep(config, '@ionic/react');
+    addDep(config, 'react-scripts');
     const f = detectFramework(config);
     expect(f?.name).toBe('Ionic React');
     expect(f?.webDir).toBe('build');
@@ -107,6 +109,7 @@ describe('framework detection', () => {
 
   it('Next', () => {
     addDep(config, 'next');
+    addDep(config, 'react-scripts');
     const f = detectFramework(config);
     expect(f?.name).toBe('Next');
     expect(f?.webDir).toBe('public');
