@@ -17,6 +17,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
+import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import {
   PluginType,
@@ -28,15 +29,13 @@ import {
   getPlugins,
   printPlugins,
 } from '../plugin';
+import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
 
 import { getAndroidPlugins } from './common';
-
-import type { Config } from '../definitions';
-import type { Plugin } from '../plugin';
 
 const platform = 'android';
 const debug = Debug('capacitor:android:update');
@@ -122,7 +121,8 @@ async function findAndroidPluginClassesInPlugin(
       ['.java', '.kt'].includes(extname(entry.path)),
   });
 
-  const classRegex = /^@(?:CapacitorPlugin|NativePlugin)[\s\S]+?class ([\w]+)/gm;
+  const classRegex =
+    /^@(?:CapacitorPlugin|NativePlugin)[\s\S]+?class ([\w]+)/gm;
   const packageRegex = /^package ([\w.]+);?$/gm;
 
   debug(
@@ -133,39 +133,37 @@ async function findAndroidPluginClassesInPlugin(
   );
 
   const entries = await Promise.all(
-    srcFiles.map(
-      async (srcFile): Promise<PluginsJsonEntry | undefined> => {
-        const srcFileContents = await readFile(srcFile, { encoding: 'utf-8' });
-        const classMatch = classRegex.exec(srcFileContents);
+    srcFiles.map(async (srcFile): Promise<PluginsJsonEntry | undefined> => {
+      const srcFileContents = await readFile(srcFile, { encoding: 'utf-8' });
+      const classMatch = classRegex.exec(srcFileContents);
 
-        if (classMatch) {
-          const className = classMatch[1];
+      if (classMatch) {
+        const className = classMatch[1];
 
-          debug('Searching %O for package by %O regex', srcFile, packageRegex);
+        debug('Searching %O for package by %O regex', srcFile, packageRegex);
 
-          const packageMatch = packageRegex.exec(
-            srcFileContents.substring(0, classMatch.index),
+        const packageMatch = packageRegex.exec(
+          srcFileContents.substring(0, classMatch.index),
+        );
+
+        if (!packageMatch) {
+          fatal(
+            `Package could not be parsed from Android plugin.\n` +
+              `Location: ${c.strong(srcFile)}`,
           );
-
-          if (!packageMatch) {
-            fatal(
-              `Package could not be parsed from Android plugin.\n` +
-                `Location: ${c.strong(srcFile)}`,
-            );
-          }
-
-          const packageName = packageMatch[1];
-          const classpath = `${packageName}.${className}`;
-
-          debug('%O is a suitable plugin class', classpath);
-
-          return {
-            pkg: plugin.id,
-            classpath,
-          };
         }
-      },
-    ),
+
+        const packageName = packageMatch[1];
+        const classpath = `${packageName}.${className}`;
+
+        debug('%O is a suitable plugin class', classpath);
+
+        return {
+          pkg: plugin.id,
+          classpath,
+        };
+      }
+    }),
   );
 
   return entries.filter((entry): entry is PluginsJsonEntry => !!entry);

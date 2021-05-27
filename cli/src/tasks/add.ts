@@ -20,7 +20,9 @@ import {
   promptForPlatform,
   getProjectPlatformDirectory,
 } from '../common';
+import type { CheckFunction } from '../common';
 import { OS } from '../definitions';
+import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
 import {
@@ -31,9 +33,6 @@ import {
 import { logger, logSuccess, output } from '../log';
 
 import { sync } from './sync';
-
-import type { CheckFunction } from '../common';
-import type { Config } from '../definitions';
 
 export async function addCommand(
   config: Config,

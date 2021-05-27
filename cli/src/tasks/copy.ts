@@ -15,12 +15,11 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
+import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
-
-import type { Config } from '../definitions';
 
 export async function copyCommand(
   config: Config,

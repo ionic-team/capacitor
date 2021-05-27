@@ -2,14 +2,13 @@ import program from 'commander';
 
 import c from './colors';
 import { loadConfig } from './config';
+import type { Config } from './definitions';
 import { fatal, isFatal } from './errors';
 import { receive } from './ipc';
 import { logger, output } from './log';
 import { telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
-
-import type { Config } from './definitions';
 
 process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
