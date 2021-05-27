@@ -3,13 +3,12 @@ import { readJSON } from '@ionic/utils-fs';
 import { doctorAndroid } from '../android/doctor';
 import c from '../colors';
 import { selectPlatforms } from '../common';
+import type { Config } from '../definitions';
 import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
 import { resolveNode } from '../util/node';
 import { getCommandOutput } from '../util/subprocess';
-
-import type { Config } from '../definitions';
 
 export async function doctorCommand(
   config: Config,
@@ -30,17 +29,13 @@ export async function doctorCommand(
 }
 
 export async function doctorCore(config: Config): Promise<void> {
-  const [
-    cliVersion,
-    coreVersion,
-    androidVersion,
-    iosVersion,
-  ] = await Promise.all([
-    getCommandOutput('npm', ['info', '@capacitor/cli', 'version']),
-    getCommandOutput('npm', ['info', '@capacitor/core', 'version']),
-    getCommandOutput('npm', ['info', '@capacitor/android', 'version']),
-    getCommandOutput('npm', ['info', '@capacitor/ios', 'version']),
-  ]);
+  const [cliVersion, coreVersion, androidVersion, iosVersion] =
+    await Promise.all([
+      getCommandOutput('npm', ['info', '@capacitor/cli', 'version']),
+      getCommandOutput('npm', ['info', '@capacitor/core', 'version']),
+      getCommandOutput('npm', ['info', '@capacitor/android', 'version']),
+      getCommandOutput('npm', ['info', '@capacitor/ios', 'version']),
+    ]);
 
   output.write(
     `${c.strong('Latest Dependencies:')}\n\n` +
