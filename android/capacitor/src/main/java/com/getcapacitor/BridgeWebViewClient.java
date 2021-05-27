@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -42,5 +43,11 @@ public class BridgeWebViewClient extends WebViewClient {
                 listener.onPageLoaded(view);
             }
         }
+    }
+
+    @Override
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        super.onPageStarted(view, url, favicon);
+        bridge.reset();
     }
 }
