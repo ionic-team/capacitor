@@ -1,7 +1,6 @@
 import { resolve } from 'path';
 
 import { detectFramework } from '../../cli/src/framework-configs';
-
 import type { Config } from '../src/definitions';
 
 describe('framework detection', () => {

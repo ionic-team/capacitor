@@ -1,6 +1,5 @@
 import { readFileSync } from '@ionic/utils-fs';
 import { resolve } from 'path';
-
 import type typescript from 'typescript';
 
 interface NodeModuleWithCompile extends NodeJS.Module {
