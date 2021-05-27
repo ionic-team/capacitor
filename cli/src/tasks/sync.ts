@@ -5,14 +5,13 @@ import {
   selectPlatforms,
   isValidPlatform,
 } from '../common';
+import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
 
 import { copy, copyCommand } from './copy';
 import { update, updateChecks, updateCommand } from './update';
-
-import type { Config } from '../definitions';
 
 /**
  * Sync is a copy and an update in one.
@@ -39,8 +38,8 @@ export async function syncCommand(
         ...updateChecks(config, platforms),
       ]);
       await allSerial(
-        platforms.map(platformName => () =>
-          sync(config, platformName, deployment),
+        platforms.map(
+          platformName => () => sync(config, platformName, deployment),
         ),
       );
       const now = +new Date();

@@ -1,6 +1,5 @@
-import { registerPlugin } from './global';
-
 import type { Plugin } from './definitions';
+import { registerPlugin } from './global';
 
 export interface WebViewPlugin extends Plugin {
   setServerBasePath(options: WebViewPath): Promise<void>;

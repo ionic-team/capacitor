@@ -9,14 +9,13 @@ import {
   selectPlatforms,
   isValidPlatform,
 } from '../common';
+import type { CheckFunction } from '../common';
+import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { checkCocoaPods } from '../ios/common';
 import { updateIOS } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
-
-import type { CheckFunction } from '../common';
-import type { Config } from '../definitions';
 
 export async function updateCommand(
   config: Config,
@@ -37,8 +36,9 @@ export async function updateCommand(
       await check([() => checkPackage(), ...updateChecks(config, platforms)]);
 
       await allSerial(
-        platforms.map(platformName => async () =>
-          await update(config, platformName, deployment),
+        platforms.map(
+          platformName => async () =>
+            await update(config, platformName, deployment),
         ),
       );
       const now = +new Date();

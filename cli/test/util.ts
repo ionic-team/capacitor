@@ -8,12 +8,11 @@ import {
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
 import tmp from 'tmp';
+import type { DirCallback } from 'tmp';
 
 import { loadConfig } from '../src/config';
-import { runCommand } from '../src/util/subprocess';
-
 import type { Config } from '../src/definitions';
-import type { DirCallback } from 'tmp';
+import { runCommand } from '../src/util/subprocess';
 
 const cwd = process.cwd();
 

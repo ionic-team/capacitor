@@ -1,6 +1,5 @@
 import { legacyRegisterWebPlugin } from './legacy/legacy-web-plugin-merge';
 import { initCapacitorGlobal } from './runtime';
-
 import type { WebPlugin } from './web-plugin';
 
 export const Capacitor = /*#__PURE__*/ initCapacitorGlobal(

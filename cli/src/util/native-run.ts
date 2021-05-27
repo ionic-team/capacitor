@@ -1,12 +1,11 @@
 import { dirname } from 'path';
 
 import c from '../colors';
+import type { PlatformTarget } from '../common';
 import { fatal } from '../errors';
 
 import { resolveNode } from './node';
 import { runCommand } from './subprocess';
-
-import type { PlatformTarget } from '../common';
 import type { RunCommandOptions } from './subprocess';
 
 export async function runNativeRun(
