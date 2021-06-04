@@ -32,7 +32,7 @@ export async function getPlatformTargets(
   try {
     const output = await runNativeRun([platformName, '--list', '--json']);
     const parsedOutput = JSON.parse(output);
-    if (parsedOutput.devices?.[0] || parsedOutput.virtualDevices?.[0]) {
+    if (parsedOutput.devices.length || parsedOutput.virtualDevices.length) {
       return [
         ...parsedOutput.devices.map((t: any) => ({ ...t, virtual: false })),
         ...parsedOutput.virtualDevices.map((t: any) => ({
