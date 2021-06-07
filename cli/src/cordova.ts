@@ -31,6 +31,7 @@ import {
 } from './plugin';
 import type { Plugin } from './plugin';
 import { resolveNode } from './util/node';
+import { isInteractive } from './util/term';
 import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
 
 /**
@@ -513,43 +514,45 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
     }
   }
   if (cordova.preferences && Object.keys(cordova.preferences).length > 0) {
-    const answers = await logPrompt(
-      `${c.strong(
-        `Cordova preferences can be automatically ported to ${c.strong(
-          config.app.extConfigName,
-        )}.`,
-      )}\n` +
-        `Keep in mind: Not all values can be automatically migrated from ${c.strong(
-          'config.xml',
-        )}. There may be more work to do.\n` +
-        `More info: ${c.strong(
-          'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
-        )}`,
-      {
-        type: 'confirm',
-        name: 'confirm',
-        message: `Migrate Cordova preferences from config.xml?`,
-        initial: true,
-      },
-    );
-    if (answers.confirm) {
-      if (config.app.extConfig?.cordova?.preferences) {
-        const answers = await prompts(
-          [
-            {
-              type: 'confirm',
-              name: 'confirm',
-              message: `${config.app.extConfigName} already contains Cordova preferences. Overwrite?`,
-            },
-          ],
-          { onCancel: () => process.exit(1) },
-        );
-        if (!answers.confirm) {
-          cordova = config.app.extConfig?.cordova;
+    if (isInteractive()) {
+      const answers = await logPrompt(
+        `${c.strong(
+          `Cordovaaa preferences can be automatically ported to ${c.strong(
+            config.app.extConfigName,
+          )}.`,
+        )}\n` +
+          `Keep in mind: Not all values can be automatically migrated from ${c.strong(
+            'config.xml',
+          )}. There may be more work to do.\n` +
+          `More info: ${c.strong(
+            'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
+          )}`,
+        {
+          type: 'confirm',
+          name: 'confirm',
+          message: `Migrate Cordova preferences from config.xml?`,
+          initial: true,
+        },
+      );
+      if (answers.confirm) {
+        if (config.app.extConfig?.cordova?.preferences) {
+          const answers = await prompts(
+            [
+              {
+                type: 'confirm',
+                name: 'confirm',
+                message: `${config.app.extConfigName} already contains Cordova preferences. Overwrite?`,
+              },
+            ],
+            { onCancel: () => process.exit(1) },
+          );
+          if (!answers.confirm) {
+            cordova = config.app.extConfig?.cordova;
+          }
         }
+      } else {
+        cordova = config.app.extConfig?.cordova;
       }
-    } else {
-      cordova = config.app.extConfig?.cordova;
     }
   } else {
     cordova = config.app.extConfig?.cordova;
