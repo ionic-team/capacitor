@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/ionic-team/capacitor/compare/3.0.0...3.0.1) (2021-06-09)
+
+
+### Bug Fixes
+
+* **cli:** add priority to framework detection ([#4617](https://github.com/ionic-team/capacitor/issues/4617)) ([6a22f03](https://github.com/ionic-team/capacitor/commit/6a22f0375921fc7c015bc72e036dee014b1baed9))
+* **cli:** Better native-run error ([#4676](https://github.com/ionic-team/capacitor/issues/4676)) ([39eebd0](https://github.com/ionic-team/capacitor/commit/39eebd0a2dc45fd5d07f79fb9ad5b919556c5fc5))
+* **cli:** Don't prompt cordova preferences if non interactive ([#4680](https://github.com/ionic-team/capacitor/issues/4680)) ([293527c](https://github.com/ionic-team/capacitor/commit/293527c85296a9b79ce6dbd12e0f3e3e43fbce0b))
+* **cli:** Remove v3 prefix from docs urls ([#4596](https://github.com/ionic-team/capacitor/issues/4596)) ([f99f11a](https://github.com/ionic-team/capacitor/commit/f99f11a6ee65020a8b2e58665e3427de814fba3a))
+* **cli:** Throw error if native-run didn't find targets ([#4681](https://github.com/ionic-team/capacitor/issues/4681)) ([bfbf2b5](https://github.com/ionic-team/capacitor/commit/bfbf2b5ffb48bf1617404385f7407baefcfe3282))
+
+
+
+
+
 # [3.0.0](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.4...3.0.0) (2021-05-18)
 
 
