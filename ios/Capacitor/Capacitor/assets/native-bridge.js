@@ -37,8 +37,6 @@ const nativeBridge = (function (exports) {
             return filePath;
         };
         const initEvents = (win, cap) => {
-            const doc = win.document;
-            const cordova = win.cordova;
             cap.addListener = (pluginName, eventName, callback) => {
                 const callbackId = cap.nativeCallback(pluginName, 'addListener', {
                     eventName: eventName,
@@ -58,6 +56,7 @@ const nativeBridge = (function (exports) {
                 }, callback);
             };
             cap.createEvent = (eventName, eventData) => {
+                const doc = win.document;
                 if (doc) {
                     const ev = doc.createEvent('Events');
                     ev.initEvent(eventName, false, false);
@@ -74,6 +73,8 @@ const nativeBridge = (function (exports) {
                 return null;
             };
             cap.triggerEvent = (eventName, target, eventData) => {
+                const doc = win.document;
+                const cordova = win.cordova;
                 eventData = eventData || {};
                 const ev = cap.createEvent(eventName, eventData);
                 if (ev) {

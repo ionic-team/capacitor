@@ -48,9 +48,6 @@ const initBridge = (w: any): void => {
   };
 
   const initEvents = (win: WindowCapacitor, cap: CapacitorInstance) => {
-    const doc = win.document;
-    const cordova = win.cordova;
-
     cap.addListener = (pluginName, eventName, callback) => {
       const callbackId = cap.nativeCallback(
         pluginName,
@@ -81,6 +78,7 @@ const initBridge = (w: any): void => {
     };
 
     cap.createEvent = (eventName, eventData) => {
+      const doc = win.document;
       if (doc) {
         const ev = doc.createEvent('Events');
         ev.initEvent(eventName, false, false);
@@ -98,6 +96,8 @@ const initBridge = (w: any): void => {
     };
 
     cap.triggerEvent = (eventName, target, eventData) => {
+      const doc = win.document;
+      const cordova = win.cordova;
       eventData = eventData || {};
       const ev = cap.createEvent(eventName, eventData);
 
