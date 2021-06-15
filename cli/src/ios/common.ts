@@ -85,3 +85,14 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   await writeFile(plistPath, plistContent, { encoding: 'utf-8' });
   await writeFile(pbxPath, pbxContent, { encoding: 'utf-8' });
 }
+
+export function shouldPodInstall(
+  config: Config,
+  platformName: string,
+): boolean {
+  // Don't run pod install or xcodebuild if not on macOS
+  if (config.cli.os !== OS.Mac && platformName === 'ios') {
+    return false;
+  }
+  return true;
+}

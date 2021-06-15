@@ -21,7 +21,6 @@ import {
   getProjectPlatformDirectory,
 } from '../common';
 import type { CheckFunction } from '../common';
-import { OS } from '../definitions';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
@@ -92,16 +91,14 @@ export async function addCommand(
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
-      if (shouldSync(config, platformName)) {
-        if (await pathExists(config.app.webDirAbs)) {
-          sync(config, platformName, false);
-        } else {
-          logger.warn(
-            `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
-              config.app.webDir,
-            )} directory.`,
-          );
-        }
+      if (await pathExists(config.app.webDirAbs)) {
+        sync(config, platformName, false);
+      } else {
+        logger.warn(
+          `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
+            config.app.webDir,
+          )} directory.`,
+        );
       }
 
       printNextSteps(platformName);
@@ -152,14 +149,6 @@ async function editPlatforms(config: Config, platformName: string) {
   } else if (platformName === config.android.name) {
     await editProjectSettingsAndroid(config);
   }
-}
-
-function shouldSync(config: Config, platformName: string) {
-  // Don't sync if we're adding the iOS platform not on a mac
-  if (config.cli.os !== OS.Mac && platformName === 'ios') {
-    return false;
-  }
-  return true;
 }
 
 function webWarning() {
