@@ -17,6 +17,7 @@ import {
 } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
+import { logger } from '../log';
 import {
   PluginType,
   getAllElements,
@@ -33,7 +34,7 @@ import { resolveNode } from '../util/node';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
-import { getIOSPlugins } from './common';
+import { getIOSPlugins, shouldPodInstall } from './common';
 
 const platform = 'ios';
 
@@ -77,14 +78,18 @@ export async function installCocoaPodsPlugins(
   plugins: Plugin[],
   deployment: boolean,
 ): Promise<void> {
-  await runTask(
-    `Updating iOS native dependencies with ${c.input(
-      `${config.ios.podPath} install`,
-    )}`,
-    () => {
-      return updatePodfile(config, plugins, deployment);
-    },
-  );
+  if (shouldPodInstall(config, platform)) {
+    await runTask(
+      `Updating iOS native dependencies with ${c.input(
+        `${config.ios.podPath} install`,
+      )}`,
+      () => {
+        return updatePodfile(config, plugins, deployment);
+      },
+    );
+  } else {
+    logger.warn('Skipping pod install on unsupported OS');
+  }
 }
 
 async function updatePodfile(
@@ -101,6 +106,7 @@ async function updatePodfile(
     `$1${dependenciesContent}$2`,
   );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
+
   if (!deployment) {
     await remove(podfileLockPath);
   }
