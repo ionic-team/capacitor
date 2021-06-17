@@ -23,7 +23,7 @@ When reporting bugs, we ask you to provide a minimal sample application that dem
 
 To create a code reproduction:
 
-* Create a new application using `npx @capacitor/cli create` (or `ionic start --capacitor`).
+* Create a new application using `npm init @capacitor/app` (or `ionic start --capacitor`).
 * Add the minimum amount of code necessary to recreate the issue you're experiencing.
 * Push the code reproduction to a public GitHub repository and include a link when you create a bug report.
 * Be sure to include steps to reproduce the issue.
