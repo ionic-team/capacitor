@@ -3,7 +3,7 @@ import {
   checkPackage,
   checkWebDir,
   selectPlatforms,
-  isValidPlatform,
+  isValidPlatform, runPlatformHook
 } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
@@ -60,10 +60,14 @@ export async function sync(
   platformName: string,
   deployment: boolean,
 ): Promise<void> {
+  await runPlatformHook(config, platformName, config.app.rootDir, 'capacitor:sync:before');
+
   try {
     await copy(config, platformName);
   } catch (e) {
     logger.error(e.stack ?? e);
   }
   await update(config, platformName, deployment);
+
+  await runPlatformHook(config, platformName, config.app.rootDir, 'capacitor:sync:after');
 }

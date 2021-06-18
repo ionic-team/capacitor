@@ -28,7 +28,7 @@ export async function copyCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(config, platformDir, 'capacitor:copy');
+      await runPlatformHook(config, selectedPlatformName, platformDir, 'capacitor:copy');
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
@@ -58,6 +58,8 @@ export async function copy(
       throw result;
     }
 
+    await runPlatformHook(config, platformName, config.app.rootDir, 'capacitor:copy:before');
+
     if (platformName === config.ios.name) {
       await copyWebDir(config, await config.ios.webDirAbs);
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
@@ -75,6 +77,7 @@ export async function copy(
       throw `Platform ${platformName} is not valid.`;
     }
   });
+  await runPlatformHook(config, platformName, config.app.rootDir, 'capacitor:copy:after');
 }
 
 async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
