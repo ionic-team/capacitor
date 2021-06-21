@@ -21,21 +21,6 @@ const nativeBridge = (function (exports) {
                 return 'web';
             }
         };
-        const convertFileSrcServerUrl = (webviewServerUrl, filePath) => {
-            if (typeof filePath === 'string') {
-                if (filePath.startsWith('/')) {
-                    return webviewServerUrl + '/_capacitor_file_' + filePath;
-                }
-                else if (filePath.startsWith('file://')) {
-                    return (webviewServerUrl + filePath.replace('file://', '/_capacitor_file_'));
-                }
-                else if (filePath.startsWith('content://')) {
-                    return (webviewServerUrl +
-                        filePath.replace('content:/', '/_capacitor_content_'));
-                }
-            }
-            return filePath;
-        };
         const initEvents = (win, cap) => {
             cap.addListener = (pluginName, eventName, callback) => {
                 const callbackId = cap.nativeCallback(pluginName, 'addListener', {
@@ -298,9 +283,23 @@ const nativeBridge = (function (exports) {
             const cap = win.Capacitor || {};
             // keep a collection of callbacks for native response data
             const callbacks = new Map();
-            const webviewServerUrl = typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
-            cap.getServerUrl = () => webviewServerUrl;
-            cap.convertFileSrc = filePath => convertFileSrcServerUrl(webviewServerUrl, filePath);
+            cap.getServerUrl = () => typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
+            cap.convertFileSrc = filePath => {
+                if (typeof filePath === 'string') {
+                    if (filePath.startsWith('/')) {
+                        return cap.getServerUrl() + '/_capacitor_file_' + filePath;
+                    }
+                    else if (filePath.startsWith('file://')) {
+                        return (cap.getServerUrl() +
+                            filePath.replace('file://', '/_capacitor_file_'));
+                    }
+                    else if (filePath.startsWith('content://')) {
+                        return (cap.getServerUrl() +
+                            filePath.replace('content:/', '/_capacitor_content_'));
+                    }
+                }
+                return filePath;
+            };
             // Counter of callback ids, randomized to avoid
             // any issues during reloads if a call comes back with
             // an existing callback id from an old session

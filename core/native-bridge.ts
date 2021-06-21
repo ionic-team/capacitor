@@ -26,27 +26,6 @@ const initBridge = (w: any): void => {
     }
   };
 
-  const convertFileSrcServerUrl = (
-    webviewServerUrl: string,
-    filePath: string,
-  ): string => {
-    if (typeof filePath === 'string') {
-      if (filePath.startsWith('/')) {
-        return webviewServerUrl + '/_capacitor_file_' + filePath;
-      } else if (filePath.startsWith('file://')) {
-        return (
-          webviewServerUrl + filePath.replace('file://', '/_capacitor_file_')
-        );
-      } else if (filePath.startsWith('content://')) {
-        return (
-          webviewServerUrl +
-          filePath.replace('content:/', '/_capacitor_content_')
-        );
-      }
-    }
-    return filePath;
-  };
-
   const initEvents = (win: WindowCapacitor, cap: CapacitorInstance) => {
     cap.addListener = (pluginName, eventName, callback) => {
       const callbackId = cap.nativeCallback(
@@ -353,11 +332,26 @@ const initBridge = (w: any): void => {
     // keep a collection of callbacks for native response data
     const callbacks = new Map();
 
-    const webviewServerUrl =
+    cap.getServerUrl = () =>
       typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
-    cap.getServerUrl = () => webviewServerUrl;
-    cap.convertFileSrc = filePath =>
-      convertFileSrcServerUrl(webviewServerUrl, filePath);
+    cap.convertFileSrc = filePath => {
+      if (typeof filePath === 'string') {
+        if (filePath.startsWith('/')) {
+          return cap.getServerUrl() + '/_capacitor_file_' + filePath;
+        } else if (filePath.startsWith('file://')) {
+          return (
+            cap.getServerUrl() +
+            filePath.replace('file://', '/_capacitor_file_')
+          );
+        } else if (filePath.startsWith('content://')) {
+          return (
+            cap.getServerUrl() +
+            filePath.replace('content:/', '/_capacitor_content_')
+          );
+        }
+      }
+      return filePath;
+    };
 
     // Counter of callback ids, randomized to avoid
     // any issues during reloads if a call comes back with
