@@ -40,7 +40,12 @@ export async function addCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(config, platformDir, 'capacitor:add');
+      await runPlatformHook(
+        config,
+        selectedPlatformName,
+        platformDir,
+        'capacitor:add',
+      );
     } else {
       let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
 

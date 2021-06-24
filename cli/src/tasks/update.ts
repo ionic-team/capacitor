@@ -25,7 +25,12 @@ export async function updateCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(config, platformDir, 'capacitor:update');
+      await runPlatformHook(
+        config,
+        selectedPlatformName,
+        platformDir,
+        'capacitor:update',
+      );
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
@@ -79,10 +84,24 @@ export async function update(
   deployment: boolean,
 ): Promise<void> {
   await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
+    await runPlatformHook(
+      config,
+      platformName,
+      config.app.rootDir,
+      'capacitor:update:before',
+    );
+
     if (platformName === config.ios.name) {
       await updateIOS(config, deployment);
     } else if (platformName === config.android.name) {
       await updateAndroid(config);
     }
+
+    await runPlatformHook(
+      config,
+      platformName,
+      config.app.rootDir,
+      'capacitor:update:after',
+    );
   });
 }
