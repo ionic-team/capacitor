@@ -193,6 +193,21 @@ export interface CapacitorConfig {
      * @since 3.0.0
      */
     includePlugins?: string[];
+
+    /**
+     * specify a custom relative build path for android targets.
+     *
+     * @since 3.0.x
+     */
+     buildOutputDirCustom?: string;
+
+    /**
+     * specify a custom apk name for android targets.
+     *
+     * @since 3.0.x
+     */
+     buildOutputApkName?: string;
+
   };
 
   ios?: {

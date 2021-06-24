@@ -29,7 +29,7 @@ export async function runAndroid(
     }),
   );
 
-  const apkName = 'app-debug.apk';
+  const apkName = config.android.buildOutputApkName;
   const apkPath = resolve(config.android.buildOutputDirAbs, apkName);
 
   const nativeRunArgs = ['android', '--app', apkPath, '--target', target.id];

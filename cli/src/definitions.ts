@@ -89,6 +89,7 @@ export interface AndroidConfig extends PlatformConfig {
   readonly resDirAbs: string;
   readonly buildOutputDir: string;
   readonly buildOutputDirAbs: string;
+  readonly buildOutputApkName: string;
 }
 
 export interface IOSConfig extends PlatformConfig {
