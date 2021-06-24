@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/ionic-team/capacitor/compare/3.0.1...3.0.2) (2021-06-23)
+
+
+### Bug Fixes
+
+* **cli:** correctly show EACCES error on run ([#4742](https://github.com/ionic-team/capacitor/issues/4742)) ([2ab8778](https://github.com/ionic-team/capacitor/commit/2ab877881a292bba0aed946b20c3c6bb58808e58))
+* **cli:** Don't error on ios sync on non macOS ([#4723](https://github.com/ionic-team/capacitor/issues/4723)) ([368ffad](https://github.com/ionic-team/capacitor/commit/368ffad03612841a8f228c6a174c141659f5293d))
+
+
+
+
+
 ## [3.0.1](https://github.com/ionic-team/capacitor/compare/3.0.0...3.0.1) (2021-06-09)
 
 

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/ionic-team/capacitor/compare/3.0.1...3.0.2) (2021-06-23)
+
+
+### Bug Fixes
+
+* **android:** Set WEBVIEW_SERVER_URL before injecting native-bridge ([#4748](https://github.com/ionic-team/capacitor/issues/4748)) ([5d6b179](https://github.com/ionic-team/capacitor/commit/5d6b17994abc7ad770b95e3a9fc29aecf5d9fc05))
+* **core:** cordova events not firing ([#4712](https://github.com/ionic-team/capacitor/issues/4712)) ([ca4e3b6](https://github.com/ionic-team/capacitor/commit/ca4e3b62dba6a40e593a1404ba2fe2b416a4ac14))
+
+
+
+
+
 ## [3.0.1](https://github.com/ionic-team/capacitor/compare/3.0.0...3.0.1) (2021-06-09)
 
 
