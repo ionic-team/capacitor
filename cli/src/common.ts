@@ -164,7 +164,7 @@ export async function runPlatformHook(
 ): Promise<void> {
   const { spawn } = await import('child_process');
   const pkg = await readJSON(join(platformDir, 'package.json'));
-  const cmd = pkg.scripts[hook];
+  const cmd = pkg.scripts?.[hook];
 
   if (!cmd) {
     return;
