@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 
-import com.getcapacitor.FileUtils;
 import com.getcapacitor.Logger;
 
 import java.io.IOException;
