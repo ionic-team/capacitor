@@ -70,7 +70,7 @@ export async function createCommand(config: Config, dir: string, name: string, i
     await create(config, appDir, appName, appId);
     // npm install
     await runTask(chalk`Installing dependencies`, () => {
-      return installDeps(appDir, ['@capacitor/cli', '@capacitor/core'], config);
+      return installDeps(appDir, ['@capacitor/cli@2', '@capacitor/core@2'], config);
     });
     // Copy web and capacitor to web assets
     await copy(config, config.web.name);
