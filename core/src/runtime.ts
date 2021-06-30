@@ -14,13 +14,16 @@ export interface RegisteredPlugin {
 }
 
 export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
-  const capCustomPlatform: CapacitorCustomPlatformInstance = win.CapacitorCustomPlatform || null;
+  const capCustomPlatform: CapacitorCustomPlatformInstance =
+    win.CapacitorCustomPlatform || null;
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
   const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
 
   const getPlatform = () => {
-    return capCustomPlatform !== null ? capCustomPlatform.name : getPlatformId(win);
-  }
+    return capCustomPlatform !== null
+      ? capCustomPlatform.name
+      : getPlatformId(win);
+  };
 
   const isNativePlatform = () => getPlatformId(win) !== 'web';
 
@@ -40,7 +43,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     return false;
   };
 
-  const getPluginHeader = (pluginName: string): PluginHeader | undefined => cap.PluginHeaders?.find(h => h.name === pluginName);
+  const getPluginHeader = (pluginName: string): PluginHeader | undefined =>
+    cap.PluginHeaders?.find(h => h.name === pluginName);
 
   const handleError = (err: Error) => win.console.error(err);
 
@@ -79,7 +83,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
           typeof jsImplementations[platform] === 'function'
             ? (jsImplementation = await jsImplementations[platform]())
             : (jsImplementation = jsImplementations[platform]);
-      } else if (capCustomPlatform !== null && !jsImplementation && 'web' in jsImplementations) {
+      } else if (
+        capCustomPlatform !== null &&
+        !jsImplementation &&
+        'web' in jsImplementations
+      ) {
         jsImplementation =
           typeof jsImplementations['web'] === 'function'
             ? (jsImplementation = await jsImplementations['web']())

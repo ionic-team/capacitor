@@ -166,7 +166,7 @@ export interface StoredCallback {
 
 export interface CapacitorCustomPlatformInstance {
   name: string;
-  plugins: {[pluginName: string]: any}
+  plugins: { [pluginName: string]: any };
 }
 
 export interface WindowCapacitor {
