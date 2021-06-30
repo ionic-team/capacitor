@@ -166,7 +166,6 @@ export interface StoredCallback {
 
 export interface CapacitorCustomPlatformInstance {
   name: string;
-  useWebFallbackPlugins?: boolean;
   plugins: {[pluginName: string]: any}
 }
 

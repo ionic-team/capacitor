@@ -79,12 +79,13 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
           typeof jsImplementations[platform] === 'function'
             ? (jsImplementation = await jsImplementations[platform]())
             : (jsImplementation = jsImplementations[platform]);
-      } else if (capCustomPlatform?.useWebFallbackPlugins && !jsImplementation && 'web' in jsImplementations) {
+      } else if (capCustomPlatform !== null && !jsImplementation && 'web' in jsImplementations) {
         jsImplementation =
-          typeof jsImplementations[platform] === 'function'
-            ? (jsImplementation = await jsImplementations[platform]())
-            : (jsImplementation = jsImplementations[platform]);
+          typeof jsImplementations['web'] === 'function'
+            ? (jsImplementation = await jsImplementations['web']())
+            : (jsImplementation = jsImplementations['web']);
       }
+      //*/
 
       return jsImplementation;
     };
