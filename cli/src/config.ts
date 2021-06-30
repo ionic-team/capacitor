@@ -227,7 +227,14 @@ async function loadAndroidConfig(
   const assetsDir = `${srcMainDir}/assets`;
   const webDir = `${assetsDir}/public`;
   const resDir = `${srcMainDir}/res`;
-  const buildOutputDir = `${appDir}/build/outputs/apk/debug`;
+  let apkPath = `${appDir}/build/outputs/apk/`;
+  let flavorPrefix = '';
+  if (extConfig.android?.flavor) {
+    apkPath = `${apkPath}/${extConfig.android?.flavor}`;
+    flavorPrefix = `-${extConfig.android?.flavor}`;
+  }
+  const apkName = `app${flavorPrefix}-debug.apk`;
+  const buildOutputDir = `${apkPath}/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
   const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
 
@@ -251,6 +258,7 @@ async function loadAndroidConfig(
     webDirAbs: resolve(platformDirAbs, webDir),
     resDir,
     resDirAbs: resolve(platformDirAbs, resDir),
+    apkName,
     buildOutputDir,
     buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
   };
