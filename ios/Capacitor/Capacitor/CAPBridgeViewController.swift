@@ -22,6 +22,7 @@ import Cordova
                let lastVersionName = UserDefaults.standard.string(forKey: "lastBinaryVersionName") {
                 return (curVersionCode.isEqual(lastVersionCode) == false || curVersionName.isEqual(lastVersionName) == false)
             }
+            return true
         }
         return false
     }()
