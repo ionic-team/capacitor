@@ -28,7 +28,10 @@ export async function runAndroid(
       cwd: config.android.platformDirAbs,
     }),
   );
-  const apkPath = resolve(config.android.buildOutputDirAbs, config.android.apkName);
+  const apkPath = resolve(
+    config.android.buildOutputDirAbs,
+    config.android.apkName,
+  );
 
   const nativeRunArgs = ['android', '--app', apkPath, '--target', target.id];
 

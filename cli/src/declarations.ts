@@ -202,7 +202,7 @@ export interface CapacitorConfig {
      *
      * @since 3.1.0
      */
-    flavor?: string
+    flavor?: string;
   };
 
   ios?: {
