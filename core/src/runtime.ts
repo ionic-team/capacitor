@@ -93,7 +93,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
             ? (jsImplementation = await jsImplementations['web']())
             : (jsImplementation = jsImplementations['web']);
       }
-      //*/
 
       return jsImplementation;
     };
