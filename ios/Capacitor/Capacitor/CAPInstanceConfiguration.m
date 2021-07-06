@@ -34,6 +34,7 @@
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
         _appLocation = descriptor.appLocation;
         _appStartPath = descriptor.appStartPath;
+        _limitsNavigationsToAppBoundDomains = descriptor.limitsNavigationsToAppBoundDomains;
         _pluginConfigurations = descriptor.pluginConfigurations;
         _legacyConfig = descriptor.legacyConfig;
         // construct the necessary URLs

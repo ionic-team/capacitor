@@ -104,6 +104,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *appStartPath;
 /**
+ @brief Whether or not the Capacitor WebView will limit the navigation to @c WKAppBoundDomains listed in the Info.plist.
+ @discussion Defaults to @c false. Set by @c ios.limitsNavigationsToAppBoundDomains in the configuration file.  Required to be @c true for plugins to work if the app includes @c WKAppBoundDomains in the Info.plist.
+ */
+@property (nonatomic, assign) BOOL limitsNavigationsToAppBoundDomains;
+/**
  @brief The parser used to load the cofiguration for Cordova plugins.
  */
 @property (nonatomic, copy, nonnull) CDVConfigParser *cordovaConfiguration;
