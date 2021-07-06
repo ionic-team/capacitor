@@ -25,7 +25,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       : getPlatformId(win);
   };
 
-  const isNativePlatform = () => getPlatformId(win) !== 'web';
+  const isNativePlatform = () => getPlatform() !== 'web';
 
   const isPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
