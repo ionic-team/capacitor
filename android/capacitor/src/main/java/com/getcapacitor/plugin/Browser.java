@@ -29,8 +29,7 @@ import org.json.JSONException;
  */
 @NativePlugin(requestCodes={PluginRequestCodes.BROWSER_OPEN_CHROME_TAB})
 public class Browser extends Plugin {
-  public static final String CUSTOM_TAB_PACKAGE_NAME = "com.android.chrome";  // Change when in stable
-
+  
   private CustomTabsClient customTabsClient;
   private CustomTabsSession currentSession;
   private boolean fireFinished = false;
@@ -123,7 +122,8 @@ public class Browser extends Plugin {
     if (fireFinished) {
       notifyListeners("browserFinished", new JSObject());
     }
-    boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
+    String customTabPackageName = CustomTabsClient.getPackageName(getContext(), null);
+    boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), customTabPackageName, connection);
     if (!ok) {
       Logger.error(getLogTag(), "Error binding to custom tabs service", null);
     }
