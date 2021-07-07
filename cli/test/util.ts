@@ -54,16 +54,7 @@ const APP_INDEX = `
   <capacitor-welcome></capacitor-welcome>
 </body>
 </html>
-`
-
-const APP_PACKAGE_JSON = `
-{
-  "name": "test-app",
-  "dependencies": {
-    "${CORDOVA_PLUGIN_ID}": "latest"
-  }
-}
-`
+`;
 
 export async function makeAppDir(monoRepoLike: boolean = false) {
   const appDirObj: any = await mktmp();
@@ -72,6 +63,15 @@ export async function makeAppDir(monoRepoLike: boolean = false) {
   if (monoRepoLike) {
     await mkdirAsync(rootDir);
   }
+  const cordovaPluginPath = join(tmpDir, CORDOVA_PLUGIN_ID);
+  const APP_PACKAGE_JSON = `
+{
+  "name": "test-app",
+  "dependencies": {
+    "${CORDOVA_PLUGIN_ID}": "file:${cordovaPluginPath}"
+  }
+}
+`;
   const appDir = monoRepoLike ? join(rootDir, 'test-app') : rootDir;
   await mkdirAsync(appDir);
   // Make the web dir
@@ -88,7 +88,6 @@ export async function makeAppDir(monoRepoLike: boolean = false) {
   await runCommand(`cd "${rootDir}" && npm install --save ${corePath} ${cliPath}`);
 
   // Make a fake cordova plugin
-  const cordovaPluginPath = join(tmpDir, CORDOVA_PLUGIN_ID);
   await makeCordovaPlugin(cordovaPluginPath);
 
   await runCommand(`cd "${rootDir}" && npm install --save ${cordovaPluginPath}`);
