@@ -4,6 +4,7 @@ import type {
   PluginResultData,
   PluginResultError,
 } from './definitions';
+import type { CapacitorPlatformsInstance } from './platforms';
 
 export interface PluginHeaderMethod {
   readonly name: string;
@@ -171,6 +172,10 @@ export interface CapacitorCustomPlatformInstance {
 
 export interface WindowCapacitor {
   Capacitor?: CapacitorInstance;
+  /**
+   * @deprecated Use `CapacitorCustomPlatform` instead
+   */
+  CapacitorPlatforms?: CapacitorPlatformsInstance;
   CapacitorCustomPlatform?: CapacitorCustomPlatformInstance;
   Ionic?: {
     WebView?: {
