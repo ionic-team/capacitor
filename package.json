@@ -6,7 +6,7 @@
     "sync-peer-dependencies": "node scripts/sync-peer-dependencies.mjs",
     "lerna:publish:dev": "lerna publish prerelease --conventional-commits --conventional-prerelease --no-changelog --preid dev-$(git rev-parse --short HEAD) --dist-tag dev --force-publish --no-git-tag-version --no-push",
     "lerna:version:rc": "lerna version prerelease --force-publish --preid rc",
-    "lerna:version:latest": "lerna version --force-publish --conventional-graduate",
+    "lerna:version:latest": "lerna version --force-publish --conventional-commits",
     "lerna:publish:next": "lerna publish from-git --force-publish --dist-tag next --yes",
     "lerna:publish:latest": "lerna publish from-git --force-publish --dist-tag latest --yes",
     "lint": "npm run eslint && npm run prettier -- --check && npm run swiftlint -- lint",
