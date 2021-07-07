@@ -193,6 +193,16 @@ export interface CapacitorConfig {
      * @since 3.0.0
      */
     includePlugins?: string[];
+
+    /**
+     * Android flavor to use.
+     *
+     * If the app has flavors declared in the `build.gradle`
+     * configure the flavor you want to run with `npx cap run` command.
+     *
+     * @since 3.1.0
+     */
+    flavor?: string;
   };
 
   ios?: {
