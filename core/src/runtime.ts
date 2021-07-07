@@ -31,8 +31,12 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   };
   const getPlatform = capPlatforms.currentPlatform.getPlatform || defaultGetPlatform;
 
+<<<<<<< HEAD
   const defaultIsNativePlatform = () => getPlatform() !== 'web';
   const isNativePlatform = capPlatforms.currentPlatform.isNativePlatform || defaultIsNativePlatform;
+=======
+  const isNativePlatform = () => getPlatform() !== 'web';
+>>>>>>> 2da66fb5094846a7977db1ba3324ae4f16ea3071
 
   const defaultIsPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
@@ -102,7 +106,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
             ? (jsImplementation = await jsImplementations['web']())
             : (jsImplementation = jsImplementations['web']);
       }
-      //*/
 
       return jsImplementation;
     };

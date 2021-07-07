@@ -22,6 +22,7 @@ import Cordova
                let lastVersionName = UserDefaults.standard.string(forKey: "lastBinaryVersionName") {
                 return (curVersionCode.isEqual(lastVersionCode) == false || curVersionName.isEqual(lastVersionName) == false)
             }
+            return true
         }
         return false
     }()
@@ -104,6 +105,9 @@ import Cordova
         webViewConfiguration.suppressesIncrementalRendering = false
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
         webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
+        if #available(iOS 14.0, *) {
+            webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
+        }
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
                 webViewConfiguration.applicationNameForUserAgent = "\(appName)  \(appendUserAgent)"

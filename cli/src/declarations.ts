@@ -321,6 +321,21 @@ export interface CapacitorConfig {
      * @since 3.0.0
      */
     includePlugins?: string[];
+
+    /**
+     * Sets WKWebView configuration for limitsNavigationsToAppBoundDomains.
+     *
+     * If the Info.plist file includes `WKAppBoundDomains` key, it's recommended to
+     * set this option to true, otherwise some features won't work.
+     * But as side effect, it blocks navigation outside the domains in the
+     * `WKAppBoundDomains` list.
+     * `localhost` (or the value configured as `server.hostname`) also needs to be
+     * added to the `WKAppBoundDomains` list.
+     *
+     * @since 3.1.0
+     * @default false
+     */
+    limitsNavigationsToAppBoundDomains?: boolean;
   };
 
   server?: {
