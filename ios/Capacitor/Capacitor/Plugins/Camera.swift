@@ -208,6 +208,52 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
   public func imagePickerController(_ picker: UIImagePickerController,
                                     didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    if let processedImage = processImage(from: info) {
+      returnProcessedImage(processedImage)
+    } else {
+      self.call?.error("Error resizing image")
+    }
+    picker.dismiss(animated: true, completion: nil)
+  }
+
+  func returnProcessedImage(_ processedImage: ProcessedImage) {
+    guard let jpeg = processedImage.generateJPEG(with: min(abs(CGFloat(settings.quality)) / 100.0, 1.0)) else {
+        self.call?.reject("Unable to convert image to jpeg")
+        return
+    }
+
+    if settings.resultType == CameraResultType.base64.rawValue {
+      let base64String = jpeg.base64EncodedString()
+
+      self.call?.success([
+        "base64String": base64String,
+        "exif": processedImage.exifData,
+        "format": "jpeg"
+      ])
+    } else if settings.resultType == CameraResultType.DATA_URL.rawValue {
+      let base64String = jpeg.base64EncodedString()
+
+      self.call?.success([
+        "dataUrl": "data:image/jpeg;base64," + base64String,
+        "exif": processedImage.exifData,
+        "format": "jpeg"
+      ])
+    } else if settings.resultType == CameraResultType.uri.rawValue {
+      let path = try! saveTemporaryImage(jpeg)
+      guard let webPath = CAPFileManager.getPortablePath(host: bridge.getLocalUrl(), uri: URL(string: path)) else {
+        call?.reject("Unable to get portable path to file")
+        return
+      }
+      call?.success([
+        "path": path,
+        "exif": processedImage.exifData,
+        "webPath": webPath,
+        "format": "jpeg"
+      ])
+    }
+  }
+
+  func processImage(from info: [UIImagePickerController.InfoKey: Any]) -> ProcessedImage? {
     var image: UIImage?
     var isEdited = false
     var isGallery = true
@@ -221,8 +267,8 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       image = originalImage
     }
 
-    var imageMetadata: [AnyHashable: Any] = [:]
-    if let photoMetadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [AnyHashable: Any] {
+    var imageMetadata: [String: Any] = [:]
+    if let photoMetadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [String: Any] {
       imageMetadata = photoMetadata
       isGallery = false
     }
@@ -232,16 +278,14 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
     if settings.shouldResize {
       guard let convertedImage = resizeImage(image!, settings.preserveAspectRatio) else {
-        self.call?.error("Error resizing image")
-        return
+        return nil
       }
       image = convertedImage
     }
 
     if settings.shouldCorrectOrientation {
       guard let convertedImage = correctOrientation(image!) else {
-        self.call?.error("Error resizing image")
-        return
+        return nil
       }
       image = convertedImage
     }
@@ -251,43 +295,12 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
         UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil);
       }
     }
-    
-    guard let jpeg = image!.jpegData(compressionQuality: CGFloat(settings.quality/100)) else {
-      self.call?.error("Unable to convert image to jpeg")
-      return
+
+    var result = ProcessedImage(image: image!, metadata: imageMetadata)
+    if settings.shouldCorrectOrientation {
+      result.overwriteMetadataOrientation(to: 1)
     }
-
-    if settings.resultType == CameraResultType.base64.rawValue {
-      let base64String = jpeg.base64EncodedString()
-
-      self.call?.success([
-        "base64String": base64String,
-        "exif": makeExif(imageMetadata) ?? [:],
-        "format": "jpeg"
-      ])
-    } else if settings.resultType == CameraResultType.DATA_URL.rawValue {
-      let base64String = jpeg.base64EncodedString()
-
-      self.call?.success([
-        "dataUrl": "data:image/jpeg;base64," + base64String,
-        "exif": makeExif(imageMetadata) ?? [:],
-        "format": "jpeg"
-      ])
-    } else if settings.resultType == CameraResultType.uri.rawValue {
-      let path = try! saveTemporaryImage(jpeg)
-      guard let webPath = CAPFileManager.getPortablePath(host: bridge.getLocalUrl(), uri: URL(string: path)) else {
-        call?.reject("Unable to get portable path to file")
-        return
-      }
-      call?.success([
-        "path": path,
-        "exif": makeExif(imageMetadata) ?? [:],
-        "webPath": webPath,
-        "format": "jpeg"
-      ])
-    }
-
-    picker.dismiss(animated: true, completion: nil)
+    return result
   }
 
   func metadataFromImageData(data: NSData)-> [String: Any]? {
@@ -404,19 +417,68 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       }
       let hasPhotoLibraryUsage = dict["NSPhotoLibraryUsageDescription"] != nil
       if !hasPhotoLibraryUsage {
-          let docLink = DocLinks.NSPhotoLibraryUsageDescription
-          return "You are missing NSPhotoLibraryUsageDescription in your Info.plist file." +
+        let docLink = DocLinks.NSPhotoLibraryUsageDescription
+        return "You are missing NSPhotoLibraryUsageDescription in your Info.plist file." +
           " Camera will not function without it. Learn more: \(docLink.rawValue)"
       }
       let hasCameraUsage = dict["NSCameraUsageDescription"] != nil
       if !hasCameraUsage {
-          let docLink = DocLinks.NSCameraUsageDescription
-          return "You are missing NSCameraUsageDescription in your Info.plist file." +
+        let docLink = DocLinks.NSCameraUsageDescription
+        return "You are missing NSCameraUsageDescription in your Info.plist file." +
           " Camera will not function without it. Learn more: \(docLink.rawValue)"
       }
     }
 
     return nil
+  }
+
+  internal struct ProcessedImage {
+    var image: UIImage
+    var metadata: [String: Any]
+
+    var exifData: [String: Any] {
+      var exifData = metadata["{Exif}"] as? [String: Any]
+      exifData?["Orientation"] = metadata["Orientation"]
+      exifData?["GPS"] = metadata["{GPS}"]
+      return exifData ?? [:]
+    }
+
+    mutating func overwriteMetadataOrientation(to orientation: Int) {
+      replaceDictionaryOrientation(atNode: &metadata, to: orientation)
+    }
+
+    func replaceDictionaryOrientation(atNode node: inout [String: Any], to orientation: Int) {
+      for key in node.keys {
+        if key == "Orientation", (node[key] as? Int) != nil {
+          node[key] = orientation
+        } else if var child = node[key] as? [String: Any] {
+          replaceDictionaryOrientation(atNode: &child, to: orientation)
+          node[key] = child
+        }
+      }
+    }
+
+    func generateJPEG(with quality: CGFloat) -> Data? {
+      // convert the UIImage to a jpeg
+      guard let data = self.image.jpegData(compressionQuality: quality) else {
+        return nil
+      }
+      // define our jpeg data as an image source and get its type
+      guard let source = CGImageSourceCreateWithData(data as CFData, nil), let type = CGImageSourceGetType(source) else {
+        return data
+      }
+      // allocate an output buffer and create the destination to receive the new data
+      guard let output = NSMutableData(capacity: data.count), let destination = CGImageDestinationCreateWithData(output, type, 1, nil) else {
+        return data
+      }
+      // pipe the source into the destination while overwriting the metadata, this encodes the metadata information into the image
+      CGImageDestinationAddImageFromSource(destination, source, 0, self.metadata as CFDictionary)
+      // finish
+      guard CGImageDestinationFinalize(destination) else {
+        return data
+      }
+      return output as Data
+    }
   }
 
 }
