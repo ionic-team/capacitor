@@ -29,10 +29,12 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       ? capCustomPlatform.name
       : getPlatformId(win);
   };
-  const getPlatform = capPlatforms.currentPlatform.getPlatform || defaultGetPlatform;
+  const getPlatform =
+    capPlatforms.currentPlatform.getPlatform || defaultGetPlatform;
 
   const defaultIsNativePlatform = () => getPlatform() !== 'web';
-  const isNativePlatform = capPlatforms.currentPlatform.isNativePlatform || defaultIsNativePlatform;
+  const isNativePlatform =
+    capPlatforms.currentPlatform.isNativePlatform || defaultIsNativePlatform;
 
   const defaultIsPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
@@ -48,12 +50,16 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     }
 
     return false;
-  }; 
-  const isPluginAvailable = capPlatforms.currentPlatform.isPluginAvailable || defaultIsPluginAvailable;
+  };
+  const isPluginAvailable =
+    capPlatforms.currentPlatform.isPluginAvailable || defaultIsPluginAvailable;
 
-  const defaultGetPluginHeader = (pluginName: string): PluginHeader | undefined =>
-    cap.PluginHeaders?.find(h => h.name === pluginName); 
-  const getPluginHeader = capPlatforms.currentPlatform.getPluginHeader || defaultGetPluginHeader;
+  const defaultGetPluginHeader = (
+    pluginName: string,
+  ): PluginHeader | undefined =>
+    cap.PluginHeaders?.find(h => h.name === pluginName);
+  const getPluginHeader =
+    capPlatforms.currentPlatform.getPluginHeader || defaultGetPluginHeader;
 
   const handleError = (err: Error) => win.console.error(err);
 
@@ -234,7 +240,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
     return proxy;
   };
-  const registerPlugin = capPlatforms.currentPlatform.registerPlugin || defaultRegisterPlugin;
+  const registerPlugin =
+    capPlatforms.currentPlatform.registerPlugin || defaultRegisterPlugin;
 
   // Add in convertFileSrc for web, it will already be available in native context
   if (!cap.convertFileSrc) {
