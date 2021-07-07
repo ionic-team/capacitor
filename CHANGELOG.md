@@ -1,3 +1,14 @@
+## [2.4.8](https://github.com/ionic-team/capacitor/compare/2.4.7...2.4.8) (2021-07-07)
+
+
+### Bug Fixes
+
+* fix(android): proper targetSdkVersion configuration on cordova plugins (#4788) ([8119522](https://github.com/ionic-team/capacitor/commit/8119522)), closes [#4788](https://github.com/ionic-team/capacitor/issues/4788)
+* fix(camera): properly append exif data into the returned images (#4769) ([1256809](https://github.com/ionic-team/capacitor/commit/1256809)), closes [#4769](https://github.com/ionic-team/capacitor/issues/4769)
+* fix(cli): Make create install capacitor 2 (#4774) ([d24451b](https://github.com/ionic-team/capacitor/commit/d24451b)), closes [#4774](https://github.com/ionic-team/capacitor/issues/4774)
+
+
+
 ## [2.4.7](https://github.com/ionic-team/capacitor/compare/2.4.6...2.4.7) (2021-03-03)
 
 
