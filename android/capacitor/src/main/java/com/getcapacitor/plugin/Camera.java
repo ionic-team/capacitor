@@ -367,6 +367,7 @@ public class Camera extends Plugin {
 
   private void returnFileURI(PluginCall call, ExifWrapper exif, Bitmap bitmap, Uri u, ByteArrayOutputStream bitmapOutputStream) {
     Uri newUri = getTempImage(bitmap, u, bitmapOutputStream);
+    exif.copyExif(newUri.getPath());
     if (newUri != null) {
       JSObject ret = new JSObject();
       ret.put("format", "jpeg");
