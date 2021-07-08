@@ -1,7 +1,7 @@
 import program from 'commander';
 
 import c from './colors';
-import { loadConfig, checkExternalConfig } from './config';
+import { checkExternalConfig, loadConfig } from './config';
 import type { Config } from './definitions';
 import { fatal, isFatal } from './errors';
 import { receive } from './ipc';
@@ -28,6 +28,7 @@ export async function run(): Promise<void> {
 
 export function runProgram(config: Config): void {
   program.version(config.cli.package.version);
+
   program
     .command('config', { hidden: true })
     .description(`print evaluated Capacitor config`)
