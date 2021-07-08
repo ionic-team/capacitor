@@ -62,8 +62,6 @@ export async function loadConfig(): Promise<Config> {
     },
   };
 
-  checkExternalConfig(conf);
-
   debug('config: %O', config);
 
   return config;
@@ -446,7 +444,7 @@ const config: CapacitorConfig = ${formatJSObject(extConfig)};
 export default config;\n`;
 }
 
-function checkExternalConfig(config: ExtConfigPairs): void {
+export function checkExternalConfig(config: ExtConfigPairs): void {
   if (
     typeof config.extConfig.hideLogs !== 'undefined' ||
     typeof config.extConfig.android?.hideLogs !== 'undefined' ||
