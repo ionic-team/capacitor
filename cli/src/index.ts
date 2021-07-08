@@ -139,7 +139,6 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { list, target, sync }) => {
-          checkExternalConfig(config.app);
           const { runCommand } = await import('./tasks/run');
           await runCommand(config, platform, { list, target, sync });
         }),
