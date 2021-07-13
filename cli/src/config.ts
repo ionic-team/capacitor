@@ -109,7 +109,9 @@ async function loadExtConfigTS(
 
     const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
     const extConfigObject = requireTS(ts, extConfigFilePath) as any;
-    const extConfig = extConfigObject.default ?? extConfigObject;
+    const extConfig = extConfigObject.default
+      ? await extConfigObject.default
+      : extConfigObject;
 
     return {
       extConfigType: 'ts',
@@ -136,7 +138,7 @@ async function loadExtConfigJS(
       extConfigType: 'js',
       extConfigName,
       extConfigFilePath: extConfigFilePath,
-      extConfig: require(extConfigFilePath),
+      extConfig: await require(extConfigFilePath),
     };
   } catch (e) {
     fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
