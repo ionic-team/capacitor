@@ -196,9 +196,59 @@ const initBridge = (w: any): void => {
     win.Ionic.WebView = IonicWebView;
   };
 
+  const shouldBeCloneable = (o: any): boolean => {
+    const type = typeof o;
+    return (
+        type === "undefined" ||
+        o === null ||
+        type === "boolean" ||
+        type === "number" ||
+        type === "string" ||
+        o instanceof Date ||
+        o instanceof RegExp ||
+        o instanceof Blob ||
+        o instanceof File ||
+        o instanceof FileList ||
+        o instanceof ArrayBuffer ||
+        o instanceof Array ||
+        o instanceof Map ||
+        o instanceof Set
+    );
+  }
+
+  const isCloneable = (obj: any): boolean => {
+      try {
+          postMessage(obj, "*");
+      } catch (error) {
+          if (error?.code === 25) return false; // DATA_CLONE_ERR
+      }
+
+      return true;
+  }
+
+  // https://stackoverflow.com/a/62544968
+  const isProxy = (obj: any): string | boolean => {
+      const _shouldBeCloneable = shouldBeCloneable(obj);
+      const _isCloneable = isCloneable(obj);
+
+      if(_isCloneable) {
+        return false;
+      }
+
+      if(!_shouldBeCloneable) {
+        return "maybe";
+      }
+      
+      return _shouldBeCloneable && !_isCloneable;
+  }
+    
   const safeStringify = (value: any): string => {
+    if (isProxy(value)) { return "proxy" }
     const seen = new Set();
     return JSON.stringify(value, (_k, v) => {
+      if (isProxy(v)) {
+        return "proxy"
+      }
       if (seen.has(v)) {
         return '...';
       }
@@ -286,8 +336,9 @@ const initBridge = (w: any): void => {
         typeof c.dir === 'function'
       );
     };
-
+    
     const serializeConsoleMessage = (msg: any): string => {
+      if (isProxy(msg)) { return "proxy" }
       if (typeof msg === 'object') {
         try {
           msg = safeStringify(msg);
@@ -306,14 +357,14 @@ const initBridge = (w: any): void => {
     if (win.console && isIos) {
       for (const logfn of BRIDGED_CONSOLE_METHODS) {
         win.console[logfn] = (...args: any[]) => {
-          const msgs = [...args];
 
-          originalConsole[logfn](...msgs);
+          // eslint-disable-next-line prefer-spread
+          originalConsole[logfn].apply(originalConsole, args);
 
           try {
             cap.toNative('Console', 'log', {
               level: logfn,
-              message: msgs.map(serializeConsoleMessage).join(' '),
+              message: args.map(serializeConsoleMessage).join(' '),
             });
           } catch (e) {
             // error converting/posting console messages
