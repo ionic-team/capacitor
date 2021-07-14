@@ -42,6 +42,17 @@ export interface CapacitorConfig {
   bundledWebRuntime?: boolean;
 
   /**
+   * Whether to skip doing a `cap sync` during `cap add`
+   *
+   * Sometimes you may not wish to perform a `cap sync` when adding a platform. e.g. if you're using
+   * private plugins that may cause the `cap sync` to fail.
+   *
+   * @since 3.0.0
+   * @default false
+   */
+   skipSyncOnAdd?: boolean;
+
+  /**
    * Hide or show the native logs for iOS and Android.
    *
    * @since 2.1.0
