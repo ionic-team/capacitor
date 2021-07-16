@@ -1,5 +1,6 @@
 import type { CapacitorGlobal, PluginImplementations } from './definitions';
 import type {
+  CapacitorCustomPlatformInstance,
   CapacitorInstance,
   PluginHeader,
   WindowCapacitor,
@@ -14,15 +15,24 @@ export interface RegisteredPlugin {
 }
 
 export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
+  const capCustomPlatform: CapacitorCustomPlatformInstance =
+    win.CapacitorCustomPlatform || null;
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
   const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
+  /**
+   * @deprecated Use `capCustomPlatform` instead, default functions like registerPlugin will function with the new object.
+   */
   const capPlatforms: CapacitorPlatformsInstance = win.CapacitorPlatforms;
 
-  const defaultGetPlatform = () => getPlatformId(win);
+  const defaultGetPlatform = () => {
+    return capCustomPlatform !== null
+      ? capCustomPlatform.name
+      : getPlatformId(win);
+  };
   const getPlatform =
     capPlatforms?.currentPlatform?.getPlatform || defaultGetPlatform;
 
-  const defaultIsNativePlatform = () => getPlatformId(win) !== 'web';
+  const defaultIsNativePlatform = () => getPlatform() !== 'web';
   const isNativePlatform =
     capPlatforms?.currentPlatform?.isNativePlatform || defaultIsNativePlatform;
 
@@ -89,6 +99,15 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
           typeof jsImplementations[platform] === 'function'
             ? (jsImplementation = await jsImplementations[platform]())
             : (jsImplementation = jsImplementations[platform]);
+      } else if (
+        capCustomPlatform !== null &&
+        !jsImplementation &&
+        'web' in jsImplementations
+      ) {
+        jsImplementation =
+          typeof jsImplementations['web'] === 'function'
+            ? (jsImplementation = await jsImplementations['web']())
+            : (jsImplementation = jsImplementations['web']);
       }
 
       return jsImplementation;
