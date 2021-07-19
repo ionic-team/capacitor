@@ -82,8 +82,4 @@ public class BridgeWebViewClient extends WebViewClient {
         }
     }
 
-    public void onPageCommitVisible(WebView view, String url) {
-        super.onPageCommitVisible(view, url);
-    }
-
 }
