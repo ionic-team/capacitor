@@ -53,7 +53,7 @@ public class BridgeWebViewClient extends WebViewClient {
         if (webViewListeners != null) {
             for (WebViewListener listener : bridge.getWebViewListeners()) {
                 listener.onReceivedError(view);
-             }
+            }
         }
     }
 
@@ -81,5 +81,4 @@ public class BridgeWebViewClient extends WebViewClient {
             }
         }
     }
-
 }
