@@ -17,6 +17,24 @@ public abstract class WebViewListener {
     }
 
     /**
+    * Callback for onReceivedError event.
+    *
+    * @param webView The WebView that loaded
+    */
+    public void onReceivedError(WebView webView){
+        // Override me to add behavior to handle the onReceivedError event
+    };
+
+    /**
+     * Callback for onReceivedHttpError event.
+     *
+     * @param webView The WebView that loaded
+     */
+    public void onReceivedHttpError(WebView webView){
+        // Override me to add behavior to handle the onReceivedHttpError event
+    };
+
+    /**
      * Callback for page start event.
      *
      * @param webView The WebView that loaded
