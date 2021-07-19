@@ -15,4 +15,13 @@ public abstract class WebViewListener {
     public void onPageLoaded(WebView webView) {
         // Override me to add behavior to the page loaded event
     }
+
+    /**
+     * Callback for page start event.
+     *
+     * @param webView The WebView that loaded
+     */
+    public void onPageStarted(WebView webView) {
+        // Override me to add behavior to the page started event
+    }
 }

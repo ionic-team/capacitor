@@ -1185,7 +1185,7 @@ public class Bridge {
         webViewListeners.remove(webViewListener);
     }
 
-    static class Builder {
+    public static class Builder {
 
         private Bundle instanceState = null;
         private CapConfig config = null;
@@ -1194,11 +1194,11 @@ public class Bridge {
         private Fragment fragment;
         private final List<WebViewListener> webViewListeners = new ArrayList<>();
 
-        Builder(AppCompatActivity activity) {
+        public Builder(AppCompatActivity activity) {
             this.activity = activity;
         }
 
-        Builder(Fragment fragment) {
+        public Builder(Fragment fragment) {
             this.activity = (AppCompatActivity) fragment.getActivity();
             this.fragment = fragment;
         }

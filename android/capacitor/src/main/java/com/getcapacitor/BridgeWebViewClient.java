@@ -35,7 +35,6 @@ public class BridgeWebViewClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
 
         if (webViewListeners != null && view.getProgress() == 100) {
@@ -49,5 +48,17 @@ public class BridgeWebViewClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
         bridge.reset();
+        List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
+
+        if (webViewListeners != null) {
+            for (WebViewListener listener : bridge.getWebViewListeners()) {
+                listener.onPageStarted(view);
+            }
+        }
+    }
+
+    @Override
+    public void onPageCommitVisible(WebView view, String url) {
+        super.onPageCommitVisible(view, url);
     }
 }
