@@ -217,6 +217,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
             // https://github.com/facebook/react/issues/20030
             case '$$typeof':
               return undefined;
+            case 'toJSON':
+              return () => ({});
             case 'addListener':
               return pluginHeader ? addListenerNative : addListener;
             case 'removeListener':
