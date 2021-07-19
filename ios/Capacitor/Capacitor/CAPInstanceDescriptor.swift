@@ -122,6 +122,9 @@ internal extension InstanceDescriptor {
             } else if let hideLogs = (config[keyPath: "ios.hideLogs"] as? Bool) ?? (config[keyPath: "hideLogs"] as? Bool), hideLogs {
                 loggingBehavior = .none
             }
+            if let limitsNavigations = config[keyPath: "ios.limitsNavigationsToAppBoundDomains"] as? Bool {
+                limitsNavigationsToAppBoundDomains = limitsNavigations
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity

@@ -4,10 +4,10 @@ import { resolve } from 'path';
 import c from '../colors';
 import { checkCapacitorPlatform } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
-import type { Config } from '../definitions';
 import { OS } from '../definitions';
-import type { Plugin } from '../plugin';
+import type { Config } from '../definitions';
 import { PluginType, getPluginPlatform } from '../plugin';
+import type { Plugin } from '../plugin';
 import { isInstalled } from '../util/subprocess';
 
 export async function checkIOSPackage(config: Config): Promise<string | null> {
@@ -84,4 +84,15 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
 
   await writeFile(plistPath, plistContent, { encoding: 'utf-8' });
   await writeFile(pbxPath, pbxContent, { encoding: 'utf-8' });
+}
+
+export function shouldPodInstall(
+  config: Config,
+  platformName: string,
+): boolean {
+  // Don't run pod install or xcodebuild if not on macOS
+  if (config.cli.os !== OS.Mac && platformName === 'ios') {
+    return false;
+  }
+  return true;
 }

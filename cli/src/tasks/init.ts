@@ -11,6 +11,7 @@ import {
 import { getCordovaPreferences } from '../cordova';
 import type { Config, ExternalConfig } from '../definitions';
 import { fatal, isFatal } from '../errors';
+import { detectFramework } from '../framework-configs';
 import { output, logSuccess, logPrompt } from '../log';
 import { readConfig, writeConfig as sysWriteConfig } from '../sysconfig';
 import { resolveNode } from '../util/node';
@@ -114,6 +115,11 @@ async function getAppId(config: Config, id: string) {
 
 async function getWebDir(config: Config, webDir?: string) {
   if (!webDir) {
+    const framework = detectFramework(config);
+    if (framework?.webDir) {
+      return framework.webDir;
+    }
+
     const answers = await logPrompt(
       `${c.strong(`What is the web asset directory for your app?`)}\n` +
         `This directory should contain the final ${c.strong(
@@ -177,7 +183,7 @@ function printNextSteps(newConfigName: string) {
   logSuccess(`${c.strong(newConfigName)} created!`);
   output.write(
     `\nNext steps: \n${c.strong(
-      `https://capacitorjs.com/docs/v3/getting-started#where-to-go-next`,
+      `https://capacitorjs.com/docs/getting-started#where-to-go-next`,
     )}\n`,
   );
 }

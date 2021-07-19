@@ -42,7 +42,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
       )} option). You may need to compile the web assets for your app (typically ${c.input(
         'npm run build',
       )}). More info: ${c.strong(
-        'https://capacitorjs.com/docs/v3/basics/workflow#sync-your-project',
+        'https://capacitorjs.com/docs/basics/workflow#sync-your-project',
       )}`
     );
   }
@@ -158,12 +158,13 @@ export async function wait(time: number): Promise<void> {
 
 export async function runPlatformHook(
   config: Config,
+  platformName: string,
   platformDir: string,
   hook: string,
 ): Promise<void> {
   const { spawn } = await import('child_process');
   const pkg = await readJSON(join(platformDir, 'package.json'));
-  const cmd = pkg.scripts[hook];
+  const cmd = pkg.scripts?.[hook];
 
   if (!cmd) {
     return;
@@ -179,6 +180,7 @@ export async function runPlatformHook(
         CAPACITOR_ROOT_DIR: config.app.rootDir,
         CAPACITOR_WEB_DIR: config.app.webDirAbs,
         CAPACITOR_CONFIG: JSON.stringify(config.app.extConfig),
+        CAPACITOR_PLATFORM_NAME: platformName,
         ...process.env,
       },
     });
@@ -307,7 +309,7 @@ export async function selectPlatforms(
           `See the docs for adding the ${c.strong(
             platformName,
           )} platform: ${c.strong(
-            `https://capacitorjs.com/docs/v3/${platformName}#adding-the-${platformName}-platform`,
+            `https://capacitorjs.com/docs/${platformName}#adding-the-${platformName}-platform`,
           )}`,
       );
     }

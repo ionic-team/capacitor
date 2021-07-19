@@ -48,6 +48,8 @@ class JSInjector {
         return (
             globalJS +
             "\n\n" +
+            localUrlJS +
+            "\n\n" +
             bridgeJS +
             "\n\n" +
             pluginJS +
@@ -56,9 +58,7 @@ class JSInjector {
             "\n\n" +
             cordovaPluginsFileJS +
             "\n\n" +
-            cordovaPluginsJS +
-            "\n\n" +
-            localUrlJS
+            cordovaPluginsJS
         );
     }
 

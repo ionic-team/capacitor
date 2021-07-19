@@ -3,6 +3,89 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.1](https://github.com/ionic-team/capacitor/compare/3.1.0...3.1.1) (2021-07-07)
+
+**Note:** Version bump only for package @capacitor/cli
+
+
+
+
+
+# [3.1.0](https://github.com/ionic-team/capacitor/compare/3.0.2...3.1.0) (2021-07-07)
+
+
+### Bug Fixes
+
+* **cli:** Don't error if there are no scripts ([#4763](https://github.com/ionic-team/capacitor/issues/4763)) ([dec3fb2](https://github.com/ionic-team/capacitor/commit/dec3fb285239912980f2abea1cf48c583da6a163))
+
+
+### Features
+
+* **cli:** Add hooks to call into npm scripts when capacitor commands run ([#4739](https://github.com/ionic-team/capacitor/issues/4739)) ([515230c](https://github.com/ionic-team/capacitor/commit/515230ccefec76d4b7ed03ef1122709d1b63b58a))
+* **cli:** allow run command to use flavors ([#4782](https://github.com/ionic-team/capacitor/issues/4782)) ([05cb853](https://github.com/ionic-team/capacitor/commit/05cb8533d4479efd3dc823b18f48699302f462ba))
+* **ios:** Add limitsNavigationsToAppBoundDomains configuration option ([#4789](https://github.com/ionic-team/capacitor/issues/4789)) ([2b7016f](https://github.com/ionic-team/capacitor/commit/2b7016f3b4d62fd8c9d03fde2745b3d515bf08b2))
+
+
+
+
+
+## [3.0.2](https://github.com/ionic-team/capacitor/compare/3.0.1...3.0.2) (2021-06-23)
+
+
+### Bug Fixes
+
+* **cli:** correctly show EACCES error on run ([#4742](https://github.com/ionic-team/capacitor/issues/4742)) ([2ab8778](https://github.com/ionic-team/capacitor/commit/2ab877881a292bba0aed946b20c3c6bb58808e58))
+* **cli:** Don't error on ios sync on non macOS ([#4723](https://github.com/ionic-team/capacitor/issues/4723)) ([368ffad](https://github.com/ionic-team/capacitor/commit/368ffad03612841a8f228c6a174c141659f5293d))
+
+
+
+
+
+## [3.0.1](https://github.com/ionic-team/capacitor/compare/3.0.0...3.0.1) (2021-06-09)
+
+
+### Bug Fixes
+
+* **cli:** add priority to framework detection ([#4617](https://github.com/ionic-team/capacitor/issues/4617)) ([6a22f03](https://github.com/ionic-team/capacitor/commit/6a22f0375921fc7c015bc72e036dee014b1baed9))
+* **cli:** Better native-run error ([#4676](https://github.com/ionic-team/capacitor/issues/4676)) ([39eebd0](https://github.com/ionic-team/capacitor/commit/39eebd0a2dc45fd5d07f79fb9ad5b919556c5fc5))
+* **cli:** Don't prompt cordova preferences if non interactive ([#4680](https://github.com/ionic-team/capacitor/issues/4680)) ([293527c](https://github.com/ionic-team/capacitor/commit/293527c85296a9b79ce6dbd12e0f3e3e43fbce0b))
+* **cli:** Remove v3 prefix from docs urls ([#4596](https://github.com/ionic-team/capacitor/issues/4596)) ([f99f11a](https://github.com/ionic-team/capacitor/commit/f99f11a6ee65020a8b2e58665e3427de814fba3a))
+* **cli:** Throw error if native-run didn't find targets ([#4681](https://github.com/ionic-team/capacitor/issues/4681)) ([bfbf2b5](https://github.com/ionic-team/capacitor/commit/bfbf2b5ffb48bf1617404385f7407baefcfe3282))
+
+
+
+
+
+# [3.0.0](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.4...3.0.0) (2021-05-18)
+
+
+### Bug Fixes
+
+* **cli:** create-react-app framework detection should not look for react-dev-utils ([#4585](https://github.com/ionic-team/capacitor/issues/4585)) ([9f7910e](https://github.com/ionic-team/capacitor/commit/9f7910ee39ea7721d01428ec65b3d101b8ba963e))
+
+
+
+
+
+# [3.0.0-rc.4](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.3...3.0.0-rc.4) (2021-05-18)
+
+
+### Features
+
+* **cli:** auto detect framework's webDir ([#4550](https://github.com/ionic-team/capacitor/issues/4550)) ([329448a](https://github.com/ionic-team/capacitor/commit/329448a26846b5167b16f9169d62a9ff61eef87d))
+
+
+
+
+
+# [3.0.0-rc.3](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.2...3.0.0-rc.3) (2021-05-11)
+
+**Note:** Version bump only for package @capacitor/cli
+
+
+
+
+
 # [3.0.0-rc.2](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.1...3.0.0-rc.2) (2021-05-07)
 
 **Note:** Version bump only for package @capacitor/cli

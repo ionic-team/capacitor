@@ -406,6 +406,9 @@ public class BridgeWebChromeClient extends WebChromeClient {
         if (fileChooserParams.getAcceptTypes().length > 1) {
             String[] validTypes = getValidTypes(fileChooserParams.getAcceptTypes());
             intent.putExtra(Intent.EXTRA_MIME_TYPES, validTypes);
+            if (intent.getType().startsWith(".")) {
+                intent.setType(validTypes[0]);
+            }
         }
         try {
             activityListener =

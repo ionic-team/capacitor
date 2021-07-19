@@ -3,6 +3,75 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.1](https://github.com/ionic-team/capacitor/compare/3.1.0...3.1.1) (2021-07-07)
+
+
+### Bug Fixes
+
+* fixing peer deps issues in android and ios libs ([310d9f4](https://github.com/ionic-team/capacitor/commit/310d9f486db976cb258fcda5ac893f019667617f))
+
+
+
+
+
+# [3.1.0](https://github.com/ionic-team/capacitor/compare/3.0.2...3.1.0) (2021-07-07)
+
+**Note:** Version bump only for package @capacitor/android
+
+
+
+
+
+## [3.0.2](https://github.com/ionic-team/capacitor/compare/3.0.1...3.0.2) (2021-06-23)
+
+
+### Bug Fixes
+
+* **android:** Set WEBVIEW_SERVER_URL before injecting native-bridge ([#4748](https://github.com/ionic-team/capacitor/issues/4748)) ([5d6b179](https://github.com/ionic-team/capacitor/commit/5d6b17994abc7ad770b95e3a9fc29aecf5d9fc05))
+* **core:** cordova events not firing ([#4712](https://github.com/ionic-team/capacitor/issues/4712)) ([ca4e3b6](https://github.com/ionic-team/capacitor/commit/ca4e3b62dba6a40e593a1404ba2fe2b416a4ac14))
+
+
+
+
+
+## [3.0.1](https://github.com/ionic-team/capacitor/compare/3.0.0...3.0.1) (2021-06-09)
+
+
+### Bug Fixes
+
+* **android:** Avoid crash on input file ([#4707](https://github.com/ionic-team/capacitor/issues/4707)) ([883c0fe](https://github.com/ionic-team/capacitor/commit/883c0fe4a8a33d2e14894d9b307f4d7ce6d13bad))
+* **android:** Make proxy handle user info in server url ([#4699](https://github.com/ionic-team/capacitor/issues/4699)) ([baeed45](https://github.com/ionic-team/capacitor/commit/baeed45038134d446aef7747e5ad5ce4ac07c438))
+* **android:** Reset bridge on onPageStarted only ([#4634](https://github.com/ionic-team/capacitor/issues/4634)) ([96e4830](https://github.com/ionic-team/capacitor/commit/96e483046c9128dbcaec21efb0f5d619c6b1185f))
+* Make isPluginAvailable available on bridge ([#4589](https://github.com/ionic-team/capacitor/issues/4589)) ([151e7a8](https://github.com/ionic-team/capacitor/commit/151e7a899d9646dbd5625a2539fd3f2297349bc5))
+
+
+
+
+
+# [3.0.0](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.4...3.0.0) (2021-05-18)
+
+**Note:** Version bump only for package @capacitor/android
+
+
+
+
+
+# [3.0.0-rc.4](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.3...3.0.0-rc.4) (2021-05-18)
+
+**Note:** Version bump only for package @capacitor/android
+
+
+
+
+
+# [3.0.0-rc.3](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.2...3.0.0-rc.3) (2021-05-11)
+
+**Note:** Version bump only for package @capacitor/android
+
+
+
+
+
 # [3.0.0-rc.2](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.1...3.0.0-rc.2) (2021-05-07)
 
 **Note:** Version bump only for package @capacitor/android

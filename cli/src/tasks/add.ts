@@ -7,7 +7,6 @@ import {
   checkAndroidPackage,
 } from '../android/common';
 import c from '../colors';
-import type { CheckFunction } from '../common';
 import {
   getKnownPlatforms,
   check,
@@ -21,8 +20,8 @@ import {
   promptForPlatform,
   getProjectPlatformDirectory,
 } from '../common';
+import type { CheckFunction } from '../common';
 import type { Config } from '../definitions';
-import { OS } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
 import {
@@ -41,7 +40,12 @@ export async function addCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(config, platformDir, 'capacitor:add');
+      await runPlatformHook(
+        config,
+        selectedPlatformName,
+        platformDir,
+        'capacitor:add',
+      );
     } else {
       let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
 
@@ -92,16 +96,14 @@ export async function addCommand(
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
-      if (shouldSync(config, platformName)) {
-        if (await pathExists(config.app.webDirAbs)) {
-          sync(config, platformName, false);
-        } else {
-          logger.warn(
-            `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
-              config.app.webDir,
-            )} directory.`,
-          );
-        }
+      if (await pathExists(config.app.webDirAbs)) {
+        sync(config, platformName, false);
+      } else {
+        logger.warn(
+          `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
+            config.app.webDir,
+          )} directory.`,
+        );
       }
 
       printNextSteps(platformName);
@@ -119,7 +121,7 @@ function printNextSteps(platformName: string) {
   logSuccess(`${c.strong(platformName)} platform added!`);
   output.write(
     `Follow the Developer Workflow guide to get building:\n${c.strong(
-      `https://capacitorjs.com/docs/v3/basics/workflow`,
+      `https://capacitorjs.com/docs/basics/workflow`,
     )}\n`,
   );
 }
@@ -154,20 +156,12 @@ async function editPlatforms(config: Config, platformName: string) {
   }
 }
 
-function shouldSync(config: Config, platformName: string) {
-  // Don't sync if we're adding the iOS platform not on a mac
-  if (config.cli.os !== OS.Mac && platformName === 'ios') {
-    return false;
-  }
-  return true;
-}
-
 function webWarning() {
   logger.error(
     `Not adding platform ${c.strong('web')}.\n` +
       `In Capacitor, the web platform is just your web app! For example, if you have a React or Angular project, the web platform is that project.\n` +
       `To add Capacitor functionality to your web app, follow the Web Getting Started Guide: ${c.strong(
-        'https://capacitorjs.com/docs/v3/web',
+        'https://capacitorjs.com/docs/web',
       )}`,
   );
 }

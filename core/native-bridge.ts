@@ -1,3 +1,7 @@
+/**
+ * Note: When making changes to this file, run `npm run build:nativebridge`
+ * afterwards to build the nativebridge.js files to the android and iOS projects.
+ */
 import type {
   CallData,
   CapacitorInstance,
@@ -44,9 +48,6 @@ const initBridge = (w: any): void => {
   };
 
   const initEvents = (win: WindowCapacitor, cap: CapacitorInstance) => {
-    const doc = win.document;
-    const cordova = win.cordova;
-
     cap.addListener = (pluginName, eventName, callback) => {
       const callbackId = cap.nativeCallback(
         pluginName,
@@ -77,6 +78,7 @@ const initBridge = (w: any): void => {
     };
 
     cap.createEvent = (eventName, eventData) => {
+      const doc = win.document;
       if (doc) {
         const ev = doc.createEvent('Events');
         ev.initEvent(eventName, false, false);
@@ -94,6 +96,8 @@ const initBridge = (w: any): void => {
     };
 
     cap.triggerEvent = (eventName, target, eventData) => {
+      const doc = win.document;
+      const cordova = win.cordova;
       eventData = eventData || {};
       const ev = cap.createEvent(eventName, eventData);
 
@@ -215,63 +219,61 @@ const initBridge = (w: any): void => {
       'warn',
     ];
 
-    const createLogFromNative = (c: Partial<Console>) => (
-      result: PluginResult,
-    ) => {
-      if (isFullConsole(c)) {
-        const success = result.success === true;
+    const createLogFromNative =
+      (c: Partial<Console>) => (result: PluginResult) => {
+        if (isFullConsole(c)) {
+          const success = result.success === true;
 
-        const tagStyles = success
-          ? 'font-style: italic; font-weight: lighter; color: gray'
-          : 'font-style: italic; font-weight: lighter; color: red';
+          const tagStyles = success
+            ? 'font-style: italic; font-weight: lighter; color: gray'
+            : 'font-style: italic; font-weight: lighter; color: red';
 
-        c.groupCollapsed(
-          '%cresult %c' +
-            result.pluginId +
-            '.' +
-            result.methodName +
-            ' (#' +
-            result.callbackId +
-            ')',
-          tagStyles,
-          'font-style: italic; font-weight: bold; color: #444',
-        );
-        if (result.success === false) {
-          c.error(result.error);
+          c.groupCollapsed(
+            '%cresult %c' +
+              result.pluginId +
+              '.' +
+              result.methodName +
+              ' (#' +
+              result.callbackId +
+              ')',
+            tagStyles,
+            'font-style: italic; font-weight: bold; color: #444',
+          );
+          if (result.success === false) {
+            c.error(result.error);
+          } else {
+            c.dir(result.data);
+          }
+          c.groupEnd();
         } else {
-          c.dir(result.data);
+          if (result.success === false) {
+            c.error('LOG FROM NATIVE', result.error);
+          } else {
+            c.log('LOG FROM NATIVE', result.data);
+          }
         }
-        c.groupEnd();
-      } else {
-        if (result.success === false) {
-          c.error('LOG FROM NATIVE', result.error);
-        } else {
-          c.log('LOG FROM NATIVE', result.data);
-        }
-      }
-    };
+      };
 
-    const createLogToNative = (c: Partial<Console>) => (
-      call: MessageCallData,
-    ) => {
-      if (isFullConsole(c)) {
-        c.groupCollapsed(
-          '%cnative %c' +
-            call.pluginId +
-            '.' +
-            call.methodName +
-            ' (#' +
-            call.callbackId +
-            ')',
-          'font-weight: lighter; color: gray',
-          'font-weight: bold; color: #000',
-        );
-        c.dir(call);
-        c.groupEnd();
-      } else {
-        c.log('LOG TO NATIVE: ', call);
-      }
-    };
+    const createLogToNative =
+      (c: Partial<Console>) => (call: MessageCallData) => {
+        if (isFullConsole(c)) {
+          c.groupCollapsed(
+            '%cnative %c' +
+              call.pluginId +
+              '.' +
+              call.methodName +
+              ' (#' +
+              call.callbackId +
+              ')',
+            'font-weight: lighter; color: gray',
+            'font-weight: bold; color: #000',
+          );
+          c.dir(call);
+          c.groupEnd();
+        } else {
+          c.log('LOG TO NATIVE: ', call);
+        }
+      };
 
     const isFullConsole = (c: Partial<Console>): c is Console => {
       if (!c) {
@@ -368,6 +370,8 @@ const initBridge = (w: any): void => {
     const getPlatform = () => getPlatformId(win);
 
     cap.getPlatform = getPlatform;
+    cap.isPluginAvailable = name =>
+      Object.prototype.hasOwnProperty.call(cap.Plugins, name);
     cap.isNativePlatform = isNativePlatform;
 
     // create the postToNative() fn if needed
