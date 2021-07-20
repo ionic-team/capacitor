@@ -15,6 +15,12 @@ public @interface CapacitorPlugin {
     String name() default "";
 
     /**
+     * Request codes this plugin uses and responds to, in order to tie
+     * Android events back the plugin to handle
+     */
+    int[] requestCodes() default {};
+
+    /**
      * Permissions this plugin needs, in order to make permission requests
      * easy if the plugin only needs basic permission prompting
      */

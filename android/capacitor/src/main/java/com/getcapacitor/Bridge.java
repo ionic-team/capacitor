@@ -548,6 +548,15 @@ public class Bridge {
                     }
                 }
             }
+            else {
+                requestCodes = pluginAnnotation.requestCodes();
+
+                for (int rc : requestCodes) {
+                    if (rc == requestCode) {
+                        return handle;
+                    }
+                }
+            }
         }
         return null;
     }
@@ -1004,7 +1013,8 @@ public class Bridge {
 
             return true;
         } else {
-            return false;
+            plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+            return true;
         }
     }
 
