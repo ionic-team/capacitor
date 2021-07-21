@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.2](https://github.com/ionic-team/capacitor/compare/3.1.1...3.1.2) (2021-07-21)
+
+
+### Bug Fixes
+
+* **cli:** Don't warn about hideLogs on some commands ([#4813](https://github.com/ionic-team/capacitor/issues/4813)) ([dc279cc](https://github.com/ionic-team/capacitor/commit/dc279cc0a4ba8332296c65ca00647829f43ed1d9))
+
+
+
+
+
 ## [3.1.1](https://github.com/ionic-team/capacitor/compare/3.1.0...3.1.1) (2021-07-07)
 
 **Note:** Version bump only for package @capacitor/cli
