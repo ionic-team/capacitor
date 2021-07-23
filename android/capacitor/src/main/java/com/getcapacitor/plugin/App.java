@@ -105,6 +105,7 @@ public class App extends Plugin {
     JSObject ret = new JSObject();
     final PackageManager manager = getContext().getPackageManager();
     Intent launchIntent = new Intent(Intent.ACTION_VIEW);
+    launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     launchIntent.setData(Uri.parse(url));
 
     try {
