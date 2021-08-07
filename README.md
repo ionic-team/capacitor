@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/l/@capacitor/core?style=flat-square" /></a>
 </p>
 <p align="center">
-  <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=getcapacitor.com&color=blue&style=flat-square" /></a>
+  <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=capacitorjs.com&color=blue&style=flat-square" /></a>
   <a href="https://twitter.com/capacitorjs"><img src="https://img.shields.io/twitter/follow/capacitorjs" /></a>
 </p>
 
