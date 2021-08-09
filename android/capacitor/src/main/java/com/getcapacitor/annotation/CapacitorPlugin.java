@@ -2,7 +2,6 @@ package com.getcapacitor.annotation;
 
 import android.content.Intent;
 import com.getcapacitor.PluginCall;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

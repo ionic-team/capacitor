@@ -547,8 +547,7 @@ public class Bridge {
                         return handle;
                     }
                 }
-            }
-            else {
+            } else {
                 requestCodes = pluginAnnotation.requestCodes();
 
                 for (int rc : requestCodes) {
