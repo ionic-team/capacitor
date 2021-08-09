@@ -86,7 +86,9 @@ public class JSExport {
             String[] content = context.getAssets().list(path);
             if (content.length > 0) {
                 for (String file : content) {
-                    builder.append(getFilesContent(context, path + "/" + file));
+                    if (!file.endsWith(".map")) {
+                        builder.append(getFilesContent(context, path + "/" + file));
+                    }
                 }
             } else {
                 return readFile(context.getAssets(), path);
