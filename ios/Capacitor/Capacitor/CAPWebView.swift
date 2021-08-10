@@ -90,10 +90,6 @@ open class CAPWebView: UIView {
         return descriptor
     }
     
- 
-    
-
-    
     /**
      Allows any additional configuration to be performed. The `webView` and `bridge` properties will be set by this point.
 
@@ -101,6 +97,10 @@ open class CAPWebView: UIView {
      this time.
      */
     open func capacitorDidLoad() {
+    }
+    
+    open func loadInitialContext(_ userContentController: WKUserContentController) throws {
+        CAPLog.print("in loadInitialContext base")
     }
     
 
@@ -133,6 +133,7 @@ extension CAPWebView {
         webViewConfig.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
         webViewConfig.userContentController = delegationHandler.contentController
         // create the web view and set its properties
+        try? self.loadInitialContext(webViewConfig.userContentController)
         let aWebView = WKWebView(frame: self.frame, configuration: webViewConfig)
         aWebView.scrollView.bounces = false
         aWebView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
