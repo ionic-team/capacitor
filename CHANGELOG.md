@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.2](https://github.com/ionic-team/capacitor/compare/3.1.1...3.1.2) (2021-07-21)
+
+
+### Bug Fixes
+
+* **android:** add missing android webview lifecycle events ([6a7c4e3](https://github.com/ionic-team/capacitor/commit/6a7c4e3b3a250270ac5c4b0f09da2a613ef2cf17))
+* **android:** Set theme an content view on onCreate ([#4841](https://github.com/ionic-team/capacitor/issues/4841)) ([8950c60](https://github.com/ionic-team/capacitor/commit/8950c600bb6e3804b79c62e83fef2253c2cc2389))
+* **cli:** Don't warn about hideLogs on some commands ([#4813](https://github.com/ionic-team/capacitor/issues/4813)) ([dc279cc](https://github.com/ionic-team/capacitor/commit/dc279cc0a4ba8332296c65ca00647829f43ed1d9))
+* **core:** handle toJSON() in plugin objects ([#4823](https://github.com/ionic-team/capacitor/issues/4823)) ([0479822](https://github.com/ionic-team/capacitor/commit/04798221666437408f22947253a18ccb4f9e409e))
+* **core:** Modify safeStringify to allow multiple null values ([#4853](https://github.com/ionic-team/capacitor/issues/4853)) ([854539b](https://github.com/ionic-team/capacitor/commit/854539b62a658e484954edbe38b25eea1b0b6f10))
+
+
+
+
+
 ## [3.1.1](https://github.com/ionic-team/capacitor/compare/3.1.0...3.1.1) (2021-07-07)
 
 

@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/l/@capacitor/core?style=flat-square" /></a>
 </p>
 <p align="center">
-  <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=getcapacitor.com&color=blue&style=flat-square" /></a>
+  <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=capacitorjs.com&color=blue&style=flat-square" /></a>
   <a href="https://twitter.com/capacitorjs"><img src="https://img.shields.io/twitter/follow/capacitorjs" /></a>
 </p>
 
@@ -22,12 +22,6 @@
 Capacitor is a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom native plugins that your app may need. Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores _and_ the mobile web.
 
 Capacitor comes with a Plugin API for building native plugins. Plugins can be written inside Capacitor apps or packaged into an npm dependency for community use. Plugin authors are encouraged to use Swift to develop plugins in iOS and Kotlin (or Java) in Android.
-
-> ### Capacitor 3.0 development has begun! :sparkles: :rocket: :star:
->
-> Interested in following Capacitor 3 development? We'd love your feedback! Use the [Capacitor 3 planning issue](https://github.com/ionic-team/capacitor/issues/3133) as a starting point. [Open a discussion](https://github.com/ionic-team/capacitor/discussions) if you have questions or suggestions.
->
-> We'd love to hear from you. :blue_heart:
 
 ## Getting Started
 

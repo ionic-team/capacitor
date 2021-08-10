@@ -200,7 +200,8 @@ const initBridge = (w: any): void => {
     const seen = new Set();
     return JSON.stringify(value, (_k, v) => {
       if (seen.has(v)) {
-        return '...';
+        if (v === null) return null;
+        else return '...';
       }
       if (typeof v === 'object') {
         seen.add(v);
