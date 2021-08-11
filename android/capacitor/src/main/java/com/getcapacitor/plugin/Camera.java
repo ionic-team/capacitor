@@ -320,15 +320,13 @@ public class Camera extends Plugin {
    * @param u
    */
   private void returnResult(PluginCall call, Bitmap bitmap, Uri u) {
+    ExifWrapper exif = ImageUtils.getExifData(getContext(), bitmap, u);
     try {
-      bitmap = prepareBitmap(bitmap, u);
+      bitmap = prepareBitmap(bitmap, u, exif);
     } catch (IOException e) {
       call.reject(UNABLE_TO_PROCESS_IMAGE);
       return;
     }
-
-    ExifWrapper exif = ImageUtils.getExifData(getContext(), bitmap, u);
-
     // Compress the final image and prepare for output to client
     ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
     bitmap.compress(Bitmap.CompressFormat.JPEG, settings.getQuality(), bitmapOutputStream);
@@ -404,11 +402,12 @@ public class Camera extends Plugin {
    * recycling the old one in the process
    * @param bitmap
    * @param imageUri
+   * @param exif
    * @return
    */
-  private Bitmap prepareBitmap(Bitmap bitmap, Uri imageUri) throws IOException {
+  private Bitmap prepareBitmap(Bitmap bitmap, Uri imageUri, ExifWrapper exif) throws IOException {
     if (settings.isShouldCorrectOrientation()) {
-      final Bitmap newBitmap = ImageUtils.correctOrientation(getContext(), bitmap, imageUri);
+      final Bitmap newBitmap = ImageUtils.correctOrientation(getContext(), bitmap, imageUri, exif);
       bitmap = replaceBitmap(bitmap, newBitmap);
     }
 
