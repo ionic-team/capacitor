@@ -41,7 +41,6 @@ open class CAPWebView: UIView {
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         self.addSubview(webView)
-        //        view = webView
 //        // create the bridge
         capacitorBridge = CapacitorBridge(with: configuration,
                                           delegate: self,
