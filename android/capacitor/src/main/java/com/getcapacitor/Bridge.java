@@ -547,6 +547,14 @@ public class Bridge {
                         return handle;
                     }
                 }
+            } else {
+                requestCodes = pluginAnnotation.requestCodes();
+
+                for (int rc : requestCodes) {
+                    if (rc == requestCode) {
+                        return handle;
+                    }
+                }
             }
         }
         return null;
@@ -984,28 +992,23 @@ public class Bridge {
             return cordovaInterface.onActivityResult(requestCode, resultCode, data);
         }
 
-        CapacitorPlugin pluginAnnotation = plugin.getPluginClass().getAnnotation(CapacitorPlugin.class);
-        if (pluginAnnotation == null) {
-            // deprecated, to be removed
-            PluginCall lastCall = plugin.getInstance().getSavedCall();
+        // deprecated, to be removed
+        PluginCall lastCall = plugin.getInstance().getSavedCall();
 
-            // If we don't have a saved last call (because our app was killed and restarted, for example),
-            // Then we should see if we have any saved plugin call information and generate a new,
-            // "dangling" plugin call (a plugin call that doesn't have a corresponding web callback)
-            // and then send that to the plugin
-            if (lastCall == null && pluginCallForLastActivity != null) {
-                plugin.getInstance().saveCall(pluginCallForLastActivity);
-            }
-
-            plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
-
-            // Clear the plugin call we may have re-hydrated on app launch
-            pluginCallForLastActivity = null;
-
-            return true;
-        } else {
-            return false;
+        // If we don't have a saved last call (because our app was killed and restarted, for example),
+        // Then we should see if we have any saved plugin call information and generate a new,
+        // "dangling" plugin call (a plugin call that doesn't have a corresponding web callback)
+        // and then send that to the plugin
+        if (lastCall == null && pluginCallForLastActivity != null) {
+            plugin.getInstance().saveCall(pluginCallForLastActivity);
         }
+
+        plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+
+        // Clear the plugin call we may have re-hydrated on app launch
+        pluginCallForLastActivity = null;
+
+        return true;
     }
 
     /**
