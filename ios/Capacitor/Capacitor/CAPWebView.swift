@@ -20,11 +20,6 @@ open class CAPWebView: UIView {
         initView()
     }
     
-//    override public init(frame: CGRect, configuration: WKWebViewConfiguration) {
-//        super.init(frame: frame, configuration: configuration)
-//        initView()
-//    }
-    
     func initView () {
 //         load the configuration and set the logging flag
         let configDescriptor = instanceDescriptor()
@@ -41,7 +36,7 @@ open class CAPWebView: UIView {
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         self.addSubview(webView)
-//        // create the bridge
+        // create the bridge
         capacitorBridge = CapacitorBridge(with: configuration,
                                           delegate: self,
                                           cordovaConfiguration: configDescriptor.cordovaConfiguration,
@@ -152,19 +147,13 @@ extension CAPWebView {
             aWebView.backgroundColor = UIColor.systemBackground
             aWebView.scrollView.backgroundColor = UIColor.systemBackground
         }
-//        self.capacitor .capacitor.setKeyboardShouldRequireUserInteraction(false)
-        // set our ivar
-//        webView = aWebView
+
         // set our delegates
         aWebView.uiDelegate = delegationHandler
         aWebView.navigationDelegate = delegationHandler
         webView = aWebView
     }
     
-//    open func webView(with frame: CGRect, configuration: WKWebViewConfiguration) -> WKWebView {
-//        return WKWebView(frame: frame, configuration: configuration)
-//    }
-//
     private func logWarnings(for descriptor: InstanceDescriptor) {
         if descriptor.warnings.contains(.missingAppDir) {
             CAPLog.print("⚡️  ERROR: Unable to find application directory at: \"\(descriptor.appLocation.absoluteString)\"!")
