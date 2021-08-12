@@ -165,9 +165,18 @@ export interface StoredCallback {
   reject?: (...args: any[]) => any;
 }
 
+export interface CapacitorCustomPlatformInstance {
+  name: string;
+  plugins: { [pluginName: string]: any };
+}
+
 export interface WindowCapacitor {
   Capacitor?: CapacitorInstance;
+  /**
+   * @deprecated Use `CapacitorCustomPlatform` instead
+   */
   CapacitorPlatforms?: CapacitorPlatformsInstance;
+  CapacitorCustomPlatform?: CapacitorCustomPlatformInstance;
   Ionic?: {
     WebView?: {
       getServerBasePath?: any;

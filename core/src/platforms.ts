@@ -48,6 +48,9 @@ const createCapacitorPlatforms = (win: any): CapacitorPlatformsInstance => {
 const initPlatforms = (win: any) =>
   (win.CapacitorPlatforms = createCapacitorPlatforms(win));
 
+/**
+ * @deprecated Set `CapacitorCustomPlatform` on the window object prior to runtime executing in the web app instead
+ */
 export const CapacitorPlatforms = /*#__PURE__*/ initPlatforms(
   (typeof globalThis !== 'undefined'
     ? globalThis
@@ -59,6 +62,11 @@ export const CapacitorPlatforms = /*#__PURE__*/ initPlatforms(
     ? global
     : {}) as any,
 );
-
+/**
+ * @deprecated Set `CapacitorCustomPlatform` on the window object prior to runtime executing in the web app instead
+ */
 export const addPlatform = CapacitorPlatforms.addPlatform;
+/**
+ * @deprecated Set `CapacitorCustomPlatform` on the window object prior to runtime executing in the web app instead
+ */
 export const setPlatform = CapacitorPlatforms.setPlatform;
