@@ -172,9 +172,16 @@ async function generatePodFile(
     );
   }
   const podPlugins = cordovaPlugins.filter(el => !noPodPlugins.includes(el));
-  if (podPlugins.length > 0) {
+  const podSwiftPlugins = podPlugins.filter(filterSwift);
+  const podObjCPlugins = podPlugins.filter(el => !podSwiftPlugins.includes(el));
+  if (podObjCPlugins.length > 0) {
     pods.push(
       `  pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'\n`,
+    );
+  }
+  if (podSwiftPlugins.length > 0) {
+    pods.push(
+      `  pod 'CordovaPluginsStaticSwift', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
   const resourcesPlugins = cordovaPlugins.filter(filterResources);
@@ -211,14 +218,18 @@ async function generateCordovaPodspecs(
 ) {
   const noPodPlugins = cordovaPlugins.filter(filterNoPods);
   const podPlugins = cordovaPlugins.filter(el => !noPodPlugins.includes(el));
-  generateCordovaPodspec(noPodPlugins, config, false);
-  generateCordovaPodspec(podPlugins, config, true);
+  const podSwiftPlugins = podPlugins.filter(filterSwift);
+  const podObjCPlugins = podPlugins.filter(el => !podSwiftPlugins.includes(el));
+  generateCordovaPodspec(noPodPlugins, config, false, false);
+  generateCordovaPodspec(podObjCPlugins, config, true, false);
+  generateCordovaPodspec(podSwiftPlugins, config, true, true);
 }
 
 async function generateCordovaPodspec(
   cordovaPlugins: Plugin[],
   config: Config,
   isStatic: boolean,
+  isSwift: boolean,
 ) {
   const weakFrameworks: string[] = [];
   const linkedFrameworks: string[] = [];
@@ -234,6 +245,10 @@ async function generateCordovaPodspec(
     name += 'Static';
     frameworkDeps.push('s.static_framework = true');
     sourcesFolderName += 'static';
+  }
+  if (isSwift) {
+    name += 'Swift';
+    sourcesFolderName += 'swift';
   }
   cordovaPlugins.map((plugin: any) => {
     const frameworks = getPlatformElement(plugin, platform, 'framework');
@@ -396,6 +411,9 @@ async function copyPluginsNativeFiles(
     let sourcesFolderName = 'sources';
     if (podFrameworks.length > 0 || podspecs.length > 0) {
       sourcesFolderName += 'static';
+      if (filterSwift(p)) {
+        sourcesFolderName += 'swift';
+      }
     }
     const sourcesFolder = join(
       config.ios.cordovaPluginsDirAbs,
@@ -501,6 +519,14 @@ function filterNoPods(plugin: Plugin) {
   );
   const podspecs = getPlatformElement(plugin, platform, 'podspec');
   return podFrameworks.length === 0 && podspecs.length === 0;
+}
+
+function filterSwift(plugin: Plugin) {
+  const sourceFiles = getPlatformElement(plugin, platform, 'source-file');
+  const swiftFiles = sourceFiles.filter(
+    (sf: any) => sf.$.src && sf.$.src.split('.').pop() === 'swift',
+  );
+  return swiftFiles.length > 0;
 }
 
 function filterResources(plugin: Plugin) {
