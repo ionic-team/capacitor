@@ -517,7 +517,7 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
     if (isInteractive()) {
       const answers = await logPrompt(
         `${c.strong(
-          `Cordovaaa preferences can be automatically ported to ${c.strong(
+          `Cordova preferences can be automatically ported to ${c.strong(
             config.app.extConfigName,
           )}.`,
         )}\n` +
