@@ -1,0 +1,30 @@
+name: Publish Native Android Library
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: read
+      packages: write
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./android/gradlew
+    - name: Grant execute permission for publishing script
+      run: chmod +x ./scripts/publish-android.sh
+    - name: Run publish script
+      working-directory: ./scripts
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: ./publish-android.sh
