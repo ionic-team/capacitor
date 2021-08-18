@@ -24,6 +24,7 @@ buildscript {
 tasks.withType(Javadoc).all { enabled = false }
 
 apply plugin: 'com.android.library'
+apply from: file('publish.gradle')
 
 android {
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 30
