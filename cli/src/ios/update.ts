@@ -165,6 +165,28 @@ async function generatePodFile(
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
   );
+  cordovaPlugins.map(async p => {
+    const podspecs = getPlatformElement(p, platform, 'podspec');
+    podspecs.map((podspec: any) => {
+      podspec.pods.map((pPods: any) => {
+        pPods.pod.map((pod: any) => {
+          if (pod.$.git) {
+            let gitRef = '';
+            if (pod.$.tag) {
+              gitRef = `, :tag => '${pod.$.tag}'`;
+            } else if (pod.$.branch) {
+              gitRef = `, :branch => '${pod.$.branch}'`;
+            } else if (pod.$.commit) {
+              gitRef = `, :commit => '${pod.$.commit}'`;
+            }
+            pods.push(
+              `  pod '${pod.$.name}', :git => '${pod.$.git}'${gitRef}\n`,
+            );
+          }
+        });
+      });
+    });
+  });
   const noPodPlugins = cordovaPlugins.filter(filterNoPods);
   if (noPodPlugins.length > 0) {
     pods.push(
