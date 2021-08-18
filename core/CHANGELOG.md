@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/ionic-team/capacitor/compare/3.1.2...3.2.0) (2021-08-18)
+
+
+### Features
+
+* **core:** implement CapacitorCustomPlatform for 3rd party platforms ([#4771](https://github.com/ionic-team/capacitor/issues/4771)) ([12c6294](https://github.com/ionic-team/capacitor/commit/12c6294b9eb82976b1322f00da9ba5a6004f7977))
+
+
+
+
+
 ## [3.1.2](https://github.com/ionic-team/capacitor/compare/3.1.1...3.1.2) (2021-07-21)
 
 

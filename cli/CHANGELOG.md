@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/ionic-team/capacitor/compare/3.1.2...3.2.0) (2021-08-18)
+
+
+### Bug Fixes
+
+* **cli:** Put cordova git pod dependencies in Podfile ([#4940](https://github.com/ionic-team/capacitor/issues/4940)) ([642dbf4](https://github.com/ionic-team/capacitor/commit/642dbf433e22bb695e5f782bd685de42eb2afada))
+* **cli:** Separate Swift plugins from ObjC plugins ([#4925](https://github.com/ionic-team/capacitor/issues/4925)) ([43ce803](https://github.com/ionic-team/capacitor/commit/43ce803975ccd66823aab1e8c0d44d0ca81c6b2f))
+
+
+
+
+
 ## [3.1.2](https://github.com/ionic-team/capacitor/compare/3.1.1...3.1.2) (2021-07-21)
 
 

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/ionic-team/capacitor/compare/3.1.2...3.2.0) (2021-08-18)
+
+
+### Bug Fixes
+
+* **android:** Don't inject map files into capacitor script ([#4893](https://github.com/ionic-team/capacitor/issues/4893)) ([992bebc](https://github.com/ionic-team/capacitor/commit/992bebce5a54128ec09b4905c4424fbe392719be))
+* **cli:** Put cordova git pod dependencies in Podfile ([#4940](https://github.com/ionic-team/capacitor/issues/4940)) ([642dbf4](https://github.com/ionic-team/capacitor/commit/642dbf433e22bb695e5f782bd685de42eb2afada))
+* **cli:** Separate Swift plugins from ObjC plugins ([#4925](https://github.com/ionic-team/capacitor/issues/4925)) ([43ce803](https://github.com/ionic-team/capacitor/commit/43ce803975ccd66823aab1e8c0d44d0ca81c6b2f))
+
+
+### Features
+
+* **core:** implement CapacitorCustomPlatform for 3rd party platforms ([#4771](https://github.com/ionic-team/capacitor/issues/4771)) ([12c6294](https://github.com/ionic-team/capacitor/commit/12c6294b9eb82976b1322f00da9ba5a6004f7977))
+
+
+
+
+
 ## [3.1.2](https://github.com/ionic-team/capacitor/compare/3.1.1...3.1.2) (2021-07-21)
 
 

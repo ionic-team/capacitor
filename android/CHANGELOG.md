@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/ionic-team/capacitor/compare/3.1.2...3.2.0) (2021-08-18)
+
+
+### Bug Fixes
+
+* **android:** Don't inject map files into capacitor script ([#4893](https://github.com/ionic-team/capacitor/issues/4893)) ([992bebc](https://github.com/ionic-team/capacitor/commit/992bebce5a54128ec09b4905c4424fbe392719be))
+
+
+
+
+
 ## [3.1.2](https://github.com/ionic-team/capacitor/compare/3.1.1...3.1.2) (2021-07-21)
 
 
