@@ -15,15 +15,22 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath 'io.github.gradle-nexus:publish-plugin:1.1.0'
     }
 }
 
 tasks.withType(Javadoc).all { enabled = false }
 
 apply plugin: 'com.android.library'
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
+apply from: file('../scripts/publish-root.gradle')
+apply from: file('../scripts/publish-module.gradle')
 
 android {
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 30
