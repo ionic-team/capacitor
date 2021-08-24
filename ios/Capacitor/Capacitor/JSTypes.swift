@@ -125,6 +125,11 @@ public protocol JSValueContainer: JSStringContainer, JSBoolContainer, JSIntConta
 }
 
 extension JSValueContainer {
+    
+    public func getAny(_ key: String) -> Any? {
+        return jsObjectRepresentation[key]
+    }
+    
     public func getString(_ key: String) -> String? {
         return jsObjectRepresentation[key] as? String
     }
