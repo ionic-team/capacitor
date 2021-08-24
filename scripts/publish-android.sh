@@ -16,8 +16,6 @@ CAPACITOR_PUBLISHED_URL="https://repo1.maven.org/maven2/com/capacitorjs/core/mav
 CAPACITOR_PUBLISHED_DATA=$(curl -s $CAPACITOR_PUBLISHED_URL)
 CAPACITOR_PUBLISHED_VERSION="$(perl -ne 'print and last if s/.*<latest>(.*)<\/latest>.*/\1/;' <<< $CAPACITOR_PUBLISHED_DATA)"
 
-CAPACITOR_PUBLISHED_VERSION="3.1.2"
-
 # Check if we need to publish a new native version of the Capacitor Android library
 if [[ $CAP_VERSION == $CAPACITOR_PUBLISHED_VERSION ]]; then
     printf %"s\n" "Native Capacitor Android library version $CAPACITOR_PUBLISHED_VERSION is already published on MavenCentral, skipping."
