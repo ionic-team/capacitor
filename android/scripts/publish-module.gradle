@@ -50,19 +50,8 @@ afterEvaluate {
                     }
                     developers {
                         developer {
-                            id = 'mlynch'
-                            name = 'Max Lynch'
-                            email = 'max@ionic.io'
-                        }
-                        developer {
-                            id = 'jcesarmobile'
-                            name = 'Julio Cesar Sanchez'
-                            email = 'julio@ionic.io'
-                        }
-                        developer {
-                            id = 'carlpoole'
-                            name = 'Carl Poole'
-                            email = 'carl@ionic.io'
+                            name = 'Ionic'
+                            email = 'hi@ionic.io'
                         }
                     }
 
