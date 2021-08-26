@@ -33,5 +33,5 @@ nexusPublishing {
             snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
         }
     }
-    repositoryDescription = 'Capacitor Android Core'
+    repositoryDescription = 'Capacitor Android Core v' + System.getenv('CAP_VERSION')
 }
