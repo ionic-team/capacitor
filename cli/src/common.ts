@@ -341,6 +341,16 @@ export async function isValidCommunityPlatform(
   return (await getKnownCommunityPlatforms()).includes(platform);
 }
 
+export async function getKnownEnterprisePlatforms(): Promise<string[]> {
+  return ['windows'];
+}
+
+export async function isValidEnterprisePlatform(
+  platform: string,
+): Promise<boolean> {
+  return (await getKnownEnterprisePlatforms()).includes(platform);
+}
+
 export async function promptForPlatform(
   platforms: string[],
   promptMessage: string,
@@ -501,6 +511,16 @@ export function resolvePlatform(
 
     if (community) {
       return dirname(community);
+    }
+
+    const enterprise = resolveNode(
+      config.app.rootDir,
+      `@ionic-enterprise/capacitor-${platform}`,
+      'package.json',
+    );
+
+    if (enterprise) {
+      return dirname(enterprise);
     }
   }
 

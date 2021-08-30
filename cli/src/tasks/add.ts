@@ -19,6 +19,7 @@ import {
   isValidCommunityPlatform,
   promptForPlatform,
   getProjectPlatformDirectory,
+  isValidEnterprisePlatform,
 } from '../common';
 import type { CheckFunction } from '../common';
 import type { Config } from '../definitions';
@@ -53,6 +54,12 @@ export async function addCommand(
         msg += `\nTry installing ${c.strong(
           `@capacitor-community/${selectedPlatformName}`,
         )} and adding the platform again.`;
+      }
+
+      if (await isValidEnterprisePlatform(selectedPlatformName)) {
+        msg +=
+          `\nThis is an enterprise platform and @ionic-enterprise/capacitor-${selectedPlatformName} is not installed.\n` +
+          `To learn how to use this platform, visit https://ionic.io/docs/${selectedPlatformName}`;
       }
 
       logger.error(msg);
