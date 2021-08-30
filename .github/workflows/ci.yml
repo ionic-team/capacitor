@@ -32,22 +32,6 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@master
         with:
           path: core/
-
-  get-package-version:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Latest
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
-      - name: Get Package Version
-        id: package-version
-        uses: elylucas/npm-get-version-action@master
-        with:
-          path: core/
-      - run: echo "version ${{ steps.package-version.outputs.current-version }}"
-
   lint:
     runs-on: macos-latest
     timeout-minutes: 30
