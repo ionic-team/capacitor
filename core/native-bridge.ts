@@ -302,11 +302,11 @@ const initBridge = (w: any): void => {
 
     // patch window.console on iOS and store original console fns
     const isIos = getPlatformId(win) === 'ios';
-    const originalConsole = { ...win.console };
+    const originalConsole: any = { ...win.console };
 
     if (win.console && isIos) {
       for (const logfn of BRIDGED_CONSOLE_METHODS) {
-        win.console[logfn] = (...args: any[]) => {
+        (win.console[logfn] as any) = (...args: any[]) => {
           const msgs = [...args];
 
           originalConsole[logfn](...msgs);
