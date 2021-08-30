@@ -231,12 +231,12 @@ const initBridge = (w: any): void => {
 
           c.groupCollapsed(
             '%cresult %c' +
-              result.pluginId +
-              '.' +
-              result.methodName +
-              ' (#' +
-              result.callbackId +
-              ')',
+            result.pluginId +
+            '.' +
+            result.methodName +
+            ' (#' +
+            result.callbackId +
+            ')',
             tagStyles,
             'font-style: italic; font-weight: bold; color: #444',
           );
@@ -260,12 +260,12 @@ const initBridge = (w: any): void => {
         if (isFullConsole(c)) {
           c.groupCollapsed(
             '%cnative %c' +
-              call.pluginId +
-              '.' +
-              call.methodName +
-              ' (#' +
-              call.callbackId +
-              ')',
+            call.pluginId +
+            '.' +
+            call.methodName +
+            ' (#' +
+            call.callbackId +
+            ')',
             'font-weight: lighter; color: gray',
             'font-weight: bold; color: #000',
           );
@@ -302,11 +302,11 @@ const initBridge = (w: any): void => {
 
     // patch window.console on iOS and store original console fns
     const isIos = getPlatformId(win) === 'ios';
-    const originalConsole = { ...win.console };
+    const originalConsole: any = { ...win.console };
 
     if (win.console && isIos) {
       for (const logfn of BRIDGED_CONSOLE_METHODS) {
-        win.console[logfn] = (...args: any[]) => {
+        (win.console[logfn] as any) = (...args: any[]) => {
           const msgs = [...args];
 
           originalConsole[logfn](...msgs);
@@ -572,12 +572,12 @@ initBridge(
   typeof globalThis !== 'undefined'
     ? (globalThis as WindowCapacitor)
     : typeof self !== 'undefined'
-    ? (self as WindowCapacitor)
-    : typeof window !== 'undefined'
-    ? (window as WindowCapacitor)
-    : typeof global !== 'undefined'
-    ? (global as WindowCapacitor)
-    : ({} as WindowCapacitor),
+      ? (self as WindowCapacitor)
+      : typeof window !== 'undefined'
+        ? (window as WindowCapacitor)
+        : typeof global !== 'undefined'
+          ? (global as WindowCapacitor)
+          : ({} as WindowCapacitor),
 );
 
 // Export only for tests
