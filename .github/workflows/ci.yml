@@ -188,7 +188,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 30
     needs:
-      - deploy-latest    
+      - deploy-latest
     steps:
       - uses: actions/setup-node@v1
         with:
