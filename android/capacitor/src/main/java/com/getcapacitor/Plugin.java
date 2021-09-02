@@ -901,8 +901,8 @@ public class Plugin {
         }
 
         Bundle ret = new Bundle();
-
         JSObject callData = savedCall.getData();
+
         if (callData != null) {
             ret.putString(BUNDLE_PERSISTED_OPTIONS_JSON_KEY, callData.toString());
         }
