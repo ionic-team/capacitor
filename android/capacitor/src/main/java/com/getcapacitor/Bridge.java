@@ -790,6 +790,7 @@ public class Bridge {
         String lastPluginId = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_ID_KEY);
         String lastPluginCallMethod = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY);
         String lastOptionsJson = savedInstanceState.getString(BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY);
+
         if (lastPluginId != null) {
             // If we have JSON blob saved, create a new plugin call with the original options
             if (lastOptionsJson != null) {

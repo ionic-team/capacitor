@@ -894,15 +894,14 @@ public class Plugin {
      * @return a new {@link Bundle} with fields set from the options of the last saved {@link PluginCall}
      */
     protected Bundle saveInstanceState() {
-        PluginCall savedCall = bridge.getSavedCall(lastPluginCallId);;
-
+        PluginCall savedCall = bridge.getSavedCall(lastPluginCallId);
         if (savedCall == null) {
             return null;
         }
 
         Bundle ret = new Bundle();
-        JSObject callData = savedCall.getData();
 
+        JSObject callData = savedCall.getData();
         if (callData != null) {
             ret.putString(BUNDLE_PERSISTED_OPTIONS_JSON_KEY, callData.toString());
         }
