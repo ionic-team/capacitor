@@ -895,6 +895,7 @@ public class Plugin {
      */
     protected Bundle saveInstanceState() {
         PluginCall savedCall = bridge.getSavedCall(lastPluginCallId);
+
         if (savedCall == null) {
             return null;
         }

@@ -796,6 +796,7 @@ public class Bridge {
             if (lastOptionsJson != null) {
                 try {
                     JSObject options = new JSObject(lastOptionsJson);
+
                     pluginCallForLastActivity =
                         new PluginCall(msgHandler, lastPluginId, PluginCall.CALLBACK_ID_DANGLING, lastPluginCallMethod, options);
                 } catch (JSONException ex) {
