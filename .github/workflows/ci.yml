@@ -184,27 +184,6 @@ jobs:
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run lerna:publish:latest || true
-  publish-ios:
-    runs-on: macos-latest
-    timeout-minutes: 30
-    needs:
-      - deploy-latest    
-    steps:
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Install Cocoapods
-        run: gem install cocoapods
-      - name: Deploy to Cocoapods
-        run: |
-          set -eo pipefail
-          pod trunk push ./ios/CapacitorCordova.podspec --allow-warnings
-          pod trunk push ./ios/Capacitor.podspec --allow-warnings
-        env:
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
   # publish-android:
   #   runs-on: ubuntu-latest
   #   needs:
