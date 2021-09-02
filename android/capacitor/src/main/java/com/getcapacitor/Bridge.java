@@ -690,6 +690,10 @@ public class Bridge {
         return pluginCallForLastActivity;
     }
 
+    void setPluginCallForLastActivity(PluginCall pluginCallForLastActivity) {
+        this.pluginCallForLastActivity = pluginCallForLastActivity;
+    }
+
     /**
      * Release a retained call
      * @param call a call to release
@@ -786,13 +790,11 @@ public class Bridge {
         String lastPluginId = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_ID_KEY);
         String lastPluginCallMethod = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY);
         String lastOptionsJson = savedInstanceState.getString(BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY);
-
         if (lastPluginId != null) {
             // If we have JSON blob saved, create a new plugin call with the original options
             if (lastOptionsJson != null) {
                 try {
                     JSObject options = new JSObject(lastOptionsJson);
-
                     pluginCallForLastActivity =
                         new PluginCall(msgHandler, lastPluginId, PluginCall.CALLBACK_ID_DANGLING, lastPluginCallMethod, options);
                 } catch (JSONException ex) {
