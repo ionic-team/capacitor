@@ -1,3 +1,21 @@
+## [2.5.0](https://github.com/ionic-team/capacitor/compare/2.4.9...2.5.0) (2021-09-07)
+
+
+### Features
+
+* feat(android): Throw error if location is disabled (#5017) ([c445a22](https://github.com/ionic-team/capacitor/commit/c445a22)), closes [#5017](https://github.com/ionic-team/capacitor/issues/5017)
+
+
+
+## [2.4.9](https://github.com/ionic-team/capacitor/compare/2.4.8...2.4.9) (2021-08-12)
+
+
+### Bug Fixes
+
+* fix(android): Properly reset orientation exif if corrected (#4912) ([214b744](https://github.com/ionic-team/capacitor/commit/214b744))
+
+
+
 ## [2.4.8](https://github.com/ionic-team/capacitor/compare/2.4.7...2.4.8) (2021-07-07)
 
 
