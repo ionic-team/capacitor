@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import androidx.core.location.LocationManagerCompat;
 import android.os.Build;
 
 import com.getcapacitor.JSObject;
@@ -15,7 +16,6 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -147,41 +147,38 @@ public class Geolocation extends Plugin {
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
     LocationManager lm = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
-    boolean networkEnabled = false;
-    try {
-      networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    } catch(Exception ex) {}
-    LocationRequest locationRequest = new LocationRequest();
-    locationRequest.setMaxWaitTime(timeout);
-    locationRequest.setInterval(10000);
-    locationRequest.setFastestInterval(5000);
-    int lowPriority = networkEnabled ? LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY : LocationRequest.PRIORITY_LOW_POWER;
-    int priority = enableHighAccuracy ? LocationRequest.PRIORITY_HIGH_ACCURACY : lowPriority;
-    locationRequest.setPriority(priority);
+    if (LocationManagerCompat.isLocationEnabled(lm)) {
+      boolean networkEnabled = false;
+      try {
+        networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+      } catch(Exception ex) {}
+      LocationRequest locationRequest = new LocationRequest();
+      locationRequest.setMaxWaitTime(timeout);
+      locationRequest.setInterval(10000);
+      locationRequest.setFastestInterval(5000);
+      int lowPriority = networkEnabled ? LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY : LocationRequest.PRIORITY_LOW_POWER;
+      int priority = enableHighAccuracy ? LocationRequest.PRIORITY_HIGH_ACCURACY : lowPriority;
+      locationRequest.setPriority(priority);
 
-    locationCallback = new LocationCallback(){
-      @Override
-      public void onLocationResult(LocationResult locationResult) {
-        if (call.getMethodName().equals("getCurrentPosition")) {
-          clearLocationUpdates();
+      locationCallback = new LocationCallback(){
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+          if (call.getMethodName().equals("getCurrentPosition")) {
+            clearLocationUpdates();
+          }
+          Location lastLocation = locationResult.getLastLocation();
+          if (lastLocation == null) {
+            call.error("location unavailable");
+          } else {
+            call.success(getJSObjectForLocation(lastLocation));
+          }
         }
-        Location lastLocation = locationResult.getLastLocation();
-        if (lastLocation == null) {
-          call.error("location unavailable");
-        } else {
-          call.success(getJSObjectForLocation(lastLocation));
-        }
-      }
-      @Override
-      public void onLocationAvailability(LocationAvailability availability) {
-        if (!availability.isLocationAvailable()) {
-          call.error("location unavailable");
-          clearLocationUpdates();
-        }
-      }
-    };
+      };
+      fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+    } else {
+      call.error("location disabled");
+    }
 
-    fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
   }
 
   private void clearLocationUpdates() {
