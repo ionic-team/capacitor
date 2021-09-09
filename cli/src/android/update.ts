@@ -342,6 +342,7 @@ ext {
   cdvMinSdkVersion = project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : ${config.android.minVersion}
   // Plugin gradle extensions can append to this to have code run at the end.
   cdvPluginPostBuildExtras = []
+  cordovaConfig = [:]
 }`;
   await writeFile(
     join(config.android.cordovaPluginsDirAbs, 'cordova.variables.gradle'),
