@@ -493,7 +493,11 @@ export function getIncompatibleCordovaPlugins(platform: string): string[] {
     'cordova-support-google-services',
   ];
   if (platform === 'ios') {
-    pluginList.push('cordova-plugin-statusbar', '@ionic-enterprise/statusbar');
+    pluginList.push(
+      'cordova-plugin-statusbar',
+      '@ionic-enterprise/statusbar',
+      'SalesforceMobileSDK-CordovaPlugin',
+    );
   }
   if (platform === 'android') {
     pluginList.push('cordova-plugin-compat');
