@@ -1,15 +1,12 @@
 package com.getcapacitor.myapp;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import com.getcapacitor.BridgeFragment;
-
-public class SimpleFragmentActivity extends AppCompatActivity implements BridgeFragment.OnFragmentInteractionListener {
+public class SimpleFragmentActivity extends AppCompatActivity {
   private TextView mTextMessage;
   private ViewPager mViewPager;
 
@@ -21,7 +18,4 @@ public class SimpleFragmentActivity extends AppCompatActivity implements BridgeF
 
 
 
-  @Override
-  public void onFragmentInteraction(Uri uri) {
-  }
 }
