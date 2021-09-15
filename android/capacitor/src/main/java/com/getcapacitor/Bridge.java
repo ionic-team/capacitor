@@ -690,6 +690,10 @@ public class Bridge {
         return pluginCallForLastActivity;
     }
 
+    void setPluginCallForLastActivity(PluginCall pluginCallForLastActivity) {
+        this.pluginCallForLastActivity = pluginCallForLastActivity;
+    }
+
     /**
      * Release a retained call
      * @param call a call to release

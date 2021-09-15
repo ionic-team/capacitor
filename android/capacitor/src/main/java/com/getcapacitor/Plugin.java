@@ -175,7 +175,7 @@ public class Plugin {
             // return when null since call was rejected in getLauncherOrReject
             return;
         }
-
+        bridge.setPluginCallForLastActivity(call);
         lastPluginCallId = call.getCallbackId();
         bridge.saveCall(call);
         activityResultLauncher.launch(intent);
@@ -894,7 +894,7 @@ public class Plugin {
      * @return a new {@link Bundle} with fields set from the options of the last saved {@link PluginCall}
      */
     protected Bundle saveInstanceState() {
-        PluginCall savedCall = getSavedCall();
+        PluginCall savedCall = bridge.getSavedCall(lastPluginCallId);
 
         if (savedCall == null) {
             return null;
