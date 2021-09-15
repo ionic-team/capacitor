@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.3](https://github.com/ionic-team/capacitor/compare/3.2.2...3.2.3) (2021-09-15)
+
+
+### Bug Fixes
+
+* **android:** proguard rules ([#5048](https://github.com/ionic-team/capacitor/issues/5048)) ([cf15c0f](https://github.com/ionic-team/capacitor/commit/cf15c0fb3bd67315011865fedb4157d5076965fd))
+* **android:** save activity result launcher calls ([#5004](https://github.com/ionic-team/capacitor/issues/5004)) ([2c1eb60](https://github.com/ionic-team/capacitor/commit/2c1eb603c79b94f6fcc74f0cbef523590b656a1e))
+
+
+
+
+
 ## [3.2.2](https://github.com/ionic-team/capacitor/compare/3.2.1...3.2.2) (2021-09-02)
 
 **Note:** Version bump only for package @capacitor/android

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.3](https://github.com/ionic-team/capacitor/compare/3.2.2...3.2.3) (2021-09-15)
+
+
+### Bug Fixes
+
+* **android:** proguard rules ([#5048](https://github.com/ionic-team/capacitor/issues/5048)) ([cf15c0f](https://github.com/ionic-team/capacitor/commit/cf15c0fb3bd67315011865fedb4157d5076965fd))
+* Add SalesforceMobileSDK-CordovaPlugin to iOS incompatible list ([#5031](https://github.com/ionic-team/capacitor/issues/5031)) ([6f3f79f](https://github.com/ionic-team/capacitor/commit/6f3f79f412b77b0c90988226ec5ade5d0198c706))
+* Define cordovaConfig gradle variable ([#5024](https://github.com/ionic-team/capacitor/issues/5024)) ([55c217e](https://github.com/ionic-team/capacitor/commit/55c217e6898d0270c23c3a7158a5102e9b84ff40))
+* **android:** save activity result launcher calls ([#5004](https://github.com/ionic-team/capacitor/issues/5004)) ([2c1eb60](https://github.com/ionic-team/capacitor/commit/2c1eb603c79b94f6fcc74f0cbef523590b656a1e))
+
+
+
+
+
 ## [3.2.2](https://github.com/ionic-team/capacitor/compare/3.2.1...3.2.2) (2021-09-02)
 
 
