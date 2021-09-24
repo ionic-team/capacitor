@@ -305,7 +305,7 @@ const initBridge = (w: any): void => {
     if (win.console && isIos) {
       Object.defineProperties(
         win.console,
-        BRIDGED_CONSOLE_METHODS.reduce((props, method) => {
+        BRIDGED_CONSOLE_METHODS.reduce((props: any, method) => {
           const consoleMethod = win.console[method].bind(win.console);
           props[method] = {
             value: (...args: any[]) => {
