@@ -258,24 +258,21 @@ const nativeBridge = (function (exports) {
             };
             // patch window.console on iOS and store original console fns
             const isIos = getPlatformId(win) === 'ios';
-            const originalConsole = Object.assign({}, win.console);
             if (win.console && isIos) {
-                for (const logfn of BRIDGED_CONSOLE_METHODS) {
-                    win.console[logfn] = (...args) => {
-                        const msgs = [...args];
-                        originalConsole[logfn](...msgs);
-                        try {
+                Object.defineProperties(win.console, BRIDGED_CONSOLE_METHODS.reduce((props, method) => {
+                    const consoleMethod = win.console[method].bind(win.console);
+                    props[method] = {
+                        value: (...args) => {
+                            const msgs = [...args];
                             cap.toNative('Console', 'log', {
-                                level: logfn,
+                                level: method,
                                 message: msgs.map(serializeConsoleMessage).join(' '),
                             });
-                        }
-                        catch (e) {
-                            // error converting/posting console messages
-                            originalConsole.error(e);
-                        }
+                            return consoleMethod(...args);
+                        },
                     };
-                }
+                    return props;
+                }, {}));
             }
             cap.logJs = (msg, level) => {
                 switch (level) {
@@ -501,4 +498,4 @@ const nativeBridge = (function (exports) {
 
     return exports;
 
-}({}));
+})({});
