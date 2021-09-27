@@ -104,7 +104,7 @@ export async function addCommand(
       await editPlatforms(config, platformName);
 
       if (await pathExists(config.app.webDirAbs)) {
-        sync(config, platformName, false);
+        await sync(config, platformName, false);
       } else {
         logger.warn(
           `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
