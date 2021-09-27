@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.4](https://github.com/ionic-team/capacitor/compare/3.2.3...3.2.4) (2021-09-27)
+
+
+### Bug Fixes
+
+* **cli:** await sync on add to avoid telemetry hang ([833bc20](https://github.com/ionic-team/capacitor/commit/833bc20525a2558e03cd0e56c6765ce6828cdfac))
+
+
+
+
+
 ## [3.2.3](https://github.com/ionic-team/capacitor/compare/3.2.2...3.2.3) (2021-09-15)
 
 
