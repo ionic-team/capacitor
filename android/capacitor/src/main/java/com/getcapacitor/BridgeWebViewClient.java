@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BridgeWebViewClient extends WebViewClient {
 
-    private Bridge bridge;
+    private final Bridge bridge;
 
     public BridgeWebViewClient(Bridge bridge) {
         this.bridge = bridge;
@@ -52,7 +52,7 @@ public class BridgeWebViewClient extends WebViewClient {
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
         if (webViewListeners != null) {
             for (WebViewListener listener : bridge.getWebViewListeners()) {
-                listener.onReceivedError(view);
+                listener.onReceivedError(view, request, error);
             }
         }
     }
@@ -77,7 +77,7 @@ public class BridgeWebViewClient extends WebViewClient {
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
         if (webViewListeners != null) {
             for (WebViewListener listener : bridge.getWebViewListeners()) {
-                listener.onReceivedHttpError(view);
+                listener.onReceivedHttpError(view, request, errorResponse);
             }
         }
     }

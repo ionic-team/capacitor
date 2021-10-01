@@ -1,5 +1,8 @@
 package com.getcapacitor;
 
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
 /**
@@ -20,8 +23,10 @@ public abstract class WebViewListener {
      * Callback for onReceivedError event.
      *
      * @param webView The WebView that loaded
+     * @param request The originating request.
+     * @param error Information about the error occurred.
      */
-    public void onReceivedError(WebView webView) {
+    public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
         // Override me to add behavior to handle the onReceivedError event
     }
 
@@ -29,8 +34,10 @@ public abstract class WebViewListener {
      * Callback for onReceivedHttpError event.
      *
      * @param webView The WebView that loaded
+     * @param request The originating request.
+     * @param errorResponse Information about the error occurred.
      */
-    public void onReceivedHttpError(WebView webView) {
+    public void onReceivedHttpError(WebView webView, WebResourceRequest request, WebResourceResponse errorResponse) {
         // Override me to add behavior to handle the onReceivedHttpError event
     }
 
