@@ -153,6 +153,8 @@ class ConfigurationTests: XCTestCase {
         XCTAssertTrue(configuration.shouldAllowNavigation(to: "test.capacitorjs.com"))
         XCTAssertTrue(configuration.shouldAllowNavigation(to: "192.168.0.1"))
         XCTAssertTrue(configuration.shouldAllowNavigation(to: "subdomain.test.ionicframework.com"))
+        XCTAssertTrue(configuration.shouldAllowNavigation(to: "wildcard1.wildcard2.example.com"))
+        XCTAssertFalse(configuration.shouldAllowNavigation(to: "wildcard1.example.com"))
         XCTAssertFalse(configuration.shouldAllowNavigation(to: "google.com"))
         XCTAssertFalse(configuration.shouldAllowNavigation(to: "192.168.0.2"))
         XCTAssertFalse(configuration.shouldAllowNavigation(to: "ionicframework.com"))
