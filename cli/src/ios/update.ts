@@ -14,6 +14,7 @@ import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   logCordovaManualSteps,
+  needsStaticPod,
 } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
@@ -187,23 +188,18 @@ async function generatePodFile(
       });
     });
   });
-  const noPodPlugins = cordovaPlugins.filter(filterNoPods);
-  if (noPodPlugins.length > 0) {
+  const staticPlugins = cordovaPlugins.filter(needsStaticPod);
+  const noStaticPlugins = cordovaPlugins.filter(
+    el => !staticPlugins.includes(el),
+  );
+  if (noStaticPlugins.length > 0) {
     pods.push(
       `  pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
-  const podPlugins = cordovaPlugins.filter(el => !noPodPlugins.includes(el));
-  const podSwiftPlugins = podPlugins.filter(filterSwift);
-  const podObjCPlugins = podPlugins.filter(el => !podSwiftPlugins.includes(el));
-  if (podObjCPlugins.length > 0) {
+  if (staticPlugins.length > 0) {
     pods.push(
       `  pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'\n`,
-    );
-  }
-  if (podSwiftPlugins.length > 0) {
-    pods.push(
-      `  pod 'CordovaPluginsStaticSwift', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
   const resourcesPlugins = cordovaPlugins.filter(filterResources);
@@ -238,20 +234,18 @@ async function generateCordovaPodspecs(
   cordovaPlugins: Plugin[],
   config: Config,
 ) {
-  const noPodPlugins = cordovaPlugins.filter(filterNoPods);
-  const podPlugins = cordovaPlugins.filter(el => !noPodPlugins.includes(el));
-  const podSwiftPlugins = podPlugins.filter(filterSwift);
-  const podObjCPlugins = podPlugins.filter(el => !podSwiftPlugins.includes(el));
-  generateCordovaPodspec(noPodPlugins, config, false, false);
-  generateCordovaPodspec(podObjCPlugins, config, true, false);
-  generateCordovaPodspec(podSwiftPlugins, config, true, true);
+  const staticPlugins = cordovaPlugins.filter(needsStaticPod);
+  const noStaticPlugins = cordovaPlugins.filter(
+    el => !staticPlugins.includes(el),
+  );
+  generateCordovaPodspec(noStaticPlugins, config, false);
+  generateCordovaPodspec(staticPlugins, config, true);
 }
 
 async function generateCordovaPodspec(
   cordovaPlugins: Plugin[],
   config: Config,
   isStatic: boolean,
-  isSwift: boolean,
 ) {
   const weakFrameworks: string[] = [];
   const linkedFrameworks: string[] = [];
@@ -267,10 +261,6 @@ async function generateCordovaPodspec(
     name += 'Static';
     frameworkDeps.push('s.static_framework = true');
     sourcesFolderName += 'static';
-  }
-  if (isSwift) {
-    name += 'Swift';
-    sourcesFolderName += 'swift';
   }
   cordovaPlugins.map((plugin: any) => {
     const frameworks = getPlatformElement(plugin, platform, 'framework');
@@ -426,16 +416,9 @@ async function copyPluginsNativeFiles(
     const headerFiles = getPlatformElement(p, platform, 'header-file');
     const codeFiles = sourceFiles.concat(headerFiles);
     const frameworks = getPlatformElement(p, platform, 'framework');
-    const podFrameworks = frameworks.filter(
-      (framework: any) => framework.$.type && framework.$.type === 'podspec',
-    );
-    const podspecs = getPlatformElement(p, platform, 'podspec');
     let sourcesFolderName = 'sources';
-    if (podFrameworks.length > 0 || podspecs.length > 0) {
+    if (needsStaticPod(p)) {
       sourcesFolderName += 'static';
-      if (filterSwift(p)) {
-        sourcesFolderName += 'swift';
-      }
     }
     const sourcesFolder = join(
       config.ios.cordovaPluginsDirAbs,
@@ -532,23 +515,6 @@ async function removePluginsNativeFiles(config: Config) {
     config.cli.assets.ios.cordovaPluginsTemplateArchiveAbs,
     config.ios.cordovaPluginsDirAbs,
   );
-}
-
-function filterNoPods(plugin: Plugin) {
-  const frameworks = getPlatformElement(plugin, platform, 'framework');
-  const podFrameworks = frameworks.filter(
-    (framework: any) => framework.$.type && framework.$.type === 'podspec',
-  );
-  const podspecs = getPlatformElement(plugin, platform, 'podspec');
-  return podFrameworks.length === 0 && podspecs.length === 0;
-}
-
-function filterSwift(plugin: Plugin) {
-  const sourceFiles = getPlatformElement(plugin, platform, 'source-file');
-  const swiftFiles = sourceFiles.filter(
-    (sf: any) => sf.$.src && sf.$.src.split('.').pop() === 'swift',
-  );
-  return swiftFiles.length > 0;
 }
 
 function filterResources(plugin: Plugin) {
