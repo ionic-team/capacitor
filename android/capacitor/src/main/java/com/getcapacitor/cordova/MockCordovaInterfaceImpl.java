@@ -1,7 +1,8 @@
 package com.getcapacitor.cordova;
 
-import android.app.Activity;
 import android.util.Pair;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.concurrent.Executors;
 import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.CordovaPlugin;
@@ -9,7 +10,7 @@ import org.json.JSONException;
 
 public class MockCordovaInterfaceImpl extends CordovaInterfaceImpl {
 
-    public MockCordovaInterfaceImpl(Activity activity) {
+    public MockCordovaInterfaceImpl(AppCompatActivity activity) {
         super(activity, Executors.newCachedThreadPool());
     }
 
