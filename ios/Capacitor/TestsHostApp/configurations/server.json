@@ -11,7 +11,7 @@
   "loggingBehavior": "production",
   "server": {
   	"iosScheme": "override",
-  	"allowNavigation": ["*.capacitorjs.com", "ionic.io", "192.168.0.1", "subdomain.*.ionicframework.com"],
+  	"allowNavigation": ["*.capacitorjs.com", "ionic.io", "192.168.0.1", "subdomain.*.ionicframework.com", "*.*.example.com"],
   	"hostname": "myhost",
   	"url": "http://192.168.100.1:2057"
   },

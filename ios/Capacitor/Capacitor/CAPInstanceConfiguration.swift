@@ -52,7 +52,7 @@ extension InstanceConfiguration {
             return false
         }
         // remove any wildcard segments
-        for wildcard in patternComponents.enumerated().filter({ $0.element == "*" }) {
+        for wildcard in patternComponents.enumerated().reversed().filter({ $0.element == "*" }) {
             hostComponents.remove(at: wildcard.offset)
             patternComponents.remove(at: wildcard.offset)
         }

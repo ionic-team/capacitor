@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.5](https://github.com/ionic-team/capacitor/compare/3.2.4...3.2.5) (2021-10-13)
+
+
+### Bug Fixes
+
+* **android:** Avoid ConcurrentModificationException on notifyListeners ([#5125](https://github.com/ionic-team/capacitor/issues/5125)) ([b82bfe0](https://github.com/ionic-team/capacitor/commit/b82bfe0db2e38fa286eb18391b1d5e2f86a1b35c))
+* **android:** Support cordova-android 10 ([#5103](https://github.com/ionic-team/capacitor/issues/5103)) ([e238233](https://github.com/ionic-team/capacitor/commit/e238233dcf34a183af4861176789d1feb1eb51fa))
+
+
+
+
+
 ## [3.2.4](https://github.com/ionic-team/capacitor/compare/3.2.3...3.2.4) (2021-09-27)
 
 

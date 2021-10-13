@@ -505,6 +505,15 @@ export function getIncompatibleCordovaPlugins(platform: string): string[] {
   return pluginList;
 }
 
+export function needsStaticPod(plugin: Plugin): boolean {
+  const pluginList = [
+    'phonegap-plugin-push',
+    '@havesource/cordova-plugin-push',
+    'cordova-plugin-firebasex',
+  ];
+  return pluginList.includes(plugin.id);
+}
+
 export async function getCordovaPreferences(config: Config): Promise<any> {
   const configXml = join(config.app.rootDir, 'config.xml');
   let cordova: any = {};
