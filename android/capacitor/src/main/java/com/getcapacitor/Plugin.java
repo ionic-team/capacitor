@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.json.JSONException;
 
 /**
@@ -668,7 +670,8 @@ public class Plugin {
             return;
         }
 
-        for (PluginCall call : listeners) {
+        CopyOnWriteArrayList<PluginCall> listenersCopy = new CopyOnWriteArrayList(listeners);
+        for (PluginCall call : listenersCopy) {
             call.resolve(data);
         }
     }
