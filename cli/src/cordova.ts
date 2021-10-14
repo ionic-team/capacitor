@@ -249,6 +249,16 @@ export async function autoGenerateConfig(
     }
   });
 
+  let allowedHostsString: string[] = [];
+  if (config.app.extConfig?.cordova?.allowedHosts) {
+    allowedHostsString = await Promise.all(
+        Object.entries(config.app.extConfig.cordova.allowedHosts).map(
+            async (host): Promise<string> => {
+              return `<access origin="${host}" />`;
+            },
+        ),
+    );
+  }
   const pluginEntriesString: string[] = await Promise.all(
     pluginEntries.map(async (item): Promise<string> => {
       const xmlString = await writeXML(item);
@@ -268,7 +278,7 @@ export async function autoGenerateConfig(
   }
   const content = `<?xml version='1.0' encoding='utf-8'?>
 <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <access origin="*" />
+  ${allowedHostsString.join('')}
   ${pluginEntriesString.join('')}
   ${pluginPreferencesString.join('')}
 </widget>`;

@@ -427,6 +427,10 @@ export interface CapacitorConfig {
 
   cordova?: {
     /**
+     * Configure allowed hosts for Cordova plugins.
+     */
+    allowedHosts?: string[]
+    /**
      * Configure Cordova preferences.
      *
      * @since 1.3.0
