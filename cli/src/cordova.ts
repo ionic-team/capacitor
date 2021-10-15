@@ -511,6 +511,7 @@ export function needsStaticPod(plugin: Plugin): boolean {
     '@havesource/cordova-plugin-push',
     'cordova-plugin-firebasex',
     '@batch.com/cordova-plugin',
+    'onesignal-cordova-plugin',
   ];
   return pluginList.includes(plugin.id);
 }
