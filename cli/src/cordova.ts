@@ -520,6 +520,7 @@ export function needsStaticPod(plugin: Plugin): boolean {
     'phonegap-plugin-push',
     '@havesource/cordova-plugin-push',
     'cordova-plugin-firebasex',
+    '@batch.com/cordova-plugin',
   ];
   return pluginList.includes(plugin.id);
 }
