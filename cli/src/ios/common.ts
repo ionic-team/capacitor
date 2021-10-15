@@ -1,4 +1,5 @@
 import { readFile, writeFile } from '@ionic/utils-fs';
+import { which } from '@ionic/utils-subprocess';
 import { resolve } from 'path';
 
 import c from '../colors';
@@ -86,13 +87,12 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   await writeFile(pbxPath, pbxContent, { encoding: 'utf-8' });
 }
 
-export function shouldPodInstall(
-  config: Config,
-  platformName: string,
-): boolean {
-  // Don't run pod install or xcodebuild if not on macOS
-  if (config.cli.os !== OS.Mac && platformName === 'ios') {
+export async function canRunPodInstall(): Promise<boolean> {
+  try {
+    await which('pod');
+  } catch (e) {
     return false;
   }
+
   return true;
 }

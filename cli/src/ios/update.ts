@@ -16,7 +16,7 @@ import {
   logCordovaManualSteps,
   needsStaticPod,
 } from '../cordova';
-import type { Config } from '../definitions';
+import { Config, OS } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
 import {
@@ -35,7 +35,7 @@ import { resolveNode } from '../util/node';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
-import { getIOSPlugins, shouldPodInstall } from './common';
+import { getIOSPlugins, canRunPodInstall } from './common';
 
 const platform = 'ios';
 
@@ -79,7 +79,12 @@ export async function installCocoaPodsPlugins(
   plugins: Plugin[],
   deployment: boolean,
 ): Promise<void> {
-  if (shouldPodInstall(config, platform)) {
+  const podCommandExists = await canRunPodInstall();
+  if (platform === 'ios' && podCommandExists) {
+    if (config.cli.os !== OS.Mac) {
+      logger.warn('Running "pod install" on a non-Mac OS may lead to unexpected results')
+    }
+
     await runTask(
       `Updating iOS native dependencies with ${c.input(
         `${config.ios.podPath} install`,
@@ -89,7 +94,7 @@ export async function installCocoaPodsPlugins(
       },
     );
   } else {
-    logger.warn('Skipping pod install on unsupported OS');
+    logger.warn('Skipping pod install because "pod" is not installed');
   }
 }
 
