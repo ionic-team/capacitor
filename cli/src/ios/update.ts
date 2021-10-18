@@ -16,7 +16,8 @@ import {
   logCordovaManualSteps,
   needsStaticPod,
 } from '../cordova';
-import { Config, OS } from '../definitions';
+import type { Config } from '../definitions';
+import { OS } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
 import {
@@ -35,7 +36,7 @@ import { resolveNode } from '../util/node';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
-import { getIOSPlugins, canRunPodInstall } from './common';
+import { getIOSPlugins, canRunPodInstall, canRunXcodebuild } from './common';
 
 const platform = 'ios';
 
@@ -82,7 +83,9 @@ export async function installCocoaPodsPlugins(
   const podCommandExists = await canRunPodInstall();
   if (platform === 'ios' && podCommandExists) {
     if (config.cli.os !== OS.Mac) {
-      logger.warn('Running "pod install" on a non-Mac OS may lead to unexpected results')
+      logger.warn(
+        'Running "pod install" on a non-Mac OS may lead to unexpected results',
+      );
     }
 
     await runTask(
@@ -123,13 +126,18 @@ async function updatePodfile(
     { cwd: config.ios.nativeProjectDirAbs },
   );
 
-  await runCommand(
-    'xcodebuild',
-    ['-project', basename(`${config.ios.nativeXcodeProjDirAbs}`), 'clean'],
-    {
-      cwd: config.ios.nativeProjectDirAbs,
-    },
-  );
+  const isXcodebuildAvailable = await canRunXcodebuild();
+  if (isXcodebuildAvailable) {
+    await runCommand(
+      'xcodebuild',
+      ['-project', basename(`${config.ios.nativeXcodeProjDirAbs}`), 'clean'],
+      {
+        cwd: config.ios.nativeProjectDirAbs,
+      },
+    );
+  } else {
+    logger.warn('Unable to find "xcodebuild". Skipping xcodebuild step...');
+  }
 }
 
 async function generatePodFile(

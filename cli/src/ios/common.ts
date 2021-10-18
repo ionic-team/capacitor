@@ -96,3 +96,13 @@ export async function canRunPodInstall(): Promise<boolean> {
 
   return true;
 }
+
+export async function canRunXcodebuild(): Promise<boolean> {
+  try {
+    await which('xcodebuild');
+  } catch (e) {
+    return false;
+  }
+
+  return true;
+}
