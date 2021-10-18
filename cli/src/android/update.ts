@@ -142,7 +142,7 @@ async function findAndroidPluginClassesInPlugin(
         const className = classMatch[1];
 
         debug('Searching %O for package by %O regex', srcFile, packageRegex);
-        
+
         packageRegex.lastIndex = 0;
         const packageMatch = packageRegex.exec(
           srcFileContents.substring(0, classMatch.index),
