@@ -91,7 +91,7 @@ export async function installCocoaPodsPlugins(
       },
     );
   } else {
-    logger.warn('Skipping pod install because "pod" is not installed');
+    logger.warn('Skipping pod install because CocoaPods is not installed');
   }
 }
 
