@@ -82,12 +82,6 @@ export async function installCocoaPodsPlugins(
 ): Promise<void> {
   const podCommandExists = await canRunPodInstall();
   if (platform === 'ios' && podCommandExists) {
-    if (config.cli.os !== OS.Mac) {
-      logger.warn(
-        'Running "pod install" on a non-Mac OS may lead to unexpected results',
-      );
-    }
-
     await runTask(
       `Updating iOS native dependencies with ${c.input(
         `${config.ios.podPath} install`,
