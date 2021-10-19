@@ -130,7 +130,7 @@ async function updatePodfile(
       },
     );
   } else {
-    logger.warn('Unable to find "xcodebuild". Skipping xcodebuild step...');
+    logger.warn('Unable to find "xcodebuild". Skipping xcodebuild clean step...');
   }
 }
 
