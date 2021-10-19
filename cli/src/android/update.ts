@@ -135,6 +135,7 @@ async function findAndroidPluginClassesInPlugin(
   const entries = await Promise.all(
     srcFiles.map(async (srcFile): Promise<PluginsJsonEntry | undefined> => {
       const srcFileContents = await readFile(srcFile, { encoding: 'utf-8' });
+      classRegex.lastIndex = 0;
       const classMatch = classRegex.exec(srcFileContents);
 
       if (classMatch) {
@@ -142,6 +143,7 @@ async function findAndroidPluginClassesInPlugin(
 
         debug('Searching %O for package by %O regex', srcFile, packageRegex);
 
+        packageRegex.lastIndex = 0;
         const packageMatch = packageRegex.exec(
           srcFileContents.substring(0, classMatch.index),
         );
