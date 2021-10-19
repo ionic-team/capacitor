@@ -146,7 +146,7 @@ public class FileUtils {
      */
     static String readFile(AssetManager assetManager, String fileName) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open(fileName)))) {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 buffer.append(line + "\n");
