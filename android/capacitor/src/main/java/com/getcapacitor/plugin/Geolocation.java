@@ -7,7 +7,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import androidx.core.location.LocationManagerCompat;
 import android.os.Build;
-import android.util.Log;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -181,7 +180,6 @@ public class Geolocation extends Plugin {
       locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-          Log.d(getLogTag(), "Location result came back: " + locationResult);
           if (call.getMethodName().equals("getCurrentPosition")) {
             clearLocationUpdates();
           }
