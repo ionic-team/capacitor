@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import androidx.core.location.LocationManagerCompat;
 import android.os.Build;
+import android.util.Log;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -97,6 +98,23 @@ public class Geolocation extends Plugin {
   }
 
   @Override
+  protected void handleOnPause() {
+    super.handleOnPause();
+
+    // Clear all location updates on pause to avoid possible background location calls
+    clearLocationUpdates();
+  }
+
+  @Override
+  protected void handleOnResume() {
+    super.handleOnResume();
+
+    for (PluginCall call : watchingCalls.values()) {
+      requestLocationUpdates(call);
+    }
+  }
+
+  @Override
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -160,9 +178,10 @@ public class Geolocation extends Plugin {
       int priority = enableHighAccuracy ? LocationRequest.PRIORITY_HIGH_ACCURACY : lowPriority;
       locationRequest.setPriority(priority);
 
-      locationCallback = new LocationCallback(){
+      locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
+          Log.d(getLogTag(), "Location result came back: " + locationResult);
           if (call.getMethodName().equals("getCurrentPosition")) {
             clearLocationUpdates();
           }
