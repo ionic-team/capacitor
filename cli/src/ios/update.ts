@@ -33,11 +33,10 @@ import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
-import { runCommand } from '../util/subprocess';
+import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
 import { getIOSPlugins } from './common';
-import { isInstalled } from '../util/subprocess';
 
 const platform = 'ios';
 
@@ -131,7 +130,9 @@ async function updatePodfile(
       },
     );
   } else {
-    logger.warn('Unable to find "xcodebuild". Skipping xcodebuild clean step...');
+    logger.warn(
+      'Unable to find "xcodebuild". Skipping xcodebuild clean step...',
+    );
   }
 }
 
