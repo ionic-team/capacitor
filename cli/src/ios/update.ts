@@ -36,7 +36,8 @@ import { resolveNode } from '../util/node';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
-import { getIOSPlugins, canRunPodInstall, canRunXcodebuild } from './common';
+import { getIOSPlugins } from './common';
+import { isInstalled } from '../util/subprocess';
 
 const platform = 'ios';
 
@@ -80,7 +81,7 @@ export async function installCocoaPodsPlugins(
   plugins: Plugin[],
   deployment: boolean,
 ): Promise<void> {
-  const podCommandExists = await canRunPodInstall();
+  const podCommandExists = await isInstalled('pod');
   if (platform === 'ios' && podCommandExists) {
     await runTask(
       `Updating iOS native dependencies with ${c.input(
@@ -120,7 +121,7 @@ async function updatePodfile(
     { cwd: config.ios.nativeProjectDirAbs },
   );
 
-  const isXcodebuildAvailable = await canRunXcodebuild();
+  const isXcodebuildAvailable = await isInstalled('xcodebuild');
   if (isXcodebuildAvailable) {
     await runCommand(
       'xcodebuild',

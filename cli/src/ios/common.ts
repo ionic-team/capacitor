@@ -86,23 +86,3 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   await writeFile(plistPath, plistContent, { encoding: 'utf-8' });
   await writeFile(pbxPath, pbxContent, { encoding: 'utf-8' });
 }
-
-export async function canRunPodInstall(): Promise<boolean> {
-  try {
-    await which('pod');
-  } catch (e) {
-    return false;
-  }
-
-  return true;
-}
-
-export async function canRunXcodebuild(): Promise<boolean> {
-  try {
-    await which('xcodebuild');
-  } catch (e) {
-    return false;
-  }
-
-  return true;
-}
