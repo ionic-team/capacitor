@@ -80,7 +80,7 @@ export async function installCocoaPodsPlugins(
   deployment: boolean,
 ): Promise<void> {
   const podCommandExists = await isInstalled('pod');
-  if (platform === 'ios' && podCommandExists) {
+  if (podCommandExists) {
     await runTask(
       `Updating iOS native dependencies with ${c.input(
         `${config.ios.podPath} install`,
