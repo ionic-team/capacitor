@@ -32,10 +32,10 @@ import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
-import { runCommand } from '../util/subprocess';
+import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
-import { getIOSPlugins, shouldPodInstall } from './common';
+import { getIOSPlugins } from './common';
 
 const platform = 'ios';
 
@@ -79,18 +79,14 @@ export async function installCocoaPodsPlugins(
   plugins: Plugin[],
   deployment: boolean,
 ): Promise<void> {
-  if (shouldPodInstall(config, platform)) {
-    await runTask(
-      `Updating iOS native dependencies with ${c.input(
-        `${config.ios.podPath} install`,
-      )}`,
-      () => {
-        return updatePodfile(config, plugins, deployment);
-      },
-    );
-  } else {
-    logger.warn('Skipping pod install on unsupported OS');
-  }
+  await runTask(
+    `Updating iOS native dependencies with ${c.input(
+      `${config.ios.podPath} install`,
+    )}`,
+    () => {
+      return updatePodfile(config, plugins, deployment);
+    },
+  );
 }
 
 async function updatePodfile(
@@ -108,23 +104,34 @@ async function updatePodfile(
   );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
-  if (!deployment) {
-    await remove(podfileLockPath);
+  const podCommandExists = await isInstalled('pod');
+  if (podCommandExists) {
+    if (!deployment) {
+      await remove(podfileLockPath);
+    }
+    await runCommand(
+      config.ios.podPath,
+      ['install', ...(deployment ? ['--deployment'] : [])],
+      { cwd: config.ios.nativeProjectDirAbs },
+    );
+  } else {
+    logger.warn('Skipping pod install because CocoaPods is not installed');
   }
 
-  await runCommand(
-    config.ios.podPath,
-    ['install', ...(deployment ? ['--deployment'] : [])],
-    { cwd: config.ios.nativeProjectDirAbs },
-  );
-
-  await runCommand(
-    'xcodebuild',
-    ['-project', basename(`${config.ios.nativeXcodeProjDirAbs}`), 'clean'],
-    {
-      cwd: config.ios.nativeProjectDirAbs,
-    },
-  );
+  const isXcodebuildAvailable = await isInstalled('xcodebuild');
+  if (isXcodebuildAvailable) {
+    await runCommand(
+      'xcodebuild',
+      ['-project', basename(`${config.ios.nativeXcodeProjDirAbs}`), 'clean'],
+      {
+        cwd: config.ios.nativeProjectDirAbs,
+      },
+    );
+  } else {
+    logger.warn(
+      'Unable to find "xcodebuild". Skipping xcodebuild clean step...',
+    );
+  }
 }
 
 async function generatePodFile(
