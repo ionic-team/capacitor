@@ -1,5 +1,4 @@
 import { readFile, writeFile } from '@ionic/utils-fs';
-import { which } from '@ionic/utils-subprocess';
 import { resolve } from 'path';
 
 import c from '../colors';

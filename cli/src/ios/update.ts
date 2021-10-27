@@ -17,7 +17,6 @@ import {
   needsStaticPod,
 } from '../cordova';
 import type { Config } from '../definitions';
-import { OS } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
 import {
