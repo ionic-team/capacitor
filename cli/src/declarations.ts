@@ -427,6 +427,16 @@ export interface CapacitorConfig {
 
   cordova?: {
     /**
+     * Populates <access> tags in the config.xml with the origin set to
+     * the values entered here.
+     * If not provided, a single <access origin="*" /> tag gets included.
+     * It only has effect on a few Cordova plugins that respect the whitelist.
+     *
+     * @since 3.3.0
+     */
+    accessOrigins?: string[];
+
+    /**
      * Configure Cordova preferences.
      *
      * @since 1.3.0
