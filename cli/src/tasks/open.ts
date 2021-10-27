@@ -20,7 +20,12 @@ export async function openCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(config, platformDir, 'capacitor:open');
+      await runPlatformHook(
+        config,
+        selectedPlatformName,
+        platformDir,
+        'capacitor:open',
+      );
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }

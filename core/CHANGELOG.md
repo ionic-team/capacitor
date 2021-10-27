@@ -3,6 +3,134 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.5](https://github.com/ionic-team/capacitor/compare/3.2.4...3.2.5) (2021-10-13)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
+## [3.2.4](https://github.com/ionic-team/capacitor/compare/3.2.3...3.2.4) (2021-09-27)
+
+
+### Bug Fixes
+
+* **ios:** show correct line number on console logs ([#5073](https://github.com/ionic-team/capacitor/issues/5073)) ([ec41e74](https://github.com/ionic-team/capacitor/commit/ec41e743aa4ba81e791ad446fac461b7f43b46ed))
+
+
+
+
+
+## [3.2.3](https://github.com/ionic-team/capacitor/compare/3.2.2...3.2.3) (2021-09-15)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
+## [3.2.2](https://github.com/ionic-team/capacitor/compare/3.2.1...3.2.2) (2021-09-02)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
+## [3.2.1](https://github.com/ionic-team/capacitor/compare/3.2.0...3.2.1) (2021-09-01)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
+# [3.2.0](https://github.com/ionic-team/capacitor/compare/3.1.2...3.2.0) (2021-08-18)
+
+
+### Features
+
+* **core:** implement CapacitorCustomPlatform for 3rd party platforms ([#4771](https://github.com/ionic-team/capacitor/issues/4771)) ([12c6294](https://github.com/ionic-team/capacitor/commit/12c6294b9eb82976b1322f00da9ba5a6004f7977))
+
+
+
+
+
+## [3.1.2](https://github.com/ionic-team/capacitor/compare/3.1.1...3.1.2) (2021-07-21)
+
+
+### Bug Fixes
+
+* **core:** handle toJSON() in plugin objects ([#4823](https://github.com/ionic-team/capacitor/issues/4823)) ([0479822](https://github.com/ionic-team/capacitor/commit/04798221666437408f22947253a18ccb4f9e409e))
+* **core:** Modify safeStringify to allow multiple null values ([#4853](https://github.com/ionic-team/capacitor/issues/4853)) ([854539b](https://github.com/ionic-team/capacitor/commit/854539b62a658e484954edbe38b25eea1b0b6f10))
+
+
+
+
+
+## [3.1.1](https://github.com/ionic-team/capacitor/compare/3.1.0...3.1.1) (2021-07-07)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
+# [3.1.0](https://github.com/ionic-team/capacitor/compare/3.0.2...3.1.0) (2021-07-07)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
+## [3.0.2](https://github.com/ionic-team/capacitor/compare/3.0.1...3.0.2) (2021-06-23)
+
+
+### Bug Fixes
+
+* **core:** cordova events not firing ([#4712](https://github.com/ionic-team/capacitor/issues/4712)) ([ca4e3b6](https://github.com/ionic-team/capacitor/commit/ca4e3b62dba6a40e593a1404ba2fe2b416a4ac14))
+
+
+
+
+
+## [3.0.1](https://github.com/ionic-team/capacitor/compare/3.0.0...3.0.1) (2021-06-09)
+
+
+### Bug Fixes
+
+* Make isPluginAvailable available on bridge ([#4589](https://github.com/ionic-team/capacitor/issues/4589)) ([151e7a8](https://github.com/ionic-team/capacitor/commit/151e7a899d9646dbd5625a2539fd3f2297349bc5))
+
+
+
+
+
+# [3.0.0](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.4...3.0.0) (2021-05-18)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
+# [3.0.0-rc.4](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.3...3.0.0-rc.4) (2021-05-18)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
+# [3.0.0-rc.3](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.2...3.0.0-rc.3) (2021-05-11)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
 # [3.0.0-rc.2](https://github.com/ionic-team/capacitor/compare/3.0.0-rc.1...3.0.0-rc.2) (2021-05-07)
 
 

@@ -9,6 +9,7 @@ import Debug from 'debug';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
+import { OS } from './definitions';
 import type {
   AndroidConfig,
   AppConfig,
@@ -18,7 +19,6 @@ import type {
   IOSConfig,
   WebConfig,
 } from './definitions';
-import { OS } from './definitions';
 import { fatal, isFatal } from './errors';
 import { logger } from './log';
 import { tryFn } from './util/fn';
@@ -61,8 +61,6 @@ export async function loadConfig(): Promise<Config> {
       bundledWebRuntime: conf.extConfig.bundledWebRuntime ?? false,
     },
   };
-
-  checkExternalConfig(conf);
 
   debug('config: %O', config);
 
@@ -227,7 +225,14 @@ async function loadAndroidConfig(
   const assetsDir = `${srcMainDir}/assets`;
   const webDir = `${assetsDir}/public`;
   const resDir = `${srcMainDir}/res`;
-  const buildOutputDir = `${appDir}/build/outputs/apk/debug`;
+  let apkPath = `${appDir}/build/outputs/apk/`;
+  let flavorPrefix = '';
+  if (extConfig.android?.flavor) {
+    apkPath = `${apkPath}/${extConfig.android?.flavor}`;
+    flavorPrefix = `-${extConfig.android?.flavor}`;
+  }
+  const apkName = `app${flavorPrefix}-debug.apk`;
+  const buildOutputDir = `${apkPath}/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
   const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
 
@@ -251,6 +256,7 @@ async function loadAndroidConfig(
     webDirAbs: resolve(platformDirAbs, webDir),
     resDir,
     resDirAbs: resolve(platformDirAbs, resDir),
+    apkName,
     buildOutputDir,
     buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
   };
@@ -343,7 +349,7 @@ async function determineXcodeWorkspaceDirAbs(
     fatal(
       'Xcode workspace does not exist.\n' +
         `See the docs for adding the ${c.strong('ios')} platform: ${c.strong(
-          'https://capacitorjs.com/docs/v3/ios#adding-the-ios-platform',
+          'https://capacitorjs.com/docs/ios#adding-the-ios-platform',
         )}`,
     );
   }
@@ -370,7 +376,7 @@ async function determineIOSWebDirAbs(
         `Please follow the Upgrade Guide to move ${c.strong(
           'public',
         )} inside the iOS target directory: ${c.strong(
-          'https://capacitorjs.com/docs/v3/updating/3-0#move-public-into-the-ios-target-directory',
+          'https://capacitorjs.com/docs/updating/3-0#move-public-into-the-ios-target-directory',
         )}`,
     );
 
@@ -438,7 +444,7 @@ const config: CapacitorConfig = ${formatJSObject(extConfig)};
 export default config;\n`;
 }
 
-function checkExternalConfig(config: ExtConfigPairs): void {
+export function checkExternalConfig(config: ExtConfigPairs): void {
   if (
     typeof config.extConfig.hideLogs !== 'undefined' ||
     typeof config.extConfig.android?.hideLogs !== 'undefined' ||

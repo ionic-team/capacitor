@@ -5,8 +5,8 @@ import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { getIOSPlugins } from '../ios/common';
 import { logger } from '../log';
-import type { Plugin } from '../plugin';
 import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
+import type { Plugin } from '../plugin';
 import { allSerial } from '../util/promise';
 
 export async function listCommand(

@@ -17,6 +17,7 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Base64;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -26,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -266,7 +268,6 @@ public class WebViewLocalServer {
 
             responseStream = jsInjector.getInjectedStream(responseStream);
 
-            bridge.reset();
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
             return new WebResourceResponse(
                 "text/html",
@@ -295,7 +296,6 @@ public class WebViewLocalServer {
             // TODO: Conjure up a bit more subtlety than this
             if (ext.equals(".html")) {
                 responseStream = jsInjector.getInjectedStream(responseStream);
-                bridge.reset();
             }
 
             String mimeType = getMimeType(path, responseStream);
@@ -345,13 +345,17 @@ public class WebViewLocalServer {
                     conn.setRequestMethod(method);
                     conn.setReadTimeout(30 * 1000);
                     conn.setConnectTimeout(30 * 1000);
+                    if (request.getUrl().getUserInfo() != null) {
+                        byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
+                        String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
+                        conn.setRequestProperty("Authorization", "Basic " + base64);
+                    }
                     String cookie = conn.getHeaderField("Set-Cookie");
                     if (cookie != null) {
                         CookieManager.getInstance().setCookie(url, cookie);
                     }
                     InputStream responseStream = conn.getInputStream();
                     responseStream = jsInjector.getInjectedStream(responseStream);
-                    bridge.reset();
                     return new WebResourceResponse(
                         "text/html",
                         handler.getEncoding(),

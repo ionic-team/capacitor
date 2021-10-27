@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.json.JSONException;
 
 /**
@@ -175,7 +176,7 @@ public class Plugin {
             // return when null since call was rejected in getLauncherOrReject
             return;
         }
-
+        bridge.setPluginCallForLastActivity(call);
         lastPluginCallId = call.getCallbackId();
         bridge.saveCall(call);
         activityResultLauncher.launch(intent);
@@ -668,7 +669,8 @@ public class Plugin {
             return;
         }
 
-        for (PluginCall call : listeners) {
+        CopyOnWriteArrayList<PluginCall> listenersCopy = new CopyOnWriteArrayList(listeners);
+        for (PluginCall call : listenersCopy) {
             call.resolve(data);
         }
     }
@@ -894,7 +896,7 @@ public class Plugin {
      * @return a new {@link Bundle} with fields set from the options of the last saved {@link PluginCall}
      */
     protected Bundle saveInstanceState() {
-        PluginCall savedCall = getSavedCall();
+        PluginCall savedCall = bridge.getSavedCall(lastPluginCallId);
 
         if (savedCall == null) {
             return null;

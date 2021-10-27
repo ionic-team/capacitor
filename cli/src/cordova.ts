@@ -8,8 +8,8 @@ import {
   writeFile,
 } from '@ionic/utils-fs';
 import { basename, extname, join, resolve } from 'path';
-import type { PlistObject } from 'plist';
 import plist from 'plist';
+import type { PlistObject } from 'plist';
 import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
@@ -18,7 +18,6 @@ import type { Config } from './definitions';
 import { fatal } from './errors';
 import { getIOSPlugins } from './ios/common';
 import { logger, logPrompt } from './log';
-import type { Plugin } from './plugin';
 import {
   PluginType,
   getAllElements,
@@ -30,7 +29,9 @@ import {
   getPlugins,
   printPlugins,
 } from './plugin';
+import type { Plugin } from './plugin';
 import { resolveNode } from './util/node';
+import { isInteractive } from './util/term';
 import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
 
 /**
@@ -248,13 +249,24 @@ export async function autoGenerateConfig(
     }
   });
 
+  let accessOriginString: string[] = [];
+  if (config.app.extConfig?.cordova?.accessOrigins) {
+    accessOriginString = await Promise.all(
+      config.app.extConfig.cordova.accessOrigins.map(
+        async (host): Promise<string> => {
+          return `
+  <access origin="${host}" />`;
+        },
+      ),
+    );
+  } else {
+    accessOriginString.push(`<access origin="*" />`);
+  }
   const pluginEntriesString: string[] = await Promise.all(
-    pluginEntries.map(
-      async (item): Promise<string> => {
-        const xmlString = await writeXML(item);
-        return xmlString;
-      },
-    ),
+    pluginEntries.map(async (item): Promise<string> => {
+      const xmlString = await writeXML(item);
+      return xmlString;
+    }),
   );
   let pluginPreferencesString: string[] = [];
   if (config.app.extConfig?.cordova?.preferences) {
@@ -269,7 +281,7 @@ export async function autoGenerateConfig(
   }
   const content = `<?xml version='1.0' encoding='utf-8'?>
 <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <access origin="*" />
+  ${accessOriginString.join('')}
   ${pluginEntriesString.join('')}
   ${pluginPreferencesString.join('')}
 </widget>`;
@@ -494,12 +506,27 @@ export function getIncompatibleCordovaPlugins(platform: string): string[] {
     'cordova-support-google-services',
   ];
   if (platform === 'ios') {
-    pluginList.push('cordova-plugin-statusbar', '@ionic-enterprise/statusbar');
+    pluginList.push(
+      'cordova-plugin-statusbar',
+      '@ionic-enterprise/statusbar',
+      'SalesforceMobileSDK-CordovaPlugin',
+    );
   }
   if (platform === 'android') {
     pluginList.push('cordova-plugin-compat');
   }
   return pluginList;
+}
+
+export function needsStaticPod(plugin: Plugin): boolean {
+  const pluginList = [
+    'phonegap-plugin-push',
+    '@havesource/cordova-plugin-push',
+    'cordova-plugin-firebasex',
+    '@batch.com/cordova-plugin',
+    'onesignal-cordova-plugin',
+  ];
+  return pluginList.includes(plugin.id);
 }
 
 export async function getCordovaPreferences(config: Config): Promise<any> {
@@ -515,43 +542,45 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
     }
   }
   if (cordova.preferences && Object.keys(cordova.preferences).length > 0) {
-    const answers = await logPrompt(
-      `${c.strong(
-        `Cordova preferences can be automatically ported to ${c.strong(
-          config.app.extConfigName,
-        )}.`,
-      )}\n` +
-        `Keep in mind: Not all values can be automatically migrated from ${c.strong(
-          'config.xml',
-        )}. There may be more work to do.\n` +
-        `More info: ${c.strong(
-          'https://capacitorjs.com/docs/v3/cordova/migrating-from-cordova-to-capacitor',
-        )}`,
-      {
-        type: 'confirm',
-        name: 'confirm',
-        message: `Migrate Cordova preferences from config.xml?`,
-        initial: true,
-      },
-    );
-    if (answers.confirm) {
-      if (config.app.extConfig?.cordova?.preferences) {
-        const answers = await prompts(
-          [
-            {
-              type: 'confirm',
-              name: 'confirm',
-              message: `${config.app.extConfigName} already contains Cordova preferences. Overwrite?`,
-            },
-          ],
-          { onCancel: () => process.exit(1) },
-        );
-        if (!answers.confirm) {
-          cordova = config.app.extConfig?.cordova;
+    if (isInteractive()) {
+      const answers = await logPrompt(
+        `${c.strong(
+          `Cordova preferences can be automatically ported to ${c.strong(
+            config.app.extConfigName,
+          )}.`,
+        )}\n` +
+          `Keep in mind: Not all values can be automatically migrated from ${c.strong(
+            'config.xml',
+          )}. There may be more work to do.\n` +
+          `More info: ${c.strong(
+            'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
+          )}`,
+        {
+          type: 'confirm',
+          name: 'confirm',
+          message: `Migrate Cordova preferences from config.xml?`,
+          initial: true,
+        },
+      );
+      if (answers.confirm) {
+        if (config.app.extConfig?.cordova?.preferences) {
+          const answers = await prompts(
+            [
+              {
+                type: 'confirm',
+                name: 'confirm',
+                message: `${config.app.extConfigName} already contains Cordova preferences. Overwrite?`,
+              },
+            ],
+            { onCancel: () => process.exit(1) },
+          );
+          if (!answers.confirm) {
+            cordova = config.app.extConfig?.cordova;
+          }
         }
+      } else {
+        cordova = config.app.extConfig?.cordova;
       }
-    } else {
-      cordova = config.app.extConfig?.cordova;
     }
   } else {
     cordova = config.app.extConfig?.cordova;
