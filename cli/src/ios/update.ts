@@ -79,19 +79,14 @@ export async function installCocoaPodsPlugins(
   plugins: Plugin[],
   deployment: boolean,
 ): Promise<void> {
-  const podCommandExists = await isInstalled('pod');
-  if (podCommandExists) {
-    await runTask(
-      `Updating iOS native dependencies with ${c.input(
-        `${config.ios.podPath} install`,
-      )}`,
-      () => {
-        return updatePodfile(config, plugins, deployment);
-      },
-    );
-  } else {
-    logger.warn('Skipping pod install because CocoaPods is not installed');
-  }
+  await runTask(
+    `Updating iOS native dependencies with ${c.input(
+      `${config.ios.podPath} install`,
+    )}`,
+    () => {
+      return updatePodfile(config, plugins, deployment);
+    },
+  );
 }
 
 async function updatePodfile(
@@ -109,15 +104,19 @@ async function updatePodfile(
   );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
-  if (!deployment) {
-    await remove(podfileLockPath);
+  const podCommandExists = await isInstalled('pod');
+  if (podCommandExists) {
+    if (!deployment) {
+      await remove(podfileLockPath);
+    }
+    await runCommand(
+      config.ios.podPath,
+      ['install', ...(deployment ? ['--deployment'] : [])],
+      { cwd: config.ios.nativeProjectDirAbs },
+    );
+  } else {
+    logger.warn('Skipping pod install because CocoaPods is not installed');
   }
-
-  await runCommand(
-    config.ios.podPath,
-    ['install', ...(deployment ? ['--deployment'] : [])],
-    { cwd: config.ios.nativeProjectDirAbs },
-  );
 
   const isXcodebuildAvailable = await isInstalled('xcodebuild');
   if (isXcodebuildAvailable) {
