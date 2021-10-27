@@ -10,14 +10,13 @@ ext {
     cordovaAndroidVersion = project.hasProperty('cordovaAndroidVersion') ? rootProject.ext.cordovaAndroidVersion : '7.0.0'
 }
 
-
 buildscript {
     repositories {
-        google()
         mavenCentral()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath 'com.android.tools.build:gradle:4.2.2'
     }
 }
 
@@ -53,23 +52,28 @@ android {
 }
 
 repositories {
-    google()
-    jcenter()
     mavenCentral()
+    google()
+    jcenter() {
+        content {
+            includeModule("org.apache.cordova", "framework") // 7.0.0
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
-    implementation "androidx.core:core:$androidxCoreVersion"
-    implementation "androidx.activity:activity:$androidxActivityVersion"
-    implementation "androidx.fragment:fragment:$androidxFragmentVersion"
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
-    testImplementation "junit:junit:$junitVersion"
-    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation "androidx.core:core:$androidxCoreVersion"
+    implementation "androidx.fragment:fragment:$androidxFragmentVersion"
     implementation "org.apache.cordova:framework:$cordovaAndroidVersion"
+
+    testImplementation "junit:junit:$junitVersion"
     testImplementation 'org.json:json:20140107'
     testImplementation 'org.mockito:mockito-inline:3.6.28'
+
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
 }
 
