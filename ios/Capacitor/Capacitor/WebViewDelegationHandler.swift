@@ -46,6 +46,18 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         // Reset the bridge on each navigation
         bridge?.reset()
     }
+    
+    // This delegates media capture permission requests to the app and also remembers the user’s decision.
+    @available(iOS 15, *)
+    func webView(
+        _ webView: WKWebView,
+        requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+        initiatedByFrame frame: WKFrameInfo,
+        type: WKMediaCaptureType,
+        decisionHandler: @escaping (WKPermissionDecision) -> Void
+    ) {
+        decisionHandler(.grant)
+    }
 
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         // post a notification for any listeners
