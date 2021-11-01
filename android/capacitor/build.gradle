@@ -34,6 +34,7 @@ android {
         versionName "1.0"
         consumerProguardFiles 'proguard-rules.pro'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments disableAnalytics: "true"
     }
     buildTypes {
         release {
