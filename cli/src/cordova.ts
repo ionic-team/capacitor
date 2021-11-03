@@ -249,6 +249,19 @@ export async function autoGenerateConfig(
     }
   });
 
+  let accessOriginString: string[] = [];
+  if (config.app.extConfig?.cordova?.accessOrigins) {
+    accessOriginString = await Promise.all(
+      config.app.extConfig.cordova.accessOrigins.map(
+        async (host): Promise<string> => {
+          return `
+  <access origin="${host}" />`;
+        },
+      ),
+    );
+  } else {
+    accessOriginString.push(`<access origin="*" />`);
+  }
   const pluginEntriesString: string[] = await Promise.all(
     pluginEntries.map(async (item): Promise<string> => {
       const xmlString = await writeXML(item);
@@ -268,7 +281,7 @@ export async function autoGenerateConfig(
   }
   const content = `<?xml version='1.0' encoding='utf-8'?>
 <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <access origin="*" />
+  ${accessOriginString.join('')}
   ${pluginEntriesString.join('')}
   ${pluginPreferencesString.join('')}
 </widget>`;
@@ -505,12 +518,19 @@ export function getIncompatibleCordovaPlugins(platform: string): string[] {
   return pluginList;
 }
 
-export function needsStaticPod(plugin: Plugin): boolean {
-  const pluginList = [
+export function needsStaticPod(plugin: Plugin, config: Config): boolean {
+  let pluginList = [
     'phonegap-plugin-push',
     '@havesource/cordova-plugin-push',
     'cordova-plugin-firebasex',
+    '@batch.com/cordova-plugin',
+    'onesignal-cordova-plugin',
   ];
+  if (config.app.extConfig?.cordova?.staticPlugins) {
+    pluginList = pluginList.concat(
+      config.app.extConfig?.cordova?.staticPlugins,
+    );
+  }
   return pluginList.includes(plugin.id);
 }
 

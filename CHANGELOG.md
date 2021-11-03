@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/ionic-team/capacitor/compare/3.2.5...3.3.0) (2021-11-03)
+
+
+### Bug Fixes
+
+* **cli:** Add Batch plugin to static list ([#5138](https://github.com/ionic-team/capacitor/issues/5138)) ([9470633](https://github.com/ionic-team/capacitor/commit/94706338c096b30390fa288c9b107e253923a644))
+* **cli:** Add onesignal-cordova-plugin to static pod list ([#5143](https://github.com/ionic-team/capacitor/issues/5143)) ([937e240](https://github.com/ionic-team/capacitor/commit/937e2408f9bb60691e653b70d8b7cb02f540b251))
+* **cli:** detect and register multiple plugins from same package ([#5098](https://github.com/ionic-team/capacitor/issues/5098)) ([25e770c](https://github.com/ionic-team/capacitor/commit/25e770c3f598bf3a1e05e21d607ab3ad70268674))
+* **core:** avoid crash on logging circular objects ([#5186](https://github.com/ionic-team/capacitor/issues/5186)) ([1451ec8](https://github.com/ionic-team/capacitor/commit/1451ec850a9ef73267a032638e73f1fc440647b9))
+* **ios:** Avoid CDVScreenOrientationDelegate umbrella header warning ([#5156](https://github.com/ionic-team/capacitor/issues/5156)) ([31ec30d](https://github.com/ionic-team/capacitor/commit/31ec30de193aa3117dbb7eda928ef3a365d5667c))
+
+
+### Features
+
+* **android:** ability to reload the webview ([#5184](https://github.com/ionic-team/capacitor/issues/5184)) ([c495bed](https://github.com/ionic-team/capacitor/commit/c495bed216ddf05450f185d2d3f09b4052b281a8))
+* **cli:** add support for 'pod install' in VM based environments ([#5144](https://github.com/ionic-team/capacitor/issues/5144)) ([32ecf22](https://github.com/ionic-team/capacitor/commit/32ecf22de0a550756dbfa68b3b17c2333c89a430))
+* **cli:** Allow to configure access origin tags on cordova config.xml ([#5134](https://github.com/ionic-team/capacitor/issues/5134)) ([0841a09](https://github.com/ionic-team/capacitor/commit/0841a093bf73ed4acac9a90be44a8e8a3aedbcdb))
+* **cli:** Allow users to include Cordova plugins to the static list ([#5175](https://github.com/ionic-team/capacitor/issues/5175)) ([664149a](https://github.com/ionic-team/capacitor/commit/664149aadbe80e66dd757315a826ec1ab305edb9))
+
+
+
+
+
 ## [3.2.5](https://github.com/ionic-team/capacitor/compare/3.2.4...3.2.5) (2021-10-13)
 
 

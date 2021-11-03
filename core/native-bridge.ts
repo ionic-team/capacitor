@@ -196,20 +196,6 @@ const initBridge = (w: any): void => {
     win.Ionic.WebView = IonicWebView;
   };
 
-  const safeStringify = (value: any): string => {
-    const seen = new Set();
-    return JSON.stringify(value, (_k, v) => {
-      if (seen.has(v)) {
-        if (v === null) return null;
-        else return '...';
-      }
-      if (typeof v === 'object') {
-        seen.add(v);
-      }
-      return v;
-    });
-  };
-
   const initLogger = (win: WindowCapacitor, cap: CapacitorInstance) => {
     const BRIDGED_CONSOLE_METHODS: (keyof Console)[] = [
       'debug',
@@ -291,7 +277,7 @@ const initBridge = (w: any): void => {
     const serializeConsoleMessage = (msg: any): string => {
       if (typeof msg === 'object') {
         try {
-          msg = safeStringify(msg);
+          msg = JSON.stringify(msg);
         } catch (e) {
           // ignore
         }
@@ -378,7 +364,7 @@ const initBridge = (w: any): void => {
       // android platform
       postToNative = data => {
         try {
-          win.androidBridge.postMessage(safeStringify(data));
+          win.androidBridge.postMessage(JSON.stringify(data));
         } catch (e) {
           win?.console?.error(e);
         }
@@ -408,7 +394,7 @@ const initBridge = (w: any): void => {
             url: url,
             line: lineNo,
             col: columnNo,
-            errorObject: safeStringify(err),
+            errorObject: JSON.stringify(err),
           },
         };
 
