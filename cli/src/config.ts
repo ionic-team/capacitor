@@ -343,18 +343,7 @@ function determineOS(os: NodeJS.Platform): OS {
 async function determineXcodeWorkspaceDirAbs(
   nativeProjectDirAbs: string,
 ): Promise<string> {
-  const xcodeDir = resolve(nativeProjectDirAbs, 'App.xcworkspace');
-
-  if (!(await pathExists(xcodeDir))) {
-    fatal(
-      'Xcode workspace does not exist.\n' +
-        `See the docs for adding the ${c.strong('ios')} platform: ${c.strong(
-          'https://capacitorjs.com/docs/ios#adding-the-ios-platform',
-        )}`,
-    );
-  }
-
-  return xcodeDir;
+  return resolve(nativeProjectDirAbs, 'App.xcworkspace');
 }
 
 async function determineIOSWebDirAbs(
@@ -364,23 +353,27 @@ async function determineIOSWebDirAbs(
 ): Promise<string> {
   const re = /path\s=\spublic[\s\S]+?sourceTree\s=\s([^;]+)/;
   const pbxprojPath = resolve(nativeXcodeProjDirAbs, 'project.pbxproj');
-  const pbxproj = await readFile(pbxprojPath, { encoding: 'utf8' });
+  try {
+    const pbxproj = await readFile(pbxprojPath, { encoding: 'utf8' });
 
-  const m = pbxproj.match(re);
+    const m = pbxproj.match(re);
 
-  if (m && m[1] === 'SOURCE_ROOT') {
-    logger.warn(
-      `Using the iOS project root for the ${c.strong(
-        'public',
-      )} directory is deprecated.\n` +
-        `Please follow the Upgrade Guide to move ${c.strong(
+    if (m && m[1] === 'SOURCE_ROOT') {
+      logger.warn(
+        `Using the iOS project root for the ${c.strong(
           'public',
-        )} inside the iOS target directory: ${c.strong(
-          'https://capacitorjs.com/docs/updating/3-0#move-public-into-the-ios-target-directory',
-        )}`,
-    );
+        )} directory is deprecated.\n` +
+          `Please follow the Upgrade Guide to move ${c.strong(
+            'public',
+          )} inside the iOS target directory: ${c.strong(
+            'https://capacitorjs.com/docs/updating/3-0#move-public-into-the-ios-target-directory',
+          )}`,
+      );
 
-    return resolve(nativeProjectDirAbs, 'public');
+      return resolve(nativeProjectDirAbs, 'public');
+    }
+  } catch (e) {
+    // ignore
   }
 
   return resolve(nativeTargetDirAbs, 'public');
