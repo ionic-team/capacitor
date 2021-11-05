@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1](https://github.com/ionic-team/capacitor/compare/3.3.0...3.3.1) (2021-11-05)
+
+
+### Bug Fixes
+
+* **cli:** Make config don't error if iOS is missing ([#5212](https://github.com/ionic-team/capacitor/issues/5212)) ([db9f12b](https://github.com/ionic-team/capacitor/commit/db9f12b545994b2ed88098c0168bb051f8191771))
+
+
+
+
+
 # [3.3.0](https://github.com/ionic-team/capacitor/compare/3.2.5...3.3.0) (2021-11-03)
 
 
