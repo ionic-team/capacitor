@@ -12,3 +12,4 @@ cd ../..
 mkdir Carthage/Build/CapacitorCordova.xcframework
 mv ios/CapacitorCordova/CapacitorCordova.xcframework/* Carthage/Build/CapacitorCordova.xcframework
 zip -r Capacitor.xcframework.zip Carthage/Build
+rm -rf ios/CapacitorCordova/CapacitorCordova.xcframework
