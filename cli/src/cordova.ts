@@ -525,6 +525,7 @@ export function needsStaticPod(plugin: Plugin, config: Config): boolean {
     'cordova-plugin-firebasex',
     '@batch.com/cordova-plugin',
     'onesignal-cordova-plugin',
+    'cordova-plugin-google-analytics',
   ];
   if (config.app.extConfig?.cordova?.staticPlugins) {
     pluginList = pluginList.concat(
