@@ -105,9 +105,11 @@ export async function addCommand(
 
       if (await pathExists(config.app.webDirAbs)) {
         await sync(config, platformName, false);
-        await runTask('Syncing Gradle', async () => {
-          return createLocalProperties(config.android.platformDirAbs);
-        });
+        if (platformName === config.android.name) {
+          await runTask('Syncing Gradle', async () => {
+            return createLocalProperties(config.android.platformDirAbs);
+          });
+        }
       } else {
         logger.warn(
           `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
