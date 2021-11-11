@@ -285,7 +285,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
                         // TODO replace with Build.VERSION_CODES.S once we target SDK 31
                         if (Build.VERSION.SDK_INT >= 31 && PermissionHelper.hasPermissions(bridge.getContext(), coarsePermission)) {
                             callback.invoke(origin, true, false);
-                        }  else {
+                        } else {
                             callback.invoke(origin, false, false);
                         }
                     }
