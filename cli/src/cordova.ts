@@ -519,20 +519,24 @@ export function getIncompatibleCordovaPlugins(platform: string): string[] {
 }
 
 export function needsStaticPod(plugin: Plugin, config: Config): boolean {
-  let pluginList = [
-    'phonegap-plugin-push',
-    '@havesource/cordova-plugin-push',
-    'cordova-plugin-firebasex',
-    '@batch.com/cordova-plugin',
-    'onesignal-cordova-plugin',
-    'cordova-plugin-google-analytics',
-  ];
+  let pluginList = ['phonegap-plugin-push', '@batch.com/cordova-plugin'];
   if (config.app.extConfig?.cordova?.staticPlugins) {
     pluginList = pluginList.concat(
       config.app.extConfig?.cordova?.staticPlugins,
     );
   }
-  return pluginList.includes(plugin.id);
+  return pluginList.includes(plugin.id) || useFrameworks(plugin);
+}
+
+function useFrameworks(plugin: Plugin): boolean {
+  const podspecs = getPlatformElement(plugin, 'ios', 'podspec');
+  const frameworkPods = podspecs.filter(
+    (podspec: any) =>
+      podspec.pods.filter(
+        (pods: any) => pods.$ && pods.$['use-frameworks'] === 'true',
+      ).length > 0,
+  );
+  return frameworkPods.length > 0;
 }
 
 export async function getCordovaPreferences(config: Config): Promise<any> {
