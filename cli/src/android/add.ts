@@ -18,13 +18,11 @@ export async function addAndroid(config: Config): Promise<void> {
       );
     },
   );
-
-  await runTask('Syncing Gradle', async () => {
-    return createLocalProperties(config.android.platformDirAbs);
-  });
 }
 
-async function createLocalProperties(platformDir: string) {
+export async function createLocalProperties(
+  platformDir: string,
+): Promise<void> {
   const defaultAndroidPath = join(homedir(), 'Library/Android/sdk');
   if (await pathExists(defaultAndroidPath)) {
     const localSettings = `
@@ -57,5 +55,7 @@ sdk.dir=${defaultAndroidPath}
 }
 
 async function gradleSync(platformDir: string) {
-  await runCommand(`${platformDir}/gradlew`, []);
+  await runCommand(`./gradlew`, [], {
+    cwd: platformDir,
+  });
 }
