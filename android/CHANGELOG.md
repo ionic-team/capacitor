@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.2](https://github.com/ionic-team/capacitor/compare/3.3.1...3.3.2) (2021-11-17)
+
+
+### Bug Fixes
+
+* **android:** Allow web geolocation if only COARSE_LOCATION is granted ([#5236](https://github.com/ionic-team/capacitor/issues/5236)) ([bc7b24e](https://github.com/ionic-team/capacitor/commit/bc7b24e9b58b194b32b750c5816c8d8ef180834a))
+
+
+
+
+
 ## [3.3.1](https://github.com/ionic-team/capacitor/compare/3.3.0...3.3.1) (2021-11-05)
 
 **Note:** Version bump only for package @capacitor/android
