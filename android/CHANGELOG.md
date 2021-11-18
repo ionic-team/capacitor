@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.2](https://github.com/ionic-team/capacitor/compare/3.3.1...3.3.2) (2021-11-17)
+
+
+### Bug Fixes
+
+* **android:** Allow web geolocation if only COARSE_LOCATION is granted ([#5236](https://github.com/ionic-team/capacitor/issues/5236)) ([bc7b24e](https://github.com/ionic-team/capacitor/commit/bc7b24e9b58b194b32b750c5816c8d8ef180834a))
+
+
+
+
+
+## [3.3.1](https://github.com/ionic-team/capacitor/compare/3.3.0...3.3.1) (2021-11-05)
+
+**Note:** Version bump only for package @capacitor/android
+
+
+
+
+
+# [3.3.0](https://github.com/ionic-team/capacitor/compare/3.2.5...3.3.0) (2021-11-03)
+
+
+### Bug Fixes
+
+* **core:** avoid crash on logging circular objects ([#5186](https://github.com/ionic-team/capacitor/issues/5186)) ([1451ec8](https://github.com/ionic-team/capacitor/commit/1451ec850a9ef73267a032638e73f1fc440647b9))
+
+
+### Features
+
+* **android:** ability to reload the webview ([#5184](https://github.com/ionic-team/capacitor/issues/5184)) ([c495bed](https://github.com/ionic-team/capacitor/commit/c495bed216ddf05450f185d2d3f09b4052b281a8))
+
+
+
+
+
 ## [3.2.5](https://github.com/ionic-team/capacitor/compare/3.2.4...3.2.5) (2021-10-13)
 
 

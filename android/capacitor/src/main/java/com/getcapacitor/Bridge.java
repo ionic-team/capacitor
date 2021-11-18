@@ -1148,6 +1148,13 @@ public class Bridge {
         webView.post(() -> webView.loadUrl(appUrl));
     }
 
+    /**
+     * Reload the WebView
+     */
+    public void reload() {
+        webView.post(() -> webView.loadUrl(appUrl));
+    }
+
     public String getLocalUrl() {
         return localUrl;
     }
