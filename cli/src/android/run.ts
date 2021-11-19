@@ -19,7 +19,8 @@ export async function runAndroid(
     selectedTarget,
   );
 
-  const gradleArgs = ['assembleDebug'];
+  const arg = `assemble${config.android?.flavor || ''}Debug`;
+  const gradleArgs = [arg];
 
   debug('Invoking ./gradlew with args: %O', gradleArgs);
 
