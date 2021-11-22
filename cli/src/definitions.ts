@@ -90,6 +90,7 @@ export interface AndroidConfig extends PlatformConfig {
   readonly buildOutputDir: string;
   readonly buildOutputDirAbs: string;
   readonly apkName: string;
+  readonly flavor: string;
 }
 
 export interface IOSConfig extends PlatformConfig {

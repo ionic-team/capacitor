@@ -227,6 +227,7 @@ async function loadAndroidConfig(
   const resDir = `${srcMainDir}/res`;
   let apkPath = `${appDir}/build/outputs/apk/`;
   let flavorPrefix = '';
+  const flavor = extConfig.android?.flavor || '';
   if (extConfig.android?.flavor) {
     apkPath = `${apkPath}/${extConfig.android?.flavor}`;
     flavorPrefix = `-${extConfig.android?.flavor}`;
@@ -259,6 +260,7 @@ async function loadAndroidConfig(
     apkName,
     buildOutputDir,
     buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
+    flavor,
   };
 }
 
