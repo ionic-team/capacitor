@@ -1,7 +1,7 @@
 import { pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
 
-import { addAndroid } from '../android/add';
+import { addAndroid, createLocalProperties } from '../android/add';
 import {
   editProjectSettingsAndroid,
   checkAndroidPackage,
@@ -105,6 +105,11 @@ export async function addCommand(
 
       if (await pathExists(config.app.webDirAbs)) {
         await sync(config, platformName, false);
+        if (platformName === config.android.name) {
+          await runTask('Syncing Gradle', async () => {
+            return createLocalProperties(config.android.platformDirAbs);
+          });
+        }
       } else {
         logger.warn(
           `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
