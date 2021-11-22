@@ -47,7 +47,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         bridge?.reset()
     }
     
-    // This delegates media capture permission requests to the app and also remembers the user’s decision.
+    // TODO: remove once Xcode 12 support is dropped
+    #if compiler(>=5.5)
     @available(iOS 15, *)
     func webView(
         _ webView: WKWebView,
