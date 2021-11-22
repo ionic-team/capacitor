@@ -260,7 +260,7 @@ async function loadAndroidConfig(
     apkName,
     buildOutputDir,
     buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
-    flavor
+    flavor,
   };
 }
 
