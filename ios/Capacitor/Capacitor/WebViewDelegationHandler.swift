@@ -59,6 +59,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     ) {
         decisionHandler(.grant)
     }
+    #endif
 
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         // post a notification for any listeners
