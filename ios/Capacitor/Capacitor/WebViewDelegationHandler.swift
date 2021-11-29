@@ -174,7 +174,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
             return
         }
 
-        if let presentedVC = viewController.presentedViewController {
+        if let presentedVC = viewController.presentedViewController, !presentedVC.isBeingDismissed {
             viewController = presentedVC
         }
 
