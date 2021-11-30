@@ -169,8 +169,13 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     // MARK: - WKUIDelegate
 
     public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        guard let viewController = bridge?.viewController else {
+        guard var viewController = bridge?.viewController else {
+            completionHandler()
             return
+        }
+
+        if let presentedVC = viewController.presentedViewController, !presentedVC.isBeingDismissed {
+            viewController = presentedVC
         }
 
         let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
