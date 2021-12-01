@@ -70,8 +70,7 @@ public class PluginCall {
     }
 
     public void resolve(JSObject data) {
-        PluginResult result = new PluginResult(data);
-        this.msgHandler.sendResponseMessage(this, result, null);
+        this.msgHandler.sendResponseMessage(this, data, null);
     }
 
     public void resolve() {

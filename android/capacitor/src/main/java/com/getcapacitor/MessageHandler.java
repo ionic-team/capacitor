@@ -79,6 +79,21 @@ public class MessageHandler {
     }
 
     public void sendResponseMessage(PluginCall call, PluginResult successResult, PluginResult errorResult) {
+        _sendResponseMessage(call, successResult, errorResult);
+    }
+
+    public void sendResponseMessage(PluginCall call, JSObject successResult, PluginResult errorResult) {
+        _sendResponseMessage(call, successResult, errorResult);
+    }
+
+    public void sendResponseMessage(PluginCall call, boolean successResult, PluginResult errorResult) {
+        _sendResponseMessage(call, successResult, errorResult);
+    }
+
+    public void sendResponseMessage(PluginCall call, String successResult, PluginResult errorResult) {
+        _sendResponseMessage(call, successResult, errorResult);
+    }
+    void _sendResponseMessage(PluginCall call, Object successResult, PluginResult errorResult) {
         try {
             PluginResult data = new PluginResult();
             data.put("save", call.isKeptAlive());
