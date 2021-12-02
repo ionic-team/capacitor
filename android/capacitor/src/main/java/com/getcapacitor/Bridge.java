@@ -807,7 +807,7 @@ public class Bridge {
             // Let the plugin restore any state it needs
             Bundle bundleData = savedInstanceState.getBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY);
             PluginHandle lastPlugin = getPlugin(lastPluginId);
-            if (lastPlugin != null) {
+            if ((bundleData != null) && (lastPlugin != null)) {
                 lastPlugin.getInstance().restoreState(bundleData);
             }
         }
