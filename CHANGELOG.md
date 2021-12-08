@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.3](https://github.com/ionic-team/capacitor/compare/3.3.2...3.3.3) (2021-12-08)
+
+
+### Bug Fixes
+
+* **android:** change logging level of google services message ([#5189](https://github.com/ionic-team/capacitor/issues/5189)) ([6b1dd43](https://github.com/ionic-team/capacitor/commit/6b1dd430dc91eb9e2b36edaa173ccc294c9fb4ff))
+* **android:** Prevent crash in restoreInstanceState if bundleData is null ([#5289](https://github.com/ionic-team/capacitor/issues/5289)) ([622d62f](https://github.com/ionic-team/capacitor/commit/622d62fc0d7cd79558bf6f11331bd7d6690aa4f9))
+* **android:** restrict android run command to configured flavour ([#5256](https://github.com/ionic-team/capacitor/issues/5256)) ([ba84443](https://github.com/ionic-team/capacitor/commit/ba84443dce9c81e09140def57a60018b527b5bb5))
+* **cli:** Add onesignal-cordova-plugin to the static list again ([#5262](https://github.com/ionic-team/capacitor/issues/5262)) ([e67ca99](https://github.com/ionic-team/capacitor/commit/e67ca9964c5a923d35f5cf41eb802c665563726f))
+* **ios:** Present js alert on top of the presented VC ([#5282](https://github.com/ionic-team/capacitor/issues/5282)) ([a53d236](https://github.com/ionic-team/capacitor/commit/a53d236452e99d1e6151e19e313b3d1545957419))
+
+
+
+
+
 ## [3.3.2](https://github.com/ionic-team/capacitor/compare/3.3.1...3.3.2) (2021-11-17)
 
 
