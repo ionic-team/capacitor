@@ -17,14 +17,11 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Base64;
-import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -349,6 +346,27 @@ public class WebViewLocalServer {
                         byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
                         String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
                         conn.setRequestProperty("Authorization", "Basic " + base64);
+                    }
+                    /**
+                     * This should be the final step in the setup process of the HttpURLConnection object.
+                     *
+                     * Initiate the connection with follow redirects disable. It allows us
+                     * identifying any redirection response and avoid intercepting such request.
+                     * This is because returning a 200 response when a redirection response (ie. 301 or 302)
+                     * is expected could result in issues with resolving relative URLs for static assets
+                     * in the HTML.
+                     */
+                    conn.setInstanceFollowRedirects(false);
+                    conn.connect();
+                    int status = conn.getResponseCode();
+                    if (
+                        status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                        status == HttpURLConnection.HTTP_MOVED_PERM ||
+                        status == HttpURLConnection.HTTP_SEE_OTHER ||
+                        status == 307
+                    ) {
+                        // Return null so that this request will not be intercepted.
+                        return null;
                     }
                     String cookie = conn.getHeaderField("Set-Cookie");
                     if (cookie != null) {
