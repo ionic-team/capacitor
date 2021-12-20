@@ -100,6 +100,14 @@ export interface CapacitorConfig {
     path?: string;
 
     /**
+     * Specify a custom folder name for the app in the native Android project.
+     *
+     * @since 3.0.0
+     * @default app
+     */
+     appDir?: string;
+
+    /**
      * User agent of Capacitor Web View on Android.
      *
      * Overrides global `overrideUserAgent` option.
@@ -228,6 +236,22 @@ export interface CapacitorConfig {
      * @default App
      */
     scheme?: string;
+
+    /**
+     * Specify a custom app name for the native iOS project.
+     *
+     * @since 3.0.0
+     * @default ios
+     */
+     appName?: string;
+    
+    /**
+     * Specify a custom native project folder for the native iOS project.
+     *
+     * @since 3.0.0
+     * @default ios
+     */
+    projectDir?: string;
 
     /**
      * User agent of Capacitor Web View on iOS.

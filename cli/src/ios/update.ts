@@ -199,20 +199,21 @@ async function generatePodFile(
   const noStaticPlugins = cordovaPlugins.filter(
     el => !staticPlugins.includes(el),
   );
+  const relativePath = config.ios.nativeProjectDirAbs === config.ios.platformDirAbs ? '.' : '..';
   if (noStaticPlugins.length > 0) {
     pods.push(
-      `  pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'\n`,
+      `  pod 'CordovaPlugins', :path => '${relativePath}/capacitor-cordova-ios-plugins'\n`,
     );
   }
   if (staticPlugins.length > 0) {
     pods.push(
-      `  pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'\n`,
+      `  pod 'CordovaPluginsStatic', :path => '${relativePath}/capacitor-cordova-ios-plugins'\n`,
     );
   }
   const resourcesPlugins = cordovaPlugins.filter(filterResources);
   if (resourcesPlugins.length > 0) {
     pods.push(
-      `  pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'\n`,
+      `  pod 'CordovaPluginsResources', :path => '${relativePath}/capacitor-cordova-ios-plugins'\n`,
     );
   }
   return `

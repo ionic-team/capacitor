@@ -219,7 +219,7 @@ async function loadAndroidConfig(
   const name = 'android';
   const platformDir = extConfig.android?.path ?? 'android';
   const platformDirAbs = resolve(rootDir, platformDir);
-  const appDir = 'app';
+  const appDir = extConfig.android?.appDir ?? 'app';
   const srcDir = `${appDir}/src`;
   const srcMainDir = `${srcDir}/main`;
   const assetsDir = `${srcMainDir}/assets`;
@@ -273,15 +273,16 @@ async function loadIOSConfig(
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
   const scheme = extConfig.ios?.scheme ?? 'App';
-  const nativeProjectDir = 'App';
-  const nativeProjectDirAbs = resolve(platformDirAbs, nativeProjectDir);
-  const nativeTargetDir = `${nativeProjectDir}/App`;
+  const appName = extConfig.ios?.appName ?? 'App';
+  const nativeProjectDir = extConfig.ios?.projectDir ?? 'App';
+  const nativeProjectDirAbs = (nativeProjectDir == '') ? platformDirAbs : resolve(platformDirAbs, nativeProjectDir);
+  const sep = (nativeProjectDir == '') ? '' : '/';
+  const nativeTargetDir = `${nativeProjectDir}${sep}${appName}`;
   const nativeTargetDirAbs = resolve(platformDirAbs, nativeTargetDir);
-  const nativeXcodeProjDir = `${nativeProjectDir}/App.xcodeproj`;
+  const nativeXcodeProjDir = `${nativeProjectDir}${sep}${appName}.xcodeproj`;
   const nativeXcodeProjDirAbs = resolve(platformDirAbs, nativeXcodeProjDir);
-  const nativeXcodeWorkspaceDirAbs = lazy(() =>
-    determineXcodeWorkspaceDirAbs(nativeProjectDirAbs),
-  );
+  const nativeXcodeWorkspaceDirAbs = lazy(() => determineXcodeWorkspaceDirAbs(nativeProjectDirAbs, appName));
+  
   const webDirAbs = lazy(() =>
     determineIOSWebDirAbs(
       nativeProjectDirAbs,
@@ -343,9 +344,9 @@ function determineOS(os: NodeJS.Platform): OS {
 }
 
 async function determineXcodeWorkspaceDirAbs(
-  nativeProjectDirAbs: string,
+  nativeProjectDirAbs: string, appName: string
 ): Promise<string> {
-  return resolve(nativeProjectDirAbs, 'App.xcworkspace');
+  return resolve(nativeProjectDirAbs, `${appName}.xcworkspace`);
 }
 
 async function determineIOSWebDirAbs(
