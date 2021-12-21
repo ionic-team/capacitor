@@ -1,7 +1,6 @@
 {
   "name": "capacitor",
   "private": true,
-  "version": "3.3.3",
   "scripts": {
     "build:nativebridge": "lerna run build:nativebridge",
     "sync-peer-dependencies": "node scripts/sync-peer-dependencies.mjs",
