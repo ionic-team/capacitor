@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.4](https://github.com/ionic-team/capacitor/compare/3.3.3...3.3.4) (2022-01-05)
+
+
+### Bug Fixes
+
+* **android:** Prevent crash if activity killed on input file ([#5328](https://github.com/ionic-team/capacitor/issues/5328)) ([a206841](https://github.com/ionic-team/capacitor/commit/a20684180a9b6fd50547ae578f21531faa116da5))
+* **cli:** Escape appName from invalid characters on add ([#5325](https://github.com/ionic-team/capacitor/issues/5325)) ([033f4ee](https://github.com/ionic-team/capacitor/commit/033f4eef59fdb7cc32018b162114511448bc46a6))
+* **cli:** sync failing if Info.plist is localized ([#5333](https://github.com/ionic-team/capacitor/issues/5333)) ([df7a104](https://github.com/ionic-team/capacitor/commit/df7a1041c4e2d9a5a1ceef247ed00f9f8467df76))
+
+
+
+
+
 ## [3.3.3](https://github.com/ionic-team/capacitor/compare/3.3.2...3.3.3) (2021-12-08)
 
 
