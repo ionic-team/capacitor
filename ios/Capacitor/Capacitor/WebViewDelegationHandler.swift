@@ -59,10 +59,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     ) {
         decisionHandler(.grant)
     }
-    #endif
 
-    // TODO: remove once Xcode 12 support is dropped
-    #if compiler(>=5.5)
     @available(iOS 15, *)
     func webView(_ webView: WKWebView,
     requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
