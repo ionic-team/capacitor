@@ -807,8 +807,10 @@ public class Bridge {
             // Let the plugin restore any state it needs
             Bundle bundleData = savedInstanceState.getBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY);
             PluginHandle lastPlugin = getPlugin(lastPluginId);
-            if (lastPlugin != null) {
+            if (bundleData != null && lastPlugin != null) {
                 lastPlugin.getInstance().restoreState(bundleData);
+            } else {
+                Logger.error("Unable to restore last plugin call");
             }
         }
     }
@@ -823,10 +825,15 @@ public class Bridge {
             PluginHandle handle = getPlugin(call.getPluginId());
 
             if (handle != null) {
-                outState.putString(BUNDLE_LAST_PLUGIN_ID_KEY, call.getPluginId());
-                outState.putString(BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY, call.getMethodName());
-                outState.putString(BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY, call.getData().toString());
-                outState.putBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY, handle.getInstance().saveInstanceState());
+                Bundle bundle = handle.getInstance().saveInstanceState();
+                if (bundle != null) {
+                    outState.putString(BUNDLE_LAST_PLUGIN_ID_KEY, call.getPluginId());
+                    outState.putString(BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY, call.getMethodName());
+                    outState.putString(BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY, call.getData().toString());
+                    outState.putBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY, bundle);
+                } else {
+                    Logger.error("Couldn't save last " + call.getPluginId() + "'s Plugin " + call.getMethodName() + " call");
+                }
             }
         }
     }

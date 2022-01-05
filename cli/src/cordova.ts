@@ -352,44 +352,57 @@ export async function logCordovaManualSteps(
 }
 
 async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
-  const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
-  const xmlMeta = await readXML(plistPath);
-  const data = await readFile(plistPath, { encoding: 'utf-8' });
-  const plistData = plist.parse(data) as PlistObject;
-  const dict = xmlMeta.plist.dict.pop();
-  if (!dict.key.includes(configElement.$.parent)) {
-    let xml = buildConfigFileXml(configElement);
-    xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
-    logger.warn(
-      `Configuration required for ${c.strong(plugin.id)}.\n` +
-        `Add the following to Info.plist:\n` +
-        xml,
+  let plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+  if (!(await pathExists(plistPath))) {
+    plistPath = resolve(
+      config.ios.nativeTargetDirAbs,
+      'Base.lproj',
+      'Info.plist',
     );
-  } else if (configElement.array || configElement.dict) {
-    if (
-      configElement.array &&
-      configElement.array.length > 0 &&
-      configElement.array[0].string
-    ) {
-      let xml = '';
-      configElement.array[0].string.map((element: any) => {
-        const d = plistData[configElement.$.parent];
-        if (Array.isArray(d) && !d.includes(element)) {
-          xml = xml.concat(`<string>${element}</string>\n`);
+  }
+  if (await pathExists(plistPath)) {
+    const xmlMeta = await readXML(plistPath);
+    const data = await readFile(plistPath, { encoding: 'utf-8' });
+    const plistData = plist.parse(data) as PlistObject;
+    const dict = xmlMeta.plist.dict.pop();
+    if (!dict.key.includes(configElement.$.parent)) {
+      let xml = buildConfigFileXml(configElement);
+      xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(
+        xml,
+      )}`;
+      logger.warn(
+        `Configuration required for ${c.strong(plugin.id)}.\n` +
+          `Add the following to Info.plist:\n` +
+          xml,
+      );
+    } else if (configElement.array || configElement.dict) {
+      if (
+        configElement.array &&
+        configElement.array.length > 0 &&
+        configElement.array[0].string
+      ) {
+        let xml = '';
+        configElement.array[0].string.map((element: any) => {
+          const d = plistData[configElement.$.parent];
+          if (Array.isArray(d) && !d.includes(element)) {
+            xml = xml.concat(`<string>${element}</string>\n`);
+          }
+        });
+        if (xml.length > 0) {
+          logger.warn(
+            `Configuration required for ${c.strong(plugin.id)}.\n` +
+              `Add the following in the existing ${c.strong(
+                configElement.$.parent,
+              )} array of your Info.plist:\n` +
+              xml,
+          );
         }
-      });
-      if (xml.length > 0) {
-        logger.warn(
-          `Configuration required for ${c.strong(plugin.id)}.\n` +
-            `Add the following in the existing ${c.strong(
-              configElement.$.parent,
-            )} array of your Info.plist:\n` +
-            xml,
-        );
+      } else {
+        logPossibleMissingItem(configElement, plugin);
       }
-    } else {
-      logPossibleMissingItem(configElement, plugin);
     }
+  } else {
+    logPossibleMissingItem(configElement, plugin);
   }
 }
 
@@ -519,7 +532,11 @@ export function getIncompatibleCordovaPlugins(platform: string): string[] {
 }
 
 export function needsStaticPod(plugin: Plugin, config: Config): boolean {
-  let pluginList = ['phonegap-plugin-push', '@batch.com/cordova-plugin'];
+  let pluginList = [
+    'phonegap-plugin-push',
+    '@batch.com/cordova-plugin',
+    'onesignal-cordova-plugin',
+  ];
   if (config.app.extConfig?.cordova?.staticPlugins) {
     pluginList = pluginList.concat(
       config.app.extConfig?.cordova?.staticPlugins,
