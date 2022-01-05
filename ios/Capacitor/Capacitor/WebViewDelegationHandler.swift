@@ -46,6 +46,20 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         // Reset the bridge on each navigation
         bridge?.reset()
     }
+    
+    // TODO: remove once Xcode 12 support is dropped
+    #if compiler(>=5.5)
+    @available(iOS 15, *)
+    func webView(
+        _ webView: WKWebView,
+        requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+        initiatedByFrame frame: WKFrameInfo,
+        type: WKMediaCaptureType,
+        decisionHandler: @escaping (WKPermissionDecision) -> Void
+    ) {
+        decisionHandler(.grant)
+    }
+    #endif
 
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         // post a notification for any listeners
@@ -169,8 +183,13 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     // MARK: - WKUIDelegate
 
     public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        guard let viewController = bridge?.viewController else {
+        guard var viewController = bridge?.viewController else {
+            completionHandler()
             return
+        }
+
+        if let presentedVC = viewController.presentedViewController, !presentedVC.isBeingDismissed {
+            viewController = presentedVC
         }
 
         let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)

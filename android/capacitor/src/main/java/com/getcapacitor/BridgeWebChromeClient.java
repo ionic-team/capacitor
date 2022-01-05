@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
@@ -69,7 +70,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
         activityLauncher =
             bridge.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
-                result -> activityListener.onActivityResult(result)
+                result -> {
+                    if (activityListener != null) {
+                        activityListener.onActivityResult(result);
+                    }
+                }
             );
     }
 
@@ -280,7 +285,13 @@ public class BridgeWebChromeClient extends WebChromeClient {
                     if (isGranted) {
                         callback.invoke(origin, true, false);
                     } else {
-                        callback.invoke(origin, false, false);
+                        final String[] coarsePermission = { Manifest.permission.ACCESS_COARSE_LOCATION };
+                        // TODO replace with Build.VERSION_CODES.S once we target SDK 31
+                        if (Build.VERSION.SDK_INT >= 31 && PermissionHelper.hasPermissions(bridge.getContext(), coarsePermission)) {
+                            callback.invoke(origin, true, false);
+                        } else {
+                            callback.invoke(origin, false, false);
+                        }
                     }
                 };
             permissionLauncher.launch(geoPermissions);

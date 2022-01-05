@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.4](https://github.com/ionic-team/capacitor/compare/3.3.3...3.3.4) (2022-01-05)
+
+
+### Bug Fixes
+
+* **cli:** Escape appName from invalid characters on add ([#5325](https://github.com/ionic-team/capacitor/issues/5325)) ([033f4ee](https://github.com/ionic-team/capacitor/commit/033f4eef59fdb7cc32018b162114511448bc46a6))
+* **cli:** sync failing if Info.plist is localized ([#5333](https://github.com/ionic-team/capacitor/issues/5333)) ([df7a104](https://github.com/ionic-team/capacitor/commit/df7a1041c4e2d9a5a1ceef247ed00f9f8467df76))
+
+
+
+
+
+## [3.3.3](https://github.com/ionic-team/capacitor/compare/3.3.2...3.3.3) (2021-12-08)
+
+
+### Bug Fixes
+
+* **android:** restrict android run command to configured flavour ([#5256](https://github.com/ionic-team/capacitor/issues/5256)) ([ba84443](https://github.com/ionic-team/capacitor/commit/ba84443dce9c81e09140def57a60018b527b5bb5))
+* **cli:** Add onesignal-cordova-plugin to the static list again ([#5262](https://github.com/ionic-team/capacitor/issues/5262)) ([e67ca99](https://github.com/ionic-team/capacitor/commit/e67ca9964c5a923d35f5cf41eb802c665563726f))
+
+
+
+
+
+## [3.3.2](https://github.com/ionic-team/capacitor/compare/3.3.1...3.3.2) (2021-11-17)
+
+
+### Bug Fixes
+
+* **cli:** add cordova-plugin-google-analytics to static list ([#5220](https://github.com/ionic-team/capacitor/issues/5220)) ([67a996c](https://github.com/ionic-team/capacitor/commit/67a996c0a6896e32c41ea01822d6435fdd706b84))
+* **cli:** Add plugin to static list if pod has use-frameworks ([#5232](https://github.com/ionic-team/capacitor/issues/5232)) ([8a0518b](https://github.com/ionic-team/capacitor/commit/8a0518be9f6f6a4be4a9f1366cb8dcb191225b9d))
+* **cli:** sync gradle from android folder ([#5233](https://github.com/ionic-team/capacitor/issues/5233)) ([cd779c4](https://github.com/ionic-team/capacitor/commit/cd779c4b6ed4ffc96777be7c94a0af4baca6d6d5))
+
+
+
+
+
 ## [3.3.1](https://github.com/ionic-team/capacitor/compare/3.3.0...3.3.1) (2021-11-05)
 
 
