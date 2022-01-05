@@ -70,7 +70,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
         activityLauncher =
             bridge.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
-                result -> activityListener.onActivityResult(result)
+                result -> {
+                    if (activityListener != null) {
+                        activityListener.onActivityResult(result);
+                    }
+                }
             );
     }
 
