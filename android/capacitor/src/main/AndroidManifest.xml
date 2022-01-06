@@ -9,7 +9,7 @@
         <receiver android:name="com.getcapacitor.plugin.notification.TimedNotificationPublisher" />
         <receiver android:name="com.getcapacitor.plugin.notification.NotificationDismissReceiver" />
         <meta-data android:name="firebase_messaging_auto_init_enabled" android:value="false" />
-        <service android:name="com.getcapacitor.CapacitorFirebaseMessagingService" android:stopWithTask="false">
+        <service android:name="com.getcapacitor.CapacitorFirebaseMessagingService" android:stopWithTask="false" android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
