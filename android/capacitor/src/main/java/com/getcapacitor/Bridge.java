@@ -107,6 +107,7 @@ public class Bridge {
     private CordovaWebView cordovaWebView;
     private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
+    private BridgeWebChromeClient webChromeClient;
     private App app;
 
     // Our MessageHandler for sending and receiving data to the WebView
@@ -182,6 +183,7 @@ public class Bridge {
         this.fragment = fragment;
         this.webView = webView;
         this.webViewClient = new BridgeWebViewClient(this);
+        this.webChromeClient = new BridgeWebChromeClient(this);
         this.initialPlugins = initialPlugins;
         this.cordovaInterface = cordovaInterface;
         this.preferences = preferences;
@@ -277,7 +279,7 @@ public class Bridge {
 
         Logger.debug("Loading app at " + appUrl);
 
-        webView.setWebChromeClient(new BridgeWebChromeClient(this));
+        webView.setWebChromeClient(this.webChromeClient);
         webView.setWebViewClient(this.webViewClient);
 
         if (!isDeployDisabled() && !isNewBinary()) {
@@ -1317,6 +1319,14 @@ public class Bridge {
     public void setWebViewClient(BridgeWebViewClient client) {
         this.webViewClient = client;
         webView.setWebViewClient(client);
+    }
+
+    public BridgeWebChromeClient getWebChromeClient() {
+        return this.webChromeClient;
+    }
+
+    public void setWebChromeClient(BridgeWebChromeClient client) {
+        this.webChromeClient = client;
     }
 
     List<WebViewListener> getWebViewListeners() {
