@@ -279,6 +279,7 @@ public class Bridge {
 
         Logger.debug("Loading app at " + appUrl);
 
+        this.webChromeClient.register();
         webView.setWebChromeClient(this.webChromeClient);
         webView.setWebViewClient(this.webViewClient);
 

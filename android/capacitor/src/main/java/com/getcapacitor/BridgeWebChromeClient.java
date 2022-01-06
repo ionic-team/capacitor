@@ -60,7 +60,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     /**
      * Calls registerForActivityResult on the bridge. You can only call this once.
      */
-    public register() {
+    public void register() {
         ActivityResultCallback<Map<String, Boolean>> permissionCallback = (Map<String, Boolean> isGranted) -> {
             if (permissionListener != null) {
                 boolean granted = true;
