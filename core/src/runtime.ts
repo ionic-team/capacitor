@@ -166,7 +166,9 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         });
 
         if (prop === 'addListener') {
-          (p as any).remove = async () => remove();
+          (p as any).remove = async () => {
+            remove && remove();
+          };
         }
 
         return p;
