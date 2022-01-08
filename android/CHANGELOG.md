@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.4](https://github.com/ionic-team/capacitor/compare/3.3.3...3.3.4) (2022-01-05)
+
+
+### Bug Fixes
+
+* **android:** Prevent crash if activity killed on input file ([#5328](https://github.com/ionic-team/capacitor/issues/5328)) ([a206841](https://github.com/ionic-team/capacitor/commit/a20684180a9b6fd50547ae578f21531faa116da5))
+
+
+
+
+
 ## [3.3.3](https://github.com/ionic-team/capacitor/compare/3.3.2...3.3.3) (2021-12-08)
 
 
