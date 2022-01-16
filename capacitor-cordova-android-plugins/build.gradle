@@ -6,7 +6,6 @@ ext {
 buildscript {
     repositories {
         google()
-        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
@@ -34,7 +33,6 @@ android {
 
 repositories {
     google()
-    jcenter()
     mavenCentral()
     flatDir{
         dirs 'src/main/libs', 'libs'
@@ -46,7 +44,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "org.apache.cordova:framework:$cordovaAndroidVersion"
     // SUB-PROJECT DEPENDENCIES START
-    
+
     // SUB-PROJECT DEPENDENCIES END
 }
 
