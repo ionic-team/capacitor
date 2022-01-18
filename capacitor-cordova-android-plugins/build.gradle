@@ -34,8 +34,8 @@ android {
 
 repositories {
     google()
-    jcenter()
     mavenCentral()
+    jcenter()
     flatDir{
         dirs 'src/main/libs', 'libs'
     }
