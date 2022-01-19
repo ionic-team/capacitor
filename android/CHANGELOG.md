@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/ionic-team/capacitor/compare/3.3.4...3.4.0) (2022-01-19)
+
+
+### Bug Fixes
+
+* **android:** prevent input file crash if accept has . ([#5363](https://github.com/ionic-team/capacitor/issues/5363)) ([bdacb30](https://github.com/ionic-team/capacitor/commit/bdacb300bb6391dc4b84bb2bab075df993a15cba))
+
+
+### Features
+
+* **android:** Add getLong helper on PluginCall ([#5235](https://github.com/ionic-team/capacitor/issues/5235)) ([26261fb](https://github.com/ionic-team/capacitor/commit/26261fb49211330c4db72c259359565da7d7bc4b))
+
+
+
+
+
 ## [3.3.4](https://github.com/ionic-team/capacitor/compare/3.3.3...3.3.4) (2022-01-05)
 
 
