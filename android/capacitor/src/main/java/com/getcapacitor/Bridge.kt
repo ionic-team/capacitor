@@ -805,7 +805,7 @@ class Bridge private constructor(
      */
     fun getPermissionStates(plugin: Plugin): Map<String, PermissionState> {
         val permissionsResults: MutableMap<String, PermissionState> = HashMap()
-        val annotation = plugin.pluginHandle.pluginAnnotation
+        val annotation = plugin.pluginHandle!!.pluginAnnotation
         for (perm in annotation.permissions) {
             // If a permission is defined with no permission constants, return GRANTED for it.
             // Otherwise, get its true state.

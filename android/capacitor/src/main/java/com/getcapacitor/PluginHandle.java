@@ -91,7 +91,7 @@ public class PluginHandle {
         try {
             this.instance = this.pluginClass.newInstance();
             this.instance.setPluginHandle(this);
-            this.instance.setBridge(this.bridge);
+            this.instance.bridge = this.bridge;
             this.instance.load();
             this.instance.initializeActivityLaunchers();
             return this.instance;
