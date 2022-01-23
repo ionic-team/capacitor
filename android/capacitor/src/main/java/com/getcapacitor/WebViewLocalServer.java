@@ -321,75 +321,73 @@ public class WebViewLocalServer {
      */
     private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
         final String method = request.getMethod();
-        if (method.equals("GET")) {
-            try {
-                String url = request.getUrl().toString();
-                Map<String, String> headers = request.getRequestHeaders();
-                boolean isHtmlText = false;
-                for (Map.Entry<String, String> header : headers.entrySet()) {
-                    if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
-                        isHtmlText = true;
-                        break;
-                    }
+        try {
+            String url = request.getUrl().toString();
+            Map<String, String> headers = request.getRequestHeaders();
+            boolean isHtmlText = false;
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
+                    isHtmlText = true;
+                    break;
                 }
-                if (isHtmlText) {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-                    for (Map.Entry<String, String> header : headers.entrySet()) {
-                        conn.setRequestProperty(header.getKey(), header.getValue());
-                    }
-                    String getCookie = CookieManager.getInstance().getCookie(url);
-                    if (getCookie != null) {
-                        conn.setRequestProperty("Cookie", getCookie);
-                    }
-                    conn.setRequestMethod(method);
-                    conn.setReadTimeout(30 * 1000);
-                    conn.setConnectTimeout(30 * 1000);
-                    if (request.getUrl().getUserInfo() != null) {
-                        byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
-                        String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
-                        conn.setRequestProperty("Authorization", "Basic " + base64);
-                    }
-                    /**
-                     * This should be the final step in the setup process of the HttpURLConnection object.
-                     *
-                     * Initiate the connection with follow redirects disable. It allows us
-                     * identifying any redirection response and avoid intercepting such request.
-                     * This is because returning a 200 response when a redirection response (ie. 301 or 302)
-                     * is expected could result in issues with resolving relative URLs for static assets
-                     * in the HTML.
-                     */
-                    conn.setInstanceFollowRedirects(false);
-                    conn.connect();
-
-                    String cookie = conn.getHeaderField("Set-Cookie");
-                    if (cookie != null) {
-                        CookieManager.getInstance().setCookie(url, cookie);
-                    }
-
-                    int status = conn.getResponseCode();
-                    if (
-                        status == HttpURLConnection.HTTP_MOVED_TEMP ||
-                        status == HttpURLConnection.HTTP_MOVED_PERM ||
-                        status == HttpURLConnection.HTTP_SEE_OTHER ||
-                        status == 307
-                    ) {
-                        // Return null so that this request will not be intercepted.
-                        return null;
-                    }
-                    InputStream responseStream = conn.getInputStream();
-                    responseStream = jsInjector.getInjectedStream(responseStream);
-                    return new WebResourceResponse(
-                        "text/html",
-                        handler.getEncoding(),
-                        handler.getStatusCode(),
-                        handler.getReasonPhrase(),
-                        handler.getResponseHeaders(),
-                        responseStream
-                    );
-                }
-            } catch (Exception ex) {
-                bridge.handleAppUrlLoadError(ex);
             }
+            if (isHtmlText) {
+                HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    conn.setRequestProperty(header.getKey(), header.getValue());
+                }
+                String getCookie = CookieManager.getInstance().getCookie(url);
+                if (getCookie != null) {
+                    conn.setRequestProperty("Cookie", getCookie);
+                }
+                conn.setRequestMethod(method);
+                conn.setReadTimeout(30 * 1000);
+                conn.setConnectTimeout(30 * 1000);
+                if (request.getUrl().getUserInfo() != null) {
+                    byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
+                    String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
+                    conn.setRequestProperty("Authorization", "Basic " + base64);
+                }
+                /**
+                    * This should be the final step in the setup process of the HttpURLConnection object.
+                    *
+                    * Initiate the connection with follow redirects disable. It allows us
+                    * identifying any redirection response and avoid intercepting such request.
+                    * This is because returning a 200 response when a redirection response (ie. 301 or 302)
+                    * is expected could result in issues with resolving relative URLs for static assets
+                    * in the HTML.
+                    */
+                conn.setInstanceFollowRedirects(false);
+                conn.connect();
+
+                String cookie = conn.getHeaderField("Set-Cookie");
+                if (cookie != null) {
+                    CookieManager.getInstance().setCookie(url, cookie);
+                }
+
+                int status = conn.getResponseCode();
+                if (
+                    status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                    status == HttpURLConnection.HTTP_MOVED_PERM ||
+                    status == HttpURLConnection.HTTP_SEE_OTHER ||
+                    status == 307
+                ) {
+                    // Return null so that this request will not be intercepted.
+                    return null;
+                }
+                InputStream responseStream = conn.getInputStream();
+                responseStream = jsInjector.getInjectedStream(responseStream);
+                return new WebResourceResponse(
+                    "text/html",
+                    handler.getEncoding(),
+                    handler.getStatusCode(),
+                    handler.getReasonPhrase(),
+                    handler.getResponseHeaders(),
+                    responseStream
+                );
+            }
+        } catch (Exception ex) {
+            bridge.handleAppUrlLoadError(ex);
         }
         return null;
     }
