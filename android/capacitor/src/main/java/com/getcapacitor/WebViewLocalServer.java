@@ -29,6 +29,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -360,9 +361,12 @@ public class WebViewLocalServer {
                 conn.setInstanceFollowRedirects(false);
                 conn.connect();
 
-                String cookie = conn.getHeaderField("Set-Cookie");
-                if (cookie != null) {
-                    CookieManager.getInstance().setCookie(url, cookie);
+                List<String> cookies = conn.getHeaderFields().get("Set-Cookie");
+                if (cookies != null && !cookies.isEmpty()) {
+                    for (String cookie : cookies) {
+                        CookieManager.getInstance().setCookie(url, cookie);
+                    }
+                    CookieManager.getInstance().flush();
                 }
 
                 int status = conn.getResponseCode();
