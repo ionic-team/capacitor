@@ -19,14 +19,14 @@ process.on('message', receive);
 export async function run(): Promise<void> {
   try {
     const config = await loadConfig();
-    runProgram(config);
+    runProgram(config, process.argv);
   } catch (e) {
     process.exitCode = isFatal(e) ? e.exitCode : 1;
     logger.error(e.message ? e.message : String(e));
   }
 }
 
-export function runProgram(config: Config): void {
+export function runProgram(config: Config, argv: string[]): void {
   program.version(config.cli.package.version);
 
   program
@@ -239,5 +239,5 @@ export function runProgram(config: Config): void {
     }),
   );
 
-  program.parse(process.argv);
+  program.parse(argv);
 }
