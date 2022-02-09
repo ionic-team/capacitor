@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.1](https://github.com/ionic-team/capacitor/compare/3.4.0...3.4.1) (2022-02-09)
+
+
+### Bug Fixes
+
+* **cli:** Better error on gradlew permission problems ([#5405](https://github.com/ionic-team/capacitor/issues/5405)) ([9420f08](https://github.com/ionic-team/capacitor/commit/9420f08dedad78cfaa5500cccf8bdbf1a9140684))
+
+
+
+
+
 # [3.4.0](https://github.com/ionic-team/capacitor/compare/3.3.4...3.4.0) (2022-01-19)
 
 **Note:** Version bump only for package @capacitor/cli
