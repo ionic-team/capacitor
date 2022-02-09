@@ -13,6 +13,7 @@ jobs:
           node-version: 14.x
       - uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           ref: native-publish
       - name: Build Capacitor.xcframework
         run: carthage build --no-skip-current --use-xcframeworks
@@ -30,4 +31,4 @@ jobs:
           zip -r Capacitor.xcframework.zip Carthage/Build
           rm -rf ios/CapacitorCordova/CapacitorCordova.xcframework
       - name: Attach ZIP to latest release
-        run: ghr -t ${{ secrets.GITHUB_TOKEN }} -replace $(git describe -tags --abbrev=0) Capacitor.xcframework.zip
+        run: ghr -t ${{ secrets.GITHUB_TOKEN }} -replace $(git describe --tags --abbrev=0) Capacitor.xcframework.zip
