@@ -13,6 +13,7 @@ jobs:
           node-version: 14.x
       - uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           ref: native-publish
       - name: Build Capacitor.xcframework
         run: carthage build --no-skip-current --use-xcframeworks
