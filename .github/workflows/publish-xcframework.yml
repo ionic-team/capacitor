@@ -30,4 +30,4 @@ jobs:
           zip -r Capacitor.xcframework.zip Carthage/Build
           rm -rf ios/CapacitorCordova/CapacitorCordova.xcframework
       - name: Attach ZIP to latest release
-        run: ghr -replace $(git describe -tags --abbrev=0) Capacitor.xcframework.zip
+        run: ghr -t ${{ secrets.GITHUB_TOKEN }} -replace $(git describe -tags --abbrev=0) Capacitor.xcframework.zip
