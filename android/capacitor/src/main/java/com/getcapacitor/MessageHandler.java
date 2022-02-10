@@ -7,11 +7,9 @@ import androidx.webkit.JavaScriptReplyProxy;
 import androidx.webkit.WebMessageCompat;
 import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewFeature;
-
-import org.apache.cordova.PluginManager;
-
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.cordova.PluginManager;
 
 /**
  * MessageHandler handles messages from the WebView, dispatching them
@@ -31,8 +29,13 @@ public class MessageHandler {
 
         WebViewCompat.WebMessageListener myListener = new WebViewCompat.WebMessageListener() {
             @Override
-            public void onPostMessage(WebView view, WebMessageCompat message, Uri sourceOrigin,
-                                      boolean isMainFrame, JavaScriptReplyProxy replyProxy) {
+            public void onPostMessage(
+                WebView view,
+                WebMessageCompat message,
+                Uri sourceOrigin,
+                boolean isMainFrame,
+                JavaScriptReplyProxy replyProxy
+            ) {
                 postMessage(message.getData());
                 pReplyProxy = replyProxy;
             }
