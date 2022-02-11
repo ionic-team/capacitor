@@ -327,10 +327,14 @@ public class WebViewLocalServer {
                 String url = request.getUrl().toString();
                 Map<String, String> headers = request.getRequestHeaders();
                 boolean isHtmlText = false;
-                for (Map.Entry<String, String> header : headers.entrySet()) {
-                    if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
-                        isHtmlText = true;
-                        break;
+                if (url.contains(".html")) {
+                    isHtmlText = true;
+                } else {
+                    for (Map.Entry<String, String> header : headers.entrySet()) {
+                        if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
+                            isHtmlText = true;
+                            break;
+                        }
                     }
                 }
                 if (isHtmlText) {
