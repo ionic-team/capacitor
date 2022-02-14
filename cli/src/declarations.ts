@@ -105,7 +105,7 @@ export interface CapacitorConfig {
      * @since 3.0.0
      * @default app
      */
-     appDir?: string;
+    appDir?: string;
 
     /**
      * User agent of Capacitor Web View on Android.
@@ -243,8 +243,8 @@ export interface CapacitorConfig {
      * @since 3.0.0
      * @default ios
      */
-     appName?: string;
-    
+    appName?: string;
+
     /**
      * Specify a custom native project folder for the native iOS project.
      *

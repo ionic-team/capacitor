@@ -275,14 +275,19 @@ async function loadIOSConfig(
   const scheme = extConfig.ios?.scheme ?? 'App';
   const appName = extConfig.ios?.appName ?? 'App';
   const nativeProjectDir = extConfig.ios?.projectDir ?? 'App';
-  const nativeProjectDirAbs = (nativeProjectDir == '') ? platformDirAbs : resolve(platformDirAbs, nativeProjectDir);
-  const sep = (nativeProjectDir == '') ? '' : '/';
+  const nativeProjectDirAbs =
+    nativeProjectDir == ''
+      ? platformDirAbs
+      : resolve(platformDirAbs, nativeProjectDir);
+  const sep = nativeProjectDir == '' ? '' : '/';
   const nativeTargetDir = `${nativeProjectDir}${sep}${appName}`;
   const nativeTargetDirAbs = resolve(platformDirAbs, nativeTargetDir);
   const nativeXcodeProjDir = `${nativeProjectDir}${sep}${appName}.xcodeproj`;
   const nativeXcodeProjDirAbs = resolve(platformDirAbs, nativeXcodeProjDir);
-  const nativeXcodeWorkspaceDirAbs = lazy(() => determineXcodeWorkspaceDirAbs(nativeProjectDirAbs, appName));
-  
+  const nativeXcodeWorkspaceDirAbs = lazy(() =>
+    determineXcodeWorkspaceDirAbs(nativeProjectDirAbs, appName),
+  );
+
   const webDirAbs = lazy(() =>
     determineIOSWebDirAbs(
       nativeProjectDirAbs,
@@ -344,7 +349,8 @@ function determineOS(os: NodeJS.Platform): OS {
 }
 
 async function determineXcodeWorkspaceDirAbs(
-  nativeProjectDirAbs: string, appName: string
+  nativeProjectDirAbs: string,
+  appName: string,
 ): Promise<string> {
   return resolve(nativeProjectDirAbs, `${appName}.xcworkspace`);
 }

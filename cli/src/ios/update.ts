@@ -199,7 +199,8 @@ async function generatePodFile(
   const noStaticPlugins = cordovaPlugins.filter(
     el => !staticPlugins.includes(el),
   );
-  const relativePath = config.ios.nativeProjectDirAbs === config.ios.platformDirAbs ? '.' : '..';
+  const relativePath =
+    config.ios.nativeProjectDirAbs === config.ios.platformDirAbs ? '.' : '..';
   if (noStaticPlugins.length > 0) {
     pods.push(
       `  pod 'CordovaPlugins', :path => '${relativePath}/capacitor-cordova-ios-plugins'\n`,
