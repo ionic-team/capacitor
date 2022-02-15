@@ -6,14 +6,17 @@ ext {
 buildscript {
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10"
     }
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 30
@@ -30,6 +33,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 repositories {
@@ -45,6 +51,8 @@ dependencies {
     implementation fileTree(dir: 'src/main/libs', include: ['*.jar'])
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "org.apache.cordova:framework:$cordovaAndroidVersion"
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.10"
     // SUB-PROJECT DEPENDENCIES START
     
     // SUB-PROJECT DEPENDENCIES END
