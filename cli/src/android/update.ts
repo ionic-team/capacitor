@@ -377,11 +377,11 @@ ext {
   );
 }
 
-async function kotlinNeededCheck(
-  config: Config,
-  cordovaPlugins: Plugin[]
-) {
-  if (config.app.extConfig.cordova?.preferences?.GradlePluginKotlinEnabled !== 'true') {
+async function kotlinNeededCheck(config: Config, cordovaPlugins: Plugin[]) {
+  if (
+    config.app.extConfig.cordova?.preferences?.GradlePluginKotlinEnabled !==
+    'true'
+  ) {
     for (const plugin of cordovaPlugins) {
       const androidPlatform = getPluginPlatform(plugin, platform);
       const srcFiles = androidPlatform['source-file'];
