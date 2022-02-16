@@ -62,9 +62,9 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     @available(iOS 15, *)
     func webView(_ webView: WKWebView,
-                 requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
-                 initiatedByFrame frame: WKFrameInfo,
-                 decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+    requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
+         initiatedByFrame frame: WKFrameInfo,
+          decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(.grant)
     }
     #endif
