@@ -350,6 +350,53 @@ ext {
     join(config.android.cordovaPluginsDirAbs, 'cordova.variables.gradle'),
     cordovaVariables,
   );
+  await kotlinNeededCheck(config, cordovaPlugins, pluginsGradlePath);
+}
+
+async function kotlinNeededCheck(config: Config, cordovaPlugins: Plugin[], pluginsGradlePath: string) {
+  let kotlinNeeded = config.app.extConfig.cordova?.preferences?.GradlePluginKotlinEnabled === "true";
+  if (!kotlinNeeded) {
+    for(const plugin of cordovaPlugins) {
+      let platforms: any[] = plugin.xml.platform;
+      platforms = platforms.filter(p => p["$"].name === 'android');
+      for(const platform of platforms) {
+        const srcFiles = platform["source-file"];
+        for(const srcFile of srcFiles) {
+          if (/^.*\.kt$/.test(srcFile["$"].src)) {
+            kotlinNeeded = true;
+            break;
+          }
+        }
+        if (kotlinNeeded) break;
+      }
+      if (kotlinNeeded) break;
+    }
+  }
+
+  if (kotlinNeeded) {
+    let buildGradle: string = await readFile(pluginsGradlePath, { encoding: 'utf-8' });
+    buildGradle = buildGradle.replace(
+      /(buildscript\s{\n(\t|\s{4})repositories\s{\n((\t{2}|\s{8}).+\n)+(\t|\s{4})}\n(\t|\s{4})dependencies\s{\n(\t{2}|\s{8}).+)\n((\t|\s{4})}\n}\n)/,
+      `$1\n        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32'\n$8`
+    );
+    buildGradle = buildGradle.replace(
+      /(ext\s{)/,
+      `$1\n    kotlin_version = project.hasProperty('kotlin_version') ? rootProject.ext.kotlin_version : '1.4.32'`
+    );
+    buildGradle = buildGradle.replace(
+      /(apply\splugin:\s'com\.android\.library')/,
+      `$1\napply plugin: 'kotlin-android'`
+    );
+    buildGradle = buildGradle.replace(
+      /(compileOptions\s{\n((\t{2}|\s{8}).+\n)+(\t|\s{4})})\n(})/,
+      '$1\n' + `    sourceSets {\n        main.java.srcDirs += 'src/main/kotlin'\n    }\n` + '$5'
+    );
+    buildGradle = buildGradle.replace(
+      /(dependencies\s{\n((\t|\s{4})implementation.+\n)+)((\t|\s{4})\/\/\sSUB-PROJECT\sDEPENDENCIES\sSTART\n)/,
+      '$1' + `    implementation 'androidx.core:core-ktx:1.6.0'\n    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"\n` + '$4'
+    );
+    await writeFile(pluginsGradlePath, buildGradle);
+  }
 }
 
 async function copyPluginsNativeFiles(
