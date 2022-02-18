@@ -294,6 +294,8 @@ export async function handleCordovaPluginsGradle(
     'build.gradle',
   );
   const kotlinNeeded = await kotlinNeededCheck(config, cordovaPlugins);
+  const isKotlinVersionInVariablesGradle = (await getVariablesGradleFile(config)).includes("kotlin_version");
+  const kotlinVersionString = config.app.extConfig.cordova?.preferences?.GradlePluginKotlinVersion ?? '1.4.32';
   const frameworksArray: any[] = [];
   let prefsArray: any[] = [];
   const applyArray: any[] = [];
@@ -346,11 +348,15 @@ export async function handleCordovaPluginsGradle(
   if (kotlinNeeded) {
     buildGradle = buildGradle.replace(
       /(buildscript\s{\n(\t|\s{4})repositories\s{\n((\t{2}|\s{8}).+\n)+(\t|\s{4})}\n(\t|\s{4})dependencies\s{\n(\t{2}|\s{8}).+)\n((\t|\s{4})}\n}\n)/,
-      `$1\n        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32'\n$8`,
+      `$1\n        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:` + 
+      (isKotlinVersionInVariablesGradle ? 
+        '$kotlin_version' : 
+        kotlinVersionString) + 
+      `"\n$8`,
     );
     buildGradle = buildGradle.replace(
       /(ext\s{)/,
-      `$1\n    kotlin_version = project.hasProperty('kotlin_version') ? rootProject.ext.kotlin_version : '1.4.32'\n    androidxCoreKTXVersion = project.hasProperty('androidxCoreKTXVersion') ? rootProject.ext.androidxCoreKTXVersion : '1.6.0'`,
+      `$1\n    kotlin_version = project.hasProperty('kotlin_version') ? rootProject.ext.kotlin_version : '${kotlinVersionString}'\n    androidxCoreKTXVersion = project.hasProperty('androidxCoreKTXVersion') ? rootProject.ext.androidxCoreKTXVersion : '1.6.0'`,
     );
     buildGradle = buildGradle.replace(
       /(apply\splugin:\s'com\.android\.library')/,
@@ -358,9 +364,7 @@ export async function handleCordovaPluginsGradle(
     );
     buildGradle = buildGradle.replace(
       /(compileOptions\s{\n((\t{2}|\s{8}).+\n)+(\t|\s{4})})\n(})/,
-      '$1\n' +
-        `    sourceSets {\n        main.java.srcDirs += 'src/main/kotlin'\n    }\n` +
-        '$5',
+      `$1\n    sourceSets {\n        main.java.srcDirs += 'src/main/kotlin'\n    }\n$5`,
     );
   }
   await writeFile(pluginsGradlePath, buildGradle);
@@ -466,11 +470,7 @@ async function getPluginsTask(config: Config) {
   });
 }
 
-async function replaceFrameworkVariables(
-  config: Config,
-  prefsArray: any[],
-  frameworkString: string,
-) {
+async function getVariablesGradleFile(config: Config) {
   const variablesFile = resolve(
     config.android.platformDirAbs,
     'variables.gradle',
@@ -479,6 +479,15 @@ async function replaceFrameworkVariables(
   if (await pathExists(variablesFile)) {
     variablesGradle = await readFile(variablesFile, { encoding: 'utf-8' });
   }
+  return variablesGradle;
+}
+
+async function replaceFrameworkVariables(
+  config: Config,
+  prefsArray: any[],
+  frameworkString: string,
+) {
+  const variablesGradle = await getVariablesGradleFile(config);
   prefsArray.map((preference: any) => {
     if (!variablesGradle.includes(preference.$.name)) {
       frameworkString = frameworkString.replace(
