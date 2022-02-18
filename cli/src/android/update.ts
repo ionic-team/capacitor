@@ -294,8 +294,12 @@ export async function handleCordovaPluginsGradle(
     'build.gradle',
   );
   const kotlinNeeded = await kotlinNeededCheck(config, cordovaPlugins);
-  const isKotlinVersionInVariablesGradle = (await getVariablesGradleFile(config)).includes("kotlin_version");
-  const kotlinVersionString = config.app.extConfig.cordova?.preferences?.GradlePluginKotlinVersion ?? '1.4.32';
+  const isKotlinVersionInVariablesGradle = (
+    await getVariablesGradleFile(config)
+  ).includes('kotlin_version');
+  const kotlinVersionString =
+    config.app.extConfig.cordova?.preferences?.GradlePluginKotlinVersion ??
+    '1.4.32';
   const frameworksArray: any[] = [];
   let prefsArray: any[] = [];
   const applyArray: any[] = [];
@@ -348,11 +352,11 @@ export async function handleCordovaPluginsGradle(
   if (kotlinNeeded) {
     buildGradle = buildGradle.replace(
       /(buildscript\s{\n(\t|\s{4})repositories\s{\n((\t{2}|\s{8}).+\n)+(\t|\s{4})}\n(\t|\s{4})dependencies\s{\n(\t{2}|\s{8}).+)\n((\t|\s{4})}\n}\n)/,
-      `$1\n        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:` + 
-      (isKotlinVersionInVariablesGradle ? 
-        '$kotlin_version' : 
-        kotlinVersionString) + 
-      `"\n$8`,
+      `$1\n        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:` +
+        (isKotlinVersionInVariablesGradle
+          ? '$kotlin_version'
+          : kotlinVersionString) +
+        `"\n$8`,
     );
     buildGradle = buildGradle.replace(
       /(ext\s{)/,
