@@ -24,11 +24,22 @@ export async function runAndroid(
 
   debug('Invoking ./gradlew with args: %O', gradleArgs);
 
-  await runTask('Running Gradle build', async () =>
-    runCommand('./gradlew', gradleArgs, {
-      cwd: config.android.platformDirAbs,
-    }),
-  );
+  try {
+    await runTask('Running Gradle build', async () =>
+      runCommand('./gradlew', gradleArgs, {
+        cwd: config.android.platformDirAbs,
+      }),
+    );
+  } catch (e) {
+    if (e.includes('EACCES')) {
+      throw `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.strong(
+        `chmod +x ./${config.android.platformDir}/gradlew`,
+      )} and try again.`;
+    } else {
+      throw e;
+    }
+  }
+
   const apkPath = resolve(
     config.android.buildOutputDirAbs,
     config.android.apkName,

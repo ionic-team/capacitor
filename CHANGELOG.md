@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.1](https://github.com/ionic-team/capacitor/compare/3.4.0...3.4.1) (2022-02-09)
+
+
+### Bug Fixes
+
+* **ci:** add token to ghr call in xcframework build action ([#5422](https://github.com/ionic-team/capacitor/issues/5422)) ([5573a77](https://github.com/ionic-team/capacitor/commit/5573a77b13539a5c36e4fbc7a1cd6548689d83d3))
+* **ci:** Fix tags/releases for Attach .xcframework CI action ([#5423](https://github.com/ionic-team/capacitor/issues/5423)) ([57b3df3](https://github.com/ionic-team/capacitor/commit/57b3df3724a2bda8e59af83f99c127b1503b5c37))
+* **cli:** Better error on gradlew permission problems ([#5405](https://github.com/ionic-team/capacitor/issues/5405)) ([9420f08](https://github.com/ionic-team/capacitor/commit/9420f08dedad78cfaa5500cccf8bdbf1a9140684))
+* **ios:** Reload webView on webViewWebContentProcessDidTerminate ([#5391](https://github.com/ionic-team/capacitor/issues/5391)) ([beebff4](https://github.com/ionic-team/capacitor/commit/beebff4550575c28c233937a11a8eacf5a76411c))
+
+
+
+
+
+# [3.4.0](https://github.com/ionic-team/capacitor/compare/3.3.4...3.4.0) (2022-01-19)
+
+
+### Bug Fixes
+
+* **android:** Add appcompat to capacitor-cordova-android-plugins module ([#5373](https://github.com/ionic-team/capacitor/issues/5373)) ([1c756b7](https://github.com/ionic-team/capacitor/commit/1c756b77bf334036a4b30ddac86ac926fa6c0b3d))
+* **android:** prevent input file crash if accept has . ([#5363](https://github.com/ionic-team/capacitor/issues/5363)) ([bdacb30](https://github.com/ionic-team/capacitor/commit/bdacb300bb6391dc4b84bb2bab075df993a15cba))
+
+
+### Features
+
+* **android:** Add getLong helper on PluginCall ([#5235](https://github.com/ionic-team/capacitor/issues/5235)) ([26261fb](https://github.com/ionic-team/capacitor/commit/26261fb49211330c4db72c259359565da7d7bc4b))
+* **ios:** Add new iOS 15 Motion permission delegate ([#5317](https://github.com/ionic-team/capacitor/issues/5317)) ([c05a3cb](https://github.com/ionic-team/capacitor/commit/c05a3cbbf02217e3972d5e067970cae18bff3faa))
+* **ios:** Add new iOS15 media capture permission delegate ([#5196](https://github.com/ionic-team/capacitor/issues/5196)) ([d8b54ac](https://github.com/ionic-team/capacitor/commit/d8b54ac23414bfe56e50e1254066630a6f87eb0e))
+
+
+
+
+
 ## [3.3.4](https://github.com/ionic-team/capacitor/compare/3.3.3...3.3.4) (2022-01-05)
 
 
