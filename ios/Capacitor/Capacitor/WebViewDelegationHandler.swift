@@ -4,7 +4,7 @@ import WebKit
 // adopting a public protocol in an internal class is by design
 // swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
-internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
+internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, WKDownloadDelegate {
     weak var bridge: CapacitorBridge?
     fileprivate(set) var contentController = WKUserContentController()
     enum WebViewLoadingState {
@@ -73,6 +73,14 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         // post a notification for any listeners
         NotificationCenter.default.post(name: .capacitorDecidePolicyForNavigationAction, object: navigationAction)
 
+        // check if we can detect file download, otherwise fallback to url detection
+        if #available(iOS 14.5, *) {
+            if (navigationAction.shouldPerformDownload) {
+                decisionHandler(.download)
+                return
+            }
+        }
+        
         // sanity check, these shouldn't ever be nil in practice
         guard let bridge = bridge, let navURL = navigationAction.request.url else {
             decisionHandler(.allow)
@@ -145,9 +153,32 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         CAPLog.print("⚡️  WebView failed provisional navigation")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
     }
+    // Make sure we do handle file downloads if webview can display it
+    public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        if navigationResponse.canShowMIMEType {
+            decisionHandler(.allow)
+        } else {
+            if #available(iOS 14.5, *) {
+                decisionHandler(.download)
+            } else {
+                decisionHandler(.cancel)
+            }
+        }
+    }
 
     public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         webView.reload()
+    }
+
+    @available(iOS 14.5, *)
+    func webView(_ webView: WKWebView, navigationAction: WKNavigationAction, didBecome download: WKDownload) {
+        CAPLog.print("⚡️  Initiating background download..")
+        download.delegate = self
+    }
+    @available(iOS 14.5, *)
+    func webView(_ webView: WKWebView, navigationResponse: WKNavigationResponse, didBecome download: WKDownload) {
+        CAPLog.print("⚡️  Initiating background download..")
+        download.delegate = self
     }
 
     // MARK: - WKScriptMessageHandler
@@ -262,6 +293,24 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
         return nil
+    }
+    
+    // MARK: - WKDownloadDelegate
+
+    @available(iOS 14.5, *)
+    public func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
+
+        // determine where to save
+        let documentsFolderURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let documentURL = documentsFolderURL.appendingPathComponent(suggestedFilename, isDirectory: false)
+        
+        CAPLog.print("⚡️  Writting download file to:", documentURL?.absoluteString)
+
+        completionHandler(documentURL)
+    }
+    @available(iOS 14.5, *)
+    func downloadDidFinish(_ download: WKDownload) {
+        CAPLog.print("⚡️  Download finished")
     }
 
     // MARK: - Private
