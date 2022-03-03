@@ -68,6 +68,14 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
         // post a notification for any listeners
         NotificationCenter.default.post(name: .capacitorDecidePolicyForNavigationAction, object: navigationAction)
 
+        // check if we can detect file download on iOS >= 14.5
+        if #available(iOS 14.5, *) {
+            if (navigationAction.shouldPerformDownload) {
+                decisionHandler(.download)
+                return
+            }
+        }
+
         // sanity check, these shouldn't ever be nil in practice
         guard let bridge = bridge, let navURL = navigationAction.request.url else {
             decisionHandler(.allow)
@@ -153,6 +161,23 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
         CAPLog.print("⚡️  WebView failed provisional navigation")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
+    }
+
+    // Make sure we do handle file downloads if webview can display it
+    public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        //Check if webview can properly display the file
+        if navigationResponse.canShowMIMEType {
+            decisionHandler(.allow)
+            return;
+        }
+        //Download support for iOS >= 14.5
+        if #available(iOS 14.5, *) {
+            decisionHandler(.download)
+            return
+        }
+        //Deny if not recognize until now and webView can not
+        //show the specified MIME type
+        decisionHandler(.cancel)
     }
 
     open func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
@@ -312,6 +337,20 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
         return nil
     }
 
+    @available(iOS 14.5, *)
+    public func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
+        //TODO: deal with conflicts
+        let documentURL = self.getUniqueFileURL(suggestedFilename, optionalSuffix: nil)
+
+        CAPLog.print("⚡️  Writting download file to:", documentURL.absoluteString)
+
+        completionHandler(documentURL)
+    }
+    @available(iOS 14.5, *)
+    func downloadDidFinish(_ download: WKDownload) {
+        CAPLog.print("⚡️  Download finished")
+    }
+
     // MARK: - UIScrollViewDelegate
 
     // disable zooming in WKWebView ScrollView
@@ -337,5 +376,15 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
         CAPLog.print("⚡️  URL: \(url)")
         CAPLog.print("⚡️  \(filename):\(line):\(col)")
         CAPLog.print("\n⚡️  See above for help with debugging blank-screen issues")
+    }
+
+    private func getUniqueFileURL(_ suggestedFilename: String, optionalSuffix: String?) -> URL {
+        let documentsFolderURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let documentURL = documentsFolderURL.appendingPathComponent(suggestedFilename + (optionalSuffix ?? ""), isDirectory: false)
+        if FileManager.default.fileExists(atPath: documentURL.absoluteString) {
+            let randSuffix = String((0..<35).map{ _ in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".randomElement()! })
+            return self.getUniqueFileURL(suggestedFilename, optionalSuffix: randSuffix)
+        }
+        return documentURL
     }
 }
