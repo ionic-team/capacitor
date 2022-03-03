@@ -392,10 +392,12 @@ async function kotlinNeededCheck(config: Config, cordovaPlugins: Plugin[]) {
   ) {
     for (const plugin of cordovaPlugins) {
       const androidPlatform = getPluginPlatform(plugin, platform);
-      const srcFiles = androidPlatform['source-file'];
-      for (const srcFile of srcFiles) {
-        if (/^.*\.kt$/.test(srcFile['$'].src)) {
-          return true;
+      const sourceFiles = androidPlatform['source-file'];
+      if (sourceFiles) {
+        for (const srcFile of sourceFiles) {
+          if (/^.*\.kt$/.test(srcFile['$'].src)) {
+            return true;
+          }
         }
       }
     }
