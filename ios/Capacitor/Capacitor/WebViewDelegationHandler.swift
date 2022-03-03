@@ -158,7 +158,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         //Check if webview can properly display the file
         if navigationResponse.canShowMIMEType {
             decisionHandler(.allow)
-            return;
+            return
         }
         //Download support for iOS >= 14.5
         if #available(iOS 14.5, *) {
@@ -303,16 +303,35 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     @available(iOS 14.5, *)
     public func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
-        //TODO: deal with conflicts
-        let documentURL = self.getUniqueFileURL(suggestedFilename, optionalSuffix: nil)
-        
-        CAPLog.print("⚡️  Writting download file to:", documentURL.absoluteString)
-
+        // generate unique URL (user can download file with same names or filename not be available on the headers)
+        let documentURL = self.getUniqueDownloadFileURL(suggestedFilename, optionalSuffix: nil)
+        CAPLog.print("⚡️  Download path:", documentURL.absoluteString)
         completionHandler(documentURL)
+        // notify
+        NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
+            "id": download.hash,
+            "status": FileDownloadNotificationStatus.started
+        ])
     }
     @available(iOS 14.5, *)
-    func downloadDidFinish(_ download: WKDownload) {
+    public func downloadDidFinish(_ download: WKDownload) {
         CAPLog.print("⚡️  Download finished")
+        // notify
+        NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
+            "id": download.hash,
+            "status": FileDownloadNotificationStatus.completed
+        ])
+    }
+    @available(iOS 14.5, *)
+    public func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
+        CAPLog.print("⚡️  Download failed")
+        CAPLog.print("⚡️  Error: " + error.localizedDescription)
+        // notify
+        NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
+            "id": download.hash,
+            "error": error.localizedDescription,
+            "status": FileDownloadNotificationStatus.failed
+        ])
     }
 
     // MARK: - Private
@@ -335,12 +354,22 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         CAPLog.print("\n⚡️  See above for help with debugging blank-screen issues")
     }
 
-    private func getUniqueFileURL(_ suggestedFilename: String, optionalSuffix: String?) -> URL {
+    private func getUniqueDownloadFileURL(_ suggestedFilename: String, optionalSuffix: String?) -> URL {
         let documentsFolderURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let documentURL = documentsFolderURL.appendingPathComponent(suggestedFilename + (optionalSuffix ?? ""), isDirectory: false)
-        if FileManager.default.fileExists(atPath: documentURL.absoluteString) {
+        //
+        var fileComps = suggestedFilename.split(separator: ".");
+        var fileName = "";
+        if (fileComps.count > 1) {
+            let fileExtension = "." + String(fileComps.popLast() ?? "")
+            fileName = fileComps.joined(separator: ".") + (optionalSuffix ?? "") + fileExtension
+        } else {
+            fileName = suggestedFilename + (optionalSuffix ?? "")
+        }
+        //Check if file with generated name exists
+        let documentURL = documentsFolderURL.appendingPathComponent(fileName, isDirectory: false)
+        if fileName == "" || FileManager.default.fileExists(atPath: documentURL.path) {
             let randSuffix = String((0..<35).map{ _ in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".randomElement()! })
-            return self.getUniqueFileURL(suggestedFilename, optionalSuffix: randSuffix)
+            return self.getUniqueDownloadFileURL(suggestedFilename, optionalSuffix: randSuffix)
         }
         return documentURL
     }

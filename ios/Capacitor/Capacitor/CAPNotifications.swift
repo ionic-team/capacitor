@@ -9,6 +9,7 @@ extension Notification.Name {
     public static let capacitorOpenURL = Notification.Name(rawValue: "CapacitorOpenURLNotification")
     public static let capacitorOpenUniversalLink = Notification.Name(rawValue: "CapacitorOpenUniversalLinkNotification")
     public static let capacitorContinueActivity = Notification.Name(rawValue: "CapacitorContinueActivityNotification")
+    public static let capacitorDidReceiveFileDownloadUpdate = Notification.Name(rawValue: "CapacitorDidReceiveFileDownloadUpdateNotification")
     public static let capacitorDidRegisterForRemoteNotifications =
         Notification.Name(rawValue: "CapacitorDidRegisterForRemoteNotificationsNotification")
     public static let capacitorDidFailToRegisterForRemoteNotifications =
@@ -18,10 +19,15 @@ extension Notification.Name {
     public static let capacitorStatusBarTapped = Notification.Name(rawValue: "CapacitorStatusBarTappedNotification")
 }
 
+public enum FileDownloadNotificationStatus {
+    case started, completed, failed
+}
+
 @objc extension NSNotification {
     public static let capacitorOpenURL = Notification.Name.capacitorOpenURL
     public static let capacitorOpenUniversalLink = Notification.Name.capacitorOpenUniversalLink
     public static let capacitorContinueActivity = Notification.Name.capacitorContinueActivity
+    public static let capacitorDidReceiveFileDownloadUpdate = Notification.Name.capacitorDidReceiveFileDownloadUpdate
     public static let capacitorDidRegisterForRemoteNotifications = Notification.Name.capacitorDidRegisterForRemoteNotifications
     public static let capacitorDidFailToRegisterForRemoteNotifications = Notification.Name.capacitorDidFailToRegisterForRemoteNotifications
     public static let capacitorDecidePolicyForNavigationAction = Notification.Name.capacitorDecidePolicyForNavigationAction
