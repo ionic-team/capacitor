@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.3](https://github.com/ionic-team/capacitor/compare/3.4.2...3.4.3) (2022-03-04)
+
+
+### Bug Fixes
+
+* **cli:** avoid srcFiles is not iterable on kotlinNeededCheck ([#5481](https://github.com/ionic-team/capacitor/issues/5481)) ([3c2b579](https://github.com/ionic-team/capacitor/commit/3c2b579c6edb1fc69d85689b268eb92067b7821b))
+
+
+
+
+
 ## [3.4.2](https://github.com/ionic-team/capacitor/compare/3.4.1...3.4.2) (2022-03-03)
 
 
