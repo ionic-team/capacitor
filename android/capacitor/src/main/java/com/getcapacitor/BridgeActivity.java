@@ -3,6 +3,8 @@ package com.getcapacitor;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.webkit.WebSettings;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.getcapacitor.android.R;
 import java.util.ArrayList;
@@ -17,6 +19,26 @@ public class BridgeActivity extends AppCompatActivity {
     private int activityDepth = 0;
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
     private final Bridge.Builder bridgeBuilder = new Bridge.Builder(this);
+
+    void setDarkMode() {
+        // Android "fix" for enabling dark mode
+        // @see: https://github.com/ionic-team/capacitor/discussions/1978
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        WebSettings webSettings = this.bridge.getWebView().getSettings();
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                // As of Android 10, you can simply force the dark mode
+                webSettings.setForceDark(WebSettings.FORCE_DARK_ON);
+            }
+            // Before Android 10, we need to use a CSS class based fallback
+            this.bridge.getWebView().evaluateJavascript("document.body.classList.toggle('dark', true);", null);
+        } else {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                webSettings.setForceDark(WebSettings.FORCE_DARK_OFF);
+            }
+            this.bridge.getWebView().evaluateJavascript("document.body.classList.toggle('dark', false);", null);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +134,7 @@ public class BridgeActivity extends AppCompatActivity {
 
         activityDepth++;
         this.bridge.onStart();
+        this.setDarkMode();
         Logger.debug("App started");
     }
 
@@ -119,6 +142,7 @@ public class BridgeActivity extends AppCompatActivity {
     public void onRestart() {
         super.onRestart();
         this.bridge.onRestart();
+        this.setDarkMode();
         Logger.debug("App restarted");
     }
 
@@ -127,6 +151,7 @@ public class BridgeActivity extends AppCompatActivity {
         super.onResume();
         bridge.getApp().fireStatusChange(true);
         this.bridge.onResume();
+        this.setDarkMode();
         Logger.debug("App resumed");
     }
 
