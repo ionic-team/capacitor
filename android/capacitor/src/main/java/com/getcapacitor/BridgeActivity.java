@@ -188,6 +188,12 @@ public class BridgeActivity extends AppCompatActivity {
         this.bridge.onDetachedFromWindow();
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        this.setDarkMode();
+    }
+
     /**
      * Handles permission request results.
      *
