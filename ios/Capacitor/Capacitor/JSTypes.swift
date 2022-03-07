@@ -125,9 +125,13 @@ public protocol JSValueContainer: JSStringContainer, JSBoolContainer, JSIntConta
 }
 
 extension JSValueContainer {
+    public func getValue(_ key: String) -> JSValue? {
+       return jsObjectRepresentation[key]
+    }
     
+    @available(*, message: "All values returned conform to JSValue, use getValue(_:) instead.", renamed: "getValue(_:)")
     public func getAny(_ key: String) -> Any? {
-        return jsObjectRepresentation[key]
+        return getValue(key)
     }
     
     public func getString(_ key: String) -> String? {
