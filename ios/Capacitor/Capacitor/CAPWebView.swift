@@ -3,61 +3,69 @@ import WebKit
 import UIKit
 
 open class CAPWebView: UIView {
-    var webView: WKWebView!
-        
-    private var capacitorBridge: CapacitorBridge?
-    public final var bridge: CAPBridgeProtocol? {
+    lazy var webView: WKWebView = createWebView(
+        with: configuration,
+        assetHandler: assetHandler,
+        delegationHandler: delegationHandler
+    )
+
+    private lazy var capacitorBridge = CapacitorBridge(
+        with: configuration,
+        delegate: self,
+        cordovaConfiguration: configDescriptor.cordovaConfiguration,
+        assetHandler: assetHandler,
+        delegationHandler: delegationHandler
+    )
+
+    public final var bridge: CAPBridgeProtocol {
         return capacitorBridge
     }
-    
-    required public init?(coder: NSCoder) {
+
+    private lazy var configDescriptor = instanceDescriptor()
+    private lazy var configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)
+
+    private lazy var assetHandler: WebViewAssetHandler = {
+        let handler = WebViewAssetHandler()
+        handler.setAssetPath(configuration.appLocation.path)
+        return handler
+    }()
+
+    private lazy var delegationHandler = WebViewDelegationHandler()
+
+    public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        initView()
+        setup()
     }
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        initView()
+
+    public init() {
+        super.init(frame: .zero)
+        setup()
     }
-    
-    func initView () {
-//         load the configuration and set the logging flag
-        let configDescriptor = instanceDescriptor()
-        let configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)
+
+    private func setup() {
         CAPLog.enableLogging = configuration.loggingEnabled
         logWarnings(for: configDescriptor)
 
-        if configDescriptor.instanceType == .fixed {
-            updateBinaryVersion()
-        }
-        // get the web view
-        let assetHandler = WebViewAssetHandler()
-        assetHandler.setAssetPath(configuration.appLocation.path)
-        let delegationHandler = WebViewDelegationHandler()
-        prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
-        self.addSubview(webView)
-        // create the bridge
-        capacitorBridge = CapacitorBridge(with: configuration,
-                                          delegate: self,
-                                          cordovaConfiguration: configDescriptor.cordovaConfiguration,
-                                          assetHandler: assetHandler,
-                                          delegationHandler: delegationHandler)
-        capacitorDidLoad()
-        
-        guard let bridge = capacitorBridge else {
-            return
-        }
+        if configDescriptor.instanceType == .fixed { updateBinaryVersion() }
 
-        guard FileManager.default.fileExists(atPath: bridge.config.appStartFileURL.path) else {
-            fatalLoadError()
-        }
+        addSubview(webView)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: topAnchor),
+            webView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            webView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+
+        guard FileManager.default.fileExists(atPath: bridge.config.appStartFileURL.path) else { fatalLoadError() }
+        capacitorDidLoad()
 
         let url = bridge.config.appStartServerURL
         CAPLog.print("⚡️  Loading app at \(url.absoluteString)")
-        bridge.webViewDelegationHandler.willLoadWebview(webView)
+        capacitorBridge.webViewDelegationHandler.willLoadWebview(webView)
         _ = webView.load(URLRequest(url: url))
     }
-    
+
     public lazy final var isNewBinary: Bool = {
         if let curVersionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
            let curVersionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
@@ -68,7 +76,7 @@ open class CAPWebView: UIView {
         }
         return false
     }()
-    
+
     open func instanceDescriptor() -> InstanceDescriptor {
         let descriptor = InstanceDescriptor.init()
         if !isNewBinary && !descriptor.cordovaDeployDisabled {
@@ -83,7 +91,7 @@ open class CAPWebView: UIView {
         }
         return descriptor
     }
-    
+
     /**
      Allows any additional configuration to be performed. The `webView` and `bridge` properties will be set by this point.
 
@@ -92,17 +100,14 @@ open class CAPWebView: UIView {
      */
     open func capacitorDidLoad() {
     }
-    
-    open func loadInitialContext(_ userContentController: WKUserContentController) throws {
+
+    open func loadInitialContext(_ userContentController: WKUserContentController) {
         CAPLog.print("in loadInitialContext base")
     }
-    
-
-    
 }
 
 extension CAPWebView {
-    
+
     open func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
         let webViewConfiguration = WKWebViewConfiguration()
         webViewConfiguration.allowsInlineMediaPlayback = true
@@ -116,10 +121,10 @@ extension CAPWebView {
                 webViewConfiguration.applicationNameForUserAgent = appendUserAgent
             }
         }
-       return webViewConfiguration
+        return webViewConfiguration
     }
-    
-    private func prepareWebView(with configuration: InstanceConfiguration, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler) {
+
+    private func createWebView(with configuration: InstanceConfiguration, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler) -> WKWebView {
         // set the cookie policy
         HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
         // setup the web view configuration
@@ -127,33 +132,35 @@ extension CAPWebView {
         webViewConfig.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
         webViewConfig.userContentController = delegationHandler.contentController
         // create the web view and set its properties
-        try? self.loadInitialContext(webViewConfig.userContentController)
-        let aWebView = WKWebView(frame: self.frame, configuration: webViewConfig)
-        aWebView.scrollView.bounces = false
-        aWebView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
-        aWebView.allowsLinkPreview = configuration.allowLinkPreviews
-        aWebView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
-        aWebView.scrollView.isScrollEnabled = configuration.scrollingEnabled
+        loadInitialContext(webViewConfig.userContentController)
+        let webView = WKWebView(frame: .zero, configuration: webViewConfig)
+        webView.scrollView.bounces = false
+        webView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
+        webView.allowsLinkPreview = configuration.allowLinkPreviews
+        webView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+        webView.scrollView.isScrollEnabled = configuration.scrollingEnabled
+
         if let overrideUserAgent = configuration.overridenUserAgentString {
-            aWebView.customUserAgent = overrideUserAgent
+            webView.customUserAgent = overrideUserAgent
         }
+
         if let backgroundColor = configuration.backgroundColor {
             self.backgroundColor = backgroundColor
-            aWebView.backgroundColor = backgroundColor
-            aWebView.scrollView.backgroundColor = backgroundColor
+            webView.backgroundColor = backgroundColor
+            webView.scrollView.backgroundColor = backgroundColor
         } else if #available(iOS 13, *) {
             // Use the system background colors if background is not set by user
             self.backgroundColor = UIColor.systemBackground
-            aWebView.backgroundColor = UIColor.systemBackground
-            aWebView.scrollView.backgroundColor = UIColor.systemBackground
+            webView.backgroundColor = UIColor.systemBackground
+            webView.scrollView.backgroundColor = UIColor.systemBackground
         }
 
         // set our delegates
-        aWebView.uiDelegate = delegationHandler
-        aWebView.navigationDelegate = delegationHandler
-        webView = aWebView
+        webView.uiDelegate = delegationHandler
+        webView.navigationDelegate = delegationHandler
+        return webView
     }
-    
+
     private func logWarnings(for descriptor: InstanceDescriptor) {
         if descriptor.warnings.contains(.missingAppDir) {
             CAPLog.print("⚡️  ERROR: Unable to find application directory at: \"\(descriptor.appLocation.absoluteString)\"!")
@@ -173,7 +180,7 @@ extension CAPWebView {
             }
         }
     }
-    
+
     private func updateBinaryVersion() {
         guard isNewBinary else {
             return
@@ -188,14 +195,14 @@ extension CAPWebView {
         prefs.set("", forKey: "serverBasePath")
         prefs.synchronize()
     }
-    
+
     private func fatalLoadError() -> Never {
         printLoadError()
         exit(1)
     }
-    
+
     private func printLoadError() {
-        let fullStartPath = capacitorBridge?.config.appStartFileURL.path ?? ""
+        let fullStartPath = capacitorBridge.config.appStartFileURL.path
 
         CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath)")
         CAPLog.print("⚡️  This file is the root of your web app and must exist before")
@@ -212,10 +219,9 @@ extension CAPWebView: CAPBridgeDelegate {
     internal var bridgedViewController: UIViewController? {
         // search for the parent view controller
         var object = self.next
-        while(!(object is UIViewController) && object != nil) {
+        while !(object is UIViewController) && object != nil {
             object = object?.next
         }
         return object as? UIViewController
     }
 }
-
