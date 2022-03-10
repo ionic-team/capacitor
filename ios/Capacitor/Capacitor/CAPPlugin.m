@@ -34,8 +34,8 @@
   return [self.bridge.config getPluginConfigValue:self.pluginName :key];
 }
 
--(CAPInstanceConfiguration*)getConfig {
-    return self.bridge.config;
+-(PluginConfig*)getConfig {
+    return [self.bridge.config getPluginConfig:self.pluginName];
 }
 
 -(void)load {}
