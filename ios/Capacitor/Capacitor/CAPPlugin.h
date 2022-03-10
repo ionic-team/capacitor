@@ -4,6 +4,8 @@
 @protocol CAPBridgeProtocol;
 @class CAPPluginCall;
 
+@class CAPInstanceConfiguration;
+
 @interface CAPPlugin : NSObject
 
 @property (nonatomic, weak, nullable) WKWebView *webView;
@@ -44,7 +46,8 @@
 -(NSString* _Nonnull)getId;
 -(BOOL)getBool:(CAPPluginCall* _Nonnull) call field:(NSString* _Nonnull)field defaultValue:(BOOL)defaultValue DEPRECATED_MSG_ATTRIBUTE("Use accessors on CAPPluginCall instead. See CAPBridgedJSTypes.h for Obj-C implementations.");
 -(NSString* _Nullable)getString:(CAPPluginCall* _Nonnull)call field:(NSString* _Nonnull)field defaultValue:(NSString* _Nonnull)defaultValue DEPRECATED_MSG_ATTRIBUTE("Use accessors on CAPPluginCall instead. See CAPBridgedJSTypes.h for Obj-C implementations.");
--(id _Nullable)getConfigValue:(NSString* _Nonnull)key;
+-(id _Nullable)getConfigValue:(NSString* _Nonnull)key __deprecated;
+-(CAPInstanceConfiguration* _Nullable)getConfig;
 -(void)setCenteredPopover:(UIViewController* _Nonnull)vc;
 -(BOOL)supportsPopover;
 

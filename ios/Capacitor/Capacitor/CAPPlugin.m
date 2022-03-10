@@ -1,5 +1,6 @@
 #import "CAPPlugin.h"
 #import "CAPBridgedJSTypes.h"
+#import "CAPInstanceConfiguration.h"
 #import <Capacitor/Capacitor-Swift.h>
 #import <Foundation/Foundation.h>
 
@@ -29,8 +30,12 @@
   return [call getString:field defaultValue:defaultValue];
 }
 
--(id)getConfigValue:(NSString *)key {
+-(id)getConfigValue:(NSString *)key __deprecated {
   return [self.bridge.config getPluginConfigValue:self.pluginName :key];
+}
+
+-(CAPInstanceConfiguration*)getConfig {
+    return self.bridge.config;
 }
 
 -(void)load {}
