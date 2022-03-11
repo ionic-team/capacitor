@@ -1,6 +1,5 @@
 #import "CAPPlugin.h"
 #import "CAPBridgedJSTypes.h"
-#import "CAPInstanceConfiguration.h"
 #import <Capacitor/Capacitor-Swift.h>
 #import <Foundation/Foundation.h>
 
