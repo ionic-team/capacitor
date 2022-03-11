@@ -118,7 +118,6 @@ jobs:
     needs:
       - setup
       - lint
-      - test-cli
       - test-core
       - test-ios
       - test-android
@@ -144,7 +143,6 @@ jobs:
     needs:
       - setup
       - lint
-      - test-cli
       - test-core
       - test-ios
       - test-android
