@@ -23,5 +23,5 @@ jobs:
         run: |
           set -eo pipefail
           pod spec lint ./ios/Capacitor.podspec --allow-warnings
-          pod spec lint ./ios/Cordova.podspec --allow-warnings
+          pod spec lint ./ios/CapacitorCordova.podspec --allow-warnings
 
