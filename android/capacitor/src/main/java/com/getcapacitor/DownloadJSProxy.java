@@ -11,8 +11,8 @@ import android.webkit.WebResourceResponse;
  * dynamic javascript upon the 'protocol' interface aviability.
  */
 public class DownloadJSProxy implements android.webkit.DownloadListener {
-    private Bridge bridge;
-    private DownloadJSInterface downloadInterface;
+    final private Bridge bridge;
+    final private DownloadJSInterface downloadInterface;
     public DownloadJSProxy(Bridge bridge) {
         this.bridge = bridge;
         this.downloadInterface = new DownloadJSInterface(this.bridge.getActivity());
