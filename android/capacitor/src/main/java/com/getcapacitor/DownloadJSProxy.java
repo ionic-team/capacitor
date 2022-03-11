@@ -12,17 +12,23 @@ import android.webkit.WebResourceResponse;
  */
 public class DownloadJSProxy implements android.webkit.DownloadListener {
     private Bridge bridge;
+    private DownloadJSInterface downloadInterface;
     public DownloadJSProxy(Bridge bridge) {
         this.bridge = bridge;
+        this.downloadInterface = new DownloadJSInterface(this.bridge.getActivity());
         this.installServiceWorkerProxy();
     }
+
+    //
+    public DownloadJSInterface jsInterface() { return this.downloadInterface; }
+    public String jsInterfaceName() { return "CapacitorDownloadInterface"; }
     @Override
     public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
         //Debug
         Logger.debug("Capacitor webview download start request", url);
         Logger.debug(userAgent + "  -  " + contentDisposition + "  -  " + mimeType);
         //Check if we can handle the URL..
-        String bridge = DownloadJSInterface.getJavascriptBridgeForURL(url, contentDisposition, mimeType);
+        String bridge = this.downloadInterface.getJavascriptBridgeForURL(url, contentDisposition, mimeType);
         if (bridge != null) {
             this.bridge.getWebView().loadUrl(bridge);
         } else {

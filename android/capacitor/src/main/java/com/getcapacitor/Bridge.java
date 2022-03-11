@@ -585,9 +585,9 @@ public class Bridge {
         settings.setGeolocationEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        DownloadJSInterface downloadInterface = new DownloadJSInterface(getContext(), getActivity());
-        webView.addJavascriptInterface(downloadInterface, "CapacitorDownloadInterface");
-        webView.setDownloadListener(new DownloadJSProxy(this));
+        DownloadJSProxy downloadProxy = new DownloadJSProxy(this);
+        webView.addJavascriptInterface(downloadProxy.jsInterface(), downloadProxy.jsInterfaceName());
+        webView.setDownloadListener(downloadProxy);
 
         if (this.config.isMixedContentAllowed()) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);

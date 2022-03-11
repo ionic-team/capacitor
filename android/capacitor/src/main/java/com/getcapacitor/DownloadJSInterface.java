@@ -2,11 +2,17 @@ package com.getcapacitor;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 import android.webkit.URLUtil;
+
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.UUID;
 import java.io.File;
@@ -23,35 +29,52 @@ import java.util.Arrays;
  * to the proxy in order to have that code executed exclusively for that request.
  */
 public class DownloadJSInterface {
-    private Context context;
-    private AppCompatActivity activity;
-    public DownloadJSInterface(Context context, AppCompatActivity activity) {
-        this.context = context;
-        this.activity = activity;
+    private DownloadJSActivity downloadActivity;
+    private ActivityResultLauncher<DownloadJSActivity.Input> launcher;
+    public DownloadJSInterface(AppCompatActivity activity) {
+        this.downloadActivity = new DownloadJSActivity(activity);
+        this.launcher = activity.registerForActivityResult(this.downloadActivity,
+                new ActivityResultCallback<Boolean>() {
+                    @Override
+                    public void onActivityResult(Boolean result) {
+                        Logger.debug("Activity result ->>>>", String.valueOf(result));
+                    }
+                });
     }
 
     @JavascriptInterface
-    public void receiveStreamChunkFromJavascript(String chunk, String nativeFileURL) {
-        //Runtime External storage permission for saving download files
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            if (this.activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                Logger.debug("permission", "permission denied to WRITE_EXTERNAL_STORAGE - requesting it");
-                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                this.activity.requestPermissions(permissions, 1);
-            }
-        }
-        //
-        try {
-            FileOutputStream fOut = new FileOutputStream(getDownloadFilePath(nativeFileURL) + ".mp4", true);
-            OutputStreamWriter osw = new OutputStreamWriter(fOut, "UTF-8");
-            osw.write(chunk);
-            osw.flush();
-            osw.close();
-        } catch (IOException e) {
-            Logger.error("Exception while appending to download file:", e);
-        }
+    public void receiveStreamChunkFromJavascript(String chunk, String operationID) {
+//        //Runtime External storage permission for saving download files
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//            if (this.activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+//                Logger.debug("permission", "permission denied to WRITE_EXTERNAL_STORAGE - requesting it");
+//                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+//                this.activity.requestPermissions(permissions, 1);
+//            }
+//        }
+//        //
+//        try {
+//            FileOutputStream fOut = new FileOutputStream(getDownloadFilePath(nativeFileURL) + ".mp4", true);
+//            OutputStreamWriter osw = new OutputStreamWriter(fOut, "UTF-8");
+//            osw.write(chunk);
+//            osw.flush();
+//            osw.close();
+//        } catch (IOException e) {
+//            Logger.error("Exception while appending to download file:", e);
+//        }
         Logger.debug("Received stream", chunk);
-        Logger.debug("Received stream2", nativeFileURL);
+        Logger.debug("Received stream2", operationID);
+        this.downloadActivity.appendToOperation(operationID, chunk);
+    }
+    @JavascriptInterface
+    public void receiveStreamErrorFromJavascript(String error, String operationID) {
+        Logger.debug("Received error", error + " - " + operationID);
+        this.downloadActivity.failOperation(operationID);
+    }
+    @JavascriptInterface
+    public void receiveStreamCompletionFromJavascript(String operationID) {
+        Logger.debug("Operation completed", operationID);
+        this.downloadActivity.completeOperation(operationID);
     }
 
     /* Proxy injector
@@ -60,30 +83,32 @@ public class DownloadJSInterface {
      *  with chunks of data to be written on the disk. This technic is specially useful for
      *  blobs and webworker initiated downloads.
      */
-    public static String getJavascriptBridgeForURL(String fileURL, String contentDisposition, String mimeType) {
+    public String getJavascriptBridgeForURL(String fileURL, String contentDisposition, String mimeType) {
         if (fileURL.startsWith("http://") || fileURL.startsWith("https://") || fileURL.startsWith("blob:")) {
-            String fileName = getUniqueDownloadFileURL(fileURL, contentDisposition, mimeType, null);
-            return getJavascriptBridgeForReadyAvailableData(fileURL, mimeType, fileName);
-            // if (mimeType != null && mimeType.indexOf("application/octet-stream") != -1) {
-            //     Logger.debug(getJavascriptBridgeForStreamData(fileURL));
-            //     return getJavascriptBridgeForReadyAvailableData(fileURL, mimeType, fileName);
-            // } else { //might already have ready-available data
-                
-            // }
+            //
+            String operationID = UUID.randomUUID().toString();
+            DownloadJSActivity.Input input = new DownloadJSActivity.Input(operationID, fileURL, mimeType, contentDisposition);
+            this.launcher.launch(input);
+            //
+            if (mimeType != null && mimeType.indexOf("application/octet-stream") != -1) {
+                return this.getJavascriptBridgeForReadyAvailableData(fileURL, mimeType, operationID);
+            } else { //might already have ready-available data
+                return this.getJavascriptBridgeForReadyAvailableData(fileURL, mimeType, operationID);
+            }
 
         }
         return null;
     }
     /* Injectors */
-    // private static String getJavascriptBridgeForStreamData(String streamURL) {
-    //     return "javascript: " +
-    //             " " +
-    //             "fetch('" + streamURL + "', { method: 'GET' }).then((res) => {\n" +
-    //             "              console.log(res.status);\n" +
-    //             "              res.text().then((text) => { console.log(text) })\n" +
-    //             "            });";
-    // }
-    private static String getJavascriptBridgeForReadyAvailableData(String blobUrl, String mimeType, String nativeFileURL) {
+    private String getJavascriptBridgeForStreamData(String streamURL) {
+        return "javascript: " +
+                " " +
+                "fetch('" + streamURL + "', { method: 'GET' }).then((res) => {\n" +
+                "              console.log(res.status);\n" +
+                "              res.text().then((text) => { console.log(text) })\n" +
+                "            });";
+    }
+    private String getJavascriptBridgeForReadyAvailableData(String blobUrl, String mimeType, String operationID) {
         return "javascript: " +
                 "" +
                 "function parseFile(file, chunkReadCallback, errorCallback, successCallback) {\n" +
@@ -122,37 +147,14 @@ public class DownloadJSInterface {
                 "    if (this.status == 200) {" +
                 "        var blob = this.response;" +
                 "        parseFile(blob, " +
-                "         function(chunk) { CapacitorDownloadInterface.receiveStreamChunkFromJavascript(chunk, '" + nativeFileURL + "'); }," +
-                "         function(err) { console.error(err); }, " +
-                "         function() { console.log('capacitor bridge, drained!'); } " +
+                "         function(chunk) { CapacitorDownloadInterface.receiveStreamChunkFromJavascript(chunk, '" + operationID + "'); }," +
+                "         function(err) { console.error(err); CapacitorDownloadInterface.receiveStreamChunkFromJavascript(err.message, '" + operationID + "'); }, " +
+                "         function() { console.log('capacitor bridge, drained!'); CapacitorDownloadInterface.receiveStreamCompletionFromJavascript('" + operationID + "'); } " +
                 "        );" +
                 "    } else {" +
                 "         console.error('[Capacitor XHR] - error:', this.status, (e ? e.loaded : this.responseText));" +
                 "    }" +
                 "};" +
                 "xhr.send();})()";
-    }
-    /* Utils */
-    public static String getDownloadFilePath(String fileName) {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + '/' + fileName;
-    }
-    private static String getUniqueDownloadFileURL(String fileDownloadURL, String optionalCD, String optionalMimeType, String optionalSuffix) {
-        String suggestedFilename = URLUtil.guessFileName(fileDownloadURL, optionalCD, optionalMimeType);
-        ArrayList<String> fileComps = new ArrayList<String>(Arrays.asList(suggestedFilename.split(".")));
-        String fileName = "";
-        //
-        if (fileComps.size() > 1) {
-            String fileExtension = "." + fileComps.remove(fileComps.size() - 1);
-            fileName = TextUtils.join(".", fileComps) + (optionalSuffix != null ? optionalSuffix : "") + fileExtension;
-        } else {
-            fileName = suggestedFilename + (optionalSuffix != null ? optionalSuffix : "");
-        }
-        //Check if file with generated name exists
-        File file = new File(getDownloadFilePath(fileName));
-        if (file.exists()) {
-            String randString = UUID.randomUUID().toString();
-            return getUniqueDownloadFileURL(fileDownloadURL, optionalCD, optionalMimeType, randString);
-        }
-        return fileName;
     }
 }
