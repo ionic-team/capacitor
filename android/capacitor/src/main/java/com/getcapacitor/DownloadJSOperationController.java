@@ -13,7 +13,10 @@ import android.webkit.URLUtil;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.HashMap;
 import java.util.UUID;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,52 +32,45 @@ import java.util.Arrays;
  * to the proxy in order to have that code executed exclusively for that request.
  */
 public class DownloadJSInterface {
-    private DownloadJSActivity downloadActivity;
-    private ActivityResultLauncher<DownloadJSActivity.Input> launcher;
+    final private DownloadJSOperationController operationsController;
+    final private ActivityResultLauncher<DownloadJSOperationController.Input> launcher;
+    final private HashMap<String, DownloadJSOperationController.Input> pendingInputs;
+    //
     public DownloadJSInterface(AppCompatActivity activity) {
-        this.downloadActivity = new DownloadJSActivity(activity);
-        this.launcher = activity.registerForActivityResult(this.downloadActivity,
+        this.operationsController = new DownloadJSOperationController(activity);
+        this.pendingInputs = new HashMap<>();
+        this.launcher = activity.registerForActivityResult(this.operationsController,
                 new ActivityResultCallback<Boolean>() {
                     @Override
                     public void onActivityResult(Boolean result) {
-                        Logger.debug("Activity result ->>>>", String.valueOf(result));
+                        Logger.debug("DownloadJSActivity result", String.valueOf(result));
                     }
                 });
     }
 
+    /* JavascriptInterface imp. */
+    @JavascriptInterface
+    public void receiveContentTypeFromJavascript(String contentType, String operationID) {
+        this.transitionPendingInputOperation(operationID, contentType, false);
+    }
     @JavascriptInterface
     public void receiveStreamChunkFromJavascript(String chunk, String operationID) {
-//        //Runtime External storage permission for saving download files
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-//            if (this.activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-//                Logger.debug("permission", "permission denied to WRITE_EXTERNAL_STORAGE - requesting it");
-//                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-//                this.activity.requestPermissions(permissions, 1);
-//            }
-//        }
-//        //
-//        try {
-//            FileOutputStream fOut = new FileOutputStream(getDownloadFilePath(nativeFileURL) + ".mp4", true);
-//            OutputStreamWriter osw = new OutputStreamWriter(fOut, "UTF-8");
-//            osw.write(chunk);
-//            osw.flush();
-//            osw.close();
-//        } catch (IOException e) {
-//            Logger.error("Exception while appending to download file:", e);
-//        }
-        Logger.debug("Received stream", chunk);
-        Logger.debug("Received stream2", operationID);
-        this.downloadActivity.appendToOperation(operationID, chunk);
+//        Logger.debug("Received stream", chunk);
+//        Logger.debug("Received stream2", operationID);
+        this.transitionPendingInputOperation(operationID, null, null);
+        //Check if activity has started already
+        this.operationsController.appendToOperation(operationID, chunk);
     }
     @JavascriptInterface
     public void receiveStreamErrorFromJavascript(String error, String operationID) {
-        Logger.debug("Received error", error + " - " + operationID);
-        this.downloadActivity.failOperation(operationID);
+//        Logger.debug("Received error", error + " - " + operationID);
+        this.transitionPendingInputOperation(operationID, null, true);
+        this.operationsController.failOperation(operationID);
     }
     @JavascriptInterface
     public void receiveStreamCompletionFromJavascript(String operationID) {
-        Logger.debug("Operation completed", operationID);
-        this.downloadActivity.completeOperation(operationID);
+//        Logger.debug("Operation completed", operationID);
+        this.operationsController.completeOperation(operationID);
     }
 
     /* Proxy injector
@@ -85,30 +81,19 @@ public class DownloadJSInterface {
      */
     public String getJavascriptBridgeForURL(String fileURL, String contentDisposition, String mimeType) {
         if (fileURL.startsWith("http://") || fileURL.startsWith("https://") || fileURL.startsWith("blob:")) {
-            //
+            //setup background operation input (not started yet)
+                //will wait either stream start on content-type resolution to start asking
+                //for file pick and stream drain
             String operationID = UUID.randomUUID().toString();
-            DownloadJSActivity.Input input = new DownloadJSActivity.Input(operationID, fileURL, mimeType, contentDisposition);
-            this.launcher.launch(input);
-            //
-            if (mimeType != null && mimeType.indexOf("application/octet-stream") != -1) {
-                return this.getJavascriptBridgeForReadyAvailableData(fileURL, mimeType, operationID);
-            } else { //might already have ready-available data
-                return this.getJavascriptBridgeForReadyAvailableData(fileURL, mimeType, operationID);
-            }
-
+            DownloadJSOperationController.Input input = new DownloadJSOperationController.Input(operationID, fileURL, mimeType, contentDisposition);
+            this.pendingInputs.put(operationID, input);
+            //Return JS bridge with operationID tagged
+            return this.getJavascriptInterfaceBridgeForReadyAvailableData(fileURL, mimeType, operationID);
         }
         return null;
     }
     /* Injectors */
-    private String getJavascriptBridgeForStreamData(String streamURL) {
-        return "javascript: " +
-                " " +
-                "fetch('" + streamURL + "', { method: 'GET' }).then((res) => {\n" +
-                "              console.log(res.status);\n" +
-                "              res.text().then((text) => { console.log(text) })\n" +
-                "            });";
-    }
-    private String getJavascriptBridgeForReadyAvailableData(String blobUrl, String mimeType, String operationID) {
+    private String getJavascriptInterfaceBridgeForReadyAvailableData(String blobUrl, String mimeType, String operationID) {
         return "javascript: " +
                 "" +
                 "function parseFile(file, chunkReadCallback, errorCallback, successCallback) {\n" +
@@ -119,8 +104,8 @@ public class DownloadJSInterface {
                 "    let readBlock  = null;" +
                 "    let onLoadHandler = function(evt) {" +
                 "        if (evt.target.error == null) {" +
-                "            offset += evt.target.result.byteLength;" +
-                "            chunkReadCallback((new TextDecoder('utf-8')).decode(evt.target.result));" +
+                "            offset += evt.target.result.length;" +
+                "            chunkReadCallback(evt.target.result);" +
                 "        } else {" +
                 "            errorCallback(evt.target.error);" +
                 "            return;" +
@@ -135,26 +120,44 @@ public class DownloadJSInterface {
                 "        var r = new FileReader();" +
                 "        var blob = _file.slice(_offset, length + _offset);" +
                 "        r.onload = onLoadHandler;" +
-                "        r.readAsArrayBuffer(blob);" +
+                "        r.readAsBinaryString(blob);" +
                 "    };" +
                 "    readBlock(offset, chunkSize, file);" +
                 "};\n" +
                 "(() => { let xhr = new XMLHttpRequest();" +
                 "xhr.open('GET', '"+ blobUrl +"', true);" +
                 ((mimeType != null && mimeType.length() > 0) ? "xhr.setRequestHeader('Content-type','" + mimeType + "');" : "") +
-                "xhr.responseType = 'blob';console.log('fetchingg');" +
-                "xhr.onerror = xhr.onload = function(e) {console.log('fetched', this.status);" +
+                "xhr.responseType = 'blob';" +
+                "xhr.onerror = xhr.onload = function(e) {" +
                 "    if (this.status == 200) {" +
+                "        let contentType = this.getResponseHeader('content-type');" +
+                "        if (contentType) { CapacitorDownloadInterface.receiveContentTypeFromJavascript(contentType, '" + operationID + "'); }" +
                 "        var blob = this.response;" +
                 "        parseFile(blob, " +
                 "         function(chunk) { CapacitorDownloadInterface.receiveStreamChunkFromJavascript(chunk, '" + operationID + "'); }," +
-                "         function(err) { console.error(err); CapacitorDownloadInterface.receiveStreamChunkFromJavascript(err.message, '" + operationID + "'); }, " +
-                "         function() { console.log('capacitor bridge, drained!'); CapacitorDownloadInterface.receiveStreamCompletionFromJavascript('" + operationID + "'); } " +
+                "         function(err) { console.error('[Capacitor XHR] - error:', err); CapacitorDownloadInterface.receiveStreamChunkFromJavascript(err.message, '" + operationID + "'); }, " +
+                "         function() { console.log('[Capacitor XHR] - Drained!'); CapacitorDownloadInterface.receiveStreamCompletionFromJavascript('" + operationID + "'); } " +
                 "        );" +
                 "    } else {" +
                 "         console.error('[Capacitor XHR] - error:', this.status, (e ? e.loaded : this.responseText));" +
                 "    }" +
                 "};" +
                 "xhr.send();})()";
+    }
+
+    /* Helpers */
+    private void transitionPendingInputOperation(String operationID, @Nullable String optionalContentType, @Nullable Boolean doNotStart) {
+        //Check if have pending input operation, if not, we discard this content type resolution
+        //for some awkward reason the chunk was received before
+        DownloadJSOperationController.Input input = this.pendingInputs.get(operationID);
+        if (input == null) return;
+        //Set content type if available (override, no problem with that)
+        if (optionalContentType != null) {
+            Logger.debug("Received content type", optionalContentType);
+            input.optionalMimeType = optionalContentType;
+        }
+        //Start operation
+        this.pendingInputs.remove(operationID);
+        if (doNotStart == null || !doNotStart) this.launcher.launch(input);
     }
 }
