@@ -48,7 +48,7 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
         public String operationID;
         public PipedOutputStream outStream;
         public PipedInputStream inStream;
-            //state
+        //state
         public Boolean closed;
         public Boolean started;
         public Boolean pendingClose;
@@ -82,11 +82,11 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
     }
 
     /* Public operations */
-    public void appendToOperation(String operationID, String data) {
+    public boolean appendToOperation(String operationID, String data) {
         //get operation status
         Operation operation = this.operations.get(operationID);
         if (operation == null && this.pendingOperation.input.operationID.equals(operationID)) operation = this.pendingOperation;
-        if (operation == null || operation.closed) return; //already closed?
+        if (operation == null || operation.closed) return false; //already closed?
         //write
         try {
             operation.outStream.write(data.getBytes(StandardCharsets.ISO_8859_1));
@@ -95,23 +95,28 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
             //Ask for close
             operation.pendingClose = true;
         }
+        return !operation.pendingClose;
     }
-    public void failOperation(String operationID) {
+    public boolean failOperation(String operationID) {
         //get operation status
         Operation operation = this.operations.get(operationID);
         if (operation == null && this.pendingOperation.input.operationID.equals(operationID)) operation = this.pendingOperation;
-        if (operation == null || operation.closed) return; //already closed?
+        if (operation == null || operation.closed) return false; //already closed?
         //Ask for close
         operation.failureClose = true;
         operation.pendingClose = true;
+        //
+        return true;
     }
-    public void completeOperation(String operationID) {
+    public boolean completeOperation(String operationID) {
         //get operation status
         Operation operation = this.operations.get(operationID);
         if (operation == null && this.pendingOperation.input.operationID.equals(operationID)) operation = this.pendingOperation;
-        if (operation == null || operation.closed) return; //already closed?
+        if (operation == null || operation.closed) return false; //already closed?
         //Ask for close
         operation.pendingClose = true;
+        //
+        return true;
     }
 
 
@@ -152,12 +157,7 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
     //Thread operation that uses duplex stream
     private void createThreadedPipeForOperation(Operation operation, Uri uri) {
         DownloadJSOperationController upperRef = this;
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                upperRef.createPipeForOperation(operation, uri);
-            }
-        });
+        Executors.newSingleThreadExecutor().execute(() -> upperRef.createPipeForOperation(operation, uri));
     }
     private void createPipeForOperation(Operation operation, Uri uri) {
         //check for operation finished
@@ -232,11 +232,9 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
         // immediately available to the user.
         MediaScannerConnection.scanFile(this.activity,
                 new String[] { uri.toString() }, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    public void onScanCompleted(String path, Uri uri2) {
-                        Logger.debug("ExternalStorage", "Scanned " + path + ":");
-                        Logger.debug("ExternalStorage", "-> uri=" + uri2);
-                    }
+                (path, uri2) -> {
+//                    Logger.debug("ExternalStorage", "Scanned " + path + ":");
+//                    Logger.debug("ExternalStorage", "-> uri=" + uri2);
                 });
     }
 

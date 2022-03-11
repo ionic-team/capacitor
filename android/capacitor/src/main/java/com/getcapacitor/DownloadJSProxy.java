@@ -15,7 +15,7 @@ public class DownloadJSProxy implements android.webkit.DownloadListener {
     final private DownloadJSInterface downloadInterface;
     public DownloadJSProxy(Bridge bridge) {
         this.bridge = bridge;
-        this.downloadInterface = new DownloadJSInterface(this.bridge.getActivity());
+        this.downloadInterface = new DownloadJSInterface(this.bridge);
         this.installServiceWorkerProxy();
     }
 

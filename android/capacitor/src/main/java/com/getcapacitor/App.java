@@ -18,11 +18,23 @@ public class App {
         void onAppRestored(PluginResult result);
     }
 
+    public enum DownloadStatus { STARTED, COMPLETED, FAILED }
+
+    /**
+     * Interface for callbacks when app is receives download request from webview.
+     */
+    public interface AppDownloadListener {
+        void onAppDownloadUpdate(String operationID, DownloadStatus operationStatus, @Nullable String error);
+    }
+
     @Nullable
     private AppStatusChangeListener statusChangeListener;
 
     @Nullable
     private AppRestoredListener appRestoredListener;
+
+    @Nullable
+    private AppDownloadListener appDownloadListener;
 
     private boolean isActive = false;
 
@@ -46,6 +58,14 @@ public class App {
         this.appRestoredListener = listener;
     }
 
+    /**
+     * Set the object to receive callbacks.
+     * @param listener
+     */
+    public void setAppDownloadListener(@Nullable AppDownloadListener listener) {
+        this.appDownloadListener = listener;
+    }
+
     protected void fireRestoredResult(PluginResult result) {
         if (appRestoredListener != null) {
             appRestoredListener.onAppRestored(result);
@@ -56,6 +76,12 @@ public class App {
         this.isActive = isActive;
         if (statusChangeListener != null) {
             statusChangeListener.onAppStatusChanged(isActive);
+        }
+    }
+
+    public void fireDownloadUpdate(String operationID, DownloadStatus operationStatus, @Nullable String error) {
+        if (appDownloadListener != null) {
+            appDownloadListener.onAppDownloadUpdate(operationID, operationStatus, error);
         }
     }
 }
