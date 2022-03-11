@@ -150,15 +150,18 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     // The force unwrap is part of the protocol declaration, so we should keep it.
     // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        CAPLog.print("⚡️  WebView failed provisional navigation")
+        CAPLog.print("⚡️  WebView failed provisional navigation ")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
     }
     // Make sure we do handle file downloads if webview can display it
     public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         //Check if webview can properly display the file
-        if navigationResponse.canShowMIMEType {
-            decisionHandler(.allow)
-            return
+        if (navigationResponse.canShowMIMEType) {
+            let isBlob = navigationResponse.response.url?.absoluteString.starts(with: "blob:") ?? false;
+            guard #available(iOS 14.5, *), isBlob else {
+                decisionHandler(.allow)
+                return
+            }
         }
         //Download support for iOS >= 14.5
         if #available(iOS 14.5, *) {
@@ -354,21 +357,22 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         CAPLog.print("\n⚡️  See above for help with debugging blank-screen issues")
     }
 
-    private func getUniqueDownloadFileURL(_ suggestedFilename: String, optionalSuffix: String?) -> URL {
+    private func getUniqueDownloadFileURL(_ suggestedFilename: String, optionalSuffix: Int?) -> URL {
         let documentsFolderURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         //
-        var fileComps = suggestedFilename.split(separator: ".");
+        var fileComps = suggestedFilename.split(separator: ".")
         var fileName = "";
+        let suffix = optionalSuffix != nil ? String(optionalSuffix!) : ""
         if (fileComps.count > 1) {
             let fileExtension = "." + String(fileComps.popLast() ?? "")
-            fileName = fileComps.joined(separator: ".") + (optionalSuffix ?? "") + fileExtension
+            fileName = fileComps.joined(separator: ".") + suffix + fileExtension
         } else {
-            fileName = suggestedFilename + (optionalSuffix ?? "")
+            fileName = suggestedFilename + suffix
         }
         //Check if file with generated name exists
         let documentURL = documentsFolderURL.appendingPathComponent(fileName, isDirectory: false)
         if fileName == "" || FileManager.default.fileExists(atPath: documentURL.path) {
-            let randSuffix = String((0..<35).map{ _ in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".randomElement()! })
+            let randSuffix = optionalSuffix != nil ? optionalSuffix! + 1 : 1;
             return self.getUniqueDownloadFileURL(suggestedFilename, optionalSuffix: randSuffix)
         }
         return documentURL
