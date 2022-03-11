@@ -47,27 +47,6 @@ jobs:
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run lint
-  test-cli:
-    runs-on: macos-latest
-    timeout-minutes: 30
-    needs:
-      - setup
-      - lint
-    steps:
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
-      - name: Restore Dependency Cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
-      - run: npm install
-      - run: npm run build
-        working-directory: ./cli
-      - run: npm test
-        working-directory: ./cli
   test-core:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -139,7 +118,6 @@ jobs:
     needs:
       - setup
       - lint
-      - test-cli
       - test-core
       - test-ios
       - test-android
@@ -165,7 +143,6 @@ jobs:
     needs:
       - setup
       - lint
-      - test-cli
       - test-core
       - test-ios
       - test-android

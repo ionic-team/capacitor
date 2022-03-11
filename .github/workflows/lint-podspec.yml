@@ -1,0 +1,27 @@
+name: Lint Podspec
+
+on:
+  push:
+    branches:
+      - native-publish
+    paths:
+      - ios/**
+  pull_request:
+    branches:
+      - native-publish
+    paths:
+      - ios/**
+
+jobs:
+  lint-podspec:
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Lint Capacitor and Cordova Podspecs
+        run: |
+          set -eo pipefail
+          pod spec lint ./ios/Capacitor.podspec --allow-warnings
+          pod spec lint ./ios/CapacitorCordova.podspec --allow-warnings
+
