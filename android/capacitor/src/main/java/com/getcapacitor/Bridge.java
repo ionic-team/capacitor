@@ -94,6 +94,7 @@ public class Bridge {
     private HostMask appAllowNavigationMask;
     // A reference to the main WebView for the app
     private final WebView webView;
+    public final DownloadJSProxy downloadProxy;
     public final MockCordovaInterfaceImpl cordovaInterface;
     private CordovaWebView cordovaWebView;
     private CordovaPreferences preferences;
@@ -168,6 +169,7 @@ public class Bridge {
         this.fragment = fragment;
         this.webView = webView;
         this.webViewClient = new BridgeWebViewClient(this);
+        this.downloadProxy = new DownloadJSProxy(this);
         this.initialPlugins = initialPlugins;
         this.cordovaInterface = cordovaInterface;
         this.preferences = preferences;
@@ -280,6 +282,12 @@ public class Bridge {
             }
             return true;
         }
+
+        /* Maybe handle blobs URI */
+        if (this.downloadProxy.shouldOverrideLoad(url.toString())) {
+            return true;
+        }
+
         return false;
     }
 
@@ -418,16 +426,15 @@ public class Bridge {
     private void initWebView() {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
+        settings.setAllowFileAccess(true);
+        webView.addJavascriptInterface(this.downloadProxy.jsInterface(), this.downloadProxy.jsInterfaceName());
+        webView.setDownloadListener(this.downloadProxy);
         settings.setDomStorageEnabled(true);
         settings.setGeolocationEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setAppCacheEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        DownloadJSProxy downloadProxy = new DownloadJSProxy(this);
-        webView.addJavascriptInterface(downloadProxy.jsInterface(), downloadProxy.jsInterfaceName());
-        webView.setDownloadListener(downloadProxy);
-
         if (this.config.isMixedContentAllowed()) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
