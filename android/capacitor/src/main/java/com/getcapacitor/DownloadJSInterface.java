@@ -119,7 +119,7 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
     @NonNull
     public Intent createIntent(@NonNull Context context, DownloadJSOperationController.Input input) {
         //ask path
-        String[] paths = this.getUniqueDownloadFileNameFromDetails(input.fileNameURL, input.optionalMimeType, input.contentDisposition, null);
+        String[] paths = this.getUniqueDownloadFileNameFromDetails(input.fileNameURL, input.contentDisposition, input.optionalMimeType, null);
         //Create/config intent to prompt for file selection
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -275,12 +275,12 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
         if (!this.checkCreateDefaultDir()) return null;
         //Check if file with generated name exists
         String fullPath = this.getDownloadFilePath(fileName);
-        //File picker should do this for us
-        File file = new File(fullPath);
-        if (file.exists()) {
-            Integer nextSuffix = (optionalSuffix != null ? optionalSuffix + 1 : 1);
-            return this.getUniqueDownloadFileNameFromDetails(fileDownloadURL, optionalCD, optionalMimeType, nextSuffix);
-        }
+        //Comment since file picker should do this for us
+//        File file = new File(fullPath);
+//        if (file.exists()) {
+//            Integer nextSuffix = (optionalSuffix != null ? optionalSuffix + 1 : 1);
+//            return this.getUniqueDownloadFileNameFromDetails(fileDownloadURL, optionalCD, optionalMimeType, nextSuffix);
+//        }
         return new String[]{fullPath, fileName};
     }
 }
