@@ -1,10 +1,11 @@
 import Foundation
 import WebKit
+import MobileCoreServices
 
 // adopting a public protocol in an internal class is by design
 // swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
-internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, WKDownloadDelegate {
+internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, WKDownloadDelegate, UIDocumentPickerDelegate {
     weak var bridge: CapacitorBridge?
     fileprivate(set) var contentController = WKUserContentController()
     enum WebViewLoadingState {
@@ -16,6 +17,13 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     private let handlerName = "bridge"
 
+    struct PendingDownload {
+        let pathSelectionCallback: ((URL?) -> Void)
+        let proposedFileName: String
+        let downloadId: Int
+    }
+    private var pendingDownload: PendingDownload?
+    
     init(bridge: CapacitorBridge? = nil) {
         super.init()
         self.bridge = bridge
@@ -157,7 +165,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         //Check if webview can properly display the file
         if (navigationResponse.canShowMIMEType) {
-            let isBlob = navigationResponse.response.url?.absoluteString.starts(with: "blob:") ?? false;
+            let isBlob = navigationResponse.response.url?.absoluteString.starts(with: "blob:") ?? false
             guard #available(iOS 14.5, *), isBlob else {
                 decisionHandler(.allow)
                 return
@@ -306,22 +314,22 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     @available(iOS 14.5, *)
     public func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
-        // generate unique URL (user can download file with same names or filename not be available on the headers)
-        let documentURL = self.getUniqueDownloadFileURL(suggestedFilename, optionalSuffix: nil)
-        CAPLog.print("⚡️  Download path:", documentURL.absoluteString)
-        completionHandler(documentURL)
-        // notify
-        NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
-            "id": download.hash,
-            "status": FileDownloadNotificationStatus.started
-        ])
+        //Add pending download
+        self.pendingDownload = PendingDownload(pathSelectionCallback: completionHandler,
+                                               proposedFileName: suggestedFilename,
+                                               downloadId: download.hash)
+        
+        // Ask for document selection (it will cal the completion handler)
+        let documentPicker = UIDocumentPickerViewController(documentTypes: [String(kUTTypeFolder)],  in: .open)
+        documentPicker.delegate = self
+        bridge?.viewController?.present(documentPicker, animated: true)
     }
     @available(iOS 14.5, *)
     public func downloadDidFinish(_ download: WKDownload) {
         CAPLog.print("⚡️  Download finished")
         // notify
         NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
-            "id": download.hash,
+            "id": String(download.hash),
             "status": FileDownloadNotificationStatus.completed
         ])
     }
@@ -331,10 +339,38 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
         // notify
         NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
-            "id": download.hash,
+            "id": String(download.hash),
             "error": error.localizedDescription,
             "status": FileDownloadNotificationStatus.failed
         ])
+    }
+    
+    // MARK: - UIDocumentPickerDelegate
+    
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        guard self.pendingDownload == nil else {
+            //cancel download
+            self.pendingDownload?.pathSelectionCallback(nil)
+            //empty refs
+            self.pendingDownload = nil
+            return
+        }
+    }
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+        guard self.pendingDownload == nil else {
+            //Generate unique file name on the choosen directory
+            let fileName: URL = self.getUniqueDownloadFileURL(url, suggestedFilename: self.pendingDownload!.proposedFileName, optionalSuffix: nil)
+            self.pendingDownload!.pathSelectionCallback(fileName)
+            // Notify
+            NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
+                "id": String(self.pendingDownload!.downloadId),
+                "status": FileDownloadNotificationStatus.started
+            ])
+            //empty refs
+            self.pendingDownload = nil
+            return
+        }
     }
 
     // MARK: - Private
@@ -357,12 +393,10 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         CAPLog.print("\n⚡️  See above for help with debugging blank-screen issues")
     }
 
-    private func getUniqueDownloadFileURL(_ suggestedFilename: String, optionalSuffix: Int?) -> URL {
-        let documentsFolderURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        //
-        var fileComps = suggestedFilename.split(separator: ".")
-        var fileName = "";
+    private func getUniqueDownloadFileURL(_ documentsFolderURL: URL, suggestedFilename: String, optionalSuffix: Int?) -> URL {
         let suffix = optionalSuffix != nil ? String(optionalSuffix!) : ""
+        var fileComps = suggestedFilename.split(separator: ".")
+        var fileName = ""
         if (fileComps.count > 1) {
             let fileExtension = "." + String(fileComps.popLast() ?? "")
             fileName = fileComps.joined(separator: ".") + suffix + fileExtension
@@ -372,8 +406,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         //Check if file with generated name exists
         let documentURL = documentsFolderURL.appendingPathComponent(fileName, isDirectory: false)
         if fileName == "" || FileManager.default.fileExists(atPath: documentURL.path) {
-            let randSuffix = optionalSuffix != nil ? optionalSuffix! + 1 : 1;
-            return self.getUniqueDownloadFileURL(suggestedFilename, optionalSuffix: randSuffix)
+            let randSuffix = optionalSuffix != nil ? optionalSuffix! + 1 : 1
+            return self.getUniqueDownloadFileURL(documentsFolderURL, suggestedFilename: suggestedFilename, optionalSuffix: randSuffix)
         }
         return documentURL
     }
