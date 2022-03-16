@@ -151,7 +151,6 @@ public class BridgeActivity extends AppCompatActivity {
         super.onResume();
         bridge.getApp().fireStatusChange(true);
         this.bridge.onResume();
-        this.setDarkMode();
         Logger.debug("App resumed");
     }
 
@@ -186,12 +185,6 @@ public class BridgeActivity extends AppCompatActivity {
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         this.bridge.onDetachedFromWindow();
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        this.setDarkMode();
     }
 
     /**
@@ -262,7 +255,7 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
+        this.setDarkMode();
         if (this.bridge == null) {
             return;
         }
