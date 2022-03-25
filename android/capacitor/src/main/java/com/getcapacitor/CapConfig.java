@@ -28,6 +28,7 @@ public class CapConfig {
     // Server Config
     private boolean html5mode = true;
     private String serverUrl;
+    private String appId;
     private String hostname = "localhost";
     private String androidScheme = CAPACITOR_HTTP_SCHEME;
     private String[] allowNavigation;
@@ -104,6 +105,7 @@ public class CapConfig {
         // Server Config
         this.html5mode = builder.html5mode;
         this.serverUrl = builder.serverUrl;
+        this.appId = builder.appId;
         this.hostname = builder.hostname;
         this.androidScheme = builder.androidScheme;
         this.allowNavigation = builder.allowNavigation;
@@ -147,6 +149,7 @@ public class CapConfig {
         // Server
         html5mode = JSONUtils.getBoolean(configJSON, "server.html5mode", html5mode);
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
+        appId = JSONUtils.getString(configJSON, "appId", null);
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
         androidScheme = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
         allowNavigation = JSONUtils.getArray(configJSON, "server.allowNavigation", null);
@@ -197,6 +200,10 @@ public class CapConfig {
 
     public String getServerUrl() {
         return serverUrl;
+    }
+
+    public String getAppId() {
+        return appId;
     }
 
     public String getHostname() {

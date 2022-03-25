@@ -87,6 +87,9 @@ internal extension InstanceDescriptor {
             if let allowNav = config[keyPath: "server.allowNavigation"] as? [String] {
                 allowedNavigationHostnames = allowNav
             }
+            if let appIdString = config[keyPath: "appId"] as? [String] {
+                appId = appIdString
+            }
             if let scheme = (config[keyPath: "server.iosScheme"] as? String)?.lowercased() {
                 urlScheme = scheme
             }
