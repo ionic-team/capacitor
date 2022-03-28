@@ -32,6 +32,7 @@ import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.PermissionHelper;
 import com.getcapacitor.util.WebColor;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -208,6 +209,12 @@ public class Bridge {
         authorities.add(authority);
 
         String scheme = this.getScheme();
+
+        List<String> invalidSchemes = Arrays.asList("ftp", "ftps", "ws", "wss");
+        if (invalidSchemes.contains(scheme)) {
+            Logger.warn(scheme + " is not a allowed scheme.  Defaulting to http.");
+            scheme = "http";
+        }
 
         localUrl = scheme + "://" + authority;
 
