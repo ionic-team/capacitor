@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -229,6 +230,11 @@ public class Bridge {
         String appUrlPath = this.config.getStartPath();
         if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
             appUrl += appUrlPath;
+        }
+
+        if (!URLUtil.isValidUrl(appUrl)) {
+            Logger.error("Provided server url is invalid: server url requires a scheme, domain / IP address and optional port.");
+            return;
         }
 
         final boolean html5mode = this.config.isHTML5Mode();
