@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.1) (2022-03-25)
+
+
+### Features
+
+* **android:** set default targetSDK to 31 ([#5442](https://github.com/ionic-team/capacitor/issues/5442)) ([4442459](https://github.com/ionic-team/capacitor/commit/4442459b24cdbac25cb1e4de11583d22c21452b3))
+* **android:** Upgrade gradle to 7.4 ([#5445](https://github.com/ionic-team/capacitor/issues/5445)) ([28eaf18](https://github.com/ionic-team/capacitor/commit/28eaf1851fa7a912917dbb40c68fb4dd583d08ad))
+
+
+
+
+
 ## [3.4.1](https://github.com/ionic-team/capacitor/compare/3.4.0...3.4.1) (2022-02-09)
 
 **Note:** Version bump only for package @capacitor/android

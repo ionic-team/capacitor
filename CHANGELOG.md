@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.1) (2022-03-25)
+
+
+### Bug Fixes
+
+* **cli:** Use CURRENT_PROJECT_VERSION variable on ios template ([#5418](https://github.com/ionic-team/capacitor/issues/5418)) ([0a07648](https://github.com/ionic-team/capacitor/commit/0a07648b4d1c5fb1fd7de3c72ac1bbcb30f48203))
+
+
+### Features
+
+* **android:** set default targetSDK to 31 ([#5442](https://github.com/ionic-team/capacitor/issues/5442)) ([4442459](https://github.com/ionic-team/capacitor/commit/4442459b24cdbac25cb1e4de11583d22c21452b3))
+* **android:** Upgrade gradle to 7.4 ([#5445](https://github.com/ionic-team/capacitor/issues/5445)) ([28eaf18](https://github.com/ionic-team/capacitor/commit/28eaf1851fa7a912917dbb40c68fb4dd583d08ad))
+* **cli:** export android-template activity for SDK 31 support ([#5351](https://github.com/ionic-team/capacitor/issues/5351)) ([79b4a3c](https://github.com/ionic-team/capacitor/commit/79b4a3c56ce9704bc8f5b0b8ce6d5e60f86d4d2c))
+* **cli:** set targetSDK to 31 in android-template ([#5443](https://github.com/ionic-team/capacitor/issues/5443)) ([8793c58](https://github.com/ionic-team/capacitor/commit/8793c58f24611d7780aff80d547b367f4114f7c5))
+* **cli:** Upgrade Gradle to 7.4 in the template ([#5446](https://github.com/ionic-team/capacitor/issues/5446)) ([11b648d](https://github.com/ionic-team/capacitor/commit/11b648d21567c5ab8e7e195fdefec1e1254ce62a))
+* **ios:** add getConfig to CAPPlugin ([#5495](https://github.com/ionic-team/capacitor/issues/5495)) ([224a9d0](https://github.com/ionic-team/capacitor/commit/224a9d075629d9c9da9ddc658eb282617fc46d09))
+
+
+
+
+
 ## [3.4.1](https://github.com/ionic-team/capacitor/compare/3.4.0...3.4.1) (2022-02-09)
 
 
