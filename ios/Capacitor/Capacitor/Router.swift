@@ -12,6 +12,7 @@ public protocol Router {
     func route(for path: String) -> String
 }
 
+// swiftlint:disable:next type_name
 struct _Router: Router {
     func route(for path: String) -> String {
         let pathUrl = URL(string: path)
