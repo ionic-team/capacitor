@@ -109,6 +109,7 @@
 
 - (void)removeAllListeners:(CAPPluginCall *)call {
   [self.eventListeners removeAllObjects];
+  [call resolve];
 }
 
 - (NSArray<CAPPluginCall *>*)getListeners:(NSString *)eventName {
