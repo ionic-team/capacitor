@@ -216,7 +216,10 @@ public class Bridge {
             try {
                 URL appUrlObject = new URL(appUrlConfig);
                 authorities.add(appUrlObject.getAuthority());
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+                Logger.error("Provided server url is invalid: " + ex.getMessage());
+                return;
+            }
             localUrl = appUrlConfig;
             appUrl = appUrlConfig;
         } else {
@@ -230,11 +233,6 @@ public class Bridge {
         String appUrlPath = this.config.getStartPath();
         if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
             appUrl += appUrlPath;
-        }
-
-        if (!URLUtil.isValidUrl(appUrl)) {
-            Logger.error("Provided server url is invalid: server url requires a scheme, domain / IP address and optional port.");
-            return;
         }
 
         final boolean html5mode = this.config.isHTML5Mode();
