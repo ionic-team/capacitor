@@ -42,7 +42,8 @@ import Cordova
         setScreenOrientationDefaults()
 
         // get the web view
-        let assetHandler = WebViewAssetHandler()
+        let assetHandler = WebViewAssetHandler(router: router())
+        
         assetHandler.setAssetPath(configuration.appLocation.path)
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
@@ -89,7 +90,11 @@ import Cordova
         }
         return descriptor
     }
-
+    
+    open func router() -> Router {
+       return _Router()
+    }
+    
     /**
      The WKWebViewConfiguration to use for the webview.
 
