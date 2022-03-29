@@ -745,9 +745,10 @@ public class Plugin {
      * @param call
      */
     @SuppressWarnings("unused")
-    @PluginMethod(returnType = PluginMethod.RETURN_NONE)
+    @PluginMethod(returnType = PluginMethod.RETURN_PROMISE)
     public void removeAllListeners(PluginCall call) {
         eventListeners.clear();
+        call.resolve();
     }
 
     /**
