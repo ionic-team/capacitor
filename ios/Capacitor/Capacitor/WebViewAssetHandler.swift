@@ -22,7 +22,6 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         
         let resolvedRoute = router.route(for: stringToLoad)
         if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
-            // This is good to stay because I think this has zero to do with the web assets and is an implementation detail of how capacitor manages temporary feiles
             startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
         } else {
             startPath.append(resolvedRoute)

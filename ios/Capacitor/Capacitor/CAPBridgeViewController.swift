@@ -43,7 +43,6 @@ import Cordova
 
         // get the web view
         let assetHandler = WebViewAssetHandler(router: router())
-        
         assetHandler.setAssetPath(configuration.appLocation.path)
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
