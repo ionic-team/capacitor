@@ -210,7 +210,7 @@ public class Bridge {
 
         String scheme = this.getScheme();
 
-        List<String> invalidSchemes = Arrays.asList("ftp", "ftps", "ws", "wss");
+        List<String> invalidSchemes = Arrays.asList("ftp", "ftps", "ws", "wss", "about", "blob");
         if (invalidSchemes.contains(scheme)) {
             Logger.warn(scheme + " is not a allowed scheme.  Defaulting to http.");
             scheme = "http";
