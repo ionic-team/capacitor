@@ -255,8 +255,8 @@ public class WebViewLocalServer {
             InputStream responseStream;
             try {
                 String startPath = this.basePath + "/index.html";
-                if (bridge.getRequestPathResolver() != null) {
-                    startPath = this.basePath + bridge.getRequestPathResolver().process("/index.html");
+                if (bridge.getRouteProcessor() != null) {
+                    startPath = this.basePath + bridge.getRouteProcessor().process("/index.html");
                 }
 
                 if (isAsset) {
@@ -471,10 +471,10 @@ public class WebViewLocalServer {
                 InputStream stream = null;
                 String path = url.getPath();
 
-                // Pass path to requestPathResolver if present
-                RouteProcessor routeProcessor = bridge.getRequestPathResolver();
+                // Pass path to routeProcessor if present
+                RouteProcessor routeProcessor = bridge.getRouteProcessor();
                 if(routeProcessor != null) {
-                    path = bridge.getRequestPathResolver().process(path);
+                    path = bridge.getRouteProcessor().process(path);
                 }
 
                 try {

@@ -1193,11 +1193,11 @@ public class Bridge {
         this.webViewListeners = webViewListeners;
     }
 
-    RouteProcessor getRequestPathResolver() {
+    RouteProcessor getRouteProcessor() {
         return routeProcessor;
     }
 
-    void setRequestPathResolver(RouteProcessor routeProcessor) {
+    void setRouteProcessor(RouteProcessor routeProcessor) {
         this.routeProcessor = routeProcessor;
     }
 
@@ -1277,7 +1277,7 @@ public class Bridge {
             return this;
         }
 
-        public Builder setRequestPathResolver(RouteProcessor routeProcessor) {
+        public Builder setRouteProcessor(RouteProcessor routeProcessor) {
             this.routeProcessor = routeProcessor;
             return this;
         }
@@ -1305,7 +1305,7 @@ public class Bridge {
             Bridge bridge = new Bridge(activity, fragment, webView, plugins, cordovaInterface, pluginManager, preferences, config);
             bridge.setCordovaWebView(mockWebView);
             bridge.setWebViewListeners(webViewListeners);
-            bridge.setRequestPathResolver(routeProcessor);
+            bridge.setRouteProcessor(routeProcessor);
 
             if (instanceState != null) {
                 bridge.restoreInstanceState(instanceState);
