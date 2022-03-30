@@ -187,7 +187,7 @@ public class WebViewLocalServer {
     }
 
     private boolean isMainUrl(Uri loadingUrl) {
-        return (bridge.getServerUrl() == null && loadingUrl.getHost().equalsIgnoreCase(bridge.getHost()));
+        return loadingUrl.getHost().equalsIgnoreCase(bridge.getHost());
     }
 
     private boolean isAllowedUrl(Uri loadingUrl) {
