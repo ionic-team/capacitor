@@ -216,7 +216,6 @@ public class Bridge {
                 URL appUrlObject = new URL(appUrlConfig);
                 authorities.add(appUrlObject.getAuthority());
             } catch (Exception ex) {}
-            localUrl = appUrlConfig;
             appUrl = appUrlConfig;
         } else {
             appUrl = localUrl;
