@@ -473,7 +473,7 @@ public class WebViewLocalServer {
 
                 // Pass path to routeProcessor if present
                 RouteProcessor routeProcessor = bridge.getRouteProcessor();
-                if(routeProcessor != null) {
+                if (routeProcessor != null) {
                     path = bridge.getRouteProcessor().process(path);
                 }
 
