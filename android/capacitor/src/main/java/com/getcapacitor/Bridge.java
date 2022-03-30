@@ -212,7 +212,7 @@ public class Bridge {
 
         List<String> invalidSchemes = Arrays.asList("file", "ftp", "ftps", "ws", "wss", "about", "blob", "data");
         if (invalidSchemes.contains(scheme)) {
-            Logger.warn(scheme + " is not a allowed scheme.  Defaulting to http.");
+            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to http.");
             scheme = "http";
         }
 
