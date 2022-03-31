@@ -155,7 +155,7 @@ public class CapConfig {
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
 
-        String configSchema =  JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
+        String configSchema = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
         if (this.validateScheme(configSchema)) {
             androidScheme = configSchema;
         }
