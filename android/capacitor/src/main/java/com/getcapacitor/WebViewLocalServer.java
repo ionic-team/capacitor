@@ -24,7 +24,6 @@ import android.webkit.WebResourceResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -256,6 +255,10 @@ public class WebViewLocalServer {
             InputStream responseStream;
             try {
                 String startPath = this.basePath + "/index.html";
+                if (bridge.getRouteProcessor() != null) {
+                    startPath = this.basePath + bridge.getRouteProcessor().process("/index.html");
+                }
+
                 if (isAsset) {
                     responseStream = protocolHandler.openAsset(startPath);
                 } else {
@@ -467,6 +470,13 @@ public class WebViewLocalServer {
             public InputStream handle(Uri url) {
                 InputStream stream = null;
                 String path = url.getPath();
+
+                // Pass path to routeProcessor if present
+                RouteProcessor routeProcessor = bridge.getRouteProcessor();
+                if (routeProcessor != null) {
+                    path = bridge.getRouteProcessor().process(path);
+                }
+
                 try {
                     if (path.startsWith(capacitorContentStart)) {
                         stream = protocolHandler.openContentUrl(url);
