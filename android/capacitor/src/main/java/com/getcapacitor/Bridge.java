@@ -32,7 +32,6 @@ import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.PermissionHelper;
 import com.getcapacitor.util.WebColor;
 import java.io.File;
-import java.lang.reflect.Array;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
