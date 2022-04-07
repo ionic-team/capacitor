@@ -5,7 +5,7 @@ import MobileCoreServices
 // adopting a public protocol in an internal class is by design
 // swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
-internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, WKDownloadDelegate, 
+internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, WKDownloadDelegate,
                                          UIDocumentPickerDelegate {
     weak var bridge: CapacitorBridge?
     fileprivate(set) var contentController = WKUserContentController()
