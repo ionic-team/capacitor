@@ -426,7 +426,6 @@ public class Bridge {
     private void initWebView() {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setAllowFileAccess(true);
         webView.addJavascriptInterface(this.downloadProxy.jsInterface(), this.downloadProxy.jsInterfaceName());
         webView.setDownloadListener(this.downloadProxy);
         settings.setDomStorageEnabled(true);

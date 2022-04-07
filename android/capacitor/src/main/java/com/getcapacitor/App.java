@@ -18,7 +18,11 @@ public class App {
         void onAppRestored(PluginResult result);
     }
 
-    public enum DownloadStatus { STARTED, COMPLETED, FAILED }
+    public enum DownloadStatus {
+        STARTED,
+        COMPLETED,
+        FAILED
+    }
 
     /**
      * Interface for callbacks when app is receives download request from webview.
