@@ -11,8 +11,10 @@ import android.webkit.WebResourceResponse;
  * dynamic javascript upon the 'protocol' interface availability.
  */
 public class DownloadJSProxy implements android.webkit.DownloadListener {
-    final private Bridge bridge;
-    final private DownloadJSInterface downloadInterface;
+
+    private final Bridge bridge;
+    private final DownloadJSInterface downloadInterface;
+
     public DownloadJSProxy(Bridge bridge) {
         this.bridge = bridge;
         this.downloadInterface = new DownloadJSInterface(this.bridge);
@@ -20,8 +22,13 @@ public class DownloadJSProxy implements android.webkit.DownloadListener {
     }
 
     //
-    public DownloadJSInterface jsInterface() { return this.downloadInterface; }
-    public String jsInterfaceName() { return "CapacitorDownloadInterface"; }
+    public DownloadJSInterface jsInterface() {
+        return this.downloadInterface;
+    }
+
+    public String jsInterfaceName() {
+        return "CapacitorDownloadInterface";
+    }
 
     /* Public interceptors */
     public boolean shouldOverrideLoad(String url) {
@@ -40,6 +47,7 @@ public class DownloadJSProxy implements android.webkit.DownloadListener {
             return false;
         }
     }
+
     /* Public DownloadListener implementation */
     @Override
     public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
@@ -60,13 +68,15 @@ public class DownloadJSProxy implements android.webkit.DownloadListener {
         //Downloads can be done via webworker, webworkers might need local resources, we enable that
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             ServiceWorkerController swController = ServiceWorkerController.getInstance();
-            swController.setServiceWorkerClient(new ServiceWorkerClient() {
-                @Override
-                public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
-                    Logger.debug("ServiceWorker Request", request.getUrl().toString());
-                    return bridge.getLocalServer().shouldInterceptRequest(request);
+            swController.setServiceWorkerClient(
+                new ServiceWorkerClient() {
+                    @Override
+                    public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
+                        Logger.debug("ServiceWorker Request", request.getUrl().toString());
+                        return bridge.getLocalServer().shouldInterceptRequest(request);
+                    }
                 }
-            });
+            );
         }
     }
 }
