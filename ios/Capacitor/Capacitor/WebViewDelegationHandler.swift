@@ -5,7 +5,8 @@ import MobileCoreServices
 // adopting a public protocol in an internal class is by design
 // swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
-internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, WKDownloadDelegate, UIDocumentPickerDelegate {
+internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, WKDownloadDelegate, 
+                                         UIDocumentPickerDelegate {
     weak var bridge: CapacitorBridge?
     fileprivate(set) var contentController = WKUserContentController()
     enum WebViewLoadingState {
@@ -23,7 +24,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         let downloadId: Int
     }
     private var pendingDownload: PendingDownload?
-    
+
     init(bridge: CapacitorBridge? = nil) {
         super.init()
         self.bridge = bridge
@@ -54,7 +55,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         // Reset the bridge on each navigation
         bridge?.reset()
     }
-    
+
     // TODO: remove once Xcode 12 support is dropped
     #if compiler(>=5.5)
     @available(iOS 15, *)
@@ -83,12 +84,12 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
         // check if we can detect file download on iOS >= 14.5
         if #available(iOS 14.5, *) {
-            if (navigationAction.shouldPerformDownload) {
+            if navigationAction.shouldPerformDownload {
                 decisionHandler(.download)
                 return
             }
         }
-        
+
         // sanity check, these shouldn't ever be nil in practice
         guard let bridge = bridge, let navURL = navigationAction.request.url else {
             decisionHandler(.allow)
@@ -163,21 +164,21 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     }
     // Make sure we do handle file downloads if webview can display it
     public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-        //Check if webview can properly display the file
-        if (navigationResponse.canShowMIMEType) {
+        // Check if webview can properly display the file
+        if navigationResponse.canShowMIMEType {
             let isBlob = navigationResponse.response.url?.absoluteString.starts(with: "blob:") ?? false
             guard #available(iOS 14.5, *), isBlob else {
                 decisionHandler(.allow)
                 return
             }
         }
-        //Download support for iOS >= 14.5
+        // Download support for iOS >= 14.5
         if #available(iOS 14.5, *) {
             decisionHandler(.download)
             return
         }
-        //Deny if not recognize until now and webView can not
-        //show the specified MIME type
+        // Deny if not recognize until now and webView can not
+        // show the specified MIME type
         decisionHandler(.cancel)
     }
 
@@ -309,18 +310,18 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         }
         return nil
     }
-    
+
     // MARK: - WKDownloadDelegate
 
     @available(iOS 14.5, *)
     public func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
-        //Add pending download
+        // Add pending download
         self.pendingDownload = PendingDownload(pathSelectionCallback: completionHandler,
                                                proposedFileName: suggestedFilename,
                                                downloadId: download.hash)
-        
+
         // Ask for document selection (it will cal the completion handler)
-        let documentPicker = UIDocumentPickerViewController(documentTypes: [String(kUTTypeFolder)],  in: .open)
+        let documentPicker = UIDocumentPickerViewController(documentTypes: [String(kUTTypeFolder)], in: .open)
         documentPicker.delegate = self
         bridge?.viewController?.present(documentPicker, animated: true)
     }
@@ -344,30 +345,30 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
             "status": FileDownloadNotificationStatus.failed
         ])
     }
-    
+
     // MARK: - UIDocumentPickerDelegate
-    
+
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         guard self.pendingDownload == nil else {
-            //cancel download
+            // cancel download
             self.pendingDownload?.pathSelectionCallback(nil)
-            //empty refs
+            // empty refs
             self.pendingDownload = nil
             return
         }
     }
-    
+
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-        guard self.pendingDownload == nil else {
-            //Generate unique file name on the choosen directory
-            let fileName: URL = self.getUniqueDownloadFileURL(url, suggestedFilename: self.pendingDownload!.proposedFileName, optionalSuffix: nil)
-            self.pendingDownload!.pathSelectionCallback(fileName)
+        if let pendingDownload = self.pendingDownload {
+            // Generate unique file name on the choosen directory
+            if let fileName: URL = self.getUniqueDownloadFileURL(url, suggestedFilename: pendingDownload.proposedFileName, optionalSuffix: nil) {
+                pendingDownload.pathSelectionCallback(fileName)
+            }
             // Notify
             NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
-                "id": String(self.pendingDownload!.downloadId),
-                "status": FileDownloadNotificationStatus.started
+                "id": String(pendingDownload.downloadId), "status": FileDownloadNotificationStatus.started
             ])
-            //empty refs
+            // empty refs
             self.pendingDownload = nil
             return
         }
@@ -394,19 +395,21 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     }
 
     private func getUniqueDownloadFileURL(_ documentsFolderURL: URL, suggestedFilename: String, optionalSuffix: Int?) -> URL {
-        let suffix = optionalSuffix != nil ? String(optionalSuffix!) : ""
+        let suffix = ""
+        if let optionalSuffix = optionalSuffix { suffix = String(optionalSuffix) }
         var fileComps = suggestedFilename.split(separator: ".")
         var fileName = ""
-        if (fileComps.count > 1) {
+        if fileComps.count > 1 {
             let fileExtension = "." + String(fileComps.popLast() ?? "")
             fileName = fileComps.joined(separator: ".") + suffix + fileExtension
         } else {
             fileName = suggestedFilename + suffix
         }
-        //Check if file with generated name exists
+        // Check if file with generated name exists
         let documentURL = documentsFolderURL.appendingPathComponent(fileName, isDirectory: false)
         if fileName == "" || FileManager.default.fileExists(atPath: documentURL.path) {
-            let randSuffix = optionalSuffix != nil ? optionalSuffix! + 1 : 1
+            let randSuffix = 1
+            if let optionalSuffix = optionalSuffix { randSuffix = optionalSuffix + 1; }
             return self.getUniqueDownloadFileURL(documentsFolderURL, suggestedFilename: suggestedFilename, optionalSuffix: randSuffix)
         }
         return documentURL
