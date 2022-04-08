@@ -15,7 +15,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import { Federation } from '../declarations';
+import type { Federation } from '../declarations';
 import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { logger } from '../log';
@@ -72,11 +72,8 @@ export async function copy(
       'capacitor:copy:before',
     );
 
-    // Check if @capacitor/federated is present in package.json or if plugins/federation is in the capacitor config?
-    // if check passes, call copyFederatedDirs
-    // else run normal copy
     const allPlugins = await getPlugins(config, platformName);
-    var isFederated: boolean = false;
+    let isFederated = false;
     if (
       allPlugins.filter(plugin => plugin.id === '@capacitor/federation')
         .length > 0
