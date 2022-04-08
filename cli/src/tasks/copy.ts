@@ -15,6 +15,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
+import { Federation } from '../declarations';
 import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { logger } from '../log';
@@ -76,24 +77,35 @@ export async function copy(
     // else run normal copy
     const allPlugins = await getPlugins(config, platformName);
     var isFederated: boolean = false;
-    if (allPlugins.filter(plugin => plugin.id === '@capacitor/federation').length > 0) {
+    if (
+      allPlugins.filter(plugin => plugin.id === '@capacitor/federation')
+        .length > 0
+    ) {
       isFederated = true;
     }
 
     if (platformName === config.ios.name) {
       if (isFederated) {
-        await copyFederatedWebDirs(config, await config.ios.webDirAbs)
+        await copyFederatedWebDirs(config, await config.ios.webDirAbs);
       } else {
-        await copyWebDir(config, await config.ios.webDirAbs, config.app.webDirAbs);
+        await copyWebDir(
+          config,
+          await config.ios.webDirAbs,
+          config.app.webDirAbs,
+        );
       }
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
     } else if (platformName === config.android.name) {
       if (isFederated) {
-        await copyFederatedWebDirs(config, await config.android.webDirAbs)
+        await copyFederatedWebDirs(config, await config.android.webDirAbs);
       } else {
-        await copyWebDir(config, config.android.webDirAbs, config.app.webDirAbs);
+        await copyWebDir(
+          config,
+          config.android.webDirAbs,
+          config.app.webDirAbs,
+        );
       }
       await copyCapacitorConfig(config, config.android.assetsDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -105,6 +117,7 @@ export async function copy(
       throw `Platform ${platformName} is not valid.`;
     }
   });
+
   await runPlatformHook(
     config,
     platformName,
@@ -128,7 +141,11 @@ async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
   );
 }
 
-async function copyWebDir(config: Config, nativeAbsDir: string, webAbsDir: string) {
+async function copyWebDir(
+  config: Config,
+  nativeAbsDir: string,
+  webAbsDir: string,
+) {
   const webRelDir = basename(webAbsDir);
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
 
@@ -157,26 +174,31 @@ async function copyWebDir(config: Config, nativeAbsDir: string, webAbsDir: strin
 }
 
 async function copyFederatedWebDirs(config: Config, nativeAbsDir: string) {
-  interface FedApp {
-    name: string,
-    webDir: string,
-    appId: string
+  logger.info('Federated Capacitor Plugin Loaded - Copying Web Assets');
+
+  if (!config.app.extConfig?.plugins?.Federation) {
+    return;
+  }
+  const fedConfig = config.app.extConfig.plugins.Federation;
+  if (!isFederation(fedConfig.shell)) {
+    return;
+  }
+  if (!fedConfig.apps.every(isFederation)) {
+    return;
   }
 
-  logger.info("Federated Capacitor Plugin Loaded - Copying Web Assets")
-  if (config.app.extConfig.plugins && config.app.extConfig.plugins.Federation) {
-    const fedConfig = config.app.extConfig.plugins.Federation
-    const fedApps = fedConfig.apps as unknown as FedApp[]
-    const shellApp = fedConfig.shell as unknown as FedApp
-    shellApp.webDir = shellApp.webDir ? resolve(config.app.rootDir, shellApp.webDir) : config.app.webDirAbs;
-    fedApps.push(shellApp)
-
-    await Promise.all(fedApps.map(app => {
-      const appDir = resolve(config.app.rootDir, app.webDir)
-      copyWebDir(config, resolve(nativeAbsDir, app.name), appDir)
-    }))
-  } else {
-    // Federated Plugin is present but config not set
-  }
+  await Promise.all(
+    [...fedConfig.apps, fedConfig.shell].map(app => {
+      const appDir = resolve(config.app.rootDir, app.webDir);
+      copyWebDir(config, resolve(nativeAbsDir, app.name), appDir);
+    }),
+  );
 }
 
+function isFederation(config: any): config is Federation {
+  return (
+    (config as Federation).webDir !== undefined &&
+    (config as Federation).name !== undefined &&
+    (config as Federation).appId !== undefined
+  );
+}

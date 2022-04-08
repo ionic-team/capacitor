@@ -474,12 +474,22 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
+export interface Federation {
+  name: string;
+  webDir: string;
+  appId: string;
+}
+
 export interface PluginsConfig {
   /**
    * Plugin configuration by class name.
    *
    * @since 1.0.0
    */
+  Federation?: {
+    shell: Federation;
+    apps: Federation[];
+  };
   [key: string]:
     | {
         [key: string]: any;
