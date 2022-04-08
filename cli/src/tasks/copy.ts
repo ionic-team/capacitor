@@ -96,7 +96,7 @@ export async function copy(
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
     } else if (platformName === config.android.name) {
       if (isFederated) {
-        await copyFederatedWebDirs(config, await config.android.webDirAbs);
+        await copyFederatedWebDirs(config, config.android.webDirAbs);
       } else {
         await copyWebDir(
           config,
