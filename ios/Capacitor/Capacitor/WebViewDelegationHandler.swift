@@ -2,6 +2,11 @@ import Foundation
 import WebKit
 import MobileCoreServices
 
+// TODO: remove once Xcode 12 support is dropped
+#if compiler(<5.5)
+    protocol WKDownloadDelegate {}
+#endif
+
 // adopting a public protocol in an internal class is by design
 // swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
@@ -81,13 +86,16 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
         // post a notification for any listeners
         NotificationCenter.default.post(name: .capacitorDecidePolicyForNavigationAction, object: navigationAction)
 
-        // check if we can detect file download on iOS >= 14.5
-        if #available(iOS 14.5, *) {
-            if navigationAction.shouldPerformDownload {
-                decisionHandler(.download)
-                return
+        // TODO: remove once Xcode 12 support is dropped
+        #if compiler(>=5.5)
+            // check if we can detect file download on iOS >= 14.5
+            if #available(iOS 14.5, *) {
+                if navigationAction.shouldPerformDownload {
+                    decisionHandler(.download)
+                    return
+                }
             }
-        }
+        #endif
 
         // sanity check, these shouldn't ever be nil in practice
         guard let bridge = bridge, let navURL = navigationAction.request.url else {
@@ -186,11 +194,14 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                 return
             }
         }
-        // Download support for iOS >= 14.5
-        if #available(iOS 14.5, *) {
-            decisionHandler(.download)
-            return
-        }
+        // TODO: remove once Xcode 12 support is dropped
+        #if compiler(>=5.5)
+            // Download support for iOS >= 14.5
+            if #available(iOS 14.5, *) {
+                decisionHandler(.download)
+                return
+            }
+        #endif
         // Deny if not recognize until now and webView can not
         // show the specified MIME type
         decisionHandler(.cancel)
@@ -201,6 +212,22 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
         bridge?.reset()
         webView.reload()
     }
+
+    // TODO: remove once Xcode 12 support is dropped
+    #if compiler(>=5.5)
+
+    @available(iOS 14.5, *)
+    func webView(_ webView: WKWebView, navigationAction: WKNavigationAction, didBecome download: WKDownload) {
+        CAPLog.print("⚡️  Initiating background download..")
+        download.delegate = self
+    }
+    @available(iOS 14.5, *)
+    func webView(_ webView: WKWebView, navigationResponse: WKNavigationResponse, didBecome download: WKDownload) {
+        CAPLog.print("⚡️  Initiating background download..")
+        download.delegate = self
+    }
+
+    #endif
 
     // MARK: - WKScriptMessageHandler
 
@@ -354,7 +381,8 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
     }
 
     // MARK: - WKDownloadDelegate
-
+    // TODO: remove once Xcode 12 support is dropped
+    #if compiler(>=5.5)
     @available(iOS 14.5, *)
     public func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
         // Add pending download
@@ -387,6 +415,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             "status": FileDownloadNotificationStatus.failed
         ])
     }
+    #endif
 
     // MARK: - UIDocumentPickerDelegate
 
