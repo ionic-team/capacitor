@@ -486,13 +486,19 @@ export interface PluginsConfig {
    *
    * @since 1.0.0
    */
-  Federation?: {
-    shell: Federation;
-    apps: Federation[];
-  };
   [key: string]:
     | {
         [key: string]: any;
       }
     | undefined;
+
+  /**
+   * Capacitor Federation plugin configuration
+   *
+   * @since 3.5.0
+   */
+  Federation?: {
+    shell: Federation;
+    apps: Federation[];
+  };
 }

@@ -177,20 +177,22 @@ async function copyFederatedWebDirs(config: Config, nativeAbsDir: string) {
   logger.info('Federated Capacitor Plugin Loaded - Copying Web Assets');
 
   if (!config.app.extConfig?.plugins?.Federation) {
-    return;
+    throw `Federated Capacitor plugin is present but no valid config is defined.`;
   }
+
   const fedConfig = config.app.extConfig.plugins.Federation;
   if (!isFederation(fedConfig.shell)) {
-    return;
+    throw `Federated Capacitor plugin is present but no valid Shell application is defined in the config.`;
   }
+
   if (!fedConfig.apps.every(isFederation)) {
-    return;
+    throw `Federated Capacitor plugin is present but there is a problem with the apps defined in the config.`;
   }
 
   await Promise.all(
     [...fedConfig.apps, fedConfig.shell].map(app => {
       const appDir = resolve(config.app.rootDir, app.webDir);
-      copyWebDir(config, resolve(nativeAbsDir, app.name), appDir);
+      return copyWebDir(config, resolve(nativeAbsDir, app.name), appDir);
     }),
   );
 }
