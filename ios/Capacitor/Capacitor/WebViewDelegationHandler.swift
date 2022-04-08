@@ -361,9 +361,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
         if let pendingDownload = self.pendingDownload {
             // Generate unique file name on the choosen directory
-            if let fileName: URL = self.getUniqueDownloadFileURL(url, suggestedFilename: pendingDownload.proposedFileName, optionalSuffix: nil) {
-                pendingDownload.pathSelectionCallback(fileName)
-            }
+            let fileName: URL = self.getUniqueDownloadFileURL(url, suggestedFilename: pendingDownload.proposedFileName, optionalSuffix: nil)
+            pendingDownload.pathSelectionCallback(fileName)
             // Notify
             NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
                 "id": String(pendingDownload.downloadId), "status": FileDownloadNotificationStatus.started
@@ -395,7 +394,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     }
 
     private func getUniqueDownloadFileURL(_ documentsFolderURL: URL, suggestedFilename: String, optionalSuffix: Int?) -> URL {
-        let suffix = ""
+        var suffix = ""
         if let optionalSuffix = optionalSuffix { suffix = String(optionalSuffix) }
         var fileComps = suggestedFilename.split(separator: ".")
         var fileName = ""
@@ -408,7 +407,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         // Check if file with generated name exists
         let documentURL = documentsFolderURL.appendingPathComponent(fileName, isDirectory: false)
         if fileName == "" || FileManager.default.fileExists(atPath: documentURL.path) {
-            let randSuffix = 1
+            var randSuffix = 1
             if let optionalSuffix = optionalSuffix { randSuffix = optionalSuffix + 1; }
             return self.getUniqueDownloadFileURL(documentsFolderURL, suggestedFilename: suggestedFilename, optionalSuffix: randSuffix)
         }
