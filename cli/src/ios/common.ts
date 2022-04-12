@@ -64,7 +64,10 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin | null> {
  */
 export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
-  const appName = config.app.appName;
+  const appName = config.app.appName
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 
   const pbxPath = `${config.ios.nativeXcodeProjDirAbs}/project.pbxproj`;
   const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');

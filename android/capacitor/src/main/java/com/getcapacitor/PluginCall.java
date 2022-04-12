@@ -215,6 +215,24 @@ public class PluginCall {
     }
 
     @Nullable
+    public Long getLong(String name) {
+        return this.getLong(name, null);
+    }
+
+    @Nullable
+    public Long getLong(String name, @Nullable Long defaultValue) {
+        Object value = this.data.opt(name);
+        if (value == null) {
+            return defaultValue;
+        }
+
+        if (value instanceof Long) {
+            return (Long) value;
+        }
+        return defaultValue;
+    }
+
+    @Nullable
     public Float getFloat(String name) {
         return this.getFloat(name, null);
     }

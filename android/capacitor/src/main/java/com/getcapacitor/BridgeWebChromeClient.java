@@ -70,7 +70,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
         activityLauncher =
             bridge.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
-                result -> activityListener.onActivityResult(result)
+                result -> {
+                    if (activityListener != null) {
+                        activityListener.onActivityResult(result);
+                    }
+                }
             );
     }
 
@@ -410,7 +414,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         if (fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) {
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
-        if (fileChooserParams.getAcceptTypes().length > 1) {
+        if (fileChooserParams.getAcceptTypes().length > 1 || intent.getType().startsWith(".")) {
             String[] validTypes = getValidTypes(fileChooserParams.getAcceptTypes());
             intent.putExtra(Intent.EXTRA_MIME_TYPES, validTypes);
             if (intent.getType().startsWith(".")) {

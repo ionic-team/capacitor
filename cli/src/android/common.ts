@@ -71,7 +71,11 @@ export async function editProjectSettingsAndroid(
   config: Config,
 ): Promise<void> {
   const appId = config.app.appId;
-  const appName = config.app.appName;
+  const appName = config.app.appName
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '\\"')
+    .replace(/'/g, "\\'");
 
   const manifestPath = resolve(
     config.android.srcMainDirAbs,
@@ -140,10 +144,7 @@ export async function editProjectSettingsAndroid(
   const stringsPath = resolve(config.android.resDirAbs, 'values/strings.xml');
   let stringsContent = await readFile(stringsPath, { encoding: 'utf-8' });
   stringsContent = stringsContent.replace(/com.getcapacitor.myapp/g, appId);
-  stringsContent = stringsContent.replace(
-    /My App/g,
-    appName.replace(/'/g, `\\'`),
-  );
+  stringsContent = stringsContent.replace(/My App/g, appName);
 
   await writeFile(stringsPath, stringsContent);
 }
