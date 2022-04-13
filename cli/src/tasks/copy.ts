@@ -109,7 +109,11 @@ export async function copy(
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
       await writeCordovaAndroidManifest(cordovaPlugins, config, platformName);
     } else if (platformName === config.web.name) {
-      await copyWeb(config);
+      if (isFederated) {
+        logger.info('Federated Capacitor Plugin installed, skipping web bundling...');
+      } else {
+        await copyWeb(config);
+      }
     } else {
       throw `Platform ${platformName} is not valid.`;
     }
