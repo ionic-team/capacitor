@@ -201,7 +201,6 @@ async function copyFederatedWebDirs(config: Config, nativeAbsDir: string) {
 function isFederation(config: any): config is Federation {
   return (
     (config as Federation).webDir !== undefined &&
-    (config as Federation).name !== undefined &&
-    (config as Federation).appId !== undefined
+    (config as Federation).name !== undefined
   );
 }
