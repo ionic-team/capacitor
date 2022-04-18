@@ -15,7 +15,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import type { Federation } from '../declarations';
+import type { Portal } from '../declarations';
 import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { logger } from '../log';
@@ -73,16 +73,16 @@ export async function copy(
     );
 
     const allPlugins = await getPlugins(config, platformName);
-    let isFederated = false;
+    let usesCapacitorPortals = false;
     if (
       allPlugins.filter(plugin => plugin.id === '@capacitor/federation')
         .length > 0
     ) {
-      isFederated = true;
+      usesCapacitorPortals = true;
     }
 
     if (platformName === config.ios.name) {
-      if (isFederated) {
+      if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, await config.ios.webDirAbs);
       } else {
         await copyWebDir(
@@ -95,7 +95,7 @@ export async function copy(
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
     } else if (platformName === config.android.name) {
-      if (isFederated) {
+      if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, config.android.webDirAbs);
       } else {
         await copyWebDir(
@@ -109,9 +109,9 @@ export async function copy(
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
       await writeCordovaAndroidManifest(cordovaPlugins, config, platformName);
     } else if (platformName === config.web.name) {
-      if (isFederated) {
+      if (usesCapacitorPortals) {
         logger.info(
-          'Federated Capacitor Plugin installed, skipping web bundling...',
+          'Capacitor Portals Plugin installed, skipping web bundling...',
         );
       } else {
         await copyWeb(config);
@@ -177,32 +177,32 @@ async function copyWebDir(
 }
 
 async function copyFederatedWebDirs(config: Config, nativeAbsDir: string) {
-  logger.info('Federated Capacitor Plugin Loaded - Copying Web Assets');
+  logger.info('Capacitor Portals Plugin Loaded - Copying Web Assets');
 
-  if (!config.app.extConfig?.plugins?.Federation) {
-    throw `Federated Capacitor plugin is present but no valid config is defined.`;
+  if (!config.app.extConfig?.plugins?.Portals) {
+    throw `Capacitor Portals plugin is present but no valid config is defined.`;
   }
 
-  const fedConfig = config.app.extConfig.plugins.Federation;
-  if (!isFederation(fedConfig.shell)) {
-    throw `Federated Capacitor plugin is present but no valid Shell application is defined in the config.`;
+  const portalsConfig = config.app.extConfig.plugins.Portals;
+  if (!isPortal(portalsConfig.shell)) {
+    throw `Capacitor Portals plugin is present but no valid Shell application is defined in the config.`;
   }
 
-  if (!fedConfig.apps.every(isFederation)) {
-    throw `Federated Capacitor plugin is present but there is a problem with the apps defined in the config.`;
+  if (!portalsConfig.apps.every(isPortal)) {
+    throw `Capacitor Portals plugin is present but there is a problem with the apps defined in the config.`;
   }
 
   await Promise.all(
-    [...fedConfig.apps, fedConfig.shell].map(app => {
+    [...portalsConfig.apps, portalsConfig.shell].map(app => {
       const appDir = resolve(config.app.rootDir, app.webDir);
       return copyWebDir(config, resolve(nativeAbsDir, app.name), appDir);
     }),
   );
 }
 
-function isFederation(config: any): config is Federation {
+function isPortal(config: any): config is Portal {
   return (
-    (config as Federation).webDir !== undefined &&
-    (config as Federation).name !== undefined
+    (config as Portal).webDir !== undefined &&
+    (config as Portal).name !== undefined
   );
 }
