@@ -474,10 +474,10 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
-export interface Federation {
+export interface Portal {
   name: string;
   webDir: string;
-  appId: string;
+  appId?: string;
 }
 
 export interface PluginsConfig {
@@ -497,8 +497,8 @@ export interface PluginsConfig {
    *
    * @since 3.5.0
    */
-  Federation?: {
-    shell: Federation;
-    apps: Federation[];
+  Portals?: {
+    shell: Portal;
+    apps: Portal[];
   };
 }
