@@ -94,7 +94,7 @@ public class JSExport {
                 return readFile(context.getAssets(), path);
             }
         } catch (IOException ex) {
-            Logger.error("Unable to read file at path " + path);
+            Logger.warn("Unable to read file at path " + path);
         }
         return builder.toString();
     }
