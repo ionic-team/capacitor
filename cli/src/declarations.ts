@@ -493,7 +493,7 @@ export interface PluginsConfig {
     | undefined;
 
   /**
-   * Capacitor Federation plugin configuration
+   * Capacitor Portals plugin configuration
    *
    * @since 3.5.0
    */
