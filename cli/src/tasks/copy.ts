@@ -75,8 +75,9 @@ export async function copy(
     const allPlugins = await getPlugins(config, platformName);
     let usesCapacitorPortals = false;
     if (
-      allPlugins.filter(plugin => plugin.id === '@ionic-enterprise/capacitor-portals')
-        .length > 0
+      allPlugins.filter(
+        plugin => plugin.id === '@ionic-enterprise/capacitor-portals',
+      ).length > 0
     ) {
       usesCapacitorPortals = true;
     }
