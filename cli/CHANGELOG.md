@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/ionic-team/capacitor/compare/3.4.3...3.5.0) (2022-04-22)
+
+
+### Features
+
+* **cli:** support capacitor portals plugin changes needed ([#5558](https://github.com/ionic-team/capacitor/issues/5558)) ([6810a19](https://github.com/ionic-team/capacitor/commit/6810a19ae2bbda1f4b2afad61d37ca822ca157f5))
+
+
+
+
+
 ## [3.4.3](https://github.com/ionic-team/capacitor/compare/3.4.2...3.4.3) (2022-03-04)
 
 

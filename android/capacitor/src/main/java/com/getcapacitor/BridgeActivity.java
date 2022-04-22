@@ -12,11 +12,11 @@ public class BridgeActivity extends AppCompatActivity {
 
     protected Bridge bridge;
     protected boolean keepRunning = true;
-    private CapConfig config;
+    protected CapConfig config;
 
-    private int activityDepth = 0;
-    private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-    private final Bridge.Builder bridgeBuilder = new Bridge.Builder(this);
+    protected int activityDepth = 0;
+    protected List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
+    protected final Bridge.Builder bridgeBuilder = new Bridge.Builder(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public class BridgeActivity extends AppCompatActivity {
         this.load();
     }
 
-    private void load() {
+    protected void load() {
         Logger.debug("Starting BridgeActivity");
 
         bridge = bridgeBuilder.addPlugins(initialPlugins).setConfig(config).create();
