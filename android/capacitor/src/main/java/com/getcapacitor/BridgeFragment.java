@@ -52,6 +52,10 @@ public class BridgeFragment extends Fragment {
         this.initialPlugins.add(plugin);
     }
 
+    public void addPlugins(List<Class<? extends Plugin>> plugins) {
+        this.initialPlugins.addAll(plugins);
+    }
+
     public void setConfig(CapConfig config) {
         this.config = config;
     }
@@ -121,6 +125,7 @@ public class BridgeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        this.loadPluginsFromConfig(view.getContext());
         this.load(savedInstanceState);
     }
 
@@ -129,6 +134,16 @@ public class BridgeFragment extends Fragment {
         super.onDestroy();
         if (this.bridge != null) {
             this.bridge.onDestroy();
+        }
+    }
+
+    private void loadPluginsFromConfig(Context context) {
+        PluginManager loader = new PluginManager(context.getAssets());
+
+        try {
+            addPlugins(loader.loadPluginClasses());
+        } catch (PluginLoadException ex) {
+            Logger.error("Error loading plugins.", ex);
         }
     }
 }
