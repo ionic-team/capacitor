@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/android",
-  "version": "3.4.3",
+  "version": "3.5.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -22,7 +22,7 @@
     "verify": "./gradlew clean lint build test -b capacitor/build.gradle"
   },
   "peerDependencies": {
-    "@capacitor/core": "^3.4.0"
+    "@capacitor/core": "^3.5.0"
   },
   "publishConfig": {
     "access": "public"
