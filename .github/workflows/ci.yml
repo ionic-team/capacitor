@@ -27,11 +27,6 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
-      - name: Get Package Version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@master
-        with:
-          path: core/
   lint:
     runs-on: macos-latest
     timeout-minutes: 30
