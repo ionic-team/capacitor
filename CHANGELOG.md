@@ -3,6 +3,55 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/ionic-team/capacitor/compare/3.4.3...3.5.0) (2022-04-22)
+
+
+### Features
+
+* **android:** Add overridable routing for WebViewLocalServer ([#5553](https://github.com/ionic-team/capacitor/issues/5553)) ([3bb288e](https://github.com/ionic-team/capacitor/commit/3bb288e848c5c0e49c1e58c0782e0b1ffd7b1f31))
+* **cli:** support capacitor portals plugin changes needed ([#5558](https://github.com/ionic-team/capacitor/issues/5558)) ([6810a19](https://github.com/ionic-team/capacitor/commit/6810a19ae2bbda1f4b2afad61d37ca822ca157f5))
+* **ios:** Add overrideable routing for CAPBridgeViewController subclasses ([#5546](https://github.com/ionic-team/capacitor/issues/5546)) ([8875d5e](https://github.com/ionic-team/capacitor/commit/8875d5e2721e8a8ee763ce70cb672db383f36efa))
+
+
+
+
+
+## [3.4.3](https://github.com/ionic-team/capacitor/compare/3.4.2...3.4.3) (2022-03-04)
+
+
+### Bug Fixes
+
+* **cli:** avoid srcFiles is not iterable on kotlinNeededCheck ([#5481](https://github.com/ionic-team/capacitor/issues/5481)) ([3c2b579](https://github.com/ionic-team/capacitor/commit/3c2b579c6edb1fc69d85689b268eb92067b7821b))
+
+
+
+
+
+## [3.4.2](https://github.com/ionic-team/capacitor/compare/3.4.1...3.4.2) (2022-03-03)
+
+
+### Bug Fixes
+
+* **android:** compatibility with cordova kotlin plugins ([#5438](https://github.com/ionic-team/capacitor/issues/5438)) ([55bf004](https://github.com/ionic-team/capacitor/commit/55bf004897b3feb280ab6b6575d2a2c1a0a183e2))
+
+
+
+
+
+## [3.4.1](https://github.com/ionic-team/capacitor/compare/3.4.0...3.4.1) (2022-02-09)
+
+
+### Bug Fixes
+
+* **ci:** add token to ghr call in xcframework build action ([#5422](https://github.com/ionic-team/capacitor/issues/5422)) ([5573a77](https://github.com/ionic-team/capacitor/commit/5573a77b13539a5c36e4fbc7a1cd6548689d83d3))
+* **ci:** Fix tags/releases for Attach .xcframework CI action ([#5423](https://github.com/ionic-team/capacitor/issues/5423)) ([57b3df3](https://github.com/ionic-team/capacitor/commit/57b3df3724a2bda8e59af83f99c127b1503b5c37))
+* **cli:** Better error on gradlew permission problems ([#5405](https://github.com/ionic-team/capacitor/issues/5405)) ([9420f08](https://github.com/ionic-team/capacitor/commit/9420f08dedad78cfaa5500cccf8bdbf1a9140684))
+* **ios:** Reload webView on webViewWebContentProcessDidTerminate ([#5391](https://github.com/ionic-team/capacitor/issues/5391)) ([beebff4](https://github.com/ionic-team/capacitor/commit/beebff4550575c28c233937a11a8eacf5a76411c))
+
+
+
+
+
 # [3.4.0](https://github.com/ionic-team/capacitor/compare/3.3.4...3.4.0) (2022-01-19)
 
 

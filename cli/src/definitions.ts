@@ -1,4 +1,4 @@
-import type { CapacitorConfig } from './declarations';
+import type { CapacitorConfig, PluginsConfig } from './declarations';
 
 type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
 
@@ -119,6 +119,7 @@ export interface Config {
   readonly web: WebConfig;
   readonly cli: CLIConfig;
   readonly app: AppConfig;
+  readonly plugins?: PluginsConfig;
 }
 
 export interface FrameworkConfig {

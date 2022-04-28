@@ -474,6 +474,12 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
+export interface Portal {
+  name: string;
+  webDir: string;
+  appId?: string;
+}
+
 export interface PluginsConfig {
   /**
    * Plugin configuration by class name.
@@ -485,4 +491,14 @@ export interface PluginsConfig {
         [key: string]: any;
       }
     | undefined;
+
+  /**
+   * Capacitor Portals plugin configuration
+   *
+   * @since 3.5.0
+   */
+  Portals?: {
+    shell: Portal;
+    apps: Portal[];
+  };
 }
