@@ -85,7 +85,7 @@ jobs:
       - run: npm test
         working-directory: ./core
   test-ios:
-    runs-on: macos-latest
+    runs-on: macos-12
     timeout-minutes: 30
     needs:
       - setup
@@ -93,7 +93,7 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - /Applications/Xcode_13.0.app
+          - /Applications/Xcode_13.3.1.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/setup-node@v1
