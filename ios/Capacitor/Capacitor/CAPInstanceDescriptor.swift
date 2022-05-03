@@ -125,6 +125,9 @@ internal extension InstanceDescriptor {
             if let limitsNavigations = config[keyPath: "ios.limitsNavigationsToAppBoundDomains"] as? Bool {
                 limitsNavigationsToAppBoundDomains = limitsNavigations
             }
+            if let preferredMode = (config[keyPath: "ios.preferredContentMode"] as? String) {
+                preferredContentMode = preferredMode
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity

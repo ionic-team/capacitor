@@ -35,6 +35,7 @@
         _appLocation = descriptor.appLocation;
         _appStartPath = descriptor.appStartPath;
         _limitsNavigationsToAppBoundDomains = descriptor.limitsNavigationsToAppBoundDomains;
+        _preferredContentMode = descriptor.preferredContentMode;
         _pluginConfigurations = descriptor.pluginConfigurations;
         _legacyConfig = descriptor.legacyConfig;
         // construct the necessary URLs
