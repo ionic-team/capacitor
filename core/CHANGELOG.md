@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.1](https://github.com/ionic-team/capacitor/compare/3.5.0...3.5.1) (2022-05-04)
+
+
+### Bug Fixes
+
+* **core:** Make cordova bridge use Promise instead of setTimeout ([#5586](https://github.com/ionic-team/capacitor/issues/5586)) ([f35d96b](https://github.com/ionic-team/capacitor/commit/f35d96b185f5890600a64b78e6bf939c336cbb2d))
+
+
+
+
+
 # [3.5.0](https://github.com/ionic-team/capacitor/compare/3.4.3...3.5.0) (2022-04-22)
 
 **Note:** Version bump only for package @capacitor/core
