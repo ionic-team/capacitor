@@ -64,7 +64,7 @@
   "devDependencies": {
     "@types/debug": "^4.1.7",
     "@types/jest": "^26.0.4",
-    "@types/open": "^6.2.1",
+    "@types/open": "^6.1.0",
     "@types/plist": "^3.0.2",
     "@types/prompts": "^2.0.14",
     "@types/semver": "^7.3.9",
