@@ -23,4 +23,8 @@ class RouterTests: XCTestCase {
     func testRouterReturnsPathWhenProvidedValidPath() {
         XCTAssertEqual(router.route(for: "/a/valid/path.ext"), "/a/valid/path.ext")
     }
+    
+    func testRouterReturnsPathWhenProvidedValidPathWithExtensionAndSpaces() {
+        XCTAssertEqual(router.route(for: "/a/valid/file path.ext"), "/a/valid/file path.ext")
+    }
 }
