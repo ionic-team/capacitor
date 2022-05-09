@@ -115,6 +115,15 @@ import Cordova
                 webViewConfiguration.applicationNameForUserAgent = appendUserAgent
             }
         }
+        if let preferredContentMode = instanceConfiguration.preferredContentMode {
+            var mode = WKWebpagePreferences.ContentMode.recommended
+            if preferredContentMode == "mobile" {
+                mode = WKWebpagePreferences.ContentMode.mobile
+            } else if preferredContentMode == "desktop" {
+                mode = WKWebpagePreferences.ContentMode.desktop
+            }
+            webViewConfiguration.defaultWebpagePreferences.preferredContentMode = mode
+        }
         return webViewConfiguration
     }
 
