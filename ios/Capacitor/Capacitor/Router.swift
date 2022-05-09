@@ -15,10 +15,10 @@ public protocol Router {
 // swiftlint:disable:next type_name
 internal struct _Router: Router {
     func route(for path: String) -> String {
-        let pathUrl = URL(string: path)
+        let pathUrl = URL(fileURLWithPath: path)
        
-        // if the pathUrl is null, then it is an invalid url (meaning it is empty or just plain invalid) then we want to route to /index.html
-        if pathUrl?.pathExtension.isEmpty ?? true {
+        // If there's no path extension it also means the path is empty or a SPA route
+        if pathUrl.pathExtension.isEmpty {
             return "/index.html"
         }
         

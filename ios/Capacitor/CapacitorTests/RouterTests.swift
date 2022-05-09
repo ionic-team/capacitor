@@ -12,10 +12,6 @@ import XCTest
 class RouterTests: XCTestCase {
     let router = _Router()
     
-    func testRouterReturnsIndexWhenProvidedInvalidPath() {
-        XCTAssertEqual(router.route(for: "/skull.💀"), "/index.html")
-    }
-    
     func testRouterReturnsIndexWhenProvidedEmptyPath() {
         XCTAssertEqual(router.route(for: ""), "/index.html")
     }
