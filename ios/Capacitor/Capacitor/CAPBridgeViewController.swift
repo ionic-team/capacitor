@@ -282,6 +282,11 @@ extension CAPBridgeViewController {
         let webConfig = webViewConfiguration(for: configuration)
         webConfig.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
         webConfig.userContentController = delegationHandler.contentController
+        // Prevent auto scaling of content on all web pages, including pages out of our control like SSO.
+        // This is necessary for Okta to look good.
+        let jscript = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1'); document.getElementsByTagName('head')[0].appendChild(meta);"
+        let userScript = WKUserScript(source: jscript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        webConfig.userContentController.addUserScript(userScript)
         // create the web view and set its properties
         let aWebView = webView(with: .zero, configuration: webConfig)
         aWebView.scrollView.bounces = false
