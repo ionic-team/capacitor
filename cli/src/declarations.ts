@@ -203,6 +203,14 @@ export interface CapacitorConfig {
      * @since 3.1.0
      */
     flavor?: string;
+
+    /**
+     * Whether to give the webview initial focus.
+     *
+     * @since 3.5.1
+     * @default true
+     */
+    initialFocus?: boolean;
   };
 
   ios?: {
