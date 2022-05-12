@@ -382,6 +382,8 @@ const initBridge = (w: any): void => {
     }
 
     cap.handleWindowError = (msg, url, lineNo, columnNo, err) => {
+      if (!msg) return false;
+
       const str = (msg as string).toLowerCase();
 
       if (str.indexOf('script error') > -1) {

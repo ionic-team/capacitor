@@ -323,6 +323,8 @@ const nativeBridge = (function (exports) {
                 };
             }
             cap.handleWindowError = (msg, url, lineNo, columnNo, err) => {
+                if (!msg)
+                    return false;
                 const str = msg.toLowerCase();
                 if (str.indexOf('script error') > -1) ;
                 else {
