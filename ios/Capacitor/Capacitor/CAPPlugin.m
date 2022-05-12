@@ -146,11 +146,7 @@
 }
 
 -(BOOL)supportsPopover {
-  if (@available(iOS 13, *)) {
     return YES;
-  } else {
-    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
-  }
 }
 
 - (NSNumber*)shouldOverrideLoad:(WKNavigationAction*)navigationAction {
