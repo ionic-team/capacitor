@@ -9,39 +9,39 @@ import Foundation
         self.config = config
     }
 
-    public func getString(configKey: String, defaultValue: String? = nil) -> String? {
+    @objc public func getString(_ configKey: String, _ defaultValue: String? = nil) -> String? {
         if let val = (self.config)[keyPath: KeyPath(configKey)] as? String {
             return val
         }
         return defaultValue
     }
 
-    public func getBoolean(configKey: String, defaultValue: Bool) -> Bool {
+    @objc public func getBoolean(_ configKey: String, _ defaultValue: Bool) -> Bool {
         if let val = (self.config)[keyPath: KeyPath(configKey)] as? Bool {
             return val
         }
         return defaultValue
     }
 
-    public func getInt(configKey: String, defaultValue: Int) -> Int {
+    @objc public func getInt(_ configKey: String, _ defaultValue: Int) -> Int {
         if let val = (self.config)[keyPath: KeyPath(configKey)] as? Int {
             return val
         }
         return defaultValue
     }
 
-    public func getArray(configKey: String, defaultValue: JSArray? = nil) -> JSArray? {
+    public func getArray(_ configKey: String, _ defaultValue: JSArray? = nil) -> JSArray? {
         if let val = (self.config)[keyPath: KeyPath(configKey)] as? JSArray {
             return val
         }
         return defaultValue
     }
 
-    public func getObject(configKey: String) -> JSObject? {
+    public func getObject(_ configKey: String) -> JSObject? {
         return (self.config)[keyPath: KeyPath(configKey)] as? JSObject
     }
 
-    public func isEmpty() -> Bool {
+    @objc public func isEmpty() -> Bool {
         return self.config.isEmpty
     }
 

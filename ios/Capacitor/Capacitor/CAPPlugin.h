@@ -49,6 +49,6 @@
 -(id _Nullable)getConfigValue:(NSString* _Nonnull)key __deprecated_msg("use getConfig() and access config values using the methods available depending on the type.");
 -(PluginConfig* _Nonnull)getConfig;
 -(void)setCenteredPopover:(UIViewController* _Nonnull)vc;
--(BOOL)supportsPopover;
+-(BOOL)supportsPopover DEPRECATED_MSG_ATTRIBUTE("All iOS 13+ devices support popover");
 
 @end
