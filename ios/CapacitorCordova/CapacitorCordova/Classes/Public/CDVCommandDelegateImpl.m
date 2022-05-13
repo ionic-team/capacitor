@@ -25,12 +25,13 @@
 
 @synthesize urlTransformer;
 
-- (id)initWithWebView:(WKWebView*)webView pluginManager:(CDVPluginManager *)manager
+- (id)initWithWebView:(WKWebView*)webView pluginManager:(CDVPluginManager *)manager baseFolder:(NSString *)baseFolder
 {
     self = [super init];
     if (self != nil) {
         _webView = webView;
         _manager = manager;
+        _baseFolder = baseFolder;
         NSError* err = nil;
         _callbackIdPattern = [NSRegularExpression regularExpressionWithPattern:@"[^A-Za-z0-9._-]" options:0 error:&err];
         if (err != nil) {
@@ -51,11 +52,10 @@
     [directoryParts removeLastObject];
 
     NSString* directoryPartsJoined = [directoryParts componentsJoinedByString:@"/"];
-    NSString* baseFolder = @"public";
-    NSString* directoryStr = baseFolder;
+    NSString* directoryStr = _baseFolder;
 
     if ([directoryPartsJoined length] > 0) {
-        directoryStr = [NSString stringWithFormat:@"%@/%@", baseFolder, [directoryParts componentsJoinedByString:@"/"]];
+        directoryStr = [NSString stringWithFormat:@"%@/%@", _baseFolder, [directoryParts componentsJoinedByString:@"/"]];
     }
 
     return [mainBundle pathForResource:filename ofType:@"" inDirectory:directoryStr];

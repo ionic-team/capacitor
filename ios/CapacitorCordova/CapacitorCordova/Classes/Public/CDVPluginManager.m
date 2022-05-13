@@ -4,7 +4,7 @@
 
 @implementation CDVPluginManager
 
-- (id)initWithParser:(CDVConfigParser*)parser viewController:(UIViewController*)viewController webView:(WKWebView *)webview
+- (id)initWithParser:(CDVConfigParser*)parser viewController:(UIViewController*)viewController webView:(WKWebView *)webview baseFolder:(NSString *)baseFolder
 {
   self = [super init];
   if (self != nil) {
@@ -13,7 +13,7 @@
     _viewController = viewController;
     _webView = webview;
     _pluginObjects = [[NSMutableDictionary alloc] init];
-    _commandDelegate = [[CDVCommandDelegateImpl alloc] initWithWebView:_webView pluginManager:self];
+    _commandDelegate = [[CDVCommandDelegateImpl alloc] initWithWebView:_webView pluginManager:self baseFolder:baseFolder];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:)
                                                  name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillEnterForeground:)

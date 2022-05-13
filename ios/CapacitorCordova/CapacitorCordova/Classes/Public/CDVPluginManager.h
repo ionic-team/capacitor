@@ -19,7 +19,7 @@
 @property (nonatomic, strong) WKWebView * webView;
 @property (nonatomic, strong) id <CDVCommandDelegate> commandDelegate;
 
-- (id)initWithParser:(CDVConfigParser*)parser viewController:(UIViewController*)viewController webView:(WKWebView *)webview;
+- (id)initWithParser:(CDVConfigParser*)parser viewController:(UIViewController*)viewController webView:(WKWebView *)webview baseFolder:(NSString *)baseFolder;
 - (CDVPlugin *)getCommandInstance:(NSString*)pluginName;
 
 @end

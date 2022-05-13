@@ -248,7 +248,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func exportCordovaJS() {
         do {
-            try JSExport.exportCordovaJS(userContentController: webViewDelegationHandler.contentController)
+            let path = config.appLocation
+                .pathComponents
+                .drop { !$0.hasSuffix(".app") } // get rid of everything before AppName.app
+                .dropFirst() // get rid of AppName.app
+                .joined(separator: "/")
+            try JSExport.exportCordovaJS(subdirectory: path, userContentController: webViewDelegationHandler.contentController)
         } catch {
             type(of: self).fatalError(error, error)
         }
@@ -365,14 +370,27 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         guard let cordovaParser = cordovaParser else {
             return
         }
-        cordovaPluginManager = CDVPluginManager.init(parser: cordovaParser, viewController: self.viewController, webView: self.getWebView())
+        
+        let path = config.appLocation
+            .pathComponents
+            .drop { !$0.hasSuffix(".app") } // get rid of everything before AppName.app
+            .dropFirst() // get rid of AppName.app
+            .joined(separator: "/")
+            
+        cordovaPluginManager = CDVPluginManager(
+            parser: cordovaParser,
+            viewController: viewController,
+            webView: getWebView(),
+            baseFolder: path
+        )
+        
         if cordovaParser.startupPluginNames.count > 0 {
             for pluginName in cordovaParser.startupPluginNames {
                 _ = cordovaPluginManager?.getCommandInstance(pluginName as? String)
             }
         }
         do {
-            try JSExport.exportCordovaPluginsJS(userContentController: webViewDelegationHandler.contentController)
+            try JSExport.exportCordovaPluginsJS(subdirectory: path, userContentController: webViewDelegationHandler.contentController)
         } catch {
             type(of: self).fatalError(error, error)
         }

@@ -29,11 +29,12 @@
     @private
     __weak WKWebView* _webView;
     __weak CDVPluginManager* _manager;
+    NSString* _baseFolder;
     NSRegularExpression* _callbackIdPattern;
     @protected
     __weak CDVCommandQueue* _commandQueue;
     BOOL _delayResponses;
 }
-- (id)initWithWebView:(WKWebView*)webView pluginManager:(CDVPluginManager *)manager;
+- (id)initWithWebView:(WKWebView*)webView pluginManager:(CDVPluginManager *)manager baseFolder:(NSString *)baseFolder;
 - (void)flushCommandQueueWithDelayedJs;
 @end

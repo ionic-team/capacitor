@@ -35,12 +35,12 @@ internal class JSExport {
         }
     }
 
-    static func exportCordovaJS(userContentController: WKUserContentController) throws {
-        guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
+    static func exportCordovaJS(subdirectory: String = "public", userContentController: WKUserContentController) throws {
+        guard let cordovaUrl = Bundle.main.url(forResource: "cordova", withExtension: "js", subdirectory: subdirectory) else {
             CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
             throw CapacitorBridgeError.errorExportingCoreJS
         }
-        guard let cordovaPluginsUrl = Bundle.main.url(forResource: "public/cordova_plugins", withExtension: "js") else {
+        guard let cordovaPluginsUrl = Bundle.main.url(forResource: "cordova_plugins", withExtension: "js", subdirectory: subdirectory) else {
             CAPLog.print("ERROR: Required cordova_plugins.js file not found. Cordova plugins  will not function!")
             throw CapacitorBridgeError.errorExportingCoreJS
         }
@@ -167,8 +167,8 @@ internal class JSExport {
         return lines.joined(separator: "\n")
     }
 
-    static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
-        if let pluginsJSFolder = Bundle.main.url(forResource: "public/plugins", withExtension: nil) {
+    static func exportCordovaPluginsJS(subdirectory: String = "public", userContentController: WKUserContentController) throws {
+        if let pluginsJSFolder = Bundle.main.url(forResource: "plugins", withExtension: nil, subdirectory: subdirectory) {
             self.injectFilesForFolder(folder: pluginsJSFolder, userContentController: userContentController)
         }
     }
