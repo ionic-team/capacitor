@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.pm.PackageInfoCompat;
 import androidx.fragment.app.Fragment;
 import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -293,7 +294,7 @@ public class Bridge {
 
         try {
             PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
-            versionCode = Integer.toString(pInfo.versionCode);
+            versionCode = Integer.toString((int) PackageInfoCompat.getLongVersionCode(pInfo));
             versionName = pInfo.versionName;
         } catch (Exception ex) {
             Logger.error("Unable to get package info", ex);
