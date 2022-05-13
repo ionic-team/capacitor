@@ -482,14 +482,8 @@ public class Bridge {
 
         CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
         if (pluginAnnotation == null) {
-            NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
-
-            if (legacyPluginAnnotation == null) {
-                Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
-                return;
-            }
-
-            pluginName = legacyPluginAnnotation.name();
+            Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+            return;
         } else {
             pluginName = pluginAnnotation.name();
         }
