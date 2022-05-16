@@ -481,7 +481,22 @@ const initBridge = (w: any): void => {
             }, new cap.Exception(''));
           }
 
-          if (typeof storedCall.callback === 'function') {
+          if (
+            typeof storedCall.callback === 'function' &&
+            typeof storedCall.resolve === 'function'
+          ) {
+            // promise with callback
+            if (result.success) {
+              if (result.save) {
+                storedCall.callback(result.data);
+              } else {
+                storedCall.resolve(result.data);
+              }
+            } else {
+              storedCall.reject(null, result.error);
+              callbacks.delete(result.callbackId);
+            }
+          } else if (typeof storedCall.callback === 'function') {
             // callback
             if (result.success) {
               storedCall.callback(result.data);
@@ -531,9 +546,10 @@ const initBridge = (w: any): void => {
       return cap.toNative(pluginName, methodName, options, { callback });
     };
 
-    cap.nativePromise = (pluginName, methodName, options) => {
+    cap.nativePromise = (pluginName, methodName, options, callback) => {
       return new Promise((resolve, reject) => {
         cap.toNative(pluginName, methodName, options, {
+          callback: callback,
           resolve: resolve,
           reject: reject,
         });

@@ -145,7 +145,7 @@ public class JSExport {
         args.add(CATCHALL_OPTIONS_PARAM);
 
         String returnType = method.getReturnType();
-        if (returnType.equals(PluginMethod.RETURN_CALLBACK)) {
+        if (!returnType.equals(PluginMethod.RETURN_NONE)) {
             args.add(CALLBACK_PARAM);
         }
 
@@ -166,7 +166,15 @@ public class JSExport {
                 break;
             case PluginMethod.RETURN_PROMISE:
                 lines.add(
-                    "return w.Capacitor.nativePromise('" + plugin.getId() + "', '" + method.getName() + "', " + CATCHALL_OPTIONS_PARAM + ")"
+                    "return w.Capacitor.nativePromise('" +
+                    plugin.getId() +
+                    "', '" +
+                    method.getName() +
+                    "', " +
+                    CATCHALL_OPTIONS_PARAM +
+                    ", " +
+                    CALLBACK_PARAM +
+                    ")"
                 );
                 break;
             case PluginMethod.RETURN_CALLBACK:
