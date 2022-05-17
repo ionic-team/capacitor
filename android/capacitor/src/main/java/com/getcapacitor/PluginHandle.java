@@ -22,6 +22,7 @@ public class PluginHandle {
 
     @SuppressWarnings("deprecation")
     private NativePlugin legacyPluginAnnotation;
+
     private CapacitorPlugin pluginAnnotation;
 
     private Plugin instance;
