@@ -789,15 +789,7 @@ public class Plugin {
     public void requestPermissions(PluginCall call) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
-            // handle permission requests for plugins defined with @NativePlugin (prior to 3.0.0)
-            NativePlugin legacyAnnotation = this.handle.getLegacyPluginAnnotation();
-            String[] perms = legacyAnnotation.permissions();
-            if (perms.length > 0) {
-                saveCall(call);
-                pluginRequestPermissions(perms, legacyAnnotation.permissionRequestCode());
-            } else {
-                call.resolve();
-            }
+            handleLegacyPermission(call);
         } else {
             // handle permission requests for plugins defined with @CapacitorPlugin (since 3.0.0)
             String[] permAliases = null;
@@ -860,6 +852,19 @@ public class Plugin {
                 // no permissions are defined on the plugin, resolve undefined
                 call.resolve();
             }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void handleLegacyPermission(PluginCall call) {
+        // handle permission requests for plugins defined with @NativePlugin (prior to 3.0.0)
+        NativePlugin legacyAnnotation = this.handle.getLegacyPluginAnnotation();
+        String[] perms = legacyAnnotation.permissions();
+        if (perms.length > 0) {
+            saveCall(call);
+            pluginRequestPermissions(perms, legacyAnnotation.permissionRequestCode());
+        } else {
+            call.resolve();
         }
     }
 
