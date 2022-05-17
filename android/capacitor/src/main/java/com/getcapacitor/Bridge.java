@@ -1009,7 +1009,7 @@ public class Bridge {
         // "dangling" plugin call (a plugin call that doesn't have a corresponding web callback)
         // and then send that to the plugin
         if (lastCall == null && pluginCallForLastActivity != null) {
-            plugin.getInstance().saveCall(pluginCallForLastActivity);
+            this.saveCall(pluginCallForLastActivity);
         }
 
         plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
