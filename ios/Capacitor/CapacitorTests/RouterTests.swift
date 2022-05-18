@@ -23,6 +23,10 @@ class RouterTests: XCTestCase {
         checkRouter(path: "/a/valid/path.ext", expected: "/a/valid/path.ext")
     }
     
+    func testRouterReturnsPathWhenProvidedValidPathWithExtensionAndSpaces() {
+        checkRouter(path: "/a/valid/file path.ext", expected: "/a/valid/file path.ext")
+    }
+    
     func checkRouter(path: String, expected: String) {
         XCTContext.runActivity(named: "router creates route path correctly") { _ in
             var router = _Router()
@@ -32,7 +36,4 @@ class RouterTests: XCTestCase {
         }
     }
     
-    func testRouterReturnsPathWhenProvidedValidPathWithExtensionAndSpaces() {
-        XCTAssertEqual(router.route(for: "/a/valid/file path.ext"), "/a/valid/file path.ext")
-    }
 }
