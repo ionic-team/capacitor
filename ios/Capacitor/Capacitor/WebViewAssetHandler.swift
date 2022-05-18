@@ -19,11 +19,10 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
         
-        let resolvedRoute = router.route(for: stringToLoad)
         if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
             startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
         } else {
-            startPath = resolvedRoute
+            startPath = router.route(for: stringToLoad)
         }
         
         let localUrl = URL.init(string: url.absoluteString)!
