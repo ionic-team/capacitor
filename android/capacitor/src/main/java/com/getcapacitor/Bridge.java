@@ -416,6 +416,7 @@ public class Bridge {
     /**
      * Initialize the WebView, setting required flags
      */
+    @SuppressWarnings("deprecation")
     private void initWebView() {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -522,6 +523,7 @@ public class Bridge {
      * @return
      */
     @Deprecated
+    @SuppressWarnings("deprecation")
     public PluginHandle getPluginWithRequestCode(int requestCode) {
         for (PluginHandle handle : this.plugins.values()) {
             int[] requestCodes;
@@ -837,6 +839,7 @@ public class Bridge {
     }
 
     @Deprecated
+    @SuppressWarnings("deprecation")
     public void startActivityForPluginWithResult(PluginCall call, Intent intent, int requestCode) {
         Logger.debug("Starting activity for result");
 
@@ -854,6 +857,7 @@ public class Bridge {
      * @param grantResults the set of granted/denied permissions
      * @return true if permission code was handled by a plugin explicitly, false if not
      */
+    @SuppressWarnings("deprecation")
     boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
@@ -993,6 +997,7 @@ public class Bridge {
      * @param resultCode
      * @param data
      */
+    @SuppressWarnings("deprecation")
     boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
