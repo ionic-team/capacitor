@@ -40,8 +40,8 @@ public class CapConfig {
     private boolean captureInput = false;
     private boolean webContentsDebuggingEnabled = false;
     private boolean loggingEnabled = true;
+    private boolean initialFocus = true;
     private boolean useWideViewPort = false;
-
     // Embedded
     private String startPath;
 
@@ -117,6 +117,7 @@ public class CapConfig {
         this.captureInput = builder.captureInput;
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.loggingEnabled = builder.loggingEnabled;
+        this.initialFocus = builder.initialFocus;
         this.useWideViewPort = builder.useWideViewPort;
 
         // Embedded
@@ -189,6 +190,7 @@ public class CapConfig {
                 loggingEnabled = isDebug;
         }
 
+        initialFocus = JSONUtils.getBoolean(configJSON, "android.initialFocus", initialFocus);
         useWideViewPort = JSONUtils.getBoolean(configJSON, "android.useWideViewPort", useWideViewPort);
 
         // Plugins
@@ -247,10 +249,12 @@ public class CapConfig {
         return loggingEnabled;
     }
 
+    public boolean isInitialFocus() {
+        return initialFocus;
+    }
     public boolean useWideViewPort() {
         return useWideViewPort;
     }
-
     public PluginConfig getPluginConfiguration(String pluginId) {
         PluginConfig pluginConfig = pluginsConfiguration.get(pluginId);
         if (pluginConfig == null) {
@@ -406,6 +410,7 @@ public class CapConfig {
         private boolean captureInput = false;
         private Boolean webContentsDebuggingEnabled = null;
         private boolean loggingEnabled = true;
+        private boolean initialFocus = false;
         private boolean useWideViewPort = false;
 
         // Embedded
@@ -505,7 +510,10 @@ public class CapConfig {
             this.loggingEnabled = enabled;
             return this;
         }
-
+        public Builder setInitialFocus(boolean focus) {
+            this.initialFocus = focus;
+            return this;
+        }
         public Builder setUseWideViewPort(boolean useWideViewPort) {
             this.useWideViewPort = useWideViewPort;
             return this;

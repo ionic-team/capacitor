@@ -448,7 +448,10 @@ public class Bridge {
             Logger.debug("WebView background color not applied");
         }
 
-        webView.requestFocusFromTouch();
+        if (config.isInitialFocus()) {
+            webView.requestFocusFromTouch();
+        }
+
         WebView.setWebContentsDebuggingEnabled(this.config.isWebContentsDebuggingEnabled());
     }
 
