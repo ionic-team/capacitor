@@ -252,6 +252,7 @@ public class CapConfig {
     public boolean isInitialFocus() {
         return initialFocus;
     }
+
     public boolean useWideViewPort() {
         return useWideViewPort;
     }
@@ -510,10 +511,12 @@ public class CapConfig {
             this.loggingEnabled = enabled;
             return this;
         }
+
         public Builder setInitialFocus(boolean focus) {
             this.initialFocus = focus;
             return this;
         }
+
         public Builder setUseWideViewPort(boolean useWideViewPort) {
             this.useWideViewPort = useWideViewPort;
             return this;
