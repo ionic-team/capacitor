@@ -12,11 +12,11 @@ const debug = Debug('capacitor:android:run');
 
 export async function runAndroid(
   config: Config,
-  { target: selectedTarget }: RunCommandOptions,
+  options: RunCommandOptions,
 ): Promise<void> {
   const target = await promptForPlatformTarget(
     await getPlatformTargets('android'),
-    selectedTarget,
+    options.target,
   );
 
   const arg = `assemble${config.android?.flavor || ''}Debug`;
@@ -46,6 +46,10 @@ export async function runAndroid(
   );
 
   const nativeRunArgs = ['android', '--app', apkPath, '--target', target.id];
+
+  if (options.forwardPorts) {
+    nativeRunArgs.push('--forward', `${options.forwardPorts}`)
+  }
 
   debug('Invoking native-run with args: %O', nativeRunArgs);
 

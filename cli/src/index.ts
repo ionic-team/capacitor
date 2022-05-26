@@ -128,7 +128,7 @@ export function runProgram(config: Config): void {
     );
 
   program
-    .command(`run [platform]`)
+    .command('run [platform]')
     .description(
       `runs ${c.input('sync')}, then builds and deploys the native app`,
     )
@@ -137,6 +137,7 @@ export function runProgram(config: Config): void {
     .allowUnknownOption(true)
     .option('--target <id>', 'use a specific target')
     .option('--no-sync', `do not run ${c.input('sync')}`)
+    .option('--forwardPorts <port:port>', 'Automatically run "adb reverse" for better live-reloading support')
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { list, target, sync }) => {
