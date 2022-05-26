@@ -472,19 +472,32 @@ public class Bridge {
         }
     }
 
+    @SuppressWarnings("deprecation")
+    private String getPluginName(Class<? extends Plugin> pluginClass) {
+        CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
+
+        if (pluginAnnotation == null) {
+            NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+            if (legacyPluginAnnotation == null) {
+                Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+                return null;
+            }
+
+            return legacyPluginAnnotation.name();
+        } else {
+            return pluginAnnotation.name();
+        }
+    }
+
     /**
      * Register a plugin class
      * @param pluginClass a class inheriting from Plugin
      */
     public void registerPlugin(Class<? extends Plugin> pluginClass) {
-        String pluginName;
+        String pluginName = this.getPluginName(pluginClass);
 
-        CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
-        if (pluginAnnotation == null) {
-            Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+        if (pluginName == null) {
             return;
-        } else {
-            pluginName = pluginAnnotation.name();
         }
 
         String pluginId = pluginClass.getSimpleName();
@@ -1012,7 +1025,7 @@ public class Bridge {
         // "dangling" plugin call (a plugin call that doesn't have a corresponding web callback)
         // and then send that to the plugin
         if (lastCall == null && pluginCallForLastActivity != null) {
-            this.saveCall(pluginCallForLastActivity);
+            plugin.getInstance().saveCall(pluginCallForLastActivity);
         }
 
         plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
