@@ -416,14 +416,12 @@ public class Bridge {
     /**
      * Initialize the WebView, setting required flags
      */
-    @SuppressWarnings("deprecation")
     private void initWebView() {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setGeolocationEnabled(true);
         settings.setDatabaseEnabled(true);
-        settings.setAppCacheEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         if (this.config.isMixedContentAllowed()) {
