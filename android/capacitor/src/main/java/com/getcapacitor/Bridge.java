@@ -1,8 +1,10 @@
 package com.getcapacitor;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -10,9 +12,12 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
+import android.view.WindowManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -20,6 +25,8 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -40,6 +47,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaWebView;
@@ -72,6 +80,7 @@ public class Bridge {
     private static final String BUNDLE_PLUGIN_CALL_BUNDLE_KEY = "capacitorLastPluginCallBundle";
     private static final String LAST_BINARY_VERSION_CODE = "lastBinaryVersionCode";
     private static final String LAST_BINARY_VERSION_NAME = "lastBinaryVersionName";
+    private final int MINIMUM_ANDROID_WEBVIEW_VERSION = 60;
 
     // The name of the directory we use to look for index.html and the rest of our web assets
     public static final String DEFAULT_WEB_ASSET_DIR = "public";
@@ -150,6 +159,7 @@ public class Bridge {
         this(context, null, webView, initialPlugins, cordovaInterface, pluginManager, preferences, config);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private Bridge(
         AppCompatActivity context,
         Fragment fragment,
@@ -186,6 +196,57 @@ public class Bridge {
 
         // Register our core plugins
         this.registerAllPlugins();
+
+        // Check if the minimum WebView version is hit
+        boolean shouldShowWarning = !this.isMinimumWebViewInstalled();
+        if (shouldShowWarning && Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
+            /*
+             Only Check Android O for the following reasons
+             - Android R and above ships with WebView 61+, so "shouldShowWarning" should be false
+             - `WindowManager.LayoutParams.TYPE_TOAST` was deprecated in O, and
+                the replacement requires a permission we shouldn't need to include
+             */
+
+            // Show error dialog!
+            Logger.error("Installed Android WebView version is below the minimum of " + MINIMUM_ANDROID_WEBVIEW_VERSION);
+
+            // TODO: Allow warning text to be customizable
+            AlertDialog alert = new AlertDialog.Builder(getContext())
+                .setTitle("Unable to Start App")
+                .setMessage("Your installed WebView version is out of date, would you like to update it?")
+                .setPositiveButton(
+                    "Yes",
+                    (dialog, which) -> {
+                        // Open the Google Play Store to update the WebView
+                        final String appPackageName = "com.google.android.webview";
+                        try {
+                            getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                        } catch (ActivityNotFoundException anfe) {
+                            getActivity()
+                                .startActivity(
+                                    new Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)
+                                    )
+                                );
+                        }
+                    }
+                )
+                .setNegativeButton(
+                    "No",
+                    (dialog, which) -> {
+                        // Close app if no is selected
+                        getActivity().finish();
+                        System.exit(0);
+                    }
+                )
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .create();
+
+            // Deprecated in R, but since we're only checking O and below, this is fine
+            alert.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+            alert.show();
+        }
 
         this.loadWebView();
     }
@@ -307,6 +368,40 @@ public class Bridge {
             editor.apply();
             return true;
         }
+        return false;
+    }
+
+    private boolean isMinimumWebViewInstalled() {
+        PackageManager pm = getContext().getPackageManager();
+
+        // Check getCurrentWebViewPackage() directly if above Android 8
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PackageInfo info = WebView.getCurrentWebViewPackage();
+            String majorVersionStr = info.versionName.split("\\.")[0];
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+        }
+
+        // Otherwise manually check WebView versions
+        try {
+            PackageInfo info = pm.getPackageInfo("com.google.android.webview", 0);
+            String majorVersionStr = info.versionName.split("\\.")[0];
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+        } catch (Exception ex) {
+            Logger.warn("Unable to get package info for 'com.google.android.webview'", ex.toString());
+        }
+
+        try {
+            PackageInfo info = pm.getPackageInfo("com.android.webview", 0);
+            String majorVersionStr = info.versionName.split("\\.")[0];
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+        } catch (Exception ex) {
+            Logger.warn("Unable to get package info for 'com.android.webview'", ex.toString());
+        }
+
+        // Could not detect any webview, return false
         return false;
     }
 
