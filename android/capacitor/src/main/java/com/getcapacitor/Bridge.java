@@ -1215,6 +1215,8 @@ public class Bridge {
         private Fragment fragment;
         private final List<WebViewListener> webViewListeners = new ArrayList<>();
 
+        private WebView webView;
+
         public Builder(AppCompatActivity activity) {
             this.activity = activity;
         }
@@ -1222,6 +1224,11 @@ public class Bridge {
         public Builder(Fragment fragment) {
             this.activity = (AppCompatActivity) fragment.getActivity();
             this.fragment = fragment;
+        }
+
+        public Builder(WebView webView) {
+            this.webView = webView;
+            this.activity = (AppCompatActivity) webView.getContext();
         }
 
         public Builder setInstanceState(Bundle instanceState) {
@@ -1278,7 +1285,10 @@ public class Bridge {
                 cordovaInterface.restoreInstanceState(instanceState);
             }
 
-            WebView webView = this.fragment != null ? fragment.getView().findViewById(R.id.webview) : activity.findViewById(R.id.webview);
+            if (webView == null) {
+                webView = this.fragment != null ? fragment.getView().findViewById(R.id.webview) : activity.findViewById(R.id.webview);
+            }
+
             MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(activity.getApplicationContext());
             mockWebView.init(cordovaInterface, pluginEntries, preferences, webView);
             PluginManager pluginManager = mockWebView.getPluginManager();
