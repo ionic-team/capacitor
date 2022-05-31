@@ -473,20 +473,14 @@ public class Bridge {
     }
 
     @SuppressWarnings("deprecation")
-    private String getPluginName(Class<? extends Plugin> pluginClass) {
-        CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
-
-        if (pluginAnnotation == null) {
-            NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
-            if (legacyPluginAnnotation == null) {
-                Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
-                return null;
-            }
-
-            return legacyPluginAnnotation.name();
-        } else {
-            return pluginAnnotation.name();
+    private String getLegacyPluginName(Class<? extends Plugin> pluginClass) {
+        NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+        if (legacyPluginAnnotation == null) {
+            Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+            return null;
         }
+
+        return legacyPluginAnnotation.name();
     }
 
     /**
@@ -494,10 +488,16 @@ public class Bridge {
      * @param pluginClass a class inheriting from Plugin
      */
     public void registerPlugin(Class<? extends Plugin> pluginClass) {
-        String pluginName = this.getPluginName(pluginClass);
+        String pluginName;
 
-        if (pluginName == null) {
-            return;
+        CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
+        if (pluginAnnotation == null) {
+            pluginName = this.getLegacyPluginName(pluginClass);
+            if (pluginName == null) {
+                return;
+            }
+        } else {
+            pluginName = pluginAnnotation.name();
         }
 
         String pluginId = pluginClass.getSimpleName();
