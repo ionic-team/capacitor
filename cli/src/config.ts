@@ -280,7 +280,7 @@ async function loadIOSConfig(
   const nativeXcodeProjDir = `${nativeProjectDir}/${scheme}.xcodeproj`;
   const nativeXcodeProjDirAbs = resolve(platformDirAbs, nativeXcodeProjDir);
   const nativeXcodeWorkspaceDirAbs = lazy(() =>
-    determineXcodeWorkspaceDirAbs(nativeProjectDirAbs),
+    determineXcodeWorkspaceDirAbs(nativeProjectDirAbs, scheme),
   );
   const webDirAbs = lazy(() =>
     determineIOSWebDirAbs(
@@ -344,8 +344,9 @@ function determineOS(os: NodeJS.Platform): OS {
 
 async function determineXcodeWorkspaceDirAbs(
   nativeProjectDirAbs: string,
+  scheme: string
 ): Promise<string> {
-  return resolve(nativeProjectDirAbs, 'App.xcworkspace');
+  return resolve(nativeProjectDirAbs, `${scheme}.xcworkspace`);
 }
 
 async function determineIOSWebDirAbs(
