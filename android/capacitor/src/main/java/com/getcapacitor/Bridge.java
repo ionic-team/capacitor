@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.pm.PackageInfoCompat;
 import androidx.fragment.app.Fragment;
 import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -293,7 +294,7 @@ public class Bridge {
 
         try {
             PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
-            versionCode = Integer.toString(pInfo.versionCode);
+            versionCode = Integer.toString((int) PackageInfoCompat.getLongVersionCode(pInfo));
             versionName = pInfo.versionName;
         } catch (Exception ex) {
             Logger.error("Unable to get package info", ex);
@@ -421,7 +422,6 @@ public class Bridge {
         settings.setDomStorageEnabled(true);
         settings.setGeolocationEnabled(true);
         settings.setDatabaseEnabled(true);
-        settings.setAppCacheEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         if (this.config.isMixedContentAllowed()) {
@@ -472,6 +472,17 @@ public class Bridge {
         }
     }
 
+    @SuppressWarnings("deprecation")
+    private String getLegacyPluginName(Class<? extends Plugin> pluginClass) {
+        NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+        if (legacyPluginAnnotation == null) {
+            Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+            return null;
+        }
+
+        return legacyPluginAnnotation.name();
+    }
+
     /**
      * Register a plugin class
      * @param pluginClass a class inheriting from Plugin
@@ -481,14 +492,10 @@ public class Bridge {
 
         CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
         if (pluginAnnotation == null) {
-            NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
-
-            if (legacyPluginAnnotation == null) {
-                Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+            pluginName = this.getLegacyPluginName(pluginClass);
+            if (pluginName == null) {
                 return;
             }
-
-            pluginName = legacyPluginAnnotation.name();
         } else {
             pluginName = pluginAnnotation.name();
         }
@@ -527,6 +534,7 @@ public class Bridge {
      * @return
      */
     @Deprecated
+    @SuppressWarnings("deprecation")
     public PluginHandle getPluginWithRequestCode(int requestCode) {
         for (PluginHandle handle : this.plugins.values()) {
             int[] requestCodes;
@@ -842,6 +850,7 @@ public class Bridge {
     }
 
     @Deprecated
+    @SuppressWarnings("deprecation")
     public void startActivityForPluginWithResult(PluginCall call, Intent intent, int requestCode) {
         Logger.debug("Starting activity for result");
 
@@ -859,6 +868,7 @@ public class Bridge {
      * @param grantResults the set of granted/denied permissions
      * @return true if permission code was handled by a plugin explicitly, false if not
      */
+    @SuppressWarnings("deprecation")
     boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
@@ -998,6 +1008,7 @@ public class Bridge {
      * @param resultCode
      * @param data
      */
+    @SuppressWarnings("deprecation")
     boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
