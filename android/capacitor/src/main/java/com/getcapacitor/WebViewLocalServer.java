@@ -257,7 +257,7 @@ public class WebViewLocalServer {
                 String startPath = this.basePath + "/index.html";
                 if (bridge.getRouteProcessor() != null) {
                     ProcessedRoute processedRoute = bridge.getRouteProcessor().process(this.basePath, "/index.html");
-                    startPath =  processedRoute.getPath();
+                    startPath = processedRoute.getPath();
                     isAsset = processedRoute.isAsset();
                 }
 
@@ -477,7 +477,7 @@ public class WebViewLocalServer {
                 RouteProcessor routeProcessor = bridge.getRouteProcessor();
                 if (routeProcessor != null) {
                     ProcessedRoute processedRoute = bridge.getRouteProcessor().process("", path);
-                    path =  processedRoute.getPath();
+                    path = processedRoute.getPath();
                     isAsset = processedRoute.isAsset();
                 }
 
