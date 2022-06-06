@@ -485,13 +485,17 @@ export interface CapacitorConfig {
 export interface Portal {
   name: string;
   webDir: string;
-  liveUpdateConfig?: {
-    appId: string;
-    channel: string;
-    autoUpdateMethod: "none" | "background";
-    maxVersions?: number;
-  };
+  liveUpdateConfig?: LiveUpdateConfig;
 }
+
+export interface LiveUpdateConfig {
+  appId: string;
+  channel: string;
+  autoUpdateMethod: AutoUpdateMethod;
+  maxVersions?: number;
+}
+
+export type AutoUpdateMethod = 'none' | 'background';
 
 export interface PluginsConfig {
   /**
