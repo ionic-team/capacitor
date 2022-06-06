@@ -33,7 +33,9 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 "Content-Type": mimeType,
                 "Cache-Control": "no-cache"
             ]
-            if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"), let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize, isMediaExtension(pathExtension: url.pathExtension) {
+            if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"),
+               let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize,
+               isMediaExtension(pathExtension: url.pathExtension) {
                 statusCode = 206
                 let fileHandle = try FileHandle(forReadingFrom: fileUrl)
                 let parts = rangeString.components(separatedBy: "=")
