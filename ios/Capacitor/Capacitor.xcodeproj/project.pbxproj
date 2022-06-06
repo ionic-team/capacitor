@@ -80,6 +80,8 @@
 		62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */; };
 		62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */; };
 		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
+		A38C3D7728484E76004B3680 /* CapacitorCookies.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C3D7628484E76004B3680 /* CapacitorCookies.swift */; };
+		A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */; };
 		A71289E627F380A500DADDF3 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289E527F380A500DADDF3 /* Router.swift */; };
 		A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289EA27F380FD00DADDF3 /* RouterTests.swift */; };
 /* End PBXBuildFile section */
@@ -219,6 +221,8 @@
 		62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Capacitor.swift"; sourceTree = "<group>"; };
 		62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgedTypesTests.m; sourceTree = "<group>"; };
 		62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesHelper.swift; sourceTree = "<group>"; };
+		A38C3D7628484E76004B3680 /* CapacitorCookies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookies.swift; sourceTree = "<group>"; };
+		A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookieManager.swift; sourceTree = "<group>"; };
 		A71289E527F380A500DADDF3 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		A71289EA27F380FD00DADDF3 /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -365,6 +369,8 @@
 				62959AEF2524DA7700A3D7F1 /* Console.swift */,
 				62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */,
 				62959AF32524DA7700A3D7F1 /* WebView.swift */,
+				A38C3D7628484E76004B3680 /* CapacitorCookies.swift */,
+				A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -586,6 +592,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A38C3D7728484E76004B3680 /* CapacitorCookies.swift in Sources */,
 				A71289E627F380A500DADDF3 /* Router.swift in Sources */,
 				62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */,
 				621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */,
@@ -598,6 +605,7 @@
 				621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */,
 				62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */,
 				623D690A254C6FDF002D01D1 /* CAPInstanceDescriptor.m in Sources */,
+				A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */,
 				62959B1B2524DA7800A3D7F1 /* CAPFile.swift in Sources */,
 				62959B462524DA7800A3D7F1 /* CAPBridge.swift in Sources */,
 				62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */,
