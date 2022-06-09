@@ -19,7 +19,6 @@
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "CDVURLProtocol.h"
-#import "CDVViewController.h"
 
 // Contains a set of NSNumbers of addresses of controllers. It doesn't store
 // the actual pointer to avoid retaining.
