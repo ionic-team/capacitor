@@ -3,9 +3,9 @@ ext {
     compileSdkVersion = 32
     targetSdkVersion = 32
     androidxActivityVersion = '1.4.0'
-    androidxAppCompatVersion = '1.4.1'
+    androidxAppCompatVersion = '1.4.2'
     androidxCoordinatorLayoutVersion = '1.2.0'
-    androidxCoreVersion = '1.7.0'
+    androidxCoreVersion = '1.8.0'
     androidxFragmentVersion = '1.4.1'
     junitVersion = '4.13.2'
     androidxJunitVersion = '1.1.3'
