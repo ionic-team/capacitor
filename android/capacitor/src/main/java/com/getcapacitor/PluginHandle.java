@@ -20,11 +20,14 @@ public class PluginHandle {
 
     private final String pluginId;
 
+    @SuppressWarnings("deprecation")
     private NativePlugin legacyPluginAnnotation;
+
     private CapacitorPlugin pluginAnnotation;
 
     private Plugin instance;
 
+    @SuppressWarnings("deprecation")
     public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException, PluginLoadException {
         this.bridge = bridge;
         this.pluginClass = pluginClass;
@@ -67,6 +70,7 @@ public class PluginHandle {
         return this.pluginId;
     }
 
+    @SuppressWarnings("deprecation")
     public NativePlugin getLegacyPluginAnnotation() {
         return this.legacyPluginAnnotation;
     }

@@ -77,7 +77,7 @@ public class FileUtils {
                 final String type = split[0];
 
                 if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                    return legacyPrimaryPath(split[1]);
                 } else {
                     final int splitIndex = docId.indexOf(':', 1);
                     final String tag = docId.substring(0, splitIndex);
@@ -134,6 +134,11 @@ public class FileUtils {
         }
 
         return null;
+    }
+
+    @SuppressWarnings("deprecation")
+    private static String legacyPrimaryPath(String pathPart) {
+        return Environment.getExternalStorageDirectory() + "/" + pathPart;
     }
 
     /**

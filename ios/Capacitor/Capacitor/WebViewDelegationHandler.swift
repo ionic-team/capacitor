@@ -47,8 +47,6 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         bridge?.reset()
     }
     
-    // TODO: remove once Xcode 12 support is dropped
-    #if compiler(>=5.5)
     @available(iOS 15, *)
     func webView(
         _ webView: WKWebView,
@@ -67,7 +65,6 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
           decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(.grant)
     }
-    #endif
 
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         // post a notification for any listeners
