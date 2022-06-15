@@ -16,7 +16,7 @@ extension Data {
 }
 
 public class AppUUID {
-    private static let KEY: String = "CapacitorAppUUID"
+    private static let key: String = "CapacitorAppUUID"
 
     public static func getAppUUID() -> String {
         assertAppUUID()
@@ -42,12 +42,12 @@ public class AppUUID {
 
     private static func readUUID() -> String {
         let defaults = UserDefaults.standard
-        return defaults.string(forKey: KEY) ?? ""
+        return defaults.string(forKey: key) ?? ""
     }
 
     private static func writeUUID(_ uuid: String) {
         let defaults = UserDefaults.standard
-        defaults.set(uuid, forKey: KEY)
+        defaults.set(uuid, forKey: key)
     }
 
 }
