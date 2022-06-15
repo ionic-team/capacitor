@@ -2,9 +2,7 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,14 +22,14 @@ public final class AppUUID {
         try {
             String uuid = generateUUID();
             writeUUID(activity, uuid);
-        } catch(NoSuchAlgorithmException ex) {
+        } catch (NoSuchAlgorithmException ex) {
             throw new Exception("Capacitor App UUID could not be generated.");
         }
     }
 
     private static void assertAppUUID(AppCompatActivity activity) throws Exception {
         String uuid = readUUID(activity);
-        if(uuid.equals("")) {
+        if (uuid.equals("")) {
             regenerateAppUUID(activity);
         }
     }

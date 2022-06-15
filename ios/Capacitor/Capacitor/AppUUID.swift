@@ -17,20 +17,20 @@ extension Data {
 
 public class AppUUID {
     private static let KEY: String = "CapacitorAppUUID"
-    
+
     public static func getAppUUID() -> String {
         assertAppUUID()
         return readUUID()
     }
-    
+
     public static func regenerateAppUUID() {
         let uuid = generateUUID()
         writeUUID(uuid)
     }
-    
+
     private static func assertAppUUID() {
         let uuid = readUUID()
-        if (uuid == "") {
+        if uuid == "" {
             regenerateAppUUID()
         }
     }
@@ -39,12 +39,12 @@ public class AppUUID {
         let uuid: String = UUID.init().uuidString
         return uuid.data(using: .utf8)!.sha256
     }
-    
+
     private static func readUUID() -> String {
         let defaults = UserDefaults.standard
         return defaults.string(forKey: KEY) ?? ""
     }
-    
+
     private static func writeUUID(_ uuid: String) {
         let defaults = UserDefaults.standard
         defaults.set(uuid, forKey: KEY)
