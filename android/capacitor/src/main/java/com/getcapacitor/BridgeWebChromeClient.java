@@ -147,7 +147,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
         builder
             .setMessage(message)
-            .setTitle("Alert")
             .setPositiveButton(
                 "OK",
                 (dialog, buttonIndex) -> {
@@ -187,7 +186,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         builder
             .setMessage(message)
-            .setTitle("Confirm")
             .setPositiveButton(
                 "OK",
                 (dialog, buttonIndex) -> {
@@ -236,7 +234,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         builder
             .setMessage(message)
-            .setTitle("Prompt")
             .setView(input)
             .setPositiveButton(
                 "OK",
