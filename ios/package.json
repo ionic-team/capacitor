@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/ios",
-  "version": "3.5.1",
+  "version": "3.6.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -24,7 +24,7 @@
     "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd .."
   },
   "peerDependencies": {
-    "@capacitor/core": "^3.5.0"
+    "@capacitor/core": "^3.6.0"
   },
   "publishConfig": {
     "access": "public"
