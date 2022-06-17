@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F83E885285A332E006C43CB /* AppUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F83E884285A332D006C43CB /* AppUUID.swift */; };
 		2F81F5C926FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F81F5C726FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.h */; };
 		2F81F5CA26FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F81F5C826FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m */; };
 		373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */; };
@@ -138,6 +139,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F83E884285A332D006C43CB /* AppUUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUUID.swift; sourceTree = "<group>"; };
 		2F81F5C726FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CAPBridgeViewController+CDVScreenOrientationDelegate.h"; sourceTree = "<group>"; };
 		2F81F5C826FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CAPBridgeViewController+CDVScreenOrientationDelegate.m"; sourceTree = "<group>"; };
 		373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerProtocol.swift; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 				373A69F1255C95D0000A6F44 /* NotificationRouter.swift */,
 				62E79C562638AF7500414164 /* assets */,
 				A71289E527F380A500DADDF3 /* Router.swift */,
+				0F83E884285A332D006C43CB /* AppUUID.swift */,
 			);
 			path = Capacitor;
 			sourceTree = "<group>";
@@ -616,6 +619,7 @@
 				62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */,
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
 				373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */,
+				0F83E885285A332E006C43CB /* AppUUID.swift in Sources */,
 				625AF1ED258963C700869675 /* WebViewAssetHandler.swift in Sources */,
 				62959B3C2524DA7800A3D7F1 /* CAPBridgeDelegate.swift in Sources */,
 				62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */,
