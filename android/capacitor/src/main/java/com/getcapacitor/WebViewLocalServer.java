@@ -24,7 +24,6 @@ import android.webkit.WebResourceResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -256,6 +255,12 @@ public class WebViewLocalServer {
             InputStream responseStream;
             try {
                 String startPath = this.basePath + "/index.html";
+                if (bridge.getRouteProcessor() != null) {
+                    ProcessedRoute processedRoute = bridge.getRouteProcessor().process(this.basePath, "/index.html");
+                    startPath = processedRoute.getPath();
+                    isAsset = processedRoute.isAsset();
+                }
+
                 if (isAsset) {
                     responseStream = protocolHandler.openAsset(startPath);
                 } else {
@@ -467,13 +472,25 @@ public class WebViewLocalServer {
             public InputStream handle(Uri url) {
                 InputStream stream = null;
                 String path = url.getPath();
+
+                // Pass path to routeProcessor if present
+                RouteProcessor routeProcessor = bridge.getRouteProcessor();
+                if (routeProcessor != null) {
+                    ProcessedRoute processedRoute = bridge.getRouteProcessor().process("", path);
+                    path = processedRoute.getPath();
+                    isAsset = processedRoute.isAsset();
+                }
+
                 try {
                     if (path.startsWith(capacitorContentStart)) {
                         stream = protocolHandler.openContentUrl(url);
-                    } else if (path.startsWith(capacitorFileStart) || !isAsset) {
-                        if (!path.startsWith(capacitorFileStart)) {
+                    } else if (path.startsWith(capacitorFileStart)) {
+                        stream = protocolHandler.openFile(path);
+                    } else if (!isAsset) {
+                        if (routeProcessor == null) {
                             path = basePath + url.getPath();
                         }
+
                         stream = protocolHandler.openFile(path);
                     } else {
                         stream = protocolHandler.openAsset(assetPath + path);

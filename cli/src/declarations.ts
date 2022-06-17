@@ -203,6 +203,14 @@ export interface CapacitorConfig {
      * @since 3.1.0
      */
     flavor?: string;
+
+    /**
+     * Whether to give the webview initial focus.
+     *
+     * @since 3.5.1
+     * @default true
+     */
+    initialFocus?: boolean;
   };
 
   ios?: {
@@ -486,6 +494,21 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
+export interface Portal {
+  name: string;
+  webDir: string;
+  liveUpdateConfig?: LiveUpdateConfig;
+}
+
+export interface LiveUpdateConfig {
+  appId: string;
+  channel: string;
+  autoUpdateMethod: AutoUpdateMethod;
+  maxVersions?: number;
+}
+
+export type AutoUpdateMethod = 'none' | 'background';
+
 export interface PluginsConfig {
   /**
    * Plugin configuration by class name.
@@ -497,4 +520,14 @@ export interface PluginsConfig {
         [key: string]: any;
       }
     | undefined;
+
+  /**
+   * Capacitor Portals plugin configuration
+   *
+   * @since 3.5.0
+   */
+  Portals?: {
+    shell: Portal;
+    apps: Portal[];
+  };
 }

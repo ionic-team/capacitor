@@ -3,25 +3,28 @@ import MobileCoreServices
 
 @objc(CAPWebViewAssetHandler)
 internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
-
-    private var basePath: String = ""
+    private var router: Router
+    
+    init(router: Router) {
+        self.router = router
+        super.init()
+    }
 
     func setAssetPath(_ assetPath: String) {
-        self.basePath = assetPath
+        router.basePath = assetPath
     }
 
     func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        var startPath = self.basePath
+        let startPath: String
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
-
+        
         if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
             startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
-        } else if stringToLoad.isEmpty || url.pathExtension.isEmpty {
-            startPath.append("/index.html")
         } else {
-            startPath.append(stringToLoad)
+            startPath = router.route(for: stringToLoad)
         }
+        
         let localUrl = URL.init(string: url.absoluteString)!
         let fileUrl = URL.init(fileURLWithPath: startPath)
 

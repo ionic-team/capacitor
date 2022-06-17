@@ -42,6 +42,7 @@ public class CapConfig {
     private boolean captureInput = false;
     private boolean webContentsDebuggingEnabled = false;
     private boolean loggingEnabled = true;
+    private boolean initialFocus = true;
 
     // Embedded
     private String startPath;
@@ -122,6 +123,7 @@ public class CapConfig {
         this.captureInput = builder.captureInput;
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.loggingEnabled = builder.loggingEnabled;
+        this.initialFocus = builder.initialFocus;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -198,6 +200,8 @@ public class CapConfig {
                 loggingEnabled = isDebug;
         }
 
+        initialFocus = JSONUtils.getBoolean(configJSON, "android.initialFocus", initialFocus);
+
         // Plugins
         pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
     }
@@ -262,6 +266,10 @@ public class CapConfig {
 
     public boolean isLoggingEnabled() {
         return loggingEnabled;
+    }
+
+    public boolean isInitialFocus() {
+        return initialFocus;
     }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
@@ -419,6 +427,7 @@ public class CapConfig {
         private boolean captureInput = false;
         private Boolean webContentsDebuggingEnabled = null;
         private boolean loggingEnabled = true;
+        private boolean initialFocus = false;
 
         // Embedded
         private String startPath = null;
@@ -515,6 +524,11 @@ public class CapConfig {
 
         public Builder setLoggingEnabled(boolean enabled) {
             this.loggingEnabled = enabled;
+            return this;
+        }
+
+        public Builder setInitialFocus(boolean focus) {
+            this.initialFocus = focus;
             return this;
         }
     }
