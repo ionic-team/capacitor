@@ -354,6 +354,18 @@ export interface CapacitorConfig {
      * @default false
      */
     limitsNavigationsToAppBoundDomains?: boolean;
+
+    /**
+     * The content mode for the web view to use when it loads and renders web content.
+     *
+     * - 'recommended': The content mode that is appropriate for the current device.
+     * - 'desktop': The content mode that represents a desktop experience.
+     * - 'mobile': The content mode that represents a mobile experience.
+     *
+     * @since 4.0.0
+     * @default recommended
+     */
+    preferredContentMode?: 'recommended' | 'desktop' | 'mobile';
   };
 
   server?: {

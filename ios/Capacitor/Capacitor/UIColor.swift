@@ -26,14 +26,14 @@ public extension CapacitorExtensionTypeWrapper where T: UIColor {
             with: ""
         )
 
-        var argb: UInt32 = 0
+        var argb: UInt64 = 0
 
         var red: CGFloat = 0.0
         var green: CGFloat = 0.0
         var blue: CGFloat = 0.0
         var alpha: CGFloat = 1.0
 
-        guard Scanner(string: hexString).scanHexInt32(&argb) else { return nil }
+        guard Scanner(string: hexString).scanHexInt64(&argb) else { return nil }
 
         if hexString.count == 6 {
             red = CGFloat((argb & 0xFF0000) >> 16) / 255.0

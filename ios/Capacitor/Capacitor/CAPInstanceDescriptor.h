@@ -109,6 +109,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, assign) BOOL limitsNavigationsToAppBoundDomains;
 /**
+ @brief The content mode for the web view to use when it loads and renders web content.
+ @discussion Defaults to  @c recommended. Set by @c ios.preferredContentMode in the configuration file.
+ */
+@property (nonatomic, copy, nullable) NSString *preferredContentMode;
+/**
  @brief The parser used to load the cofiguration for Cordova plugins.
  */
 @property (nonatomic, copy, nonnull) CDVConfigParser *cordovaConfiguration;

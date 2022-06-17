@@ -11,6 +11,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [4.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.2) (2022-05-12)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
 ## [3.5.1](https://github.com/ionic-team/capacitor/compare/3.5.0...3.5.1) (2022-05-04)
 
 
@@ -23,6 +30,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 # [3.5.0](https://github.com/ionic-team/capacitor/compare/3.4.3...3.5.0) (2022-04-22)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
+
+# [4.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.1) (2022-03-25)
 
 **Note:** Version bump only for package @capacitor/core
 

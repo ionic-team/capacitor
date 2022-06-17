@@ -14,6 +14,18 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [4.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.2) (2022-05-12)
+
+
+### Features
+
+* **android:** Use java 11 ([#5552](https://github.com/ionic-team/capacitor/issues/5552)) ([e47959f](https://github.com/ionic-team/capacitor/commit/e47959fcbd6a89b97b1275a5814fdb4e7ce30672))
+* **ios:** Add preferredContentMode configuration option ([#5583](https://github.com/ionic-team/capacitor/issues/5583)) ([5b6dfa3](https://github.com/ionic-team/capacitor/commit/5b6dfa3fe29c85632546b299f03cc04a77cf7475))
+
+
+
+
+
 ## [3.5.1](https://github.com/ionic-team/capacitor/compare/3.5.0...3.5.1) (2022-05-04)
 
 
@@ -36,6 +48,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [4.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.1) (2022-03-25)
+
+**Note:** Version bump only for package @capacitor/cli
+
+
+
+
+
+
 ## [3.4.3](https://github.com/ionic-team/capacitor/compare/3.4.2...3.4.3) (2022-03-04)
 
 
@@ -53,7 +74,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * **android:** compatibility with cordova kotlin plugins ([#5438](https://github.com/ionic-team/capacitor/issues/5438)) ([55bf004](https://github.com/ionic-team/capacitor/commit/55bf004897b3feb280ab6b6575d2a2c1a0a183e2))
-
 
 
 
