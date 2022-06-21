@@ -61,7 +61,6 @@
 		62959B462524DA7800A3D7F1 /* CAPBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B142524DA7700A3D7F1 /* CAPBridge.swift */; };
 		62959B472524DA7800A3D7F1 /* CAPNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B152524DA7700A3D7F1 /* CAPNotifications.swift */; };
 		62959BA52526475A00A3D7F1 /* Cordova.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62959BA02526474300A3D7F1 /* Cordova.framework */; };
-		62959BA62526475A00A3D7F1 /* Cordova.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62959BA02526474300A3D7F1 /* Cordova.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6296A77E253A2E49005A202A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6296A77D253A2E49005A202A /* AppDelegate.swift */; };
 		6296A782253A2E49005A202A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6296A781253A2E49005A202A /* ViewController.swift */; };
 		6296A785253A2E49005A202A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A783253A2E49005A202A /* Main.storyboard */; };
@@ -124,17 +123,6 @@
 				62E0736325535E8700BAAADB /* flat.json in CopyFiles */,
 				62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		62959BA72526475A00A3D7F1 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				62959BA62526475A00A3D7F1 /* Cordova.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -448,7 +436,6 @@
 				50503EDB1FC08594003606DC /* Frameworks */,
 				50503EDC1FC08594003606DC /* Headers */,
 				50503EDD1FC08594003606DC /* Resources */,
-				62959BA72526475A00A3D7F1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
