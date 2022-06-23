@@ -30,6 +30,7 @@ public class CapConfig {
     // Server Config
     private boolean html5mode = true;
     private String serverUrl;
+    private String errorUrl;
     private String hostname = "localhost";
     private String androidScheme = CAPACITOR_HTTP_SCHEME;
     private String[] allowNavigation;
@@ -124,6 +125,7 @@ public class CapConfig {
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.loggingEnabled = builder.loggingEnabled;
         this.initialFocus = builder.initialFocus;
+        this.errorUrl = builder.errorUrl;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -179,6 +181,7 @@ public class CapConfig {
             );
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
+        errorUrl = JSONUtils.getString(configJSON, "android.errorUrl", null);
 
         String logBehavior = JSONUtils.getString(
             configJSON,
@@ -223,6 +226,8 @@ public class CapConfig {
     public String getServerUrl() {
         return serverUrl;
     }
+
+    public String getErrorUrl() { return errorUrl; }
 
     public String getHostname() {
         return hostname;
@@ -415,6 +420,7 @@ public class CapConfig {
         // Server Config Values
         private boolean html5mode = true;
         private String serverUrl;
+        private String errorUrl;
         private String hostname = "localhost";
         private String androidScheme = CAPACITOR_HTTP_SCHEME;
         private String[] allowNavigation;
@@ -469,6 +475,11 @@ public class CapConfig {
 
         public Builder setServerUrl(String serverUrl) {
             this.serverUrl = serverUrl;
+            return this;
+        }
+
+        public Builder setErrorUrl(String errorUrl) {
+            this.errorUrl = errorUrl;
             return this;
         }
 

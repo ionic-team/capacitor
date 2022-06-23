@@ -109,6 +109,13 @@ export interface CapacitorConfig {
     overrideUserAgent?: string;
 
     /**
+     * Specify path to a local html page to display in case of errors.
+     *
+     * @since 4.0.0
+     */
+    errorUrl?: string;
+
+    /**
      * String to append to the original user agent of Capacitor Web View for Android.
      *
      * Overrides global `appendUserAgent` option.
@@ -236,6 +243,13 @@ export interface CapacitorConfig {
      * @default App
      */
     scheme?: string;
+
+    /**
+     * Specify path to a local html page to display in case of errors.
+     *
+     * @since 4.0.0
+     */
+    errorUrl?: string;
 
     /**
      * User agent of Capacitor Web View on iOS.
