@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -73,6 +74,7 @@ public class Bridge {
     private static final String BUNDLE_PLUGIN_CALL_BUNDLE_KEY = "capacitorLastPluginCallBundle";
     private static final String LAST_BINARY_VERSION_CODE = "lastBinaryVersionCode";
     private static final String LAST_BINARY_VERSION_NAME = "lastBinaryVersionName";
+    private final int MINIMUM_ANDROID_WEBVIEW_VERSION = 60;
 
     // The name of the directory we use to look for index.html and the rest of our web assets
     public static final String DEFAULT_WEB_ASSET_DIR = "public";
@@ -257,8 +259,53 @@ public class Bridge {
                 setServerBasePath(path);
             }
         }
+
+        if (!this.isMinimumWebViewInstalled()) {
+            String errorUrl = this.getErrorUrl();
+            if (errorUrl != null) {
+                webView.loadUrl(errorUrl);
+                return;
+            } else {
+                Logger.error("System webview is not supported");
+            }
+        }
+
         // Get to work
         webView.loadUrl(appUrl);
+    }
+
+    private boolean isMinimumWebViewInstalled() {
+        PackageManager pm = getContext().getPackageManager();
+
+        // Check getCurrentWebViewPackage() directly if above Android 8
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PackageInfo info = WebView.getCurrentWebViewPackage();
+            String majorVersionStr = info.versionName.split("\\.")[0];
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+        }
+
+        // Otherwise manually check WebView versions
+        try {
+            PackageInfo info = pm.getPackageInfo("com.google.android.webview", 0);
+            String majorVersionStr = info.versionName.split("\\.")[0];
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+        } catch (Exception ex) {
+            Logger.warn("Unable to get package info for 'com.google.android.webview'", ex.toString());
+        }
+
+        try {
+            PackageInfo info = pm.getPackageInfo("com.android.webview", 0);
+            String majorVersionStr = info.versionName.split("\\.")[0];
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+        } catch (Exception ex) {
+            Logger.warn("Unable to get package info for 'com.android.webview'", ex.toString());
+        }
+
+        // Could not detect any webview, return false
+        return false;
     }
 
     public boolean launchIntent(Uri url) {
@@ -406,6 +453,16 @@ public class Bridge {
      */
     public String getServerUrl() {
         return this.config.getServerUrl();
+    }
+
+    private String getErrorUrl() {
+        String errorPath = this.config.getErrorPath();
+
+        if (errorPath != null && !errorPath.trim().isEmpty()) {
+            return appUrl += errorPath;
+        }
+
+        return null;
     }
 
     public CapConfig getConfig() {
