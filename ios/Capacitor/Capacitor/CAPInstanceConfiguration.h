@@ -23,6 +23,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly, nonnull) NSURL *appLocation;
 @property (nonatomic, readonly, nullable) NSString *appStartPath;
 @property (nonatomic, readonly) BOOL limitsNavigationsToAppBoundDomains;
+@property (nonatomic, readonly, nullable) NSString *preferredContentMode;
 
 @property (nonatomic, readonly, nonnull) NSDictionary *legacyConfig DEPRECATED_MSG_ATTRIBUTE("Use direct properties instead");
 

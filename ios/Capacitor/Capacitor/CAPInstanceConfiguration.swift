@@ -15,8 +15,16 @@ extension InstanceConfiguration {
         return serverURL
     }
 
+    @available(*, deprecated, message: "Use getPluginConfig")
     @objc public func getPluginConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
         return (pluginConfigurations as? JSObject)?[keyPath: KeyPath("\(pluginId).\(configKey)")]
+    }
+
+    @objc public func getPluginConfig(_ pluginId: String) -> PluginConfig {
+        if let cfg = (pluginConfigurations as? JSObject)?[keyPath: KeyPath("\(pluginId)")] as? JSObject {
+            return PluginConfig(config: cfg)
+        }
+        return PluginConfig(config: JSObject())
     }
 
     @objc public func shouldAllowNavigation(to host: String) -> Bool {

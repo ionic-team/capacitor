@@ -9,8 +9,10 @@ import android.content.res.AssetManager;
 import androidx.annotation.Nullable;
 import com.getcapacitor.util.JSONUtils;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.json.JSONException;
@@ -106,7 +108,11 @@ public class CapConfig {
         this.html5mode = builder.html5mode;
         this.serverUrl = builder.serverUrl;
         this.hostname = builder.hostname;
-        this.androidScheme = builder.androidScheme;
+
+        if (this.validateScheme(builder.androidScheme)) {
+            this.androidScheme = builder.androidScheme;
+        }
+
         this.allowNavigation = builder.allowNavigation;
 
         // Android Config
@@ -150,7 +156,12 @@ public class CapConfig {
         html5mode = JSONUtils.getBoolean(configJSON, "server.html5mode", html5mode);
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
-        androidScheme = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
+
+        String configSchema = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
+        if (this.validateScheme(configSchema)) {
+            androidScheme = configSchema;
+        }
+
         allowNavigation = JSONUtils.getArray(configJSON, "server.allowNavigation", null);
 
         // Android
@@ -193,6 +204,16 @@ public class CapConfig {
 
         // Plugins
         pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
+    }
+
+    private boolean validateScheme(String scheme) {
+        List<String> invalidSchemes = Arrays.asList("file", "ftp", "ftps", "ws", "wss", "about", "blob", "data");
+        if (invalidSchemes.contains(scheme)) {
+            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to http.");
+            return false;
+        }
+
+        return true;
     }
 
     public boolean isHTML5Mode() {

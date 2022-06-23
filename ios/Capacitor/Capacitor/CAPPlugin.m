@@ -29,8 +29,12 @@
   return [call getString:field defaultValue:defaultValue];
 }
 
--(id)getConfigValue:(NSString *)key {
+-(id)getConfigValue:(NSString *)key __deprecated {
   return [self.bridge.config getPluginConfigValue:self.pluginName :key];
+}
+
+-(PluginConfig*)getConfig {
+    return [self.bridge.config getPluginConfig:self.pluginName];
 }
 
 -(void)load {}
@@ -105,6 +109,7 @@
 
 - (void)removeAllListeners:(CAPPluginCall *)call {
   [self.eventListeners removeAllObjects];
+  [call resolve];
 }
 
 - (NSArray<CAPPluginCall *>*)getListeners:(NSString *)eventName {
@@ -141,11 +146,7 @@
 }
 
 -(BOOL)supportsPopover {
-  if (@available(iOS 13, *)) {
     return YES;
-  } else {
-    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
-  }
 }
 
 - (NSNumber*)shouldOverrideLoad:(WKNavigationAction*)navigationAction {
