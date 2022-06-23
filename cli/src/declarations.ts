@@ -113,7 +113,7 @@ export interface CapacitorConfig {
      *
      * @since 4.0.0
      */
-    errorUrl?: string;
+    errorPath?: string;
 
     /**
      * String to append to the original user agent of Capacitor Web View for Android.
@@ -249,7 +249,7 @@ export interface CapacitorConfig {
      *
      * @since 4.0.0
      */
-    errorUrl?: string;
+    errorPath?: string;
 
     /**
      * User agent of Capacitor Web View on iOS.

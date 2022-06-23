@@ -30,7 +30,6 @@ public class CapConfig {
     // Server Config
     private boolean html5mode = true;
     private String serverUrl;
-    private String errorUrl;
     private String hostname = "localhost";
     private String androidScheme = CAPACITOR_HTTP_SCHEME;
     private String[] allowNavigation;
@@ -44,6 +43,7 @@ public class CapConfig {
     private boolean webContentsDebuggingEnabled = false;
     private boolean loggingEnabled = true;
     private boolean initialFocus = true;
+    private String errorPath;
 
     // Embedded
     private String startPath;
@@ -125,7 +125,7 @@ public class CapConfig {
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.loggingEnabled = builder.loggingEnabled;
         this.initialFocus = builder.initialFocus;
-        this.errorUrl = builder.errorUrl;
+        this.errorPath = builder.errorPath;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -181,7 +181,7 @@ public class CapConfig {
             );
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
-        errorUrl = JSONUtils.getString(configJSON, "android.errorUrl", null);
+        errorPath = JSONUtils.getString(configJSON, "android.errorPath", null);
 
         String logBehavior = JSONUtils.getString(
             configJSON,
@@ -227,7 +227,7 @@ public class CapConfig {
         return serverUrl;
     }
 
-    public String getErrorUrl() { return errorUrl; }
+    public String getErrorPath() { return errorPath; }
 
     public String getHostname() {
         return hostname;
@@ -420,7 +420,7 @@ public class CapConfig {
         // Server Config Values
         private boolean html5mode = true;
         private String serverUrl;
-        private String errorUrl;
+        private String errorPath;
         private String hostname = "localhost";
         private String androidScheme = CAPACITOR_HTTP_SCHEME;
         private String[] allowNavigation;
@@ -478,8 +478,8 @@ public class CapConfig {
             return this;
         }
 
-        public Builder setErrorUrl(String errorUrl) {
-            this.errorUrl = errorUrl;
+        public Builder setErrorUPath(String errorPath) {
+            this.errorPath = errorPath;
             return this;
         }
 
