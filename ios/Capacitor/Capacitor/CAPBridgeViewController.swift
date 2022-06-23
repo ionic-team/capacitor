@@ -89,11 +89,11 @@ import Cordova
         }
         return descriptor
     }
-    
+
     open func router() -> Router {
-       return _Router()
+        return _Router()
     }
-    
+
     /**
      The WKWebViewConfiguration to use for the webview.
 
