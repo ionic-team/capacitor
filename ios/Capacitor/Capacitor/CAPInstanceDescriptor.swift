@@ -128,6 +128,10 @@ internal extension InstanceDescriptor {
             if let preferredMode = (config[keyPath: "ios.preferredContentMode"] as? String) {
                 preferredContentMode = preferredMode
             }
+            
+            if let pathString = (config[keyPath: "ios.errorPath"] as? String) {
+                errorPath = pathString
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity

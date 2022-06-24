@@ -14,6 +14,14 @@ extension InstanceConfiguration {
         }
         return serverURL
     }
+    
+    @objc var errorPathURL: URL? {
+        guard let errorPath = errorPath else {
+            return nil
+        }
+        
+        return appStartServerURL.appendingPathComponent(errorPath)
+    }
 
     @available(*, deprecated, message: "Use getPluginConfig")
     @objc public func getPluginConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
