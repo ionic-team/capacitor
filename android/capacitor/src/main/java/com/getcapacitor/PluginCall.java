@@ -127,7 +127,7 @@ public class PluginCall {
         try {
             errorResult.put("message", msg);
             errorResult.put("code", code);
-            if(null != data) {
+            if (null != data) {
                 errorResult.put("data", data);
             }
         } catch (Exception jsonEx) {
