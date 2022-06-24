@@ -56,6 +56,11 @@ public class BridgeWebViewClient extends WebViewClient {
                 listener.onReceivedError(view);
             }
         }
+
+        String errorPath = bridge.getErrorUrl();
+        if (errorPath != null && request.getUrl().toString().equals(errorPath)) {
+            view.loadUrl(errorPath);
+        }
     }
 
     @Override

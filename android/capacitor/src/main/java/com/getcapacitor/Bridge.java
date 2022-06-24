@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -75,6 +76,7 @@ public class Bridge {
     private static final String LAST_BINARY_VERSION_CODE = "lastBinaryVersionCode";
     private static final String LAST_BINARY_VERSION_NAME = "lastBinaryVersionName";
     private final int MINIMUM_ANDROID_WEBVIEW_VERSION = 60;
+    private static final String MINIMUM_ANDROID_WEBVIEW_ERROR = "System WebView is not supported";
 
     // The name of the directory we use to look for index.html and the rest of our web assets
     public static final String DEFAULT_WEB_ASSET_DIR = "public";
@@ -266,7 +268,7 @@ public class Bridge {
                 webView.loadUrl(errorUrl);
                 return;
             } else {
-                Logger.error("System webview is not supported");
+                Logger.error(MINIMUM_ANDROID_WEBVIEW_ERROR);
             }
         }
 
@@ -274,6 +276,7 @@ public class Bridge {
         webView.loadUrl(appUrl);
     }
 
+    @SuppressLint("WebViewApiAvailability")
     private boolean isMinimumWebViewInstalled() {
         PackageManager pm = getContext().getPackageManager();
 
@@ -455,7 +458,7 @@ public class Bridge {
         return this.config.getServerUrl();
     }
 
-    private String getErrorUrl() {
+    public String getErrorUrl() {
         String errorPath = this.config.getErrorPath();
 
         if (errorPath != null && !errorPath.trim().isEmpty()) {
