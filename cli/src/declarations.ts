@@ -112,6 +112,7 @@ export interface CapacitorConfig {
      * Specify path to a local html page to display in case of errors.
      *
      * @since 4.0.0
+     * @default null
      */
     errorPath?: string;
 
@@ -248,6 +249,7 @@ export interface CapacitorConfig {
      * Specify path to a local html page to display in case of errors.
      *
      * @since 4.0.0
+     * @default null
      */
     errorPath?: string;
 

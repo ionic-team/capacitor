@@ -55,7 +55,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 @property (nonatomic, copy, nullable) NSString *urlScheme;
 /**
  @brief The path to a local html page to display in case of errors.
- @discussion Defaults to null.
+ @discussion Defaults to nil.
  */
 @property (nonatomic, copy, nullable) NSString *errorPath;
 /**
