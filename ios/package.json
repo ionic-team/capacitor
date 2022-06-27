@@ -24,7 +24,7 @@
     "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd .."
   },
   "peerDependencies": {
-    "@capacitor/core": "^4.0.0-beta.0"
+    "@capacitor/core": "next"
   },
   "publishConfig": {
     "access": "public"
