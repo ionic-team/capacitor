@@ -227,7 +227,9 @@ public class CapConfig {
         return serverUrl;
     }
 
-    public String getErrorPath() { return errorPath; }
+    public String getErrorPath() {
+        return errorPath;
+    }
 
     public String getHostname() {
         return hostname;

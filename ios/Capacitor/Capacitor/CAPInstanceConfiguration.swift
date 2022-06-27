@@ -14,12 +14,12 @@ extension InstanceConfiguration {
         }
         return serverURL
     }
-    
+
     @objc var errorPathURL: URL? {
         guard let errorPath = errorPath else {
             return nil
         }
-        
+
         return appStartServerURL.appendingPathComponent(errorPath)
     }
 
