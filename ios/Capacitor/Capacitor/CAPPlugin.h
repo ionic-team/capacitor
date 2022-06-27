@@ -48,7 +48,8 @@
 -(NSString* _Nullable)getString:(CAPPluginCall* _Nonnull)call field:(NSString* _Nonnull)field defaultValue:(NSString* _Nonnull)defaultValue DEPRECATED_MSG_ATTRIBUTE("Use accessors on CAPPluginCall instead. See CAPBridgedJSTypes.h for Obj-C implementations.");
 -(id _Nullable)getConfigValue:(NSString* _Nonnull)key __deprecated_msg("use getConfig() and access config values using the methods available depending on the type.");
 -(PluginConfig* _Nonnull)getConfig;
--(void)setCenteredPopover:(UIViewController* _Nonnull)vc;
+-(void)setCenteredPopover:(UIViewController* _Nonnull) vc;
+-(void)setCenteredPopover:(UIViewController* _Nonnull) vc size:(CGSize) size;
 -(BOOL)supportsPopover DEPRECATED_MSG_ATTRIBUTE("All iOS 13+ devices support popover");
 
 @end
