@@ -462,10 +462,14 @@ public class Bridge {
         String errorPath = this.config.getErrorPath();
 
         if (errorPath != null && !errorPath.trim().isEmpty()) {
-            return appUrl += errorPath;
+            return appUrl + errorPath;
         }
 
         return null;
+    }
+
+    public String getAppUrl() {
+        return appUrl;
     }
 
     public CapConfig getConfig() {
