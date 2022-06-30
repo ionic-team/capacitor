@@ -450,7 +450,7 @@ export interface CapacitorConfig {
      * @since 4.0.0
      * @default null
      */
-     errorPath?: string;
+    errorPath?: string;
   };
 
   cordova?: {
