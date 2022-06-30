@@ -175,11 +175,7 @@ import Cordova
             }
             if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
                 if statusBarStyle == "UIStatusBarStyleDarkContent" {
-                    if #available(iOS 13.0, *) {
-                        self.statusBarStyle = .darkContent
-                    } else {
-                        self.statusBarStyle = .default
-                    }
+                    self.statusBarStyle = .darkContent
                 } else if statusBarStyle != "UIStatusBarStyleDefault" {
                     self.statusBarStyle = .lightContent
                 }
@@ -304,7 +300,7 @@ extension CAPBridgeViewController {
         if let backgroundColor = configuration.backgroundColor {
             aWebView.backgroundColor = backgroundColor
             aWebView.scrollView.backgroundColor = backgroundColor
-        } else if #available(iOS 13, *) {
+        } else {
             // Use the system background colors if background is not set by user
             aWebView.backgroundColor = UIColor.systemBackground
             aWebView.scrollView.backgroundColor = UIColor.systemBackground

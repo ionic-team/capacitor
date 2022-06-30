@@ -1,8 +1,6 @@
 name: Publish NPM Latest
 
-on: 
-  schedule:
-    - cron: '0 15 1/14 * 4'
+on: workflow_dispatch
 
 jobs:
   deploy-npm-latest:
