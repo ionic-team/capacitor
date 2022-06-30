@@ -1,6 +1,6 @@
 require "json"
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
-portals_dev_head = `git rev-parse origin/portals-dev`.strip
+portals_dev_head = `git rev-parse origin/3.x`.strip
 Pod::Spec.new do |s|
   s.name = 'Capacitor'
   s.version = package['version']

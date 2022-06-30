@@ -12,7 +12,7 @@ jobs:
           node-version: 14.x
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0 # needed to enable fetching the latest commit from origin/portals-dev otherwise it will fail because the refspecs have not been fetched
+          fetch-depth: 0 # needed to enable fetching the latest commit from origin/3.x otherwise it will fail because the refspecs have not been fetched
           ref: native-publish
       - name: Install Cocoapods
         run: gem install cocoapods
