@@ -158,6 +158,7 @@ public class CapConfig {
         html5mode = JSONUtils.getBoolean(configJSON, "server.html5mode", html5mode);
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
+        errorPath = JSONUtils.getString(configJSON, "server.errorPath", null);
 
         String configSchema = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
         if (this.validateScheme(configSchema)) {
@@ -181,7 +182,6 @@ public class CapConfig {
             );
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
-        errorPath = JSONUtils.getString(configJSON, "android.errorPath", null);
 
         String logBehavior = JSONUtils.getString(
             configJSON,

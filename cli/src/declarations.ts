@@ -109,14 +109,6 @@ export interface CapacitorConfig {
     overrideUserAgent?: string;
 
     /**
-     * Specify path to a local html page to display in case of errors.
-     *
-     * @since 4.0.0
-     * @default null
-     */
-    errorPath?: string;
-
-    /**
      * String to append to the original user agent of Capacitor Web View for Android.
      *
      * Overrides global `appendUserAgent` option.
@@ -244,14 +236,6 @@ export interface CapacitorConfig {
      * @default App
      */
     scheme?: string;
-
-    /**
-     * Specify path to a local html page to display in case of errors.
-     *
-     * @since 4.0.0
-     * @default null
-     */
-    errorPath?: string;
 
     /**
      * User agent of Capacitor Web View on iOS.
@@ -459,6 +443,14 @@ export interface CapacitorConfig {
      * @default []
      */
     allowNavigation?: string[];
+
+    /**
+     * Specify path to a local html page to display in case of errors.
+     *
+     * @since 4.0.0
+     * @default null
+     */
+     errorPath?: string;
   };
 
   cordova?: {
