@@ -22,7 +22,7 @@
     "verify": "./gradlew clean lint build test -b capacitor/build.gradle"
   },
   "peerDependencies": {
-    "@capacitor/core": "^4.0.0-beta.1"
+    "@capacitor/core": "next"
   },
   "publishConfig": {
     "access": "public"
