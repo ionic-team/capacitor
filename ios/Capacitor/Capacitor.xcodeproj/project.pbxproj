@@ -16,6 +16,7 @@
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
 		50503EE91FC08595003606DC /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Capacitor.framework */; };
 		50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* CapacitorTests.swift */; };
+		55F6736A26C371E6001E7AB9 /* CAPWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6736826C371E6001E7AB9 /* CAPWebView.swift */; };
 		6214934725509C3F006C36F9 /* CAPInstanceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */; };
 		621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */; };
 		621ECCB82542045900D3D615 /* CAPBridgedJSTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -138,6 +139,7 @@
 		50503EDF1FC08594003606DC /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE81FC08595003606DC /* CapacitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapacitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EED1FC08595003606DC /* CapacitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorTests.swift; sourceTree = "<group>"; };
+		55F6736826C371E6001E7AB9 /* CAPWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPWebView.swift; sourceTree = "<group>"; };
 		6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstanceConfiguration.swift; sourceTree = "<group>"; };
 		621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPBridgedJSTypes.m; sourceTree = "<group>"; };
 		621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPBridgedJSTypes.h; sourceTree = "<group>"; };
@@ -327,6 +329,7 @@
 				623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */,
 				623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */,
 				623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */,
+				55F6736826C371E6001E7AB9 /* CAPWebView.swift */,
 				6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */,
 				62959B082524DA7700A3D7F1 /* CAPLog.swift */,
 				62959AE72524DA7700A3D7F1 /* CAPFile.swift */,
@@ -579,6 +582,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55F6736A26C371E6001E7AB9 /* CAPWebView.swift in Sources */,
 				A71289E627F380A500DADDF3 /* Router.swift in Sources */,
 				62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */,
 				621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */,
