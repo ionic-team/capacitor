@@ -4,7 +4,7 @@ import MobileCoreServices
 @objc(CAPWebViewAssetHandler)
 internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
-    
+
     init(router: Router) {
         self.router = router
         super.init()
@@ -18,13 +18,13 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let startPath: String
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
-        
+
         if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
             startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
         } else {
             startPath = router.route(for: stringToLoad)
         }
-        
+
         let localUrl = URL.init(string: url.absoluteString)!
         let fileUrl = URL.init(fileURLWithPath: startPath)
 

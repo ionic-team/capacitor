@@ -145,6 +145,15 @@
   }
 }
 
+-(void)setCenteredPopover:(UIViewController* _Nonnull) vc size:(CGSize) size {
+    if (self.bridge.viewController != nil) {
+      vc.popoverPresentationController.sourceRect = CGRectMake(self.bridge.viewController.view.center.x, self.bridge.viewController.view.center.y, 0, 0);
+      vc.preferredContentSize = size;
+      vc.popoverPresentationController.sourceView = self.bridge.viewController.view;
+      vc.popoverPresentationController.permittedArrowDirections = 0;
+    }
+}
+
 -(BOOL)supportsPopover {
     return YES;
 }

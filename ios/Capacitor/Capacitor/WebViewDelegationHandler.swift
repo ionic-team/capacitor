@@ -46,7 +46,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         // Reset the bridge on each navigation
         bridge?.reset()
     }
-    
+
     @available(iOS 15, *)
     func webView(
         _ webView: WKWebView,
@@ -60,9 +60,9 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     @available(iOS 15, *)
     func webView(_ webView: WKWebView,
-    requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
-         initiatedByFrame frame: WKFrameInfo,
-          decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+                 requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
+                 initiatedByFrame frame: WKFrameInfo,
+                 decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(.grant)
     }
 
