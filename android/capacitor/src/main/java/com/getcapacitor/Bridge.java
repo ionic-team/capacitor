@@ -466,7 +466,12 @@ public class Bridge {
         String errorPath = this.config.getErrorPath();
 
         if (errorPath != null && !errorPath.trim().isEmpty()) {
-            return appUrl + errorPath;
+            String authority = this.getHost();
+            String scheme = this.getScheme();
+
+            String localUrl = scheme + "://" + authority;
+
+            return localUrl + "/" + errorPath;
         }
 
         return null;
