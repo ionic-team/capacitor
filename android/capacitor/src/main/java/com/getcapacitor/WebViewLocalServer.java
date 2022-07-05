@@ -185,6 +185,11 @@ public class WebViewLocalServer {
         return path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart);
     }
 
+    private boolean isErrorUrl(Uri uri) {
+        String url = uri.toString();
+        return url.equals(bridge.getErrorUrl());
+    }
+
     private boolean isMainUrl(Uri loadingUrl) {
         return (bridge.getServerUrl() == null && loadingUrl.getHost().equalsIgnoreCase(bridge.getHost()));
     }
@@ -226,7 +231,7 @@ public class WebViewLocalServer {
             );
         }
 
-        if (isLocalFile(request.getUrl())) {
+        if (isLocalFile(request.getUrl()) || isErrorUrl(request.getUrl())) {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
             String mimeType = getMimeType(request.getUrl().getPath(), responseStream);
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
