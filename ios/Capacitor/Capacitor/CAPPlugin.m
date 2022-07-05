@@ -41,7 +41,7 @@
 
 - (void)addEventListener:(NSString *)eventName listener:(CAPPluginCall *)listener {
   NSMutableArray *listenersForEvent = [self.eventListeners objectForKey:eventName];
-  if(!listenersForEvent) {
+  if(listenersForEvent == nil || [listenersForEvent count] == 0) {
     listenersForEvent = [[NSMutableArray alloc] initWithObjects:listener, nil];
     [self.eventListeners setValue:listenersForEvent forKey:eventName];
     
