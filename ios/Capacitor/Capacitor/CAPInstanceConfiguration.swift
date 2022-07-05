@@ -20,7 +20,7 @@ extension InstanceConfiguration {
             return nil
         }
 
-        return appStartServerURL.appendingPathComponent(errorPath)
+        return localURL.appendingPathComponent(errorPath)
     }
 
     @available(*, deprecated, message: "Use getPluginConfig")
