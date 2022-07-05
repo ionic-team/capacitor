@@ -25,12 +25,14 @@ open class CAPWebView: UIView {
     private lazy var configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)
 
     private lazy var assetHandler: WebViewAssetHandler = {
-        let handler = WebViewAssetHandler(router: _Router())
+        let handler = WebViewAssetHandler(router: router)
         handler.setAssetPath(configuration.appLocation.path)
         return handler
     }()
 
     private lazy var delegationHandler = WebViewDelegationHandler()
+
+    open var router: Router { _Router() }
 
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
