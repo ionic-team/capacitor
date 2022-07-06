@@ -43,7 +43,7 @@ public class CapConfig {
     private boolean webContentsDebuggingEnabled = false;
     private boolean loggingEnabled = true;
     private boolean initialFocus = true;
-
+    private boolean useWideViewPort = false;
     // Embedded
     private String startPath;
 
@@ -124,6 +124,7 @@ public class CapConfig {
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.loggingEnabled = builder.loggingEnabled;
         this.initialFocus = builder.initialFocus;
+        this.useWideViewPort = builder.useWideViewPort;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -201,6 +202,7 @@ public class CapConfig {
         }
 
         initialFocus = JSONUtils.getBoolean(configJSON, "android.initialFocus", initialFocus);
+        useWideViewPort = JSONUtils.getBoolean(configJSON, "android.useWideViewPort", useWideViewPort);
 
         // Plugins
         pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
@@ -272,6 +274,9 @@ public class CapConfig {
         return initialFocus;
     }
 
+    public boolean useWideViewPort() {
+        return useWideViewPort;
+    }
     public PluginConfig getPluginConfiguration(String pluginId) {
         PluginConfig pluginConfig = pluginsConfiguration.get(pluginId);
         if (pluginConfig == null) {
@@ -428,6 +433,7 @@ public class CapConfig {
         private Boolean webContentsDebuggingEnabled = null;
         private boolean loggingEnabled = true;
         private boolean initialFocus = false;
+        private boolean useWideViewPort = false;
 
         // Embedded
         private String startPath = null;
@@ -529,6 +535,11 @@ public class CapConfig {
 
         public Builder setInitialFocus(boolean focus) {
             this.initialFocus = focus;
+            return this;
+        }
+
+        public Builder setUseWideViewPort(boolean useWideViewPort) {
+            this.useWideViewPort = useWideViewPort;
             return this;
         }
     }
