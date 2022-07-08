@@ -10,19 +10,40 @@ public class WebColor {
      * @return The corresponding color as an int.
      */
     public static int parseColor(String colorString) {
-        String formattedColor = colorString;
-        if (colorString.charAt(0) != '#') {
-            formattedColor = "#" + formattedColor;
+        if (color.isEmpty()) {
+            return 0;
         }
 
-        if (formattedColor.length() != 7 && formattedColor.length() != 9) {
-            throw new IllegalArgumentException("The encoded color space is invalid or unknown");
-        } else if (formattedColor.length() == 7) {
-            return Color.parseColor(formattedColor);
-        } else {
-            // Convert to Android format #AARRGGBB from #RRGGBBAA
-            formattedColor = "#" + formattedColor.substring(7) + formattedColor.substring(1, 7);
-            return Color.parseColor(formattedColor);
+        // Color.parseColor() reads colors as ARGB instead of RGBA, which is the CSS standard. Brilliant!
+        // So we have to move the alpha value if it exists. Also, if the color does not have a "#" prefix
+        // (which is allowed on iOS), add it, because parseColor() expects it.
+        if (color.length() > 1) {
+            if (color.charAt(0) == '#') {
+              color = color.substring(1);
+            }
+
+            switch (color.length()) {
+                // If the length is 3 or 4, assume it's RGB[A], convert to RRGGBB[AA]
+                case 3:
+                case 4:
+                  StringBuilder rgb = new StringBuilder();
+
+                  for (int i = 0; i < color.length(); i++) {
+                    String ch = color.substring(i, i + 1);
+                    rgb.append(ch).append(ch);
+                  }
+
+                  color = rgb.toString();
+                  break;
+            }
+
+            if (color.length() == 8) {
+                // If the length is 8, assume it's RRGGBBAA
+                color = color.substring(6) + color.substring(0, 6);
+            }
+
+            color = "#" + color;
         }
-    }
+
+        return Color.parseColor(color);
 }
