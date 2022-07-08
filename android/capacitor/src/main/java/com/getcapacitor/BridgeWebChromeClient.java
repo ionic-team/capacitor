@@ -409,7 +409,9 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     private void showFilePicker(final ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
-        Intent intent = fileChooserParams.createIntent();
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
         if (fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) {
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
