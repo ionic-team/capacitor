@@ -480,7 +480,7 @@ public class CapConfig {
             return this;
         }
 
-        public Builder setErrorUPath(String errorPath) {
+        public Builder setErrorPath(String errorPath) {
             this.errorPath = errorPath;
             return this;
         }
