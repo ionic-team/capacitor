@@ -43,6 +43,7 @@ public class CapConfig {
     private boolean webContentsDebuggingEnabled = false;
     private boolean loggingEnabled = true;
     private boolean initialFocus = true;
+    private int minWebViewVersion = 50;
 
     // Embedded
     private String startPath;
@@ -124,6 +125,7 @@ public class CapConfig {
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.loggingEnabled = builder.loggingEnabled;
         this.initialFocus = builder.initialFocus;
+        this.minWebViewVersion = builder.minWebViewVersion;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -177,6 +179,7 @@ public class CapConfig {
                 "android.allowMixedContent",
                 JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
             );
+        minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", 50);
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
 
@@ -271,6 +274,8 @@ public class CapConfig {
     public boolean isInitialFocus() {
         return initialFocus;
     }
+
+    public int getMinWebViewVersion() { return minWebViewVersion; }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
         PluginConfig pluginConfig = pluginsConfiguration.get(pluginId);
@@ -428,6 +433,7 @@ public class CapConfig {
         private Boolean webContentsDebuggingEnabled = null;
         private boolean loggingEnabled = true;
         private boolean initialFocus = false;
+        private int minWebViewVersion = 50;
 
         // Embedded
         private String startPath = null;
