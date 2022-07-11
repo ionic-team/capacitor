@@ -277,7 +277,7 @@ public class Bridge {
     }
 
     @SuppressLint("WebViewApiAvailability")
-    private boolean isMinimumWebViewInstalled() {
+    public boolean isMinimumWebViewInstalled() {
         PackageManager pm = getContext().getPackageManager();
 
         // Check getCurrentWebViewPackage() directly if above Android 8
