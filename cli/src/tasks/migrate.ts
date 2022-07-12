@@ -51,7 +51,7 @@ export async function migrateCommand(config: Config): Promise<void> {
   };
 
   const daysLeft = daysUntil(new Date('11/01/2022'));
-  let googlePlayWarning = `Google Play Store requires a minimum target of SDK 31 by 1st November 2022`;
+  let googlePlayWarning = `Google Play Store requires a minimum target of SDK 31 by the 1st November 2022`;
   if (daysLeft > 0) {
     googlePlayWarning += ` (${daysLeft} days left)`;
   }
