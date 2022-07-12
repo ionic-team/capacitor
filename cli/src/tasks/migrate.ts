@@ -51,13 +51,16 @@ export async function migrateCommand(config: Config): Promise<void> {
   };
 
   const daysLeft = daysUntil(new Date('11/01/2022'));
-  let warning = `Google Play Store requires a minimum target of SDK 31 by 1st November 2022`;
+  let googlePlayWarning = `Google Play Store requires a minimum target of SDK 31 by 1st November 2022`;
   if (daysLeft > 0) {
-    warning += ` (${daysLeft} days left)`;
+    googlePlayWarning += ` (${daysLeft} days left)`;
   }
 
+  const monorepoWarning =
+    'Please note this tool is not intended for use in a mono-repo enviroment, please check out the Ionic vscode extension for this functionality.';
+
   const { migrateconfirm } = await logPrompt(
-    `Capacitor 4 sets a deployment target of iOS 13 and Android 12 (SDK 32). \n${warning}\n`,
+    `Capacitor 4 sets a deployment target of iOS 13 and Android 12 (SDK 32). \n${googlePlayWarning} \n${monorepoWarning} \n`,
     {
       type: 'text',
       name: 'migrateconfirm',
@@ -74,7 +77,7 @@ export async function migrateCommand(config: Config): Promise<void> {
       }
       await installLatestNPMLibs();
       await migrateStoragePluginToPreferences();
-  
+
       if (allDependencies['@capacitor/ios']) {
         // Set deployment target to 13.0
         updateFile(
@@ -113,12 +116,18 @@ export async function migrateCommand(config: Config): Promise<void> {
         );
         // Remove from App Delegate
         removeInFile(
-          join(configData.app.rootDir, 'ios', 'App', 'App', 'AppDelegate.swift'),
+          join(
+            configData.app.rootDir,
+            'ios',
+            'App',
+            'App',
+            'AppDelegate.swift',
+          ),
           `#if USE_PUSH`,
           `#endif`,
         );
       }
-  
+
       if (allDependencies['@capacitor/android']) {
         // AndroidManifest.xml add attribute: <activity android:exported="true"
         updateAndroidManifest(
@@ -161,7 +170,7 @@ export async function migrateCommand(config: Config): Promise<void> {
           `App/App/capacitor.config.json`,
           `App/App/config.xml`,
         ]);
-  
+
         // Variables gradle
         const variables: { [key: string]: any } = {
           minSdkVersion: 22,
@@ -197,10 +206,10 @@ export async function migrateCommand(config: Config): Promise<void> {
           }
         }
       }
-  
+
       // Ran Cap Sync
       await getCommandOutput('npx', ['cap', 'sync']);
-  
+
       writeBreakingChanges();
       logSuccess(
         `Migration to Capacitor ${coreVersion} is complete. Run and test your app!`,
