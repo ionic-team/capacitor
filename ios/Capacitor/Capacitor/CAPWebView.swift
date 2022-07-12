@@ -104,6 +104,19 @@ open class CAPWebView: UIView {
     open func loadInitialContext(_ userContentController: WKUserContentController) {
         CAPLog.print("in loadInitialContext base")
     }
+
+    public func setServerBasePath(path: String) {
+        let url = URL(fileURLWithPath: path, isDirectory: true)
+        guard FileManager.default.fileExists(atPath: url.path) else { return }
+
+        capacitorBridge.config = capacitorBridge.config.updatingAppLocation(url)
+        capacitorBridge.webViewAssetHandler.setAssetPath(url.path)
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            _ = self.webView.load(URLRequest(url: self.capacitorBridge.config.serverURL))
+        }
+    }
 }
 
 extension CAPWebView {
