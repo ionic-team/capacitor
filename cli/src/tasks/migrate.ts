@@ -40,8 +40,8 @@ const plugins = [
   '@capacitor/toast',
 ];
 let configData: Config | null = null;
-const coreVersion = '^4.0.0-beta.2';
-const pluginVersion = '^4.0.0-beta.2';
+const coreVersion = '4.0.0-beta.2';
+const pluginVersion = '4.0.0-beta.2';
 
 export async function migrateCommand(config: Config): Promise<void> {
   configData = config;
