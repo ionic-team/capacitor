@@ -1,4 +1,3 @@
-// import c from '../colors';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
