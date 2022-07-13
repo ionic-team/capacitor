@@ -20,7 +20,7 @@ export enum ExceptionCode {
 }
 
 export class CapacitorException extends Error {
-  constructor(readonly message: string, readonly code?: ExceptionCode) {
+  constructor(readonly message: string, readonly code?: ExceptionCode, readonly data?: any) {
     super(message);
   }
 }
