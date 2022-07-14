@@ -172,7 +172,7 @@ public class WebViewLocalServer {
             return null;
         }
 
-        if (isLocalFile(loadingUrl) || isMainUrl(loadingUrl) || !isAllowedUrl(loadingUrl)) {
+        if (isLocalFile(loadingUrl) || isMainUrl(loadingUrl) || !isAllowedUrl(loadingUrl)  ||isErrorUrl(loadingUrl)) {
             Logger.debug("Handling local request: " + request.getUrl().toString());
             return handleLocalRequest(request, handler);
         } else {
