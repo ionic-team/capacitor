@@ -58,11 +58,7 @@ public class BridgeWebViewClient extends WebViewClient {
         }
 
         String errorPath = bridge.getErrorUrl();
-        String appUrl = bridge.getAppUrl();
-        if (appUrl.charAt(appUrl.length() - 1) != '/') {
-            appUrl += "/";
-        }
-        if (errorPath != null && request.getUrl().toString().equals(appUrl)) {
+        if (errorPath != null && request.isForMainFrame()) {
             view.loadUrl(errorPath);
         }
     }
@@ -89,6 +85,11 @@ public class BridgeWebViewClient extends WebViewClient {
             for (WebViewListener listener : bridge.getWebViewListeners()) {
                 listener.onReceivedHttpError(view);
             }
+        }
+
+        String errorPath = bridge.getErrorUrl();
+        if (errorPath != null && request.isForMainFrame()) {
+            view.loadUrl(errorPath);
         }
     }
 }
