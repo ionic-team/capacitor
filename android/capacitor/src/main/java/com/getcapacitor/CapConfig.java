@@ -2,6 +2,8 @@ package com.getcapacitor;
 
 import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
 import static com.getcapacitor.FileUtils.readFile;
+import static com.getcapacitor.Bridge.DEFAULT_ANDROID_WEBVIEW_VERSION;
+import static com.getcapacitor.Bridge.MINIMUM_ANDROID_WEBVIEW_VERSION;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -43,7 +45,7 @@ public class CapConfig {
     private boolean webContentsDebuggingEnabled = false;
     private boolean loggingEnabled = true;
     private boolean initialFocus = true;
-    private int minWebViewVersion = 50;
+    private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
     private String errorPath;
 
     // Embedded
@@ -182,7 +184,7 @@ public class CapConfig {
                 "android.allowMixedContent",
                 JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
             );
-        minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", 50);
+        minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", DEFAULT_ANDROID_WEBVIEW_VERSION);
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
 
@@ -282,7 +284,13 @@ public class CapConfig {
         return initialFocus;
     }
 
-    public int getMinWebViewVersion() { return minWebViewVersion; }
+    public int getMinWebViewVersion() {
+        if (minWebViewVersion < MINIMUM_ANDROID_WEBVIEW_VERSION) {
+            return MINIMUM_ANDROID_WEBVIEW_VERSION;
+        }
+
+        return minWebViewVersion;
+    }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
         PluginConfig pluginConfig = pluginsConfiguration.get(pluginId);
@@ -441,7 +449,7 @@ public class CapConfig {
         private Boolean webContentsDebuggingEnabled = null;
         private boolean loggingEnabled = true;
         private boolean initialFocus = false;
-        private int minWebViewVersion = 50;
+        private int minWebViewVersion = 60;
 
         // Embedded
         private String startPath = null;
