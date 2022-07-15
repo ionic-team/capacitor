@@ -995,7 +995,7 @@ public class Bridge {
      * @param resultCode
      * @param data
      */
-    boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+    public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
         if (plugin == null || plugin.getInstance() == null) {
