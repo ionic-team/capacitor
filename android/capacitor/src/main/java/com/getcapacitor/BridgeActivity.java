@@ -12,11 +12,11 @@ public class BridgeActivity extends AppCompatActivity {
 
     protected Bridge bridge;
     protected boolean keepRunning = true;
-    private CapConfig config;
+    protected CapConfig config;
 
-    private int activityDepth = 0;
-    private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-    private final Bridge.Builder bridgeBuilder = new Bridge.Builder(this);
+    protected int activityDepth = 0;
+    protected List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
+    protected final Bridge.Builder bridgeBuilder = new Bridge.Builder(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,47 +26,18 @@ public class BridgeActivity extends AppCompatActivity {
         setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
         setTheme(R.style.AppTheme_NoActionBar);
         setContentView(R.layout.bridge_layout_main);
-    }
+        PluginManager loader = new PluginManager(getAssets());
 
-    /**
-     * Initializes the Capacitor Bridge with the Activity.
-     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
-     * initialized automatically. If you need to add additional plugins during initialization,
-     * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
-     *
-     * @param plugins A list of plugins to initialize with Capacitor
-     */
-    @Deprecated
-    protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
-        this.init(savedInstanceState, plugins, null);
-    }
-
-    /**
-     * Initializes the Capacitor Bridge with the Activity.
-     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
-     * initialized automatically. If you need to add additional plugins during initialization,
-     * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
-     *
-     * @param plugins A list of plugins to initialize with Capacitor
-     * @param config An instance of a Capacitor Configuration to use. If null, will load from file
-     */
-    @Deprecated
-    protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, CapConfig config) {
-        this.initialPlugins = plugins;
-        this.config = config;
+        try {
+            bridgeBuilder.addPlugins(loader.loadPluginClasses());
+        } catch (PluginLoadException ex) {
+            Logger.error("Error loading plugins.", ex);
+        }
 
         this.load();
     }
 
-    /**
-     * @deprecated This method should not be called manually.
-     */
-    @Deprecated
-    protected void load(Bundle savedInstanceState) {
-        this.load();
-    }
-
-    private void load() {
+    protected void load() {
         Logger.debug("Starting BridgeActivity");
 
         bridge = bridgeBuilder.addPlugins(initialPlugins).setConfig(config).create();
@@ -96,20 +67,6 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
-        // Preferred behavior: init() was not called, so we construct the bridge with auto-loaded plugins.
-        if (bridge == null) {
-            PluginManager loader = new PluginManager(getAssets());
-
-            try {
-                bridgeBuilder.addPlugins(loader.loadPluginClasses());
-            } catch (PluginLoadException ex) {
-                Logger.error("Error loading plugins.", ex);
-            }
-
-            this.load();
-        }
-
         activityDepth++;
         this.bridge.onStart();
         Logger.debug("App started");

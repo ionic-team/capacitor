@@ -42,7 +42,7 @@ import Cordova
         setScreenOrientationDefaults()
 
         // get the web view
-        let assetHandler = WebViewAssetHandler()
+        let assetHandler = WebViewAssetHandler(router: router())
         assetHandler.setAssetPath(configuration.appLocation.path)
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
@@ -90,6 +90,10 @@ import Cordova
         return descriptor
     }
 
+    open func router() -> Router {
+        return _Router()
+    }
+
     /**
      The WKWebViewConfiguration to use for the webview.
 
@@ -114,6 +118,15 @@ import Cordova
             } else {
                 webViewConfiguration.applicationNameForUserAgent = appendUserAgent
             }
+        }
+        if let preferredContentMode = instanceConfiguration.preferredContentMode {
+            var mode = WKWebpagePreferences.ContentMode.recommended
+            if preferredContentMode == "mobile" {
+                mode = WKWebpagePreferences.ContentMode.mobile
+            } else if preferredContentMode == "desktop" {
+                mode = WKWebpagePreferences.ContentMode.desktop
+            }
+            webViewConfiguration.defaultWebpagePreferences.preferredContentMode = mode
         }
         return webViewConfiguration
     }
@@ -162,11 +175,7 @@ import Cordova
             }
             if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
                 if statusBarStyle == "UIStatusBarStyleDarkContent" {
-                    if #available(iOS 13.0, *) {
-                        self.statusBarStyle = .darkContent
-                    } else {
-                        self.statusBarStyle = .default
-                    }
+                    self.statusBarStyle = .darkContent
                 } else if statusBarStyle != "UIStatusBarStyleDefault" {
                     self.statusBarStyle = .lightContent
                 }
@@ -291,7 +300,7 @@ extension CAPBridgeViewController {
         if let backgroundColor = configuration.backgroundColor {
             aWebView.backgroundColor = backgroundColor
             aWebView.scrollView.backgroundColor = backgroundColor
-        } else if #available(iOS 13, *) {
+        } else {
             // Use the system background colors if background is not set by user
             aWebView.backgroundColor = UIColor.systemBackground
             aWebView.scrollView.backgroundColor = UIColor.systemBackground
