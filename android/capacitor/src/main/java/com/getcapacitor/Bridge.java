@@ -286,7 +286,7 @@ public class Bridge {
             PackageInfo info = WebView.getCurrentWebViewPackage();
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+            return majorVersion >= config.getMinWebViewVersion();
         }
 
         // Otherwise manually check WebView versions
@@ -298,7 +298,7 @@ public class Bridge {
             PackageInfo info = pm.getPackageInfo(webViewPackage, 0);
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+            return majorVersion >= config.getMinWebViewVersion();
         } catch (Exception ex) {
             Logger.warn("Unable to get package info for 'com.google.android.webview'" + ex.toString());
         }
@@ -307,7 +307,7 @@ public class Bridge {
             PackageInfo info = pm.getPackageInfo("com.android.webview", 0);
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+            return majorVersion >= config.getMinWebViewVersion();
         } catch (Exception ex) {
             Logger.warn("Unable to get package info for 'com.android.webview'" + ex.toString());
         }
