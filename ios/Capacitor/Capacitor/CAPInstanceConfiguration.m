@@ -46,6 +46,7 @@
         else {
             _serverURL = _localURL;
         }
+        _errorPath = descriptor.errorPath;
         // extract the one value we care about from the cordova configuration
         _cordovaDeployDisabled = [descriptor cordovaDeployDisabled];
     }
@@ -60,6 +61,7 @@
         _allowedNavigationHostnames = [[configuration allowedNavigationHostnames] copy];
         _localURL = [[configuration localURL] copy];
         _serverURL = [[configuration serverURL] copy];
+        _errorPath = [[configuration errorPath] copy];
         _pluginConfigurations = [[configuration pluginConfigurations] copy];
         _loggingEnabled = configuration.loggingEnabled;
         _scrollingEnabled = configuration.scrollingEnabled;

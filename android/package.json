@@ -16,6 +16,7 @@
     "capacitor/build.gradle",
     "capacitor/lint-baseline.xml",
     "capacitor/lint.xml",
+    "capacitor/proguard-rules.pro",
     "capacitor/src/main/"
   ],
   "scripts": {

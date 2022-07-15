@@ -13,6 +13,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly, nonnull) NSArray<NSString*> *allowedNavigationHostnames;
 @property (nonatomic, readonly, nonnull) NSURL *localURL;
 @property (nonatomic, readonly, nonnull) NSURL *serverURL;
+@property (nonatomic, readonly, nullable) NSString *errorPath;
 @property (nonatomic, readonly, nonnull) NSDictionary *pluginConfigurations;
 @property (nonatomic, readonly) BOOL loggingEnabled;
 @property (nonatomic, readonly) BOOL scrollingEnabled;
