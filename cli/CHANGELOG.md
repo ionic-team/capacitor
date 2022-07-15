@@ -3,6 +3,109 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.2](https://github.com/ionic-team/capacitor/compare/4.0.0-beta.1...4.0.0-beta.2) (2022-07-08)
+
+**Note:** Version bump only for package @capacitor/cli
+
+
+
+
+
+# [4.0.0-beta.1](https://github.com/ionic-team/capacitor/compare/4.0.0-beta.0...4.0.0-beta.1) (2022-06-27)
+
+**Note:** Version bump only for package @capacitor/cli
+
+
+
+
+
+# [4.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/3.6.0...4.0.0-beta.0) (2022-06-17)
+
+
+### Features
+
+* **android:** Use java 11 ([#5552](https://github.com/ionic-team/capacitor/issues/5552)) ([e47959f](https://github.com/ionic-team/capacitor/commit/e47959fcbd6a89b97b1275a5814fdb4e7ce30672))
+* **ios:** Add preferredContentMode configuration option ([#5583](https://github.com/ionic-team/capacitor/issues/5583)) ([5b6dfa3](https://github.com/ionic-team/capacitor/commit/5b6dfa3fe29c85632546b299f03cc04a77cf7475))
+
+
+
+
+
+# [3.6.0](https://github.com/ionic-team/capacitor/compare/3.5.1...3.6.0) (2022-06-17)
+
+
+### Features
+
+* **android:** update support for Portals for Capacitor to include Live Updates ([#5660](https://github.com/ionic-team/capacitor/issues/5660)) ([62f0a5e](https://github.com/ionic-team/capacitor/commit/62f0a5eaa40776aad79dbf8f8c0900037d3cc97e))
+
+
+
+
+
+# [4.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.2) (2022-05-12)
+
+
+### Features
+
+* **android:** Use java 11 ([#5552](https://github.com/ionic-team/capacitor/issues/5552)) ([e47959f](https://github.com/ionic-team/capacitor/commit/e47959fcbd6a89b97b1275a5814fdb4e7ce30672))
+* **ios:** Add preferredContentMode configuration option ([#5583](https://github.com/ionic-team/capacitor/issues/5583)) ([5b6dfa3](https://github.com/ionic-team/capacitor/commit/5b6dfa3fe29c85632546b299f03cc04a77cf7475))
+
+
+
+
+
+## [3.5.1](https://github.com/ionic-team/capacitor/compare/3.5.0...3.5.1) (2022-05-04)
+
+
+### Bug Fixes
+
+* **android:** move initialFocus on webview into config ([#5579](https://github.com/ionic-team/capacitor/issues/5579)) ([8b4e861](https://github.com/ionic-team/capacitor/commit/8b4e861514b0fbe08e9296f49c280234f54742e1))
+
+
+
+
+
+# [3.5.0](https://github.com/ionic-team/capacitor/compare/3.4.3...3.5.0) (2022-04-22)
+
+
+### Features
+
+* **cli:** support capacitor portals plugin changes needed ([#5558](https://github.com/ionic-team/capacitor/issues/5558)) ([6810a19](https://github.com/ionic-team/capacitor/commit/6810a19ae2bbda1f4b2afad61d37ca822ca157f5))
+
+
+
+
+
+# [4.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.1) (2022-03-25)
+
+**Note:** Version bump only for package @capacitor/cli
+
+
+
+
+
+
+## [3.4.3](https://github.com/ionic-team/capacitor/compare/3.4.2...3.4.3) (2022-03-04)
+
+
+### Bug Fixes
+
+* **cli:** avoid srcFiles is not iterable on kotlinNeededCheck ([#5481](https://github.com/ionic-team/capacitor/issues/5481)) ([3c2b579](https://github.com/ionic-team/capacitor/commit/3c2b579c6edb1fc69d85689b268eb92067b7821b))
+
+
+
+
+
+## [3.4.2](https://github.com/ionic-team/capacitor/compare/3.4.1...3.4.2) (2022-03-03)
+
+
+### Bug Fixes
+
+* **android:** compatibility with cordova kotlin plugins ([#5438](https://github.com/ionic-team/capacitor/issues/5438)) ([55bf004](https://github.com/ionic-team/capacitor/commit/55bf004897b3feb280ab6b6575d2a2c1a0a183e2))
+
+
+
+
 ## [3.4.1](https://github.com/ionic-team/capacitor/compare/3.4.0...3.4.1) (2022-02-09)
 
 

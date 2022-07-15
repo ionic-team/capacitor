@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/capacitorjs'
   s.license = 'MIT'
   s.homepage = 'https://capacitorjs.com/'
-  s.ios.deployment_target  = '12.0'
+  s.ios.deployment_target  = '13.0'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :branch => "portals-dev" }
   s.source_files = 'Capacitor/Capacitor/*.{swift,h,m}', 'Capacitor/Capacitor/Plugins/*.{swift,h,m}', 'Capacitor/Capacitor/Plugins/**/*.{swift,h,m}'
