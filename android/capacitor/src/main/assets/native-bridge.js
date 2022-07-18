@@ -384,11 +384,16 @@ const nativeBridge = (function (exports) {
                 }
                 return null;
             };
-
-            androidBridge.onmessage = function(event) {
+            win.androidBridge.onmessage = function (event) {
+                console.log(JSON.parse(event.data));
                 returnResult(JSON.parse(event.data));
-            }
-
+            };
+            /**
+             * Process a response from the native layer.
+             */
+            cap.fromNative = result => {
+                returnResult(result);
+            };
             const returnResult = result => {
                 var _a, _b;
                 if (cap.isLoggingEnabled && result.pluginId !== 'Console') {
@@ -444,12 +449,6 @@ const nativeBridge = (function (exports) {
                 // overkill but we're not sure what apps will do with this data
                 delete result.data;
                 delete result.error;
-            }
-            /**
-             * Process a response from the native layer.
-             */
-            cap.fromNative = result => {
-                returnResult(result);
             };
             cap.nativeCallback = (pluginName, methodName, options, callback) => {
                 if (typeof options === 'function') {

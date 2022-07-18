@@ -384,10 +384,17 @@ const nativeBridge = (function (exports) {
                 }
                 return null;
             };
+            win.androidBridge.onmessage = function (event) {
+                console.log(JSON.parse(event.data));
+                returnResult(JSON.parse(event.data));
+            };
             /**
              * Process a response from the native layer.
              */
             cap.fromNative = result => {
+                returnResult(result);
+            };
+            const returnResult = result => {
                 var _a, _b;
                 if (cap.isLoggingEnabled && result.pluginId !== 'Console') {
                     cap.logFromNative(result);
