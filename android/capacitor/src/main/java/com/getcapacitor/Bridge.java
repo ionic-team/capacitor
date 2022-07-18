@@ -45,7 +45,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaWebView;
@@ -100,7 +99,7 @@ public class Bridge {
     private String appUrl;
     private String appUrlConfig;
     private HostMask appAllowNavigationMask;
-    private Set<String> allowedOriginRules = new HashSet<String>();;
+    private Set<String> allowedOriginRules = new HashSet<String>();
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
@@ -212,9 +211,9 @@ public class Bridge {
             allowedOriginRules.add(this.getServerUrl());
         }
         if (appAllowNavigationConfig != null) {
-            for (String allowNavigation: appAllowNavigationConfig) {
+            for (String allowNavigation : appAllowNavigationConfig) {
                 if (!allowNavigation.startsWith("http")) {
-                    allowedOriginRules.add("https://"+allowNavigation);
+                    allowedOriginRules.add("https://" + allowNavigation);
                 } else {
                     allowedOriginRules.add(allowNavigation);
                 }

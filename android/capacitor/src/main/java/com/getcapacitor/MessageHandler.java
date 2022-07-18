@@ -42,7 +42,7 @@ public class MessageHandler {
                 }
             }
         };
-        
+
         if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
             try {
                 WebViewCompat.addWebMessageListener(webView, "androidBridge", bridge.getAllowedOriginRules(), capListener);
@@ -132,7 +132,7 @@ public class MessageHandler {
 
             boolean isValidCallbackId = !call.getCallbackId().equals(PluginCall.CALLBACK_ID_DANGLING);
             if (isValidCallbackId) {
-                if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER) &&  javaScriptReplyProxy != null) {
+                if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER) && javaScriptReplyProxy != null) {
                     javaScriptReplyProxy.postMessage(data.toString());
                 } else {
                     final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
