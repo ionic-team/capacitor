@@ -59,7 +59,7 @@ export async function migrateCommand(config: Config): Promise<void> {
   const monorepoWarning =
     'Please note this tool is not intended for use in a mono-repo enviroment, please check out the Ionic vscode extension for this functionality.';
 
-  logger.info(monorepoWarning)
+  logger.info(monorepoWarning);
 
   const { migrateconfirm } = await logPrompt(
     `Capacitor 4 sets a deployment target of iOS 13 and Android 12 (SDK 32). \n${googlePlayWarning} \n`,
@@ -71,7 +71,10 @@ export async function migrateCommand(config: Config): Promise<void> {
     },
   );
 
-  if (typeof migrateconfirm === 'string' && migrateconfirm.toLowerCase() === 'y') {
+  if (
+    typeof migrateconfirm === 'string' &&
+    migrateconfirm.toLowerCase() === 'y'
+  ) {
     try {
       if (configData === null) {
         fatal('Config data missing');
@@ -86,17 +89,25 @@ export async function migrateCommand(config: Config): Promise<void> {
           initial: 'y',
         },
       );
-      const runNpmInstall = typeof npmInstallConfirm === 'string' && npmInstallConfirm.toLowerCase() === 'y';
+      const runNpmInstall =
+        typeof npmInstallConfirm === 'string' &&
+        npmInstallConfirm.toLowerCase() === 'y';
 
       await runTask(`Installing Latest NPM Modules.`, () => {
         return installLatestNPMLibs(runNpmInstall);
       });
 
-      await runTask(`Migrating @capacitor/storage to @capacitor/preferences.`, () => {
-        return migrateStoragePluginToPreferences(runNpmInstall);
-      });
+      await runTask(
+        `Migrating @capacitor/storage to @capacitor/preferences.`,
+        () => {
+          return migrateStoragePluginToPreferences(runNpmInstall);
+        },
+      );
 
-      if (allDependencies['@capacitor/ios'] && existsSync(join(configData.app.rootDir, 'ios'))) {
+      if (
+        allDependencies['@capacitor/ios'] &&
+        existsSync(join(configData.app.rootDir, 'ios'))
+      ) {
         // Set deployment target to 13.0
         await runTask(`Migrating deployment target to 13.0.`, () => {
           return updateFile(
@@ -106,7 +117,7 @@ export async function migrateCommand(config: Config): Promise<void> {
             '13.0',
           );
         });
-        
+
         // Update Podfile to 13.0
         await runTask(`Migrating Podfile to 13.0.`, () => {
           return updateFile(
@@ -116,24 +127,30 @@ export async function migrateCommand(config: Config): Promise<void> {
             '13.0',
           );
         });
-        
+
         // Remove touchesBegan
-        await runTask(`Migrating AppDelegate.swift by removing touchesBegan.`, () => {
-          return updateFile(
-            join('ios', 'App', 'App', 'AppDelegate.swift'),
-            `override func touchesBegan`,
-            `}`,
-          );
-        });
-        
+        await runTask(
+          `Migrating AppDelegate.swift by removing touchesBegan.`,
+          () => {
+            return updateFile(
+              join('ios', 'App', 'App', 'AppDelegate.swift'),
+              `override func touchesBegan`,
+              `}`,
+            );
+          },
+        );
+
         // Remove NSAppTransportSecurity
-        await runTask(`Migrating info.plist by removing NSAppTransportSecurity key.`, () => {
-          return removeKey(
-            join(configData!.app.rootDir, 'ios', 'App', 'App', 'info.plist'),
-            'NSAppTransportSecurity',
-          );
-        });
-        
+        await runTask(
+          `Migrating info.plist by removing NSAppTransportSecurity key.`,
+          () => {
+            return removeKey(
+              join(configData!.app.rootDir, 'ios', 'App', 'App', 'info.plist'),
+              'NSAppTransportSecurity',
+            );
+          },
+        );
+
         // Remove USE_PUSH
         await runTask(`Migrating by removing USE_PUSH.`, () => {
           return replacePush(
@@ -146,29 +163,34 @@ export async function migrateCommand(config: Config): Promise<void> {
             ),
           );
         });
-        
+
         // Remove from App Delegate
         await runTask(`Migrating App Delegate.`, () => {
           return replaceIfUsePush();
         });
-        
       }
 
-      if (allDependencies['@capacitor/android'] && existsSync(join(configData.app.rootDir, 'android'))) {
+      if (
+        allDependencies['@capacitor/android'] &&
+        existsSync(join(configData.app.rootDir, 'android'))
+      ) {
         // AndroidManifest.xml add attribute: <activity android:exported="true"
-        await runTask(`Migrating AndroidManifest.xml by adding android:exported attribute to Activity.`, () => {
-          return updateAndroidManifest(
-            join(
-              configData!.app.rootDir,
-              'android',
-              'app',
-              'src',
-              'main',
-              'AndroidManifest.xml',
-            ),
-          );
-        });
-        
+        await runTask(
+          `Migrating AndroidManifest.xml by adding android:exported attribute to Activity.`,
+          () => {
+            return updateAndroidManifest(
+              join(
+                configData!.app.rootDir,
+                'android',
+                'app',
+                'src',
+                'main',
+                'AndroidManifest.xml',
+              ),
+            );
+          },
+        );
+
         // Update build.gradle
         const { leaveJCenterPrompt } = await logPrompt(
           `Some projects still require JCenter to function. If your project does, please answer yes below.`,
@@ -182,47 +204,60 @@ export async function migrateCommand(config: Config): Promise<void> {
         await runTask(`Migrating build.gradle file.`, () => {
           return updateBuildGradle(
             join(configData!.app.rootDir, 'android', 'build.gradle'),
-            typeof leaveJCenterPrompt === 'string' && leaveJCenterPrompt.toLowerCase() === 'y' 
+            typeof leaveJCenterPrompt === 'string' &&
+              leaveJCenterPrompt.toLowerCase() === 'y',
           );
         });
-        
+
         // Update app.gradle
         await runTask(`Migrating app.gradle file.`, () => {
           return updateAppBuildGradle(
             join(configData!.app.rootDir, 'android', 'app', 'build.gradle'),
           );
         });
-        
+
         // Update gradle-wrapper.properties
-        await runTask(`Migrating gradle-wrapper.properties by updating gradle version from 7.0 to 7.4.2.`, () => {
-          return updateGradleWrapper(
-            join(
-              configData!.app.rootDir,
-              'android',
-              'gradle',
-              'wrapper',
-              'gradle-wrapper.properties',
-            ),
-          );
-        });
-        
+        await runTask(
+          `Migrating gradle-wrapper.properties by updating gradle version from 7.0 to 7.4.2.`,
+          () => {
+            return updateGradleWrapper(
+              join(
+                configData!.app.rootDir,
+                'android',
+                'gradle',
+                'wrapper',
+                'gradle-wrapper.properties',
+              ),
+            );
+          },
+        );
+
         // Update .gitIgnore
-        await runTask(`Migrating .gitignore files by adding generated config files.`, () => {
-          return (async () => {
-            await updateGitIgnore(join(configData!.app.rootDir, 'android', '.gitignore'), [
-              `# Generated Config files`,
-              `app/src/main/assets/capacitor.config.json`,
-              `app/src/main/assets/capacitor.plugins.json`,
-              `app/src/main/res/xml/config.xml`,
-            ]);
-            await updateGitIgnore(join(configData!.app.rootDir, 'ios', '.gitignore'), [
-              `# Generated Config files`,
-              `App/App/capacitor.config.json`,
-              `App/App/config.xml`,
-            ]);
-          })();
-        });
-        
+        await runTask(
+          `Migrating .gitignore files by adding generated config files.`,
+          () => {
+            return (async () => {
+              await updateGitIgnore(
+                join(configData!.app.rootDir, 'android', '.gitignore'),
+                [
+                  `# Generated Config files`,
+                  `app/src/main/assets/capacitor.config.json`,
+                  `app/src/main/assets/capacitor.plugins.json`,
+                  `app/src/main/res/xml/config.xml`,
+                ],
+              );
+              await updateGitIgnore(
+                join(configData!.app.rootDir, 'ios', '.gitignore'),
+                [
+                  `# Generated Config files`,
+                  `App/App/capacitor.config.json`,
+                  `App/App/config.xml`,
+                ],
+              );
+            })();
+          },
+        );
+
         // Variables gradle
         await runTask(`Migrating variables.gradle file.`, () => {
           return (async (): Promise<void> => {
@@ -261,7 +296,6 @@ export async function migrateCommand(config: Config): Promise<void> {
             }
           })();
         });
-        
       }
 
       // Run Cap Sync
@@ -308,7 +342,9 @@ async function installLatestNPMLibs(runInstall: boolean) {
   if (runInstall) {
     await getCommandOutput('npm', ['i', ...result]);
   } else {
-    logger.info(`Please run an install command with your package manager of choice with the following:`);
+    logger.info(
+      `Please run an install command with your package manager of choice with the following:`,
+    );
     logger.info(`<pkg manager install cmd> ${result.join(' ')}`);
   }
 }
@@ -322,7 +358,9 @@ async function migrateStoragePluginToPreferences(runInstall: boolean) {
         `@capacitor/preferences@${pluginVersion}`,
       ]);
     } else {
-      logger.info(`Please manually uninstall @capacitor/storage and replace it with @capacitor/preferences@${pluginVersion}`);
+      logger.info(
+        `Please manually uninstall @capacitor/storage and replace it with @capacitor/preferences@${pluginVersion}`,
+      );
     }
   }
 }
@@ -360,10 +398,14 @@ async function updateAndroidManifest(filename: string) {
     return;
   }
 
-  const hasAndroidExportedAlreadySet = (new RegExp(/<activity([^>]*(android:exported=")[^>]*)>/g)).test(txt);
+  const hasAndroidExportedAlreadySet = new RegExp(
+    /<activity([^>]*(android:exported=")[^>]*)>/g,
+  ).test(txt);
   let isAndroidExportedSetToFalse = false;
   if (hasAndroidExportedAlreadySet) {
-    isAndroidExportedSetToFalse = (new RegExp(/<activity([^>]*(android:exported="false")[^>]*)>/g)).test(txt);
+    isAndroidExportedSetToFalse = new RegExp(
+      /<activity([^>]*(android:exported="false")[^>]*)>/g,
+    ).test(txt);
   }
 
   // AndroidManifest.xml add attribute: <activity android:exported="true"
@@ -379,7 +421,10 @@ async function updateAndroidManifest(filename: string) {
       ' android:exported="true"',
     );
   } else {
-    replaced = txt.replace('android:exported="false"', 'android:exported="true"')
+    replaced = txt.replace(
+      'android:exported="false"',
+      'android:exported="true"',
+    );
   }
   if (txt == replaced) {
     logger.error(`Unable to update Android Manifest. Missing <activity> tag`);
@@ -601,7 +646,7 @@ async function replaceIfUsePush() {
     'App',
     'App',
     'AppDelegate.swift',
-  )
+  );
   const txt = readFile(filename);
   if (!txt) {
     return;
@@ -609,14 +654,14 @@ async function replaceIfUsePush() {
   const lines = txt.split('\n');
   let startLineIndex: number | null = null;
   let endLineIndex: number | null = null;
-  for(const [key, item] of lines.entries()) {
+  for (const [key, item] of lines.entries()) {
     if (item.includes(startLine)) {
       startLineIndex = key;
       break;
     }
   }
   if (startLineIndex !== null) {
-    for(const [key, item] of lines.entries()) {
+    for (const [key, item] of lines.entries()) {
       if (item.includes(endLine) && key > startLineIndex) {
         endLineIndex = key;
         break;
