@@ -385,7 +385,6 @@ const nativeBridge = (function (exports) {
                 return null;
             };
             win.androidBridge.onmessage = function (event) {
-                console.log(JSON.parse(event.data));
                 returnResult(JSON.parse(event.data));
             };
             /**

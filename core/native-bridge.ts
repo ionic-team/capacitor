@@ -458,7 +458,6 @@ const initBridge = (w: any): void => {
     };
 
     win.androidBridge.onmessage = function (event) {
-      console.log(JSON.parse(event.data));
       returnResult(JSON.parse(event.data));
     };
 
