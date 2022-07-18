@@ -212,12 +212,11 @@ export interface CapacitorConfig {
      */
     initialFocus?: boolean;
 
-
     /**
      * The minimum supported webview version on Android supported by your app.
-     * 
+     *
      * The minimum supported cannot be lower than version `55`, which is required for Capacitor.
-     * 
+     *
      * @since 4.0.0
      * @default 60
      */

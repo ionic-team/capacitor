@@ -1,9 +1,9 @@
 package com.getcapacitor;
 
 import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
-import static com.getcapacitor.FileUtils.readFile;
 import static com.getcapacitor.Bridge.DEFAULT_ANDROID_WEBVIEW_VERSION;
 import static com.getcapacitor.Bridge.MINIMUM_ANDROID_WEBVIEW_VERSION;
+import static com.getcapacitor.FileUtils.readFile;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
