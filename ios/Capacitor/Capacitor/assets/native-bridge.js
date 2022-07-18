@@ -384,7 +384,7 @@ const nativeBridge = (function (exports) {
                 }
                 return null;
             };
-            if (win && win.androidBridge) {
+            if (win === null || win === void 0 ? void 0 : win.androidBridge) {
                 win.androidBridge.onmessage = function (event) {
                     returnResult(JSON.parse(event.data));
                 };

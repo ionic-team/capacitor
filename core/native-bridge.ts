@@ -457,7 +457,7 @@ const initBridge = (w: any): void => {
       return null;
     };
 
-    if (win && win.androidBridge) {
+    if (win?.androidBridge) {
       win.androidBridge.onmessage = function (event) {
         returnResult(JSON.parse(event.data));
       };
