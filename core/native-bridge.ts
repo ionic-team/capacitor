@@ -457,9 +457,11 @@ const initBridge = (w: any): void => {
       return null;
     };
 
-    win.androidBridge.onmessage = function (event) {
-      returnResult(JSON.parse(event.data));
-    };
+    if (win && win.androidBridge) {
+      win.androidBridge.onmessage = function (event) {
+        returnResult(JSON.parse(event.data));
+      };
+    }
 
     /**
      * Process a response from the native layer.
@@ -468,7 +470,7 @@ const initBridge = (w: any): void => {
       returnResult(result);
     };
 
-    const returnResult = result => {
+    const returnResult = (result: any) => {
       if (cap.isLoggingEnabled && result.pluginId !== 'Console') {
         cap.logFromNative(result);
       }
