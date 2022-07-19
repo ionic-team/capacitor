@@ -35,7 +35,8 @@ public class CapConfig {
     // Android Config
     private String overriddenUserAgentString;
     private String appendedUserAgentString;
-    private String backgroundColor;
+    private String lightBackgroundColor;
+    private String darkBackgroundColor;
     private boolean allowMixedContent = false;
     private boolean captureInput = false;
     private boolean webContentsDebuggingEnabled = false;
@@ -112,7 +113,8 @@ public class CapConfig {
         // Android Config
         this.overriddenUserAgentString = builder.overriddenUserAgentString;
         this.appendedUserAgentString = builder.appendedUserAgentString;
-        this.backgroundColor = builder.backgroundColor;
+        this.lightBackgroundColor = builder.lightBackgroundColor;
+        this.darkBackgroundColor = builder.darkBackgroundColor;
         this.allowMixedContent = builder.allowMixedContent;
         this.captureInput = builder.captureInput;
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
@@ -158,8 +160,10 @@ public class CapConfig {
             JSONUtils.getString(configJSON, "android.overrideUserAgent", JSONUtils.getString(configJSON, "overrideUserAgent", null));
         appendedUserAgentString =
             JSONUtils.getString(configJSON, "android.appendUserAgent", JSONUtils.getString(configJSON, "appendUserAgent", null));
-        backgroundColor =
-            JSONUtils.getString(configJSON, "android.backgroundColor", JSONUtils.getString(configJSON, "backgroundColor", null));
+        lightBackgroundColor =
+            JSONUtils.getString(configJSON, "android.backgroundColor.light", JSONUtils.getString(configJSON, "backgroundColor.light", null));
+        darkBackgroundColor =
+                JSONUtils.getString(configJSON, "android.backgroundColor.dark", JSONUtils.getString(configJSON, "backgroundColor.dark", null));
         allowMixedContent =
             JSONUtils.getBoolean(
                 configJSON,
@@ -227,8 +231,12 @@ public class CapConfig {
         return appendedUserAgentString;
     }
 
-    public String getBackgroundColor() {
-        return backgroundColor;
+    public String getLightBackgroundColor() {
+        return lightBackgroundColor;
+    }
+
+    public String getDarkBackgroundColor() {
+        return darkBackgroundColor;
     }
 
     public boolean isMixedContentAllowed() {
@@ -401,7 +409,8 @@ public class CapConfig {
         // Android Config Values
         private String overriddenUserAgentString;
         private String appendedUserAgentString;
-        private String backgroundColor;
+        private String lightBackgroundColor;
+        private String darkBackgroundColor;
         private boolean allowMixedContent = false;
         private boolean captureInput = false;
         private Boolean webContentsDebuggingEnabled = null;
@@ -481,8 +490,13 @@ public class CapConfig {
             return this;
         }
 
-        public Builder setBackgroundColor(String backgroundColor) {
-            this.backgroundColor = backgroundColor;
+        public Builder setLightBackgroundColor(String backgroundColor) {
+            this.lightBackgroundColor = backgroundColor;
+            return this;
+        }
+
+        public Builder setDarkBackgroundColor(String backgroundColor) {
+            this.darkBackgroundColor = backgroundColor;
             return this;
         }
 

@@ -21,6 +21,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import com.getcapacitor.android.R;
@@ -438,7 +439,17 @@ public class Bridge {
             settings.setUserAgentString(overrideUserAgent);
         }
 
-        String backgroundColor = this.config.getBackgroundColor();
+        int currentNightMode =
+                getContext().getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+
+        String backgroundColor = null;
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+            backgroundColor = this.config.getDarkBackgroundColor();
+        } else {
+            backgroundColor = this.config.getLightBackgroundColor();
+        }
+
         try {
             if (backgroundColor != null) {
                 webView.setBackgroundColor(WebColor.parseColor(backgroundColor));
