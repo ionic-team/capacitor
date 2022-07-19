@@ -25,21 +25,12 @@ public class MessageHandler {
         this.webView = webView;
         this.cordovaPluginManager = cordovaPluginManager;
 
-        WebViewCompat.WebMessageListener capListener = new WebViewCompat.WebMessageListener() {
-            @Override
-            public void onPostMessage(
-                WebView view,
-                WebMessageCompat message,
-                Uri sourceOrigin,
-                boolean isMainFrame,
-                JavaScriptReplyProxy replyProxy
-            ) {
-                if (isMainFrame) {
-                    postMessage(message.getData());
-                    javaScriptReplyProxy = replyProxy;
-                } else {
-                    Logger.warn("Plugin execution is allowed in Main Frame only");
-                }
+        WebViewCompat.WebMessageListener capListener = (view, message, sourceOrigin, isMainFrame, replyProxy) -> {
+            if (isMainFrame) {
+                postMessage(message.getData());
+                javaScriptReplyProxy = replyProxy;
+            } else {
+                Logger.warn("Plugin execution is allowed in Main Frame only");
             }
         };
 
