@@ -1,3 +1,5 @@
+import { LightAndDark } from "./colors";
+
 export interface CapacitorConfig {
   /**
    * The unique identifier of your packaged app.
@@ -88,7 +90,7 @@ export interface CapacitorConfig {
    *
    * @since 1.1.0
    */
-  backgroundColor?: string;
+  backgroundColor?: LightAndDark;
 
   android?: {
     /**
@@ -126,7 +128,7 @@ export interface CapacitorConfig {
      *
      * @since 1.1.0
      */
-    backgroundColor?: string;
+    backgroundColor?: LightAndDark;
 
     /**
      * Enable mixed content in the Capacitor Web View for Android.
@@ -264,7 +266,7 @@ export interface CapacitorConfig {
      *
      * @since 1.1.0
      */
-    backgroundColor?: string;
+    backgroundColor?: LightAndDark;
 
     /**
      * Configure the scroll view's content inset adjustment behavior.

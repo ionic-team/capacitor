@@ -80,9 +80,15 @@ internal extension InstanceDescriptor {
             if let agentString = (config[keyPath: "ios.overrideUserAgent"] as? String) ?? (config[keyPath: "overrideUserAgent"] as? String) {
                 overridenUserAgentString = agentString
             }
-            if let colorString = (config[keyPath: "ios.backgroundColor"] as? String) ?? (config[keyPath: "backgroundColor"] as? String),
+            if let colorString = (config[keyPath: "ios.backgroundColor.light"] as? String) ?? (config[keyPath: "backgroundColor.light"] as? String),
                let color = UIColor.capacitor.color(fromHex: colorString) {
-                backgroundColor = color
+                print(color)
+                lightBackgroundColor = color
+            }
+            if let colorString = (config[keyPath: "ios.backgroundColor.dark"] as? String) ?? (config[keyPath: "backgroundColor.dark"] as? String),
+               let color = UIColor.capacitor.color(fromHex: colorString) {
+                print(color)
+                darkBackgroundColor = color
             }
             if let allowNav = config[keyPath: "server.allowNavigation"] as? [String] {
                 allowedNavigationHostnames = allowNav

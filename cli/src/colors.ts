@@ -8,6 +8,11 @@ export const success = kleur.green;
 export const failure = kleur.red;
 export const ancillary = kleur.cyan;
 
+export interface LightAndDark {
+  light: string;
+  dark: string;
+}
+
 const COLORS: Colors = {
   strong,
   weak,

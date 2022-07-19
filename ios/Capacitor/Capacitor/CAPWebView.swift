@@ -158,12 +158,27 @@ extension CAPWebView {
         if let overrideUserAgent = configuration.overridenUserAgentString {
             webView.customUserAgent = overrideUserAgent
         }
+        
+        var backgroundSet = false
+        if #available(iOS 13.0, *), UITraitCollection.current.userInterfaceStyle == .dark {
+            if let backgroundColor = configuration.darkBackgroundColor {
+                print("dark1")
+                backgroundSet = true
+                self.backgroundColor = backgroundColor
+                webView.backgroundColor = backgroundColor
+                webView.scrollView.backgroundColor = backgroundColor
+            }
+        } else {
+            if let backgroundColor = configuration.lightBackgroundColor {
+                print("light1")
+                backgroundSet = true
+                self.backgroundColor = backgroundColor
+                webView.backgroundColor = backgroundColor
+                webView.scrollView.backgroundColor = backgroundColor
+            }
+        }
 
-        if let backgroundColor = configuration.backgroundColor {
-            self.backgroundColor = backgroundColor
-            webView.backgroundColor = backgroundColor
-            webView.scrollView.backgroundColor = backgroundColor
-        } else if #available(iOS 13, *) {
+        if #available(iOS 13.0, *), !backgroundSet {
             // Use the system background colors if background is not set by user
             self.backgroundColor = UIColor.systemBackground
             webView.backgroundColor = UIColor.systemBackground
