@@ -286,6 +286,7 @@ public class CapConfig {
 
     public int getMinWebViewVersion() {
         if (minWebViewVersion < MINIMUM_ANDROID_WEBVIEW_VERSION) {
+            Logger.warn("Specified minimum webview version is too low, defaulting to " + MINIMUM_ANDROID_WEBVIEW_VERSION);
             return MINIMUM_ANDROID_WEBVIEW_VERSION;
         }
 
@@ -449,7 +450,7 @@ public class CapConfig {
         private Boolean webContentsDebuggingEnabled = null;
         private boolean loggingEnabled = true;
         private boolean initialFocus = false;
-        private int minWebViewVersion = 60;
+        private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
 
         // Embedded
         private String startPath = null;
