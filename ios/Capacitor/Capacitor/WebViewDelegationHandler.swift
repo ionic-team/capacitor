@@ -243,6 +243,25 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     }
 
     public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
+        
+        // Check if this is synchronous cookie call
+        do {
+            if let dataFromString = prompt.data(using: .utf8, allowLossyConversion: false) {
+                if let payload = try JSONSerialization.jsonObject(with: dataFromString, options: .fragmentsAllowed) as? [String:AnyObject] {
+                    let type = payload["type"] as! String
+
+                    if (type == "CapacitorCookies") {
+                        completionHandler(CapacitorCookieManager(bridge!.config).getCookies())
+                        // Don't present prompt
+                        return
+                    }
+                }
+            }
+        }
+        catch {
+            // Continue with regular prompt
+        }
+        
         guard let viewController = bridge?.viewController else {
             return
         }

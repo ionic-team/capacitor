@@ -20,10 +20,24 @@ export { Capacitor, registerPlugin } from './global';
 export { WebPlugin, WebPluginConfig, ListenerCallback } from './web-plugin';
 
 // Core Plugins APIs
-export { WebView } from './core-plugins';
+export { CapacitorCookies, WebView } from './core-plugins';
 
 // Core Plugin definitions
-export type { WebViewPath, WebViewPlugin } from './core-plugins';
+export type {
+  ClearCookieOptions,
+  DeleteCookieOptions,
+  SetCookieOptions,
+  WebViewPath,
+  WebViewPlugin
+} from './core-plugins';
+
+// Original definitions for cookies / http
+declare global {
+  interface Window {
+    CapacitorCookiesAndroidInterface: any;
+    CapacitorCookiesDescriptor: PropertyDescriptor;
+  }
+}
 
 // Constants
 export { CapacitorException, ExceptionCode } from './util';
