@@ -137,6 +137,11 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
             webView.isOpaque = isOpaque
             webViewLoadingState = .subsequentLoad
         }
+
+        if let errorURL = bridge?.config.errorPathURL {
+            webView.load(URLRequest(url: errorURL))
+        }
+
         CAPLog.print("⚡️  WebView failed to load")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
     }
@@ -144,6 +149,10 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     // The force unwrap is part of the protocol declaration, so we should keep it.
     // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        if let errorURL = bridge?.config.errorPathURL {
+            webView.load(URLRequest(url: errorURL))
+        }
+
         CAPLog.print("⚡️  WebView failed provisional navigation")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
     }

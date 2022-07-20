@@ -54,6 +54,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *urlScheme;
 /**
+ @brief The path to a local html page to display in case of errors.
+ @discussion Defaults to nil.
+ */
+@property (nonatomic, copy, nullable) NSString *errorPath;
+/**
  @brief The hostname that will be used for the server URL.
  @discussion Defaults to @c localhost. Set by @c server.hostname in the configuration file.
  */
