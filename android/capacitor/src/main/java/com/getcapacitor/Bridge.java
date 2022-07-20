@@ -77,7 +77,6 @@ public class Bridge {
     private static final String BUNDLE_PLUGIN_CALL_BUNDLE_KEY = "capacitorLastPluginCallBundle";
     private static final String LAST_BINARY_VERSION_CODE = "lastBinaryVersionCode";
     private static final String LAST_BINARY_VERSION_NAME = "lastBinaryVersionName";
-    private final int MINIMUM_ANDROID_WEBVIEW_VERSION = 60;
     private static final String MINIMUM_ANDROID_WEBVIEW_ERROR = "System WebView is not supported";
 
     // The name of the directory we use to look for index.html and the rest of our web assets
@@ -86,6 +85,8 @@ public class Bridge {
     public static final String CAPACITOR_HTTPS_SCHEME = "https";
     public static final String CAPACITOR_FILE_START = "/_capacitor_file_";
     public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
+    public static final int DEFAULT_ANDROID_WEBVIEW_VERSION = 60;
+    public static final int MINIMUM_ANDROID_WEBVIEW_VERSION = 55;
 
     // Loaded Capacitor config
     private CapConfig config;
@@ -306,7 +307,7 @@ public class Bridge {
             PackageInfo info = WebView.getCurrentWebViewPackage();
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+            return majorVersion >= config.getMinWebViewVersion();
         }
 
         // Otherwise manually check WebView versions
@@ -318,7 +319,7 @@ public class Bridge {
             PackageInfo info = pm.getPackageInfo(webViewPackage, 0);
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+            return majorVersion >= config.getMinWebViewVersion();
         } catch (Exception ex) {
             Logger.warn("Unable to get package info for 'com.google.android.webview'" + ex.toString());
         }
@@ -327,7 +328,7 @@ public class Bridge {
             PackageInfo info = pm.getPackageInfo("com.android.webview", 0);
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion >= MINIMUM_ANDROID_WEBVIEW_VERSION;
+            return majorVersion >= config.getMinWebViewVersion();
         } catch (Exception ex) {
             Logger.warn("Unable to get package info for 'com.android.webview'" + ex.toString());
         }
