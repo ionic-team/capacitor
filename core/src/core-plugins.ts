@@ -1,5 +1,5 @@
 import type { Plugin } from './definitions';
-import { Capacitor, registerPlugin } from './global';
+import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
 
 /******** WEB VIEW PLUGIN ********/
@@ -26,13 +26,6 @@ const encode = (str: string) =>
     .replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent)
     .replace(/[()]/g, escape);
 
-/**
-* Safely web decode a string value (inspired by js-cookie)
-* @param str The string value to decode
-*/
-const decode = (str: string): string =>
-  str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
-
 export interface CapacitorCookiesPlugin {
   setCookie(options: SetCookieOptions): Promise<void>;
   deleteCookie(options: DeleteCookieOptions): Promise<void>;
@@ -55,62 +48,6 @@ export type SetCookieOptions = HttpCookie & HttpCookieExtras;
 export type DeleteCookieOptions = Omit<HttpCookie, 'value'>;
 export type ClearCookieOptions = Omit<HttpCookie, 'key' | 'value'>;
 
-const PatchCookies = () => {
-  if (!window.CapacitorCookiesDescriptor) {
-    window.CapacitorCookiesDescriptor =
-      Object.getOwnPropertyDescriptor(Document.prototype, 'cookie') ||
-      Object.getOwnPropertyDescriptor(HTMLDocument.prototype, 'cookie');
-  
-    
-      Object.defineProperty(document, 'cookie', {
-        get: function () {
-          const platform = Capacitor.getPlatform();
-          
-          // Use default document.cookie get
-          if (!Capacitor.isNativePlatform()) {
-            return window.CapacitorCookiesDescriptor.get.call(document);
-          }
-
-          if (platform === 'ios') {
-            // Use prompt to synchronously get cookies.
-            // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
-
-            const payload = {
-              type: 'CapacitorCookies'
-            }
-
-            const res = prompt(JSON.stringify(payload));
-            return res;
-          }
-          else if(typeof window.CapacitorCookiesAndroidInterface !== 'undefined') {
-            return window.CapacitorCookiesAndroidInterface.getCookies();
-          }
-        },
-        set: function (val) {
-          // Use default document.cookie set
-          if (!Capacitor.isNativePlatform()) {
-            window.CapacitorCookiesDescriptor.set.call(document, val);
-          }
-          else {
-            const cookiePairs = val.split(';');
-            for (const cookiePair of cookiePairs) {
-              const cookieKey = cookiePair.split('=')[0];
-              const cookieValue = cookiePair.split('=')[1];
-
-              if (null == cookieValue) {
-                continue;
-              }
-
-              CapacitorCookies.setCookie({
-                key: cookieKey,
-                value: decode(cookieValue),
-              });
-            }
-          }
-        }
-      });
-  }
-}
 
 export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCookiesPlugin {
   async setCookie(options: SetCookieOptions): Promise<void> {
@@ -166,8 +103,6 @@ export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCoo
     }
   }
 }
-
-PatchCookies();
 
 export const CapacitorCookies = registerPlugin<CapacitorCookiesPlugin>(
   'CapacitorCookies',

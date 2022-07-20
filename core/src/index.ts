@@ -31,14 +31,6 @@ export type {
   WebViewPlugin
 } from './core-plugins';
 
-// Original definitions for cookies / http
-declare global {
-  interface Window {
-    CapacitorCookiesAndroidInterface: any;
-    CapacitorCookiesDescriptor: PropertyDescriptor;
-  }
-}
-
 // Constants
 export { CapacitorException, ExceptionCode } from './util';
 

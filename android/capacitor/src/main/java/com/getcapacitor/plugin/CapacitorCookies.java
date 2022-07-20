@@ -4,22 +4,20 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
-
 import androidx.annotation.Nullable;
-
 import com.getcapacitor.CapConfig;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
-
 import java.net.CookieHandler;
 import java.net.HttpCookie;
 import java.net.URI;
 
 @CapacitorPlugin
 public class CapacitorCookies extends Plugin {
+
     CapacitorCookieManager cookieManager;
 
     @Override
@@ -37,12 +35,15 @@ public class CapacitorCookies extends Plugin {
      * @return the string of the server specified in the Capacitor config
      */
     private String getServerUrl(@Nullable PluginCall call) {
-        String url = (call == null) ? this.bridge.getServerUrl() :
-                call.getString("url", this.bridge.getServerUrl());
+        String url = (call == null) ? this.bridge.getServerUrl() : call.getString("url", this.bridge.getServerUrl());
+
+        if (url == null || url.isEmpty()) {
+            url = this.bridge.getLocalUrl();
+        }
 
         URI uri = getUri(url);
         if (uri == null) {
-            if(call != null) {
+            if (call != null) {
                 call.reject("Invalid URL. Check that \"server\" is passed in correctly");
             }
 
@@ -72,8 +73,7 @@ public class CapacitorCookies extends Plugin {
             if (!url.isEmpty()) {
                 return cookieManager.getCookieString(url);
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
