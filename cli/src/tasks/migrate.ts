@@ -101,10 +101,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         },
       );
 
-      if (
-        allDependencies['@capacitor/ios'] &&
-        existsSync(iosProjectDirAbs)
-      ) {
+      if (allDependencies['@capacitor/ios'] && existsSync(iosProjectDirAbs)) {
         // Set deployment target to 13.0
         await runTask(`Migrating deployment target to 13.0.`, () => {
           return updateFile(
@@ -151,12 +148,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         // Remove USE_PUSH
         await runTask(`Migrating by removing USE_PUSH.`, () => {
           return replacePush(
-            join(
-              iosProjectDirAbs,
-              'App',
-              'App.xcodeproj',
-              'project.pbxproj',
-            ),
+            join(iosProjectDirAbs, 'App', 'App.xcodeproj', 'project.pbxproj'),
           );
         });
 
@@ -287,28 +279,28 @@ export async function migrateCommand(config: Config): Promise<void> {
   }
 }
 
-
-
 async function installLatestNPMLibs(runInstall: boolean, cfg: Config) {
   const pkgJsonPath = join(cfg.app.rootDir, 'package.json');
   const pkgJson: any = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'));
 
   for (const devDepKey of pkgJson['devDependencies'].keys()) {
     if (libs.includes(devDepKey)) {
-      pkgJson['devDependencies'][devDepKey] = coreVersion
+      pkgJson['devDependencies'][devDepKey] = coreVersion;
     } else if (plugins.includes(devDepKey)) {
-      pkgJson['devDependencies'][devDepKey] = pluginVersion
+      pkgJson['devDependencies'][devDepKey] = pluginVersion;
     }
   }
   for (const depKey of pkgJson['dependencies'].keys()) {
     if (libs.includes(depKey)) {
-      pkgJson['dependencies'][depKey] = coreVersion
+      pkgJson['dependencies'][depKey] = coreVersion;
     } else if (plugins.includes(depKey)) {
-      pkgJson['dependencies'][depKey] = pluginVersion
+      pkgJson['dependencies'][depKey] = pluginVersion;
     }
   }
 
-  writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2), {encoding: 'utf-8'});
+  writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2), {
+    encoding: 'utf-8',
+  });
 
   if (runInstall) {
     await getCommandOutput('npm', ['i']);
@@ -321,7 +313,9 @@ async function installLatestNPMLibs(runInstall: boolean, cfg: Config) {
 
 async function migrateStoragePluginToPreferences(runInstall: boolean) {
   if (allDependencies['@capacitor/storage']) {
-    logger.info('NOTE: @capacitor/storage was renamed to @capacitor/preferences, please be sure to replace occurances in your code.')
+    logger.info(
+      'NOTE: @capacitor/storage was renamed to @capacitor/preferences, please be sure to replace occurances in your code.',
+    );
     if (runInstall) {
       await getCommandOutput('npm', ['uninstall', '@capacitor/storage']);
       await getCommandOutput('npm', [
