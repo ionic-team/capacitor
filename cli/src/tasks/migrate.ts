@@ -50,11 +50,8 @@ export async function migrateCommand(config: Config): Promise<void> {
     ...(configData ? configData.app.package.devDependencies : {}),
   };
 
-  const daysLeft = daysUntil(new Date('11/01/2022'));
-  let googlePlayWarning = `Google Play Store requires a minimum target of SDK 31 by the 1st November 2022`;
-  if (daysLeft > 0) {
-    googlePlayWarning += ` (${daysLeft} days left)`;
-  }
+  const iosProjectDirAbs = config.ios.platformDirAbs;
+  const androidProjectDirAbs = config.android.platformDirAbs;
 
   const monorepoWarning =
     'Please note this tool is not intended for use in a mono-repo enviroment, please check out the Ionic vscode extension for this functionality.';
@@ -62,7 +59,7 @@ export async function migrateCommand(config: Config): Promise<void> {
   logger.info(monorepoWarning);
 
   const { migrateconfirm } = await logPrompt(
-    `Capacitor 4 sets a deployment target of iOS 13 and Android 12 (SDK 32). \n${googlePlayWarning} \n`,
+    `Capacitor 4 sets a deployment target of iOS 13 and Android 12 (SDK 32). \n`,
     {
       type: 'text',
       name: 'migrateconfirm',
@@ -94,7 +91,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         npmInstallConfirm.toLowerCase() === 'y';
 
       await runTask(`Installing Latest NPM Modules.`, () => {
-        return installLatestNPMLibs(runNpmInstall);
+        return installLatestNPMLibs(runNpmInstall, config);
       });
 
       await runTask(
@@ -106,12 +103,12 @@ export async function migrateCommand(config: Config): Promise<void> {
 
       if (
         allDependencies['@capacitor/ios'] &&
-        existsSync(join(configData.app.rootDir, 'ios'))
+        existsSync(iosProjectDirAbs)
       ) {
         // Set deployment target to 13.0
         await runTask(`Migrating deployment target to 13.0.`, () => {
           return updateFile(
-            join('ios', 'App', 'App.xcodeproj', 'project.pbxproj'),
+            join(iosProjectDirAbs, 'App', 'App.xcodeproj', 'project.pbxproj'),
             'IPHONEOS_DEPLOYMENT_TARGET = ',
             ';',
             '13.0',
@@ -121,7 +118,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         // Update Podfile to 13.0
         await runTask(`Migrating Podfile to 13.0.`, () => {
           return updateFile(
-            join('ios', 'App', 'Podfile'),
+            join(iosProjectDirAbs, 'App', 'Podfile'),
             `platform :ios, '`,
             `'`,
             '13.0',
@@ -133,7 +130,7 @@ export async function migrateCommand(config: Config): Promise<void> {
           `Migrating AppDelegate.swift by removing touchesBegan.`,
           () => {
             return updateFile(
-              join('ios', 'App', 'App', 'AppDelegate.swift'),
+              join(iosProjectDirAbs, 'App', 'App', 'AppDelegate.swift'),
               `override func touchesBegan`,
               `}`,
             );
@@ -145,7 +142,7 @@ export async function migrateCommand(config: Config): Promise<void> {
           `Migrating info.plist by removing NSAppTransportSecurity key.`,
           () => {
             return removeKey(
-              join(configData!.app.rootDir, 'ios', 'App', 'App', 'info.plist'),
+              join(iosProjectDirAbs, 'App', 'App', 'info.plist'),
               'NSAppTransportSecurity',
             );
           },
@@ -155,8 +152,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         await runTask(`Migrating by removing USE_PUSH.`, () => {
           return replacePush(
             join(
-              configData!.app.rootDir,
-              'ios',
+              iosProjectDirAbs,
               'App',
               'App.xcodeproj',
               'project.pbxproj',
@@ -180,8 +176,7 @@ export async function migrateCommand(config: Config): Promise<void> {
           () => {
             return updateAndroidManifest(
               join(
-                configData!.app.rootDir,
-                'android',
+                androidProjectDirAbs,
                 'app',
                 'src',
                 'main',
@@ -203,7 +198,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         );
         await runTask(`Migrating build.gradle file.`, () => {
           return updateBuildGradle(
-            join(configData!.app.rootDir, 'android', 'build.gradle'),
+            join(androidProjectDirAbs, 'build.gradle'),
             typeof leaveJCenterPrompt === 'string' &&
               leaveJCenterPrompt.toLowerCase() === 'y',
           );
@@ -212,7 +207,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         // Update app.gradle
         await runTask(`Migrating app.gradle file.`, () => {
           return updateAppBuildGradle(
-            join(configData!.app.rootDir, 'android', 'app', 'build.gradle'),
+            join(androidProjectDirAbs, 'app', 'build.gradle'),
           );
         });
 
@@ -222,39 +217,12 @@ export async function migrateCommand(config: Config): Promise<void> {
           () => {
             return updateGradleWrapper(
               join(
-                configData!.app.rootDir,
-                'android',
+                androidProjectDirAbs,
                 'gradle',
                 'wrapper',
                 'gradle-wrapper.properties',
               ),
             );
-          },
-        );
-
-        // Update .gitIgnore
-        await runTask(
-          `Migrating .gitignore files by adding generated config files.`,
-          () => {
-            return (async () => {
-              await updateGitIgnore(
-                join(configData!.app.rootDir, 'android', '.gitignore'),
-                [
-                  `# Generated Config files`,
-                  `app/src/main/assets/capacitor.config.json`,
-                  `app/src/main/assets/capacitor.plugins.json`,
-                  `app/src/main/res/xml/config.xml`,
-                ],
-              );
-              await updateGitIgnore(
-                join(configData!.app.rootDir, 'ios', '.gitignore'),
-                [
-                  `# Generated Config files`,
-                  `App/App/capacitor.config.json`,
-                  `App/App/config.xml`,
-                ],
-              );
-            })();
           },
         );
 
@@ -278,7 +246,7 @@ export async function migrateCommand(config: Config): Promise<void> {
             for (const variable of Object.keys(variables)) {
               if (
                 !(await updateFile(
-                  join('android', 'variables.gradle'),
+                  join(androidProjectDirAbs, 'variables.gradle'),
                   `${variable} = '`,
                   `'`,
                   variables[variable].toString(),
@@ -286,7 +254,7 @@ export async function migrateCommand(config: Config): Promise<void> {
                 ))
               ) {
                 await updateFile(
-                  join('android', 'variables.gradle'),
+                  join(androidProjectDirAbs, 'variables.gradle'),
                   `${variable} = `,
                   `\n`,
                   variables[variable].toString(),
@@ -319,38 +287,41 @@ export async function migrateCommand(config: Config): Promise<void> {
   }
 }
 
-function daysUntil(date_1: Date) {
-  const date_2 = new Date();
-  const difference = date_1.getTime() - date_2.getTime();
-  return Math.ceil(difference / (1000 * 3600 * 24));
-}
 
-async function installLatestNPMLibs(runInstall: boolean) {
-  const result: string[] = [];
-  for (const lib of libs) {
-    if (allDependencies[lib]) {
-      result.push(`${lib}@${coreVersion}`);
+
+async function installLatestNPMLibs(runInstall: boolean, cfg: Config) {
+  const pkgJsonPath = join(cfg.app.rootDir, 'package.json');
+  const pkgJson: any = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'));
+
+  for (const devDepKey of pkgJson['devDependencies'].keys()) {
+    if (libs.includes(devDepKey)) {
+      pkgJson['devDependencies'][devDepKey] = coreVersion
+    } else if (plugins.includes(devDepKey)) {
+      pkgJson['devDependencies'][devDepKey] = pluginVersion
+    }
+  }
+  for (const depKey of pkgJson['dependencies'].keys()) {
+    if (libs.includes(depKey)) {
+      pkgJson['dependencies'][depKey] = coreVersion
+    } else if (plugins.includes(depKey)) {
+      pkgJson['dependencies'][depKey] = pluginVersion
     }
   }
 
-  for (const plugin of plugins) {
-    if (allDependencies[plugin]) {
-      result.push(`${plugin}@${pluginVersion}`);
-    }
-  }
+  writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2), {encoding: 'utf-8'});
 
   if (runInstall) {
-    await getCommandOutput('npm', ['i', ...result]);
+    await getCommandOutput('npm', ['i']);
   } else {
     logger.info(
-      `Please run an install command with your package manager of choice with the following:`,
+      `Please run an install command with your package manager of choice. (ex: yarn install)`,
     );
-    logger.info(`<pkg manager install cmd> ${result.join(' ')}`);
   }
 }
 
 async function migrateStoragePluginToPreferences(runInstall: boolean) {
   if (allDependencies['@capacitor/storage']) {
+    logger.info('NOTE: @capacitor/storage was renamed to @capacitor/preferences, please be sure to replace occurances in your code.')
     if (runInstall) {
       await getCommandOutput('npm', ['uninstall', '@capacitor/storage']);
       await getCommandOutput('npm', [
