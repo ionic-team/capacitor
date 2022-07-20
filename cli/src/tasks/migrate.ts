@@ -39,19 +39,18 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-let configData: Config | null = null;
 const coreVersion = 'next';
 const pluginVersion = 'next';
 
 export async function migrateCommand(config: Config): Promise<void> {
-  configData = config;
-  allDependencies = {
-    ...(configData ? configData.app.package.dependencies : {}),
-    ...(configData ? configData.app.package.devDependencies : {}),
-  };
+  if (config === null) {
+    fatal('Config data missing');
+  }
 
-  const iosProjectDirAbs = config.ios.platformDirAbs;
-  const androidProjectDirAbs = config.android.platformDirAbs;
+  allDependencies = {
+    ...config.app.package.dependencies,
+    ...config.app.package.devDependencies,
+  };
 
   const monorepoWarning =
     'Please note this tool is not intended for use in a mono-repo enviroment, please check out the Ionic vscode extension for this functionality.';
@@ -73,10 +72,6 @@ export async function migrateCommand(config: Config): Promise<void> {
     migrateconfirm.toLowerCase() === 'y'
   ) {
     try {
-      if (configData === null) {
-        fatal('Config data missing');
-      }
-
       const { npmInstallConfirm } = await logPrompt(
         `Would you like the migrator to run npm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
         {
@@ -101,11 +96,15 @@ export async function migrateCommand(config: Config): Promise<void> {
         },
       );
 
-      if (allDependencies['@capacitor/ios'] && existsSync(iosProjectDirAbs)) {
+      if (
+        allDependencies['@capacitor/ios'] &&
+        existsSync(config.ios.platformDirAbs)
+      ) {
         // Set deployment target to 13.0
         await runTask(`Migrating deployment target to 13.0.`, () => {
           return updateFile(
-            join(iosProjectDirAbs, 'App', 'App.xcodeproj', 'project.pbxproj'),
+            config,
+            join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'),
             'IPHONEOS_DEPLOYMENT_TARGET = ',
             ';',
             '13.0',
@@ -115,7 +114,8 @@ export async function migrateCommand(config: Config): Promise<void> {
         // Update Podfile to 13.0
         await runTask(`Migrating Podfile to 13.0.`, () => {
           return updateFile(
-            join(iosProjectDirAbs, 'App', 'Podfile'),
+            config,
+            join(config.ios.nativeProjectDirAbs, 'Podfile'),
             `platform :ios, '`,
             `'`,
             '13.0',
@@ -127,7 +127,8 @@ export async function migrateCommand(config: Config): Promise<void> {
           `Migrating AppDelegate.swift by removing touchesBegan.`,
           () => {
             return updateFile(
-              join(iosProjectDirAbs, 'App', 'App', 'AppDelegate.swift'),
+              config,
+              join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift'),
               `override func touchesBegan`,
               `}`,
             );
@@ -139,7 +140,7 @@ export async function migrateCommand(config: Config): Promise<void> {
           `Migrating info.plist by removing NSAppTransportSecurity key.`,
           () => {
             return removeKey(
-              join(iosProjectDirAbs, 'App', 'App', 'info.plist'),
+              join(config.ios.nativeTargetDirAbs, 'info.plist'),
               'NSAppTransportSecurity',
             );
           },
@@ -148,32 +149,26 @@ export async function migrateCommand(config: Config): Promise<void> {
         // Remove USE_PUSH
         await runTask(`Migrating by removing USE_PUSH.`, () => {
           return replacePush(
-            join(iosProjectDirAbs, 'App', 'App.xcodeproj', 'project.pbxproj'),
+            join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'),
           );
         });
 
         // Remove from App Delegate
         await runTask(`Migrating App Delegate.`, () => {
-          return replaceIfUsePush();
+          return replaceIfUsePush(config);
         });
       }
 
       if (
         allDependencies['@capacitor/android'] &&
-        existsSync(join(configData.app.rootDir, 'android'))
+        existsSync(config.android.platformDirAbs)
       ) {
         // AndroidManifest.xml add attribute: <activity android:exported="true"
         await runTask(
           `Migrating AndroidManifest.xml by adding android:exported attribute to Activity.`,
           () => {
             return updateAndroidManifest(
-              join(
-                androidProjectDirAbs,
-                'app',
-                'src',
-                'main',
-                'AndroidManifest.xml',
-              ),
+              join(config.android.srcMainDirAbs, 'AndroidManifest.xml'),
             );
           },
         );
@@ -190,7 +185,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         );
         await runTask(`Migrating build.gradle file.`, () => {
           return updateBuildGradle(
-            join(androidProjectDirAbs, 'build.gradle'),
+            join(config.android.platformDirAbs, 'build.gradle'),
             typeof leaveJCenterPrompt === 'string' &&
               leaveJCenterPrompt.toLowerCase() === 'y',
           );
@@ -199,7 +194,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         // Update app.gradle
         await runTask(`Migrating app.gradle file.`, () => {
           return updateAppBuildGradle(
-            join(androidProjectDirAbs, 'app', 'build.gradle'),
+            join(config.android.appDirAbs, 'build.gradle'),
           );
         });
 
@@ -209,7 +204,7 @@ export async function migrateCommand(config: Config): Promise<void> {
           () => {
             return updateGradleWrapper(
               join(
-                androidProjectDirAbs,
+                config.android.platformDirAbs,
                 'gradle',
                 'wrapper',
                 'gradle-wrapper.properties',
@@ -238,7 +233,8 @@ export async function migrateCommand(config: Config): Promise<void> {
             for (const variable of Object.keys(variables)) {
               if (
                 !(await updateFile(
-                  join(androidProjectDirAbs, 'variables.gradle'),
+                  config,
+                  join(config.android.platformDirAbs, 'variables.gradle'),
                   `${variable} = '`,
                   `'`,
                   variables[variable].toString(),
@@ -246,7 +242,8 @@ export async function migrateCommand(config: Config): Promise<void> {
                 ))
               ) {
                 await updateFile(
-                  join(androidProjectDirAbs, 'variables.gradle'),
+                  config,
+                  join(config.android.platformDirAbs, 'variables.gradle'),
                   `${variable} = `,
                   `\n`,
                   variables[variable].toString(),
@@ -279,18 +276,22 @@ export async function migrateCommand(config: Config): Promise<void> {
   }
 }
 
-async function installLatestNPMLibs(runInstall: boolean, cfg: Config) {
-  const pkgJsonPath = join(cfg.app.rootDir, 'package.json');
-  const pkgJson: any = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'));
+async function installLatestNPMLibs(runInstall: boolean, config: Config) {
+  const pkgJsonPath = join(config.app.rootDir, 'package.json');
+  const pkgJsonFile = readFile(pkgJsonPath);
+  if (!pkgJsonFile) {
+    return;
+  }
+  const pkgJson: any = JSON.parse(pkgJsonFile);
 
-  for (const devDepKey of pkgJson['devDependencies'].keys()) {
+  for (const devDepKey of Object.keys(pkgJson['devDependencies'])) {
     if (libs.includes(devDepKey)) {
       pkgJson['devDependencies'][devDepKey] = coreVersion;
     } else if (plugins.includes(devDepKey)) {
       pkgJson['devDependencies'][devDepKey] = pluginVersion;
     }
   }
-  for (const depKey of pkgJson['dependencies'].keys()) {
+  for (const depKey of Object.keys(pkgJson['dependencies'])) {
     if (libs.includes(depKey)) {
       pkgJson['dependencies'][depKey] = coreVersion;
     } else if (plugins.includes(depKey)) {
@@ -510,33 +511,18 @@ async function updateGradleWrapper(filename: string) {
   writeFileSync(filename, replaced, 'utf-8');
 }
 
-async function updateGitIgnore(filename: string, lines: string[]) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  let replaced = txt;
-  for (const line of lines) {
-    if (!replaced.includes(line)) {
-      replaced += line + '\n';
-    }
-  }
-  if (replaced !== txt) {
-    writeFileSync(filename, replaced, 'utf-8');
-  }
-}
-
 async function updateFile(
+  config: Config,
   filename: string,
   textStart: string,
   textEnd: string,
   replacement?: string,
   skipIfNotFound?: boolean,
 ): Promise<boolean> {
-  if (configData === null) {
+  if (config === null) {
     return false;
   }
-  const path = join(configData.app.rootDir, filename);
+  const path = filename;
   let txt = readFile(path);
   if (!txt) {
     return false;
@@ -602,16 +588,10 @@ function setAllStringIn(
   return result;
 }
 
-async function replaceIfUsePush() {
+async function replaceIfUsePush(config: Config) {
   const startLine = '#if USE_PUSH';
   const endLine = '#endif';
-  const filename = join(
-    configData!.app.rootDir,
-    'ios',
-    'App',
-    'App',
-    'AppDelegate.swift',
-  );
+  const filename = join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift');
   const txt = readFile(filename);
   if (!txt) {
     return;
