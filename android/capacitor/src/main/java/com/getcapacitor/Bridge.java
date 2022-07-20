@@ -40,9 +40,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaWebView;
@@ -97,6 +99,7 @@ public class Bridge {
     private String appUrl;
     private String appUrlConfig;
     private HostMask appAllowNavigationMask;
+    private Set<String> allowedOriginRules = new HashSet<String>();
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
@@ -186,6 +189,7 @@ public class Bridge {
 
         // Initialize web view and message handler for it
         this.initWebView();
+        this.setAllowedOriginRules();
         this.msgHandler = new MessageHandler(this, webView, pluginManager);
 
         // Grab any intent info that our app was launched with
@@ -198,6 +202,25 @@ public class Bridge {
         this.loadWebView();
     }
 
+    private void setAllowedOriginRules() {
+        String[] appAllowNavigationConfig = this.config.getAllowNavigation();
+        String authority = this.getHost();
+        String scheme = this.getScheme();
+        allowedOriginRules.add(scheme + "://" + authority);
+        if (this.getServerUrl() != null) {
+            allowedOriginRules.add(this.getServerUrl());
+        }
+        if (appAllowNavigationConfig != null) {
+            for (String allowNavigation : appAllowNavigationConfig) {
+                if (!allowNavigation.startsWith("http")) {
+                    allowedOriginRules.add("https://" + allowNavigation);
+                } else {
+                    allowedOriginRules.add(allowNavigation);
+                }
+            }
+        }
+    }
+
     public App getApp() {
         return app;
     }
@@ -207,14 +230,13 @@ public class Bridge {
         String[] appAllowNavigationConfig = this.config.getAllowNavigation();
 
         ArrayList<String> authorities = new ArrayList<>();
+
         if (appAllowNavigationConfig != null) {
             authorities.addAll(Arrays.asList(appAllowNavigationConfig));
         }
         this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
-
         String authority = this.getHost();
         authorities.add(authority);
-
         String scheme = this.getScheme();
 
         localUrl = scheme + "://" + authority;
@@ -241,7 +263,6 @@ public class Bridge {
         if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
             appUrl += appUrlPath;
         }
-
         final boolean html5mode = this.config.isHTML5Mode();
 
         // Start the local web server
@@ -1265,6 +1286,10 @@ public class Bridge {
 
     public HostMask getAppAllowNavigationMask() {
         return appAllowNavigationMask;
+    }
+
+    public Set<String> getAllowedOriginRules() {
+        return allowedOriginRules;
     }
 
     public BridgeWebViewClient getWebViewClient() {

@@ -457,10 +457,20 @@ const initBridge = (w: any): void => {
       return null;
     };
 
+    if (win?.androidBridge) {
+      win.androidBridge.onmessage = function (event) {
+        returnResult(JSON.parse(event.data));
+      };
+    }
+
     /**
      * Process a response from the native layer.
      */
     cap.fromNative = result => {
+      returnResult(result);
+    };
+
+    const returnResult = (result: any) => {
       if (cap.isLoggingEnabled && result.pluginId !== 'Console') {
         cap.logFromNative(result);
       }
