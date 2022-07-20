@@ -1,12 +1,15 @@
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
 import { join } from 'path';
 
 import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger, logPrompt, logSuccess } from '../log';
+import { deleteFolderRecursive } from '../util/fs';
 import { getCommandOutput } from '../util/subprocess';
+import { extractTemplate } from '../util/template';
 
+// eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
 const libs = [
   '@capacitor/core',
@@ -46,6 +49,20 @@ export async function migrateCommand(config: Config): Promise<void> {
   if (config === null) {
     fatal('Config data missing');
   }
+
+  const variablesAndClasspaths:
+    | {
+        'variables': any;
+        'com.android.tools.build:gradle': string;
+        'com.google.gms:google-services': string;
+      }
+    | undefined = await getAndroidVarriablesAndClasspaths(config);
+
+  if (!variablesAndClasspaths) {
+    fatal('Variable and Classpath info could not be read.');
+  }
+
+  //*
 
   allDependencies = {
     ...config.app.package.dependencies,
@@ -188,6 +205,7 @@ export async function migrateCommand(config: Config): Promise<void> {
             join(config.android.platformDirAbs, 'build.gradle'),
             typeof leaveJCenterPrompt === 'string' &&
               leaveJCenterPrompt.toLowerCase() === 'y',
+            variablesAndClasspaths,
           );
         });
 
@@ -216,28 +234,16 @@ export async function migrateCommand(config: Config): Promise<void> {
         // Variables gradle
         await runTask(`Migrating variables.gradle file.`, () => {
           return (async (): Promise<void> => {
-            const variables: { [key: string]: any } = {
-              minSdkVersion: 22,
-              compileSdkVersion: 32,
-              targetSdkVersion: 32,
-              androidxActivityVersion: '1.4.0',
-              androidxAppCompatVersion: '1.4.2',
-              androidxCoordinatorLayoutVersion: '1.2.0',
-              androidxCoreVersion: '1.8.0',
-              androidxFragmentVersion: '1.4.1',
-              junitVersion: '4.13.2',
-              androidxJunitVersion: '1.1.3',
-              androidxEspressoCoreVersion: '3.4.0',
-              cordovaAndroidVersion: '10.1.1',
-            };
-            for (const variable of Object.keys(variables)) {
+            for (const variable of Object.keys(
+              variablesAndClasspaths.variables,
+            )) {
               if (
                 !(await updateFile(
                   config,
                   join(config.android.platformDirAbs, 'variables.gradle'),
                   `${variable} = '`,
                   `'`,
-                  variables[variable].toString(),
+                  variablesAndClasspaths.variables[variable].toString(),
                   true,
                 ))
               ) {
@@ -246,7 +252,7 @@ export async function migrateCommand(config: Config): Promise<void> {
                   join(config.android.platformDirAbs, 'variables.gradle'),
                   `${variable} = `,
                   `\n`,
-                  variables[variable].toString(),
+                  variablesAndClasspaths.variables[variable].toString(),
                   true,
                 );
               }
@@ -274,6 +280,7 @@ export async function migrateCommand(config: Config): Promise<void> {
   } else {
     fatal(`User canceled migration.`);
   }
+  //*/
 }
 
 async function installLatestNPMLibs(runInstall: boolean, config: Config) {
@@ -399,7 +406,15 @@ async function updateAndroidManifest(filename: string) {
   writeFileSync(filename, replaced, 'utf-8');
 }
 
-async function updateBuildGradle(filename: string, leaveJCenter: boolean) {
+async function updateBuildGradle(
+  filename: string,
+  leaveJCenter: boolean,
+  variablesAndClasspaths: {
+    'variables': any;
+    'com.android.tools.build:gradle': string;
+    'com.google.gms:google-services': string;
+  },
+) {
   // In build.gradle add dependencies:
   // classpath 'com.android.tools.build:gradle:7.2.1'
   // classpath 'com.google.gms:google-services:4.3.10'
@@ -408,8 +423,10 @@ async function updateBuildGradle(filename: string, leaveJCenter: boolean) {
     return;
   }
   const neededDeps: { [key: string]: string } = {
-    'com.android.tools.build:gradle': '7.2.1',
-    'com.google.gms:google-services': '4.3.10',
+    'com.android.tools.build:gradle':
+      variablesAndClasspaths['com.android.tools.build:gradle'],
+    'com.google.gms:google-services':
+      variablesAndClasspaths['com.google.gms:google-services'],
   };
   let replaced = txt;
 
@@ -463,6 +480,64 @@ async function updateBuildGradle(filename: string, leaveJCenter: boolean) {
     writeFileSync(filename, final, 'utf-8');
     return;
   }
+}
+
+async function getAndroidVarriablesAndClasspaths(config: Config) {
+  const tempAndroidTemplateFolder = join(
+    config.cli.assetsDirAbs,
+    'tempAndroidTemplate',
+  );
+  await extractTemplate(
+    config.cli.assets.android.platformTemplateArchiveAbs,
+    tempAndroidTemplateFolder,
+  );
+  const variablesGradleFile = readFile(
+    join(tempAndroidTemplateFolder, 'variables.gradle'),
+  );
+  const buildGradleFile = readFile(
+    join(tempAndroidTemplateFolder, 'build.gradle'),
+  );
+  if (!variablesGradleFile || !buildGradleFile) {
+    return;
+  }
+  deleteFolderRecursive(tempAndroidTemplateFolder);
+
+  const firstIndxOfCATBGV =
+    buildGradleFile.indexOf(`classpath 'com.android.tools.build:gradle:`) + 42;
+  const firstIndxOfCGGGS =
+    buildGradleFile.indexOf(`com.google.gms:google-services:`) + 31;
+  const comAndroidToolsBuildGradleVersion =
+    '' +
+    buildGradleFile.substring(
+      firstIndxOfCATBGV,
+      buildGradleFile.indexOf("'", firstIndxOfCATBGV),
+    );
+  const comGoogleGmsGoogleServices =
+    '' +
+    buildGradleFile.substring(
+      firstIndxOfCGGGS,
+      buildGradleFile.indexOf("'", firstIndxOfCGGGS),
+    );
+
+  const variablesGradleAsJSON = JSON.parse(
+    variablesGradleFile
+      .replace('ext ', '')
+      .replace(/=/g, ':')
+      .replace(/\n/g, ',')
+      .replace(/,([^:]+):/g, function (_k, p1) {
+        return `,"${p1}":`;
+      })
+      .replace('{,', '{')
+      .replace(',}', '}')
+      .replace(/\s/g, '')
+      .replace(/'/g, '"'),
+  );
+
+  return {
+    'variables': variablesGradleAsJSON,
+    'com.android.tools.build:gradle': comAndroidToolsBuildGradleVersion,
+    'com.google.gms:google-services': comGoogleGmsGoogleServices,
+  };
 }
 
 function readFile(filename: string): string | undefined {
