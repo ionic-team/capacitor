@@ -163,7 +163,7 @@ extension CAPWebView {
             self.backgroundColor = backgroundColor
             webView.backgroundColor = backgroundColor
             webView.scrollView.backgroundColor = backgroundColor
-        } else if #available(iOS 13, *) {
+        } else {
             // Use the system background colors if background is not set by user
             self.backgroundColor = UIColor.systemBackground
             webView.backgroundColor = UIColor.systemBackground
