@@ -96,7 +96,7 @@ public class PluginCall {
      */
     @Deprecated
     public void error(String msg, Exception ex) {
-        reject(msg, null, ex);
+        reject(msg, ex);
     }
 
     /**
@@ -114,10 +114,10 @@ public class PluginCall {
      */
     @Deprecated
     public void error(String msg) {
-        reject(msg, null, null);
+        reject(msg);
     }
 
-    public void reject(String msg, String code, Exception ex) {
+    public void reject(String msg, String code, Exception ex, JSObject data) {
         PluginResult errorResult = new PluginResult();
 
         if (ex != null) {
@@ -127,23 +127,42 @@ public class PluginCall {
         try {
             errorResult.put("message", msg);
             errorResult.put("code", code);
+            if (null != data) {
+                errorResult.put("data", data);
+            }
         } catch (Exception jsonEx) {
-            Logger.error(Logger.tags("Plugin"), jsonEx.getMessage(), null);
+            Logger.error(Logger.tags("Plugin"), jsonEx.getMessage(), jsonEx);
         }
 
         this.msgHandler.sendResponseMessage(this, null, errorResult);
     }
 
+    public void reject(String msg, Exception ex, JSObject data) {
+        reject(msg, null, ex, data);
+    }
+
+    public void reject(String msg, String code, JSObject data) {
+        reject(msg, code, null, data);
+    }
+
+    public void reject(String msg, String code, Exception ex) {
+        reject(msg, code, ex, null);
+    }
+
+    public void reject(String msg, JSObject data) {
+        reject(msg, null, null, data);
+    }
+
     public void reject(String msg, Exception ex) {
-        reject(msg, null, ex);
+        reject(msg, null, ex, null);
     }
 
     public void reject(String msg, String code) {
-        reject(msg, code, null);
+        reject(msg, code, null, null);
     }
 
     public void reject(String msg) {
-        reject(msg, null, null);
+        reject(msg, null, null, null);
     }
 
     public void unimplemented() {
@@ -151,7 +170,7 @@ public class PluginCall {
     }
 
     public void unimplemented(String msg) {
-        reject(msg, "UNIMPLEMENTED", null);
+        reject(msg, "UNIMPLEMENTED", null, null);
     }
 
     public void unavailable() {
@@ -159,7 +178,7 @@ public class PluginCall {
     }
 
     public void unavailable(String msg) {
-        reject(msg, "UNAVAILABLE", null);
+        reject(msg, "UNAVAILABLE", null, null);
     }
 
     public String getPluginId() {
