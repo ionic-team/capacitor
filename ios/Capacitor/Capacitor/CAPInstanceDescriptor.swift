@@ -96,6 +96,9 @@ internal extension InstanceDescriptor {
             if let urlString = config[keyPath: "server.url"] as? String {
                 serverURL = urlString
             }
+            if let errorPathString = (config[keyPath: "server.errorPath"] as? String) {
+                errorPath = errorPathString
+            }
             if let insetBehavior = config[keyPath: "ios.contentInset"] as? String {
                 let availableInsets: [String: UIScrollView.ContentInsetAdjustmentBehavior] = ["automatic": .automatic,
                                                                                               "scrollableAxes": .scrollableAxes,
@@ -124,6 +127,9 @@ internal extension InstanceDescriptor {
             }
             if let limitsNavigations = config[keyPath: "ios.limitsNavigationsToAppBoundDomains"] as? Bool {
                 limitsNavigationsToAppBoundDomains = limitsNavigations
+            }
+            if let preferredMode = (config[keyPath: "ios.preferredContentMode"] as? String) {
+                preferredContentMode = preferredMode
             }
         }
     }

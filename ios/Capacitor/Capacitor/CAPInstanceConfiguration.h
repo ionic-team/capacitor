@@ -13,6 +13,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly, nonnull) NSArray<NSString*> *allowedNavigationHostnames;
 @property (nonatomic, readonly, nonnull) NSURL *localURL;
 @property (nonatomic, readonly, nonnull) NSURL *serverURL;
+@property (nonatomic, readonly, nullable) NSString *errorPath;
 @property (nonatomic, readonly, nonnull) NSDictionary *pluginConfigurations;
 @property (nonatomic, readonly) BOOL loggingEnabled;
 @property (nonatomic, readonly) BOOL scrollingEnabled;
@@ -23,6 +24,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly, nonnull) NSURL *appLocation;
 @property (nonatomic, readonly, nullable) NSString *appStartPath;
 @property (nonatomic, readonly) BOOL limitsNavigationsToAppBoundDomains;
+@property (nonatomic, readonly, nullable) NSString *preferredContentMode;
 
 @property (nonatomic, readonly, nonnull) NSDictionary *legacyConfig DEPRECATED_MSG_ATTRIBUTE("Use direct properties instead");
 
