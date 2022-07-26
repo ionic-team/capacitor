@@ -157,7 +157,7 @@ export async function migrateCommand(config: Config): Promise<void> {
           `Migrating info.plist by removing NSAppTransportSecurity key.`,
           () => {
             return removeKey(
-              join(config.ios.nativeTargetDirAbs, 'info.plist'),
+              join(config.ios.nativeTargetDirAbs, 'Info.plist'),
               'NSAppTransportSecurity',
             );
           },
