@@ -822,9 +822,12 @@ async function removeOldInitAndroid(config: Config) {
     },
   );
   const mainActivityClassName: any = mainActivityClassPath.split('.').pop();
+  const mainActivityPathArray = mainActivityClassPath.split('.');
+  mainActivityPathArray.pop();
   const mainActivityClassFileName = `${mainActivityClassName}.java`;
   const mainActivityClassFilePath = join(
     join(config.android.srcMainDirAbs, 'java'),
+    ...mainActivityPathArray,
     mainActivityClassFileName,
   );
 
