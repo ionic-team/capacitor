@@ -758,7 +758,7 @@ async function podfileAssertDeploymentTarget(filename: string) {
     return;
   }
   let replaced =
-    `require_relative '../node_modules/@capacitor/ios/scripts/pods_helpers'\n\n` +
+    `require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'\n\n` +
     txt;
   if (replaced.includes('post_install do |installer|')) {
     replaced = replaced.replace(
