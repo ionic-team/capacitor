@@ -584,7 +584,7 @@ async function updateAppBuildGradle(filename: string) {
 
   const replaced = txt.replace(
     'dependencies {',
-    'dependencies {\n    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"',
+    'dependencies {\n    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"\n    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"',
   );
   // const lines = txt.split('\n');
   writeFileSync(filename, replaced, 'utf-8');
@@ -789,54 +789,51 @@ async function removeOldInitAndroid(config: Config) {
   const manifestNode: any = xmlData.manifest;
   const applicationChildNodes: any[] = manifestNode.application;
   let mainActivityClassPath = '';
-  applicationChildNodes.find(
-    applicationChildNode => {
-      const activityChildNodes: any[] = applicationChildNode.activity;
-      if (!Array.isArray(activityChildNodes)) {
+  applicationChildNodes.find(applicationChildNode => {
+    const activityChildNodes: any[] = applicationChildNode.activity;
+    if (!Array.isArray(activityChildNodes)) {
+      return false;
+    }
+
+    const mainActivityNode = activityChildNodes.find(activityChildNode => {
+      const intentFilterChildNodes: any[] = activityChildNode['intent-filter'];
+      if (!Array.isArray(intentFilterChildNodes)) {
         return false;
       }
 
-      const mainActivityNode = activityChildNodes.find(activityChildNode => {
-        const intentFilterChildNodes: any[] =
-          activityChildNode['intent-filter'];
-        if (!Array.isArray(intentFilterChildNodes)) {
+      return intentFilterChildNodes.find(intentFilterChildNode => {
+        const actionChildNodes: any[] = intentFilterChildNode.action;
+        if (!Array.isArray(actionChildNodes)) {
           return false;
         }
 
-        return intentFilterChildNodes.find(intentFilterChildNode => {
-          const actionChildNodes: any[] = intentFilterChildNode.action;
-          if (!Array.isArray(actionChildNodes)) {
-            return false;
-          }
+        const mainActionChildNode = actionChildNodes.find(actionChildNode => {
+          const androidName = actionChildNode.$['android:name'];
+          return androidName === 'android.intent.action.MAIN';
+        });
 
-          const mainActionChildNode = actionChildNodes.find(actionChildNode => {
-            const androidName = actionChildNode.$['android:name'];
-            return androidName === 'android.intent.action.MAIN';
-          });
+        if (!mainActionChildNode) {
+          return false;
+        }
 
-          if (!mainActionChildNode) {
-            return false;
-          }
+        const categoryChildNodes: any[] = intentFilterChildNode.category;
+        if (!Array.isArray(categoryChildNodes)) {
+          return false;
+        }
 
-          const categoryChildNodes: any[] = intentFilterChildNode.category;
-          if (!Array.isArray(categoryChildNodes)) {
-            return false;
-          }
-
-          return categoryChildNodes.find(categoryChildNode => {
-            const androidName = categoryChildNode.$['android:name'];
-            return androidName === 'android.intent.category.LAUNCHER';
-          });
+        return categoryChildNodes.find(categoryChildNode => {
+          const androidName = categoryChildNode.$['android:name'];
+          return androidName === 'android.intent.category.LAUNCHER';
         });
       });
+    });
 
-      if (mainActivityNode) {
-        mainActivityClassPath = mainActivityNode.$['android:name'];
-      }
+    if (mainActivityNode) {
+      mainActivityClassPath = mainActivityNode.$['android:name'];
+    }
 
-      return mainActivityNode;
-    },
-  );
+    return mainActivityNode;
+  });
   const mainActivityClassName: any = mainActivityClassPath.split('.').pop();
   const mainActivityPathArray = mainActivityClassPath.split('.');
   mainActivityPathArray.pop();
@@ -865,8 +862,6 @@ async function removeOldInitAndroid(config: Config) {
 async function addNewSplashScreen(config: Config) {
   const varsPath = join(config.android.platformDirAbs, 'variables.gradle');
   let varsGradle = readFile(varsPath);
-  const buildPath = join(config.android.appDirAbs, 'build.gradle');
-  let buildGradle = readFile(buildPath);
   const stylePath = join(
     config.android.srcMainDirAbs,
     'res',
@@ -875,7 +870,7 @@ async function addNewSplashScreen(config: Config) {
   );
   let stylesXml = readFile(stylePath);
 
-  if (!varsGradle || !buildGradle || !stylesXml) return;
+  if (!varsGradle || !stylesXml) return;
 
   stylesXml = stylesXml.replace('AppTheme.NoActionBar', 'Theme.SplashScreen');
   writeFileSync(stylePath, stylesXml);
@@ -885,10 +880,4 @@ async function addNewSplashScreen(config: Config) {
     `    coreSplashScreenVersion = '1.0.0-rc01'\n}`,
   );
   writeFileSync(varsPath, varsGradle);
-
-  buildGradle = buildGradle.replace(
-    'implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"',
-    `implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"\n    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"\n`,
-  );
-  writeFileSync(buildPath, buildGradle);
 }
