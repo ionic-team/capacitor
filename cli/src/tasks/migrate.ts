@@ -875,9 +875,11 @@ async function addNewSplashScreen(config: Config) {
   stylesXml = stylesXml.replace('AppTheme.NoActionBar', 'Theme.SplashScreen');
   writeFileSync(stylePath, stylesXml);
 
-  varsGradle = varsGradle.replace(
-    '}',
-    `    coreSplashScreenVersion = '1.0.0-rc01'\n}`,
-  );
-  writeFileSync(varsPath, varsGradle);
+  if (!varsGradle.includes(`coreSplashScreenVersion = `)) {
+    varsGradle = varsGradle.replace(
+      '}',
+      `    coreSplashScreenVersion = '1.0.0-rc01'\n}`,
+    );
+    writeFileSync(varsPath, varsGradle);
+  }
 }
