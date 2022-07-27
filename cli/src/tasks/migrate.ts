@@ -44,8 +44,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = 'next';
-const pluginVersion = 'next';
+const coreVersion = 'latest';
+const pluginVersion = 'latest';
 
 export async function migrateCommand(config: Config): Promise<void> {
   if (config === null) {
