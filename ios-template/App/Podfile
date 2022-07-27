@@ -15,8 +15,9 @@ end
 
 target 'App' do
   capacitor_pods
-  post_install do |installer|
-    assertDeploymentTarget(installer)
-  end
   # Add your Pods here
+end
+
+post_install do |installer|
+  assertDeploymentTarget(installer)
 end
