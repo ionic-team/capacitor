@@ -142,7 +142,9 @@ export async function migrateCommand(config: Config): Promise<void> {
         });
 
         await runTask(`Migrating Podfile to use post_install script.`, () => {
-          return podfileAssertDeploymentTarget(join(config.ios.nativeProjectDirAbs, 'Podfile'));
+          return podfileAssertDeploymentTarget(
+            join(config.ios.nativeProjectDirAbs, 'Podfile'),
+          );
         });
 
         // Remove touchesBegan
@@ -274,7 +276,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         // add new splashscreen
         await runTask('Migrate to Android 12 Splashscreen.', () => {
           return addNewSplashScreen(config);
-        })
+        });
       }
 
       // Run Cap Sync
@@ -412,7 +414,9 @@ async function updateAndroidManifest(filename: string) {
       ' android:exported="true"',
     );
   } else {
-    logger.info(`Found 'android:exported="false"' in your AndroidManifest.xml, if this is not intentional please update it manually to "true".`)
+    logger.info(
+      `Found 'android:exported="false"' in your AndroidManifest.xml, if this is not intentional please update it manually to "true".`,
+    );
   }
   if (txt == replaced) {
     logger.error(`Unable to update Android Manifest. Missing <activity> tag`);
@@ -753,13 +757,19 @@ async function podfileAssertDeploymentTarget(filename: string) {
   if (!txt) {
     return;
   }
-  let replaced = `require_relative '../node_modules/@capacitor/ios/scripts/pods_helpers'\n\n` + txt;
-  replaced = replaced + `\n\npost_install do |installer|\n    assertDeploymentTarget(installer)\n  end\n`;
+  let replaced =
+    `require_relative '../node_modules/@capacitor/ios/scripts/pods_helpers'\n\n` +
+    txt;
+  replaced =
+    replaced +
+    `\n\npost_install do |installer|\n    assertDeploymentTarget(installer)\n  end\n`;
   writeFileSync(filename, replaced, 'utf-8');
 }
 
 async function removeOldInitAndroid(config: Config) {
-  const xmlData = await readXML(join(config.android.srcMainDirAbs, 'AndroidManifest.xml'));
+  const xmlData = await readXML(
+    join(config.android.srcMainDirAbs, 'AndroidManifest.xml'),
+  );
   const manifestNode: any = xmlData.manifest;
   const applicationChildNodes: any[] = manifestNode.application;
   let mainActivityClassPath = '';
@@ -813,16 +823,19 @@ async function removeOldInitAndroid(config: Config) {
   );
   const mainActivityClassName: any = mainActivityClassPath.split('.').pop();
   const mainActivityClassFileName = `${mainActivityClassName}.java`;
-  const mainActivityClassFilePath = join(join(config.android.srcMainDirAbs, 'java'), mainActivityClassFileName);
-  
+  const mainActivityClassFilePath = join(
+    join(config.android.srcMainDirAbs, 'java'),
+    mainActivityClassFileName,
+  );
+
   let data = readFile(mainActivityClassFilePath);
 
   if (data) {
     const bindex = data.indexOf('this.init(savedInstanceState');
     if (bindex == -1) return;
     const eindex = data.indexOf('}});', bindex) + 4;
-    
-    data = data.replace(data.substring(bindex, eindex), "");
+
+    data = data.replace(data.substring(bindex, eindex), '');
 
     writeFileSync(mainActivityClassFilePath, data);
   }
@@ -833,7 +846,12 @@ async function addNewSplashScreen(config: Config) {
   let varsGradle = readFile(varsPath);
   const buildPath = join(config.android.appDirAbs, 'build.gradle');
   let buildGradle = readFile(buildPath);
-  const stylePath = join(config.android.srcMainDirAbs, 'res', 'values', 'styles.xml');
+  const stylePath = join(
+    config.android.srcMainDirAbs,
+    'res',
+    'values',
+    'styles.xml',
+  );
   let stylesXml = readFile(stylePath);
 
   if (!varsGradle || !buildGradle || !stylesXml) return;
@@ -841,9 +859,15 @@ async function addNewSplashScreen(config: Config) {
   stylesXml = stylesXml.replace('AppTheme.NoActionBar', 'Theme.SplashScreen');
   writeFileSync(stylePath, stylesXml);
 
-  varsGradle = varsGradle.replace('}', `    coreSplashScreenVersion = '1.0.0-rc01'\n}`);
+  varsGradle = varsGradle.replace(
+    '}',
+    `    coreSplashScreenVersion = '1.0.0-rc01'\n}`,
+  );
   writeFileSync(varsPath, varsGradle);
 
-  buildGradle = buildGradle.replace('implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"', `implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"\n    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"\n`);
+  buildGradle = buildGradle.replace(
+    'implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"',
+    `implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"\n    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"\n`,
+  );
   writeFileSync(buildPath, buildGradle);
 }
