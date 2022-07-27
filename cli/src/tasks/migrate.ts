@@ -218,7 +218,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         });
 
         // Update app.gradle
-        await runTask(`Migrating app.gradle file.`, () => {
+        await runTask(`Migrating app/build.gradle file.`, () => {
           return updateAppBuildGradle(
             join(config.android.appDirAbs, 'build.gradle'),
           );
