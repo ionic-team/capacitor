@@ -847,6 +847,8 @@ async function removeOldInitAndroid(config: Config) {
 
     data = data.replace(data.substring(bindex, eindex), '');
 
+    data = data.replace('// Initializes the Bridge', '');
+
     writeFileSync(mainActivityClassFilePath, data);
   }
 }
