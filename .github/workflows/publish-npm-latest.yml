@@ -8,12 +8,13 @@ jobs:
     runs-on: macos-12
     timeout-minutes: 30
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Restore Dependency Cache
         uses: actions/cache@v2
         with:
@@ -25,8 +26,8 @@ jobs:
           npm install
       - name: Version & Publish
         env: 
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
         run: |
           git config user.name "Github Workflow (on behalf of ${{ github.actor }})"
           git config user.email "users.noreply.github.com"
