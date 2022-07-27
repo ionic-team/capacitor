@@ -266,10 +266,20 @@ export async function migrateCommand(config: Config): Promise<void> {
                   true,
                 );
                 if (!didWork) {
-                  let file = readFile(join(config.android.platformDirAbs, 'variables.gradle'));
+                  let file = readFile(
+                    join(config.android.platformDirAbs, 'variables.gradle'),
+                  );
                   if (file) {
-                    file = file.replace('ext {', `ext {\n    ${variable} = '${variablesAndClasspaths.variables[variable].toString()}'`);
-                    writeFileSync(join(config.android.platformDirAbs, 'variables.gradle'), file);
+                    file = file.replace(
+                      'ext {',
+                      `ext {\n    ${variable} = '${variablesAndClasspaths.variables[
+                        variable
+                      ].toString()}'`,
+                    );
+                    writeFileSync(
+                      join(config.android.platformDirAbs, 'variables.gradle'),
+                      file,
+                    );
                   }
                 }
               }
@@ -890,5 +900,4 @@ async function addNewSplashScreen(config: Config) {
 
   stylesXml = stylesXml.replace('AppTheme.NoActionBar', 'Theme.SplashScreen');
   writeFileSync(stylePath, stylesXml);
-
 }
