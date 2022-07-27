@@ -156,6 +156,8 @@ export async function migrateCommand(config: Config): Promise<void> {
               join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift'),
               `override func touchesBegan`,
               `}`,
+              undefined,
+              true,
             );
           },
         );
@@ -255,7 +257,7 @@ export async function migrateCommand(config: Config): Promise<void> {
                   true,
                 ))
               ) {
-                await updateFile(
+                const didWork = await updateFile(
                   config,
                   join(config.android.platformDirAbs, 'variables.gradle'),
                   `${variable} = `,
@@ -263,6 +265,13 @@ export async function migrateCommand(config: Config): Promise<void> {
                   variablesAndClasspaths.variables[variable].toString(),
                   true,
                 );
+                if (!didWork) {
+                  let file = readFile(join(config.android.platformDirAbs, 'variables.gradle'));
+                  if (file) {
+                    file = file.replace('ext {', `ext {\n    ${variable} = '${variablesAndClasspaths.variables[variable].toString()}'`);
+                    writeFileSync(join(config.android.platformDirAbs, 'variables.gradle'), file);
+                  }
+                }
               }
             }
           })();
@@ -272,6 +281,8 @@ export async function migrateCommand(config: Config): Promise<void> {
         await runTask('Migrating MainActivity by removing init().', () => {
           return removeOldInitAndroid(config);
         });
+
+        rimraf.sync(join(config.android.appDirAbs, 'build'));
 
         // add new splashscreen
         await runTask('Migrate to Android 12 Splashscreen.', () => {
@@ -411,7 +422,7 @@ async function updateAndroidManifest(filename: string) {
       txt,
       '<activity',
       ' ',
-      ' android:exported="true"',
+      `\n            android:exported="true"\n`,
     );
   } else {
     logger.info(
@@ -867,8 +878,6 @@ async function removeOldInitAndroid(config: Config) {
 }
 
 async function addNewSplashScreen(config: Config) {
-  const varsPath = join(config.android.platformDirAbs, 'variables.gradle');
-  let varsGradle = readFile(varsPath);
   const stylePath = join(
     config.android.srcMainDirAbs,
     'res',
@@ -877,16 +886,9 @@ async function addNewSplashScreen(config: Config) {
   );
   let stylesXml = readFile(stylePath);
 
-  if (!varsGradle || !stylesXml) return;
+  if (!stylesXml) return;
 
   stylesXml = stylesXml.replace('AppTheme.NoActionBar', 'Theme.SplashScreen');
   writeFileSync(stylePath, stylesXml);
 
-  if (!varsGradle.includes(`coreSplashScreenVersion = `)) {
-    varsGradle = varsGradle.replace(
-      '}',
-      `    coreSplashScreenVersion = '1.0.0-rc01'\n}`,
-    );
-    writeFileSync(varsPath, varsGradle);
-  }
 }
