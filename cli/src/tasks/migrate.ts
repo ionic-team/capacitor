@@ -771,13 +771,13 @@ async function podfileAssertDeploymentTarget(filename: string) {
     if (!replaced.includes(`assertDeploymentTarget(installer)`)) {
       replaced = replaced.replace(
         'post_install do |installer|',
-        `post_install do |installer|\n    assertDeploymentTarget(installer)\n`,
+        `post_install do |installer|\n  assertDeploymentTarget(installer)\n`,
       );
     }
   } else {
     replaced =
       replaced +
-      `\n\npost_install do |installer|\n    assertDeploymentTarget(installer)\n  end\n`;
+      `\n\npost_install do |installer|\n  assertDeploymentTarget(installer)\nend\n`;
   }
   writeFileSync(filename, replaced, 'utf-8');
 }
