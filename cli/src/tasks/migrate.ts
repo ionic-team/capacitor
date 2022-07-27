@@ -1,5 +1,6 @@
 import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
 import { join } from 'path';
+import rimraf from 'rimraf';
 
 import { runTask } from '../common';
 import type { Config } from '../definitions';
@@ -326,6 +327,8 @@ async function installLatestNPMLibs(runInstall: boolean, config: Config) {
   });
 
   if (runInstall) {
+    rimraf.sync(join(config.app.rootDir, 'package-lock.json'));
+    rimraf.sync(join(config.app.rootDir, 'node_modules/@capacitor/!(cli)'));
     await getCommandOutput('npm', ['i']);
   } else {
     logger.info(
