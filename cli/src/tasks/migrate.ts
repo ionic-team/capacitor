@@ -757,14 +757,23 @@ async function podfileAssertDeploymentTarget(filename: string) {
   if (!txt) {
     return;
   }
-  let replaced =
-    `require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'\n\n` +
-    txt;
+  let replaced = txt;
+  if (
+    !replaced.includes(
+      `require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers`,
+    )
+  ) {
+    replaced =
+      `require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'\n\n` +
+      txt;
+  }
   if (replaced.includes('post_install do |installer|')) {
-    replaced = replaced.replace(
-      'post_install do |installer|',
-      `post_install do |installer|\n    assertDeploymentTarget(installer)\n`,
-    );
+    if (!replaced.includes(`assertDeploymentTarget(installer)`)) {
+      replaced = replaced.replace(
+        'post_install do |installer|',
+        `post_install do |installer|\n    assertDeploymentTarget(installer)\n`,
+      );
+    }
   } else {
     replaced =
       replaced +
