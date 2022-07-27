@@ -578,16 +578,23 @@ async function updateAppBuildGradle(filename: string) {
   if (!txt) {
     return;
   }
-  if (txt.includes('androidx.coordinatorlayout:coordinatorlayout:')) {
-    return;
+  let replaced = txt;
+  if (!txt.includes('androidx.coordinatorlayout:coordinatorlayout:')) {
+    replaced = replaced.replace(
+      'dependencies {',
+      'dependencies {\n    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"',
+    );
   }
-
-  const replaced = txt.replace(
-    'dependencies {',
-    'dependencies {\n    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"\n    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"',
-  );
+  if (!txt.includes('androidx.core:core-splashscreen:')) {
+    replaced = replaced.replace(
+      'dependencies {',
+      'dependencies {\n    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"',
+    );
+  }
   // const lines = txt.split('\n');
-  writeFileSync(filename, replaced, 'utf-8');
+  if (replaced !== txt) {
+    writeFileSync(filename, replaced, 'utf-8');
+  }
 }
 
 async function updateGradleWrapper(filename: string) {
