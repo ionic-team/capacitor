@@ -789,7 +789,7 @@ async function removeOldInitAndroid(config: Config) {
   const manifestNode: any = xmlData.manifest;
   const applicationChildNodes: any[] = manifestNode.application;
   let mainActivityClassPath = '';
-  const mainApplicationNode = applicationChildNodes.find(
+  applicationChildNodes.find(
     applicationChildNode => {
       const activityChildNodes: any[] = applicationChildNode.activity;
       if (!Array.isArray(activityChildNodes)) {
