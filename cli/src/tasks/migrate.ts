@@ -760,9 +760,16 @@ async function podfileAssertDeploymentTarget(filename: string) {
   let replaced =
     `require_relative '../node_modules/@capacitor/ios/scripts/pods_helpers'\n\n` +
     txt;
-  replaced =
-    replaced +
-    `\n\npost_install do |installer|\n    assertDeploymentTarget(installer)\n  end\n`;
+  if (replaced.includes('post_install do |installer|')) {
+    replaced = replaced.replace(
+      'post_install do |installer|',
+      `post_install do |installer|\n    assertDeploymentTarget(installer)\n`,
+    );
+  } else {
+    replaced =
+      replaced +
+      `\n\npost_install do |installer|\n    assertDeploymentTarget(installer)\n  end\n`;
+  }
   writeFileSync(filename, replaced, 'utf-8');
 }
 
