@@ -20,7 +20,7 @@ export async function run(): Promise<void> {
   try {
     const config = await loadConfig();
     runProgram(config);
-  } catch (e) {
+  } catch (e: any) {
     process.exitCode = isFatal(e) ? e.exitCode : 1;
     logger.error(e.message ? e.message : String(e));
   }
@@ -221,6 +221,18 @@ export function runProgram(config: Config): void {
       wrapAction(async () => {
         const { newPluginCommand } = await import('./tasks/new-plugin');
         await newPluginCommand();
+      }),
+    );
+
+  program
+    .command('migrate')
+    .description(
+      'Migrate your current Capacitor app to the latest major version of Capacitor.',
+    )
+    .action(
+      wrapAction(async () => {
+        const { migrateCommand } = await import('./tasks/migrate');
+        await migrateCommand(config);
       }),
     );
 
