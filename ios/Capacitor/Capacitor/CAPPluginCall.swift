@@ -57,7 +57,7 @@ extension CAPPluginCall: JSValueContainer {
         errorHandler(CAPPluginCallError(message: message, code: nil, error: error, data: data))
     }
 
-    func reject(_ message: String, _ code: String? = nil, _ error: Error? = nil, _ data: PluginCallResultData = [:]) {
+    func reject(_ message: String, _ code: String? = nil, _ error: Error? = nil, _ data: PluginCallResultData? = nil) {
         errorHandler(CAPPluginCallError(message: message, code: code, error: error, data: data))
     }
 
