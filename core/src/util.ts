@@ -19,8 +19,16 @@ export enum ExceptionCode {
   Unavailable = 'UNAVAILABLE',
 }
 
+export interface ExceptionData {
+  [key: string]: any;
+}
+
 export class CapacitorException extends Error {
-  constructor(readonly message: string, readonly code?: ExceptionCode) {
+  constructor(
+    readonly message: string,
+    readonly code?: ExceptionCode,
+    readonly data?: ExceptionData,
+  ) {
     super(message);
   }
 }

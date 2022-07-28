@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/ios",
-  "version": "3.4.3",
+  "version": "4.0.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -16,7 +16,8 @@
     "Capacitor/Capacitor/",
     "CapacitorCordova/CapacitorCordova/",
     "Capacitor.podspec",
-    "CapacitorCordova.podspec"
+    "CapacitorCordova.podspec",
+    "scripts/pods_helpers.rb"
   ],
   "scripts": {
     "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova",
@@ -24,7 +25,7 @@
     "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd .."
   },
   "peerDependencies": {
-    "@capacitor/core": "^3.4.0"
+    "@capacitor/core": "next"
   },
   "publishConfig": {
     "access": "public"

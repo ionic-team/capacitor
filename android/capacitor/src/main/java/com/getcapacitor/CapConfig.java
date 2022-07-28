@@ -1,6 +1,8 @@
 package com.getcapacitor;
 
 import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
+import static com.getcapacitor.Bridge.DEFAULT_ANDROID_WEBVIEW_VERSION;
+import static com.getcapacitor.Bridge.MINIMUM_ANDROID_WEBVIEW_VERSION;
 import static com.getcapacitor.FileUtils.readFile;
 
 import android.content.Context;
@@ -9,8 +11,10 @@ import android.content.res.AssetManager;
 import androidx.annotation.Nullable;
 import com.getcapacitor.util.JSONUtils;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.json.JSONException;
@@ -41,6 +45,9 @@ public class CapConfig {
     private boolean captureInput = false;
     private boolean webContentsDebuggingEnabled = false;
     private boolean loggingEnabled = true;
+    private boolean initialFocus = true;
+    private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
+    private String errorPath;
 
     // Embedded
     private String startPath;
@@ -107,7 +114,11 @@ public class CapConfig {
         this.serverUrl = builder.serverUrl;
         this.appId = builder.appId;
         this.hostname = builder.hostname;
-        this.androidScheme = builder.androidScheme;
+
+        if (this.validateScheme(builder.androidScheme)) {
+            this.androidScheme = builder.androidScheme;
+        }
+
         this.allowNavigation = builder.allowNavigation;
 
         // Android Config
@@ -118,6 +129,9 @@ public class CapConfig {
         this.captureInput = builder.captureInput;
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.loggingEnabled = builder.loggingEnabled;
+        this.initialFocus = builder.initialFocus;
+        this.minWebViewVersion = builder.minWebViewVersion;
+        this.errorPath = builder.errorPath;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -151,7 +165,13 @@ public class CapConfig {
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
         appId = JSONUtils.getString(configJSON, "appId", null);
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
-        androidScheme = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
+        errorPath = JSONUtils.getString(configJSON, "server.errorPath", null);
+
+        String configSchema = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
+        if (this.validateScheme(configSchema)) {
+            androidScheme = configSchema;
+        }
+
         allowNavigation = JSONUtils.getArray(configJSON, "server.allowNavigation", null);
 
         // Android
@@ -167,6 +187,7 @@ public class CapConfig {
                 "android.allowMixedContent",
                 JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
             );
+        minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", DEFAULT_ANDROID_WEBVIEW_VERSION);
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
 
@@ -190,8 +211,20 @@ public class CapConfig {
                 loggingEnabled = isDebug;
         }
 
+        initialFocus = JSONUtils.getBoolean(configJSON, "android.initialFocus", initialFocus);
+
         // Plugins
         pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
+    }
+
+    private boolean validateScheme(String scheme) {
+        List<String> invalidSchemes = Arrays.asList("file", "ftp", "ftps", "ws", "wss", "about", "blob", "data");
+        if (invalidSchemes.contains(scheme)) {
+            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to http.");
+            return false;
+        }
+
+        return true;
     }
 
     public boolean isHTML5Mode() {
@@ -204,6 +237,9 @@ public class CapConfig {
 
     public String getAppId() {
         return appId;
+
+    public String getErrorPath() {
+        return errorPath;
     }
 
     public String getHostname() {
@@ -248,6 +284,19 @@ public class CapConfig {
 
     public boolean isLoggingEnabled() {
         return loggingEnabled;
+    }
+
+    public boolean isInitialFocus() {
+        return initialFocus;
+    }
+
+    public int getMinWebViewVersion() {
+        if (minWebViewVersion < MINIMUM_ANDROID_WEBVIEW_VERSION) {
+            Logger.warn("Specified minimum webview version is too low, defaulting to " + MINIMUM_ANDROID_WEBVIEW_VERSION);
+            return MINIMUM_ANDROID_WEBVIEW_VERSION;
+        }
+
+        return minWebViewVersion;
     }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
@@ -393,6 +442,7 @@ public class CapConfig {
         // Server Config Values
         private boolean html5mode = true;
         private String serverUrl;
+        private String errorPath;
         private String hostname = "localhost";
         private String androidScheme = CAPACITOR_HTTP_SCHEME;
         private String[] allowNavigation;
@@ -405,6 +455,8 @@ public class CapConfig {
         private boolean captureInput = false;
         private Boolean webContentsDebuggingEnabled = null;
         private boolean loggingEnabled = true;
+        private boolean initialFocus = false;
+        private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
 
         // Embedded
         private String startPath = null;
@@ -446,6 +498,11 @@ public class CapConfig {
 
         public Builder setServerUrl(String serverUrl) {
             this.serverUrl = serverUrl;
+            return this;
+        }
+
+        public Builder setErrorPath(String errorPath) {
+            this.errorPath = errorPath;
             return this;
         }
 
@@ -501,6 +558,11 @@ public class CapConfig {
 
         public Builder setLoggingEnabled(boolean enabled) {
             this.loggingEnabled = enabled;
+            return this;
+        }
+
+        public Builder setInitialFocus(boolean focus) {
+            this.initialFocus = focus;
             return this;
         }
     }
