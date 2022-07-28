@@ -295,9 +295,12 @@ export async function migrateCommand(config: Config): Promise<void> {
         rimraf.sync(join(config.android.appDirAbs, 'build'));
 
         // add new splashscreen
-        await runTask('Migrate to Android 12 Splashscreen and apply DayNight theme.', () => {
-          return addNewSplashScreen(config);
-        });
+        await runTask(
+          'Migrate to Android 12 Splashscreen and apply DayNight theme.',
+          () => {
+            return addNewSplashScreen(config);
+          },
+        );
       }
 
       // Run Cap Sync
