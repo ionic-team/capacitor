@@ -271,10 +271,10 @@ export async function migrateCommand(config: Config): Promise<void> {
                   );
                   if (file) {
                     file = file.replace(
-                      'ext {',
-                      `ext {\n    ${variable} = '${variablesAndClasspaths.variables[
+                      '}',
+                      `    ${variable} = '${variablesAndClasspaths.variables[
                         variable
-                      ].toString()}'`,
+                      ].toString()}'\n}`,
                     );
                     writeFileSync(
                       join(config.android.platformDirAbs, 'variables.gradle'),
