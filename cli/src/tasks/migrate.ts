@@ -902,5 +902,16 @@ async function addNewSplashScreen(config: Config) {
     `parent="AppTheme.NoActionBar"`,
     `parent="Theme.SplashScreen"`,
   );
+
+  // revert wrong replaces
+  stylesXml = stylesXml.replace(
+    `name="Theme.SplashScreen"`,
+    `name="AppTheme.NoActionBar"`,
+  );
+  stylesXml = stylesXml.replace(
+    `name="Theme.SplashScreenLaunch"`,
+    `name="AppTheme.NoActionBarLaunch"`,
+  );
+
   writeFileSync(stylePath, stylesXml);
 }
