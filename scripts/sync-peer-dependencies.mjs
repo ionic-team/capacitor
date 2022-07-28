@@ -5,7 +5,6 @@ import { execute } from './lib/cli.mjs';
 import { ls } from './lib/lerna.mjs';
 import { setPackageJsonDependencies } from './lib/version.mjs';
 
-/*
 execute(async () => {
   const CORE_DEPENDENTS = ['@capacitor/android', '@capacitor/ios'];
   const pkgs = await ls();
@@ -27,4 +26,3 @@ execute(async () => {
     );
   }
 });
-//*/

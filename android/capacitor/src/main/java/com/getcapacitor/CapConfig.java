@@ -1,6 +1,8 @@
 package com.getcapacitor;
 
 import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
+import static com.getcapacitor.Bridge.DEFAULT_ANDROID_WEBVIEW_VERSION;
+import static com.getcapacitor.Bridge.MINIMUM_ANDROID_WEBVIEW_VERSION;
 import static com.getcapacitor.FileUtils.readFile;
 
 import android.content.Context;
@@ -43,6 +45,7 @@ public class CapConfig {
     private boolean webContentsDebuggingEnabled = false;
     private boolean loggingEnabled = true;
     private boolean initialFocus = true;
+    private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
     private String errorPath;
 
     // Embedded
@@ -125,6 +128,7 @@ public class CapConfig {
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.loggingEnabled = builder.loggingEnabled;
         this.initialFocus = builder.initialFocus;
+        this.minWebViewVersion = builder.minWebViewVersion;
         this.errorPath = builder.errorPath;
 
         // Embedded
@@ -180,6 +184,7 @@ public class CapConfig {
                 "android.allowMixedContent",
                 JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
             );
+        minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", DEFAULT_ANDROID_WEBVIEW_VERSION);
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
 
@@ -277,6 +282,15 @@ public class CapConfig {
 
     public boolean isInitialFocus() {
         return initialFocus;
+    }
+
+    public int getMinWebViewVersion() {
+        if (minWebViewVersion < MINIMUM_ANDROID_WEBVIEW_VERSION) {
+            Logger.warn("Specified minimum webview version is too low, defaulting to " + MINIMUM_ANDROID_WEBVIEW_VERSION);
+            return MINIMUM_ANDROID_WEBVIEW_VERSION;
+        }
+
+        return minWebViewVersion;
     }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
@@ -436,6 +450,7 @@ public class CapConfig {
         private Boolean webContentsDebuggingEnabled = null;
         private boolean loggingEnabled = true;
         private boolean initialFocus = false;
+        private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
 
         // Embedded
         private String startPath = null;
