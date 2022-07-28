@@ -44,8 +44,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = 'latest';
-const pluginVersion = 'latest';
+const coreVersion = '^4.0.0';
+const pluginVersion = '^4.0.0';
 
 export async function migrateCommand(config: Config): Promise<void> {
   if (config === null) {
@@ -271,10 +271,10 @@ export async function migrateCommand(config: Config): Promise<void> {
                   );
                   if (file) {
                     file = file.replace(
-                      'ext {',
-                      `ext {\n    ${variable} = '${variablesAndClasspaths.variables[
+                      '}',
+                      `    ${variable} = '${variablesAndClasspaths.variables[
                         variable
-                      ].toString()}'`,
+                      ].toString()}'\n}`,
                     );
                     writeFileSync(
                       join(config.android.platformDirAbs, 'variables.gradle'),
