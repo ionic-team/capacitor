@@ -631,7 +631,7 @@ async function updateGradleWrapper(filename: string) {
     'distributionUrl=',
     '\n',
     // eslint-disable-next-line no-useless-escape
-    `https\://services.gradle.org/distributions/gradle-7.4.2-bin.zip`,
+    `https\\://services.gradle.org/distributions/gradle-7.4.2-all.zip`,
   );
   writeFileSync(filename, replaced, 'utf-8');
 }
