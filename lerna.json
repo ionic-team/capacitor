@@ -10,12 +10,12 @@
       "hoist": true
     },
     "version": {
-      "allowBranch": "main",
+      "allowBranch": "3.x",
       "conventionalCommits": true,
       "createRelease": "github",
       "message": "Release %s",
       "tagVersionPrefix": ""
     }
   },
-  "version": "3.6.0"
+  "version": "3.7.0"
 }

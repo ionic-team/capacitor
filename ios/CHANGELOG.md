@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/ionic-team/capacitor/compare/3.6.0...3.7.0) (2022-08-01)
+
+
+### Features
+
+* **ios:** Add `setServerBasePath(path:)` to CAPWebView ([#5742](https://github.com/ionic-team/capacitor/issues/5742)) ([#5748](https://github.com/ionic-team/capacitor/issues/5748)) ([9c25aad](https://github.com/ionic-team/capacitor/commit/9c25aad0ca8f97416753e7589a92efa401ad75bc))
+* **ios:** Add overrideable router var for CAPWebView. ([#5743](https://github.com/ionic-team/capacitor/issues/5743)) ([#5760](https://github.com/ionic-team/capacitor/issues/5760)) ([6ba286d](https://github.com/ionic-team/capacitor/commit/6ba286d0429f70c9d2df9132f38c04f156f572b6))
+* Add CapWebView  ([#5715](https://github.com/ionic-team/capacitor/issues/5715)) ([#5730](https://github.com/ionic-team/capacitor/issues/5730)) ([bb54ac1](https://github.com/ionic-team/capacitor/commit/bb54ac1c9973dc01262119f0b0925f67c942264c))
+
+
+
+
+
 # [3.6.0](https://github.com/ionic-team/capacitor/compare/3.5.1...3.6.0) (2022-06-17)
 
 

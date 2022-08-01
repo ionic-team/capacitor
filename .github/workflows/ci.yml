@@ -133,7 +133,7 @@ jobs:
       - run: npm run lerna:publish:next || true
   deploy-latest:
     runs-on: macos-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Release') && (!contains(github.event.head_commit.message, 'rc') && !contains(github.event.head_commit.message, 'beta') && !contains(github.event.head_commit.message, 'alpha'))
+    if: github.event_name == 'push' && github.ref == 'refs/heads/3.x' && startsWith(github.event.head_commit.message, 'Release') && (!contains(github.event.head_commit.message, 'rc') && !contains(github.event.head_commit.message, 'beta') && !contains(github.event.head_commit.message, 'alpha'))
     timeout-minutes: 30
     needs:
       - setup

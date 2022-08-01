@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/ionic-team/capacitor/compare/3.6.0...3.7.0) (2022-08-01)
+
+**Note:** Version bump only for package @capacitor/android
+
+
+
+
+
 # [3.6.0](https://github.com/ionic-team/capacitor/compare/3.5.1...3.6.0) (2022-06-17)
 
 
