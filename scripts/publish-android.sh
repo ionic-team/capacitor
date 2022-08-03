@@ -20,7 +20,7 @@ CAPACITOR_PUBLISHED_VERSION="$(perl -ne 'print and last if s/.*<latest>(.*)<\/la
 if [[ $CAP_VERSION == $CAPACITOR_PUBLISHED_VERSION ]]; then
     printf %"s\n" "Native Capacitor Android library version $CAPACITOR_PUBLISHED_VERSION is already published on MavenCentral, skipping."
 else
-    printf %"s\n" "Latest native Capacitor Android library is version $CAPACITOR_PUBLISHED_VERSION, publishing to MavenCentral staging..."
+    printf %"s\n" "Publishing $CAP_VERSION to MavenCentral staging..."
 
     # Build and publish
     $DIR/gradlew clean build publishReleasePublicationToSonatypeRepository --max-workers 1 -b $DIR/capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true > $LOG_OUTPUT 2>&1
