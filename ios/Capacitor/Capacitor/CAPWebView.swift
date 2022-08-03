@@ -25,12 +25,14 @@ open class CAPWebView: UIView {
     private lazy var configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)
 
     private lazy var assetHandler: WebViewAssetHandler = {
-        let handler = WebViewAssetHandler(router: _Router())
+        let handler = WebViewAssetHandler(router: router)
         handler.setAssetPath(configuration.appLocation.path)
         return handler
     }()
 
     private lazy var delegationHandler = WebViewDelegationHandler()
+
+    open var router: Router { _Router() }
 
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -104,6 +106,19 @@ open class CAPWebView: UIView {
     open func loadInitialContext(_ userContentController: WKUserContentController) {
         CAPLog.print("in loadInitialContext base")
     }
+
+    public func setServerBasePath(path: String) {
+        let url = URL(fileURLWithPath: path, isDirectory: true)
+        guard FileManager.default.fileExists(atPath: url.path) else { return }
+
+        capacitorBridge.config = capacitorBridge.config.updatingAppLocation(url)
+        capacitorBridge.webViewAssetHandler.setAssetPath(url.path)
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            _ = self.webView.load(URLRequest(url: self.capacitorBridge.config.serverURL))
+        }
+    }
 }
 
 extension CAPWebView {
@@ -148,7 +163,7 @@ extension CAPWebView {
             self.backgroundColor = backgroundColor
             webView.backgroundColor = backgroundColor
             webView.scrollView.backgroundColor = backgroundColor
-        } else if #available(iOS 13, *) {
+        } else {
             // Use the system background colors if background is not set by user
             self.backgroundColor = UIColor.systemBackground
             webView.backgroundColor = UIColor.systemBackground

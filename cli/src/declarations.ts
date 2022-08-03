@@ -211,6 +211,16 @@ export interface CapacitorConfig {
      * @default true
      */
     initialFocus?: boolean;
+
+    /**
+     * The minimum supported webview version on Android supported by your app.
+     *
+     * The minimum supported cannot be lower than version `55`, which is required for Capacitor.
+     *
+     * @since 4.0.0
+     * @default 60
+     */
+    minWebViewVersion?: number;
   };
 
   ios?: {
@@ -443,6 +453,14 @@ export interface CapacitorConfig {
      * @default []
      */
     allowNavigation?: string[];
+
+    /**
+     * Specify path to a local html page to display in case of errors.
+     *
+     * @since 4.0.0
+     * @default null
+     */
+    errorPath?: string;
   };
 
   cordova?: {
