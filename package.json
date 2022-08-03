@@ -26,7 +26,7 @@
     "@ionic/eslint-config": "^0.3.0",
     "@ionic/prettier-config": "~1.0.1",
     "@ionic/swiftlint-config": "^1.1.2",
-    "@types/tar": "^4.0.4",
+    "@types/tar": "^6.1.2",
     "eslint": "~7.27.0",
     "lerna": "^3.22.1",
     "prettier": "~2.3.0",
