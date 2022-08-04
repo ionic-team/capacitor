@@ -239,7 +239,11 @@ project(':${getGradlePackageName(
           `apply from: "${relativePluginPath}/${framework.$.src}"`,
         );
       } else if (!framework.$.type && !framework.$.custom) {
-        frameworksArray.push(`    implementation "${framework.$.src}"`);
+        if (framework.$.src.startsWith('platform(')) {
+          frameworksArray.push(`    implementation ${framework.$.src}`);
+        } else {
+          frameworksArray.push(`    implementation "${framework.$.src}"`);
+        }
       }
     });
     prefsArray = prefsArray.concat(getAllElements(p, platform, 'preference'));
@@ -324,7 +328,11 @@ export async function handleCordovaPluginsGradle(
   });
   let frameworkString = frameworksArray
     .map(f => {
-      return `    implementation "${f}"`;
+      if (f.startsWith('platform(')) {
+        return `    implementation ${f}`;
+      } else {
+        return `    implementation "${f}"`;
+      }
     })
     .join('\n');
   frameworkString = await replaceFrameworkVariables(
