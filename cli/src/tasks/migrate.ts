@@ -460,7 +460,7 @@ async function updateBuildGradle(
 ) {
   // In build.gradle add dependencies:
   // classpath 'com.android.tools.build:gradle:7.2.1'
-  // classpath 'com.google.gms:google-services:4.3.10'
+  // classpath 'com.google.gms:google-services:4.3.13'
   const txt = readFile(filename);
   if (!txt) {
     return;
@@ -474,13 +474,7 @@ async function updateBuildGradle(
   let replaced = txt;
 
   for (const dep of Object.keys(neededDeps)) {
-    if (!replaced.includes(`classpath '${dep}`)) {
-      replaced = txt.replace(
-        'dependencies {',
-        `dependencies {\n        classpath '${dep}:${neededDeps[dep]}'`,
-      );
-    } else {
-      // Update
+    if (replaced.includes(`classpath '${dep}`)) {
       replaced = setAllStringIn(
         replaced,
         `classpath '${dep}:`,
