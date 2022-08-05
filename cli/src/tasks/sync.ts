@@ -12,6 +12,7 @@ import { logger } from '../log';
 import { allSerial } from '../util/promise';
 
 import { copy, copyCommand } from './copy';
+import { inlineSourceMaps } from "./sourcemaps";
 import { update, updateChecks, updateCommand } from './update';
 
 /**
@@ -70,6 +71,7 @@ export async function sync(
 
   try {
     await copy(config, platformName);
+    await inlineSourceMaps(config, platformName);
   } catch (e) {
     logger.error(e.stack ?? e);
   }
