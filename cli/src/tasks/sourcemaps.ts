@@ -9,6 +9,22 @@ import { join, extname } from 'path';
 import type { Config } from '../definitions';
 import { logger } from '../log';
 
+
+function findJSAssetsDir(buildDir: string): string {
+    const reactJSDir = "/static/js";
+    const vueJSDir = "/js";    
+
+    if (existsSync(buildDir + reactJSDir)) {
+        return reactJSDir;
+    }
+
+    if (existsSync(buildDir + vueJSDir)) {
+        return vueJSDir;
+    }
+
+    return "/";
+}
+
 export async function inlineSourceMaps(
   config: Config,
   platformName: string,
@@ -16,21 +32,18 @@ export async function inlineSourceMaps(
   let buildDir = '';
 
   if (platformName == config.ios.name) {
-    logger.info(
-      `inlining sourcemaps for ${platformName} - ${await config.ios.webDirAbs}`,
-    );
     buildDir = await config.ios.webDirAbs;
   }
 
-  if (platformName == config.android.name) {
-    logger.info(
-      `inlining sourcemaps for ${platformName} - ${await config.android.webDirAbs}`,
-    );
+  if (platformName == config.android.name) {    
     buildDir = await config.android.webDirAbs;
   }
 
   if (buildDir) {
-    buildDir += "/static/js"
+    logger.info("Inlining sourcemaps")
+    let jsAssetsDir = findJSAssetsDir(buildDir);
+    buildDir += jsAssetsDir;
+
     const files = readdirSync(buildDir);
     files.forEach(file => {
       const mapFile = join(buildDir, `${file}.map`);
