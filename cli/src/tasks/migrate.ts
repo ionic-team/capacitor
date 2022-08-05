@@ -244,13 +244,23 @@ export async function migrateCommand(config: Config): Promise<void> {
         // Variables gradle
         await runTask(`Migrating variables.gradle file.`, () => {
           return (async (): Promise<void> => {
+            const variablesPath = join(
+              config.android.platformDirAbs,
+              'variables.gradle',
+            );
+            let txt = readFile(variablesPath);
+            if (!txt) {
+              return;
+            }
+            txt = txt.replace(/= {2}'/g, `= '`);
+            writeFileSync(variablesPath, txt, { encoding: 'utf-8' });
             for (const variable of Object.keys(
               variablesAndClasspaths.variables,
             )) {
               if (
                 !(await updateFile(
                   config,
-                  join(config.android.platformDirAbs, 'variables.gradle'),
+                  variablesPath,
                   `${variable} = '`,
                   `'`,
                   variablesAndClasspaths.variables[variable].toString(),
@@ -259,16 +269,14 @@ export async function migrateCommand(config: Config): Promise<void> {
               ) {
                 const didWork = await updateFile(
                   config,
-                  join(config.android.platformDirAbs, 'variables.gradle'),
+                  variablesPath,
                   `${variable} = `,
                   `\n`,
                   variablesAndClasspaths.variables[variable].toString(),
                   true,
                 );
                 if (!didWork) {
-                  let file = readFile(
-                    join(config.android.platformDirAbs, 'variables.gradle'),
-                  );
+                  let file = readFile(variablesPath);
                   if (file) {
                     file = file.replace(
                       '}',
@@ -276,10 +284,7 @@ export async function migrateCommand(config: Config): Promise<void> {
                         variable
                       ].toString()}'\n}`,
                     );
-                    writeFileSync(
-                      join(config.android.platformDirAbs, 'variables.gradle'),
-                      file,
-                    );
+                    writeFileSync(variablesPath, file);
                   }
                 }
               }
