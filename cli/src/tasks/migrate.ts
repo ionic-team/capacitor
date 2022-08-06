@@ -36,6 +36,7 @@ const plugins = [
   '@capacitor/local-notifications',
   '@capacitor/motion',
   '@capacitor/network',
+  '@capacitor/preferences',
   '@capacitor/push-notifications',
   '@capacitor/screen-reader',
   '@capacitor/share',
