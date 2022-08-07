@@ -39,10 +39,15 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *overridenUserAgentString;
 /**
- @brief The background color to set on the web view where content is not visible.
+ @brief The background color to set on the web view where content is not visible when phone is in light mode.
  @discussion Set by @c backgroundColor in the configuration file.
  */
-@property (nonatomic, retain, nullable) UIColor *backgroundColor;
+@property (nonatomic, retain, nullable) UIColor *lightBackgroundColor;
+/**
+ @brief The background color to set on the web view where content is not visible when fone is in dark mode.
+ @discussion Set by @c backgroundColor in the configuration file.
+ */
+@property (nonatomic, retain, nullable) UIColor *darkBackgroundColor;
 /**
  @brief Hostnames to which the web view is allowed to navigate without opening an external browser.
  @discussion Set by @c allowNavigation in the configuration file.

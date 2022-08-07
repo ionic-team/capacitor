@@ -158,17 +158,25 @@ extension CAPWebView {
         if let overrideUserAgent = configuration.overridenUserAgentString {
             webView.customUserAgent = overrideUserAgent
         }
-
-        if let backgroundColor = configuration.backgroundColor {
-            self.backgroundColor = backgroundColor
-            webView.backgroundColor = backgroundColor
-            webView.scrollView.backgroundColor = backgroundColor
+        
+        var bColor: UIColor? = nil
+        if UITraitCollection.current.userInterfaceStyle == .dark {
+            if let backgroundColor = configuration.darkBackgroundColor {
+                bColor = backgroundColor
+            }
         } else {
-            // Use the system background colors if background is not set by user
-            self.backgroundColor = UIColor.systemBackground
-            webView.backgroundColor = UIColor.systemBackground
-            webView.scrollView.backgroundColor = UIColor.systemBackground
+            if let backgroundColor = configuration.lightBackgroundColor {
+                bColor = backgroundColor
+            }
         }
+        
+        if bColor == nil {
+            bColor = UIColor.systemBackground
+        }
+
+        self.backgroundColor = bColor
+        webView.backgroundColor = bColor
+        webView.scrollView.backgroundColor = bColor
 
         // set our delegates
         webView.uiDelegate = delegationHandler

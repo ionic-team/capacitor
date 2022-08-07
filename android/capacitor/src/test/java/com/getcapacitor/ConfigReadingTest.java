@@ -46,7 +46,8 @@ public class ConfigReadingTest {
 
             CapConfig config = CapConfig.loadDefault(context);
             assertEquals("not a real domain", config.getServerUrl());
-            assertNull(config.getBackgroundColor());
+            assertNull(config.getLightBackgroundColor());
+            assertNull(config.getDarkBackgroundColor());
             assertFalse(config.isLoggingEnabled());
         } catch (IOException e) {
             fail();
@@ -61,7 +62,8 @@ public class ConfigReadingTest {
             CapConfig config = CapConfig.loadDefault(context);
             assertEquals("level 1 override", config.getOverriddenUserAgentString());
             assertEquals("level 1 append", config.getAppendedUserAgentString());
-            assertEquals("#ffffff", config.getBackgroundColor());
+            assertEquals("#ffffff", config.getLightBackgroundColor());
+            assertEquals("#000000", config.getDarkBackgroundColor());
             assertFalse(config.isLoggingEnabled());
             assertEquals(1, config.getPluginConfiguration("SplashScreen").getInt("launchShowDuration", 0));
         } catch (IOException e) {
@@ -77,7 +79,8 @@ public class ConfigReadingTest {
             CapConfig config = CapConfig.loadDefault(context);
             assertEquals("level 2 override", config.getOverriddenUserAgentString());
             assertEquals("level 2 append", config.getAppendedUserAgentString());
-            assertEquals("#000000", config.getBackgroundColor());
+            assertEquals("#000000", config.getLightBackgroundColor());
+            assertEquals("#ffffff", config.getDarkBackgroundColor());
             assertFalse(config.isLoggingEnabled());
         } catch (IOException e) {
             fail();

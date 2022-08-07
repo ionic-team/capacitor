@@ -1,6 +1,11 @@
 import type { Colors } from '@ionic/cli-framework-output';
 import kleur from 'kleur';
 
+export interface LightAndDark {
+  light: string;
+  dark: string;
+}
+
 export const strong = kleur.bold;
 export const weak = kleur.dim;
 export const input = kleur.cyan;

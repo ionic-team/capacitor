@@ -6,7 +6,10 @@
   "webDir": "build",
   "overrideUserAgent": "level 1 override",
   "appendUserAgent": "level 1 append",
-  "backgroundColor": "#ffffff",
+  "backgroundColor": {
+    "light": "#ffffff",
+    "dark": "#000000"
+  },
   "hideLogs": true,
   "plugins": {
     "SplashScreen": {

@@ -51,7 +51,7 @@ public class ConfigBuildingTest {
                     .setOverriddenUserAgentString("test-user-agent")
                     .setAppendedUserAgentString("test-append")
                     .setWebContentsDebuggingEnabled(true)
-                    .setBackgroundColor("red")
+                    .setLightBackgroundColor("red")
                     .setPluginsConfiguration(pluginConfig)
                     .setServerUrl("http://www.google.com")
                     .create();
@@ -71,7 +71,7 @@ public class ConfigBuildingTest {
         assertEquals("test-user-agent", config.getOverriddenUserAgentString());
         assertEquals("test-append", config.getAppendedUserAgentString());
         assertTrue(config.isWebContentsDebuggingEnabled());
-        assertEquals("red", config.getBackgroundColor());
+        assertEquals("red", config.getLightBackgroundColor());
         assertEquals("http://www.google.com", config.getServerUrl());
     }
 

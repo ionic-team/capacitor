@@ -297,14 +297,25 @@ extension CAPBridgeViewController {
         if let overrideUserAgent = configuration.overridenUserAgentString {
             aWebView.customUserAgent = overrideUserAgent
         }
-        if let backgroundColor = configuration.backgroundColor {
-            aWebView.backgroundColor = backgroundColor
-            aWebView.scrollView.backgroundColor = backgroundColor
+        
+        var bColor: UIColor? = nil
+        if UITraitCollection.current.userInterfaceStyle == .dark {
+            if let backgroundColor = configuration.darkBackgroundColor {
+                bColor = backgroundColor
+            }
         } else {
-            // Use the system background colors if background is not set by user
-            aWebView.backgroundColor = UIColor.systemBackground
-            aWebView.scrollView.backgroundColor = UIColor.systemBackground
+            if let backgroundColor = configuration.lightBackgroundColor {
+                bColor = backgroundColor
+            }
         }
+        
+        if bColor == nil {
+            bColor = UIColor.systemBackground
+        }
+        
+        aWebView.backgroundColor = bColor
+        aWebView.scrollView.backgroundColor = bColor
+        
         aWebView.capacitor.setKeyboardShouldRequireUserInteraction(false)
         // set our ivar
         webView = aWebView

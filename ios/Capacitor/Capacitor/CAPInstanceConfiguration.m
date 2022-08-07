@@ -15,7 +15,8 @@
         // now copy the simple properties
         _appendedUserAgentString = descriptor.appendedUserAgentString;
         _overridenUserAgentString = descriptor.overridenUserAgentString;
-        _backgroundColor = descriptor.backgroundColor;
+        _lightBackgroundColor = descriptor.lightBackgroundColor;
+        _darkBackgroundColor = descriptor.darkBackgroundColor;
         _allowedNavigationHostnames = descriptor.allowedNavigationHostnames;
         switch (descriptor.loggingBehavior) {
             case CAPInstanceLoggingBehaviorProduction:
@@ -57,7 +58,8 @@
     if (self = [super init]) {
         _appendedUserAgentString = [[configuration appendedUserAgentString] copy];
         _overridenUserAgentString = [[configuration overridenUserAgentString] copy];
-        _backgroundColor = configuration.backgroundColor;
+        _lightBackgroundColor = configuration.lightBackgroundColor;
+        _darkBackgroundColor = configuration.darkBackgroundColor;
         _allowedNavigationHostnames = [[configuration allowedNavigationHostnames] copy];
         _localURL = [[configuration localURL] copy];
         _serverURL = [[configuration serverURL] copy];
