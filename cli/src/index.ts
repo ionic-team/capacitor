@@ -85,8 +85,8 @@ export function runProgram(config: Config): void {
     )
     .option(
       '--inline',
-      "Optional: if true, all source maps will be inlined for easier debugging on mobile devices",
-      false
+      'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
+      false,
     )
     .action(
       wrapAction(

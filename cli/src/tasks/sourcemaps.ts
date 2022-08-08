@@ -6,23 +6,23 @@ import {
   unlinkSync,
 } from '@ionic/utils-fs';
 import { join, extname } from 'path';
+
 import type { Config } from '../definitions';
 import { logger } from '../log';
 
-
 function findJSAssetsDir(buildDir: string): string {
-    const reactJSDir = "/static/js";
-    const vueJSDir = "/js";    
+  const reactJSDir = '/static/js';
+  const vueJSDir = '/js';
 
-    if (existsSync(buildDir + reactJSDir)) {
-        return reactJSDir;
-    }
+  if (existsSync(buildDir + reactJSDir)) {
+    return reactJSDir;
+  }
 
-    if (existsSync(buildDir + vueJSDir)) {
-        return vueJSDir;
-    }
+  if (existsSync(buildDir + vueJSDir)) {
+    return vueJSDir;
+  }
 
-    return "/";
+  return '/';
 }
 
 export async function inlineSourceMaps(
@@ -35,13 +35,13 @@ export async function inlineSourceMaps(
     buildDir = await config.ios.webDirAbs;
   }
 
-  if (platformName == config.android.name) {    
+  if (platformName == config.android.name) {
     buildDir = await config.android.webDirAbs;
   }
 
   if (buildDir) {
-    logger.info("Inlining sourcemaps")
-    let jsAssetsDir = findJSAssetsDir(buildDir);
+    logger.info('Inlining sourcemaps');
+    const jsAssetsDir = findJSAssetsDir(buildDir);
     buildDir += jsAssetsDir;
 
     const files = readdirSync(buildDir);
