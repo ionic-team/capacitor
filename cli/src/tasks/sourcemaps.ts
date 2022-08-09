@@ -4,25 +4,35 @@ import {
   readFileSync,
   writeFileSync,
   unlinkSync,
+  lstatSync,
 } from '@ionic/utils-fs';
 import { join, extname } from 'path';
 
 import type { Config } from '../definitions';
 import { logger } from '../log';
 
-function findJSAssetsDir(buildDir: string): string {
-  const reactJSDir = '/static/js';
-  const vueJSDir = '/js';
 
-  if (existsSync(buildDir + reactJSDir)) {
-    return reactJSDir;
-  }
-
-  if (existsSync(buildDir + vueJSDir)) {
-    return vueJSDir;
-  }
-
-  return '/';
+function walkDirectory(dirPath: string) {
+  const files = readdirSync(dirPath);
+  files.forEach(file => {
+    const targetFile = join(dirPath, file);
+    if (existsSync(targetFile) && lstatSync(targetFile).isDirectory()) {
+      walkDirectory(targetFile);
+    } else {      
+      const mapFile = join(dirPath, `${file}.map`)
+      if (extname(file) === '.js' && existsSync(mapFile)) {        
+        const bufMap = readFileSync(mapFile).toString('base64');
+        const bufFile = readFileSync(targetFile, 'utf8');
+        const result = bufFile.replace(
+          `sourceMappingURL=${file}.map`,
+          'sourceMappingURL=data:application/json;charset=utf-8;base64,' +
+            bufMap,
+        );
+        writeFileSync(targetFile, result);
+        unlinkSync(mapFile);
+      }
+    }
+  });
 }
 
 export async function inlineSourceMaps(
@@ -41,24 +51,6 @@ export async function inlineSourceMaps(
 
   if (buildDir) {
     logger.info('Inlining sourcemaps');
-    const jsAssetsDir = findJSAssetsDir(buildDir);
-    buildDir += jsAssetsDir;
-
-    const files = readdirSync(buildDir);
-    files.forEach(file => {
-      const mapFile = join(buildDir, `${file}.map`);
-      if (extname(file) === '.js' && existsSync(mapFile)) {
-        const targetFile = join(buildDir, file);
-        const bufMap = readFileSync(mapFile).toString('base64');
-        const bufFile = readFileSync(targetFile, 'utf8');
-        const result = bufFile.replace(
-          `sourceMappingURL=${file}.map`,
-          'sourceMappingURL=data:application/json;charset=utf-8;base64,' +
-            bufMap,
-        );
-        writeFileSync(targetFile, result);
-        unlinkSync(mapFile);
-      }
-    });
+    walkDirectory(buildDir);
   }
 }
