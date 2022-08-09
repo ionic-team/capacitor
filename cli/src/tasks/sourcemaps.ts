@@ -11,16 +11,15 @@ import { join, extname } from 'path';
 import type { Config } from '../definitions';
 import { logger } from '../log';
 
-
 function walkDirectory(dirPath: string) {
   const files = readdirSync(dirPath);
   files.forEach(file => {
     const targetFile = join(dirPath, file);
     if (existsSync(targetFile) && lstatSync(targetFile).isDirectory()) {
       walkDirectory(targetFile);
-    } else {      
-      const mapFile = join(dirPath, `${file}.map`)
-      if (extname(file) === '.js' && existsSync(mapFile)) {        
+    } else {
+      const mapFile = join(dirPath, `${file}.map`);
+      if (extname(file) === '.js' && existsSync(mapFile)) {
         const bufMap = readFileSync(mapFile).toString('base64');
         const bufFile = readFileSync(targetFile, 'utf8');
         const result = bufFile.replace(
