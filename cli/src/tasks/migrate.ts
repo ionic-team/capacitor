@@ -294,8 +294,8 @@ export async function migrateCommand(config: Config): Promise<void> {
         });
 
         // remove init
-        await runTask('Migrating MainActivity by removing init().', () => {
-          return removeOldInitAndroid(config);
+        await runTask('Migrating MainActivity', () => {
+          return migrateMainActivity(config);
         });
 
         rimraf.sync(join(config.android.appDirAbs, 'build'));
@@ -813,7 +813,7 @@ async function podfileAssertDeploymentTarget(filename: string) {
   writeFileSync(filename, replaced, 'utf-8');
 }
 
-async function removeOldInitAndroid(config: Config) {
+async function migrateMainActivity(config: Config) {
   const xmlData = await readXML(
     join(config.android.srcMainDirAbs, 'AndroidManifest.xml'),
   );
@@ -879,12 +879,35 @@ async function removeOldInitAndroid(config: Config) {
 
   if (data) {
     const bindex = data.indexOf('this.init(savedInstanceState');
-    if (bindex == -1) return;
-    const eindex = data.indexOf('}});', bindex) + 4;
+    if (bindex !== -1) {
+      const eindex = data.indexOf('}});', bindex) + 4;
 
-    data = data.replace(data.substring(bindex, eindex), '');
+      data = data.replace(data.substring(bindex, eindex), '');
 
-    data = data.replace('// Initializes the Bridge', '');
+      data = data.replace('// Initializes the Bridge', '');
+    }
+
+    const rindex = data.indexOf('registerPlugin');
+    if (rindex !== -1) {
+      if (data.indexOf('super.onCreate(savedInstanceState);') < rindex) {
+        data = data.replace(
+          'super.onCreate(savedInstanceState);\n        ',
+          '',
+        );
+        const eindex = data.lastIndexOf('.class);') + 8;
+        data = data.replace(
+          data.substring(bindex, eindex),
+          `${data.substring(
+            bindex,
+            eindex,
+          )}\n        super.onCreate(savedInstanceState);`,
+        );
+      }
+    }
+
+    if (bindex == -1 && rindex == -1) {
+      return;
+    }
 
     writeFileSync(mainActivityClassFilePath, data);
   }
