@@ -80,7 +80,7 @@ export async function runCommand(
 
     try {
       if (options.sync) {
-        await sync(config, platformName, false);
+        await sync(config, platformName, false, true);
       }
 
       await run(config, platformName, options);
