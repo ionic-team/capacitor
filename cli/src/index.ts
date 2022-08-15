@@ -83,12 +83,17 @@ export function runProgram(config: Config): void {
       '--deployment',
       "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
     )
+    .option(
+      '--inline',
+      'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
+      false,
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { deployment }) => {
+        telemetryAction(config, async (platform, { deployment, inline }) => {
           checkExternalConfig(config.app);
           const { syncCommand } = await import('./tasks/sync');
-          await syncCommand(config, platform, deployment);
+          await syncCommand(config, platform, deployment, inline);
         }),
       ),
     );
