@@ -48,8 +48,10 @@ export type SetCookieOptions = HttpCookie & HttpCookieExtras;
 export type DeleteCookieOptions = Omit<HttpCookie, 'value'>;
 export type ClearCookieOptions = Omit<HttpCookie, 'key' | 'value'>;
 
-
-export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCookiesPlugin {
+export class CapacitorCookiesPluginWeb
+  extends WebPlugin
+  implements CapacitorCookiesPlugin
+{
   async setCookie(options: SetCookieOptions): Promise<void> {
     try {
       // Safely Encoded Key/Value
@@ -61,12 +63,13 @@ export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCoo
         'expires=',
         '',
       )}`; // Default is "; expires="
-      
+
       const path = (options.path || '/').replace('path=', ''); // Default is "path=/"
 
-      document.cookie = `${encodedKey}=${encodedValue || ''}${expires}; path=${path}`;
-    }
-    catch (error) {
+      document.cookie = `${encodedKey}=${
+        encodedValue || ''
+      }${expires}; path=${path}`;
+    } catch (error) {
       return Promise.reject(error);
     }
   }
@@ -74,8 +77,7 @@ export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCoo
   async deleteCookie(options: DeleteCookieOptions): Promise<void> {
     try {
       document.cookie = `${options.key}=; Max-Age=0`;
-    }
-    catch (error) {
+    } catch (error) {
       return Promise.reject(error);
     }
   }
@@ -88,8 +90,7 @@ export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCoo
           .replace(/^ +/, '')
           .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
       }
-    }
-    catch (error) {
+    } catch (error) {
       return Promise.reject(error);
     }
   }
@@ -97,8 +98,7 @@ export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCoo
   async clearAllCookies(): Promise<void> {
     try {
       await this.clearCookies();
-    }
-    catch (error) {
+    } catch (error) {
       return Promise.reject(error);
     }
   }
@@ -107,8 +107,8 @@ export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCoo
 export const CapacitorCookies = registerPlugin<CapacitorCookiesPlugin>(
   'CapacitorCookies',
   {
-      web: () => new CapacitorCookiesPluginWeb(),
-  }
+    web: () => new CapacitorCookiesPluginWeb(),
+  },
 );
 
 /******** END COOKIES PLUGIN ********/

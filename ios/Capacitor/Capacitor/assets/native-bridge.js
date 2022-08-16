@@ -241,6 +241,48 @@ const nativeBridge = (function (exports) {
                 }
                 return String(msg);
             };
+            /**
+            * Safely web decode a string value (inspired by js-cookie)
+            * @param str The string value to decode
+            */
+            const decode = (str) => str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
+            const platform = getPlatformId(win);
+            // patch document.cookie on Android/iOS
+            if (platform == 'android' || platform == 'ios') {
+                win.CapacitorCookiesDescriptor =
+                    Object.getOwnPropertyDescriptor(Document.prototype, 'cookie') ||
+                        Object.getOwnPropertyDescriptor(HTMLDocument.prototype, 'cookie');
+                Object.defineProperty(document, 'cookie', {
+                    get: function () {
+                        if (platform === 'ios') {
+                            // Use prompt to synchronously get cookies.
+                            // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                            const payload = {
+                                type: 'CapacitorCookies'
+                            };
+                            const res = prompt(JSON.stringify(payload));
+                            return res;
+                        }
+                        else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
+                            return win.CapacitorCookiesAndroidInterface.getCookies();
+                        }
+                    },
+                    set: function (val) {
+                        const cookiePairs = val.split(';');
+                        for (const cookiePair of cookiePairs) {
+                            const cookieKey = cookiePair.split('=')[0];
+                            const cookieValue = cookiePair.split('=')[1];
+                            if (null == cookieValue) {
+                                continue;
+                            }
+                            cap.toNative('CapacitorCookies', 'setCookie', {
+                                key: cookieKey,
+                                value: decode(cookieValue),
+                            });
+                        }
+                    }
+                });
+            }
             // patch window.console on iOS and store original console fns
             const isIos = getPlatformId(win) === 'ios';
             if (win.console && isIos) {

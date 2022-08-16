@@ -28,7 +28,7 @@ export type {
   DeleteCookieOptions,
   SetCookieOptions,
   WebViewPath,
-  WebViewPlugin
+  WebViewPlugin,
 } from './core-plugins';
 
 // Constants
