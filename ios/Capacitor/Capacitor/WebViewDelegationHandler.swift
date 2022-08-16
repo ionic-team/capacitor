@@ -248,7 +248,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         do {
             if let dataFromString = prompt.data(using: .utf8, allowLossyConversion: false) {
                 if let payload = try JSONSerialization.jsonObject(with: dataFromString, options: .fragmentsAllowed) as? [String: AnyObject] {
-                    let type = payload["type"] as! String
+                    let type = payload["type"] as? String
 
                     if type == "CapacitorCookies" {
                         completionHandler(CapacitorCookieManager(bridge!.config).getCookies())
