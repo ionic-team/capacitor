@@ -36,6 +36,7 @@ const plugins = [
   '@capacitor/local-notifications',
   '@capacitor/motion',
   '@capacitor/network',
+  '@capacitor/preferences',
   '@capacitor/push-notifications',
   '@capacitor/screen-reader',
   '@capacitor/share',
@@ -244,13 +245,23 @@ export async function migrateCommand(config: Config): Promise<void> {
         // Variables gradle
         await runTask(`Migrating variables.gradle file.`, () => {
           return (async (): Promise<void> => {
+            const variablesPath = join(
+              config.android.platformDirAbs,
+              'variables.gradle',
+            );
+            let txt = readFile(variablesPath);
+            if (!txt) {
+              return;
+            }
+            txt = txt.replace(/= {2}'/g, `= '`);
+            writeFileSync(variablesPath, txt, { encoding: 'utf-8' });
             for (const variable of Object.keys(
               variablesAndClasspaths.variables,
             )) {
               if (
                 !(await updateFile(
                   config,
-                  join(config.android.platformDirAbs, 'variables.gradle'),
+                  variablesPath,
                   `${variable} = '`,
                   `'`,
                   variablesAndClasspaths.variables[variable].toString(),
@@ -259,16 +270,14 @@ export async function migrateCommand(config: Config): Promise<void> {
               ) {
                 const didWork = await updateFile(
                   config,
-                  join(config.android.platformDirAbs, 'variables.gradle'),
+                  variablesPath,
                   `${variable} = `,
                   `\n`,
                   variablesAndClasspaths.variables[variable].toString(),
                   true,
                 );
                 if (!didWork) {
-                  let file = readFile(
-                    join(config.android.platformDirAbs, 'variables.gradle'),
-                  );
+                  let file = readFile(variablesPath);
                   if (file) {
                     file = file.replace(
                       '}',
@@ -276,10 +285,7 @@ export async function migrateCommand(config: Config): Promise<void> {
                         variable
                       ].toString()}'\n}`,
                     );
-                    writeFileSync(
-                      join(config.android.platformDirAbs, 'variables.gradle'),
-                      file,
-                    );
+                    writeFileSync(variablesPath, file);
                   }
                 }
               }
@@ -288,8 +294,8 @@ export async function migrateCommand(config: Config): Promise<void> {
         });
 
         // remove init
-        await runTask('Migrating MainActivity by removing init().', () => {
-          return removeOldInitAndroid(config);
+        await runTask('Migrating MainActivity', () => {
+          return migrateMainActivity(config);
         });
 
         rimraf.sync(join(config.android.appDirAbs, 'build'));
@@ -460,7 +466,7 @@ async function updateBuildGradle(
 ) {
   // In build.gradle add dependencies:
   // classpath 'com.android.tools.build:gradle:7.2.1'
-  // classpath 'com.google.gms:google-services:4.3.10'
+  // classpath 'com.google.gms:google-services:4.3.13'
   const txt = readFile(filename);
   if (!txt) {
     return;
@@ -474,13 +480,7 @@ async function updateBuildGradle(
   let replaced = txt;
 
   for (const dep of Object.keys(neededDeps)) {
-    if (!replaced.includes(`classpath '${dep}`)) {
-      replaced = txt.replace(
-        'dependencies {',
-        `dependencies {\n        classpath '${dep}:${neededDeps[dep]}'`,
-      );
-    } else {
-      // Update
+    if (replaced.includes(`classpath '${dep}`)) {
       replaced = setAllStringIn(
         replaced,
         `classpath '${dep}:`,
@@ -631,7 +631,7 @@ async function updateGradleWrapper(filename: string) {
     'distributionUrl=',
     '\n',
     // eslint-disable-next-line no-useless-escape
-    `https\://services.gradle.org/distributions/gradle-7.4.2-bin.zip`,
+    `https\\://services.gradle.org/distributions/gradle-7.4.2-all.zip`,
   );
   writeFileSync(filename, replaced, 'utf-8');
 }
@@ -813,7 +813,7 @@ async function podfileAssertDeploymentTarget(filename: string) {
   writeFileSync(filename, replaced, 'utf-8');
 }
 
-async function removeOldInitAndroid(config: Config) {
+async function migrateMainActivity(config: Config) {
   const xmlData = await readXML(
     join(config.android.srcMainDirAbs, 'AndroidManifest.xml'),
   );
@@ -879,12 +879,35 @@ async function removeOldInitAndroid(config: Config) {
 
   if (data) {
     const bindex = data.indexOf('this.init(savedInstanceState');
-    if (bindex == -1) return;
-    const eindex = data.indexOf('}});', bindex) + 4;
+    if (bindex !== -1) {
+      const eindex = data.indexOf('}});', bindex) + 4;
 
-    data = data.replace(data.substring(bindex, eindex), '');
+      data = data.replace(data.substring(bindex, eindex), '');
 
-    data = data.replace('// Initializes the Bridge', '');
+      data = data.replace('// Initializes the Bridge', '');
+    }
+
+    const rindex = data.indexOf('registerPlugin');
+    if (rindex !== -1) {
+      if (data.indexOf('super.onCreate(savedInstanceState);') < rindex) {
+        data = data.replace(
+          'super.onCreate(savedInstanceState);\n        ',
+          '',
+        );
+        const eindex = data.lastIndexOf('.class);') + 8;
+        data = data.replace(
+          data.substring(bindex, eindex),
+          `${data.substring(
+            bindex,
+            eindex,
+          )}\n        super.onCreate(savedInstanceState);`,
+        );
+      }
+    }
+
+    if (bindex == -1 && rindex == -1) {
+      return;
+    }
 
     writeFileSync(mainActivityClassFilePath, data);
   }
