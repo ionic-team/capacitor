@@ -6,6 +6,7 @@ import {
   writeJSON,
 } from '@ionic/utils-fs';
 import Debug from 'debug';
+import merge from 'lodash.merge';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
@@ -32,10 +33,19 @@ export const CONFIG_FILE_NAME_TS = 'capacitor.config.ts';
 export const CONFIG_FILE_NAME_JS = 'capacitor.config.js';
 export const CONFIG_FILE_NAME_JSON = 'capacitor.config.json';
 
-export async function loadConfig(): Promise<Config> {
+function mergeEnviromentConfigs(cfg: ExtConfigPairs, enviromentName: string) {
+  if (cfg.extConfig.enviromentOverrides?.[enviromentName]) {
+    merge(cfg.extConfig, cfg.extConfig.enviromentOverrides[enviromentName])
+  }
+}
+
+export async function loadConfig(enviromentName = ''): Promise<Config> {
   const appRootDir = process.cwd();
   const cliRootDir = dirname(__dirname);
   const conf = await loadExtConfig(appRootDir);
+  if (enviromentName.length >= 0) {
+    mergeEnviromentConfigs(conf, enviromentName);
+  }
 
   const appId = conf.extConfig.appId ?? '';
   const appName = conf.extConfig.appName ?? '';

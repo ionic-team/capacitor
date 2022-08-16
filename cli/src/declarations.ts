@@ -510,6 +510,15 @@ export interface CapacitorConfig {
    * @since 3.0.0
    */
   includePlugins?: string[];
+
+  /**
+   * Enviroment Overrides.
+   * 
+   * @since 4.1.0
+   */
+  enviromentOverrides?: {
+    [enviromentName: string]: Omit<CapacitorConfig, "appId" | "appName" | "webDir" | "enviromentOverrides">
+  }
 }
 
 export interface Portal {
