@@ -512,14 +512,14 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 
   /**
-   * Enviroment Overrides.
+   * Environment Overrides.
    *
    * @since 4.1.0
    */
-  enviromentOverrides?: {
-    [enviromentName: string]: Omit<
+  environmentOverrides?: {
+    [environmentName: string]: Omit<
       CapacitorConfig,
-      'appId' | 'appName' | 'webDir' | 'enviromentOverrides'
+      'appId' | 'appName' | 'webDir' | 'environmentOverrides'
     >;
   };
 }

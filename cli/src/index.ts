@@ -18,7 +18,7 @@ process.on('message', receive);
 
 export async function run(): Promise<void> {
   try {
-    const configEnvName = (process.env.CAP_CONFIG_ENVIROMENT ?? '') + '';
+    const configEnvName = (process.env.CAP_CONFIG_ENVIRONMENT ?? '') + '';
     const config = await loadConfig(configEnvName);
     runProgram(config);
   } catch (e: any) {
