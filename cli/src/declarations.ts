@@ -513,12 +513,15 @@ export interface CapacitorConfig {
 
   /**
    * Enviroment Overrides.
-   * 
+   *
    * @since 4.1.0
    */
   enviromentOverrides?: {
-    [enviromentName: string]: Omit<CapacitorConfig, "appId" | "appName" | "webDir" | "enviromentOverrides">
-  }
+    [enviromentName: string]: Omit<
+      CapacitorConfig,
+      'appId' | 'appName' | 'webDir' | 'enviromentOverrides'
+    >;
+  };
 }
 
 export interface Portal {

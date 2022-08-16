@@ -33,12 +33,6 @@ export const CONFIG_FILE_NAME_TS = 'capacitor.config.ts';
 export const CONFIG_FILE_NAME_JS = 'capacitor.config.js';
 export const CONFIG_FILE_NAME_JSON = 'capacitor.config.json';
 
-function mergeEnviromentConfigs(cfg: ExtConfigPairs, enviromentName: string) {
-  if (cfg.extConfig.enviromentOverrides?.[enviromentName]) {
-    merge(cfg.extConfig, cfg.extConfig.enviromentOverrides[enviromentName])
-  }
-}
-
 export async function loadConfig(enviromentName = ''): Promise<Config> {
   const appRootDir = process.cwd();
   const cliRootDir = dirname(__dirname);
@@ -459,5 +453,11 @@ export function checkExternalConfig(config: ExtConfigPairs): void {
       `The ${c.strong('hideLogs')} configuration option has been deprecated. ` +
         `Please update to use ${c.strong('loggingBehavior')} instead.`,
     );
+  }
+}
+
+function mergeEnviromentConfigs(cfg: ExtConfigPairs, enviromentName: string) {
+  if (cfg.extConfig.enviromentOverrides?.[enviromentName]) {
+    merge(cfg.extConfig, cfg.extConfig.enviromentOverrides[enviromentName]);
   }
 }
