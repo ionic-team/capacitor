@@ -339,7 +339,7 @@ async function installLatestNPMLibs(runInstall: boolean, config: Config) {
   }
   const pkgJson: any = JSON.parse(pkgJsonFile);
 
-  for (const devDepKey of Object.keys(pkgJson['devDependencies'])) {
+  for (const devDepKey of Object.keys(pkgJson['devDependencies'] || {})) {
     if (libs.includes(devDepKey)) {
       pkgJson['devDependencies'][devDepKey] = coreVersion;
     } else if (plugins.includes(devDepKey)) {
