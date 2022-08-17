@@ -83,7 +83,6 @@ Made possible by the Capacitor community. 💖
 
 <p align="center">
   <a href="https://github.com/zookatron"><img src="https://github.com/zookatron.png?size=100" width="50" height="50" /></a>
-  <a href="https://github.com/undefined"><img src="https://github.com/undefined.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/giralte-ionic"><img src="https://github.com/giralte-ionic.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/Steven0351"><img src="https://github.com/Steven0351.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/samydoesit"><img src="https://github.com/samydoesit.png?size=100" width="50" height="50" /></a>
