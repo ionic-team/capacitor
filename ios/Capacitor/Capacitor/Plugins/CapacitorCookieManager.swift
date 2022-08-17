@@ -33,19 +33,9 @@ public class CapacitorCookieManager {
 
     public func setCookie(_ url: URL, _ key: String, _ value: String) {
         let jar = HTTPCookieStorage.shared
-        let cookieProperties: [HTTPCookiePropertyKey: Any] = [
-            .name: key,
-            .value: value,
-            .domain: url.absoluteString,
-            .originURL: url.absoluteString,
-            .path: "/",
-            .version: "0",
-            .expires: Date().addingTimeInterval(2629743)
-        ]
-
-        if let cookie = HTTPCookie(properties: cookieProperties) {
-            jar.setCookie(cookie)
-        }
+        let field = ["Set-Cookie": "\(key)=\(value)"]
+        let cookies = HTTPCookie.cookies(withResponseHeaderFields: field, for: url)
+        jar.setCookies(cookies, for: url, mainDocumentURL: url)
     }
 
     public func getCookies() -> String {
