@@ -17,19 +17,13 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Base64;
-import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,7 +50,6 @@ public class WebViewLocalServer {
     private boolean isAsset;
     // Whether to route all requests to paths without extensions back to `index.html`
     private final boolean html5mode;
-    private final JSInjector jsInjector;
     private final Bridge bridge;
 
     /**
@@ -128,30 +121,12 @@ public class WebViewLocalServer {
         }
     }
 
-    WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, ArrayList<String> authorities, boolean html5mode) {
+    WebViewLocalServer(Context context, Bridge bridge, ArrayList<String> authorities, boolean html5mode) {
         uriMatcher = new UriMatcher(null);
         this.html5mode = html5mode;
         this.protocolHandler = new AndroidProtocolHandler(context.getApplicationContext());
         this.authorities = authorities;
         this.bridge = bridge;
-        this.jsInjector = jsInjector;
-    }
-
-    private static Uri parseAndVerifyUrl(String url) {
-        if (url == null) {
-            return null;
-        }
-        Uri uri = Uri.parse(url);
-        if (uri == null) {
-            Logger.error("Malformed URL: " + url);
-            return null;
-        }
-        String path = uri.getPath();
-        if (path == null || path.isEmpty()) {
-            Logger.error("URL does not have a path: " + url);
-            return null;
-        }
-        return uri;
     }
 
     /**
@@ -177,7 +152,7 @@ public class WebViewLocalServer {
             Logger.debug("Handling local request: " + request.getUrl().toString());
             return handleLocalRequest(request, handler);
         } else {
-            return handleProxyRequest(request, handler);
+            return null;
         }
     }
 
@@ -277,8 +252,6 @@ public class WebViewLocalServer {
                 return null;
             }
 
-            responseStream = jsInjector.getInjectedStream(responseStream);
-
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
             return new WebResourceResponse(
                 "text/html",
@@ -300,14 +273,7 @@ public class WebViewLocalServer {
 
         int periodIndex = path.lastIndexOf(".");
         if (periodIndex >= 0) {
-            String ext = path.substring(path.lastIndexOf("."));
-
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
-
-            // TODO: Conjure up a bit more subtlety than this
-            if (ext.equals(".html")) {
-                responseStream = jsInjector.getInjectedStream(responseStream);
-            }
 
             String mimeType = getMimeType(path, responseStream);
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
@@ -321,68 +287,6 @@ public class WebViewLocalServer {
             );
         }
 
-        return null;
-    }
-
-    /**
-     * Instead of reading files from the filesystem/assets, proxy through to the URL
-     * and let an external server handle it.
-     * @param request
-     * @param handler
-     * @return
-     */
-    private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
-        final String method = request.getMethod();
-        if (method.equals("GET")) {
-            try {
-                String url = request.getUrl().toString();
-                Map<String, String> headers = request.getRequestHeaders();
-                boolean isHtmlText = false;
-                for (Map.Entry<String, String> header : headers.entrySet()) {
-                    if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
-                        isHtmlText = true;
-                        break;
-                    }
-                }
-                if (isHtmlText) {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-                    for (Map.Entry<String, String> header : headers.entrySet()) {
-                        conn.setRequestProperty(header.getKey(), header.getValue());
-                    }
-                    String getCookie = CookieManager.getInstance().getCookie(url);
-                    if (getCookie != null) {
-                        conn.setRequestProperty("Cookie", getCookie);
-                    }
-                    conn.setRequestMethod(method);
-                    conn.setReadTimeout(30 * 1000);
-                    conn.setConnectTimeout(30 * 1000);
-                    if (request.getUrl().getUserInfo() != null) {
-                        byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
-                        String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
-                        conn.setRequestProperty("Authorization", "Basic " + base64);
-                    }
-
-                    List<String> cookies = conn.getHeaderFields().get("Set-Cookie");
-                    if (cookies != null) {
-                        for (String cookie : cookies) {
-                            CookieManager.getInstance().setCookie(url, cookie);
-                        }
-                    }
-                    InputStream responseStream = conn.getInputStream();
-                    responseStream = jsInjector.getInjectedStream(responseStream);
-                    return new WebResourceResponse(
-                        "text/html",
-                        handler.getEncoding(),
-                        handler.getStatusCode(),
-                        handler.getReasonPhrase(),
-                        handler.getResponseHeaders(),
-                        responseStream
-                    );
-                }
-            } catch (Exception ex) {
-                bridge.handleAppUrlLoadError(ex);
-            }
-        }
         return null;
     }
 

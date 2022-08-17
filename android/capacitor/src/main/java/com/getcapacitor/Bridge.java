@@ -267,7 +267,7 @@ public class Bridge {
         final boolean html5mode = this.config.isHTML5Mode();
 
         // Start the local web server
-        localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
+        localServer = new WebViewLocalServer(context, this, authorities, html5mode);
         localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
         Logger.debug("Loading app at " + appUrl);
@@ -509,6 +509,11 @@ public class Bridge {
 
     public void reset() {
         savedCalls = new HashMap<>();
+
+        JSInjector jsInjector = getJSInjector();
+        if (jsInjector != null) {
+            webView.evaluateJavascript(jsInjector.getScriptString(), result -> {});
+        }
     }
 
     /**
