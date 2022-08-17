@@ -290,6 +290,23 @@ export async function migrateCommand(config: Config): Promise<void> {
                 }
               }
             }
+            const pluginVariables: { [key: string]: string } = {
+              firebaseMessagingVersion: '23.0.5',
+              playServicesLocationVersion: '20.0.0',
+              androidxBrowserVersion: '1.4.0',
+              androidxMaterialVersion: '1.6.1',
+              androidxExifInterfaceVersion: '1.3.3',
+            };
+            for (const variable of Object.keys(pluginVariables)) {
+              await updateFile(
+                config,
+                variablesPath,
+                `${variable} = '`,
+                `'`,
+                pluginVariables[variable],
+                true,
+              );
+            }
           })();
         });
 
