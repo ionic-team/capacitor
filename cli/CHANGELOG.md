@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/ionic-team/capacitor/compare/4.0.1...4.1.0) (2022-08-18)
+
+
+### Bug Fixes
+
+* **cli:** Also update preferences plugin if present ([#5831](https://github.com/ionic-team/capacitor/issues/5831)) ([b9d5954](https://github.com/ionic-team/capacitor/commit/b9d5954ca0b333f2caa20179b96b049379860ea5))
+* **cli:** Don't add google-services plugin if missing ([#5825](https://github.com/ionic-team/capacitor/issues/5825)) ([48ff9e6](https://github.com/ionic-team/capacitor/commit/48ff9e6461e8037a5c6da87c90efc6bc872d7f08))
+* **cli:** make migrator also update plugin variables ([#5871](https://github.com/ionic-team/capacitor/issues/5871)) ([478d48c](https://github.com/ionic-team/capacitor/commit/478d48c3e322cffc6f0ff7ce590b635de4b41279))
+* **cli:** Migrator put registerPlugin before super.onCreate ([#5828](https://github.com/ionic-team/capacitor/issues/5828)) ([8cd3373](https://github.com/ionic-team/capacitor/commit/8cd3373133903f97a836fd6ac6b7ce4e1ba9317e))
+* **cli:** prevent error on migrate when devDependencies is missing ([#5863](https://github.com/ionic-team/capacitor/issues/5863)) ([474ad1f](https://github.com/ionic-team/capacitor/commit/474ad1f4d4a9ea0636a457836c938dac9f6534e8))
+* **cli:** remove double space in cap 2 variables file ([#5826](https://github.com/ionic-team/capacitor/issues/5826)) ([7184097](https://github.com/ionic-team/capacitor/commit/7184097da88ed34f3e754119f967d262aa5e2add))
+* **cli:** Support of BoM dependencies on cordova plugins ([#5827](https://github.com/ionic-team/capacitor/issues/5827)) ([ea2d95b](https://github.com/ionic-team/capacitor/commit/ea2d95ba43467cd2d4c4637aacab6bf655d9c596))
+
+
+### Features
+
+* **cli:** Option to inline JS source maps during sync ([#5843](https://github.com/ionic-team/capacitor/issues/5843)) ([7ce6dd4](https://github.com/ionic-team/capacitor/commit/7ce6dd4b6fb5cdc395add6f656fbedc785178ae3))
+
+
+
+
+
 ## [4.0.1](https://github.com/ionic-team/capacitor/compare/4.0.0...4.0.1) (2022-07-28)
 
 
