@@ -90,6 +90,7 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     return mimetype as String
                 }
             }
+            // TODO: Remove in the future if Apple fixes the issue
             if let mimeType = mimeTypes[pathExtension] {
                 return mimeType
             }
