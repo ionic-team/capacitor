@@ -107,7 +107,7 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         }
         return false
     }
-    
+
     let mimeTypes = [
         "aaf": "application/octet-stream",
         "aca": "application/octet-stream",
