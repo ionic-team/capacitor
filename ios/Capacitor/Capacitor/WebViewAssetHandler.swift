@@ -2,6 +2,7 @@ import Foundation
 import MobileCoreServices
 
 @objc(CAPWebViewAssetHandler)
+// swiftlint:disable type_body_length
 internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
 
