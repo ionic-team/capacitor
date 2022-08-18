@@ -290,12 +290,29 @@ export async function migrateCommand(config: Config): Promise<void> {
                 }
               }
             }
+            const pluginVariables: { [key: string]: string } = {
+              firebaseMessagingVersion: '23.0.5',
+              playServicesLocationVersion: '20.0.0',
+              androidxBrowserVersion: '1.4.0',
+              androidxMaterialVersion: '1.6.1',
+              androidxExifInterfaceVersion: '1.3.3',
+            };
+            for (const variable of Object.keys(pluginVariables)) {
+              await updateFile(
+                config,
+                variablesPath,
+                `${variable} = '`,
+                `'`,
+                pluginVariables[variable],
+                true,
+              );
+            }
           })();
         });
 
         // remove init
-        await runTask('Migrating MainActivity by removing init().', () => {
-          return removeOldInitAndroid(config);
+        await runTask('Migrating MainActivity', () => {
+          return migrateMainActivity(config);
         });
 
         rimraf.sync(join(config.android.appDirAbs, 'build'));
@@ -339,7 +356,7 @@ async function installLatestNPMLibs(runInstall: boolean, config: Config) {
   }
   const pkgJson: any = JSON.parse(pkgJsonFile);
 
-  for (const devDepKey of Object.keys(pkgJson['devDependencies'])) {
+  for (const devDepKey of Object.keys(pkgJson['devDependencies'] || {})) {
     if (libs.includes(devDepKey)) {
       pkgJson['devDependencies'][devDepKey] = coreVersion;
     } else if (plugins.includes(devDepKey)) {
@@ -813,7 +830,7 @@ async function podfileAssertDeploymentTarget(filename: string) {
   writeFileSync(filename, replaced, 'utf-8');
 }
 
-async function removeOldInitAndroid(config: Config) {
+async function migrateMainActivity(config: Config) {
   const xmlData = await readXML(
     join(config.android.srcMainDirAbs, 'AndroidManifest.xml'),
   );
@@ -879,12 +896,35 @@ async function removeOldInitAndroid(config: Config) {
 
   if (data) {
     const bindex = data.indexOf('this.init(savedInstanceState');
-    if (bindex == -1) return;
-    const eindex = data.indexOf('}});', bindex) + 4;
+    if (bindex !== -1) {
+      const eindex = data.indexOf('}});', bindex) + 4;
 
-    data = data.replace(data.substring(bindex, eindex), '');
+      data = data.replace(data.substring(bindex, eindex), '');
 
-    data = data.replace('// Initializes the Bridge', '');
+      data = data.replace('// Initializes the Bridge', '');
+    }
+
+    const rindex = data.indexOf('registerPlugin');
+    if (rindex !== -1) {
+      if (data.indexOf('super.onCreate(savedInstanceState);') < rindex) {
+        data = data.replace(
+          'super.onCreate(savedInstanceState);\n        ',
+          '',
+        );
+        const eindex = data.lastIndexOf('.class);') + 8;
+        data = data.replace(
+          data.substring(bindex, eindex),
+          `${data.substring(
+            bindex,
+            eindex,
+          )}\n        super.onCreate(savedInstanceState);`,
+        );
+      }
+    }
+
+    if (bindex == -1 && rindex == -1) {
+      return;
+    }
 
     writeFileSync(mainActivityClassFilePath, data);
   }
