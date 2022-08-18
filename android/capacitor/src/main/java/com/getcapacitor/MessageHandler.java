@@ -1,7 +1,12 @@
 package com.getcapacitor;
 
+import android.net.Uri;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+import androidx.webkit.JavaScriptReplyProxy;
+import androidx.webkit.WebMessageCompat;
+import androidx.webkit.WebViewCompat;
+import androidx.webkit.WebViewFeature;
 import org.apache.cordova.PluginManager;
 
 /**
@@ -13,13 +18,31 @@ public class MessageHandler {
     private Bridge bridge;
     private WebView webView;
     private PluginManager cordovaPluginManager;
+    private JavaScriptReplyProxy javaScriptReplyProxy;
 
     public MessageHandler(Bridge bridge, WebView webView, PluginManager cordovaPluginManager) {
         this.bridge = bridge;
         this.webView = webView;
         this.cordovaPluginManager = cordovaPluginManager;
 
-        webView.addJavascriptInterface(this, "androidBridge");
+        WebViewCompat.WebMessageListener capListener = (view, message, sourceOrigin, isMainFrame, replyProxy) -> {
+            if (isMainFrame) {
+                postMessage(message.getData());
+                javaScriptReplyProxy = replyProxy;
+            } else {
+                Logger.warn("Plugin execution is allowed in Main Frame only");
+            }
+        };
+
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
+            try {
+                WebViewCompat.addWebMessageListener(webView, "androidBridge", bridge.getAllowedOriginRules(), capListener);
+            } catch (Exception ex) {
+                webView.addJavascriptInterface(this, "androidBridge");
+            }
+        } else {
+            webView.addJavascriptInterface(this, "androidBridge");
+        }
     }
 
     /**
@@ -100,9 +123,13 @@ public class MessageHandler {
 
             boolean isValidCallbackId = !call.getCallbackId().equals(PluginCall.CALLBACK_ID_DANGLING);
             if (isValidCallbackId) {
-                final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
-                final WebView webView = this.webView;
-                webView.post(() -> webView.evaluateJavascript(runScript, null));
+                if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER) && javaScriptReplyProxy != null) {
+                    javaScriptReplyProxy.postMessage(data.toString());
+                } else {
+                    final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
+                    final WebView webView = this.webView;
+                    webView.post(() -> webView.evaluateJavascript(runScript, null));
+                }
             } else {
                 bridge.getApp().fireRestoredResult(data);
             }
