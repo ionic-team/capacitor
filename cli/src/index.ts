@@ -1,4 +1,4 @@
-import program from 'commander';
+import { program } from 'commander';
 
 import c from './colors';
 import { checkExternalConfig, loadConfig } from './config';
@@ -20,7 +20,7 @@ export async function run(): Promise<void> {
   try {
     const config = await loadConfig();
     runProgram(config);
-  } catch (e) {
+  } catch (e: any) {
     process.exitCode = isFatal(e) ? e.exitCode : 1;
     logger.error(e.message ? e.message : String(e));
   }
@@ -83,12 +83,17 @@ export function runProgram(config: Config): void {
       '--deployment',
       "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
     )
+    .option(
+      '--inline',
+      'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
+      false,
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { deployment }) => {
+        telemetryAction(config, async (platform, { deployment, inline }) => {
           checkExternalConfig(config.app);
           const { syncCommand } = await import('./tasks/sync');
-          await syncCommand(config, platform, deployment);
+          await syncCommand(config, platform, deployment, inline);
         }),
       ),
     );
@@ -221,6 +226,18 @@ export function runProgram(config: Config): void {
       wrapAction(async () => {
         const { newPluginCommand } = await import('./tasks/new-plugin');
         await newPluginCommand();
+      }),
+    );
+
+  program
+    .command('migrate')
+    .description(
+      'Migrate your current Capacitor app to the latest major version of Capacitor.',
+    )
+    .action(
+      wrapAction(async () => {
+        const { migrateCommand } = await import('./tasks/migrate');
+        await migrateCommand(config);
       }),
     );
 

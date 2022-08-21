@@ -172,7 +172,7 @@ public class WebViewLocalServer {
             return null;
         }
 
-        if (isLocalFile(loadingUrl) || isMainUrl(loadingUrl) || !isAllowedUrl(loadingUrl)) {
+        if (isLocalFile(loadingUrl) || isMainUrl(loadingUrl) || !isAllowedUrl(loadingUrl) || isErrorUrl(loadingUrl)) {
             Logger.debug("Handling local request: " + request.getUrl().toString());
             return handleLocalRequest(request, handler);
         } else {
@@ -183,6 +183,11 @@ public class WebViewLocalServer {
     private boolean isLocalFile(Uri uri) {
         String path = uri.getPath();
         return path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart);
+    }
+
+    private boolean isErrorUrl(Uri uri) {
+        String url = uri.toString();
+        return url.equals(bridge.getErrorUrl());
     }
 
     private boolean isMainUrl(Uri loadingUrl) {
@@ -226,7 +231,7 @@ public class WebViewLocalServer {
             );
         }
 
-        if (isLocalFile(request.getUrl())) {
+        if (isLocalFile(request.getUrl()) || isErrorUrl(request.getUrl())) {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
             String mimeType = getMimeType(request.getUrl().getPath(), responseStream);
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
@@ -256,7 +261,9 @@ public class WebViewLocalServer {
             try {
                 String startPath = this.basePath + "/index.html";
                 if (bridge.getRouteProcessor() != null) {
-                    startPath = this.basePath + bridge.getRouteProcessor().process("/index.html");
+                    ProcessedRoute processedRoute = bridge.getRouteProcessor().process(this.basePath, "/index.html");
+                    startPath = processedRoute.getPath();
+                    isAsset = processedRoute.isAsset();
                 }
 
                 if (isAsset) {
@@ -474,16 +481,21 @@ public class WebViewLocalServer {
                 // Pass path to routeProcessor if present
                 RouteProcessor routeProcessor = bridge.getRouteProcessor();
                 if (routeProcessor != null) {
-                    path = bridge.getRouteProcessor().process(path);
+                    ProcessedRoute processedRoute = bridge.getRouteProcessor().process("", path);
+                    path = processedRoute.getPath();
+                    isAsset = processedRoute.isAsset();
                 }
 
                 try {
                     if (path.startsWith(capacitorContentStart)) {
                         stream = protocolHandler.openContentUrl(url);
-                    } else if (path.startsWith(capacitorFileStart) || !isAsset) {
-                        if (!path.startsWith(capacitorFileStart)) {
+                    } else if (path.startsWith(capacitorFileStart)) {
+                        stream = protocolHandler.openFile(path);
+                    } else if (!isAsset) {
+                        if (routeProcessor == null) {
                             path = basePath + url.getPath();
                         }
+
                         stream = protocolHandler.openFile(path);
                     } else {
                         stream = protocolHandler.openAsset(assetPath + path);
