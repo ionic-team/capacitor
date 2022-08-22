@@ -19,7 +19,7 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
     return (
       `CocoaPods is not installed.\n` +
       `See this install guide: ${c.strong(
-        'https://guides.cocoapods.org/using/getting-started.html#installation',
+        'https://capacitorjs.com/docs/getting-started/environment-setup#homebrew',
       )}`
     );
   }
