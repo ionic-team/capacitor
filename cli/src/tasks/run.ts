@@ -1,6 +1,4 @@
 import { columnar } from '@ionic/utils-terminal';
-import cloneDeep from 'lodash.clonedeep';
-import merge from 'lodash.merge';
 
 import { runAndroid } from '../android/run';
 import c from '../colors';
@@ -29,25 +27,10 @@ export interface RunCommandOptions {
 }
 
 export async function runCommand(
-  cfg: Config,
+  config: Config,
   selectedPlatformName: string,
   options: RunCommandOptions,
 ): Promise<void> {
-  const toMerge: {
-    android?: {
-      flavor: string;
-    };
-    ios?: {
-      scheme: string;
-    };
-  } = {};
-  if (options.flavor) {
-    toMerge.android = { flavor: options.flavor };
-  }
-  if (options.scheme) {
-    toMerge.ios = { scheme: options.scheme };
-  }
-  const config: Config = merge(cloneDeep(cfg), toMerge);
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
