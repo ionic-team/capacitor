@@ -1,5 +1,4 @@
 import { buildAndroid } from '../android/build';
-import c from '../colors';
 import { selectPlatforms, promptForPlatform } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
