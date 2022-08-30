@@ -172,6 +172,8 @@ export interface CapacitorCustomPlatformInstance {
 
 export interface WindowCapacitor {
   Capacitor?: CapacitorInstance;
+  CapacitorWebFetch?: any;
+  CapacitorWebXMLHttpRequest?: any;
   /**
    * @deprecated Use `CapacitorCustomPlatform` instead
    */

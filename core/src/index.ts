@@ -20,10 +20,18 @@ export { Capacitor, registerPlugin } from './global';
 export { WebPlugin, WebPluginConfig, ListenerCallback } from './web-plugin';
 
 // Core Plugins APIs
-export { WebView } from './core-plugins';
+export { CapacitorHttp, WebView } from './core-plugins';
 
 // Core Plugin definitions
-export type { WebViewPath, WebViewPlugin } from './core-plugins';
+export type {
+  HttpHeaders,
+  HttpOptions,
+  HttpParams,
+  HttpResponse,
+  HttpResponseType,
+  WebViewPath,
+  WebViewPlugin,
+} from './core-plugins';
 
 // Constants
 export { CapacitorException, ExceptionCode } from './util';
