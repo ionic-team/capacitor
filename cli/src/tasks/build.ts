@@ -44,7 +44,7 @@ export async function build(
   buildOptions: BuildCommandOptions,
 ): Promise<void> {
   if (platformName == config.ios.name) {
-    // await runIOS(config);
+    throw `Platform "${platformName}" is not available in the build command.`;
   } else if (platformName === config.android.name) {
     await buildAndroid(config, buildOptions);
   } else if (platformName === config.web.name) {
