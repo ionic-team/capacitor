@@ -172,6 +172,8 @@ export interface CapacitorCustomPlatformInstance {
 
 export interface WindowCapacitor {
   Capacitor?: CapacitorInstance;
+  CapacitorCookiesAndroidInterface?: any;
+  CapacitorCookiesDescriptor?: PropertyDescriptor;
   CapacitorWebFetch?: any;
   CapacitorWebXMLHttpRequest?: any;
   /**

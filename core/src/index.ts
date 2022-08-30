@@ -20,10 +20,13 @@ export { Capacitor, registerPlugin } from './global';
 export { WebPlugin, WebPluginConfig, ListenerCallback } from './web-plugin';
 
 // Core Plugins APIs
-export { CapacitorHttp, WebView } from './core-plugins';
+export { CapacitorCookies, CapacitorHttp, WebView } from './core-plugins';
 
 // Core Plugin definitions
 export type {
+  ClearCookieOptions,
+  DeleteCookieOptions,
+  SetCookieOptions,
   HttpHeaders,
   HttpOptions,
   HttpParams,
