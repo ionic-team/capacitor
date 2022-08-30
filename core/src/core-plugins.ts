@@ -24,7 +24,12 @@ export interface CapacitorHttpPlugin {
   delete(options: HttpOptions): Promise<HttpResponse>;
 }
 
-export type HttpResponseType = 'arraybuffer' | 'blob' | 'json' | 'text' | 'document';
+export type HttpResponseType =
+  | 'arraybuffer'
+  | 'blob'
+  | 'json'
+  | 'text'
+  | 'document';
 
 export interface HttpOptions {
   url: string;
@@ -184,57 +189,60 @@ export const buildRequestInit = (
 };
 
 // WEB IMPLEMENTATION
-export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPlugin {
+export class CapacitorHttpPluginWeb
+  extends WebPlugin
+  implements CapacitorHttpPlugin
+{
   /**
    * Perform an Http request given a set of options
    * @param options Options to build the HTTP request
    */
   async request(options: HttpOptions): Promise<HttpResponse> {
     const requestInit = buildRequestInit(options, options.webFetchExtra);
-  const urlParams = buildUrlParams(
-    options.params,
-    options.shouldEncodeUrlParams,
-  );
-  const url = urlParams ? `${options.url}?${urlParams}` : options.url;
+    const urlParams = buildUrlParams(
+      options.params,
+      options.shouldEncodeUrlParams,
+    );
+    const url = urlParams ? `${options.url}?${urlParams}` : options.url;
 
-  const response = await fetch(url, requestInit);
-  const contentType = response.headers.get('content-type') || '';
+    const response = await fetch(url, requestInit);
+    const contentType = response.headers.get('content-type') || '';
 
-  // Default to 'text' responseType so no parsing happens
-  let { responseType = 'text' } = response.ok ? options : {};
+    // Default to 'text' responseType so no parsing happens
+    let { responseType = 'text' } = response.ok ? options : {};
 
-  // If the response content-type is json, force the response to be json
-  if (contentType.includes('application/json')) {
-    responseType = 'json';
-  }
+    // If the response content-type is json, force the response to be json
+    if (contentType.includes('application/json')) {
+      responseType = 'json';
+    }
 
-  let data: any;
-  switch (responseType) {
-    case 'arraybuffer':
-    case 'blob':
-      //TODO: Add Blob Support
-      break;
-    case 'json':
-      data = await response.json();
-      break;
-    case 'document':
-    case 'text':
-    default:
-      data = await response.text();
-  }
+    let data: any;
+    switch (responseType) {
+      case 'arraybuffer':
+      case 'blob':
+        //TODO: Add Blob Support
+        break;
+      case 'json':
+        data = await response.json();
+        break;
+      case 'document':
+      case 'text':
+      default:
+        data = await response.text();
+    }
 
-  // Convert fetch headers to Capacitor HttpHeaders
-  const headers = {} as HttpHeaders;
-  response.headers.forEach((value: string, key: string) => {
-    headers[key] = value;
-  });
+    // Convert fetch headers to Capacitor HttpHeaders
+    const headers = {} as HttpHeaders;
+    response.headers.forEach((value: string, key: string) => {
+      headers[key] = value;
+    });
 
-  return {
-    data,
-    headers,
-    status: response.status,
-    url: response.url,
-  };
+    return {
+      data,
+      headers,
+      status: response.status,
+      url: response.url,
+    };
   }
 
   /**
@@ -244,7 +252,7 @@ export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPl
   async get(options: HttpOptions): Promise<HttpResponse> {
     return this.request({ ...options, method: 'GET' });
   }
-  
+
   /**
    * Perform an Http POST request given a set of options
    * @param options Options to build the HTTP request
@@ -252,7 +260,7 @@ export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPl
   async post(options: HttpOptions): Promise<HttpResponse> {
     return this.request({ ...options, method: 'POST' });
   }
-  
+
   /**
    * Perform an Http PUT request given a set of options
    * @param options Options to build the HTTP request
@@ -260,7 +268,7 @@ export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPl
   async put(options: HttpOptions): Promise<HttpResponse> {
     return this.request({ ...options, method: 'PUT' });
   }
-  
+
   /**
    * Perform an Http PATCH request given a set of options
    * @param options Options to build the HTTP request
@@ -268,7 +276,7 @@ export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPl
   async patch(options: HttpOptions): Promise<HttpResponse> {
     return this.request({ ...options, method: 'PATCH' });
   }
-  
+
   /**
    * Perform an Http DELETE request given a set of options
    * @param options Options to build the HTTP request
@@ -276,7 +284,6 @@ export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPl
   async delete(options: HttpOptions): Promise<HttpResponse> {
     return this.request({ ...options, method: 'DELETE' });
   }
-  
 }
 
 export const CapacitorHttp = registerPlugin<CapacitorHttpPlugin>(

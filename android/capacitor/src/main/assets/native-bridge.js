@@ -320,7 +320,7 @@ const nativeBridge = (function (exports) {
                             set: function (val) {
                                 this._readyState = val;
                                 this.dispatchEvent(new Event('readystatechange'));
-                            }
+                            },
                         },
                         response: {
                             value: '',
@@ -360,12 +360,14 @@ const nativeBridge = (function (exports) {
                     try {
                         this.readyState = 2;
                         // intercept request & pass to the bridge
-                        cap.nativePromise('CapacitorHttp', 'request', {
+                        cap
+                            .nativePromise('CapacitorHttp', 'request', {
                             url: this._url,
                             method: this._method,
-                            data: (body !== null) ? body : undefined,
+                            data: body !== null ? body : undefined,
                             headers: this._headers,
-                        }).then((nativeResponse) => {
+                        })
+                            .then((nativeResponse) => {
                             // intercept & parse response before returning
                             if (this.readyState == 2) {
                                 this.dispatchEvent(new Event('loadstart'));
@@ -377,7 +379,8 @@ const nativeBridge = (function (exports) {
                                 this.dispatchEvent(new Event('load'));
                                 this.dispatchEvent(new Event('loadend'));
                             }
-                        }).catch((error) => {
+                        })
+                            .catch((error) => {
                             this.dispatchEvent(new Event('loadstart'));
                             this.status = error.status;
                             this.response = error.data;

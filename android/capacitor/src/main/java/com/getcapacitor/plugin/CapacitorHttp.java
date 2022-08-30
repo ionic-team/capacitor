@@ -2,7 +2,6 @@ package com.getcapacitor.plugin;
 
 import android.Manifest;
 import android.webkit.JavascriptInterface;
-
 import com.getcapacitor.CapConfig;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -15,11 +14,12 @@ import com.getcapacitor.plugin.util.HttpRequestHandler;
 
 @CapacitorPlugin(
     permissions = {
-            @Permission(strings = { Manifest.permission.WRITE_EXTERNAL_STORAGE }, alias = "HttpWrite"),
-            @Permission(strings = { Manifest.permission.READ_EXTERNAL_STORAGE }, alias = "HttpRead")
+        @Permission(strings = { Manifest.permission.WRITE_EXTERNAL_STORAGE }, alias = "HttpWrite"),
+        @Permission(strings = { Manifest.permission.READ_EXTERNAL_STORAGE }, alias = "HttpRead")
     }
 )
 public class CapacitorHttp extends Plugin {
+
     private void http(final PluginCall call, final String httpMethod) {
         Runnable asyncHttpCall = new Runnable() {
             @Override

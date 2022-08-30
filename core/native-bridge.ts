@@ -12,7 +12,6 @@ import type {
   WindowCapacitor,
 } from './src/definitions-internal';
 
-
 // For removing exports for iOS/Android, keep let for reassignment
 // eslint-disable-next-line
 let dummy = {};
@@ -303,15 +302,22 @@ const initBridge = (w: any): void => {
       };
 
       // fetch patch
-      window.fetch = async (resource: RequestInfo | URL, options?: RequestInit) => {
+      window.fetch = async (
+        resource: RequestInfo | URL,
+        options?: RequestInit,
+      ) => {
         try {
           // intercept request & pass to the bridge
-          const nativeResponse: HttpResponse = await cap.nativePromise('CapacitorHttp', 'request', {
-            url: resource,
-            method: options?.method ? options.method : undefined,
-            data: options?.body ? options.body : undefined,
-            headers: options?.headers ? options.headers : undefined,
-          });
+          const nativeResponse: HttpResponse = await cap.nativePromise(
+            'CapacitorHttp',
+            'request',
+            {
+              url: resource,
+              method: options?.method ? options.method : undefined,
+              data: options?.body ? options.body : undefined,
+              headers: options?.headers ? options.headers : undefined,
+            },
+          );
 
           // intercept & parse response before returning
           const response = new Response(JSON.stringify(nativeResponse.data), {
@@ -320,58 +326,58 @@ const initBridge = (w: any): void => {
           });
 
           return response;
-        }
-        catch (error) {
+        } catch (error) {
           return Promise.reject(error);
         }
       };
 
       // XHR event listeners
-      const addEventListeners = function() {
+      const addEventListeners = function () {
         this.addEventListener('abort', function () {
-          if(typeof this.onabort === 'function')  this.onabort();
+          if (typeof this.onabort === 'function') this.onabort();
         });
-      
+
         this.addEventListener('error', function () {
-          if(typeof this.onerror === 'function')  this.onerror();
+          if (typeof this.onerror === 'function') this.onerror();
         });
-      
+
         this.addEventListener('load', function () {
-          if(typeof this.onload === 'function')  this.onload();
+          if (typeof this.onload === 'function') this.onload();
         });
-      
+
         this.addEventListener('loadend', function () {
-          if(typeof this.onloadend === 'function')  this.onloadend();
+          if (typeof this.onloadend === 'function') this.onloadend();
         });
-      
+
         this.addEventListener('loadstart', function () {
-          if(typeof this.onloadstart === 'function')  this.onloadstart();
+          if (typeof this.onloadstart === 'function') this.onloadstart();
         });
-      
+
         this.addEventListener('readystatechange', function () {
-          if(typeof this.onreadystatechange === 'function')  this.onreadystatechange();
+          if (typeof this.onreadystatechange === 'function')
+            this.onreadystatechange();
         });
-      
+
         this.addEventListener('timeout', function () {
-          if(typeof this.ontimeout === 'function')  this.ontimeout();
+          if (typeof this.ontimeout === 'function') this.ontimeout();
         });
-      }
+      };
 
       // XHR patch abort
-      window.XMLHttpRequest.prototype.abort = function() {
+      window.XMLHttpRequest.prototype.abort = function () {
         Object.defineProperties(this, {
           _headers: {
             value: {},
             writable: true,
           },
           readyState: {
-            get: function() {
+            get: function () {
               return this._readyState ?? 0;
             },
             set: function (val: number) {
               this._readyState = val;
               this.dispatchEvent(new Event('readystatechange'));
-            }
+            },
           },
           response: {
             value: '',
@@ -393,10 +399,13 @@ const initBridge = (w: any): void => {
         this.readyState = 0;
         this.dispatchEvent(new Event('abort'));
         this.dispatchEvent(new Event('loadend'));
-      }
+      };
 
       // XHR patch open
-      window.XMLHttpRequest.prototype.open = function (method: string, url: string) {
+      window.XMLHttpRequest.prototype.open = function (
+        method: string,
+        url: string,
+      ) {
         this.abort();
         addEventListeners.call(this);
         this._method = method;
@@ -405,47 +414,52 @@ const initBridge = (w: any): void => {
       };
 
       // XHR patch set request header
-      window.XMLHttpRequest.prototype.setRequestHeader = function (header: string, value: string) {
+      window.XMLHttpRequest.prototype.setRequestHeader = function (
+        header: string,
+        value: string,
+      ) {
         this._headers[header] = value;
       };
 
       // XHR patch send
       window.XMLHttpRequest.prototype.send = function (
-        body?: Document | XMLHttpRequestBodyInit
+        body?: Document | XMLHttpRequestBodyInit,
       ) {
         try {
           this.readyState = 2;
-          
+
           // intercept request & pass to the bridge
-          cap.nativePromise('CapacitorHttp', 'request', {
-            url: this._url,
-            method: this._method,
-            data: (body !== null) ? body : undefined,
-            headers: this._headers,
-          }).then((nativeResponse: any) => {
-            // intercept & parse response before returning
-            if (this.readyState == 2) {
+          cap
+            .nativePromise('CapacitorHttp', 'request', {
+              url: this._url,
+              method: this._method,
+              data: body !== null ? body : undefined,
+              headers: this._headers,
+            })
+            .then((nativeResponse: any) => {
+              // intercept & parse response before returning
+              if (this.readyState == 2) {
+                this.dispatchEvent(new Event('loadstart'));
+                this.status = nativeResponse.status;
+                this.response = nativeResponse.data;
+                this.responseText = JSON.stringify(nativeResponse.data);
+                this.responseURL = nativeResponse.url;
+                this.readyState = 4;
+                this.dispatchEvent(new Event('load'));
+                this.dispatchEvent(new Event('loadend'));
+              }
+            })
+            .catch((error: any) => {
               this.dispatchEvent(new Event('loadstart'));
-              this.status = nativeResponse.status;
-              this.response = nativeResponse.data;
-              this.responseText = JSON.stringify(nativeResponse.data);
-              this.responseURL = nativeResponse.url;
+              this.status = error.status;
+              this.response = error.data;
+              this.responseText = JSON.stringify(error.data);
+              this.responseURL = error.url;
               this.readyState = 4;
-              this.dispatchEvent(new Event('load'));
+              this.dispatchEvent(new Event('error'));
               this.dispatchEvent(new Event('loadend'));
-            }
-          }).catch((error: any) => {
-            this.dispatchEvent(new Event('loadstart'));
-            this.status = error.status;
-            this.response = error.data;
-            this.responseText = JSON.stringify(error.data);
-            this.responseURL = error.url;
-            this.readyState = 4;
-            this.dispatchEvent(new Event('error'));
-            this.dispatchEvent(new Event('loadend'));
-          });
-        }
-        catch (error) {
+            });
+        } catch (error) {
           this.dispatchEvent(new Event('loadstart'));
           this.status = 500;
           this.response = error;
@@ -455,7 +469,7 @@ const initBridge = (w: any): void => {
           this.dispatchEvent(new Event('error'));
           this.dispatchEvent(new Event('loadend'));
         }
-      }
+      };
     }
 
     // patch window.console on iOS and store original console fns

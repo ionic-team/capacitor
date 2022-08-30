@@ -3,14 +3,10 @@ package com.getcapacitor.plugin.util;
 import android.os.Build;
 import android.os.LocaleList;
 import android.text.TextUtils;
-
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
 import com.getcapacitor.PluginCall;
-
-import org.json.JSONException;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.json.JSONException;
 
 public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 

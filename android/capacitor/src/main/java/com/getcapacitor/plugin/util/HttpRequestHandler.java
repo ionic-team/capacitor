@@ -2,16 +2,10 @@ package com.getcapacitor.plugin.util;
 
 import android.text.TextUtils;
 import android.util.Base64;
-
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
 import com.getcapacitor.PluginCall;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,8 +19,12 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HttpRequestHandler {
+
     /**
      * An enum specifying conventional HTTP Response Types
      * See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
@@ -119,7 +117,7 @@ public class HttpRequestHandler {
         }
 
         public HttpURLConnectionBuilder setUrlParams(JSObject params, boolean shouldEncode)
-                throws URISyntaxException, MalformedURLException {
+            throws URISyntaxException, MalformedURLException {
             String initialQuery = url.getQuery();
             String initialQueryBuilderStr = initialQuery == null ? "" : initialQuery;
 
@@ -164,7 +162,13 @@ public class HttpRequestHandler {
                 URI encodedUri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), urlQuery, uri.getFragment());
                 this.url = encodedUri.toURL();
             } else {
-                String unEncodedUrlString = uri.getScheme() + "://" + uri.getAuthority() + uri.getPath() + ((!urlQuery.equals("")) ? "?" + urlQuery : "") + ((uri.getFragment() != null) ? uri.getFragment() : "");
+                String unEncodedUrlString =
+                    uri.getScheme() +
+                    "://" +
+                    uri.getAuthority() +
+                    uri.getPath() +
+                    ((!urlQuery.equals("")) ? "?" + urlQuery : "") +
+                    ((uri.getFragment() != null) ? uri.getFragment() : "");
                 this.url = new URL(unEncodedUrlString);
             }
 
@@ -196,7 +200,7 @@ public class HttpRequestHandler {
      * @throws JSONException Thrown if the JSON is unable to be parsed
      */
     private static JSObject buildResponse(CapacitorHttpUrlConnection connection, ResponseType responseType)
-            throws IOException, JSONException {
+        throws IOException, JSONException {
         int statusCode = connection.getResponseCode();
 
         JSObject output = new JSObject();
@@ -373,14 +377,14 @@ public class HttpRequestHandler {
 
         URL url = new URL(urlString);
         HttpURLConnectionBuilder connectionBuilder = new HttpURLConnectionBuilder()
-                .setUrl(url)
-                .setMethod(method)
-                .setHeaders(headers)
-                .setUrlParams(params, shouldEncode)
-                .setConnectTimeout(connectTimeout)
-                .setReadTimeout(readTimeout)
-                .setDisableRedirects(disableRedirects)
-                .openConnection();
+            .setUrl(url)
+            .setMethod(method)
+            .setHeaders(headers)
+            .setUrlParams(params, shouldEncode)
+            .setConnectTimeout(connectTimeout)
+            .setReadTimeout(readTimeout)
+            .setDisableRedirects(disableRedirects)
+            .openConnection();
 
         CapacitorHttpUrlConnection connection = connectionBuilder.build();
 
