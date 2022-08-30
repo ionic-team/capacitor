@@ -165,7 +165,6 @@ export function runProgram(config: Config): void {
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
-            console.log(program.args);
             await buildCommand(config, platform, {
               keystorepath,
               keystorepass,
