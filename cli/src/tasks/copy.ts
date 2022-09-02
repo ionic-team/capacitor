@@ -15,7 +15,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import type { Portal } from '../declarations';
+import type { Portal, LiveUpdateConfig } from '../declarations';
 import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { logger } from '../log';
@@ -82,6 +82,15 @@ export async function copy(
       usesCapacitorPortals = true;
     }
 
+    let usesLiveUpdates = false;
+    if (
+      allPlugins.filter(
+        plugin => plugin.id === '@capacitor/live-updates',
+      ).length > 0
+    ) {
+      usesLiveUpdates = true;
+    }
+
     if (platformName === config.ios.name) {
       if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, await config.ios.webDirAbs);
@@ -91,6 +100,9 @@ export async function copy(
           await config.ios.webDirAbs,
           config.app.webDirAbs,
         );
+      }
+      if (usesLiveUpdates) {
+        await copySecureLiveUpdatesKey(config, config.android.assetsDirAbs)
       }
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -104,6 +116,9 @@ export async function copy(
           config.android.webDirAbs,
           config.app.webDirAbs,
         );
+      }
+      if (usesLiveUpdates) {
+        await copySecureLiveUpdatesKey(config, config.android.assetsDirAbs)
       }
       await copyCapacitorConfig(config, config.android.assetsDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -205,5 +220,21 @@ function isPortal(config: any): config is Portal {
   return (
     (config as Portal).webDir !== undefined &&
     (config as Portal).name !== undefined
+  );
+}
+
+async function copySecureLiveUpdatesKey(config: Config, nativeAbsDir: string) {
+  if (!config.app.extConfig?.plugins?.LiveUpdates?.key) {
+    return;
+  }
+
+  const secureLiveUpdatesKey = config.app.extConfig.plugins.LiveUpdates.key
+  const secureLiveUpdatesKeyPath = resolve(secureLiveUpdatesKey, config.app.rootDir)
+
+  await runTask(
+    `Copying Secure Live Updates key from ${c.strong(secureLiveUpdatesKeyPath)} to ${nativeAbsDir}`,
+    async () => {
+      return fsCopy(secureLiveUpdatesKeyPath, nativeAbsDir);
+    },
   );
 }
