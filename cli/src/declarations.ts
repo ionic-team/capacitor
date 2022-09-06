@@ -553,7 +553,7 @@ export interface PluginsConfig {
   /**
    * Capacitor Live Updates plugin configuration
    *
-   * @since 4.1.0
+   * @since 4.2.0
    */
   LiveUpdates?: LiveUpdateConfig;
 }
