@@ -102,7 +102,7 @@ export async function copy(
         );
       }
       if (usesLiveUpdates) {
-        await copySecureLiveUpdatesKey(config, config.android.assetsDirAbs)
+        await copySecureLiveUpdatesKey(config, config.ios.nativeTargetDirAbs)
       }
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -228,13 +228,26 @@ async function copySecureLiveUpdatesKey(config: Config, nativeAbsDir: string) {
     return;
   }
 
-  const secureLiveUpdatesKey = config.app.extConfig.plugins.LiveUpdates.key
-  const secureLiveUpdatesKeyPath = resolve(secureLiveUpdatesKey, config.app.rootDir)
+  const secureLiveUpdatesKeyFile = config.app.extConfig.plugins.LiveUpdates.key
+  const keyAbsFromPath = join(config.app.rootDir, secureLiveUpdatesKeyFile);
+  const keyAbsToPath = join(nativeAbsDir, basename(keyAbsFromPath));
+  const keyRelToDir = relative(config.app.rootDir, nativeAbsDir);
+
+  if (!(await pathExists(keyAbsFromPath))) {
+    logger.warn(
+      `Cannot copy Secure Live Updates signature file from ${c.strong(
+        keyAbsFromPath,
+      )} to ${keyRelToDir}\n` +
+        `Signature file does not exist at specified key path.`,
+    );
+
+    return;
+  }
 
   await runTask(
-    `Copying Secure Live Updates key from ${c.strong(secureLiveUpdatesKeyPath)} to ${nativeAbsDir}`,
+    `Copying Secure Live Updates key from ${c.strong(secureLiveUpdatesKeyFile)} to ${keyRelToDir}`,
     async () => {
-      return fsCopy(secureLiveUpdatesKeyPath, nativeAbsDir);
+      return fsCopy(keyAbsFromPath, keyAbsToPath);
     },
   );
 }
