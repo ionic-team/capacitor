@@ -555,5 +555,5 @@ export interface PluginsConfig {
    *
    * @since 4.1.0
    */
-   LiveUpdates?: LiveUpdateConfig;
+  LiveUpdates?: LiveUpdateConfig;
 }

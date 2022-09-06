@@ -84,9 +84,8 @@ export async function copy(
 
     let usesLiveUpdates = false;
     if (
-      allPlugins.filter(
-        plugin => plugin.id === '@capacitor/live-updates',
-      ).length > 0
+      allPlugins.filter(plugin => plugin.id === '@capacitor/live-updates')
+        .length > 0
     ) {
       usesLiveUpdates = true;
     }
@@ -102,7 +101,7 @@ export async function copy(
         );
       }
       if (usesLiveUpdates) {
-        await copySecureLiveUpdatesKey(config, config.ios.nativeTargetDirAbs)
+        await copySecureLiveUpdatesKey(config, config.ios.nativeTargetDirAbs);
       }
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -118,7 +117,7 @@ export async function copy(
         );
       }
       if (usesLiveUpdates) {
-        await copySecureLiveUpdatesKey(config, config.android.assetsDirAbs)
+        await copySecureLiveUpdatesKey(config, config.android.assetsDirAbs);
       }
       await copyCapacitorConfig(config, config.android.assetsDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -228,7 +227,7 @@ async function copySecureLiveUpdatesKey(config: Config, nativeAbsDir: string) {
     return;
   }
 
-  const secureLiveUpdatesKeyFile = config.app.extConfig.plugins.LiveUpdates.key
+  const secureLiveUpdatesKeyFile = config.app.extConfig.plugins.LiveUpdates.key;
   const keyAbsFromPath = join(config.app.rootDir, secureLiveUpdatesKeyFile);
   const keyAbsToPath = join(nativeAbsDir, basename(keyAbsFromPath));
   const keyRelToDir = relative(config.app.rootDir, nativeAbsDir);
@@ -245,7 +244,9 @@ async function copySecureLiveUpdatesKey(config: Config, nativeAbsDir: string) {
   }
 
   await runTask(
-    `Copying Secure Live Updates key from ${c.strong(secureLiveUpdatesKeyFile)} to ${keyRelToDir}`,
+    `Copying Secure Live Updates key from ${c.strong(
+      secureLiveUpdatesKeyFile,
+    )} to ${keyRelToDir}`,
     async () => {
       return fsCopy(keyAbsFromPath, keyAbsToPath);
     },
