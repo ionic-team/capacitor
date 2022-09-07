@@ -122,12 +122,17 @@ export function runProgram(config: Config): void {
   program
     .command('copy [platform]')
     .description('copies the web app build into the native app')
+    .option(
+      '--inline',
+      'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
+      false,
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform, { inline }) => {
           checkExternalConfig(config.app);
           const { copyCommand } = await import('./tasks/copy');
-          await copyCommand(config, platform);
+          await copyCommand(config, platform, inline);
         }),
       ),
     );

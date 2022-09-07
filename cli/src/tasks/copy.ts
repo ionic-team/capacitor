@@ -23,9 +23,12 @@ import { getPlugins } from '../plugin';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
 
+import { inlineSourceMaps } from './sourcemaps';
+
 export async function copyCommand(
   config: Config,
   selectedPlatformName: string,
+  inline: boolean,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
@@ -43,7 +46,7 @@ export async function copyCommand(
     const platforms = await selectPlatforms(config, selectedPlatformName);
     try {
       await allSerial(
-        platforms.map(platformName => () => copy(config, platformName)),
+        platforms.map(platformName => () => copy(config, platformName, inline)),
       );
     } catch (e) {
       if (isFatal(e)) {
@@ -58,6 +61,7 @@ export async function copyCommand(
 export async function copy(
   config: Config,
   platformName: string,
+  inline: boolean,
 ): Promise<void> {
   await runTask(c.success(c.strong(`copy ${platformName}`)), async () => {
     const result = await checkWebDir(config);
@@ -119,6 +123,9 @@ export async function copy(
       }
     } else {
       throw `Platform ${platformName} is not valid.`;
+    }
+    if (inline) {
+      await inlineSourceMaps(config, platformName);
     }
   });
 
