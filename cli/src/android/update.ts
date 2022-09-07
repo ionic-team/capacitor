@@ -58,7 +58,7 @@ export async function updateAndroid(config: Config): Promise<void> {
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
   if (!(await pathExists(config.android.webDirAbs))) {
-    await copyTask(config, platform);
+    await copyTask(config, platform, false);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await checkPluginDependencies(plugins, platform);
