@@ -137,6 +137,8 @@ export function runProgram(config: Config): void {
     .description(
       `runs ${c.input('sync')}, then builds and deploys the native app`,
     )
+    .option('--scheme <schemeName>', 'set the scheme of the iOS project')
+    .option('--flavor <flavorName>', 'set the flavor of the Android project')
     .option('--list', 'list targets, then quit')
     // TODO: remove once --json is a hidden option (https://github.com/tj/commander.js/issues/1106)
     .allowUnknownOption(true)
@@ -144,10 +146,19 @@ export function runProgram(config: Config): void {
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { list, target, sync }) => {
-          const { runCommand } = await import('./tasks/run');
-          await runCommand(config, platform, { list, target, sync });
-        }),
+        telemetryAction(
+          config,
+          async (platform, { scheme, flavor, list, target, sync }) => {
+            const { runCommand } = await import('./tasks/run');
+            await runCommand(config, platform, {
+              scheme,
+              flavor,
+              list,
+              target,
+              sync,
+            });
+          },
+        ),
       ),
     );
 
