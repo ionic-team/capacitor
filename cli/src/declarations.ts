@@ -493,6 +493,7 @@ export interface LiveUpdateConfig {
   channel: string;
   autoUpdateMethod: AutoUpdateMethod;
   maxVersions?: number;
+  key?: string;
 }
 
 export type AutoUpdateMethod = 'none' | 'background';
@@ -518,4 +519,11 @@ export interface PluginsConfig {
     shell: Portal;
     apps: Portal[];
   };
+
+  /**
+   * Capacitor Live Updates plugin configuration
+   *
+   * @since 4.2.0
+   */
+  LiveUpdates?: LiveUpdateConfig;
 }
