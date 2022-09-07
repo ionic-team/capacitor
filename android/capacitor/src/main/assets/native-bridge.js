@@ -293,6 +293,9 @@ const nativeBridge = (function (exports) {
                 };
                 // fetch patch
                 window.fetch = async (resource, options) => {
+                    if (resource.toString().startsWith('data:')) {
+                        return win.CapacitorWebFetch(resource, options);
+                    }
                     try {
                         // intercept request & pass to the bridge
                         const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {

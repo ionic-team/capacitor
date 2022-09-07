@@ -353,6 +353,10 @@ const initBridge = (w: any): void => {
         resource: RequestInfo | URL,
         options?: RequestInit,
       ) => {
+        if (resource.toString().startsWith('data:')) {
+          return win.CapacitorWebFetch(resource, options);
+        }
+
         try {
           // intercept request & pass to the bridge
           const nativeResponse: HttpResponse = await cap.nativePromise(
