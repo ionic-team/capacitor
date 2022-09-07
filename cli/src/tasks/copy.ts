@@ -86,6 +86,14 @@ export async function copy(
       usesCapacitorPortals = true;
     }
 
+    let usesLiveUpdates = false;
+    if (
+      allPlugins.filter(plugin => plugin.id === '@capacitor/live-updates')
+        .length > 0
+    ) {
+      usesLiveUpdates = true;
+    }
+
     if (platformName === config.ios.name) {
       if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, await config.ios.webDirAbs);
@@ -95,6 +103,9 @@ export async function copy(
           await config.ios.webDirAbs,
           config.app.webDirAbs,
         );
+      }
+      if (usesLiveUpdates) {
+        await copySecureLiveUpdatesKey(config, config.ios.nativeTargetDirAbs);
       }
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -108,6 +119,9 @@ export async function copy(
           config.android.webDirAbs,
           config.app.webDirAbs,
         );
+      }
+      if (usesLiveUpdates) {
+        await copySecureLiveUpdatesKey(config, config.android.assetsDirAbs);
       }
       await copyCapacitorConfig(config, config.android.assetsDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -212,5 +226,36 @@ function isPortal(config: any): config is Portal {
   return (
     (config as Portal).webDir !== undefined &&
     (config as Portal).name !== undefined
+  );
+}
+
+async function copySecureLiveUpdatesKey(config: Config, nativeAbsDir: string) {
+  if (!config.app.extConfig?.plugins?.LiveUpdates?.key) {
+    return;
+  }
+
+  const secureLiveUpdatesKeyFile = config.app.extConfig.plugins.LiveUpdates.key;
+  const keyAbsFromPath = join(config.app.rootDir, secureLiveUpdatesKeyFile);
+  const keyAbsToPath = join(nativeAbsDir, basename(keyAbsFromPath));
+  const keyRelToDir = relative(config.app.rootDir, nativeAbsDir);
+
+  if (!(await pathExists(keyAbsFromPath))) {
+    logger.warn(
+      `Cannot copy Secure Live Updates signature file from ${c.strong(
+        keyAbsFromPath,
+      )} to ${keyRelToDir}\n` +
+        `Signature file does not exist at specified key path.`,
+    );
+
+    return;
+  }
+
+  await runTask(
+    `Copying Secure Live Updates key from ${c.strong(
+      secureLiveUpdatesKeyFile,
+    )} to ${keyRelToDir}`,
+    async () => {
+      return fsCopy(keyAbsFromPath, keyAbsToPath);
+    },
   );
 }
