@@ -59,7 +59,7 @@ export async function updateIOS(
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
   if (!(await pathExists(await config.ios.webDirAbs))) {
-    await copyTask(config, platform, false);
+    await copyTask(config, platform);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await checkPluginDependencies(plugins, platform);

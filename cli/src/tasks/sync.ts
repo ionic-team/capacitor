@@ -21,7 +21,7 @@ export async function syncCommand(
   config: Config,
   selectedPlatformName: string,
   deployment: boolean,
-  inline: boolean,
+  inline = false,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     try {
@@ -61,7 +61,7 @@ export async function sync(
   config: Config,
   platformName: string,
   deployment: boolean,
-  inline: boolean,
+  inline = false,
 ): Promise<void> {
   await runPlatformHook(
     config,

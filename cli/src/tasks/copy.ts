@@ -28,7 +28,7 @@ import { inlineSourceMaps } from './sourcemaps';
 export async function copyCommand(
   config: Config,
   selectedPlatformName: string,
-  inline: boolean,
+  inline = false,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
@@ -61,7 +61,7 @@ export async function copyCommand(
 export async function copy(
   config: Config,
   platformName: string,
-  inline: boolean,
+  inline = false,
 ): Promise<void> {
   await runTask(c.success(c.strong(`copy ${platformName}`)), async () => {
     const result = await checkWebDir(config);
