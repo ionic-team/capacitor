@@ -20,6 +20,12 @@ import com.getcapacitor.plugin.util.HttpRequestHandler;
 )
 public class CapacitorHttp extends Plugin {
 
+    @Override
+    public void load() {
+        this.bridge.getWebView().addJavascriptInterface(this, "CapacitorHttpAndroidInterface");
+        super.load();
+    }
+
     private void http(final PluginCall call, final String httpMethod) {
         Runnable asyncHttpCall = new Runnable() {
             @Override

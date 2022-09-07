@@ -291,158 +291,179 @@ const nativeBridge = (function (exports) {
                     send: window.XMLHttpRequest.prototype.send,
                     setRequestHeader: window.XMLHttpRequest.prototype.setRequestHeader,
                 };
-                // fetch patch
-                window.fetch = async (resource, options) => {
-                    if (resource.toString().startsWith('data:')) {
-                        return win.CapacitorWebFetch(resource, options);
+                let doPatchHttp = true;
+                // check if capacitor http is disabled before patching
+                if (platform === 'ios') {
+                    // Use prompt to synchronously get capacitor http config.
+                    // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                    const payload = {
+                        type: 'CapacitorHttp',
+                    };
+                    const isDisabled = prompt(JSON.stringify(payload));
+                    if (isDisabled === 'true') {
+                        doPatchHttp = false;
                     }
-                    try {
-                        // intercept request & pass to the bridge
-                        const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
-                            url: resource,
-                            method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
-                            data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
-                            headers: (options === null || options === void 0 ? void 0 : options.headers) ? options.headers : undefined,
-                        });
-                        // intercept & parse response before returning
-                        const response = new Response(JSON.stringify(nativeResponse.data), {
-                            headers: nativeResponse.headers,
-                            status: nativeResponse.status,
-                        });
-                        return response;
+                }
+                else if (typeof win.CapacitorHttpAndroidInterface !== 'undefined') {
+                    const isDisabled = win.CapacitorHttpAndroidInterface.isDisabled();
+                    if (isDisabled === true) {
+                        doPatchHttp = false;
                     }
-                    catch (error) {
-                        return Promise.reject(error);
-                    }
-                };
-                // XHR event listeners
-                const addEventListeners = function () {
-                    this.addEventListener('abort', function () {
-                        if (typeof this.onabort === 'function')
-                            this.onabort();
-                    });
-                    this.addEventListener('error', function () {
-                        if (typeof this.onerror === 'function')
-                            this.onerror();
-                    });
-                    this.addEventListener('load', function () {
-                        if (typeof this.onload === 'function')
-                            this.onload();
-                    });
-                    this.addEventListener('loadend', function () {
-                        if (typeof this.onloadend === 'function')
-                            this.onloadend();
-                    });
-                    this.addEventListener('loadstart', function () {
-                        if (typeof this.onloadstart === 'function')
-                            this.onloadstart();
-                    });
-                    this.addEventListener('readystatechange', function () {
-                        if (typeof this.onreadystatechange === 'function')
-                            this.onreadystatechange();
-                    });
-                    this.addEventListener('timeout', function () {
-                        if (typeof this.ontimeout === 'function')
-                            this.ontimeout();
-                    });
-                };
-                // XHR patch abort
-                window.XMLHttpRequest.prototype.abort = function () {
-                    Object.defineProperties(this, {
-                        _headers: {
-                            value: {},
-                            writable: true,
-                        },
-                        readyState: {
-                            get: function () {
-                                var _a;
-                                return (_a = this._readyState) !== null && _a !== void 0 ? _a : 0;
-                            },
-                            set: function (val) {
-                                this._readyState = val;
-                                this.dispatchEvent(new Event('readystatechange'));
-                            },
-                        },
-                        response: {
-                            value: '',
-                            writable: true,
-                        },
-                        responseText: {
-                            value: '',
-                            writable: true,
-                        },
-                        responseURL: {
-                            value: '',
-                            writable: true,
-                        },
-                        status: {
-                            value: 0,
-                            writable: true,
-                        },
-                    });
-                    this.readyState = 0;
-                    this.dispatchEvent(new Event('abort'));
-                    this.dispatchEvent(new Event('loadend'));
-                };
-                // XHR patch open
-                window.XMLHttpRequest.prototype.open = function (method, url) {
-                    this.abort();
-                    addEventListeners.call(this);
-                    this._method = method;
-                    this._url = url;
-                    this.readyState = 1;
-                };
-                // XHR patch set request header
-                window.XMLHttpRequest.prototype.setRequestHeader = function (header, value) {
-                    this._headers[header] = value;
-                };
-                // XHR patch send
-                window.XMLHttpRequest.prototype.send = function (body) {
-                    try {
-                        this.readyState = 2;
-                        // intercept request & pass to the bridge
-                        cap
-                            .nativePromise('CapacitorHttp', 'request', {
-                            url: this._url,
-                            method: this._method,
-                            data: body !== null ? body : undefined,
-                            headers: this._headers,
-                        })
-                            .then((nativeResponse) => {
+                }
+                if (doPatchHttp) {
+                    // fetch patch
+                    window.fetch = async (resource, options) => {
+                        if (resource.toString().startsWith('data:')) {
+                            return win.CapacitorWebFetch(resource, options);
+                        }
+                        try {
+                            // intercept request & pass to the bridge
+                            const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
+                                url: resource,
+                                method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
+                                data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
+                                headers: (options === null || options === void 0 ? void 0 : options.headers) ? options.headers : undefined,
+                            });
                             // intercept & parse response before returning
-                            if (this.readyState == 2) {
+                            const response = new Response(JSON.stringify(nativeResponse.data), {
+                                headers: nativeResponse.headers,
+                                status: nativeResponse.status,
+                            });
+                            return response;
+                        }
+                        catch (error) {
+                            return Promise.reject(error);
+                        }
+                    };
+                    // XHR event listeners
+                    const addEventListeners = function () {
+                        this.addEventListener('abort', function () {
+                            if (typeof this.onabort === 'function')
+                                this.onabort();
+                        });
+                        this.addEventListener('error', function () {
+                            if (typeof this.onerror === 'function')
+                                this.onerror();
+                        });
+                        this.addEventListener('load', function () {
+                            if (typeof this.onload === 'function')
+                                this.onload();
+                        });
+                        this.addEventListener('loadend', function () {
+                            if (typeof this.onloadend === 'function')
+                                this.onloadend();
+                        });
+                        this.addEventListener('loadstart', function () {
+                            if (typeof this.onloadstart === 'function')
+                                this.onloadstart();
+                        });
+                        this.addEventListener('readystatechange', function () {
+                            if (typeof this.onreadystatechange === 'function')
+                                this.onreadystatechange();
+                        });
+                        this.addEventListener('timeout', function () {
+                            if (typeof this.ontimeout === 'function')
+                                this.ontimeout();
+                        });
+                    };
+                    // XHR patch abort
+                    window.XMLHttpRequest.prototype.abort = function () {
+                        Object.defineProperties(this, {
+                            _headers: {
+                                value: {},
+                                writable: true,
+                            },
+                            readyState: {
+                                get: function () {
+                                    var _a;
+                                    return (_a = this._readyState) !== null && _a !== void 0 ? _a : 0;
+                                },
+                                set: function (val) {
+                                    this._readyState = val;
+                                    this.dispatchEvent(new Event('readystatechange'));
+                                },
+                            },
+                            response: {
+                                value: '',
+                                writable: true,
+                            },
+                            responseText: {
+                                value: '',
+                                writable: true,
+                            },
+                            responseURL: {
+                                value: '',
+                                writable: true,
+                            },
+                            status: {
+                                value: 0,
+                                writable: true,
+                            },
+                        });
+                        this.readyState = 0;
+                        this.dispatchEvent(new Event('abort'));
+                        this.dispatchEvent(new Event('loadend'));
+                    };
+                    // XHR patch open
+                    window.XMLHttpRequest.prototype.open = function (method, url) {
+                        this.abort();
+                        addEventListeners.call(this);
+                        this._method = method;
+                        this._url = url;
+                        this.readyState = 1;
+                    };
+                    // XHR patch set request header
+                    window.XMLHttpRequest.prototype.setRequestHeader = function (header, value) {
+                        this._headers[header] = value;
+                    };
+                    // XHR patch send
+                    window.XMLHttpRequest.prototype.send = function (body) {
+                        try {
+                            this.readyState = 2;
+                            // intercept request & pass to the bridge
+                            cap
+                                .nativePromise('CapacitorHttp', 'request', {
+                                url: this._url,
+                                method: this._method,
+                                data: body !== null ? body : undefined,
+                                headers: this._headers,
+                            })
+                                .then((nativeResponse) => {
+                                // intercept & parse response before returning
+                                if (this.readyState == 2) {
+                                    this.dispatchEvent(new Event('loadstart'));
+                                    this.status = nativeResponse.status;
+                                    this.response = nativeResponse.data;
+                                    this.responseText = JSON.stringify(nativeResponse.data);
+                                    this.responseURL = nativeResponse.url;
+                                    this.readyState = 4;
+                                    this.dispatchEvent(new Event('load'));
+                                    this.dispatchEvent(new Event('loadend'));
+                                }
+                            })
+                                .catch((error) => {
                                 this.dispatchEvent(new Event('loadstart'));
-                                this.status = nativeResponse.status;
-                                this.response = nativeResponse.data;
-                                this.responseText = JSON.stringify(nativeResponse.data);
-                                this.responseURL = nativeResponse.url;
+                                this.status = error.status;
+                                this.response = error.data;
+                                this.responseText = JSON.stringify(error.data);
+                                this.responseURL = error.url;
                                 this.readyState = 4;
-                                this.dispatchEvent(new Event('load'));
+                                this.dispatchEvent(new Event('error'));
                                 this.dispatchEvent(new Event('loadend'));
-                            }
-                        })
-                            .catch((error) => {
+                            });
+                        }
+                        catch (error) {
                             this.dispatchEvent(new Event('loadstart'));
-                            this.status = error.status;
-                            this.response = error.data;
-                            this.responseText = JSON.stringify(error.data);
-                            this.responseURL = error.url;
+                            this.status = 500;
+                            this.response = error;
+                            this.responseText = error.toString();
+                            this.responseURL = this._url;
                             this.readyState = 4;
                             this.dispatchEvent(new Event('error'));
                             this.dispatchEvent(new Event('loadend'));
-                        });
-                    }
-                    catch (error) {
-                        this.dispatchEvent(new Event('loadstart'));
-                        this.status = 500;
-                        this.response = error;
-                        this.responseText = error.toString();
-                        this.responseURL = this._url;
-                        this.readyState = 4;
-                        this.dispatchEvent(new Event('error'));
-                        this.dispatchEvent(new Event('loadend'));
-                    }
-                };
+                        }
+                    };
+                }
             }
             // patch window.console on iOS and store original console fns
             const isIos = getPlatformId(win) === 'ios';

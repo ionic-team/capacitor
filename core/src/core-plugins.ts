@@ -1,3 +1,5 @@
+/// <reference types="../../cli" />
+
 import type { Plugin } from './definitions';
 import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
@@ -114,6 +116,19 @@ export const CapacitorCookies = registerPlugin<CapacitorCookiesPlugin>(
 /******** END COOKIES PLUGIN ********/
 
 /******** HTTP PLUGIN ********/
+declare module '../../cli' {
+  export interface PluginsConfig {
+    CapacitorHttp?: {
+      /**
+       * Disable CapacitorHttp from monkey patching the global fetch and XMLHttpRequest
+       *
+       * @default false
+       */
+      disabled?: boolean;
+    };
+  }
+}
+
 export interface CapacitorHttpPlugin {
   request(options: HttpOptions): Promise<HttpResponse>;
   get(options: HttpOptions): Promise<HttpResponse>;

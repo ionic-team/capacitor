@@ -174,6 +174,7 @@ export interface WindowCapacitor {
   Capacitor?: CapacitorInstance;
   CapacitorCookiesAndroidInterface?: any;
   CapacitorCookiesDescriptor?: PropertyDescriptor;
+  CapacitorHttpAndroidInterface?: any;
   CapacitorWebFetch?: any;
   CapacitorWebXMLHttpRequest?: any;
   /**
