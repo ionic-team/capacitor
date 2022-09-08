@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/ionic-team/capacitor/compare/3.7.0...3.8.0) (2022-09-08)
+
+
+### Features
+
+* **ios:** Add `setServerBasePath(_:)` to CAPBridgeProtocol ([#5860](https://github.com/ionic-team/capacitor/issues/5860)) ([#5892](https://github.com/ionic-team/capacitor/issues/5892)) ([9954281](https://github.com/ionic-team/capacitor/commit/995428129de9c06e199b67264b9840bb4a87939e))
+
+
+
+
+
 # [3.7.0](https://github.com/ionic-team/capacitor/compare/3.6.0...3.7.0) (2022-08-01)
 
 
