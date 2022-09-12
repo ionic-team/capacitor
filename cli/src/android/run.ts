@@ -12,14 +12,16 @@ const debug = Debug('capacitor:android:run');
 
 export async function runAndroid(
   config: Config,
-  { target: selectedTarget }: RunCommandOptions,
+  { target: selectedTarget, flavor: selectedFlavor }: RunCommandOptions,
 ): Promise<void> {
   const target = await promptForPlatformTarget(
     await getPlatformTargets('android'),
     selectedTarget,
   );
 
-  const arg = `assemble${config.android?.flavor || ''}Debug`;
+  const runFlavor = selectedFlavor || config.android?.flavor || '';
+
+  const arg = `assemble${runFlavor}Debug`;
   const gradleArgs = [arg];
 
   debug('Invoking ./gradlew with args: %O', gradleArgs);
