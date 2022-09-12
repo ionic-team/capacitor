@@ -3,6 +3,82 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/ionic-team/capacitor/compare/4.1.0...4.2.0) (2022-09-08)
+
+
+### Features
+
+* **cli:** add inline option to copy command ([#5901](https://github.com/ionic-team/capacitor/issues/5901)) ([17fbabb](https://github.com/ionic-team/capacitor/commit/17fbabb2a77d1b356d24048efc5883bd4d049104))
+* **cli:** add scheme and flavor options to run command ([#5873](https://github.com/ionic-team/capacitor/issues/5873)) ([e4c143d](https://github.com/ionic-team/capacitor/commit/e4c143d4da653533570215964808c2f32f5469d3))
+* **cli:** copy signature when using secure live updates ([#5896](https://github.com/ionic-team/capacitor/issues/5896)) ([0f17177](https://github.com/ionic-team/capacitor/commit/0f17177b1c64c0f69f86e990e4e150b820da497b))
+
+
+
+
+
+# [4.1.0](https://github.com/ionic-team/capacitor/compare/4.0.1...4.1.0) (2022-08-18)
+
+
+### Bug Fixes
+
+* **cli:** Also update preferences plugin if present ([#5831](https://github.com/ionic-team/capacitor/issues/5831)) ([b9d5954](https://github.com/ionic-team/capacitor/commit/b9d5954ca0b333f2caa20179b96b049379860ea5))
+* **cli:** Don't add google-services plugin if missing ([#5825](https://github.com/ionic-team/capacitor/issues/5825)) ([48ff9e6](https://github.com/ionic-team/capacitor/commit/48ff9e6461e8037a5c6da87c90efc6bc872d7f08))
+* **cli:** make migrator also update plugin variables ([#5871](https://github.com/ionic-team/capacitor/issues/5871)) ([478d48c](https://github.com/ionic-team/capacitor/commit/478d48c3e322cffc6f0ff7ce590b635de4b41279))
+* **cli:** Migrator put registerPlugin before super.onCreate ([#5828](https://github.com/ionic-team/capacitor/issues/5828)) ([8cd3373](https://github.com/ionic-team/capacitor/commit/8cd3373133903f97a836fd6ac6b7ce4e1ba9317e))
+* **cli:** prevent error on migrate when devDependencies is missing ([#5863](https://github.com/ionic-team/capacitor/issues/5863)) ([474ad1f](https://github.com/ionic-team/capacitor/commit/474ad1f4d4a9ea0636a457836c938dac9f6534e8))
+* **cli:** remove double space in cap 2 variables file ([#5826](https://github.com/ionic-team/capacitor/issues/5826)) ([7184097](https://github.com/ionic-team/capacitor/commit/7184097da88ed34f3e754119f967d262aa5e2add))
+* **cli:** Support of BoM dependencies on cordova plugins ([#5827](https://github.com/ionic-team/capacitor/issues/5827)) ([ea2d95b](https://github.com/ionic-team/capacitor/commit/ea2d95ba43467cd2d4c4637aacab6bf655d9c596))
+* **ios:** Prevent Xcode 14 warning on CAPWebView ([#5821](https://github.com/ionic-team/capacitor/issues/5821)) ([66954ef](https://github.com/ionic-team/capacitor/commit/66954ef6bc93f2038d85a386ef2f8b582af11bc3))
+* **ios:** return proper mimeType on M1 x86_64 simulators ([#5853](https://github.com/ionic-team/capacitor/issues/5853)) ([325b6fe](https://github.com/ionic-team/capacitor/commit/325b6fe83939efaaef44c7e8624e33de742a57e2)), closes [#5793](https://github.com/ionic-team/capacitor/issues/5793)
+* update @types/tar to prevent core build failure ([#5822](https://github.com/ionic-team/capacitor/issues/5822)) ([59e64b7](https://github.com/ionic-team/capacitor/commit/59e64b7c548341c27a8477ddc867290592c43815))
+
+
+### Features
+
+* **cli:** Option to inline JS source maps during sync ([#5843](https://github.com/ionic-team/capacitor/issues/5843)) ([7ce6dd4](https://github.com/ionic-team/capacitor/commit/7ce6dd4b6fb5cdc395add6f656fbedc785178ae3))
+* **ios:** Add `setServerBasePath(_:)` to CAPBridgeProtocol ([#5860](https://github.com/ionic-team/capacitor/issues/5860)) ([76f28e7](https://github.com/ionic-team/capacitor/commit/76f28e70a5c0a03e4c6b9a93a0c068666a2c38ff))
+
+
+
+
+
+## [4.0.1](https://github.com/ionic-team/capacitor/compare/4.0.0...4.0.1) (2022-07-28)
+
+
+### Bug Fixes
+
+* **cli:** Correct Splash theme update ([#5805](https://github.com/ionic-team/capacitor/issues/5805)) ([25b82a8](https://github.com/ionic-team/capacitor/commit/25b82a84425bf09b2be45b213788b0e13982b9b3))
+* **cli:** Revert some splash migration errors ([#5806](https://github.com/ionic-team/capacitor/issues/5806)) ([471feed](https://github.com/ionic-team/capacitor/commit/471feedc07bef357ac798fcba664bd373e9f8ebf))
+* **ios:** publish Podfile script ([#5799](https://github.com/ionic-team/capacitor/issues/5799)) ([604f03a](https://github.com/ionic-team/capacitor/commit/604f03a29bc500d2841987d0a0f1b20d34fba7d6))
+
+
+
+
+
+# [4.0.0](https://github.com/ionic-team/capacitor/compare/4.0.0-beta.2...4.0.0) (2022-07-27)
+
+
+### Bug Fixes
+
+* **android:** Publish proguard-rules.pro on npm ([#5761](https://github.com/ionic-team/capacitor/issues/5761)) ([df77103](https://github.com/ionic-team/capacitor/commit/df77103ca411fa452239099769289eeeea2404d2))
+* **ios:** error data is optional ([#5782](https://github.com/ionic-team/capacitor/issues/5782)) ([da48d79](https://github.com/ionic-team/capacitor/commit/da48d798c3463de9de188ae6a6475fd6afba6091))
+
+
+### Features
+
+* **android:** Add android.minWebviewVersion configuration option ([#5768](https://github.com/ionic-team/capacitor/issues/5768)) ([ad83827](https://github.com/ionic-team/capacitor/commit/ad838279e9cd190ce6f1a020a0ac9e3916786324))
+* **android:** Add Optional Data Param for Error Object ([#5719](https://github.com/ionic-team/capacitor/issues/5719)) ([174172b](https://github.com/ionic-team/capacitor/commit/174172b6c64dc9117c48ed0e20c25e0b6c2fb625))
+* **android:** Use addWebMessageListener where available ([#5427](https://github.com/ionic-team/capacitor/issues/5427)) ([c2dfe80](https://github.com/ionic-team/capacitor/commit/c2dfe808446717412b35e82713d123b7a052f264))
+* **android-template:** Use Android 12 splash API ([#5777](https://github.com/ionic-team/capacitor/issues/5777)) ([f3ab951](https://github.com/ionic-team/capacitor/commit/f3ab9519e1f08d5dfeb2db61b6939725be92b4f3))
+* **cli:** add migrator for cap3 to cap4 ([#5762](https://github.com/ionic-team/capacitor/issues/5762)) ([7cb660a](https://github.com/ionic-team/capacitor/commit/7cb660a34d9a87274761d4492d0d77c9ef44ace8))
+* **ios:** Add overrideable router var for CAPWebView. ([#5743](https://github.com/ionic-team/capacitor/issues/5743)) ([c1de1c0](https://github.com/ionic-team/capacitor/commit/c1de1c0138aad188a760118e35983d10d257f8e7))
+* **iOS:** post install script for deployment target ([#5783](https://github.com/ionic-team/capacitor/issues/5783)) ([f5afa94](https://github.com/ionic-team/capacitor/commit/f5afa94b3b9c246d87b2af03359840f503bace90))
+* Add option for custom error page ([#5723](https://github.com/ionic-team/capacitor/issues/5723)) ([e8bdef3](https://github.com/ionic-team/capacitor/commit/e8bdef3b4634e4ad45fa8fc34c7c0ab8dfa383f3))
+
+
+
+
+
 # [4.0.0-beta.2](https://github.com/ionic-team/capacitor/compare/4.0.0-beta.1...4.0.0-beta.2) (2022-07-08)
 
 

@@ -21,10 +21,11 @@ export async function syncCommand(
   config: Config,
   selectedPlatformName: string,
   deployment: boolean,
+  inline = false,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     try {
-      await copyCommand(config, selectedPlatformName);
+      await copyCommand(config, selectedPlatformName, inline);
     } catch (e) {
       logger.error(e.stack ?? e);
     }
@@ -40,7 +41,7 @@ export async function syncCommand(
       ]);
       await allSerial(
         platforms.map(
-          platformName => () => sync(config, platformName, deployment),
+          platformName => () => sync(config, platformName, deployment, inline),
         ),
       );
       const now = +new Date();
@@ -60,6 +61,7 @@ export async function sync(
   config: Config,
   platformName: string,
   deployment: boolean,
+  inline = false,
 ): Promise<void> {
   await runPlatformHook(
     config,
@@ -69,7 +71,7 @@ export async function sync(
   );
 
   try {
-    await copy(config, platformName);
+    await copy(config, platformName, inline);
   } catch (e) {
     logger.error(e.stack ?? e);
   }

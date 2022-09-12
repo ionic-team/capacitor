@@ -20,7 +20,7 @@ export async function run(): Promise<void> {
   try {
     const config = await loadConfig();
     runProgram(config);
-  } catch (e) {
+  } catch (e: any) {
     process.exitCode = isFatal(e) ? e.exitCode : 1;
     logger.error(e.message ? e.message : String(e));
   }
@@ -83,12 +83,17 @@ export function runProgram(config: Config): void {
       '--deployment',
       "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
     )
+    .option(
+      '--inline',
+      'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
+      false,
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { deployment }) => {
+        telemetryAction(config, async (platform, { deployment, inline }) => {
           checkExternalConfig(config.app);
           const { syncCommand } = await import('./tasks/sync');
-          await syncCommand(config, platform, deployment);
+          await syncCommand(config, platform, deployment, inline);
         }),
       ),
     );
@@ -117,12 +122,17 @@ export function runProgram(config: Config): void {
   program
     .command('copy [platform]')
     .description('copies the web app build into the native app')
+    .option(
+      '--inline',
+      'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
+      false,
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform, { inline }) => {
           checkExternalConfig(config.app);
           const { copyCommand } = await import('./tasks/copy');
-          await copyCommand(config, platform);
+          await copyCommand(config, platform, inline);
         }),
       ),
     );
@@ -132,6 +142,8 @@ export function runProgram(config: Config): void {
     .description(
       `runs ${c.input('sync')}, then builds and deploys the native app`,
     )
+    .option('--scheme <schemeName>', 'set the scheme of the iOS project')
+    .option('--flavor <flavorName>', 'set the flavor of the Android project')
     .option('--list', 'list targets, then quit')
     // TODO: remove once --json is a hidden option (https://github.com/tj/commander.js/issues/1106)
     .allowUnknownOption(true)
@@ -139,10 +151,19 @@ export function runProgram(config: Config): void {
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { list, target, sync }) => {
-          const { runCommand } = await import('./tasks/run');
-          await runCommand(config, platform, { list, target, sync });
-        }),
+        telemetryAction(
+          config,
+          async (platform, { scheme, flavor, list, target, sync }) => {
+            const { runCommand } = await import('./tasks/run');
+            await runCommand(config, platform, {
+              scheme,
+              flavor,
+              list,
+              target,
+              sync,
+            });
+          },
+        ),
       ),
     );
 
@@ -221,6 +242,18 @@ export function runProgram(config: Config): void {
       wrapAction(async () => {
         const { newPluginCommand } = await import('./tasks/new-plugin');
         await newPluginCommand();
+      }),
+    );
+
+  program
+    .command('migrate')
+    .description(
+      'Migrate your current Capacitor app to the latest major version of Capacitor.',
+    )
+    .action(
+      wrapAction(async () => {
+        const { migrateCommand } = await import('./tasks/migrate');
+        await migrateCommand(config);
       }),
     );
 
