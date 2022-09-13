@@ -4,11 +4,11 @@ import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 
 export interface BuildCommandOptions {
-  keystorepath: string;
-  keystorepass: string;
-  keystorealias: string;
-  keystorealiaspass: string;
-  androidreleasetype: string;
+  keystorepath?: string;
+  keystorepass?: string;
+  keystorealias?: string;
+  keystorealiaspass?: string;
+  androidreleasetype?: 'AAB' | 'APK';
 }
 
 export async function buildCommand(
@@ -27,8 +27,23 @@ export async function buildCommand(
     );
   }
 
+  const buildCommandOptions: BuildCommandOptions = {
+    keystorepath:
+      buildOptions.keystorepath || config.android.buildOptions.keystorePath,
+    keystorepass:
+      buildOptions.keystorepass || config.android.buildOptions.keystorePassword,
+    keystorealias:
+      buildOptions.keystorealias || config.android.buildOptions.keystoreAlias,
+    keystorealiaspass:
+      buildOptions.keystorealiaspass ||
+      config.android.buildOptions.keystoreAliasPassword,
+    androidreleasetype:
+      buildOptions.androidreleasetype ||
+      config.android.buildOptions.releaseType,
+  };
+
   try {
-    await build(config, platformName, buildOptions);
+    await build(config, platformName, buildCommandOptions);
   } catch (e) {
     if (!isFatal(e)) {
       fatal((e as any).stack ?? e);

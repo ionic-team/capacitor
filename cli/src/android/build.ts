@@ -11,7 +11,8 @@ export async function buildAndroid(
   config: Config,
   buildOptions: BuildCommandOptions,
 ): Promise<void> {
-  const releaseTypeIsAAB = buildOptions.androidreleasetype === 'AAB';
+  const releaseType = buildOptions.androidreleasetype ?? 'AAB';
+  const releaseTypeIsAAB = releaseType === 'AAB';
   const arg = releaseTypeIsAAB ? ':app:bundleRelease' : 'assembleRelease';
   const gradleArgs = [arg];
 
@@ -21,7 +22,7 @@ export async function buildAndroid(
     !buildOptions.keystorealiaspass ||
     !buildOptions.keystorepass
   ) {
-    throw 'Missing options. Please supply all options for android aab signing. (Keystore Path, Keystore Password, Keystore Key Alias, Keystore Key Password)';
+    throw 'Missing options. Please supply all options for android signing. (Keystore Path, Keystore Password, Keystore Key Alias, Keystore Key Password)';
   }
 
   try {
@@ -50,15 +51,13 @@ export async function buildAndroid(
 
   const unsignedReleaseName = `app${
     config.android.flavor ? `-${config.android.flavor}` : ''
-  }-release${
-    releaseTypeIsAAB ? '' : '-unsigned'
-  }.${buildOptions.androidreleasetype.toLowerCase()}`;
+  }-release${releaseTypeIsAAB ? '' : '-unsigned'}.${releaseType.toLowerCase()}`;
 
   const signedReleaseName = unsignedReleaseName.replace(
     `-release${
       releaseTypeIsAAB ? '' : '-unsigned'
-    }.${buildOptions.androidreleasetype.toLowerCase()}`,
-    `-release-signed.${buildOptions.androidreleasetype.toLowerCase()}`,
+    }.${releaseType.toLowerCase()}`,
+    `-release-signed.${releaseType.toLowerCase()}`,
   );
 
   const signingArgs = [

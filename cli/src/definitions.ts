@@ -91,6 +91,13 @@ export interface AndroidConfig extends PlatformConfig {
   readonly buildOutputDirAbs: string;
   readonly apkName: string;
   readonly flavor: string;
+  readonly buildOptions: {
+    keystorePath?: string;
+    keystorePassword?: string;
+    keystoreAlias?: string;
+    keystoreAliasPassword?: string;
+    releaseType?: 'AAB' | 'APK';
+  };
 }
 
 export interface IOSConfig extends PlatformConfig {
