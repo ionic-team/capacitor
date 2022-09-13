@@ -438,7 +438,7 @@ const initBridge = (w: any): void => {
         };
 
         // XHR patch abort
-        window.XMLHttpRequest.prototype.abort = function () {          
+        window.XMLHttpRequest.prototype.abort = function () {
           this.readyState = 0;
           this.dispatchEvent(new Event('abort'));
           this.dispatchEvent(new Event('loadend'));
