@@ -44,9 +44,9 @@ public class CapacitorHttp extends Plugin {
     }
 
     @JavascriptInterface
-    public boolean isDisabled() {
+    public boolean isEnabled() {
         PluginConfig pluginConfig = getBridge().getConfig().getPluginConfiguration("CapacitorHttp");
-        return pluginConfig.getBoolean("disabled", false);
+        return pluginConfig.getBoolean("enabled", false);
     }
 
     @PluginMethod

@@ -256,7 +256,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
                         return
                     } else if type == "CapacitorHttp" {
                         let pluginConfig = bridge!.config.getPluginConfig("CapacitorHttp")
-                        completionHandler(String(pluginConfig.getBoolean("disabled", false)))
+                        completionHandler(String(pluginConfig.getBoolean("enabled", false)))
                         // Don't present prompt
                         return
                     }

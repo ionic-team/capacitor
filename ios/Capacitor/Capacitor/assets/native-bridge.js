@@ -291,7 +291,7 @@ const nativeBridge = (function (exports) {
                     send: window.XMLHttpRequest.prototype.send,
                     setRequestHeader: window.XMLHttpRequest.prototype.setRequestHeader,
                 };
-                let doPatchHttp = true;
+                let doPatchHttp = false;
                 // check if capacitor http is disabled before patching
                 if (platform === 'ios') {
                     // Use prompt to synchronously get capacitor http config.
@@ -299,15 +299,15 @@ const nativeBridge = (function (exports) {
                     const payload = {
                         type: 'CapacitorHttp',
                     };
-                    const isDisabled = prompt(JSON.stringify(payload));
-                    if (isDisabled === 'true') {
-                        doPatchHttp = false;
+                    const isEnabled = prompt(JSON.stringify(payload));
+                    if (isEnabled === 'true') {
+                        doPatchHttp = true;
                     }
                 }
                 else if (typeof win.CapacitorHttpAndroidInterface !== 'undefined') {
-                    const isDisabled = win.CapacitorHttpAndroidInterface.isDisabled();
-                    if (isDisabled === true) {
-                        doPatchHttp = false;
+                    const isEnabled = win.CapacitorHttpAndroidInterface.isEnabled();
+                    if (isEnabled === true) {
+                        doPatchHttp = true;
                     }
                 }
                 if (doPatchHttp) {
