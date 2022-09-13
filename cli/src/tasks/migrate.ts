@@ -2,12 +2,13 @@ import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
 
+import c from '../colors';
 import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
-import { getCommandOutput } from '../util/subprocess';
+import { runCommand, getCommandOutput } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 import { readXML } from '../util/xml';
 
@@ -331,6 +332,24 @@ export async function migrateCommand(config: Config): Promise<void> {
         return getCommandOutput('npx', ['cap', 'sync']);
       });
 
+      try {
+        await runTask(`Upgrading gradle wrapper files`, () => {
+          return updateGradleWrapperFiles(config.android.platformDirAbs);
+        });
+      } catch (e) {
+        if (e.includes('EACCES')) {
+          logger.error(
+            `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
+              `chmod +x ./${config.android.platformDir}/gradlew`,
+            )} and ${c.input(
+              `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version 7.4.2 --warning-mode all`,
+            )} to update the files manually`,
+          );
+        } else {
+          logger.error(`gradle wrapper files were not updated`);
+        }
+      }
+
       // Write all breaking changes
       await runTask(`Writing breaking changes.`, () => {
         return writeBreakingChanges();
@@ -651,6 +670,24 @@ async function updateGradleWrapper(filename: string) {
     `https\\://services.gradle.org/distributions/gradle-7.4.2-all.zip`,
   );
   writeFileSync(filename, replaced, 'utf-8');
+}
+
+async function updateGradleWrapperFiles(platformDir: string) {
+  await runCommand(
+    `./gradlew`,
+    [
+      'wrapper',
+      '--distribution-type',
+      'all',
+      '--gradle-version',
+      '7.4.2',
+      '--warning-mode',
+      'all',
+    ],
+    {
+      cwd: platformDir,
+    },
+  );
 }
 
 async function updateFile(
