@@ -106,16 +106,32 @@ export async function migrateCommand(config: Config): Promise<void> {
         typeof npmInstallConfirm === 'string' &&
         npmInstallConfirm.toLowerCase() === 'y';
 
-      await runTask(`Installing Latest NPM Modules.`, () => {
-        return installLatestNPMLibs(runNpmInstall, config);
-      });
+      try {
+        await runTask(`Installing Latest NPM Modules.`, () => {
+          return installLatestNPMLibs(runNpmInstall, config);
+        });
+      } catch (ex) {
+        logger.error(
+          `npm install failed. Try deleting node_modules folder and running ${c.input(
+            'npm install --force',
+          )} manually.`,
+        );
+      }
 
-      await runTask(
-        `Migrating @capacitor/storage to @capacitor/preferences.`,
-        () => {
-          return migrateStoragePluginToPreferences(runNpmInstall);
-        },
-      );
+      try {
+        await runTask(
+          `Migrating @capacitor/storage to @capacitor/preferences.`,
+          () => {
+            return migrateStoragePluginToPreferences(runNpmInstall);
+          },
+        );
+      } catch (ex) {
+        logger.error(
+          `@capacitor/preferences failed to install. Try deleting node_modules folder and running ${c.input(
+            'npm install @capacitor/preferences --force',
+          )} manually.`,
+        );
+      }
 
       if (
         allDependencies['@capacitor/ios'] &&
@@ -395,9 +411,8 @@ async function installLatestNPMLibs(runInstall: boolean, config: Config) {
   });
 
   if (runInstall) {
-    rimraf.sync(join(config.app.rootDir, 'package-lock.json'));
     rimraf.sync(join(config.app.rootDir, 'node_modules/@capacitor/!(cli)'));
-    await getCommandOutput('npm', ['i']);
+    await runCommand('npm', ['i']);
   } else {
     logger.info(
       `Please run an install command with your package manager of choice. (ex: yarn install)`,
@@ -412,10 +427,7 @@ async function migrateStoragePluginToPreferences(runInstall: boolean) {
     );
     if (runInstall) {
       await getCommandOutput('npm', ['uninstall', '@capacitor/storage']);
-      await getCommandOutput('npm', [
-        'i',
-        `@capacitor/preferences@${pluginVersion}`,
-      ]);
+      await runCommand('npm', ['i', `@capacitor/preferences@${pluginVersion}`]);
     } else {
       logger.info(
         `Please manually uninstall @capacitor/storage and replace it with @capacitor/preferences@${pluginVersion}`,
