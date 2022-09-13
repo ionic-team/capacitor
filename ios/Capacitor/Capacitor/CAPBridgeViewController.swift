@@ -284,6 +284,7 @@ extension CAPBridgeViewController {
         // create the web view and set its properties
         let aWebView = webView(with: .zero, configuration: webConfig)
         aWebView.scrollView.bounces = false
+        aWebView.scrollView.alwaysBounceVertical = false
         aWebView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
         aWebView.allowsLinkPreview = configuration.allowLinkPreviews
         aWebView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")

@@ -150,6 +150,7 @@ extension CAPWebView {
         loadInitialContext(webViewConfig.userContentController)
         let webView = WKWebView(frame: .zero, configuration: webViewConfig)
         webView.scrollView.bounces = false
+        webView.scrollView.alwaysBounceVertical = false
         webView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
         webView.allowsLinkPreview = configuration.allowLinkPreviews
         webView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
