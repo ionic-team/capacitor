@@ -438,7 +438,17 @@ const initBridge = (w: any): void => {
         };
 
         // XHR patch abort
-        window.XMLHttpRequest.prototype.abort = function () {
+        window.XMLHttpRequest.prototype.abort = function () {          
+          this.readyState = 0;
+          this.dispatchEvent(new Event('abort'));
+          this.dispatchEvent(new Event('loadend'));
+        };
+
+        // XHR patch open
+        window.XMLHttpRequest.prototype.open = function (
+          method: string,
+          url: string,
+        ) {
           Object.defineProperties(this, {
             _headers: {
               value: {},
@@ -470,17 +480,6 @@ const initBridge = (w: any): void => {
               writable: true,
             },
           });
-          this.readyState = 0;
-          this.dispatchEvent(new Event('abort'));
-          this.dispatchEvent(new Event('loadend'));
-        };
-
-        // XHR patch open
-        window.XMLHttpRequest.prototype.open = function (
-          method: string,
-          url: string,
-        ) {
-          this.abort();
           addEventListeners.call(this);
           this._method = method;
           this._url = url;

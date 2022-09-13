@@ -368,6 +368,12 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch abort
                     window.XMLHttpRequest.prototype.abort = function () {
+                        this.readyState = 0;
+                        this.dispatchEvent(new Event('abort'));
+                        this.dispatchEvent(new Event('loadend'));
+                    };
+                    // XHR patch open
+                    window.XMLHttpRequest.prototype.open = function (method, url) {
                         Object.defineProperties(this, {
                             _headers: {
                                 value: {},
@@ -400,13 +406,6 @@ const nativeBridge = (function (exports) {
                                 writable: true,
                             },
                         });
-                        this.readyState = 0;
-                        this.dispatchEvent(new Event('abort'));
-                        this.dispatchEvent(new Event('loadend'));
-                    };
-                    // XHR patch open
-                    window.XMLHttpRequest.prototype.open = function (method, url) {
-                        this.abort();
                         addEventListeners.call(this);
                         this._method = method;
                         this._url = url;
