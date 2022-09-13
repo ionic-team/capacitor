@@ -5,7 +5,6 @@ public class CAPHttpPlugin: CAPPlugin {
     @objc func http(_ call: CAPPluginCall, _ httpMethod: String?) {
         // Protect against bad values from JS before calling request
         guard let u = call.getString("url") else { return call.reject("Must provide a URL"); }
-        guard let _ = httpMethod ?? call.getString("method") else { return call.reject("Must provide an HTTP Method"); }
         guard var _ = URL(string: u) else { return call.reject("Invalid URL"); }
 
         do {

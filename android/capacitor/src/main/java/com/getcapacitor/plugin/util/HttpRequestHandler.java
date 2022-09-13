@@ -371,7 +371,7 @@ public class HttpRequestHandler {
         Boolean shouldEncode = call.getBoolean("shouldEncodeUrlParams", true);
         ResponseType responseType = ResponseType.parse(call.getString("responseType"));
 
-        String method = httpMethod != null ? httpMethod.toUpperCase() : call.getString("method", "").toUpperCase();
+        String method = httpMethod != null ? httpMethod.toUpperCase() : call.getString("method", "GET").toUpperCase();
 
         boolean isHttpMutate = method.equals("DELETE") || method.equals("PATCH") || method.equals("POST") || method.equals("PUT");
 

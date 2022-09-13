@@ -123,7 +123,7 @@ class HttpRequestHandler {
 
     public static func request(_ call: CAPPluginCall, _ httpMethod: String?) throws {
         guard let urlString = call.getString("url") else { throw URLError(.badURL) }
-        guard let method = httpMethod ?? call.getString("method") else { throw URLError(.dataNotAllowed) }
+        let method = httpMethod ?? call.getString("method", "GET")
 
         let headers = (call.getObject("headers") ?? [:]) as! [String: String]
         let params = (call.getObject("params") ?? [:]) as! [String: Any]
