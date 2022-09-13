@@ -28,6 +28,7 @@ public class BridgeWebViewClient extends WebViewClient {
         return bridge.launchIntent(url);
     }
 
+    @Deprecated
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         return bridge.launchIntent(Uri.parse(url));
@@ -55,6 +56,11 @@ public class BridgeWebViewClient extends WebViewClient {
                 listener.onReceivedError(view);
             }
         }
+
+        String errorPath = bridge.getErrorUrl();
+        if (errorPath != null && request.isForMainFrame()) {
+            view.loadUrl(errorPath);
+        }
     }
 
     @Override
@@ -79,6 +85,11 @@ public class BridgeWebViewClient extends WebViewClient {
             for (WebViewListener listener : bridge.getWebViewListeners()) {
                 listener.onReceivedHttpError(view);
             }
+        }
+
+        String errorPath = bridge.getErrorUrl();
+        if (errorPath != null && request.isForMainFrame()) {
+            view.loadUrl(errorPath);
         }
     }
 }

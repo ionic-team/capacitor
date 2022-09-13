@@ -211,6 +211,16 @@ export interface CapacitorConfig {
      * @default true
      */
     initialFocus?: boolean;
+
+    /**
+     * The minimum supported webview version on Android supported by your app.
+     *
+     * The minimum supported cannot be lower than version `55`, which is required for Capacitor.
+     *
+     * @since 4.0.0
+     * @default 60
+     */
+    minWebViewVersion?: number;
   };
 
   ios?: {
@@ -354,6 +364,18 @@ export interface CapacitorConfig {
      * @default false
      */
     limitsNavigationsToAppBoundDomains?: boolean;
+
+    /**
+     * The content mode for the web view to use when it loads and renders web content.
+     *
+     * - 'recommended': The content mode that is appropriate for the current device.
+     * - 'desktop': The content mode that represents a desktop experience.
+     * - 'mobile': The content mode that represents a mobile experience.
+     *
+     * @since 4.0.0
+     * @default recommended
+     */
+    preferredContentMode?: 'recommended' | 'desktop' | 'mobile';
   };
 
   server?: {
@@ -376,6 +398,7 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on iOS.
      *
+     * [Can't be set to schemes that the WKWebView already handles, such as http or https](https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/2875766-seturlschemehandler)
      * This can be useful when migrating from
      * [`cordova-plugin-ionic-webview`](https://github.com/ionic-team/cordova-plugin-ionic-webview),
      * where the default scheme on iOS is `ionic`.
@@ -431,6 +454,14 @@ export interface CapacitorConfig {
      * @default []
      */
     allowNavigation?: string[];
+
+    /**
+     * Specify path to a local html page to display in case of errors.
+     *
+     * @since 4.0.0
+     * @default null
+     */
+    errorPath?: string;
   };
 
   cordova?: {
@@ -485,8 +516,18 @@ export interface CapacitorConfig {
 export interface Portal {
   name: string;
   webDir: string;
-  appId?: string;
+  liveUpdateConfig?: LiveUpdateConfig;
 }
+
+export interface LiveUpdateConfig {
+  appId: string;
+  channel: string;
+  autoUpdateMethod: AutoUpdateMethod;
+  maxVersions?: number;
+  key?: string;
+}
+
+export type AutoUpdateMethod = 'none' | 'background';
 
 export interface PluginsConfig {
   /**
@@ -509,4 +550,11 @@ export interface PluginsConfig {
     shell: Portal;
     apps: Portal[];
   };
+
+  /**
+   * Capacitor Live Updates plugin configuration
+   *
+   * @since 4.2.0
+   */
+  LiveUpdates?: LiveUpdateConfig;
 }

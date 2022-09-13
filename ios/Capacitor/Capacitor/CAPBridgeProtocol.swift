@@ -70,6 +70,7 @@ import WebKit
     // MARK: - Paths, Files, Assets
     func localURL(fromWebURL webURL: URL?) -> URL?
     func portablePath(fromLocalURL localURL: URL?) -> URL?
+    func setServerBasePath(_ path: String)
 
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)

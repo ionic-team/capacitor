@@ -188,6 +188,7 @@ export interface WindowCapacitor {
   WEBVIEW_SERVER_URL?: string;
   androidBridge?: {
     postMessage(data: string): void;
+    onmessage?: (event: { data: string }) => void;
   };
   webkit?: {
     messageHandlers?: {

@@ -97,7 +97,7 @@ internal class JSExport {
             let methods = [
                 PluginHeaderMethod(name: "addListener", rtype: nil),
                 PluginHeaderMethod(name: "removeListener", rtype: nil),
-                PluginHeaderMethod(name: "removeAllListeners", rtype: nil),
+                PluginHeaderMethod(name: "removeAllListeners", rtype: "promise"),
                 PluginHeaderMethod(name: "checkPermissions", rtype: "promise"),
                 PluginHeaderMethod(name: "requestPermissions", rtype: "promise")
             ]

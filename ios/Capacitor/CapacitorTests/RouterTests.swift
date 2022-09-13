@@ -10,21 +10,30 @@ import XCTest
 @testable import Capacitor
 
 class RouterTests: XCTestCase {
-    let router = _Router()
     
     func testRouterReturnsIndexWhenProvidedEmptyPath() {
-        XCTAssertEqual(router.route(for: ""), "/index.html")
+        checkRouter(path: "", expected: "/index.html")
     }
     
     func testRouterReturnsIndexWhenProviedPathWithoutExtension() {
-        XCTAssertEqual(router.route(for: "/a/valid/path/no/ext"), "/index.html")
+        checkRouter(path: "/a/valid/path/no/ext", expected: "/index.html")
     }
     
     func testRouterReturnsPathWhenProvidedValidPath() {
-        XCTAssertEqual(router.route(for: "/a/valid/path.ext"), "/a/valid/path.ext")
+        checkRouter(path: "/a/valid/path.ext", expected: "/a/valid/path.ext")
     }
     
     func testRouterReturnsPathWhenProvidedValidPathWithExtensionAndSpaces() {
-        XCTAssertEqual(router.route(for: "/a/valid/file path.ext"), "/a/valid/file path.ext")
+        checkRouter(path: "/a/valid/file path.ext", expected: "/a/valid/file path.ext")
     }
+    
+    func checkRouter(path: String, expected: String) {
+        XCTContext.runActivity(named: "router creates route path correctly") { _ in
+            var router = _Router()
+            XCTAssertEqual(router.route(for: path), expected)
+            router.basePath = "/A/Route"
+            XCTAssertEqual(router.route(for: path), "/A/Route" + expected)
+        }
+    }
+    
 }

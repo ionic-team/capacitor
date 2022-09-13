@@ -46,9 +46,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         // Reset the bridge on each navigation
         bridge?.reset()
     }
-    
-    // TODO: remove once Xcode 12 support is dropped
-    #if compiler(>=5.5)
+
     @available(iOS 15, *)
     func webView(
         _ webView: WKWebView,
@@ -62,12 +60,11 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     @available(iOS 15, *)
     func webView(_ webView: WKWebView,
-    requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
-         initiatedByFrame frame: WKFrameInfo,
-          decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+                 requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
+                 initiatedByFrame frame: WKFrameInfo,
+                 decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(.grant)
     }
-    #endif
 
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         // post a notification for any listeners
@@ -105,7 +102,12 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
         // otherwise, is this a new window or a main frame navigation but to an outside source
         let toplevelNavigation = (navigationAction.targetFrame == nil || navigationAction.targetFrame?.isMainFrame == true)
-        if navURL.absoluteString.contains(bridge.config.serverURL.absoluteString) == false, toplevelNavigation {
+
+        // Check if the url being navigated to is configured as an application url (whether local or remote)
+        let isApplicationNavigation = navURL.absoluteString.starts(with: bridge.config.serverURL.absoluteString) ||
+            navURL.absoluteString.starts(with: bridge.config.localURL.absoluteString)
+
+        if !isApplicationNavigation, toplevelNavigation {
             // disallow and let the system handle it
             if UIApplication.shared.applicationState == .active {
                 UIApplication.shared.open(navURL, options: [:], completionHandler: nil)
@@ -135,6 +137,11 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
             webView.isOpaque = isOpaque
             webViewLoadingState = .subsequentLoad
         }
+
+        if let errorURL = bridge?.config.errorPathURL {
+            webView.load(URLRequest(url: errorURL))
+        }
+
         CAPLog.print("⚡️  WebView failed to load")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
     }
@@ -142,6 +149,10 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     // The force unwrap is part of the protocol declaration, so we should keep it.
     // swiftlint:disable:next implicitly_unwrapped_optional
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        if let errorURL = bridge?.config.errorPathURL {
+            webView.load(URLRequest(url: errorURL))
+        }
+
         CAPLog.print("⚡️  WebView failed provisional navigation")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
     }
