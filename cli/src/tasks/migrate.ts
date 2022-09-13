@@ -48,6 +48,7 @@ const plugins = [
 ];
 const coreVersion = '^4.0.0';
 const pluginVersion = '^4.0.0';
+const gradleVersion = '7.4.2';
 
 export async function migrateCommand(config: Config): Promise<void> {
   if (config === null) {
@@ -246,7 +247,7 @@ export async function migrateCommand(config: Config): Promise<void> {
 
         // Update gradle-wrapper.properties
         await runTask(
-          `Migrating gradle-wrapper.properties by updating gradle version from 7.0 to 7.4.2.`,
+          `Migrating gradle-wrapper.properties by updating gradle version from 7.0 to ${gradleVersion}.`,
           () => {
             return updateGradleWrapper(
               join(
@@ -358,7 +359,7 @@ export async function migrateCommand(config: Config): Promise<void> {
             `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
               `chmod +x ./${config.android.platformDir}/gradlew`,
             )} and ${c.input(
-              `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version 7.4.2 --warning-mode all`,
+              `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version ${gradleVersion} --warning-mode all`,
             )} to update the files manually`,
           );
         } else {
@@ -679,7 +680,7 @@ async function updateGradleWrapper(filename: string) {
     'distributionUrl=',
     '\n',
     // eslint-disable-next-line no-useless-escape
-    `https\\://services.gradle.org/distributions/gradle-7.4.2-all.zip`,
+    `https\\://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip`,
   );
   writeFileSync(filename, replaced, 'utf-8');
 }
@@ -692,7 +693,7 @@ async function updateGradleWrapperFiles(platformDir: string) {
       '--distribution-type',
       'all',
       '--gradle-version',
-      '7.4.2',
+      gradleVersion,
       '--warning-mode',
       'all',
     ],
