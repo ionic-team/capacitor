@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/ionic-team/capacitor/compare/4.1.0...4.2.0) (2022-09-08)
+
+
+### Features
+
+* **cli:** add inline option to copy command ([#5901](https://github.com/ionic-team/capacitor/issues/5901)) ([17fbabb](https://github.com/ionic-team/capacitor/commit/17fbabb2a77d1b356d24048efc5883bd4d049104))
+* **cli:** add scheme and flavor options to run command ([#5873](https://github.com/ionic-team/capacitor/issues/5873)) ([e4c143d](https://github.com/ionic-team/capacitor/commit/e4c143d4da653533570215964808c2f32f5469d3))
+* **cli:** copy signature when using secure live updates ([#5896](https://github.com/ionic-team/capacitor/issues/5896)) ([0f17177](https://github.com/ionic-team/capacitor/commit/0f17177b1c64c0f69f86e990e4e150b820da497b))
+
+
+
+
+
 # [4.1.0](https://github.com/ionic-team/capacitor/compare/4.0.1...4.1.0) (2022-08-18)
 
 
