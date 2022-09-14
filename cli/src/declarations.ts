@@ -436,6 +436,7 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on iOS.
      *
+     * [Can't be set to schemes that the WKWebView already handles, such as http or https](https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/2875766-seturlschemehandler)
      * This can be useful when migrating from
      * [`cordova-plugin-ionic-webview`](https://github.com/ionic-team/cordova-plugin-ionic-webview),
      * where the default scheme on iOS is `ionic`.
@@ -561,6 +562,7 @@ export interface LiveUpdateConfig {
   channel: string;
   autoUpdateMethod: AutoUpdateMethod;
   maxVersions?: number;
+  key?: string;
 }
 
 export type AutoUpdateMethod = 'none' | 'background';
@@ -586,4 +588,11 @@ export interface PluginsConfig {
     shell: Portal;
     apps: Portal[];
   };
+
+  /**
+   * Capacitor Live Updates plugin configuration
+   *
+   * @since 4.2.0
+   */
+  LiveUpdates?: LiveUpdateConfig;
 }

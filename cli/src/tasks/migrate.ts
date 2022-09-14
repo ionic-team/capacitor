@@ -2,12 +2,13 @@ import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
 
+import c from '../colors';
 import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
-import { getCommandOutput } from '../util/subprocess';
+import { runCommand, getCommandOutput } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 import { readXML } from '../util/xml';
 
@@ -47,6 +48,7 @@ const plugins = [
 ];
 const coreVersion = '^4.0.0';
 const pluginVersion = '^4.0.0';
+const gradleVersion = '7.4.2';
 
 export async function migrateCommand(config: Config): Promise<void> {
   if (config === null) {
@@ -105,16 +107,32 @@ export async function migrateCommand(config: Config): Promise<void> {
         typeof npmInstallConfirm === 'string' &&
         npmInstallConfirm.toLowerCase() === 'y';
 
-      await runTask(`Installing Latest NPM Modules.`, () => {
-        return installLatestNPMLibs(runNpmInstall, config);
-      });
+      try {
+        await runTask(`Installing Latest NPM Modules.`, () => {
+          return installLatestNPMLibs(runNpmInstall, config);
+        });
+      } catch (ex) {
+        logger.error(
+          `npm install failed. Try deleting node_modules folder and running ${c.input(
+            'npm install --force',
+          )} manually.`,
+        );
+      }
 
-      await runTask(
-        `Migrating @capacitor/storage to @capacitor/preferences.`,
-        () => {
-          return migrateStoragePluginToPreferences(runNpmInstall);
-        },
-      );
+      try {
+        await runTask(
+          `Migrating @capacitor/storage to @capacitor/preferences.`,
+          () => {
+            return migrateStoragePluginToPreferences(runNpmInstall);
+          },
+        );
+      } catch (ex) {
+        logger.error(
+          `@capacitor/preferences failed to install. Try deleting node_modules folder and running ${c.input(
+            'npm install @capacitor/preferences --force',
+          )} manually.`,
+        );
+      }
 
       if (
         allDependencies['@capacitor/ios'] &&
@@ -229,7 +247,7 @@ export async function migrateCommand(config: Config): Promise<void> {
 
         // Update gradle-wrapper.properties
         await runTask(
-          `Migrating gradle-wrapper.properties by updating gradle version from 7.0 to 7.4.2.`,
+          `Migrating gradle-wrapper.properties by updating gradle version from 7.0 to ${gradleVersion}.`,
           () => {
             return updateGradleWrapper(
               join(
@@ -331,6 +349,24 @@ export async function migrateCommand(config: Config): Promise<void> {
         return getCommandOutput('npx', ['cap', 'sync']);
       });
 
+      try {
+        await runTask(`Upgrading gradle wrapper files`, () => {
+          return updateGradleWrapperFiles(config.android.platformDirAbs);
+        });
+      } catch (e) {
+        if (e.includes('EACCES')) {
+          logger.error(
+            `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
+              `chmod +x ./${config.android.platformDir}/gradlew`,
+            )} and ${c.input(
+              `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version ${gradleVersion} --warning-mode all`,
+            )} to update the files manually`,
+          );
+        } else {
+          logger.error(`gradle wrapper files were not updated`);
+        }
+      }
+
       // Write all breaking changes
       await runTask(`Writing breaking changes.`, () => {
         return writeBreakingChanges();
@@ -376,9 +412,8 @@ async function installLatestNPMLibs(runInstall: boolean, config: Config) {
   });
 
   if (runInstall) {
-    rimraf.sync(join(config.app.rootDir, 'package-lock.json'));
     rimraf.sync(join(config.app.rootDir, 'node_modules/@capacitor/!(cli)'));
-    await getCommandOutput('npm', ['i']);
+    await runCommand('npm', ['i']);
   } else {
     logger.info(
       `Please run an install command with your package manager of choice. (ex: yarn install)`,
@@ -393,10 +428,7 @@ async function migrateStoragePluginToPreferences(runInstall: boolean) {
     );
     if (runInstall) {
       await getCommandOutput('npm', ['uninstall', '@capacitor/storage']);
-      await getCommandOutput('npm', [
-        'i',
-        `@capacitor/preferences@${pluginVersion}`,
-      ]);
+      await runCommand('npm', ['i', `@capacitor/preferences@${pluginVersion}`]);
     } else {
       logger.info(
         `Please manually uninstall @capacitor/storage and replace it with @capacitor/preferences@${pluginVersion}`,
@@ -648,9 +680,27 @@ async function updateGradleWrapper(filename: string) {
     'distributionUrl=',
     '\n',
     // eslint-disable-next-line no-useless-escape
-    `https\\://services.gradle.org/distributions/gradle-7.4.2-all.zip`,
+    `https\\://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip`,
   );
   writeFileSync(filename, replaced, 'utf-8');
+}
+
+async function updateGradleWrapperFiles(platformDir: string) {
+  await runCommand(
+    `./gradlew`,
+    [
+      'wrapper',
+      '--distribution-type',
+      'all',
+      '--gradle-version',
+      gradleVersion,
+      '--warning-mode',
+      'all',
+    ],
+    {
+      cwd: platformDir,
+    },
+  );
 }
 
 async function updateFile(

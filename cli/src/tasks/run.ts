@@ -19,6 +19,8 @@ import { getPlatformTargets } from '../util/native-run';
 import { sync } from './sync';
 
 export interface RunCommandOptions {
+  scheme?: string;
+  flavor?: string;
   list?: boolean;
   target?: string;
   sync?: boolean;
