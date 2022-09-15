@@ -15,19 +15,23 @@ export async function buildiOS(
   const theScheme = buildOptions.scheme ?? 'App';
 
   await runTask('Building xArchive', async () =>
-    runCommand('xcodebuild', [
-      '-workspace',
-      `${theScheme}.xcworkspace`,
-      '-scheme',
-      `${theScheme}`,
-      '-destination',
-      `generic/platform=iOS`,
-      '-archivePath',
-      `${theScheme}.xcarchive`,
-      'archive'
-    ], {
-      cwd: config.ios.nativeProjectDirAbs,
-    }),
+    runCommand(
+      'xcodebuild',
+      [
+        '-workspace',
+        `${theScheme}.xcworkspace`,
+        '-scheme',
+        `${theScheme}`,
+        '-destination',
+        `generic/platform=iOS`,
+        '-archivePath',
+        `${theScheme}.xcarchive`,
+        'archive',
+      ],
+      {
+        cwd: config.ios.nativeProjectDirAbs,
+      },
+    ),
   );
 
   const archivePlistContents = `<?xml version="1.0" encoding="UTF-8"?>
@@ -39,30 +43,42 @@ export async function buildiOS(
 </dict>
 </plist>`;
 
-  const archivePlistPath = join(`${config.ios.nativeProjectDirAbs}`, 'archive.plist');
+  const archivePlistPath = join(
+    `${config.ios.nativeProjectDirAbs}`,
+    'archive.plist',
+  );
 
   writeFileSync(archivePlistPath, archivePlistContents);
 
   await runTask('Building IPA', async () =>
-    runCommand('xcodebuild', [
-      'archive',
-      '-archivePath',
-      `${theScheme}.xcarchive`,
-      '-exportArchive',
-      '-exportOptionsPlist',
-      'archive.plist',
-      '-exportPath',
-      'output',
-      '-allowProvisioningUpdates'
-    ], {
-      cwd: config.ios.nativeProjectDirAbs,
-    }),
+    runCommand(
+      'xcodebuild',
+      [
+        'archive',
+        '-archivePath',
+        `${theScheme}.xcarchive`,
+        '-exportArchive',
+        '-exportOptionsPlist',
+        'archive.plist',
+        '-exportPath',
+        'output',
+        '-allowProvisioningUpdates',
+      ],
+      {
+        cwd: config.ios.nativeProjectDirAbs,
+      },
+    ),
   );
-  
+
   await runTask('Cleaning up', async () => {
     unlinkSync(archivePlistPath);
     rimraf.sync(join(config.ios.nativeProjectDirAbs, `${theScheme}.xcarchive`));
   });
 
-  logSuccess(`Successfully generated an IPA at: ${join(config.ios.nativeProjectDirAbs, 'output')}`);
+  logSuccess(
+    `Successfully generated an IPA at: ${join(
+      config.ios.nativeProjectDirAbs,
+      'output',
+    )}`,
+  );
 }

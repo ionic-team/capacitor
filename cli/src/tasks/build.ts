@@ -30,8 +30,7 @@ export async function buildCommand(
   }
 
   const buildCommandOptions: BuildCommandOptions = {
-    scheme: 
-      buildOptions.scheme || config.ios.scheme,
+    scheme: buildOptions.scheme || config.ios.scheme,
     keystorepath:
       buildOptions.keystorepath || config.android.buildOptions.keystorePath,
     keystorepass:
