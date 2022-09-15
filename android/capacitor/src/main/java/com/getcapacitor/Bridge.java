@@ -1299,6 +1299,7 @@ public class Bridge {
 
     public void setWebViewClient(BridgeWebViewClient client) {
         this.webViewClient = client;
+        webView.setWebViewClient(client);
     }
 
     List<WebViewListener> getWebViewListeners() {
