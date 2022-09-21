@@ -1,5 +1,3 @@
-/// <reference types="../../cli" />
-
 import type { Plugin } from './definitions';
 import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
@@ -116,19 +114,6 @@ export const CapacitorCookies = registerPlugin<CapacitorCookiesPlugin>(
 /******** END COOKIES PLUGIN ********/
 
 /******** HTTP PLUGIN ********/
-declare module '../../cli' {
-  export interface PluginsConfig {
-    CapacitorHttp?: {
-      /**
-       * Enable CapacitorHttp to override the global fetch and XMLHttpRequest
-       *
-       * @default false
-       */
-      enabled?: boolean;
-    };
-  }
-}
-
 export interface CapacitorHttpPlugin {
   request(options: HttpOptions): Promise<HttpResponse>;
   get(options: HttpOptions): Promise<HttpResponse>;

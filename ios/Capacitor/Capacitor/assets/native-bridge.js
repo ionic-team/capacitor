@@ -2,7 +2,7 @@
 /*! Capacitor: https://capacitorjs.com/ - MIT License */
 /* Generated File. Do not edit. */
 
-var nativeBridge = (function (exports) {
+const nativeBridge = (function (exports) {
     'use strict';
 
     var ExceptionCode;
@@ -279,36 +279,57 @@ var nativeBridge = (function (exports) {
                 win.CapacitorCookiesDescriptor =
                     Object.getOwnPropertyDescriptor(Document.prototype, 'cookie') ||
                         Object.getOwnPropertyDescriptor(HTMLDocument.prototype, 'cookie');
-                Object.defineProperty(document, 'cookie', {
-                    get: function () {
-                        if (platform === 'ios') {
-                            // Use prompt to synchronously get cookies.
-                            // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
-                            const payload = {
-                                type: 'CapacitorCookies',
-                            };
-                            const res = prompt(JSON.stringify(payload));
-                            return res;
-                        }
-                        else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
-                            return win.CapacitorCookiesAndroidInterface.getCookies();
-                        }
-                    },
-                    set: function (val) {
-                        const cookiePairs = val.split(';');
-                        for (const cookiePair of cookiePairs) {
-                            const cookieKey = cookiePair.split('=')[0];
-                            const cookieValue = cookiePair.split('=')[1];
-                            if (null == cookieValue) {
-                                continue;
+                let doPatchCookies = false;
+                // check if capacitor cookies is disabled before patching
+                if (platform === 'ios') {
+                    // Use prompt to synchronously get capacitor cookies config.
+                    // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                    const payload = {
+                        type: 'CapacitorCookies.isEnabled',
+                    };
+                    const isCookiesEnabled = prompt(JSON.stringify(payload));
+                    if (isCookiesEnabled === 'true') {
+                        doPatchCookies = true;
+                    }
+                }
+                else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
+                    const isCookiesEnabled = win.CapacitorCookiesAndroidInterface.isEnabled();
+                    if (isCookiesEnabled === true) {
+                        doPatchCookies = true;
+                    }
+                }
+                if (doPatchCookies) {
+                    Object.defineProperty(document, 'cookie', {
+                        get: function () {
+                            if (platform === 'ios') {
+                                // Use prompt to synchronously get cookies.
+                                // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                                const payload = {
+                                    type: 'CapacitorCookies',
+                                };
+                                const res = prompt(JSON.stringify(payload));
+                                return res;
                             }
-                            cap.toNative('CapacitorCookies', 'setCookie', {
-                                key: cookieKey,
-                                value: decode(cookieValue),
-                            });
-                        }
-                    },
-                });
+                            else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
+                                return win.CapacitorCookiesAndroidInterface.getCookies();
+                            }
+                        },
+                        set: function (val) {
+                            const cookiePairs = val.split(';');
+                            for (const cookiePair of cookiePairs) {
+                                const cookieKey = cookiePair.split('=')[0];
+                                const cookieValue = cookiePair.split('=')[1];
+                                if (null == cookieValue) {
+                                    continue;
+                                }
+                                cap.toNative('CapacitorCookies', 'setCookie', {
+                                    key: cookieKey,
+                                    value: decode(cookieValue),
+                                });
+                            }
+                        },
+                    });
+                }
                 // patch fetch / XHR on Android/iOS
                 // store original fetch & XHR functions
                 win.CapacitorWebFetch = window.fetch;
@@ -326,14 +347,14 @@ var nativeBridge = (function (exports) {
                     const payload = {
                         type: 'CapacitorHttp',
                     };
-                    const isEnabled = prompt(JSON.stringify(payload));
-                    if (isEnabled === 'true') {
+                    const isHttpEnabled = prompt(JSON.stringify(payload));
+                    if (isHttpEnabled === 'true') {
                         doPatchHttp = true;
                     }
                 }
                 else if (typeof win.CapacitorHttpAndroidInterface !== 'undefined') {
-                    const isEnabled = win.CapacitorHttpAndroidInterface.isEnabled();
-                    if (isEnabled === true) {
+                    const isHttpEnabled = win.CapacitorHttpAndroidInterface.isEnabled();
+                    if (isHttpEnabled === true) {
                         doPatchHttp = true;
                     }
                 }

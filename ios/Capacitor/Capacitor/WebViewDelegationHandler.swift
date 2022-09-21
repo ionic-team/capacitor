@@ -254,6 +254,11 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
                         completionHandler(CapacitorCookieManager(bridge!.config).getCookies())
                         // Don't present prompt
                         return
+                    } else if type == "CapacitorCookies.isEnabled" {
+                        let pluginConfig = bridge!.config.getPluginConfig("CapacitorCookies")
+                        completionHandler(String(pluginConfig.getBoolean("enabled", false)))
+                        // Don't present prompt
+                        return
                     } else if type == "CapacitorHttp" {
                         let pluginConfig = bridge!.config.getPluginConfig("CapacitorHttp")
                         completionHandler(String(pluginConfig.getBoolean("enabled", false)))

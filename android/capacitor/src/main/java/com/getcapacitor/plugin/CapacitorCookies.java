@@ -9,6 +9,7 @@ import com.getcapacitor.CapConfig;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
+import com.getcapacitor.PluginConfig;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import java.net.CookieHandler;
@@ -26,6 +27,12 @@ public class CapacitorCookies extends Plugin {
         this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
         super.load();
+    }
+
+    @JavascriptInterface
+    public boolean isEnabled() {
+        PluginConfig pluginConfig = getBridge().getConfig().getPluginConfiguration("CapacitorCookies");
+        return pluginConfig.getBoolean("enabled", false);
     }
 
     /**
