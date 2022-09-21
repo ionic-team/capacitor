@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -371,7 +372,7 @@ public class HttpRequestHandler {
         Boolean shouldEncode = call.getBoolean("shouldEncodeUrlParams", true);
         ResponseType responseType = ResponseType.parse(call.getString("responseType"));
 
-        String method = httpMethod != null ? httpMethod.toUpperCase() : call.getString("method", "GET").toUpperCase();
+        String method = httpMethod != null ? httpMethod.toUpperCase(Locale.ROOT) : call.getString("method", "GET").toUpperCase(Locale.ROOT);
 
         boolean isHttpMutate = method.equals("DELETE") || method.equals("PATCH") || method.equals("POST") || method.equals("PUT");
 
