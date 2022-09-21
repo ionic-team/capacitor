@@ -120,11 +120,11 @@ declare module '../../cli' {
   export interface PluginsConfig {
     CapacitorHttp?: {
       /**
-       * Disable CapacitorHttp from monkey patching the global fetch and XMLHttpRequest
+       * Enable CapacitorHttp to override the global fetch and XMLHttpRequest
        *
        * @default false
        */
-      disabled?: boolean;
+      enabled?: boolean;
     };
   }
 }
@@ -196,6 +196,26 @@ export interface HttpResponse {
 }
 
 // UTILITY FUNCTIONS
+
+/**
+ * Read in a Blob value and return it as a base64 string
+ * @param blob The blob value to convert to a base64 string
+ */
+export const readBlobAsBase64 = async (blob: Blob): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result as string;
+      // remove prefix "data:application/pdf;base64,"
+      resolve(
+        base64String.indexOf(',') >= 0
+          ? base64String.split(',')[1]
+          : base64String,
+      );
+    };
+    reader.onerror = (error: any) => reject(error);
+    reader.readAsDataURL(blob);
+  });
 
 /**
  * Normalize an HttpHeaders map by lowercasing all of the values
@@ -331,10 +351,12 @@ export class CapacitorHttpPluginWeb
     }
 
     let data: any;
+    let blob: any;
     switch (responseType) {
       case 'arraybuffer':
       case 'blob':
-        //TODO: Add Blob Support
+        blob = await response.blob();
+        data = await readBlobAsBase64(blob);
         break;
       case 'json':
         data = await response.json();

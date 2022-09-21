@@ -313,7 +313,8 @@ const nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
-                        if (resource.toString().startsWith('data:')) {
+                        if (resource.toString().startsWith('data:') ||
+                            resource.toString().startsWith('blob:')) {
                             return win.CapacitorWebFetch(resource, options);
                         }
                         try {
@@ -324,8 +325,11 @@ const nativeBridge = (function (exports) {
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
                                 headers: (options === null || options === void 0 ? void 0 : options.headers) ? options.headers : undefined,
                             });
+                            const data = typeof nativeResponse.data === 'string'
+                                ? nativeResponse.data
+                                : JSON.stringify(nativeResponse.data);
                             // intercept & parse response before returning
-                            const response = new Response(JSON.stringify(nativeResponse.data), {
+                            const response = new Response(data, {
                                 headers: nativeResponse.headers,
                                 status: nativeResponse.status,
                             });
@@ -431,9 +435,13 @@ const nativeBridge = (function (exports) {
                                 // intercept & parse response before returning
                                 if (this.readyState == 2) {
                                     this.dispatchEvent(new Event('loadstart'));
+                                    this._headers = nativeResponse.headers;
                                     this.status = nativeResponse.status;
                                     this.response = nativeResponse.data;
-                                    this.responseText = JSON.stringify(nativeResponse.data);
+                                    this.responseText =
+                                        typeof nativeResponse.data === 'string'
+                                            ? nativeResponse.data
+                                            : JSON.stringify(nativeResponse.data);
                                     this.responseURL = nativeResponse.url;
                                     this.readyState = 4;
                                     this.dispatchEvent(new Event('load'));
@@ -443,6 +451,7 @@ const nativeBridge = (function (exports) {
                                 .catch((error) => {
                                 this.dispatchEvent(new Event('loadstart'));
                                 this.status = error.status;
+                                this._headers = error.headers;
                                 this.response = error.data;
                                 this.responseText = JSON.stringify(error.data);
                                 this.responseURL = error.url;
@@ -454,6 +463,7 @@ const nativeBridge = (function (exports) {
                         catch (error) {
                             this.dispatchEvent(new Event('loadstart'));
                             this.status = 500;
+                            this._headers = {};
                             this.response = error;
                             this.responseText = error.toString();
                             this.responseURL = this._url;
@@ -461,6 +471,20 @@ const nativeBridge = (function (exports) {
                             this.dispatchEvent(new Event('error'));
                             this.dispatchEvent(new Event('loadend'));
                         }
+                    };
+                    // XHR patch getAllResponseHeaders
+                    window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
+                        let returnString = '';
+                        for (const key in this._headers) {
+                            if (key != 'Set-Cookie') {
+                                returnString += key + ': ' + this._headers[key] + '\r\n';
+                            }
+                        }
+                        return returnString;
+                    };
+                    // XHR patch getResponseHeader
+                    window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
+                        return this._headers[name];
                     };
                 }
             }

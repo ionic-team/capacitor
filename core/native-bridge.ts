@@ -376,7 +376,10 @@ const initBridge = (w: any): void => {
           resource: RequestInfo | URL,
           options?: RequestInit,
         ) => {
-          if (resource.toString().startsWith('data:')) {
+          if (
+            resource.toString().startsWith('data:') ||
+            resource.toString().startsWith('blob:')
+          ) {
             return win.CapacitorWebFetch(resource, options);
           }
 
@@ -393,8 +396,12 @@ const initBridge = (w: any): void => {
               },
             );
 
+            const data =
+              typeof nativeResponse.data === 'string'
+                ? nativeResponse.data
+                : JSON.stringify(nativeResponse.data);
             // intercept & parse response before returning
-            const response = new Response(JSON.stringify(nativeResponse.data), {
+            const response = new Response(data, {
               headers: nativeResponse.headers,
               status: nativeResponse.status,
             });
@@ -513,9 +520,13 @@ const initBridge = (w: any): void => {
                 // intercept & parse response before returning
                 if (this.readyState == 2) {
                   this.dispatchEvent(new Event('loadstart'));
+                  this._headers = nativeResponse.headers;
                   this.status = nativeResponse.status;
                   this.response = nativeResponse.data;
-                  this.responseText = JSON.stringify(nativeResponse.data);
+                  this.responseText =
+                    typeof nativeResponse.data === 'string'
+                      ? nativeResponse.data
+                      : JSON.stringify(nativeResponse.data);
                   this.responseURL = nativeResponse.url;
                   this.readyState = 4;
                   this.dispatchEvent(new Event('load'));
@@ -525,6 +536,7 @@ const initBridge = (w: any): void => {
               .catch((error: any) => {
                 this.dispatchEvent(new Event('loadstart'));
                 this.status = error.status;
+                this._headers = error.headers;
                 this.response = error.data;
                 this.responseText = JSON.stringify(error.data);
                 this.responseURL = error.url;
@@ -535,6 +547,7 @@ const initBridge = (w: any): void => {
           } catch (error) {
             this.dispatchEvent(new Event('loadstart'));
             this.status = 500;
+            this._headers = {};
             this.response = error;
             this.responseText = error.toString();
             this.responseURL = this._url;
@@ -542,6 +555,22 @@ const initBridge = (w: any): void => {
             this.dispatchEvent(new Event('error'));
             this.dispatchEvent(new Event('loadend'));
           }
+        };
+
+        // XHR patch getAllResponseHeaders
+        window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
+          let returnString = '';
+          for (const key in this._headers) {
+            if (key != 'Set-Cookie') {
+              returnString += key + ': ' + this._headers[key] + '\r\n';
+            }
+          }
+          return returnString;
+        };
+
+        // XHR patch getResponseHeader
+        window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
+          return this._headers[name];
         };
       }
     }
