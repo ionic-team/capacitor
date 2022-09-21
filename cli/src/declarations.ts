@@ -566,7 +566,7 @@ export interface PluginsConfig {
   /**
    * Capacitor Cookies plugin configuration
    *
-   * @since 4.2.0
+   * @since 4.3.0
    */
   CapacitorCookies?: {
     /**
@@ -580,7 +580,7 @@ export interface PluginsConfig {
   /**
    * Capacitor Http plugin configuration
    *
-   * @since 4.2.0
+   * @since 4.3.0
    */
   CapacitorHttp?: {
     /**
