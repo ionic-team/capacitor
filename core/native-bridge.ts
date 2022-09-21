@@ -11,6 +11,7 @@ import type {
   PluginResult,
   WindowCapacitor,
 } from './src/definitions-internal';
+import { CapacitorException } from './src/util';
 
 // For removing exports for iOS/Android, keep let for reassignment
 // eslint-disable-next-line
@@ -840,6 +841,8 @@ const initBridge = (w: any): void => {
     };
 
     cap.withPlugin = (_pluginId, _fn) => dummy;
+
+    cap.Exception = CapacitorException;
 
     initEvents(win, cap);
     initLegacyHandlers(win, cap);

@@ -353,6 +353,12 @@ export async function logCordovaManualSteps(
 
 async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
   let plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+  if (config.app.extConfig.ios?.scheme) {
+    plistPath = resolve(
+      config.ios.nativeProjectDirAbs,
+      `${config.app.extConfig.ios?.scheme}-Info.plist`,
+    );
+  }
   if (!(await pathExists(plistPath))) {
     plistPath = resolve(
       config.ios.nativeTargetDirAbs,
