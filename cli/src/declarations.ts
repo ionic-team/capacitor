@@ -562,4 +562,32 @@ export interface PluginsConfig {
    * @since 4.2.0
    */
   LiveUpdates?: LiveUpdateConfig;
+
+  /**
+   * Capacitor Cookies plugin configuration
+   *
+   * @since 4.3.0
+   */
+  CapacitorCookies?: {
+    /**
+     * Enable CapacitorCookies to override the global `document.cookie` on native.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+  };
+
+  /**
+   * Capacitor Http plugin configuration
+   *
+   * @since 4.3.0
+   */
+  CapacitorHttp?: {
+    /**
+     * Enable CapacitorHttp to override the global `fetch` and `XMLHttpRequest` on native.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+  };
 }
