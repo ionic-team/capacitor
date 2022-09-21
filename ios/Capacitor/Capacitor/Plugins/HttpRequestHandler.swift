@@ -50,10 +50,10 @@ class HttpRequestHandler {
         ///     - urlString: The URL value to parse
         /// - Returns: self to continue chaining functions
         public func setUrl(_ urlString: String) throws -> CapacitorHttpRequestBuilder {
-            guard let u = URL(string: urlString) else {
+            guard let url = URL(string: urlString) else {
                 throw URLError(.badURL)
             }
-            url = u
+            self.url = url
             return self
         }
 
@@ -64,6 +64,7 @@ class HttpRequestHandler {
 
         public func setUrlParams(_ params: [String: Any]) -> CapacitorHttpRequestBuilder {
             if params.count != 0 {
+                // swiftlint:disable force_cast
                 var cmps = URLComponents(url: url!, resolvingAgainstBaseURL: true)
                 if cmps?.queryItems == nil {
                     cmps?.queryItems = []
@@ -125,13 +126,14 @@ class HttpRequestHandler {
         guard let urlString = call.getString("url") else { throw URLError(.badURL) }
         let method = httpMethod ?? call.getString("method", "GET")
 
+        // swiftlint:disable force_cast
         let headers = (call.getObject("headers") ?? [:]) as! [String: String]
-        let params = (call.getObject("params") ?? [:]) as! [String: Any]
+        let params = (call.getObject("params") ?? [:]) as [String: Any]
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")
         let readTimeout = call.getDouble("readTimeout")
 
-        let request = try! CapacitorHttpRequestBuilder()
+        let request = try CapacitorHttpRequestBuilder()
             .setUrl(urlString)
             .setMethod(method)
             .setUrlParams(params)
