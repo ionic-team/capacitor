@@ -17,7 +17,7 @@ export interface CapacitorGlobal {
   /**
    * Gets the name of the platform, such as `android`, `ios`, or `web`.
    */
-  getPlatform: () => string;
+  getPlatform: () => PlatformType;
 
   /**
    * Boolean if the platform is native or not. `android` and `ios`
@@ -126,6 +126,11 @@ export type PermissionState =
   | 'prompt-with-rationale'
   | 'granted'
   | 'denied';
+
+export type PlatformType = 
+  | 'android'
+  | 'web'
+  | 'ios'
 
 export interface PluginListenerHandle {
   remove: () => Promise<void>;
