@@ -402,11 +402,7 @@ const initBridge = (w: any): void => {
           resource: RequestInfo | URL,
           options?: RequestInit,
         ) => {
-          if (
-            resource.toString().startsWith('data:') ||
-            resource.toString().startsWith('blob:') ||
-            !resource.toString().startsWith('http')
-          ) {
+          if (!resource.toString().startsWith('http')) {
             return win.CapacitorWebFetch(resource, options);
           }
 
