@@ -369,6 +369,9 @@ const initBridge = (w: any): void => {
       win.CapacitorWebFetch = window.fetch;
       win.CapacitorWebXMLHttpRequest = {
         abort: window.XMLHttpRequest.prototype.abort,
+        getAllResponseHeaders:
+          window.XMLHttpRequest.prototype.getAllResponseHeaders,
+        getResponseHeader: window.XMLHttpRequest.prototype.getResponseHeader,
         open: window.XMLHttpRequest.prototype.open,
         send: window.XMLHttpRequest.prototype.send,
         setRequestHeader: window.XMLHttpRequest.prototype.setRequestHeader,
@@ -403,8 +406,10 @@ const initBridge = (w: any): void => {
           options?: RequestInit,
         ) => {
           if (
-            resource.toString().startsWith('data:') ||
-            resource.toString().startsWith('blob:')
+            !(
+              resource.toString().startsWith('http:') ||
+              resource.toString().startsWith('https:')
+            )
           ) {
             return win.CapacitorWebFetch(resource, options);
           }
@@ -472,6 +477,12 @@ const initBridge = (w: any): void => {
 
         // XHR patch abort
         window.XMLHttpRequest.prototype.abort = function () {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.abort.call(this);
+          }
           this.readyState = 0;
           this.dispatchEvent(new Event('abort'));
           this.dispatchEvent(new Event('loadend'));
@@ -482,9 +493,21 @@ const initBridge = (w: any): void => {
           method: string,
           url: string,
         ) {
+          this._url = url;
+
+          if (
+            !(url.startsWith('http:') || url.toString().startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
+          }
+
           Object.defineProperties(this, {
             _headers: {
               value: {},
+              writable: true,
+            },
+            _method: {
+              value: method,
               writable: true,
             },
             readyState: {
@@ -513,9 +536,8 @@ const initBridge = (w: any): void => {
               writable: true,
             },
           });
+
           addEventListeners.call(this);
-          this._method = method;
-          this._url = url;
           this.readyState = 1;
         };
 
@@ -524,6 +546,16 @@ const initBridge = (w: any): void => {
           header: string,
           value: string,
         ) {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(
+              this,
+              header,
+              value,
+            );
+          }
           this._headers[header] = value;
         };
 
@@ -531,6 +563,13 @@ const initBridge = (w: any): void => {
         window.XMLHttpRequest.prototype.send = function (
           body?: Document | XMLHttpRequestBodyInit,
         ) {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.send.call(this, body);
+          }
+
           try {
             this.readyState = 2;
 
@@ -585,6 +624,15 @@ const initBridge = (w: any): void => {
 
         // XHR patch getAllResponseHeaders
         window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(
+              this,
+            );
+          }
+
           let returnString = '';
           for (const key in this._headers) {
             if (key != 'Set-Cookie') {
@@ -596,6 +644,15 @@ const initBridge = (w: any): void => {
 
         // XHR patch getResponseHeader
         window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(
+              this,
+              name,
+            );
+          }
           return this._headers[name];
         };
       }
