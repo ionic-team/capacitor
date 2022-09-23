@@ -404,7 +404,8 @@ const initBridge = (w: any): void => {
         ) => {
           if (
             resource.toString().startsWith('data:') ||
-            resource.toString().startsWith('blob:')
+            resource.toString().startsWith('blob:') ||
+            !resource.toString().startsWith('http')
           ) {
             return win.CapacitorWebFetch(resource, options);
           }
