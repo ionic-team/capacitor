@@ -88,6 +88,19 @@ public class CapacitorCookies extends Plugin {
     }
 
     @PluginMethod
+    public void getCookies(PluginCall call) {
+        String url = getServerUrl(call);
+        if (!url.isEmpty()) {
+            JSObject cookiesMap = new JSObject();
+            HttpCookie[] cookies = cookieManager.getCookies(url);
+            for (HttpCookie cookie : cookies) {
+                cookiesMap.put(cookie.getName(), cookie.getValue());
+            }
+            call.resolve(cookiesMap);
+        }
+    }
+
+    @PluginMethod
     public void setCookie(PluginCall call) {
         String key = call.getString("key");
         String value = call.getString("value");
