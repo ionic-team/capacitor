@@ -98,10 +98,8 @@ export async function copy(
       if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, await config.ios.webDirAbs);
         if (config.app.extConfig?.plugins?.Portals?.liveUpdatesKey) {
-          const secureLiveUpdatesKeyFile =
-            config.app.extConfig.plugins.Portals.liveUpdatesKey;
           await copySecureLiveUpdatesKey(
-            secureLiveUpdatesKeyFile,
+            config.app.extConfig.plugins.Portals.liveUpdatesKey,
             config.app.rootDir,
             config.ios.nativeTargetDirAbs,
           );
@@ -114,10 +112,8 @@ export async function copy(
         );
       }
       if (usesLiveUpdates && config.app.extConfig?.plugins?.LiveUpdates?.key) {
-        const secureLiveUpdatesKeyFile =
-          config.app.extConfig.plugins.LiveUpdates.key;
         await copySecureLiveUpdatesKey(
-          secureLiveUpdatesKeyFile,
+          config.app.extConfig.plugins.LiveUpdates.key,
           config.app.rootDir,
           config.ios.nativeTargetDirAbs,
         );
@@ -129,10 +125,8 @@ export async function copy(
       if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, config.android.webDirAbs);
         if (config.app.extConfig?.plugins?.Portals?.liveUpdatesKey) {
-          const secureLiveUpdatesKeyFile =
-            config.app.extConfig.plugins.Portals.liveUpdatesKey;
           await copySecureLiveUpdatesKey(
-            secureLiveUpdatesKeyFile,
+            config.app.extConfig.plugins.Portals.liveUpdatesKey,
             config.app.rootDir,
             config.android.assetsDirAbs,
           );
@@ -145,10 +139,8 @@ export async function copy(
         );
       }
       if (usesLiveUpdates && config.app.extConfig?.plugins?.LiveUpdates?.key) {
-        const secureLiveUpdatesKeyFile =
-          config.app.extConfig.plugins.LiveUpdates.key;
         await copySecureLiveUpdatesKey(
-          secureLiveUpdatesKeyFile,
+          config.app.extConfig.plugins.LiveUpdates.key,
           config.app.rootDir,
           config.android.assetsDirAbs,
         );
