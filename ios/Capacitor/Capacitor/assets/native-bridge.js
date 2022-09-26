@@ -268,11 +268,6 @@ const nativeBridge = (function (exports) {
                 }
                 return String(msg);
             };
-            /**
-             * Safely web decode a string value (inspired by js-cookie)
-             * @param str The string value to decode
-             */
-            const decode = (str) => str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
             const platform = getPlatformId(win);
             if (platform == 'android' || platform == 'ios') {
                 // patch document.cookie on Android/iOS
@@ -328,12 +323,12 @@ const nativeBridge = (function (exports) {
                                     const payload = {
                                         type: 'CapacitorCookies.set',
                                         key: cookieKey,
-                                        value: decode(cookieValue),
+                                        value: cookieValue,
                                     };
                                     prompt(JSON.stringify(payload));
                                 }
                                 else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
-                                    win.CapacitorCookiesAndroidInterface.setCookie(cookieKey, decode(cookieValue));
+                                    win.CapacitorCookiesAndroidInterface.setCookie(cookieKey, cookieValue);
                                 }
                             }
                         },

@@ -288,13 +288,6 @@ const initBridge = (w: any): void => {
       return String(msg);
     };
 
-    /**
-     * Safely web decode a string value (inspired by js-cookie)
-     * @param str The string value to decode
-     */
-    const decode = (str: string): string =>
-      str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
-
     const platform = getPlatformId(win);
 
     if (platform == 'android' || platform == 'ios') {
@@ -362,7 +355,7 @@ const initBridge = (w: any): void => {
                 const payload = {
                   type: 'CapacitorCookies.set',
                   key: cookieKey,
-                  value: decode(cookieValue),
+                  value: cookieValue,
                 };
 
                 prompt(JSON.stringify(payload));
@@ -371,7 +364,7 @@ const initBridge = (w: any): void => {
               ) {
                 win.CapacitorCookiesAndroidInterface.setCookie(
                   cookieKey,
-                  decode(cookieValue),
+                  cookieValue,
                 );
               }
             }
