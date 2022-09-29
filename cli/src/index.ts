@@ -1,4 +1,5 @@
 import { Option, program } from 'commander';
+import { existsSync } from 'fs';
 
 import c from './colors';
 import { checkExternalConfig, loadConfig } from './config';
@@ -18,7 +19,20 @@ process.on('message', receive);
 
 export async function run(): Promise<void> {
   try {
-    const config = await loadConfig();
+    let configPath: string | undefined = undefined;
+
+    if (process.argv.includes('--config')) {
+      const index = process.argv.indexOf('--config');
+      configPath = process.argv[index + 1];
+      if (!existsSync(configPath)) {
+        fatal('Capacitor Config file path is invalid.');
+      }
+      const indexesToRemove = [index, index + 1];
+      for (let i = indexesToRemove.length -1; i >= 0; i--)
+        process.argv.splice(indexesToRemove[i],1);
+    }
+
+    const config = await loadConfig(configPath);
     runProgram(config);
   } catch (e: any) {
     process.exitCode = isFatal(e) ? e.exitCode : 1;
