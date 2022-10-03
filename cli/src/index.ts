@@ -1,4 +1,4 @@
-import { program } from 'commander';
+import { Option, program } from 'commander';
 
 import c from './colors';
 import { checkExternalConfig, loadConfig } from './config';
@@ -134,6 +134,51 @@ export function runProgram(config: Config): void {
           const { copyCommand } = await import('./tasks/copy');
           await copyCommand(config, platform, inline);
         }),
+      ),
+    );
+
+  program
+    .command('build <platform>')
+    .description('builds the release version of the selected platform')
+    .option('--keystorepath <keystorePath>', 'Path to the keystore')
+    .option('--keystorepass <keystorePass>', 'Password to the keystore')
+    .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
+    .option(
+      '--keystorealiaspass <keystoreAliasPass>',
+      'Password for the Key Alias',
+    )
+    .addOption(
+      new Option(
+        '--androidreleasetype <androidreleasetype>',
+        'Android release type; APK or AAB',
+      )
+        .choices(['AAB', 'APK'])
+        .default('AAB'),
+    )
+    .action(
+      wrapAction(
+        telemetryAction(
+          config,
+          async (
+            platform,
+            {
+              keystorepath,
+              keystorepass,
+              keystorealias,
+              keystorealiaspass,
+              androidreleasetype,
+            },
+          ) => {
+            const { buildCommand } = await import('./tasks/build');
+            await buildCommand(config, platform, {
+              keystorepath,
+              keystorepass,
+              keystorealias,
+              keystorealiaspass,
+              androidreleasetype,
+            });
+          },
+        ),
       ),
     );
 
