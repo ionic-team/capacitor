@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/ionic-team/capacitor/compare/4.2.0...4.3.0) (2022-09-21)
+
+
+### Bug Fixes
+
+* **android:** open external links in browser ([#5913](https://github.com/ionic-team/capacitor/issues/5913)) ([7553ede](https://github.com/ionic-team/capacitor/commit/7553ede93170971e21ab3dec1798443d084ead2a))
+* **android:** set all cookies on proxied requests ([#5781](https://github.com/ionic-team/capacitor/issues/5781)) ([5ef6a38](https://github.com/ionic-team/capacitor/commit/5ef6a3889121dd39a9159ff80250df18854bc557))
+* **android:** set WebViewClient on the WebView ([#5919](https://github.com/ionic-team/capacitor/issues/5919)) ([020ed8e](https://github.com/ionic-team/capacitor/commit/020ed8eaeb7864399d4b93f54ab7601c607d8e0d))
+* **cli:** Find the Info.plist when using scheme ([#5914](https://github.com/ionic-team/capacitor/issues/5914)) ([f7029ac](https://github.com/ionic-team/capacitor/commit/f7029acb885ec60f85a434b6f71e4f2a633c7651))
+* **cli:** Make migrator update gradle wrapper files ([#5910](https://github.com/ionic-team/capacitor/issues/5910)) ([b8b9b1f](https://github.com/ionic-team/capacitor/commit/b8b9b1f96249908435017eea6c427221f1971836))
+* **cli:** Make update from windows use proper paths on Podfile ([#5906](https://github.com/ionic-team/capacitor/issues/5906)) ([c41d28f](https://github.com/ionic-team/capacitor/commit/c41d28f8cc829c6bf69d776280c9f1fdba9f866f))
+* **cli:** show error if npm install on migration failed ([#5904](https://github.com/ionic-team/capacitor/issues/5904)) ([aa60a75](https://github.com/ionic-team/capacitor/commit/aa60a75d9c2c784e127a4d89e4079b412fbe7262))
+* **core:** Exception object was not set on Cap ([#5917](https://github.com/ionic-team/capacitor/issues/5917)) ([9ca27a4](https://github.com/ionic-team/capacitor/commit/9ca27a4f8441b368f8bf9d97dda57b1a55ac0e4e))
+
+
+### Features
+
+* Capacitor Cookies & Capacitor Http core plugins ([d4047cf](https://github.com/ionic-team/capacitor/commit/d4047cfa947676777f400389a8d65defae140b45))
+
+
+
+
+
 # [4.2.0](https://github.com/ionic-team/capacitor/compare/4.1.0...4.2.0) (2022-09-08)
 
 
