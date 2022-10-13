@@ -2,8 +2,10 @@ import { buildAndroid } from '../android/build';
 import { selectPlatforms, promptForPlatform } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
+import { buildiOS } from '../ios/build';
 
 export interface BuildCommandOptions {
+  scheme?: string;
   keystorepath?: string;
   keystorepass?: string;
   keystorealias?: string;
@@ -28,6 +30,7 @@ export async function buildCommand(
   }
 
   const buildCommandOptions: BuildCommandOptions = {
+    scheme: buildOptions.scheme || config.ios.scheme,
     keystorepath:
       buildOptions.keystorepath || config.android.buildOptions.keystorePath,
     keystorepass:
@@ -58,7 +61,7 @@ export async function build(
   buildOptions: BuildCommandOptions,
 ): Promise<void> {
   if (platformName == config.ios.name) {
-    throw `Platform "${platformName}" is not available in the build command.`;
+    await buildiOS(config, buildOptions);
   } else if (platformName === config.android.name) {
     await buildAndroid(config, buildOptions);
   } else if (platformName === config.web.name) {

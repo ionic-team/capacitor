@@ -592,6 +592,7 @@ export interface PluginsConfig {
   Portals?: {
     shell: Portal;
     apps: Portal[];
+    liveUpdatesKey?: string;
   };
 
   /**
