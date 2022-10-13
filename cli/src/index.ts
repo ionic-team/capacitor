@@ -140,6 +140,7 @@ export function runProgram(config: Config): void {
   program
     .command('build <platform>')
     .description('builds the release version of the selected platform')
+    .option('--scheme <schemeToBuild>', 'iOS Scheme to build')
     .option('--keystorepath <keystorePath>', 'Path to the keystore')
     .option('--keystorepass <keystorePass>', 'Password to the keystore')
     .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
@@ -162,6 +163,7 @@ export function runProgram(config: Config): void {
           async (
             platform,
             {
+              scheme,
               keystorepath,
               keystorepass,
               keystorealias,
@@ -171,6 +173,7 @@ export function runProgram(config: Config): void {
           ) => {
             const { buildCommand } = await import('./tasks/build');
             await buildCommand(config, platform, {
+              scheme,
               keystorepath,
               keystorepass,
               keystorealias,
