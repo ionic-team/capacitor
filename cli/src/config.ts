@@ -236,10 +236,18 @@ async function loadAndroidConfig(
   const buildOutputDir = `${apkPath}/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
   const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
+  const buildOptions = {
+    keystorePath: extConfig.android?.buildOptions?.keystorePath,
+    keystorePassword: extConfig.android?.buildOptions?.keystorePassword,
+    keystoreAlias: extConfig.android?.buildOptions?.keystoreAlias,
+    keystoreAliasPassword:
+      extConfig.android?.buildOptions?.keystoreAliasPassword,
+    releaseType: extConfig.android?.buildOptions?.releaseType,
+  };
 
   return {
     name,
-    minVersion: '21',
+    minVersion: '22',
     studioPath,
     platformDir,
     platformDirAbs,
@@ -261,6 +269,7 @@ async function loadAndroidConfig(
     buildOutputDir,
     buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
     flavor,
+    buildOptions,
   };
 }
 
@@ -293,7 +302,7 @@ async function loadIOSConfig(
 
   return {
     name,
-    minVersion: '12.0',
+    minVersion: '13.0',
     platformDir,
     platformDirAbs,
     scheme,

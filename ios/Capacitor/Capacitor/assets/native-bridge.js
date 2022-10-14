@@ -5,6 +5,33 @@
 const nativeBridge = (function (exports) {
     'use strict';
 
+    var ExceptionCode;
+    (function (ExceptionCode) {
+        /**
+         * API is not implemented.
+         *
+         * This usually means the API can't be used because it is not implemented for
+         * the current platform.
+         */
+        ExceptionCode["Unimplemented"] = "UNIMPLEMENTED";
+        /**
+         * API is not available.
+         *
+         * This means the API can't be used right now because:
+         *   - it is currently missing a prerequisite, such as network connectivity
+         *   - it requires a particular platform or browser version
+         */
+        ExceptionCode["Unavailable"] = "UNAVAILABLE";
+    })(ExceptionCode || (ExceptionCode = {}));
+    class CapacitorException extends Error {
+        constructor(message, code, data) {
+            super(message);
+            this.message = message;
+            this.code = code;
+            this.data = data;
+        }
+    }
+
     // For removing exports for iOS/Android, keep let for reassignment
     // eslint-disable-next-line
     let dummy = {};
@@ -241,6 +268,274 @@ const nativeBridge = (function (exports) {
                 }
                 return String(msg);
             };
+            /**
+             * Safely web decode a string value (inspired by js-cookie)
+             * @param str The string value to decode
+             */
+            const decode = (str) => str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
+            const platform = getPlatformId(win);
+            if (platform == 'android' || platform == 'ios') {
+                // patch document.cookie on Android/iOS
+                win.CapacitorCookiesDescriptor =
+                    Object.getOwnPropertyDescriptor(Document.prototype, 'cookie') ||
+                        Object.getOwnPropertyDescriptor(HTMLDocument.prototype, 'cookie');
+                let doPatchCookies = false;
+                // check if capacitor cookies is disabled before patching
+                if (platform === 'ios') {
+                    // Use prompt to synchronously get capacitor cookies config.
+                    // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                    const payload = {
+                        type: 'CapacitorCookies.isEnabled',
+                    };
+                    const isCookiesEnabled = prompt(JSON.stringify(payload));
+                    if (isCookiesEnabled === 'true') {
+                        doPatchCookies = true;
+                    }
+                }
+                else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
+                    const isCookiesEnabled = win.CapacitorCookiesAndroidInterface.isEnabled();
+                    if (isCookiesEnabled === true) {
+                        doPatchCookies = true;
+                    }
+                }
+                if (doPatchCookies) {
+                    Object.defineProperty(document, 'cookie', {
+                        get: function () {
+                            if (platform === 'ios') {
+                                // Use prompt to synchronously get cookies.
+                                // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                                const payload = {
+                                    type: 'CapacitorCookies',
+                                };
+                                const res = prompt(JSON.stringify(payload));
+                                return res;
+                            }
+                            else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
+                                return win.CapacitorCookiesAndroidInterface.getCookies();
+                            }
+                        },
+                        set: function (val) {
+                            const cookiePairs = val.split(';');
+                            for (const cookiePair of cookiePairs) {
+                                const cookieKey = cookiePair.split('=')[0];
+                                const cookieValue = cookiePair.split('=')[1];
+                                if (null == cookieValue) {
+                                    continue;
+                                }
+                                cap.toNative('CapacitorCookies', 'setCookie', {
+                                    key: cookieKey,
+                                    value: decode(cookieValue),
+                                });
+                            }
+                        },
+                    });
+                }
+                // patch fetch / XHR on Android/iOS
+                // store original fetch & XHR functions
+                win.CapacitorWebFetch = window.fetch;
+                win.CapacitorWebXMLHttpRequest = {
+                    abort: window.XMLHttpRequest.prototype.abort,
+                    open: window.XMLHttpRequest.prototype.open,
+                    send: window.XMLHttpRequest.prototype.send,
+                    setRequestHeader: window.XMLHttpRequest.prototype.setRequestHeader,
+                };
+                let doPatchHttp = false;
+                // check if capacitor http is disabled before patching
+                if (platform === 'ios') {
+                    // Use prompt to synchronously get capacitor http config.
+                    // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                    const payload = {
+                        type: 'CapacitorHttp',
+                    };
+                    const isHttpEnabled = prompt(JSON.stringify(payload));
+                    if (isHttpEnabled === 'true') {
+                        doPatchHttp = true;
+                    }
+                }
+                else if (typeof win.CapacitorHttpAndroidInterface !== 'undefined') {
+                    const isHttpEnabled = win.CapacitorHttpAndroidInterface.isEnabled();
+                    if (isHttpEnabled === true) {
+                        doPatchHttp = true;
+                    }
+                }
+                if (doPatchHttp) {
+                    // fetch patch
+                    window.fetch = async (resource, options) => {
+                        if (resource.toString().startsWith('data:') ||
+                            resource.toString().startsWith('blob:')) {
+                            return win.CapacitorWebFetch(resource, options);
+                        }
+                        try {
+                            // intercept request & pass to the bridge
+                            const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
+                                url: resource,
+                                method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
+                                data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
+                                headers: (options === null || options === void 0 ? void 0 : options.headers) ? options.headers : undefined,
+                            });
+                            const data = typeof nativeResponse.data === 'string'
+                                ? nativeResponse.data
+                                : JSON.stringify(nativeResponse.data);
+                            // intercept & parse response before returning
+                            const response = new Response(data, {
+                                headers: nativeResponse.headers,
+                                status: nativeResponse.status,
+                            });
+                            return response;
+                        }
+                        catch (error) {
+                            return Promise.reject(error);
+                        }
+                    };
+                    // XHR event listeners
+                    const addEventListeners = function () {
+                        this.addEventListener('abort', function () {
+                            if (typeof this.onabort === 'function')
+                                this.onabort();
+                        });
+                        this.addEventListener('error', function () {
+                            if (typeof this.onerror === 'function')
+                                this.onerror();
+                        });
+                        this.addEventListener('load', function () {
+                            if (typeof this.onload === 'function')
+                                this.onload();
+                        });
+                        this.addEventListener('loadend', function () {
+                            if (typeof this.onloadend === 'function')
+                                this.onloadend();
+                        });
+                        this.addEventListener('loadstart', function () {
+                            if (typeof this.onloadstart === 'function')
+                                this.onloadstart();
+                        });
+                        this.addEventListener('readystatechange', function () {
+                            if (typeof this.onreadystatechange === 'function')
+                                this.onreadystatechange();
+                        });
+                        this.addEventListener('timeout', function () {
+                            if (typeof this.ontimeout === 'function')
+                                this.ontimeout();
+                        });
+                    };
+                    // XHR patch abort
+                    window.XMLHttpRequest.prototype.abort = function () {
+                        this.readyState = 0;
+                        this.dispatchEvent(new Event('abort'));
+                        this.dispatchEvent(new Event('loadend'));
+                    };
+                    // XHR patch open
+                    window.XMLHttpRequest.prototype.open = function (method, url) {
+                        Object.defineProperties(this, {
+                            _headers: {
+                                value: {},
+                                writable: true,
+                            },
+                            readyState: {
+                                get: function () {
+                                    var _a;
+                                    return (_a = this._readyState) !== null && _a !== void 0 ? _a : 0;
+                                },
+                                set: function (val) {
+                                    this._readyState = val;
+                                    this.dispatchEvent(new Event('readystatechange'));
+                                },
+                            },
+                            response: {
+                                value: '',
+                                writable: true,
+                            },
+                            responseText: {
+                                value: '',
+                                writable: true,
+                            },
+                            responseURL: {
+                                value: '',
+                                writable: true,
+                            },
+                            status: {
+                                value: 0,
+                                writable: true,
+                            },
+                        });
+                        addEventListeners.call(this);
+                        this._method = method;
+                        this._url = url;
+                        this.readyState = 1;
+                    };
+                    // XHR patch set request header
+                    window.XMLHttpRequest.prototype.setRequestHeader = function (header, value) {
+                        this._headers[header] = value;
+                    };
+                    // XHR patch send
+                    window.XMLHttpRequest.prototype.send = function (body) {
+                        try {
+                            this.readyState = 2;
+                            // intercept request & pass to the bridge
+                            cap
+                                .nativePromise('CapacitorHttp', 'request', {
+                                url: this._url,
+                                method: this._method,
+                                data: body !== null ? body : undefined,
+                                headers: this._headers,
+                            })
+                                .then((nativeResponse) => {
+                                // intercept & parse response before returning
+                                if (this.readyState == 2) {
+                                    this.dispatchEvent(new Event('loadstart'));
+                                    this._headers = nativeResponse.headers;
+                                    this.status = nativeResponse.status;
+                                    this.response = nativeResponse.data;
+                                    this.responseText =
+                                        typeof nativeResponse.data === 'string'
+                                            ? nativeResponse.data
+                                            : JSON.stringify(nativeResponse.data);
+                                    this.responseURL = nativeResponse.url;
+                                    this.readyState = 4;
+                                    this.dispatchEvent(new Event('load'));
+                                    this.dispatchEvent(new Event('loadend'));
+                                }
+                            })
+                                .catch((error) => {
+                                this.dispatchEvent(new Event('loadstart'));
+                                this.status = error.status;
+                                this._headers = error.headers;
+                                this.response = error.data;
+                                this.responseText = JSON.stringify(error.data);
+                                this.responseURL = error.url;
+                                this.readyState = 4;
+                                this.dispatchEvent(new Event('error'));
+                                this.dispatchEvent(new Event('loadend'));
+                            });
+                        }
+                        catch (error) {
+                            this.dispatchEvent(new Event('loadstart'));
+                            this.status = 500;
+                            this._headers = {};
+                            this.response = error;
+                            this.responseText = error.toString();
+                            this.responseURL = this._url;
+                            this.readyState = 4;
+                            this.dispatchEvent(new Event('error'));
+                            this.dispatchEvent(new Event('loadend'));
+                        }
+                    };
+                    // XHR patch getAllResponseHeaders
+                    window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
+                        let returnString = '';
+                        for (const key in this._headers) {
+                            if (key != 'Set-Cookie') {
+                                returnString += key + ': ' + this._headers[key] + '\r\n';
+                            }
+                        }
+                        return returnString;
+                    };
+                    // XHR patch getResponseHeader
+                    window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
+                        return this._headers[name];
+                    };
+                }
+            }
             // patch window.console on iOS and store original console fns
             const isIos = getPlatformId(win) === 'ios';
             if (win.console && isIos) {
@@ -384,10 +679,18 @@ const nativeBridge = (function (exports) {
                 }
                 return null;
             };
+            if (win === null || win === void 0 ? void 0 : win.androidBridge) {
+                win.androidBridge.onmessage = function (event) {
+                    returnResult(JSON.parse(event.data));
+                };
+            }
             /**
              * Process a response from the native layer.
              */
             cap.fromNative = result => {
+                returnResult(result);
+            };
+            const returnResult = (result) => {
                 var _a, _b;
                 if (cap.isLoggingEnabled && result.pluginId !== 'Console') {
                     cap.logFromNative(result);
@@ -460,6 +763,7 @@ const nativeBridge = (function (exports) {
                 });
             };
             cap.withPlugin = (_pluginId, _fn) => dummy;
+            cap.Exception = CapacitorException;
             initEvents(win, cap);
             initLegacyHandlers(win, cap);
             initVendor(win, cap);

@@ -1,0 +1,32 @@
+name: Publish NPM RC
+
+on: workflow_dispatch
+
+jobs:
+  deploy-npm-rc:
+    runs-on: macos-12
+    timeout-minutes: 30
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Restore Dependency Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+      - run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          npm whoami
+          npm install
+      - name: Version & Publish
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          git config user.name "Github Workflow (on behalf of ${{ github.actor }})"
+          git config user.email "users.noreply.github.com"
+          npm run ci:publish:rc

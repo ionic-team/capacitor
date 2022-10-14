@@ -164,9 +164,8 @@ async function generatePodFile(
         return '';
       }
 
-      return `  pod '${p.ios.name}', :path => '${relative(
-        podfilePath,
-        await realpath(p.rootPath),
+      return `  pod '${p.ios.name}', :path => '${convertToUnixPath(
+        relative(podfilePath, await realpath(p.rootPath)),
       )}'\n`;
     }),
   );

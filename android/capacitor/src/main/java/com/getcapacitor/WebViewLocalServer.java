@@ -29,6 +29,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -172,7 +173,7 @@ public class WebViewLocalServer {
             return null;
         }
 
-        if (isLocalFile(loadingUrl) || isMainUrl(loadingUrl) || !isAllowedUrl(loadingUrl)) {
+        if (isLocalFile(loadingUrl) || isMainUrl(loadingUrl) || !isAllowedUrl(loadingUrl) || isErrorUrl(loadingUrl)) {
             Logger.debug("Handling local request: " + request.getUrl().toString());
             return handleLocalRequest(request, handler);
         } else {
@@ -183,6 +184,11 @@ public class WebViewLocalServer {
     private boolean isLocalFile(Uri uri) {
         String path = uri.getPath();
         return path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart);
+    }
+
+    private boolean isErrorUrl(Uri uri) {
+        String url = uri.toString();
+        return url.equals(bridge.getErrorUrl());
     }
 
     private boolean isMainUrl(Uri loadingUrl) {
@@ -226,7 +232,7 @@ public class WebViewLocalServer {
             );
         }
 
-        if (isLocalFile(request.getUrl())) {
+        if (isLocalFile(request.getUrl()) || isErrorUrl(request.getUrl())) {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
             String mimeType = getMimeType(request.getUrl().getPath(), responseStream);
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
@@ -355,9 +361,12 @@ public class WebViewLocalServer {
                         String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
                         conn.setRequestProperty("Authorization", "Basic " + base64);
                     }
-                    String cookie = conn.getHeaderField("Set-Cookie");
-                    if (cookie != null) {
-                        CookieManager.getInstance().setCookie(url, cookie);
+
+                    List<String> cookies = conn.getHeaderFields().get("Set-Cookie");
+                    if (cookies != null) {
+                        for (String cookie : cookies) {
+                            CookieManager.getInstance().setCookie(url, cookie);
+                        }
                     }
                     InputStream responseStream = conn.getInputStream();
                     responseStream = jsInjector.getInjectedStream(responseStream);

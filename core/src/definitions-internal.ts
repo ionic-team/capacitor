@@ -172,6 +172,11 @@ export interface CapacitorCustomPlatformInstance {
 
 export interface WindowCapacitor {
   Capacitor?: CapacitorInstance;
+  CapacitorCookiesAndroidInterface?: any;
+  CapacitorCookiesDescriptor?: PropertyDescriptor;
+  CapacitorHttpAndroidInterface?: any;
+  CapacitorWebFetch?: any;
+  CapacitorWebXMLHttpRequest?: any;
   /**
    * @deprecated Use `CapacitorCustomPlatform` instead
    */
@@ -188,6 +193,7 @@ export interface WindowCapacitor {
   WEBVIEW_SERVER_URL?: string;
   androidBridge?: {
     postMessage(data: string): void;
+    onmessage?: (event: { data: string }) => void;
   };
   webkit?: {
     messageHandlers?: {

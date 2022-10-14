@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -22,6 +24,7 @@ import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.pm.PackageInfoCompat;
 import androidx.fragment.app.Fragment;
 import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -37,9 +40,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaWebView;
@@ -72,6 +77,7 @@ public class Bridge {
     private static final String BUNDLE_PLUGIN_CALL_BUNDLE_KEY = "capacitorLastPluginCallBundle";
     private static final String LAST_BINARY_VERSION_CODE = "lastBinaryVersionCode";
     private static final String LAST_BINARY_VERSION_NAME = "lastBinaryVersionName";
+    private static final String MINIMUM_ANDROID_WEBVIEW_ERROR = "System WebView is not supported";
 
     // The name of the directory we use to look for index.html and the rest of our web assets
     public static final String DEFAULT_WEB_ASSET_DIR = "public";
@@ -79,6 +85,8 @@ public class Bridge {
     public static final String CAPACITOR_HTTPS_SCHEME = "https";
     public static final String CAPACITOR_FILE_START = "/_capacitor_file_";
     public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
+    public static final int DEFAULT_ANDROID_WEBVIEW_VERSION = 60;
+    public static final int MINIMUM_ANDROID_WEBVIEW_VERSION = 55;
 
     // Loaded Capacitor config
     private CapConfig config;
@@ -92,6 +100,7 @@ public class Bridge {
     private String appUrl;
     private String appUrlConfig;
     private HostMask appAllowNavigationMask;
+    private Set<String> allowedOriginRules = new HashSet<String>();
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
@@ -181,6 +190,7 @@ public class Bridge {
 
         // Initialize web view and message handler for it
         this.initWebView();
+        this.setAllowedOriginRules();
         this.msgHandler = new MessageHandler(this, webView, pluginManager);
 
         // Grab any intent info that our app was launched with
@@ -193,6 +203,25 @@ public class Bridge {
         this.loadWebView();
     }
 
+    private void setAllowedOriginRules() {
+        String[] appAllowNavigationConfig = this.config.getAllowNavigation();
+        String authority = this.getHost();
+        String scheme = this.getScheme();
+        allowedOriginRules.add(scheme + "://" + authority);
+        if (this.getServerUrl() != null) {
+            allowedOriginRules.add(this.getServerUrl());
+        }
+        if (appAllowNavigationConfig != null) {
+            for (String allowNavigation : appAllowNavigationConfig) {
+                if (!allowNavigation.startsWith("http")) {
+                    allowedOriginRules.add("https://" + allowNavigation);
+                } else {
+                    allowedOriginRules.add(allowNavigation);
+                }
+            }
+        }
+    }
+
     public App getApp() {
         return app;
     }
@@ -202,14 +231,13 @@ public class Bridge {
         String[] appAllowNavigationConfig = this.config.getAllowNavigation();
 
         ArrayList<String> authorities = new ArrayList<>();
+
         if (appAllowNavigationConfig != null) {
             authorities.addAll(Arrays.asList(appAllowNavigationConfig));
         }
         this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
-
         String authority = this.getHost();
         authorities.add(authority);
-
         String scheme = this.getScheme();
 
         localUrl = scheme + "://" + authority;
@@ -218,7 +246,10 @@ public class Bridge {
             try {
                 URL appUrlObject = new URL(appUrlConfig);
                 authorities.add(appUrlObject.getAuthority());
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+                Logger.error("Provided server url is invalid: " + ex.getMessage());
+                return;
+            }
             localUrl = appUrlConfig;
             appUrl = appUrlConfig;
         } else {
@@ -233,7 +264,6 @@ public class Bridge {
         if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
             appUrl += appUrlPath;
         }
-
         final boolean html5mode = this.config.isHTML5Mode();
 
         // Start the local web server
@@ -253,8 +283,58 @@ public class Bridge {
                 setServerBasePath(path);
             }
         }
+
+        if (!this.isMinimumWebViewInstalled()) {
+            String errorUrl = this.getErrorUrl();
+            if (errorUrl != null) {
+                webView.loadUrl(errorUrl);
+                return;
+            } else {
+                Logger.error(MINIMUM_ANDROID_WEBVIEW_ERROR);
+            }
+        }
+
         // Get to work
         webView.loadUrl(appUrl);
+    }
+
+    @SuppressLint("WebViewApiAvailability")
+    public boolean isMinimumWebViewInstalled() {
+        PackageManager pm = getContext().getPackageManager();
+
+        // Check getCurrentWebViewPackage() directly if above Android 8
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PackageInfo info = WebView.getCurrentWebViewPackage();
+            String majorVersionStr = info.versionName.split("\\.")[0];
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion >= config.getMinWebViewVersion();
+        }
+
+        // Otherwise manually check WebView versions
+        try {
+            String webViewPackage = "com.google.android.webview";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                webViewPackage = "com.android.chrome";
+            }
+            PackageInfo info = pm.getPackageInfo(webViewPackage, 0);
+            String majorVersionStr = info.versionName.split("\\.")[0];
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion >= config.getMinWebViewVersion();
+        } catch (Exception ex) {
+            Logger.warn("Unable to get package info for 'com.google.android.webview'" + ex.toString());
+        }
+
+        try {
+            PackageInfo info = pm.getPackageInfo("com.android.webview", 0);
+            String majorVersionStr = info.versionName.split("\\.")[0];
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion >= config.getMinWebViewVersion();
+        } catch (Exception ex) {
+            Logger.warn("Unable to get package info for 'com.android.webview'" + ex.toString());
+        }
+
+        // Could not detect any webview, return false
+        return false;
     }
 
     public boolean launchIntent(Uri url) {
@@ -271,7 +351,7 @@ public class Bridge {
             }
         }
 
-        if (!url.toString().contains(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
+        if (!url.toString().startsWith(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
             try {
                 Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
                 getContext().startActivity(openIntent);
@@ -293,7 +373,7 @@ public class Bridge {
 
         try {
             PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
-            versionCode = Integer.toString(pInfo.versionCode);
+            versionCode = Integer.toString((int) PackageInfoCompat.getLongVersionCode(pInfo));
             versionName = pInfo.versionName;
         } catch (Exception ex) {
             Logger.error("Unable to get package info", ex);
@@ -404,6 +484,25 @@ public class Bridge {
         return this.config.getServerUrl();
     }
 
+    public String getErrorUrl() {
+        String errorPath = this.config.getErrorPath();
+
+        if (errorPath != null && !errorPath.trim().isEmpty()) {
+            String authority = this.getHost();
+            String scheme = this.getScheme();
+
+            String localUrl = scheme + "://" + authority;
+
+            return localUrl + "/" + errorPath;
+        }
+
+        return null;
+    }
+
+    public String getAppUrl() {
+        return appUrl;
+    }
+
     public CapConfig getConfig() {
         return this.config;
     }
@@ -421,7 +520,6 @@ public class Bridge {
         settings.setDomStorageEnabled(true);
         settings.setGeolocationEnabled(true);
         settings.setDatabaseEnabled(true);
-        settings.setAppCacheEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         if (this.config.isMixedContentAllowed()) {
@@ -458,7 +556,9 @@ public class Bridge {
      * Register our core Plugin APIs
      */
     private void registerAllPlugins() {
+        this.registerPlugin(com.getcapacitor.plugin.CapacitorCookies.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
+        this.registerPlugin(com.getcapacitor.plugin.CapacitorHttp.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
             this.registerPlugin(pluginClass);
@@ -475,6 +575,17 @@ public class Bridge {
         }
     }
 
+    @SuppressWarnings("deprecation")
+    private String getLegacyPluginName(Class<? extends Plugin> pluginClass) {
+        NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+        if (legacyPluginAnnotation == null) {
+            Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+            return null;
+        }
+
+        return legacyPluginAnnotation.name();
+    }
+
     /**
      * Register a plugin class
      * @param pluginClass a class inheriting from Plugin
@@ -484,14 +595,10 @@ public class Bridge {
 
         CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
         if (pluginAnnotation == null) {
-            NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
-
-            if (legacyPluginAnnotation == null) {
-                Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+            pluginName = this.getLegacyPluginName(pluginClass);
+            if (pluginName == null) {
                 return;
             }
-
-            pluginName = legacyPluginAnnotation.name();
         } else {
             pluginName = pluginAnnotation.name();
         }
@@ -530,6 +637,7 @@ public class Bridge {
      * @return
      */
     @Deprecated
+    @SuppressWarnings("deprecation")
     public PluginHandle getPluginWithRequestCode(int requestCode) {
         for (PluginHandle handle : this.plugins.values()) {
             int[] requestCodes;
@@ -845,6 +953,7 @@ public class Bridge {
     }
 
     @Deprecated
+    @SuppressWarnings("deprecation")
     public void startActivityForPluginWithResult(PluginCall call, Intent intent, int requestCode) {
         Logger.debug("Starting activity for result");
 
@@ -862,6 +971,7 @@ public class Bridge {
      * @param grantResults the set of granted/denied permissions
      * @return true if permission code was handled by a plugin explicitly, false if not
      */
+    @SuppressWarnings("deprecation")
     boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
@@ -1001,6 +1111,7 @@ public class Bridge {
      * @param resultCode
      * @param data
      */
+    @SuppressWarnings("deprecation")
     boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
@@ -1180,12 +1291,17 @@ public class Bridge {
         return appAllowNavigationMask;
     }
 
+    public Set<String> getAllowedOriginRules() {
+        return allowedOriginRules;
+    }
+
     public BridgeWebViewClient getWebViewClient() {
         return this.webViewClient;
     }
 
     public void setWebViewClient(BridgeWebViewClient client) {
         this.webViewClient = client;
+        webView.setWebViewClient(client);
     }
 
     List<WebViewListener> getWebViewListeners() {

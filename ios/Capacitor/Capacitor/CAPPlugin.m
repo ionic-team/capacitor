@@ -29,15 +29,19 @@
   return [call getString:field defaultValue:defaultValue];
 }
 
--(id)getConfigValue:(NSString *)key {
+-(id)getConfigValue:(NSString *)key __deprecated {
   return [self.bridge.config getPluginConfigValue:self.pluginName :key];
+}
+
+-(PluginConfig*)getConfig {
+    return [self.bridge.config getPluginConfig:self.pluginName];
 }
 
 -(void)load {}
 
 - (void)addEventListener:(NSString *)eventName listener:(CAPPluginCall *)listener {
   NSMutableArray *listenersForEvent = [self.eventListeners objectForKey:eventName];
-  if(!listenersForEvent) {
+  if(listenersForEvent == nil || [listenersForEvent count] == 0) {
     listenersForEvent = [[NSMutableArray alloc] initWithObjects:listener, nil];
     [self.eventListeners setValue:listenersForEvent forKey:eventName];
     
@@ -105,6 +109,7 @@
 
 - (void)removeAllListeners:(CAPPluginCall *)call {
   [self.eventListeners removeAllObjects];
+  [call resolve];
 }
 
 - (NSArray<CAPPluginCall *>*)getListeners:(NSString *)eventName {
@@ -140,12 +145,17 @@
   }
 }
 
+-(void)setCenteredPopover:(UIViewController* _Nonnull) vc size:(CGSize) size {
+    if (self.bridge.viewController != nil) {
+      vc.popoverPresentationController.sourceRect = CGRectMake(self.bridge.viewController.view.center.x, self.bridge.viewController.view.center.y, 0, 0);
+      vc.preferredContentSize = size;
+      vc.popoverPresentationController.sourceView = self.bridge.viewController.view;
+      vc.popoverPresentationController.permittedArrowDirections = 0;
+    }
+}
+
 -(BOOL)supportsPopover {
-  if (@available(iOS 13, *)) {
     return YES;
-  } else {
-    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
-  }
 }
 
 - (NSNumber*)shouldOverrideLoad:(WKNavigationAction*)navigationAction {

@@ -123,7 +123,11 @@ open class CAPWebView: UIView {
 
 extension CAPWebView {
 
+<<<<<<< HEAD
     open func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
+=======
+    public func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
+>>>>>>> main
         let webViewConfiguration = WKWebViewConfiguration()
         webViewConfiguration.allowsInlineMediaPlayback = true
         webViewConfiguration.suppressesIncrementalRendering = false
@@ -163,7 +167,11 @@ extension CAPWebView {
             self.backgroundColor = backgroundColor
             webView.backgroundColor = backgroundColor
             webView.scrollView.backgroundColor = backgroundColor
+<<<<<<< HEAD
         } else if #available(iOS 13, *) {
+=======
+        } else {
+>>>>>>> main
             // Use the system background colors if background is not set by user
             self.backgroundColor = UIColor.systemBackground
             webView.backgroundColor = UIColor.systemBackground

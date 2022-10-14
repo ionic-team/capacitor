@@ -12,12 +12,14 @@ const debug = Debug('capacitor:ios:run');
 
 export async function runIOS(
   config: Config,
-  { target: selectedTarget }: RunCommandOptions,
+  { target: selectedTarget, scheme: selectedScheme }: RunCommandOptions,
 ): Promise<void> {
   const target = await promptForPlatformTarget(
     await getPlatformTargets('ios'),
     selectedTarget,
   );
+
+  const runScheme = selectedScheme || config.ios.scheme;
 
   const derivedDataPath = resolve(
     config.ios.platformDirAbs,
@@ -29,7 +31,7 @@ export async function runIOS(
     '-workspace',
     basename(await config.ios.nativeXcodeWorkspaceDirAbs),
     '-scheme',
-    config.ios.scheme,
+    runScheme,
     '-configuration',
     'Debug',
     '-destination',
@@ -46,7 +48,7 @@ export async function runIOS(
     }),
   );
 
-  const appName = `${config.ios.scheme}.app`;
+  const appName = `${runScheme}.app`;
   const appPath = resolve(
     derivedDataPath,
     'Build/Products',

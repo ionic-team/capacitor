@@ -17,7 +17,7 @@ export async function openAndroid(config: Config): Promise<void> {
       throw new Error(`Android Studio does not exist at: ${androidStudioPath}`);
     }
 
-    await open(dir, { app: androidStudioPath, wait: false });
+    await open(dir, { app: { name: androidStudioPath }, wait: false });
     logger.info(
       `Opening Android project at: ${c.strong(config.android.platformDir)}.`,
     );
