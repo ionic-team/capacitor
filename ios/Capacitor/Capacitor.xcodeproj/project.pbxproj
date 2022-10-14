@@ -598,10 +598,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				55F6736A26C371E6001E7AB9 /* CAPWebView.swift in Sources */,
-<<<<<<< HEAD
-=======
 				A38C3D7728484E76004B3680 /* CapacitorCookies.swift in Sources */,
->>>>>>> main
 				A71289E627F380A500DADDF3 /* Router.swift in Sources */,
 				A327E6B828DB8B2900CA8B0A /* CapacitorUrlRequest.swift in Sources */,
 				62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */,

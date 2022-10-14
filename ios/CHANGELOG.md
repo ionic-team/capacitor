@@ -3,25 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<<<<<<< HEAD
-# [3.7.0](https://github.com/ionic-team/capacitor/compare/3.6.0...3.7.0) (2022-08-01)
-=======
 # [4.3.0](https://github.com/ionic-team/capacitor/compare/4.2.0...4.3.0) (2022-09-21)
 
 
 ### Bug Fixes
 
 * **core:** Exception object was not set on Cap ([#5917](https://github.com/ionic-team/capacitor/issues/5917)) ([9ca27a4](https://github.com/ionic-team/capacitor/commit/9ca27a4f8441b368f8bf9d97dda57b1a55ac0e4e))
->>>>>>> main
 
 
 ### Features
 
-<<<<<<< HEAD
-* **ios:** Add `setServerBasePath(path:)` to CAPWebView ([#5742](https://github.com/ionic-team/capacitor/issues/5742)) ([#5748](https://github.com/ionic-team/capacitor/issues/5748)) ([9c25aad](https://github.com/ionic-team/capacitor/commit/9c25aad0ca8f97416753e7589a92efa401ad75bc))
-* **ios:** Add overrideable router var for CAPWebView. ([#5743](https://github.com/ionic-team/capacitor/issues/5743)) ([#5760](https://github.com/ionic-team/capacitor/issues/5760)) ([6ba286d](https://github.com/ionic-team/capacitor/commit/6ba286d0429f70c9d2df9132f38c04f156f572b6))
-* Add CapWebView  ([#5715](https://github.com/ionic-team/capacitor/issues/5715)) ([#5730](https://github.com/ionic-team/capacitor/issues/5730)) ([bb54ac1](https://github.com/ionic-team/capacitor/commit/bb54ac1c9973dc01262119f0b0925f67c942264c))
-=======
 * Capacitor Cookies & Capacitor Http core plugins ([d4047cf](https://github.com/ionic-team/capacitor/commit/d4047cfa947676777f400389a8d65defae140b45))
 
 
@@ -131,7 +122,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **ios:** add getConfig to CAPPlugin ([#5495](https://github.com/ionic-team/capacitor/issues/5495)) ([224a9d0](https://github.com/ionic-team/capacitor/commit/224a9d075629d9c9da9ddc658eb282617fc46d09))
 * **ios:** Add preferredContentMode configuration option ([#5583](https://github.com/ionic-team/capacitor/issues/5583)) ([5b6dfa3](https://github.com/ionic-team/capacitor/commit/5b6dfa3fe29c85632546b299f03cc04a77cf7475))
 * **ios:** Support of range requests on WebViewAssetHandler ([#5659](https://github.com/ionic-team/capacitor/issues/5659)) ([348c08d](https://github.com/ionic-team/capacitor/commit/348c08d511e9d57a1b2ecedc3290c65fa9ba3924))
->>>>>>> main
 
 
 

@@ -9,17 +9,10 @@ Pod::Spec.new do |s|
   s.license      = 'MIT'
   s.authors      = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source       = { :git => 'https://github.com/ionic-team/capacitor', :tag => s.version.to_s }
-<<<<<<< HEAD
-  s.platform     = :ios, 12.0
-  s.source_files = 'ios/CapacitorCordova/CapacitorCordova/**/*.{h,m}'
-  s.public_header_files = 'ios/CapacitorCordova/CapacitorCordova/Classes/Public/*.h', 'ios/CapacitorCordova/CapacitorCordova/CapacitorCordova.h'
-  s.module_map = 'ios/CapacitorCordova/CapacitorCordova/CapacitorCordova.modulemap'
-=======
   s.platform     = :ios, 13.0
   s.source_files = 'CapacitorCordova/CapacitorCordova/**/*.{h,m}'
   s.public_header_files = 'CapacitorCordova/CapacitorCordova/Classes/Public/*.h', 'CapacitorCordova/CapacitorCordova/CapacitorCordova.h'
   s.module_map = 'CapacitorCordova/CapacitorCordova/CapacitorCordova.modulemap'
->>>>>>> main
   s.requires_arc = true
   s.framework    = "WebKit"
 end
