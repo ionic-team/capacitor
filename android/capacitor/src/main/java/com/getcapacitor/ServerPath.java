@@ -1,8 +1,10 @@
 package com.getcapacitor;
 
 public class ServerPath {
+
     public enum PathType {
-        BASE_PATH, ASSET_PATH
+        BASE_PATH,
+        ASSET_PATH
     }
 
     private final PathType type;

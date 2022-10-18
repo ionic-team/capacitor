@@ -262,7 +262,7 @@ public class Bridge {
 
         // If serverPath configured, start server based on provided path
         if (serverPath != null) {
-            if(serverPath.getType() == ServerPath.PathType.ASSET_PATH) {
+            if (serverPath.getType() == ServerPath.PathType.ASSET_PATH) {
                 setServerAssetPath(serverPath.getPath());
             } else {
                 setServerBasePath(serverPath.getPath());
@@ -1331,7 +1331,17 @@ public class Bridge {
             cordovaInterface.onCordovaInit(pluginManager);
 
             // Bridge initialization
-            Bridge bridge = new Bridge(activity, serverPath, fragment, webView, plugins, cordovaInterface, pluginManager, preferences, config);
+            Bridge bridge = new Bridge(
+                activity,
+                serverPath,
+                fragment,
+                webView,
+                plugins,
+                cordovaInterface,
+                pluginManager,
+                preferences,
+                config
+            );
             bridge.setCordovaWebView(mockWebView);
             bridge.setWebViewListeners(webViewListeners);
             bridge.setRouteProcessor(routeProcessor);
