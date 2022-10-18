@@ -1,12 +1,7 @@
 package com.getcapacitor.plugin;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 import androidx.annotation.Nullable;
-import com.getcapacitor.CapConfig;
-import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginConfig;
@@ -85,6 +80,15 @@ public class CapacitorCookies extends Plugin {
         }
 
         return "";
+    }
+
+    @JavascriptInterface
+    public void setCookie(String key, String value) {
+        String url = getServerUrl(null);
+
+        if (!url.isEmpty()) {
+            cookieManager.setCookie(url, key, value);
+        }
     }
 
     @PluginMethod

@@ -31,6 +31,14 @@ public class CapacitorCookieManager {
         return value.removingPercentEncoding!
     }
 
+    public func setCookie(_ key: String, _ value: String) {
+        let url = getServerUrl()!
+        let jar = HTTPCookieStorage.shared
+        let field = ["Set-Cookie": "\(key)=\(value)"]
+        let cookies = HTTPCookie.cookies(withResponseHeaderFields: field, for: url)
+        jar.setCookies(cookies, for: url, mainDocumentURL: url)
+    }
+
     public func setCookie(_ url: URL, _ key: String, _ value: String) {
         let jar = HTTPCookieStorage.shared
         let field = ["Set-Cookie": "\(key)=\(value)"]
