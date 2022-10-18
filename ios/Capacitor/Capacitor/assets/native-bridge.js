@@ -268,11 +268,6 @@ const nativeBridge = (function (exports) {
                 }
                 return String(msg);
             };
-            /**
-             * Safely web decode a string value (inspired by js-cookie)
-             * @param str The string value to decode
-             */
-            const decode = (str) => str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
             const platform = getPlatformId(win);
             if (platform == 'android' || platform == 'ios') {
                 // patch document.cookie on Android/iOS
@@ -305,7 +300,7 @@ const nativeBridge = (function (exports) {
                                 // Use prompt to synchronously get cookies.
                                 // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
                                 const payload = {
-                                    type: 'CapacitorCookies',
+                                    type: 'CapacitorCookies.get',
                                 };
                                 const res = prompt(JSON.stringify(payload));
                                 return res;
@@ -322,10 +317,19 @@ const nativeBridge = (function (exports) {
                                 if (null == cookieValue) {
                                     continue;
                                 }
-                                cap.toNative('CapacitorCookies', 'setCookie', {
-                                    key: cookieKey,
-                                    value: decode(cookieValue),
-                                });
+                                if (platform === 'ios') {
+                                    // Use prompt to synchronously set cookies.
+                                    // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                                    const payload = {
+                                        type: 'CapacitorCookies.set',
+                                        key: cookieKey,
+                                        value: cookieValue,
+                                    };
+                                    prompt(JSON.stringify(payload));
+                                }
+                                else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
+                                    win.CapacitorCookiesAndroidInterface.setCookie(cookieKey, cookieValue);
+                                }
                             }
                         },
                     });
