@@ -2,7 +2,6 @@ package com.getcapacitor.plugin;
 
 import android.webkit.JavascriptInterface;
 import androidx.annotation.Nullable;
-
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
