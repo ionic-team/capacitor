@@ -426,8 +426,7 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch abort
                     window.XMLHttpRequest.prototype.abort = function () {
-                        if (this._url == null ||
-                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.abort.call(this);
                         }
                         this.readyState = 0;
@@ -481,16 +480,14 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch set request header
                     window.XMLHttpRequest.prototype.setRequestHeader = function (header, value) {
-                        if (this._url == null ||
-                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(this, header, value);
                         }
                         this._headers[header] = value;
                     };
                     // XHR patch send
                     window.XMLHttpRequest.prototype.send = function (body) {
-                        if (this._url == null ||
-                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
                         }
                         try {
@@ -546,8 +543,7 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch getAllResponseHeaders
                     window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
-                        if (this._url == null ||
-                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(this);
                         }
                         let returnString = '';
@@ -560,8 +556,7 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch getResponseHeader
                     window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
-                        if (this._url == null ||
-                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                         }
                         return this._headers[name];
