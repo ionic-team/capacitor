@@ -303,6 +303,8 @@ public class HttpRequestHandler {
                 return new JSONObject().put("flag", "true");
             } else if ("false".equals(input.trim())) {
                 return new JSONObject().put("flag", "false");
+            } else if (input.trim().length() <= 0) {
+                return "";
             } else {
                 try {
                     return new JSObject(input);
