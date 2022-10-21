@@ -530,13 +530,19 @@ async function updateBuildGradle(
 
   for (const dep of Object.keys(neededDeps)) {
     if (replaced.includes(`classpath '${dep}`)) {
-      replaced = setAllStringIn(
-        replaced,
-        `classpath '${dep}:`,
-        `'`,
-        neededDeps[dep],
-      );
-      logger.info(`Set ${dep} = ${neededDeps[dep]}.`);
+      const semver = await import('semver');
+      const firstIndex = replaced.indexOf(dep) + dep.length + 1;
+      const existingVersion =
+        '' + replaced.substring(firstIndex, replaced.indexOf("'", firstIndex));
+      if (semver.gte(neededDeps[dep], existingVersion)) {
+        replaced = setAllStringIn(
+          replaced,
+          `classpath '${dep}:`,
+          `'`,
+          neededDeps[dep],
+        );
+        logger.info(`Set ${dep} = ${neededDeps[dep]}.`);
+      }
     }
   }
 
