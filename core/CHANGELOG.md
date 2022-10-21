@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/ionic-team/capacitor/compare/3.8.0...3.9.0) (2022-10-21)
+
+**Note:** Version bump only for package @capacitor/core
+
+
+
+
+
 # [3.8.0](https://github.com/ionic-team/capacitor/compare/3.7.0...3.8.0) (2022-09-08)
 
 **Note:** Version bump only for package @capacitor/core
