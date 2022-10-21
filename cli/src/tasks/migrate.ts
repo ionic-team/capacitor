@@ -955,10 +955,12 @@ async function migrateMainActivity(config: Config) {
     }
 
     const rindex = data.indexOf('registerPlugin');
+    const superLine = 'super.onCreate(savedInstanceState);';
     if (rindex !== -1) {
-      if (data.indexOf('super.onCreate(savedInstanceState);') < rindex) {
+      if (data.indexOf(superLine) < rindex) {
+        const linePadding = rindex - data.indexOf(superLine) - superLine.length - 1;
         data = data.replace(
-          'super.onCreate(savedInstanceState);\n        ',
+          `${superLine}\n${" ".repeat(linePadding)}`,
           '',
         );
         const eindex = data.lastIndexOf('.class);') + 8;
@@ -967,7 +969,7 @@ async function migrateMainActivity(config: Config) {
           `${data.substring(
             bindex,
             eindex,
-          )}\n        super.onCreate(savedInstanceState);`,
+          )}\n${" ".repeat(linePadding) + superLine.padStart(linePadding)}`,
         );
       }
     }
