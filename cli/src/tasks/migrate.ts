@@ -958,18 +958,15 @@ async function migrateMainActivity(config: Config) {
     const superLine = 'super.onCreate(savedInstanceState);';
     if (rindex !== -1) {
       if (data.indexOf(superLine) < rindex) {
-        const linePadding = rindex - data.indexOf(superLine) - superLine.length - 1;
-        data = data.replace(
-          `${superLine}\n${" ".repeat(linePadding)}`,
-          '',
-        );
+        const linePadding =
+          rindex - data.indexOf(superLine) - superLine.length - 1;
+        data = data.replace(`${superLine}\n${' '.repeat(linePadding)}`, '');
         const eindex = data.lastIndexOf('.class);') + 8;
         data = data.replace(
           data.substring(bindex, eindex),
-          `${data.substring(
-            bindex,
-            eindex,
-          )}\n${" ".repeat(linePadding) + superLine.padStart(linePadding)}`,
+          `${data.substring(bindex, eindex)}\n${
+            ' '.repeat(linePadding) + superLine.padStart(linePadding)
+          }`,
         );
       }
     }
