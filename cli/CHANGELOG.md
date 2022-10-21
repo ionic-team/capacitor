@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/ionic-team/capacitor/compare/3.8.0...3.9.0) (2022-10-21)
+
+
+### Features
+
+* **cli:** backports secure live updates support with portals for capacitor to 3.x ([#5988](https://github.com/ionic-team/capacitor/issues/5988)) ([8146cd2](https://github.com/ionic-team/capacitor/commit/8146cd23456b0737680f47ca0a1859c8a979077c)), closes [#5896](https://github.com/ionic-team/capacitor/issues/5896) [#5955](https://github.com/ionic-team/capacitor/issues/5955)
+
+
+
+
+
+# [3.8.0](https://github.com/ionic-team/capacitor/compare/3.7.0...3.8.0) (2022-09-08)
+
+**Note:** Version bump only for package @capacitor/cli
+
+
+
+
+
 # [3.7.0](https://github.com/ionic-team/capacitor/compare/3.6.0...3.7.0) (2022-08-01)
 
 **Note:** Version bump only for package @capacitor/cli

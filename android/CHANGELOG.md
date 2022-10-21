@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/ionic-team/capacitor/compare/3.8.0...3.9.0) (2022-10-21)
+
+
+### Bug Fixes
+
+* **android:** added ServerPath object and building options for setting initial load from portals ([#6005](https://github.com/ionic-team/capacitor/issues/6005)) ([a408213](https://github.com/ionic-team/capacitor/commit/a4082136ef0588d89575ba022baf83520ca4956b))
+
+
+
+
+
+# [3.8.0](https://github.com/ionic-team/capacitor/compare/3.7.0...3.8.0) (2022-09-08)
+
+**Note:** Version bump only for package @capacitor/android
+
+
+
+
+
 # [3.7.0](https://github.com/ionic-team/capacitor/compare/3.6.0...3.7.0) (2022-08-01)
 
 **Note:** Version bump only for package @capacitor/android
