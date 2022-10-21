@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/ionic-team/capacitor/compare/4.3.0...4.4.0) (2022-10-21)
+
+
+### Features
+
+* **cli:** add build command for android ([#5891](https://github.com/ionic-team/capacitor/issues/5891)) ([6d4e620](https://github.com/ionic-team/capacitor/commit/6d4e620308b6dd97376e3af7de1dd1a530083f1c))
+* **cli:** add build command for ios ([#5925](https://github.com/ionic-team/capacitor/issues/5925)) ([8e8414f](https://github.com/ionic-team/capacitor/commit/8e8414fa6f4ccb245576cc113eb969937613bbf7))
+* **cli:** supports secure live updates in Portals for Capacitor config ([#5955](https://github.com/ionic-team/capacitor/issues/5955)) ([a309b45](https://github.com/ionic-team/capacitor/commit/a309b455fdd190613353bdf0eb04469cf4aa6ccd))
+
+
+
+
+
 # [4.3.0](https://github.com/ionic-team/capacitor/compare/4.2.0...4.3.0) (2022-09-21)
 
 
