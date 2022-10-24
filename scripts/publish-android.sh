@@ -9,7 +9,7 @@ echo Attempting to build and publish Capacitor native libraries with version $CA
 mkdir -p ./tmp
 
 # Export ENV variable used by Gradle for Versioning
-export CAP_VERSION=4.4.0-beta1
+export CAP_VERSION
 export CAP_PUBLISH=true
 
 # Get latest com.capacitorjs:core XML version info
