@@ -1,5 +1,4 @@
 #!/usr/bin/sh
-printenv
 set -eo pipefail
 
 patch -u ios/Capacitor.podspec -i ios/Capacitor.podspec.patch
