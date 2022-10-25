@@ -1,5 +1,5 @@
-require "json"
-package = JSON.parse(File.read(File.join(__dir__, "package.json")))
+require 'json'
+package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 Pod::Spec.new do |s|
   s.name = 'Capacitor'
   s.version = package['version']
@@ -7,9 +7,9 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/capacitorjs'
   s.license = 'MIT'
   s.homepage = 'https://capacitorjs.com/'
-  s.ios.deployment_target  = '13.0'
+  s.ios.deployment_target = '13.0'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
-  s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :branch => "portals-dev" }
+  s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => package['version'] }
   s.source_files = 'Capacitor/Capacitor/*.{swift,h,m}', 'Capacitor/Capacitor/Plugins/*.{swift,h,m}', 'Capacitor/Capacitor/Plugins/**/*.{swift,h,m}'
   s.module_map = 'Capacitor/Capacitor/Capacitor.modulemap'
   s.resources = ['Capacitor/Capacitor/assets/native-bridge.js']
