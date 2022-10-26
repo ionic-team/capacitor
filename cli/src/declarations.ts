@@ -230,35 +230,35 @@ export interface CapacitorConfig {
       /**
        * Path to your keystore
        *
-       * @since 4.3.0
+       * @since 4.4.0
        */
       keystorePath?: string;
 
       /**
        * Password to your keystore
        *
-       * @since 4.3.0
+       * @since 4.4.0
        */
       keystorePassword?: string;
 
       /**
        * Alias in the keystore to use
        *
-       * @since 4.3.0
+       * @since 4.4.0
        */
       keystoreAlias?: string;
 
       /**
        * Password for the alias in the keystore to use
        *
-       * @since 4.3.0
+       * @since 4.4.0
        */
       keystoreAliasPassword?: string;
 
       /**
        * Bundle type for your release build
        *
-       * @since 4.3.0
+       * @since 4.4.0
        * @default "AAB"
        */
       releaseType?: 'AAB' | 'APK';
@@ -418,6 +418,15 @@ export interface CapacitorConfig {
      * @default recommended
      */
     preferredContentMode?: 'recommended' | 'desktop' | 'mobile';
+
+    /**
+     * Configure if Capacitor will handle local/push notifications.
+     * Set to false if you want to use your own UNUserNotificationCenter to handle notifications.
+     *
+     * @since 4.4.1
+     * @default true
+     */
+    handleApplicationNotifications?: boolean;
   };
 
   server?: {
