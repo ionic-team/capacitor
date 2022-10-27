@@ -181,6 +181,8 @@ class HttpRequestHandler {
             urlSession.invalidateAndCancel()
 
             if error != nil {
+                CAPLog.print("Error on request", String(describing: data), String(describing: response), String(describing: error))
+                call.reject(error!.localizedDescription, "REQUEST", error, [:])
                 return
             }
 
