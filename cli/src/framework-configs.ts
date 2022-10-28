@@ -72,7 +72,7 @@ const FRAMEWORK_CONFIGS: FrameworkConfig[] = [
     name: 'Vite',
     isMatch: config => hasDependency(config, 'vite'),
     webDir: 'dist',
-    priority: 2
+    priority: 2,
   },
   {
     name: 'Vue',
