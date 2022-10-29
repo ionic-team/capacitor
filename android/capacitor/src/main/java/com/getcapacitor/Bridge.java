@@ -142,6 +142,9 @@ public class Bridge {
     // An interface to manipulate route resolving
     private RouteProcessor routeProcessor;
 
+    // A pre-determined path to load the bridge
+    private ServerPath serverPath;
+
     /**
      * Create the Bridge with a reference to the main {@link Activity} for the
      * app, and a reference to the {@link WebView} our app will use.
@@ -159,11 +162,12 @@ public class Bridge {
         CordovaPreferences preferences,
         CapConfig config
     ) {
-        this(context, null, webView, initialPlugins, cordovaInterface, pluginManager, preferences, config);
+        this(context, null, null, webView, initialPlugins, cordovaInterface, pluginManager, preferences, config);
     }
 
     private Bridge(
         AppCompatActivity context,
+        ServerPath serverPath,
         Fragment fragment,
         WebView webView,
         List<Class<? extends Plugin>> initialPlugins,
@@ -173,6 +177,7 @@ public class Bridge {
         CapConfig config
     ) {
         this.app = new App();
+        this.serverPath = serverPath;
         this.context = context;
         this.fragment = fragment;
         this.webView = webView;
@@ -294,8 +299,17 @@ public class Bridge {
             }
         }
 
-        // Get to work
-        webView.loadUrl(appUrl);
+        // If serverPath configured, start server based on provided path
+        if (serverPath != null) {
+            if (serverPath.getType() == ServerPath.PathType.ASSET_PATH) {
+                setServerAssetPath(serverPath.getPath());
+            } else {
+                setServerBasePath(serverPath.getPath());
+            }
+        } else {
+            // Get to work
+            webView.loadUrl(appUrl);
+        }
     }
 
     @SuppressLint("WebViewApiAvailability")
@@ -351,7 +365,7 @@ public class Bridge {
             }
         }
 
-        if (!url.toString().contains(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
+        if (!url.toString().startsWith(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
             try {
                 Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
                 getContext().startActivity(openIntent);
@@ -514,6 +528,7 @@ public class Bridge {
     /**
      * Initialize the WebView, setting required flags
      */
+    @SuppressLint("SetJavaScriptEnabled")
     private void initWebView() {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -556,7 +571,9 @@ public class Bridge {
      * Register our core Plugin APIs
      */
     private void registerAllPlugins() {
+        this.registerPlugin(com.getcapacitor.plugin.CapacitorCookies.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
+        this.registerPlugin(com.getcapacitor.plugin.CapacitorHttp.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
             this.registerPlugin(pluginClass);
@@ -1299,6 +1316,7 @@ public class Bridge {
 
     public void setWebViewClient(BridgeWebViewClient client) {
         this.webViewClient = client;
+        webView.setWebViewClient(client);
     }
 
     List<WebViewListener> getWebViewListeners() {
@@ -1315,6 +1333,10 @@ public class Bridge {
 
     void setRouteProcessor(RouteProcessor routeProcessor) {
         this.routeProcessor = routeProcessor;
+    }
+
+    ServerPath getServerPath() {
+        return serverPath;
     }
 
     /**
@@ -1342,6 +1364,7 @@ public class Bridge {
         private Fragment fragment;
         private RouteProcessor routeProcessor;
         private final List<WebViewListener> webViewListeners = new ArrayList<>();
+        private ServerPath serverPath;
 
         public Builder(AppCompatActivity activity) {
             this.activity = activity;
@@ -1398,6 +1421,11 @@ public class Bridge {
             return this;
         }
 
+        public Builder setServerPath(ServerPath serverPath) {
+            this.serverPath = serverPath;
+            return this;
+        }
+
         public Bridge create() {
             // Cordova initialization
             ConfigXmlParser parser = new ConfigXmlParser();
@@ -1418,7 +1446,17 @@ public class Bridge {
             cordovaInterface.onCordovaInit(pluginManager);
 
             // Bridge initialization
-            Bridge bridge = new Bridge(activity, fragment, webView, plugins, cordovaInterface, pluginManager, preferences, config);
+            Bridge bridge = new Bridge(
+                activity,
+                serverPath,
+                fragment,
+                webView,
+                plugins,
+                cordovaInterface,
+                pluginManager,
+                preferences,
+                config
+            );
             bridge.setCordovaWebView(mockWebView);
             bridge.setWebViewListeners(webViewListeners);
             bridge.setRouteProcessor(routeProcessor);

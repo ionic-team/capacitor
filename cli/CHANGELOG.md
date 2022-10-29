@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/ionic-team/capacitor/compare/4.3.0...4.4.0) (2022-10-21)
+
+
+### Features
+
+* **cli:** add build command for android ([#5891](https://github.com/ionic-team/capacitor/issues/5891)) ([6d4e620](https://github.com/ionic-team/capacitor/commit/6d4e620308b6dd97376e3af7de1dd1a530083f1c))
+* **cli:** add build command for ios ([#5925](https://github.com/ionic-team/capacitor/issues/5925)) ([8e8414f](https://github.com/ionic-team/capacitor/commit/8e8414fa6f4ccb245576cc113eb969937613bbf7))
+* **cli:** supports secure live updates in Portals for Capacitor config ([#5955](https://github.com/ionic-team/capacitor/issues/5955)) ([a309b45](https://github.com/ionic-team/capacitor/commit/a309b455fdd190613353bdf0eb04469cf4aa6ccd))
+
+
+
+
+
+# [4.3.0](https://github.com/ionic-team/capacitor/compare/4.2.0...4.3.0) (2022-09-21)
+
+
+### Bug Fixes
+
+* **cli:** Find the Info.plist when using scheme ([#5914](https://github.com/ionic-team/capacitor/issues/5914)) ([f7029ac](https://github.com/ionic-team/capacitor/commit/f7029acb885ec60f85a434b6f71e4f2a633c7651))
+* **cli:** Make migrator update gradle wrapper files ([#5910](https://github.com/ionic-team/capacitor/issues/5910)) ([b8b9b1f](https://github.com/ionic-team/capacitor/commit/b8b9b1f96249908435017eea6c427221f1971836))
+* **cli:** Make update from windows use proper paths on Podfile ([#5906](https://github.com/ionic-team/capacitor/issues/5906)) ([c41d28f](https://github.com/ionic-team/capacitor/commit/c41d28f8cc829c6bf69d776280c9f1fdba9f866f))
+* **cli:** show error if npm install on migration failed ([#5904](https://github.com/ionic-team/capacitor/issues/5904)) ([aa60a75](https://github.com/ionic-team/capacitor/commit/aa60a75d9c2c784e127a4d89e4079b412fbe7262))
+
+
+### Features
+
+* Capacitor Cookies & Capacitor Http core plugins ([d4047cf](https://github.com/ionic-team/capacitor/commit/d4047cfa947676777f400389a8d65defae140b45))
+
+
+
+
+
 # [4.2.0](https://github.com/ionic-team/capacitor/compare/4.1.0...4.2.0) (2022-09-08)
 
 

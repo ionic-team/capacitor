@@ -131,6 +131,9 @@ internal extension InstanceDescriptor {
             if let preferredMode = (config[keyPath: "ios.preferredContentMode"] as? String) {
                 preferredContentMode = preferredMode
             }
+            if let handleNotifications = config[keyPath: "ios.handleApplicationNotifications"] as? Bool {
+                handleApplicationNotifications = handleNotifications
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity
