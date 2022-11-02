@@ -1,6 +1,6 @@
 require 'json'
 package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
-prefix = if ENV['NATIVE_PUBLISH']
+prefix = if ENV['NATIVE_PUBLISH'] == 'true'
            'ios/'
          else
            ''
