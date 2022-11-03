@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/env sh
 set -eo pipefail
 
 export NATIVE_PUBLISH=true
