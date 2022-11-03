@@ -1,8 +1,7 @@
-#!/usr/bin/sh
+#!/usr/bin/env sh
 set -eo pipefail
 
-patch -u ios/Capacitor.podspec -i ios/Capacitor.podspec.patch
-patch -u ios/CapacitorCordova.podspec -i ios/CapacitorCordova.podspec.patch
+export NATIVE_PUBLISH=true
 
 case $1 in
      lint) 
@@ -15,5 +14,3 @@ case $1 in
 
      *) echo "'lint' or 'publish' were not provided. Exiting...";;
 esac
-
-git restore ios/Capacitor.podspec ios/CapacitorCordova.podspec
