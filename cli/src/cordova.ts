@@ -11,6 +11,7 @@ import { basename, extname, join, resolve } from 'path';
 import plist from 'plist';
 import type { PlistObject } from 'plist';
 import prompts from 'prompts';
+import { xml2js } from 'xml-js';
 
 import { getAndroidPlugins } from './android/common';
 import c from './colors';
@@ -369,6 +370,7 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
   if (await pathExists(plistPath)) {
     const xmlMeta = await readXML(plistPath);
     const data = await readFile(plistPath, { encoding: 'utf-8' });
+    const trimmedPlistData = data.replace(/(\t|\r|\n)/g, '');
     const plistData = plist.parse(data) as PlistObject;
     const dict = xmlMeta.plist.dict.pop();
     if (!dict.key.includes(configElement.$.parent)) {
@@ -404,12 +406,70 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
           );
         }
       } else {
-        logPossibleMissingItem(configElement, plugin);
+        const jsfromxml = xml2js(trimmedPlistData, { compact: false });
+        let xml = buildConfigFileXml(configElement);
+        xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(
+          xml,
+        )}`;
+        xml = `<plist version="1.0"><dict>${xml}</dict></plist>`;
+        const requiredDatafromPlugin = xml2js(xml, { compact: false });
+        if (
+          !doesPlistContain(
+            requiredDatafromPlugin.elements[0].elements[0].elements,
+            jsfromxml.elements[1].elements[0].elements,
+          )
+        ) {
+          logPossibleMissingItem(configElement, plugin);
+        }
       }
     }
   } else {
     logPossibleMissingItem(configElement, plugin);
   }
+}
+
+function doesPlistContain(requiredElements: any[], existingElements: any[]) {
+  let isMatched = true;
+  for (const requiredElement of requiredElements) {
+    let wantedItem = '';
+    if (requiredElement.name === 'key' || requiredElement.name === 'string') {
+      wantedItem = JSON.stringify(requiredElement);
+    } else {
+      const modItem = { ...requiredElement, elements: [] };
+      wantedItem = JSON.stringify(modItem);
+    }
+    let foundInCheckArr = false;
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < existingElements.length; i++) {
+      const existingElement = existingElements[i];
+      let itemInPlist = '';
+      if (existingElement.name === 'key' || existingElement.name === 'string') {
+        itemInPlist = JSON.stringify(existingElement);
+        if (itemInPlist === wantedItem) {
+          foundInCheckArr = true;
+          break;
+        }
+      } else {
+        itemInPlist = JSON.stringify({ ...existingElement, elements: [] });
+        if (itemInPlist === wantedItem) {
+          if (
+            doesPlistContain(
+              requiredElement.elements,
+              existingElements[i].elements,
+            )
+          ) {
+            foundInCheckArr = true;
+            break;
+          }
+        }
+      }
+    }
+    if (!foundInCheckArr) {
+      isMatched = false;
+      break;
+    }
+  }
+  return isMatched;
 }
 
 function logPossibleMissingItem(configElement: any, plugin: Plugin) {
@@ -621,6 +681,106 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
   return cordova;
 }
 
+function findElementsToSearchIn(
+  existingElements: any[],
+  pathTarget: string[],
+): any[] {
+  const parts = [...pathTarget];
+  const elementsToSearchNextIn = [];
+  for (const existingElement of existingElements) {
+    if (existingElement.name === pathTarget[0]) {
+      for (const el of existingElement.elements) {
+        elementsToSearchNextIn.push(el);
+      }
+    }
+  }
+  if (elementsToSearchNextIn.length === 0) {
+    return [];
+  } else {
+    parts.splice(0, 1);
+    if (parts.length <= 0) {
+      return elementsToSearchNextIn;
+    } else {
+      return findElementsToSearchIn(elementsToSearchNextIn, parts);
+    }
+  }
+}
+
+function doesElementMatch(requiredElement: any, existingElement: any): boolean {
+  if (requiredElement.name !== existingElement.name) {
+    return false;
+  }
+  if (
+    (requiredElement.attributes !== undefined) !==
+    (existingElement.attributes !== undefined)
+  ) {
+    return false;
+  } else {
+    if (requiredElement.attributes !== undefined) {
+      const requiredELementAttrKeys = Object.keys(requiredElement.attributes);
+      for (const key of requiredELementAttrKeys) {
+        if (
+          requiredElement.attributes[key] !== existingElement.attributes[key]
+        ) {
+          return false;
+        }
+      }
+    }
+  }
+  if (
+    (requiredElement.elements !== undefined) !==
+    (existingElement.elements !== undefined)
+  ) {
+    return false;
+  } else {
+    if (requiredElement.elements !== undefined) {
+      // each req element is in existing element
+      for (const requiredElementItem of requiredElement.elements) {
+        let foundRequiredElement = false;
+        for (const existingElementItem of existingElement.elements) {
+          const foundRequiredElementIn = doesElementMatch(
+            requiredElementItem,
+            existingElementItem,
+          );
+          if (foundRequiredElementIn) {
+            foundRequiredElement = true;
+            break;
+          }
+        }
+        if (!foundRequiredElement) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+function doesXmlManifestContain(
+  requiredElements: any[],
+  existingElements: any[],
+  pathTarget: string[],
+) {
+  const elementsToSearchIn = findElementsToSearchIn(
+    existingElements,
+    pathTarget,
+  );
+  for (const requiredElement of requiredElements) {
+    let foundMatch = false;
+    for (const existingElement of elementsToSearchIn) {
+      const doesContain = doesElementMatch(requiredElement, existingElement);
+      if (doesContain) {
+        foundMatch = true;
+        break;
+      }
+    }
+    if (!foundMatch) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export async function writeCordovaAndroidManifest(
   cordovaPlugins: Plugin[],
   config: Config,
@@ -648,7 +808,7 @@ export async function writeCordovaAndroidManifest(
       ) {
         const keys = Object.keys(configElement).filter(k => k !== '$');
         keys.map(k => {
-          configElement[k].map((e: any) => {
+          configElement[k].map(async (e: any) => {
             const xmlElement = buildXmlElement(e, k);
             const pathParts = getPathParts(
               configElement.$.parent || configElement.$.target,
@@ -670,11 +830,50 @@ export async function writeCordovaAndroidManifest(
                   applicationXMLEntries.push(xmlElement);
                 }
               } else {
-                logger.warn(
-                  `Configuration required for ${c.strong(p.id)}.\n` +
-                    `Add the following to AndroidManifest.xml:\n` +
-                    xmlElement,
+                const manifestPathOfCapApp = join(
+                  config.android.appDirAbs,
+                  'src',
+                  'main',
+                  'AndroidManifest.xml',
                 );
+                const manifestContentTrimmed = (
+                  await readFile(manifestPathOfCapApp)
+                )
+                  .toString()
+                  .trim()
+                  .replace(/\n|\t|\r/g, '')
+                  .replace(/[\s]{1,}</g, '<')
+                  .replace(/>[\s]{1,}/g, '>')
+                  .replace(/[\s]{2,}/g, ' ');
+                const requiredManifestContentTrimmed = xmlElement
+                  .trim()
+                  .replace(/\n|\t|\r/g, '')
+                  .replace(/[\s]{1,}</g, '<')
+                  .replace(/>[\s]{1,}/g, '>')
+                  .replace(/[\s]{2,}/g, ' ');
+                const requiredDatafromPlugin = xml2js(
+                  requiredManifestContentTrimmed,
+                  { compact: false },
+                );
+                const manifestXml = xml2js(manifestContentTrimmed, {
+                  compact: false,
+                });
+                const pathPartList = getPathParts(
+                  configElement.$.parent || configElement.$.target,
+                );
+                if (
+                  !doesXmlManifestContain(
+                    requiredDatafromPlugin.elements,
+                    manifestXml.elements,
+                    pathPartList,
+                  )
+                ) {
+                  logger.warn(
+                    `Android Configuration required for ${c.strong(p.id)}.\n` +
+                      `Add the following to AndroidManifest.xml:\n` +
+                      xmlElement,
+                  );
+                }
               }
             } else {
               if (
