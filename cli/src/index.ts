@@ -1,4 +1,4 @@
-import { program } from 'commander';
+import { Option, program } from 'commander';
 
 import c from './colors';
 import { checkExternalConfig, loadConfig } from './config';
@@ -122,13 +122,66 @@ export function runProgram(config: Config): void {
   program
     .command('copy [platform]')
     .description('copies the web app build into the native app')
+    .option(
+      '--inline',
+      'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
+      false,
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform, { inline }) => {
           checkExternalConfig(config.app);
           const { copyCommand } = await import('./tasks/copy');
-          await copyCommand(config, platform);
+          await copyCommand(config, platform, inline);
         }),
+      ),
+    );
+
+  program
+    .command('build <platform>')
+    .description('builds the release version of the selected platform')
+    .option('--scheme <schemeToBuild>', 'iOS Scheme to build')
+    .option('--keystorepath <keystorePath>', 'Path to the keystore')
+    .option('--keystorepass <keystorePass>', 'Password to the keystore')
+    .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
+    .option(
+      '--keystorealiaspass <keystoreAliasPass>',
+      'Password for the Key Alias',
+    )
+    .addOption(
+      new Option(
+        '--androidreleasetype <androidreleasetype>',
+        'Android release type; APK or AAB',
+      )
+        .choices(['AAB', 'APK'])
+        .default('AAB'),
+    )
+    .action(
+      wrapAction(
+        telemetryAction(
+          config,
+          async (
+            platform,
+            {
+              scheme,
+              keystorepath,
+              keystorepass,
+              keystorealias,
+              keystorealiaspass,
+              androidreleasetype,
+            },
+          ) => {
+            const { buildCommand } = await import('./tasks/build');
+            await buildCommand(config, platform, {
+              scheme,
+              keystorepath,
+              keystorepass,
+              keystorealias,
+              keystorealiaspass,
+              androidreleasetype,
+            });
+          },
+        ),
       ),
     );
 
@@ -137,6 +190,8 @@ export function runProgram(config: Config): void {
     .description(
       `runs ${c.input('sync')}, then builds and deploys the native app`,
     )
+    .option('--scheme <schemeName>', 'set the scheme of the iOS project')
+    .option('--flavor <flavorName>', 'set the flavor of the Android project')
     .option('--list', 'list targets, then quit')
     // TODO: remove once --json is a hidden option (https://github.com/tj/commander.js/issues/1106)
     .allowUnknownOption(true)
@@ -144,10 +199,19 @@ export function runProgram(config: Config): void {
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { list, target, sync }) => {
-          const { runCommand } = await import('./tasks/run');
-          await runCommand(config, platform, { list, target, sync });
-        }),
+        telemetryAction(
+          config,
+          async (platform, { scheme, flavor, list, target, sync }) => {
+            const { runCommand } = await import('./tasks/run');
+            await runCommand(config, platform, {
+              scheme,
+              flavor,
+              list,
+              target,
+              sync,
+            });
+          },
+        ),
       ),
     );
 
