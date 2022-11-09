@@ -11,7 +11,6 @@ import { basename, extname, join, resolve } from 'path';
 import plist from 'plist';
 import type { PlistObject } from 'plist';
 import prompts from 'prompts';
-import { xml2js } from 'xml-js';
 
 import { getAndroidPlugins } from './android/common';
 import c from './colors';
@@ -406,18 +405,137 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
           );
         }
       } else {
-        const jsfromxml = xml2js(trimmedPlistData, { compact: false });
         let xml = buildConfigFileXml(configElement);
         xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(
           xml,
         )}`;
         xml = `<plist version="1.0"><dict>${xml}</dict></plist>`;
-        const requiredDatafromPlugin = xml2js(xml, { compact: false });
+
+        const parseXmlToSearchable = (
+          childElementsObj: any[],
+          arrayToAddTo: any[],
+        ) => {
+          for (const childElement of childElementsObj) {
+            const childElementName = childElement['#name'];
+            const toAdd: {
+              name: string;
+              attrs?: { [key: string]: any } | undefined;
+              children?: any[] | undefined;
+              value?: any | undefined;
+            } = { name: childElementName };
+            if (childElementName === 'key' || childElementName === 'string') {
+              toAdd.value = childElement['_'];
+            } else {
+              if (childElement['$']) {
+                toAdd.attrs = { ...childElement['$'] };
+              }
+              if (childElement['$$']) {
+                toAdd.children = [];
+                parseXmlToSearchable(childElement['$$'], toAdd['children']);
+              }
+            }
+            arrayToAddTo.push(toAdd);
+          }
+        };
+
+        const existingElements = parseXML(trimmedPlistData, {
+          explicitChildren: true,
+          trim: true,
+          preserveChildrenOrder: true,
+        });
+        const parsedExistingElements: any[] = [];
+        const rootKeyOfExistingElements = Object.keys(existingElements)[0];
+        const rootOfExistingElementsToAdd: {
+          name: string;
+          attrs?: { [key: string]: any } | undefined;
+          children: any[];
+        } = { name: rootKeyOfExistingElements, children: [] };
+        if (existingElements[rootKeyOfExistingElements]['$']) {
+          rootOfExistingElementsToAdd.attrs = {
+            ...existingElements[rootKeyOfExistingElements]['$'],
+          };
+        }
+        parseXmlToSearchable(
+          existingElements[rootKeyOfExistingElements]['$$'],
+          rootOfExistingElementsToAdd['children'],
+        );
+        parsedExistingElements.push(rootOfExistingElementsToAdd);
+
+        const requiredElements = parseXML(xml, {
+          explicitChildren: true,
+          trim: true,
+          preserveChildrenOrder: true,
+        });
+        const parsedRequiredElements: any[] = [];
+        const rootKeyOfRequiredElements = Object.keys(requiredElements)[0];
+        const rootOfRequiredElementsToAdd: {
+          name: string;
+          attrs?: { [key: string]: any } | undefined;
+          children: any[];
+        } = { name: rootKeyOfRequiredElements, children: [] };
+        if (requiredElements[rootKeyOfRequiredElements]['$']) {
+          rootOfRequiredElementsToAdd.attrs = {
+            ...requiredElements[rootKeyOfRequiredElements]['$'],
+          };
+        }
+        parseXmlToSearchable(
+          requiredElements[rootKeyOfRequiredElements]['$$'],
+          rootOfRequiredElementsToAdd['children'],
+        );
+        parsedRequiredElements.push(rootOfRequiredElementsToAdd);
+
+        const doesContainElements = (
+          requiredElementsArray: any[],
+          existingElementsArray: any[],
+        ) => {
+          for (const requiredElement of requiredElementsArray) {
+            if (
+              requiredElement.name === 'key' ||
+              requiredElement.name === 'string'
+            ) {
+              let foundMatch = false;
+              for (const existingElement of existingElementsArray) {
+                if (
+                  existingElement.name === requiredElement.name &&
+                  existingElement.value === requiredElement.value
+                ) {
+                  foundMatch = true;
+                  break;
+                }
+              }
+              if (!foundMatch) {
+                return false;
+              }
+            } else {
+              let foundMatch = false;
+              for (const existingElement of existingElementsArray) {
+                if (existingElement.name === requiredElement.name) {
+                  if (
+                    (requiredElement.children !== undefined) ===
+                    (existingElement.children !== undefined)
+                  ) {
+                    if (
+                      doesContainElements(
+                        requiredElement.children,
+                        existingElement.children,
+                      )
+                    ) {
+                      foundMatch = true;
+                      break;
+                    }
+                  }
+                }
+              }
+              if (!foundMatch) {
+                return false;
+              }
+            }
+          }
+          return true;
+        };
+
         if (
-          !doesPlistContain(
-            requiredDatafromPlugin.elements[0].elements[0].elements,
-            jsfromxml.elements[1].elements[0].elements,
-          )
+          !doesContainElements(parsedRequiredElements, parsedExistingElements)
         ) {
           logPossibleMissingItem(configElement, plugin);
         }
@@ -426,50 +544,6 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
   } else {
     logPossibleMissingItem(configElement, plugin);
   }
-}
-
-function doesPlistContain(requiredElements: any[], existingElements: any[]) {
-  let isMatched = true;
-  for (const requiredElement of requiredElements) {
-    let wantedItem = '';
-    if (requiredElement.name === 'key' || requiredElement.name === 'string') {
-      wantedItem = JSON.stringify(requiredElement);
-    } else {
-      const modItem = { ...requiredElement, elements: [] };
-      wantedItem = JSON.stringify(modItem);
-    }
-    let foundInCheckArr = false;
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < existingElements.length; i++) {
-      const existingElement = existingElements[i];
-      let itemInPlist = '';
-      if (existingElement.name === 'key' || existingElement.name === 'string') {
-        itemInPlist = JSON.stringify(existingElement);
-        if (itemInPlist === wantedItem) {
-          foundInCheckArr = true;
-          break;
-        }
-      } else {
-        itemInPlist = JSON.stringify({ ...existingElement, elements: [] });
-        if (itemInPlist === wantedItem) {
-          if (
-            doesPlistContain(
-              requiredElement.elements,
-              existingElements[i].elements,
-            )
-          ) {
-            foundInCheckArr = true;
-            break;
-          }
-        }
-      }
-    }
-    if (!foundInCheckArr) {
-      isMatched = false;
-      break;
-    }
-  }
-  return isMatched;
 }
 
 function logPossibleMissingItem(configElement: any, plugin: Plugin) {
@@ -681,106 +755,6 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
   return cordova;
 }
 
-function findElementsToSearchIn(
-  existingElements: any[],
-  pathTarget: string[],
-): any[] {
-  const parts = [...pathTarget];
-  const elementsToSearchNextIn = [];
-  for (const existingElement of existingElements) {
-    if (existingElement.name === pathTarget[0]) {
-      for (const el of existingElement.elements) {
-        elementsToSearchNextIn.push(el);
-      }
-    }
-  }
-  if (elementsToSearchNextIn.length === 0) {
-    return [];
-  } else {
-    parts.splice(0, 1);
-    if (parts.length <= 0) {
-      return elementsToSearchNextIn;
-    } else {
-      return findElementsToSearchIn(elementsToSearchNextIn, parts);
-    }
-  }
-}
-
-function doesElementMatch(requiredElement: any, existingElement: any): boolean {
-  if (requiredElement.name !== existingElement.name) {
-    return false;
-  }
-  if (
-    (requiredElement.attributes !== undefined) !==
-    (existingElement.attributes !== undefined)
-  ) {
-    return false;
-  } else {
-    if (requiredElement.attributes !== undefined) {
-      const requiredELementAttrKeys = Object.keys(requiredElement.attributes);
-      for (const key of requiredELementAttrKeys) {
-        if (
-          requiredElement.attributes[key] !== existingElement.attributes[key]
-        ) {
-          return false;
-        }
-      }
-    }
-  }
-  if (
-    (requiredElement.elements !== undefined) !==
-    (existingElement.elements !== undefined)
-  ) {
-    return false;
-  } else {
-    if (requiredElement.elements !== undefined) {
-      // each req element is in existing element
-      for (const requiredElementItem of requiredElement.elements) {
-        let foundRequiredElement = false;
-        for (const existingElementItem of existingElement.elements) {
-          const foundRequiredElementIn = doesElementMatch(
-            requiredElementItem,
-            existingElementItem,
-          );
-          if (foundRequiredElementIn) {
-            foundRequiredElement = true;
-            break;
-          }
-        }
-        if (!foundRequiredElement) {
-          return false;
-        }
-      }
-    }
-  }
-  return true;
-}
-
-function doesXmlManifestContain(
-  requiredElements: any[],
-  existingElements: any[],
-  pathTarget: string[],
-) {
-  const elementsToSearchIn = findElementsToSearchIn(
-    existingElements,
-    pathTarget,
-  );
-  for (const requiredElement of requiredElements) {
-    let foundMatch = false;
-    for (const existingElement of elementsToSearchIn) {
-      const doesContain = doesElementMatch(requiredElement, existingElement);
-      if (doesContain) {
-        foundMatch = true;
-        break;
-      }
-    }
-    if (!foundMatch) {
-      return false;
-    }
-  }
-  return true;
-}
-
 export async function writeCordovaAndroidManifest(
   cordovaPlugins: Plugin[],
   config: Config,
@@ -851,20 +825,196 @@ export async function writeCordovaAndroidManifest(
                   .replace(/[\s]{1,}</g, '<')
                   .replace(/>[\s]{1,}/g, '>')
                   .replace(/[\s]{2,}/g, ' ');
-                const requiredDatafromPlugin = xml2js(
-                  requiredManifestContentTrimmed,
-                  { compact: false },
-                );
-                const manifestXml = xml2js(manifestContentTrimmed, {
-                  compact: false,
-                });
                 const pathPartList = getPathParts(
                   configElement.$.parent || configElement.$.target,
                 );
+
+                const doesXmlManifestContainRequiredInfo = (
+                  requiredElements: any,
+                  existingElements: any,
+                  pathTarget: string[],
+                ): boolean => {
+                  const findElementsToSearchIn = (
+                    existingElements: any[],
+                    pathTarget: string[],
+                  ): any[] => {
+                    const parts = [...pathTarget];
+                    const elementsToSearchNextIn = [];
+                    for (const existingElement of existingElements) {
+                      if (existingElement.name === pathTarget[0]) {
+                        for (const el of existingElement.children) {
+                          elementsToSearchNextIn.push(el);
+                        }
+                      }
+                    }
+                    if (elementsToSearchNextIn.length === 0) {
+                      return [];
+                    } else {
+                      parts.splice(0, 1);
+                      if (parts.length <= 0) {
+                        return elementsToSearchNextIn;
+                      } else {
+                        return findElementsToSearchIn(
+                          elementsToSearchNextIn,
+                          parts,
+                        );
+                      }
+                    }
+                  };
+                  const parseXmlToSearchable = (
+                    childElementsObj: any,
+                    arrayToAddTo: any[],
+                  ) => {
+                    for (const childElementKey of Object.keys(
+                      childElementsObj,
+                    )) {
+                      for (const occurannceOfElement of childElementsObj[
+                        childElementKey
+                      ]) {
+                        const toAdd: {
+                          name: string;
+                          attrs?: { [key: string]: any } | undefined;
+                          children?: any[] | undefined;
+                        } = { name: childElementKey };
+                        if (occurannceOfElement['$']) {
+                          toAdd.attrs = { ...occurannceOfElement['$'] };
+                        }
+                        if (occurannceOfElement['$$']) {
+                          toAdd.children = [];
+                          parseXmlToSearchable(
+                            occurannceOfElement['$$'],
+                            toAdd['children'],
+                          );
+                        }
+                        arrayToAddTo.push(toAdd);
+                      }
+                    }
+                  };
+                  const doesElementMatch = (
+                    requiredElement: any,
+                    existingElement: any,
+                  ): boolean => {
+                    if (requiredElement.name !== existingElement.name) {
+                      return false;
+                    }
+                    if (
+                      (requiredElement.attrs !== undefined) !==
+                      (existingElement.attrs !== undefined)
+                    ) {
+                      return false;
+                    } else {
+                      if (requiredElement.attrs !== undefined) {
+                        const requiredELementAttrKeys = Object.keys(
+                          requiredElement.attrs,
+                        );
+                        for (const key of requiredELementAttrKeys) {
+                          if (
+                            requiredElement.attrs[key] !==
+                            existingElement.attrs[key]
+                          ) {
+                            return false;
+                          }
+                        }
+                      }
+                    }
+                    if (
+                      (requiredElement.children !== undefined) !==
+                      (existingElement.children !== undefined)
+                    ) {
+                      return false;
+                    } else {
+                      if (requiredElement.children !== undefined) {
+                        // each req element is in existing element
+                        for (const requiredElementItem of requiredElement.children) {
+                          let foundRequiredElement = false;
+                          for (const existingElementItem of existingElement.children) {
+                            const foundRequiredElementIn = doesElementMatch(
+                              requiredElementItem,
+                              existingElementItem,
+                            );
+                            if (foundRequiredElementIn) {
+                              foundRequiredElement = true;
+                              break;
+                            }
+                          }
+                          if (!foundRequiredElement) {
+                            return false;
+                          }
+                        }
+                      }
+                    }
+                    return true;
+                  };
+                  const parsedExistingElements: any[] = [];
+                  const rootKeyOfExistingElements =
+                    Object.keys(existingElements)[0];
+                  const rootOfExistingElementsToAdd: {
+                    name: string;
+                    attrs?: { [key: string]: any } | undefined;
+                    children: any[];
+                  } = { name: rootKeyOfExistingElements, children: [] };
+                  if (existingElements[rootKeyOfExistingElements]['$']) {
+                    rootOfExistingElementsToAdd.attrs = {
+                      ...existingElements[rootKeyOfExistingElements]['$'],
+                    };
+                  }
+                  parseXmlToSearchable(
+                    existingElements[rootKeyOfExistingElements]['$$'],
+                    rootOfExistingElementsToAdd['children'],
+                  );
+                  parsedExistingElements.push(rootOfExistingElementsToAdd);
+                  const parsedRequiredElements: any[] = [];
+                  const rootKeyOfRequiredElements =
+                    Object.keys(requiredElements)[0];
+                  const rootOfRequiredElementsToAdd: {
+                    name: string;
+                    attrs?: { [key: string]: any } | undefined;
+                    children: any[];
+                  } = { name: rootKeyOfRequiredElements, children: [] };
+                  if (requiredElements[rootKeyOfRequiredElements]['$']) {
+                    rootOfRequiredElementsToAdd.attrs = {
+                      ...requiredElements[rootKeyOfRequiredElements]['$'],
+                    };
+                  }
+                  parseXmlToSearchable(
+                    requiredElements[rootKeyOfRequiredElements]['$$'],
+                    rootOfRequiredElementsToAdd['children'],
+                  );
+                  parsedRequiredElements.push(rootOfRequiredElementsToAdd);
+                  const elementsToSearch = findElementsToSearchIn(
+                    parsedExistingElements,
+                    pathTarget,
+                  );
+
+                  for (const requiredElement of parsedRequiredElements) {
+                    let foundMatch = false;
+                    for (const existingElement of elementsToSearch) {
+                      const doesContain = doesElementMatch(
+                        requiredElement,
+                        existingElement,
+                      );
+                      if (doesContain) {
+                        foundMatch = true;
+                        break;
+                      }
+                    }
+                    if (!foundMatch) {
+                      return false;
+                    }
+                  }
+                  return true;
+                };
+
                 if (
-                  !doesXmlManifestContain(
-                    requiredDatafromPlugin.elements,
-                    manifestXml.elements,
+                  !doesXmlManifestContainRequiredInfo(
+                    parseXML(requiredManifestContentTrimmed, {
+                      explicitChildren: true,
+                      trim: true,
+                    }),
+                    parseXML(manifestContentTrimmed, {
+                      explicitChildren: true,
+                      trim: true,
+                    }),
                     pathPartList,
                   )
                 ) {

@@ -60,7 +60,6 @@
     "semver": "^7.3.7",
     "tar": "^6.1.11",
     "tslib": "^2.4.0",
-    "xml-js": "1.6.11",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
