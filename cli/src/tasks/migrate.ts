@@ -530,13 +530,19 @@ async function updateBuildGradle(
 
   for (const dep of Object.keys(neededDeps)) {
     if (replaced.includes(`classpath '${dep}`)) {
-      replaced = setAllStringIn(
-        replaced,
-        `classpath '${dep}:`,
-        `'`,
-        neededDeps[dep],
-      );
-      logger.info(`Set ${dep} = ${neededDeps[dep]}.`);
+      const semver = await import('semver');
+      const firstIndex = replaced.indexOf(dep) + dep.length + 1;
+      const existingVersion =
+        '' + replaced.substring(firstIndex, replaced.indexOf("'", firstIndex));
+      if (semver.gte(neededDeps[dep], existingVersion)) {
+        replaced = setAllStringIn(
+          replaced,
+          `classpath '${dep}:`,
+          `'`,
+          neededDeps[dep],
+        );
+        logger.info(`Set ${dep} = ${neededDeps[dep]}.`);
+      }
     }
   }
 
@@ -955,19 +961,18 @@ async function migrateMainActivity(config: Config) {
     }
 
     const rindex = data.indexOf('registerPlugin');
+    const superLine = 'super.onCreate(savedInstanceState);';
     if (rindex !== -1) {
-      if (data.indexOf('super.onCreate(savedInstanceState);') < rindex) {
-        data = data.replace(
-          'super.onCreate(savedInstanceState);\n        ',
-          '',
-        );
+      if (data.indexOf(superLine) < rindex) {
+        const linePadding =
+          rindex - data.indexOf(superLine) - superLine.length - 1;
+        data = data.replace(`${superLine}\n${' '.repeat(linePadding)}`, '');
         const eindex = data.lastIndexOf('.class);') + 8;
         data = data.replace(
           data.substring(bindex, eindex),
-          `${data.substring(
-            bindex,
-            eindex,
-          )}\n        super.onCreate(savedInstanceState);`,
+          `${data.substring(bindex, eindex)}\n${
+            ' '.repeat(linePadding) + superLine.padStart(linePadding)
+          }`,
         );
       }
     }

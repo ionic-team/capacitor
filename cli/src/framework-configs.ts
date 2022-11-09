@@ -69,6 +69,12 @@ const FRAMEWORK_CONFIGS: FrameworkConfig[] = [
     priority: 3,
   },
   {
+    name: 'Vite',
+    isMatch: config => hasDependency(config, 'vite'),
+    webDir: 'dist',
+    priority: 2,
+  },
+  {
     name: 'Vue',
     isMatch: config => hasDependency(config, '@vue/cli-service'),
     webDir: 'dist',

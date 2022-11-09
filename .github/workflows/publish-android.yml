@@ -9,8 +9,6 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: native-publish
       - name: set up JDK 11
         uses: actions/setup-java@v2
         with:
