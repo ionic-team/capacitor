@@ -66,10 +66,9 @@ public class PluginHandle {
     }
 
     public PluginHandle(Bridge bridge, Plugin plugin) throws InvalidPluginException {
-        this(plugin.getClass(), bridge );
+        this(plugin.getClass(), bridge);
         this.loadInstance(plugin);
     }
-
 
     public Class<? extends Plugin> getPluginClass() {
         return pluginClass;

@@ -670,10 +670,10 @@ public class Bridge {
 
     private void logInvalidPluginException(Class<? extends Plugin> clazz) {
         Logger.error(
-                "NativePlugin " +
-                        clazz.getName() +
-                        " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
-                        " the class extends Plugin"
+            "NativePlugin " +
+            clazz.getName() +
+            " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
+            " the class extends Plugin"
         );
     }
 
