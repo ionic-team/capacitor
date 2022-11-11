@@ -89,7 +89,7 @@
 		A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */; };
 		A71289E627F380A500DADDF3 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289E527F380A500DADDF3 /* Router.swift */; };
 		A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289EA27F380FD00DADDF3 /* RouterTests.swift */; };
-		A7F7EDC8291CB7E30015B73B /* CAPBridge+LoadInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDC7291CB7E30015B73B /* CAPBridge+LoadInstance.swift */; };
+		A7F7EDCD291EC75C0015B73B /* CAPPlugin+LoadInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -226,7 +226,7 @@
 		A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookieManager.swift; sourceTree = "<group>"; };
 		A71289E527F380A500DADDF3 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		A71289EA27F380FD00DADDF3 /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
-		A7F7EDC7291CB7E30015B73B /* CAPBridge+LoadInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CAPBridge+LoadInstance.swift"; sourceTree = "<group>"; };
+		A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CAPPlugin+LoadInstance.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -314,6 +314,7 @@
 				62959B0F2524DA7700A3D7F1 /* Capacitor.h */,
 				62959B132524DA7700A3D7F1 /* CAPPlugin.h */,
 				62959B012524DA7700A3D7F1 /* CAPPlugin.m */,
+				A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */,
 				62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */,
 				62959B092524DA7700A3D7F1 /* CAPPluginMethod.h */,
 				62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */,
@@ -329,7 +330,6 @@
 				62959AE32524DA7700A3D7F1 /* JSExport.swift */,
 				621ECCD4254205BD00D3D615 /* CAPBridgeProtocol.swift */,
 				621ECCD9254205C400D3D615 /* CapacitorBridge.swift */,
-				A7F7EDC7291CB7E30015B73B /* CAPBridge+LoadInstance.swift */,
 				62959B142524DA7700A3D7F1 /* CAPBridge.swift */,
 				62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */,
 				621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */,
@@ -644,11 +644,11 @@
 				623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */,
 				623D68FA254C5037002D01D1 /* KeyPath.swift in Sources */,
 				62959B222524DA7800A3D7F1 /* Console.swift in Sources */,
-				A7F7EDC8291CB7E30015B73B /* CAPBridge+LoadInstance.swift in Sources */,
 				62959B3A2524DA7800A3D7F1 /* CAPLog.swift in Sources */,
 				6214934725509C3F006C36F9 /* CAPInstanceConfiguration.swift in Sources */,
 				623D6914254C7030002D01D1 /* CAPInstanceDescriptor.swift in Sources */,
 				621ECCE3254206A600D3D615 /* CAPApplicationDelegateProxy.swift in Sources */,
+				A7F7EDCD291EC75C0015B73B /* CAPPlugin+LoadInstance.swift in Sources */,
 				62959B262524DA7800A3D7F1 /* WebView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
