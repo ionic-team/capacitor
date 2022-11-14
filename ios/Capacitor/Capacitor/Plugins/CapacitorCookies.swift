@@ -17,11 +17,12 @@ public class CAPCookiesPlugin: CAPPlugin {
         guard let key = call.getString("key") else { return call.reject("Must provide key") }
         guard let value = call.getString("value") else { return call.reject("Must provide value") }
 
-        let url = cookieManager!.getServerUrl(call)
-        if url != nil {
-            cookieManager!.setCookie(url!, key, cookieManager!.encode(value))
-            call.resolve()
-        }
+        guard let url = cookieManager!.getServerUrl(call) else { return call.reject("Invalid domain") }
+
+        let expires = call.getString("expires", "")
+        let path = call.getString("path", "")
+        cookieManager!.setCookie(url, key, cookieManager!.encode(value), expires, path)
+        call.resolve()
     }
 
     @objc func deleteCookie(_ call: CAPPluginCall) {

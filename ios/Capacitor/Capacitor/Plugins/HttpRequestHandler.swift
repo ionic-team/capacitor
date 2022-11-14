@@ -161,6 +161,7 @@ class HttpRequestHandler {
         let urlSession = request.getUrlSession(call)
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             urlSession.invalidateAndCancel()
+            CapacitorCookieManager(nil).syncCookiesToWebView()
             if error != nil {
                 return
             }

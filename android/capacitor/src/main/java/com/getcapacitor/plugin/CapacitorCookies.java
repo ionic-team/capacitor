@@ -56,6 +56,19 @@ public class CapacitorCookies extends Plugin {
         return url;
     }
 
+    private String getSanitizedDomain(String url) {
+        if (url == null || url.isEmpty()) {
+            url = this.bridge.getLocalUrl();
+        }
+
+        URI uri = getUri(url);
+        if (uri == null) {
+            return getServerUrl(null);
+        }
+
+        return url;
+    }
+
     /**
      * Try to parse a url string and if it can't be parsed, return null
      * @param url the url string to try to parse
@@ -84,11 +97,20 @@ public class CapacitorCookies extends Plugin {
     }
 
     @JavascriptInterface
-    public void setCookie(String key, String value) {
+    public void setCookie(String action) {
         String url = getServerUrl(null);
 
         if (!url.isEmpty()) {
-            cookieManager.setCookie(url, key, value);
+            cookieManager.setCookie(url, action);
+        }
+    }
+
+    @JavascriptInterface
+    public void setCookie(String domain, String action) {
+        String url = getSanitizedDomain(domain);
+
+        if (!url.isEmpty()) {
+            cookieManager.setCookie(url, action);
         }
     }
 
@@ -110,9 +132,11 @@ public class CapacitorCookies extends Plugin {
         String key = call.getString("key");
         String value = call.getString("value");
         String url = getServerUrl(call);
+        String expires = call.getString("expires", "");
+        String path = call.getString("path", "/");
 
         if (!url.isEmpty()) {
-            cookieManager.setCookie(url, key, value);
+            cookieManager.setCookie(url, key, value, expires, path);
             call.resolve();
         }
     }

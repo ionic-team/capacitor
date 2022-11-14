@@ -256,9 +256,8 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
                         return
                     } else if type == "CapacitorCookies.set" {
                         // swiftlint:disable force_cast
-                        let key = payload["key"] as! String
-                        let value = payload["value"] as! String
-                        CapacitorCookieManager(bridge!.config).setCookie(key, value)
+                        let action = payload["action"] as! String
+                        CapacitorCookieManager(bridge!.config).setCookie(action)
                         completionHandler("")
                         // swiftlint:enable force_cast
                         // Don't present prompt

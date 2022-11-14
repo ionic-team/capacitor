@@ -109,6 +109,11 @@ public class CapacitorCookieManager extends CookieManager {
         setCookie(url, cookieValue);
     }
 
+    public void setCookie(String url, String key, String value, String expires, String path) {
+        String cookieValue = key + "=" + value + "; expires=" + expires + "; path=" + path;
+        setCookie(url, cookieValue);
+    }
+
     /**
      * Removes all cookies. This method is asynchronous.
      */
