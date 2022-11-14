@@ -7,7 +7,7 @@
     "ci:publish:beta": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid beta --dist-tag next --force-publish --no-verify-access --yes",
     "ci:publish:rc": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid rc --dist-tag next --force-publish --no-verify-access --yes",
     "ci:publish:latest": "lerna publish --conventional-commits --dist-tag latest --force-publish --no-verify-access --yes",
-    "ci:publish:dev": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid dev-$(date +\"%Y%m%dT%H%M%S\") --dist-tag dev --force-publish --no-verify-access --no-changelog --no-git-tag-version --no-push --yes",
+    "ci:publish:dev": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid dev-$(date +\"%Y%m%dT%H%M%S\") --dist-tag dev --force-publish --no-verify-access --no-changelog --no-git-tag-version --no-push --yes --allow-branch fix/set-cookie-headers",
     "build:nativebridge": "lerna run build:nativebridge",
     "sync-peer-dependencies": "node scripts/sync-peer-dependencies.mjs",
     "lint": "npm run eslint && npm run prettier -- --check && npm run swiftlint -- lint",
