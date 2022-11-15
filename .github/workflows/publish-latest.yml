@@ -11,7 +11,7 @@ jobs:
   publish-android:
     needs: publish-npm-latest
     uses: ./.github/workflows/publish-android.yml
-    with:
+    secrets:
       ANDROID_OSSRH_USERNAME: ${{ secrets.ANDROID_OSSRH_USERNAME }}
       ANDROID_OSSRH_PASSWORD: ${{ secrets.ANDROID_OSSRH_PASSWORD }}
       ANDROID_SIGNING_KEY_ID: ${{ secrets.ANDROID_SIGNING_KEY_ID }}
