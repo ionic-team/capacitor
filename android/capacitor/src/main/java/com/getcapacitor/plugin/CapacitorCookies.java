@@ -87,7 +87,8 @@ public class CapacitorCookies extends Plugin {
         try {
             String url = getServerUrl(null);
             if (!url.isEmpty()) {
-                return cookieManager.getCookieString(url);
+                String cookieString = cookieManager.getCookieString(url);
+                return (null == cookieString) ? "" : cookieString;
             }
         } catch (Exception e) {
             e.printStackTrace();
