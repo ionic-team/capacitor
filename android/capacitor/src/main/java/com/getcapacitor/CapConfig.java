@@ -45,6 +45,7 @@ public class CapConfig {
     private boolean webContentsDebuggingEnabled = false;
     private boolean loggingEnabled = true;
     private boolean initialFocus = true;
+    private boolean useLegacyBridge = false;
     private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
     private String errorPath;
 
@@ -128,6 +129,7 @@ public class CapConfig {
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.loggingEnabled = builder.loggingEnabled;
         this.initialFocus = builder.initialFocus;
+        this.useLegacyBridge = builder.useLegacyBridge;
         this.minWebViewVersion = builder.minWebViewVersion;
         this.errorPath = builder.errorPath;
 
@@ -186,6 +188,7 @@ public class CapConfig {
             );
         minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", DEFAULT_ANDROID_WEBVIEW_VERSION);
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
+        useLegacyBridge = JSONUtils.getBoolean(configJSON, "android.useLegacyBridge", useLegacyBridge);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
 
         String logBehavior = JSONUtils.getString(
@@ -282,6 +285,10 @@ public class CapConfig {
 
     public boolean isInitialFocus() {
         return initialFocus;
+    }
+
+    public boolean isUsingLegacyBridge() {
+        return useLegacyBridge;
     }
 
     public int getMinWebViewVersion() {
@@ -450,6 +457,7 @@ public class CapConfig {
         private Boolean webContentsDebuggingEnabled = null;
         private boolean loggingEnabled = true;
         private boolean initialFocus = false;
+        private boolean useLegacyBridge = false;
         private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
 
         // Embedded
@@ -542,6 +550,11 @@ public class CapConfig {
 
         public Builder setCaptureInput(boolean captureInput) {
             this.captureInput = captureInput;
+            return this;
+        }
+
+        public Builder setUseLegacyBridge(boolean useLegacyBridge) {
+            this.useLegacyBridge = useLegacyBridge;
             return this;
         }
 
