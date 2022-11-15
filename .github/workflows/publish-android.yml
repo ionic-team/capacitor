@@ -1,9 +1,10 @@
 name: Publish Native Android Library
 
-on: workflow_dispatch
+on: [workflow_dispatch, workflow_call]
 jobs:
   publish-android:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       packages: write
