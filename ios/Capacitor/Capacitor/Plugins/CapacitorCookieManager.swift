@@ -46,6 +46,17 @@ public class CapacitorCookieManager {
         jar.setCookies(cookies, for: url, mainDocumentURL: url)
     }
 
+    public func getCookiesAsMap(_ url: URL) -> [String: String] {
+        var cookiesMap: [String: String] = [:]
+        let jar = HTTPCookieStorage.shared
+        if let cookies = jar.cookies(for: url) {
+            for cookie in cookies {
+                cookiesMap[cookie.name] = cookie.value
+            }
+        }
+        return cookiesMap
+    }
+
     public func getCookies() -> String {
         let jar = HTTPCookieStorage.shared
         guard let url = self.getServerUrl() else { return "" }
