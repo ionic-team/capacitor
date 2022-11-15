@@ -1,6 +1,6 @@
 name: Publish NPM Latest
 
-on: workflow_dispatch
+on: [workflow_dispatch, workflow_call]
 
 jobs:
   deploy-npm-latest:

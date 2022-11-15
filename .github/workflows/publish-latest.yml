@@ -1,0 +1,10 @@
+name: Publish Latest
+
+on: workflow_dispatch
+
+jobs:
+  publish-npm-latest:
+    uses: ./.github/workflows/publish-npm-latest.yml
+  publish-android:
+    needs: publish-npm-latest
+    uses: ./.github/workflows/publish-android.yml
