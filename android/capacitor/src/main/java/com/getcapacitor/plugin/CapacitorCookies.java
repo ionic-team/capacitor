@@ -97,15 +97,6 @@ public class CapacitorCookies extends Plugin {
     }
 
     @JavascriptInterface
-    public void setCookie(String action) {
-        String url = getServerUrl(null);
-
-        if (!url.isEmpty()) {
-            cookieManager.setCookie(url, action);
-        }
-    }
-
-    @JavascriptInterface
     public void setCookie(String domain, String action) {
         String url = getSanitizedDomain(domain);
 

@@ -28,8 +28,12 @@ public class CapacitorCookieManager {
         return urlString.isEmpty || urlString == getServerUrl()?.absoluteString || urlString.hasPrefix("http://") || urlString.hasPrefix("https://")
     }
 
-    public func getServerUrl(_ call: CAPPluginCall) -> URL? {
-        guard let urlString = call.getString("url") else {
+    public func getServerUrl(_ urlString: String?) -> URL? {
+        guard let urlString = urlString else {
+            return getServerUrl()
+        }
+
+        if urlString.isEmpty {
             return getServerUrl()
         }
 
@@ -50,8 +54,8 @@ public class CapacitorCookieManager {
         return value.removingPercentEncoding!
     }
 
-    public func setCookie(_ action: String) {
-        let url = getServerUrl()!
+    public func setCookie(_ domain: String, _ action: String) {
+        let url = getServerUrl(domain)!
         let jar = HTTPCookieStorage.shared
         let field = ["Set-Cookie": action]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: field, for: url)
