@@ -2,6 +2,7 @@ package com.getcapacitor.plugin;
 
 import android.webkit.JavascriptInterface;
 import androidx.annotation.Nullable;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginConfig;
@@ -88,6 +89,19 @@ public class CapacitorCookies extends Plugin {
 
         if (!url.isEmpty()) {
             cookieManager.setCookie(url, key, value);
+        }
+    }
+
+    @PluginMethod
+    public void getCookies(PluginCall call) {
+        String url = getServerUrl(call);
+        if (!url.isEmpty()) {
+            JSObject cookiesMap = new JSObject();
+            HttpCookie[] cookies = cookieManager.getCookies(url);
+            for (HttpCookie cookie : cookies) {
+                cookiesMap.put(cookie.getName(), cookie.getValue());
+            }
+            call.resolve(cookiesMap);
         }
     }
 

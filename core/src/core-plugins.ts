@@ -26,7 +26,15 @@ const encode = (str: string) =>
     .replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent)
     .replace(/[()]/g, escape);
 
+/**
+ * Safely web decode a string value (inspired by js-cookie)
+ * @param str The string value to decode
+ */
+const decode = (str: string): string =>
+  str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
+
 export interface CapacitorCookiesPlugin {
+  getCookies(options?: GetCookieOptions): Promise<HttpCookieMap>;
   setCookie(options: SetCookieOptions): Promise<void>;
   deleteCookie(options: DeleteCookieOptions): Promise<void>;
   clearCookies(options: ClearCookieOptions): Promise<void>;
@@ -39,11 +47,16 @@ interface HttpCookie {
   value: string;
 }
 
+interface HttpCookieMap {
+  [key: string]: string;
+}
+
 interface HttpCookieExtras {
   path?: string;
   expires?: string;
 }
 
+export type GetCookieOptions = Omit<HttpCookie, 'key' | 'value'>;
 export type SetCookieOptions = HttpCookie & HttpCookieExtras;
 export type DeleteCookieOptions = Omit<HttpCookie, 'value'>;
 export type ClearCookieOptions = Omit<HttpCookie, 'key' | 'value'>;
@@ -52,6 +65,20 @@ export class CapacitorCookiesPluginWeb
   extends WebPlugin
   implements CapacitorCookiesPlugin
 {
+  async getCookies(): Promise<HttpCookieMap> {
+    const cookies = document.cookie;
+    const cookieMap: HttpCookieMap = {};
+    cookies.split(';').forEach(cookie => {
+      if (cookie.length <= 0) return;
+      // Replace first "=" with CAP_COOKIE to prevent splitting on additional "="
+      let [key, value] = cookie.replace(/=/, 'CAP_COOKIE').split('CAP_COOKIE');
+      key = decode(key).trim();
+      value = decode(value).trim();
+      cookieMap[key] = value;
+    });
+    return cookieMap;
+  }
+
   async setCookie(options: SetCookieOptions): Promise<void> {
     try {
       // Safely Encoded Key/Value
