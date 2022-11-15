@@ -3,6 +3,7 @@
 #import "CAPBridgedPlugin.h"
 
 CAP_PLUGIN(CAPCookiesPlugin, "CapacitorCookies",
+  CAP_PLUGIN_METHOD(getCookies, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(setCookie, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(deleteCookie, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(clearCookies, CAPPluginReturnPromise);
