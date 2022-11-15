@@ -79,6 +79,17 @@ public class CapacitorCookieManager {
         return cookiesMap
     }
 
+    public func getCookiesAsMap(_ url: URL) -> [String: String] {
+        var cookiesMap: [String: String] = [:]
+        let jar = HTTPCookieStorage.shared
+        if let cookies = jar.cookies(for: url) {
+            for cookie in cookies {
+                cookiesMap[cookie.name] = cookie.value
+            }
+        }
+        return cookiesMap
+    }
+
     public func getCookies() -> String {
         syncCookiesToWebView()
         let jar = HTTPCookieStorage.shared
