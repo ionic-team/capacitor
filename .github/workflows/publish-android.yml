@@ -1,6 +1,24 @@
 name: Publish Native Android Library
 
-on: [workflow_dispatch, workflow_call]
+on: 
+  workflow_call:
+    secrets:
+      ANDROID_OSSRH_USERNAME:
+        required: true
+      ANDROID_OSSRH_PASSWORD:
+        required: true
+      ANDROID_SIGNING_KEY_ID:
+        required: true
+      ANDROID_SIGNING_PASSWORD:
+        required: true
+      ANDROID_SIGNING_KEY:
+        required: true
+      ANDROID_SONATYPE_STAGING_PROFILE_ID:
+        required: true
+      CAP_GH_RELEASE_TOKEN:
+        required: true
+  workflow_dispatch:
+
 jobs:
   publish-android:
     runs-on: ubuntu-latest
@@ -9,7 +27,9 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
       - name: set up JDK 11
         uses: actions/setup-java@v2
         with:
