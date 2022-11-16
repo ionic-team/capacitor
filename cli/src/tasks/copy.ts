@@ -23,9 +23,12 @@ import { getPlugins } from '../plugin';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
 
+import { inlineSourceMaps } from './sourcemaps';
+
 export async function copyCommand(
   config: Config,
   selectedPlatformName: string,
+  inline = false,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
@@ -43,7 +46,7 @@ export async function copyCommand(
     const platforms = await selectPlatforms(config, selectedPlatformName);
     try {
       await allSerial(
-        platforms.map(platformName => () => copy(config, platformName)),
+        platforms.map(platformName => () => copy(config, platformName, inline)),
       );
     } catch (e) {
       if (isFatal(e)) {
@@ -58,6 +61,7 @@ export async function copyCommand(
 export async function copy(
   config: Config,
   platformName: string,
+  inline = false,
 ): Promise<void> {
   await runTask(c.success(c.strong(`copy ${platformName}`)), async () => {
     const result = await checkWebDir(config);
@@ -82,14 +86,36 @@ export async function copy(
       usesCapacitorPortals = true;
     }
 
+    let usesLiveUpdates = false;
+    if (
+      allPlugins.filter(plugin => plugin.id === '@capacitor/live-updates')
+        .length > 0
+    ) {
+      usesLiveUpdates = true;
+    }
+
     if (platformName === config.ios.name) {
       if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, await config.ios.webDirAbs);
+        if (config.app.extConfig?.plugins?.Portals?.liveUpdatesKey) {
+          await copySecureLiveUpdatesKey(
+            config.app.extConfig.plugins.Portals.liveUpdatesKey,
+            config.app.rootDir,
+            config.ios.nativeTargetDirAbs,
+          );
+        }
       } else {
         await copyWebDir(
           config,
           await config.ios.webDirAbs,
           config.app.webDirAbs,
+        );
+      }
+      if (usesLiveUpdates && config.app.extConfig?.plugins?.LiveUpdates?.key) {
+        await copySecureLiveUpdatesKey(
+          config.app.extConfig.plugins.LiveUpdates.key,
+          config.app.rootDir,
+          config.ios.nativeTargetDirAbs,
         );
       }
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
@@ -98,11 +124,25 @@ export async function copy(
     } else if (platformName === config.android.name) {
       if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, config.android.webDirAbs);
+        if (config.app.extConfig?.plugins?.Portals?.liveUpdatesKey) {
+          await copySecureLiveUpdatesKey(
+            config.app.extConfig.plugins.Portals.liveUpdatesKey,
+            config.app.rootDir,
+            config.android.assetsDirAbs,
+          );
+        }
       } else {
         await copyWebDir(
           config,
           config.android.webDirAbs,
           config.app.webDirAbs,
+        );
+      }
+      if (usesLiveUpdates && config.app.extConfig?.plugins?.LiveUpdates?.key) {
+        await copySecureLiveUpdatesKey(
+          config.app.extConfig.plugins.LiveUpdates.key,
+          config.app.rootDir,
+          config.android.assetsDirAbs,
         );
       }
       await copyCapacitorConfig(config, config.android.assetsDirAbs);
@@ -119,6 +159,9 @@ export async function copy(
       }
     } else {
       throw `Platform ${platformName} is not valid.`;
+    }
+    if (inline) {
+      await inlineSourceMaps(config, platformName);
     }
   });
 
@@ -205,5 +248,35 @@ function isPortal(config: any): config is Portal {
   return (
     (config as Portal).webDir !== undefined &&
     (config as Portal).name !== undefined
+  );
+}
+
+async function copySecureLiveUpdatesKey(
+  secureLiveUpdatesKeyFile: string,
+  rootDir: string,
+  nativeAbsDir: string,
+) {
+  const keyAbsFromPath = join(rootDir, secureLiveUpdatesKeyFile);
+  const keyAbsToPath = join(nativeAbsDir, basename(keyAbsFromPath));
+  const keyRelToDir = relative(rootDir, nativeAbsDir);
+
+  if (!(await pathExists(keyAbsFromPath))) {
+    logger.warn(
+      `Cannot copy Secure Live Updates signature file from ${c.strong(
+        keyAbsFromPath,
+      )} to ${keyRelToDir}\n` +
+        `Signature file does not exist at specified key path.`,
+    );
+
+    return;
+  }
+
+  await runTask(
+    `Copying Secure Live Updates key from ${c.strong(
+      secureLiveUpdatesKeyFile,
+    )} to ${keyRelToDir}`,
+    async () => {
+      return fsCopy(keyAbsFromPath, keyAbsToPath);
+    },
   );
 }

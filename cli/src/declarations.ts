@@ -217,10 +217,61 @@ export interface CapacitorConfig {
      *
      * The minimum supported cannot be lower than version `55`, which is required for Capacitor.
      *
+     * If the device uses a lower WebView version, an error message will be shown on Logcat.
+     * If `server.errorPath` is configured, the WebView will redirect to that file, so can be
+     * used to show a custom error.
+     *
      * @since 4.0.0
      * @default 60
      */
     minWebViewVersion?: number;
+
+    buildOptions?: {
+      /**
+       * Path to your keystore
+       *
+       * @since 4.4.0
+       */
+      keystorePath?: string;
+
+      /**
+       * Password to your keystore
+       *
+       * @since 4.4.0
+       */
+      keystorePassword?: string;
+
+      /**
+       * Alias in the keystore to use
+       *
+       * @since 4.4.0
+       */
+      keystoreAlias?: string;
+
+      /**
+       * Password for the alias in the keystore to use
+       *
+       * @since 4.4.0
+       */
+      keystoreAliasPassword?: string;
+
+      /**
+       * Bundle type for your release build
+       *
+       * @since 4.4.0
+       * @default "AAB"
+       */
+      releaseType?: 'AAB' | 'APK';
+    };
+
+    /**
+     * Use legacy [addJavascriptInterface](https://developer.android.com/reference/android/webkit/WebView#addJavascriptInterface(java.lang.Object,%20java.lang.String))
+     * instead of the new and more secure [addWebMessageListener](https://developer.android.com/reference/androidx/webkit/WebViewCompat#addWebMessageListener(android.webkit.WebView,java.lang.String,java.util.Set%3Cjava.lang.String%3E,androidx.webkit.WebViewCompat.WebMessageListener))
+     *
+     * @since 4.5.0
+     * @default false
+     */
+    useLegacyBridge: boolean;
   };
 
   ios?: {
@@ -376,6 +427,15 @@ export interface CapacitorConfig {
      * @default recommended
      */
     preferredContentMode?: 'recommended' | 'desktop' | 'mobile';
+
+    /**
+     * Configure if Capacitor will handle local/push notifications.
+     * Set to false if you want to use your own UNUserNotificationCenter to handle notifications.
+     *
+     * @since 4.4.1
+     * @default true
+     */
+    handleApplicationNotifications?: boolean;
   };
 
   server?: {
@@ -398,6 +458,7 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on iOS.
      *
+     * [Can't be set to schemes that the WKWebView already handles, such as http or https](https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/2875766-seturlschemehandler)
      * This can be useful when migrating from
      * [`cordova-plugin-ionic-webview`](https://github.com/ionic-team/cordova-plugin-ionic-webview),
      * where the default scheme on iOS is `ionic`.
@@ -456,6 +517,7 @@ export interface CapacitorConfig {
 
     /**
      * Specify path to a local html page to display in case of errors.
+     * On Android the html file won't have access to Capacitor plugins.
      *
      * @since 4.0.0
      * @default null
@@ -523,6 +585,7 @@ export interface LiveUpdateConfig {
   channel: string;
   autoUpdateMethod: AutoUpdateMethod;
   maxVersions?: number;
+  key?: string;
 }
 
 export type AutoUpdateMethod = 'none' | 'background';
@@ -547,5 +610,41 @@ export interface PluginsConfig {
   Portals?: {
     shell: Portal;
     apps: Portal[];
+    liveUpdatesKey?: string;
+  };
+
+  /**
+   * Capacitor Live Updates plugin configuration
+   *
+   * @since 4.2.0
+   */
+  LiveUpdates?: LiveUpdateConfig;
+
+  /**
+   * Capacitor Cookies plugin configuration
+   *
+   * @since 4.3.0
+   */
+  CapacitorCookies?: {
+    /**
+     * Enable CapacitorCookies to override the global `document.cookie` on native.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+  };
+
+  /**
+   * Capacitor Http plugin configuration
+   *
+   * @since 4.3.0
+   */
+  CapacitorHttp?: {
+    /**
+     * Enable CapacitorHttp to override the global `fetch` and `XMLHttpRequest` on native.
+     *
+     * @default false
+     */
+    enabled?: boolean;
   };
 }

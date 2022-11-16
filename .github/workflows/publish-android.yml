@@ -1,16 +1,15 @@
 name: Publish Native Android Library
 
-on: workflow_dispatch
+on: [workflow_dispatch, workflow_call]
 jobs:
   publish-android:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       packages: write
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: native-publish
       - name: set up JDK 11
         uses: actions/setup-java@v2
         with:

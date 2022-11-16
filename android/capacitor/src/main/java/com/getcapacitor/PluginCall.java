@@ -318,6 +318,10 @@ public class PluginCall {
     }
 
     public JSObject getObject(String name) {
+        Logger.warn(
+            Logger.tags("Plugin"),
+            "getObject calls without a default value will return null in Capacitor 5 instead of an empty object to match iOS behavior"
+        );
         return this.getObject(name, new JSObject());
     }
 
@@ -339,6 +343,10 @@ public class PluginCall {
     }
 
     public JSArray getArray(String name) {
+        Logger.warn(
+            Logger.tags("Plugin"),
+            "getArray calls without a default value will return null in Capacitor 5 instead of an empty array to match iOS behavior"
+        );
         return this.getArray(name, new JSArray());
     }
 

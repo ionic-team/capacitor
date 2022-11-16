@@ -263,16 +263,10 @@ extension CAPBridgeViewController {
     }
 
     @objc public func setServerBasePath(path: String) {
-        let url = URL(fileURLWithPath: path, isDirectory: true)
-        guard let capBridge = capacitorBridge, FileManager.default.fileExists(atPath: url.path) else {
-            return
-        }
-        capBridge.config = capBridge.config.updatingAppLocation(url)
-        capBridge.webViewAssetHandler.setAssetPath(url.path)
-        if let url = capacitorBridge?.config.serverURL {
-            DispatchQueue.main.async { [weak self] in
-                _ = self?.webView?.load(URLRequest(url: url))
-            }
+        guard let capBridge = capacitorBridge else { return }
+        capBridge.setServerBasePath(path)
+        DispatchQueue.main.async { [weak self] in
+            _ = self?.webView?.load(URLRequest(url: capBridge.config.serverURL))
         }
     }
 }
