@@ -20,7 +20,7 @@ public class CapacitorCookies extends Plugin {
     @Override
     public void load() {
         this.bridge.getWebView().addJavascriptInterface(this, "CapacitorCookiesAndroidInterface");
-        this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL);
+        this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL, this.bridge);
         CookieHandler.setDefault(cookieManager);
         super.load();
     }
@@ -56,19 +56,6 @@ public class CapacitorCookies extends Plugin {
         return url;
     }
 
-    private String getSanitizedDomain(String url) {
-        if (url == null || url.isEmpty()) {
-            url = this.bridge.getLocalUrl();
-        }
-
-        URI uri = getUri(url);
-        if (uri == null) {
-            return getServerUrl(null);
-        }
-
-        return url;
-    }
-
     /**
      * Try to parse a url string and if it can't be parsed, return null
      * @param url the url string to try to parse
@@ -99,7 +86,7 @@ public class CapacitorCookies extends Plugin {
 
     @JavascriptInterface
     public void setCookie(String domain, String action) {
-        String url = getSanitizedDomain(domain);
+        String url = cookieManager.getSanitizedDomain(domain);
 
         if (!url.isEmpty()) {
             cookieManager.setCookie(url, action);

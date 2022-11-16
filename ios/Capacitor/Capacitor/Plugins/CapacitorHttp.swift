@@ -8,7 +8,7 @@ public class CAPHttpPlugin: CAPPlugin {
         guard var _ = URL(string: url) else { return call.reject("Invalid URL"); }
 
         do {
-            try HttpRequestHandler.request(call, httpMethod)
+            try HttpRequestHandler.request(call, httpMethod, self.bridge?.config)
         } catch let error {
             call.reject(error.localizedDescription)
         }
