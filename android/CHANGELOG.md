@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/ionic-team/capacitor/compare/4.4.0...4.5.0) (2022-11-16)
+
+
+### Bug Fixes
+
+* **android:** Silence deprecation warning on handlePermissionResult ([#6092](https://github.com/ionic-team/capacitor/issues/6092)) ([888b13e](https://github.com/ionic-team/capacitor/commit/888b13e89c48dab949b38135a3ec443ac4fd852e))
+
+
+### Features
+
+* **android/cli:** Allow to use the old addJavascriptInterface bridge ([#6043](https://github.com/ionic-team/capacitor/issues/6043)) ([a6e7c54](https://github.com/ionic-team/capacitor/commit/a6e7c5422687b703492a5fcc49369eacc376143d))
+* **cookies:** add get cookies plugin method ([ba1e770](https://github.com/ionic-team/capacitor/commit/ba1e7702a3338714aee24388c0afea39706c9341))
+
+
+
+
+
 # [4.4.0](https://github.com/ionic-team/capacitor/compare/4.3.0...4.4.0) (2022-10-21)
 
 
