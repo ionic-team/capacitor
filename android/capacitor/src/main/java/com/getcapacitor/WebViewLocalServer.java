@@ -342,54 +342,54 @@ public class WebViewLocalServer {
                     isHtmlText = true;
                     break;
                 }
-                if (isHtmlText) {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-                    for (Map.Entry<String, String> header : headers.entrySet()) {
-                        conn.setRequestProperty(header.getKey(), header.getValue());
-                    }
-                    String getCookie = CookieManager.getInstance().getCookie(url);
-                    if (getCookie != null) {
-                        conn.setRequestProperty("Cookie", getCookie);
-                    }
-                    conn.setRequestMethod(method);
-                    conn.setReadTimeout(30 * 1000);
-                    conn.setConnectTimeout(30 * 1000);
-                    if (request.getUrl().getUserInfo() != null) {
-                        byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
-                        String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
-                        conn.setRequestProperty("Authorization", "Basic " + base64);
-                    }
-
-                    List<String> cookies = conn.getHeaderFields().get("Set-Cookie");
-                    if (cookies != null) {
-                        for (String cookie : cookies) {
-                            CookieManager.getInstance().setCookie(url, cookie);
-                        }
-                    }
-                    CookieManager.getInstance().flush();
-                }
-
-                int status = conn.getResponseCode();
-                if (
-                    status == HttpURLConnection.HTTP_MOVED_TEMP ||
-                    status == HttpURLConnection.HTTP_MOVED_PERM ||
-                    status == HttpURLConnection.HTTP_SEE_OTHER ||
-                    status == 307
-                ) {
-                    // Return null so that this request will not be intercepted.
-                    return null;
-                }
-                InputStream responseStream = conn.getInputStream();
-                responseStream = jsInjector.getInjectedStream(responseStream);
-                return new WebResourceResponse(
-                    "text/html",
-                    handler.getEncoding(),
-                    handler.getStatusCode(),
-                    handler.getReasonPhrase(),
-                    handler.getResponseHeaders(),
-                    responseStream
-                );
             }
+            if (isHtmlText) {
+                HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    conn.setRequestProperty(header.getKey(), header.getValue());
+                }
+                String getCookie = CookieManager.getInstance().getCookie(url);
+                if (getCookie != null) {
+                    conn.setRequestProperty("Cookie", getCookie);
+                }
+                conn.setRequestMethod(method);
+                conn.setReadTimeout(30 * 1000);
+                conn.setConnectTimeout(30 * 1000);
+                if (request.getUrl().getUserInfo() != null) {
+                    byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
+                    String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
+                    conn.setRequestProperty("Authorization", "Basic " + base64);
+                }
+
+                List<String> cookies = conn.getHeaderFields().get("Set-Cookie");
+                if (cookies != null) {
+                    for (String cookie : cookies) {
+                        CookieManager.getInstance().setCookie(url, cookie);
+                    }
+                }
+                CookieManager.getInstance().flush();
+
+            int status = conn.getResponseCode();
+            if (
+                status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                status == HttpURLConnection.HTTP_MOVED_PERM ||
+                status == HttpURLConnection.HTTP_SEE_OTHER ||
+                status == 307
+            ) {
+                // Return null so that this request will not be intercepted.
+                return null;
+            }
+            InputStream responseStream = conn.getInputStream();
+            responseStream = jsInjector.getInjectedStream(responseStream);
+            return new WebResourceResponse(
+                "text/html",
+                handler.getEncoding(),
+                handler.getStatusCode(),
+                handler.getReasonPhrase(),
+                handler.getResponseHeaders(),
+                responseStream
+            );
+        }
         } catch (Exception ex) {
             bridge.handleAppUrlLoadError(ex);
         }
