@@ -312,15 +312,18 @@ const nativeBridge = (function (exports) {
                         set: function (val) {
                             const cookiePairs = val.split(';');
                             const domainSection = val.toLowerCase().split('domain=')[1];
-                            const domain = (cookiePairs.length > 1 && domainSection != null && domainSection.length > 0)
-                                ? domainSection.split(';')[0].trim() : '';
+                            const domain = cookiePairs.length > 1 &&
+                                domainSection != null &&
+                                domainSection.length > 0
+                                ? domainSection.split(';')[0].trim()
+                                : '';
                             if (platform === 'ios') {
                                 // Use prompt to synchronously set cookies.
                                 // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
                                 const payload = {
                                     type: 'CapacitorCookies.set',
                                     action: val,
-                                    domain
+                                    domain,
                                 };
                                 prompt(JSON.stringify(payload));
                             }
