@@ -271,7 +271,7 @@ export interface CapacitorConfig {
      * @since 4.5.0
      * @default false
      */
-    useLegacyBridge: boolean;
+    useLegacyBridge?: boolean;
   };
 
   ios?: {
