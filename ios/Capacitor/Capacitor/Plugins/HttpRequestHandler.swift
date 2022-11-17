@@ -97,6 +97,24 @@ class HttpRequestHandler {
         }
     }
 
+    private static func setCookiesFromResponse(_ response: HTTPURLResponse, _ config: InstanceConfiguration?) {
+        let headers = response.allHeaderFields
+        if let cookies = headers["Set-Cookie"] as? String {
+            for cookie in cookies.components(separatedBy: ",") {
+                let domainComponents = cookie.lowercased().components(separatedBy: "domain=")
+                if domainComponents.count > 1 {
+                    CapacitorCookieManager(config).setCookie(
+                        domainComponents[1].components(separatedBy: ";")[0],
+                        cookie
+                    )
+                } else {
+                    CapacitorCookieManager(config).setCookie("", cookie)
+                }
+            }
+        }
+        CapacitorCookieManager(config).syncCookiesToWebView()
+    }
+
     private static func buildResponse(_ data: Data?, _ response: HTTPURLResponse, responseType: ResponseType = .default) -> [String: Any] {
         var output = [:] as [String: Any]
 
@@ -122,7 +140,7 @@ class HttpRequestHandler {
         return output
     }
 
-    public static func request(_ call: CAPPluginCall, _ httpMethod: String?) throws {
+    public static func request(_ call: CAPPluginCall, _ httpMethod: String?, _ config: InstanceConfiguration?) throws {
         guard let urlString = call.getString("url") else { throw URLError(.badURL) }
         let method = httpMethod ?? call.getString("method", "GET")
 
@@ -161,9 +179,12 @@ class HttpRequestHandler {
         let urlSession = request.getUrlSession(call)
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             urlSession.invalidateAndCancel()
+
             if error != nil {
                 return
             }
+
+            setCookiesFromResponse(response as! HTTPURLResponse, config)
 
             let type = ResponseType(rawValue: responseType) ?? .default
             call.resolve(self.buildResponse(data, response as! HTTPURLResponse, responseType: type))
