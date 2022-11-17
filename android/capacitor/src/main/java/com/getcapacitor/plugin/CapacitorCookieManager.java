@@ -165,6 +165,10 @@ public class CapacitorCookieManager extends CookieManager {
 
             // process each of the headers
             for (String headerValue : Objects.requireNonNull(responseHeaders.get(headerKey))) {
+                // Set at server url
+                setCookie(uri.toString(), headerValue);
+
+                // Set at local url or domain
                 setCookie(getDomainFromCookieString(headerValue), headerValue);
             }
         }
