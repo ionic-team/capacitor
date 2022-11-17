@@ -263,6 +263,15 @@ export interface CapacitorConfig {
        */
       releaseType?: 'AAB' | 'APK';
     };
+
+    /**
+     * Use legacy [addJavascriptInterface](https://developer.android.com/reference/android/webkit/WebView#addJavascriptInterface(java.lang.Object,%20java.lang.String))
+     * instead of the new and more secure [addWebMessageListener](https://developer.android.com/reference/androidx/webkit/WebViewCompat#addWebMessageListener(android.webkit.WebView,java.lang.String,java.util.Set%3Cjava.lang.String%3E,androidx.webkit.WebViewCompat.WebMessageListener))
+     *
+     * @since 4.5.0
+     * @default false
+     */
+    useLegacyBridge?: boolean;
   };
 
   ios?: {
@@ -423,7 +432,7 @@ export interface CapacitorConfig {
      * Configure if Capacitor will handle local/push notifications.
      * Set to false if you want to use your own UNUserNotificationCenter to handle notifications.
      *
-     * @since 4.4.1
+     * @since 4.5.0
      * @default true
      */
     handleApplicationNotifications?: boolean;

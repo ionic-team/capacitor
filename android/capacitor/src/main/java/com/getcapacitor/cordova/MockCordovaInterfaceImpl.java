@@ -26,6 +26,7 @@ public class MockCordovaInterfaceImpl extends CordovaInterfaceImpl {
      * @param grantResults
      * @return true if Cordova handled the permission request, false if not
      */
+    @SuppressWarnings("deprecation")
     public boolean handlePermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
         Pair<CordovaPlugin, Integer> callback = permissionResultCallbacks.getAndRemoveCallback(requestCode);
         if (callback != null) {
