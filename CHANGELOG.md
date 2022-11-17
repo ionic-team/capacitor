@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/ionic-team/capacitor/compare/4.4.0...4.5.0) (2022-11-16)
+
+
+### Bug Fixes
+
+* **android:** Silence deprecation warning on handlePermissionResult ([#6092](https://github.com/ionic-team/capacitor/issues/6092)) ([888b13e](https://github.com/ionic-team/capacitor/commit/888b13e89c48dab949b38135a3ec443ac4fd852e))
+* **cli:** add vite config to framework detection ([#6039](https://github.com/ionic-team/capacitor/issues/6039)) ([3796d42](https://github.com/ionic-team/capacitor/commit/3796d42665f3150f99c761aa561a9e34d03cae28))
+* **cli:** calculate padding of super.onCreate(savedInstanceState); line ([#6016](https://github.com/ionic-team/capacitor/issues/6016)) ([5729ac1](https://github.com/ionic-team/capacitor/commit/5729ac19e7880713ec52bac431a2756da5aa3109))
+* **cli:** Update gradle versions only if they are older ([#6015](https://github.com/ionic-team/capacitor/issues/6015)) ([ae94101](https://github.com/ionic-team/capacitor/commit/ae941017fff3bcfa75e0788535f356a56ce6fa05))
+* **cli/ios:** Read handleApplicationNotifications configuration option ([#6030](https://github.com/ionic-team/capacitor/issues/6030)) ([99ccf18](https://github.com/ionic-team/capacitor/commit/99ccf181f6ee8a00ed97bdbf9076e2b2ea27cd57))
+
+
+### Features
+
+* **android/cli:** Allow to use the old addJavascriptInterface bridge ([#6043](https://github.com/ionic-team/capacitor/issues/6043)) ([a6e7c54](https://github.com/ionic-team/capacitor/commit/a6e7c5422687b703492a5fcc49369eacc376143d))
+* **cookies:** add get cookies plugin method ([ba1e770](https://github.com/ionic-team/capacitor/commit/ba1e7702a3338714aee24388c0afea39706c9341))
+
+
+
+
+
 # [4.4.0](https://github.com/ionic-team/capacitor/compare/4.3.0...4.4.0) (2022-10-21)
 
 
