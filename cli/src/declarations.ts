@@ -432,7 +432,7 @@ export interface CapacitorConfig {
      * Configure if Capacitor will handle local/push notifications.
      * Set to false if you want to use your own UNUserNotificationCenter to handle notifications.
      *
-     * @since 4.4.1
+     * @since 4.5.0
      * @default true
      */
     handleApplicationNotifications?: boolean;
