@@ -2,6 +2,7 @@ package com.getcapacitor.plugin;
 
 import android.webkit.JavascriptInterface;
 import androidx.annotation.Nullable;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginConfig;
@@ -19,7 +20,7 @@ public class CapacitorCookies extends Plugin {
     @Override
     public void load() {
         this.bridge.getWebView().addJavascriptInterface(this, "CapacitorCookiesAndroidInterface");
-        this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL);
+        this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL, this.bridge);
         CookieHandler.setDefault(cookieManager);
         super.load();
     }
@@ -73,7 +74,8 @@ public class CapacitorCookies extends Plugin {
         try {
             String url = getServerUrl(null);
             if (!url.isEmpty()) {
-                return cookieManager.getCookieString(url);
+                String cookieString = cookieManager.getCookieString(url);
+                return (null == cookieString) ? "" : cookieString;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,11 +85,24 @@ public class CapacitorCookies extends Plugin {
     }
 
     @JavascriptInterface
-    public void setCookie(String key, String value) {
-        String url = getServerUrl(null);
+    public void setCookie(String domain, String action) {
+        String url = cookieManager.getSanitizedDomain(domain);
 
         if (!url.isEmpty()) {
-            cookieManager.setCookie(url, key, value);
+            cookieManager.setCookie(url, action);
+        }
+    }
+
+    @PluginMethod
+    public void getCookies(PluginCall call) {
+        String url = getServerUrl(call);
+        if (!url.isEmpty()) {
+            JSObject cookiesMap = new JSObject();
+            HttpCookie[] cookies = cookieManager.getCookies(url);
+            for (HttpCookie cookie : cookies) {
+                cookiesMap.put(cookie.getName(), cookie.getValue());
+            }
+            call.resolve(cookiesMap);
         }
     }
 
@@ -96,9 +111,11 @@ public class CapacitorCookies extends Plugin {
         String key = call.getString("key");
         String value = call.getString("value");
         String url = getServerUrl(call);
+        String expires = call.getString("expires", "");
+        String path = call.getString("path", "/");
 
         if (!url.isEmpty()) {
-            cookieManager.setCookie(url, key, value);
+            cookieManager.setCookie(url, key, value, expires, path);
             call.resolve();
         }
     }

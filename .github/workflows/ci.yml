@@ -108,6 +108,8 @@ jobs:
       - run: npm install
       - run: npm run verify
         working-directory: ./ios
+      - name: Validate native podspec
+        run: sh ./scripts/native-podspec.sh lint
   test-android:
     runs-on: ubuntu-latest
     timeout-minutes: 30
