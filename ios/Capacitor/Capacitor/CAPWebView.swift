@@ -129,6 +129,7 @@ extension CAPWebView {
 
     public func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
         let webViewConfiguration = WKWebViewConfiguration()
+        webViewConfiguration.websiteDataStore.httpCookieStore.add(CapacitorWKCookieObserver())
         webViewConfiguration.allowsInlineMediaPlayback = true
         webViewConfiguration.suppressesIncrementalRendering = false
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
