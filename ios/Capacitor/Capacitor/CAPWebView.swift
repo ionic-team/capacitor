@@ -32,7 +32,7 @@ open class CAPWebView: UIView {
     }()
 
     private lazy var delegationHandler = WebViewDelegationHandler()
-    private var autoRegisterPlugins: Bool
+    private let autoRegisterPlugins: Bool
 
     open var router: Router { _Router() }
 

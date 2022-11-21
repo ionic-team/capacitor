@@ -10,7 +10,7 @@ import WebKit
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
     var userInterfaceStyle: UIUserInterfaceStyle { get }
-    var autoRegisterPlugins: Bool { get set }
+    var autoRegisterPlugins: Bool { get }
     var statusBarVisible: Bool { get set }
     var statusBarStyle: UIStatusBarStyle { get set }
     var statusBarAnimation: UIStatusBarAnimation { get set }

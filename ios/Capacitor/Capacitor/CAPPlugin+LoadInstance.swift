@@ -6,10 +6,6 @@
 //  Copyright © 2022 Drifty Co. All rights reserved.
 //
 
-import Foundation
-
-open class CAPInstancePlugin: CAPPlugin {}
-
 extension CAPPlugin {
     func load(as bridgedType: CAPBridgedPlugin.Type, on bridge: CAPBridgeProtocol) {
         self.bridge = bridge

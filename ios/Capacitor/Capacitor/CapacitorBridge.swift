@@ -31,7 +31,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return bridgeDelegate?.bridgedWebView
     }
 
-    public var autoRegisterPlugins: Bool
+    public let autoRegisterPlugins: Bool
 
     public var notificationRouter: NotificationRouter
 
