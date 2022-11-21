@@ -1,6 +1,12 @@
 name: Publish Native iOS Library
 
-on: workflow_dispatch
+on: 
+  workflow_call:
+    secrets:
+      COCOAPODS_TRUNK_TOKEN:
+        required: true
+  workflow_dispatch:
+
 jobs:
   publish-ios:
     runs-on: macos-12

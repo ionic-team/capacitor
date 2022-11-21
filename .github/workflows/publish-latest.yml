@@ -19,3 +19,8 @@ jobs:
       ANDROID_SIGNING_KEY: ${{ secrets.ANDROID_SIGNING_KEY }}
       ANDROID_SONATYPE_STAGING_PROFILE_ID: ${{ secrets.ANDROID_SONATYPE_STAGING_PROFILE_ID }}
       CAP_GH_RELEASE_TOKEN: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
+  publish-ios:
+    needs: publish-npm-latest
+    uses: ./.github/workflows/publish-ios.yml
+    secrets:
+      COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
