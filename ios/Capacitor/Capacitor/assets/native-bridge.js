@@ -311,25 +311,24 @@ const nativeBridge = (function (exports) {
                         },
                         set: function (val) {
                             const cookiePairs = val.split(';');
-                            for (const cookiePair of cookiePairs) {
-                                const cookieKey = cookiePair.split('=')[0];
-                                const cookieValue = cookiePair.split('=')[1];
-                                if (null == cookieValue) {
-                                    continue;
-                                }
-                                if (platform === 'ios') {
-                                    // Use prompt to synchronously set cookies.
-                                    // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
-                                    const payload = {
-                                        type: 'CapacitorCookies.set',
-                                        key: cookieKey,
-                                        value: cookieValue,
-                                    };
-                                    prompt(JSON.stringify(payload));
-                                }
-                                else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
-                                    win.CapacitorCookiesAndroidInterface.setCookie(cookieKey, cookieValue);
-                                }
+                            const domainSection = val.toLowerCase().split('domain=')[1];
+                            const domain = cookiePairs.length > 1 &&
+                                domainSection != null &&
+                                domainSection.length > 0
+                                ? domainSection.split(';')[0].trim()
+                                : '';
+                            if (platform === 'ios') {
+                                // Use prompt to synchronously set cookies.
+                                // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                                const payload = {
+                                    type: 'CapacitorCookies.set',
+                                    action: val,
+                                    domain,
+                                };
+                                prompt(JSON.stringify(payload));
+                            }
+                            else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
+                                win.CapacitorCookiesAndroidInterface.setCookie(domain, val);
                             }
                         },
                     });
@@ -426,7 +425,8 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch abort
                     window.XMLHttpRequest.prototype.abort = function () {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.abort.call(this);
                         }
                         this.readyState = 0;
@@ -480,14 +480,16 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch set request header
                     window.XMLHttpRequest.prototype.setRequestHeader = function (header, value) {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(this, header, value);
                         }
                         this._headers[header] = value;
                     };
                     // XHR patch send
                     window.XMLHttpRequest.prototype.send = function (body) {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
                         }
                         try {
@@ -543,7 +545,8 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch getAllResponseHeaders
                     window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(this);
                         }
                         let returnString = '';
@@ -556,7 +559,8 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch getResponseHeader
                     window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                         }
                         return this._headers[name];

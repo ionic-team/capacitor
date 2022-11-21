@@ -14,9 +14,13 @@ export async function readXML(path: string): Promise<any> {
   }
 }
 
-export function parseXML(xmlStr: string): any {
+export function parseXML(xmlStr: string, options?: xml2js.OptionsV2): any {
+  const parser =
+    options !== undefined
+      ? new xml2js.Parser({ ...options })
+      : new xml2js.Parser();
   let xmlObj;
-  xml2js.parseString(xmlStr, (err: any, result: any) => {
+  parser.parseString(xmlStr, (err: any, result: any) => {
     if (!err) {
       xmlObj = result;
     }

@@ -340,33 +340,29 @@ const initBridge = (w: any): void => {
           },
           set: function (val) {
             const cookiePairs = val.split(';');
-            for (const cookiePair of cookiePairs) {
-              const cookieKey = cookiePair.split('=')[0];
-              const cookieValue = cookiePair.split('=')[1];
+            const domainSection = val.toLowerCase().split('domain=')[1];
+            const domain =
+              cookiePairs.length > 1 &&
+              domainSection != null &&
+              domainSection.length > 0
+                ? domainSection.split(';')[0].trim()
+                : '';
 
-              if (null == cookieValue) {
-                continue;
-              }
+            if (platform === 'ios') {
+              // Use prompt to synchronously set cookies.
+              // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
 
-              if (platform === 'ios') {
-                // Use prompt to synchronously set cookies.
-                // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+              const payload = {
+                type: 'CapacitorCookies.set',
+                action: val,
+                domain,
+              };
 
-                const payload = {
-                  type: 'CapacitorCookies.set',
-                  key: cookieKey,
-                  value: cookieValue,
-                };
-
-                prompt(JSON.stringify(payload));
-              } else if (
-                typeof win.CapacitorCookiesAndroidInterface !== 'undefined'
-              ) {
-                win.CapacitorCookiesAndroidInterface.setCookie(
-                  cookieKey,
-                  cookieValue,
-                );
-              }
+              prompt(JSON.stringify(payload));
+            } else if (
+              typeof win.CapacitorCookiesAndroidInterface !== 'undefined'
+            ) {
+              win.CapacitorCookiesAndroidInterface.setCookie(domain, val);
             }
           },
         });
