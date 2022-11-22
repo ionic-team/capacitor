@@ -14,7 +14,8 @@ open class CAPWebView: UIView {
         delegate: self,
         cordovaConfiguration: configDescriptor.cordovaConfiguration,
         assetHandler: assetHandler,
-        delegationHandler: delegationHandler
+        delegationHandler: delegationHandler,
+        autoRegisterPlugins: autoRegisterPlugins
     )
 
     public final var bridge: CAPBridgeProtocol {
@@ -31,15 +32,18 @@ open class CAPWebView: UIView {
     }()
 
     private lazy var delegationHandler = WebViewDelegationHandler()
+    private let autoRegisterPlugins: Bool
 
     open var router: Router { _Router() }
 
     public required init?(coder: NSCoder) {
+        autoRegisterPlugins = true
         super.init(coder: coder)
         setup()
     }
 
-    public init() {
+    public init(autoRegisterPlugins: Bool = true) {
+        self.autoRegisterPlugins = autoRegisterPlugins
         super.init(frame: .zero)
         setup()
     }
@@ -125,6 +129,7 @@ extension CAPWebView {
 
     public func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
         let webViewConfiguration = WKWebViewConfiguration()
+        webViewConfiguration.websiteDataStore.httpCookieStore.add(CapacitorWKCookieObserver())
         webViewConfiguration.allowsInlineMediaPlayback = true
         webViewConfiguration.suppressesIncrementalRendering = false
         webViewConfiguration.allowsAirPlayForMediaPlayback = true

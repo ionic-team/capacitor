@@ -25,16 +25,15 @@ public class MessageHandler {
         this.webView = webView;
         this.cordovaPluginManager = cordovaPluginManager;
 
-        WebViewCompat.WebMessageListener capListener = (view, message, sourceOrigin, isMainFrame, replyProxy) -> {
-            if (isMainFrame) {
-                postMessage(message.getData());
-                javaScriptReplyProxy = replyProxy;
-            } else {
-                Logger.warn("Plugin execution is allowed in Main Frame only");
-            }
-        };
-
-        if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER) && !bridge.getConfig().isUsingLegacyBridge()) {
+            WebViewCompat.WebMessageListener capListener = (view, message, sourceOrigin, isMainFrame, replyProxy) -> {
+                if (isMainFrame) {
+                    postMessage(message.getData());
+                    javaScriptReplyProxy = replyProxy;
+                } else {
+                    Logger.warn("Plugin execution is allowed in Main Frame only");
+                }
+            };
             try {
                 WebViewCompat.addWebMessageListener(webView, "androidBridge", bridge.getAllowedOriginRules(), capListener);
             } catch (Exception ex) {
@@ -123,12 +122,12 @@ public class MessageHandler {
 
             boolean isValidCallbackId = !call.getCallbackId().equals(PluginCall.CALLBACK_ID_DANGLING);
             if (isValidCallbackId) {
-                if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER) && javaScriptReplyProxy != null) {
+                if (bridge.getConfig().isUsingLegacyBridge()) {
+                    legacySendResponseMessage(data);
+                } else if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER) && javaScriptReplyProxy != null) {
                     javaScriptReplyProxy.postMessage(data.toString());
                 } else {
-                    final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
-                    final WebView webView = this.webView;
-                    webView.post(() -> webView.evaluateJavascript(runScript, null));
+                    legacySendResponseMessage(data);
                 }
             } else {
                 bridge.getApp().fireRestoredResult(data);
@@ -139,6 +138,12 @@ public class MessageHandler {
         if (!call.isKeptAlive()) {
             call.release(bridge);
         }
+    }
+
+    private void legacySendResponseMessage(PluginResult data) {
+        final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
+        final WebView webView = this.webView;
+        webView.post(() -> webView.evaluateJavascript(runScript, null));
     }
 
     private void callPluginMethod(String callbackId, String pluginId, String methodName, JSObject methodData) {

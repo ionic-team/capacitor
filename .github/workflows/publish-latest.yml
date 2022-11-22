@@ -1,0 +1,26 @@
+name: Publish Latest
+
+on: workflow_dispatch
+
+jobs:
+  publish-npm-latest:
+    uses: ./.github/workflows/publish-npm-latest.yml
+    secrets:
+      CAP_GH_RELEASE_TOKEN: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  publish-android:
+    needs: publish-npm-latest
+    uses: ./.github/workflows/publish-android.yml
+    secrets:
+      ANDROID_OSSRH_USERNAME: ${{ secrets.ANDROID_OSSRH_USERNAME }}
+      ANDROID_OSSRH_PASSWORD: ${{ secrets.ANDROID_OSSRH_PASSWORD }}
+      ANDROID_SIGNING_KEY_ID: ${{ secrets.ANDROID_SIGNING_KEY_ID }}
+      ANDROID_SIGNING_PASSWORD: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
+      ANDROID_SIGNING_KEY: ${{ secrets.ANDROID_SIGNING_KEY }}
+      ANDROID_SONATYPE_STAGING_PROFILE_ID: ${{ secrets.ANDROID_SONATYPE_STAGING_PROFILE_ID }}
+      CAP_GH_RELEASE_TOKEN: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
+  publish-ios:
+    needs: publish-npm-latest
+    uses: ./.github/workflows/publish-ios.yml
+    secrets:
+      COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}

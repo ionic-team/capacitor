@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/ionic-team/capacitor/compare/4.4.0...4.5.0) (2022-11-16)
+
+
+### Bug Fixes
+
+* **android:** Silence deprecation warning on handlePermissionResult ([#6092](https://github.com/ionic-team/capacitor/issues/6092)) ([888b13e](https://github.com/ionic-team/capacitor/commit/888b13e89c48dab949b38135a3ec443ac4fd852e))
+* **cli:** add vite config to framework detection ([#6039](https://github.com/ionic-team/capacitor/issues/6039)) ([3796d42](https://github.com/ionic-team/capacitor/commit/3796d42665f3150f99c761aa561a9e34d03cae28))
+* **cli:** calculate padding of super.onCreate(savedInstanceState); line ([#6016](https://github.com/ionic-team/capacitor/issues/6016)) ([5729ac1](https://github.com/ionic-team/capacitor/commit/5729ac19e7880713ec52bac431a2756da5aa3109))
+* **cli:** Update gradle versions only if they are older ([#6015](https://github.com/ionic-team/capacitor/issues/6015)) ([ae94101](https://github.com/ionic-team/capacitor/commit/ae941017fff3bcfa75e0788535f356a56ce6fa05))
+* **cli/ios:** Read handleApplicationNotifications configuration option ([#6030](https://github.com/ionic-team/capacitor/issues/6030)) ([99ccf18](https://github.com/ionic-team/capacitor/commit/99ccf181f6ee8a00ed97bdbf9076e2b2ea27cd57))
+
+
+### Features
+
+* **android/cli:** Allow to use the old addJavascriptInterface bridge ([#6043](https://github.com/ionic-team/capacitor/issues/6043)) ([a6e7c54](https://github.com/ionic-team/capacitor/commit/a6e7c5422687b703492a5fcc49369eacc376143d))
+* **cookies:** add get cookies plugin method ([ba1e770](https://github.com/ionic-team/capacitor/commit/ba1e7702a3338714aee24388c0afea39706c9341))
+
+
+
+
+
+# [4.4.0](https://github.com/ionic-team/capacitor/compare/4.3.0...4.4.0) (2022-10-21)
+
+
+### Bug Fixes
+
+* **android:** added ServerPath object and building options for setting initial load from portals ([#6008](https://github.com/ionic-team/capacitor/issues/6008)) ([205b6e6](https://github.com/ionic-team/capacitor/commit/205b6e61806158244846608b1e6c0c7b26ee4ab7))
+* **cookies:** make document.cookie setter synchronous ([2272abf](https://github.com/ionic-team/capacitor/commit/2272abf3d3d9dc82d9ca0d03b17e2b78f11f61fc))
+* **http:** fix exception thrown on 204 responses ([1f6e8be](https://github.com/ionic-team/capacitor/commit/1f6e8be9d8813c4397e2c54ac4c06beb55f97b5f))
+* **http:** fix local http requests on native platforms ([c4e040a](https://github.com/ionic-team/capacitor/commit/c4e040a6f8c6b54bac6ae320e5f0f008604fe50f))
+
+
+### Features
+
+* **cli:** add build command for android ([#5891](https://github.com/ionic-team/capacitor/issues/5891)) ([6d4e620](https://github.com/ionic-team/capacitor/commit/6d4e620308b6dd97376e3af7de1dd1a530083f1c))
+* **cli:** add build command for ios ([#5925](https://github.com/ionic-team/capacitor/issues/5925)) ([8e8414f](https://github.com/ionic-team/capacitor/commit/8e8414fa6f4ccb245576cc113eb969937613bbf7))
+* **cli:** supports secure live updates in Portals for Capacitor config ([#5955](https://github.com/ionic-team/capacitor/issues/5955)) ([a309b45](https://github.com/ionic-team/capacitor/commit/a309b455fdd190613353bdf0eb04469cf4aa6ccd))
+
+
+
+
+
 # [4.3.0](https://github.com/ionic-team/capacitor/compare/4.2.0...4.3.0) (2022-09-21)
 
 

@@ -1,6 +1,13 @@
 name: Publish NPM Latest
 
-on: workflow_dispatch
+on: 
+  workflow_call:
+    secrets:
+      CAP_GH_RELEASE_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
+  workflow_dispatch:
 
 jobs:
   deploy-npm-latest:

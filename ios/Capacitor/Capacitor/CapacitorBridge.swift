@@ -31,6 +31,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return bridgeDelegate?.bridgedWebView
     }
 
+    public let autoRegisterPlugins: Bool
+
     public var notificationRouter: NotificationRouter
 
     public var isSimEnvironment: Bool {
@@ -188,7 +190,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - Initialization
 
-    init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler) {
+    init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler, autoRegisterPlugins: Bool = true) {
         self.bridgeDelegate = bridgeDelegate
         self.webViewAssetHandler = assetHandler
         self.webViewDelegationHandler = delegationHandler
@@ -196,7 +198,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         self.cordovaParser = cordovaConfiguration
         self.notificationRouter = NotificationRouter()
         self.notificationRouter.handleApplicationNotifications = configuration.handleApplicationNotifications
-
+        self.autoRegisterPlugins = autoRegisterPlugins
         super.init()
 
         self.webViewDelegationHandler.bridge = self
@@ -273,32 +275,73 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      Register all plugins that have been declared
      */
     func registerPlugins() {
-        let classCount = objc_getClassList(nil, 0)
-        let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
+        if autoRegisterPlugins {
+            let classCount = objc_getClassList(nil, 0)
+            let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
 
-        let releasingClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(classes)
-        let numClasses: Int32 = objc_getClassList(releasingClasses, classCount)
+            let releasingClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(classes)
+            let numClasses: Int32 = objc_getClassList(releasingClasses, classCount)
 
-        for classIndex in 0..<Int(numClasses) {
-            if let aClass: AnyClass = classes[classIndex] {
-                if class_getSuperclass(aClass) == CDVPlugin.self {
-                    injectCordovaFiles = true
-                }
-                if class_conformsToProtocol(aClass, CAPBridgedPlugin.self),
-                   let pluginType = aClass as? CAPPlugin.Type,
-                   let bridgeType = aClass as? CAPBridgedPlugin.Type {
-                    let pluginClassName = NSStringFromClass(aClass)
-                    registerPlugin(pluginClassName, bridgeType.jsName(), pluginType)
+            for classIndex in 0..<Int(numClasses) {
+                if let aClass: AnyClass = classes[classIndex] {
+                    if class_getSuperclass(aClass) == CDVPlugin.self {
+                        injectCordovaFiles = true
+                    }
+                    if class_conformsToProtocol(aClass, CAPBridgedPlugin.self),
+                       let pluginType = aClass as? CAPPlugin.Type,
+                       let bridgeType = aClass as? CAPBridgedPlugin.Type {
+                        if aClass is CAPInstancePlugin.Type { continue }
+                        registerPlugin(bridgeType.jsName(), pluginType)
+                    }
                 }
             }
+            classes.deallocate()
+        } else {
+            // register core plugins only
+            [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
+                .forEach { registerPluginType($0) }
         }
-        classes.deallocate()
+    }
+
+    public func registerPluginType(_ pluginType: CAPPlugin.Type) {
+        if autoRegisterPlugins { return }
+        if pluginType is CAPInstancePlugin.Type {
+            Swift.fatalError("""
+
+            ⚡️ ❌  Cannot register class \(pluginType): CAPInstancePlugin through registerPluginType(_:).
+            ⚡️ ❌  Use `registerPluginInstance(_:)` to register subclasses of CAPInstancePlugin.
+            """)
+        }
+        guard let bridgedType = pluginType as? CAPBridgedPlugin.Type else { return }
+        registerPlugin(bridgedType.jsName(), pluginType)
+    }
+
+    public func registerPluginInstance(_ pluginInstance: CAPPlugin) {
+        guard
+            let pluginInstance = pluginInstance as? (CAPPlugin & CAPBridgedPlugin),
+            let pluginClass = pluginInstance.classForCoder as? (CAPPlugin & CAPBridgedPlugin).Type
+        else { return }
+
+        let jsName = pluginClass.jsName()!
+
+        knownPlugins[jsName] = pluginClass
+        if plugins[jsName] != nil {
+            CAPLog.print("⚡️  Overriding existing registered plugin \(pluginClass)")
+        }
+        plugins[jsName] = pluginInstance
+        pluginInstance.load(as: pluginClass, on: self)
+
+        JSExport.exportJS(
+            userContentController: webViewDelegationHandler.contentController,
+            pluginClassName: jsName,
+            pluginType: pluginClass
+        )
     }
 
     /**
      Register a single plugin.
      */
-    func registerPlugin(_ pluginClassName: String, _ jsName: String, _ pluginType: CAPPlugin.Type) {
+    func registerPlugin(_ jsName: String, _ pluginType: CAPPlugin.Type) {
         // let bridgeType = pluginType as! CAPBridgedPlugin.Type
         knownPlugins[jsName] = pluginType
         JSExport.exportJS(userContentController: webViewDelegationHandler.contentController, pluginClassName: jsName, pluginType: pluginType)

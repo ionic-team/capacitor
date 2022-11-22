@@ -230,39 +230,48 @@ export interface CapacitorConfig {
       /**
        * Path to your keystore
        *
-       * @since 4.3.0
+       * @since 4.4.0
        */
       keystorePath?: string;
 
       /**
        * Password to your keystore
        *
-       * @since 4.3.0
+       * @since 4.4.0
        */
       keystorePassword?: string;
 
       /**
        * Alias in the keystore to use
        *
-       * @since 4.3.0
+       * @since 4.4.0
        */
       keystoreAlias?: string;
 
       /**
        * Password for the alias in the keystore to use
        *
-       * @since 4.3.0
+       * @since 4.4.0
        */
       keystoreAliasPassword?: string;
 
       /**
        * Bundle type for your release build
        *
-       * @since 4.3.0
+       * @since 4.4.0
        * @default "AAB"
        */
       releaseType?: 'AAB' | 'APK';
     };
+
+    /**
+     * Use legacy [addJavascriptInterface](https://developer.android.com/reference/android/webkit/WebView#addJavascriptInterface(java.lang.Object,%20java.lang.String))
+     * instead of the new and more secure [addWebMessageListener](https://developer.android.com/reference/androidx/webkit/WebViewCompat#addWebMessageListener(android.webkit.WebView,java.lang.String,java.util.Set%3Cjava.lang.String%3E,androidx.webkit.WebViewCompat.WebMessageListener))
+     *
+     * @since 4.5.0
+     * @default false
+     */
+    useLegacyBridge?: boolean;
   };
 
   ios?: {
@@ -418,6 +427,15 @@ export interface CapacitorConfig {
      * @default recommended
      */
     preferredContentMode?: 'recommended' | 'desktop' | 'mobile';
+
+    /**
+     * Configure if Capacitor will handle local/push notifications.
+     * Set to false if you want to use your own UNUserNotificationCenter to handle notifications.
+     *
+     * @since 4.5.0
+     * @default true
+     */
+    handleApplicationNotifications?: boolean;
   };
 
   server?: {
