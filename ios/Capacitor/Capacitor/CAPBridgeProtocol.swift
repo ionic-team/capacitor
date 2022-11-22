@@ -10,6 +10,7 @@ import WebKit
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
     var userInterfaceStyle: UIUserInterfaceStyle { get }
+    var autoRegisterPlugins: Bool { get }
     var statusBarVisible: Bool { get set }
     var statusBarStyle: UIStatusBarStyle { get set }
     var statusBarAnimation: UIStatusBarAnimation { get set }
@@ -71,6 +72,10 @@ import WebKit
     func localURL(fromWebURL webURL: URL?) -> URL?
     func portablePath(fromLocalURL localURL: URL?) -> URL?
     func setServerBasePath(_ path: String)
+
+    // MARK: - Plugins
+    func registerPluginType(_ pluginType: CAPPlugin.Type)
+    func registerPluginInstance(_ pluginInstance: CAPPlugin)
 
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
