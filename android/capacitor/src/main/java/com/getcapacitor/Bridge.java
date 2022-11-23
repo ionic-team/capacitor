@@ -745,16 +745,18 @@ public class Bridge {
                 return;
             }
 
-            Logger.verbose(
-                "callback: " +
-                call.getCallbackId() +
-                ", pluginId: " +
-                plugin.getId() +
-                ", methodName: " +
-                methodName +
-                ", methodData: " +
-                call.getData().toString()
-            );
+            if (Logger.shouldLog()) {
+                Logger.verbose(
+                    "callback: " +
+                    call.getCallbackId() +
+                    ", pluginId: " +
+                    plugin.getId() +
+                    ", methodName: " +
+                    methodName +
+                    ", methodData: " +
+                    call.getData().toString()
+                );
+            }
 
             Runnable currentThreadTask = () -> {
                 try {
