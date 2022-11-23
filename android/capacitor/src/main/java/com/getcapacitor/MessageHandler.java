@@ -1,10 +1,8 @@
 package com.getcapacitor;
 
-import android.net.Uri;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import androidx.webkit.JavaScriptReplyProxy;
-import androidx.webkit.WebMessageCompat;
 import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewFeature;
 import org.apache.cordova.PluginManager;
@@ -152,6 +150,10 @@ public class MessageHandler {
     }
 
     private void callCordovaPluginMethod(String callbackId, String service, String action, String actionArgs) {
-        cordovaPluginManager.exec(service, action, callbackId, actionArgs);
+        bridge.execute(
+            () -> {
+                cordovaPluginManager.exec(service, action, callbackId, actionArgs);
+            }
+        );
     }
 }
