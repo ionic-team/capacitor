@@ -7,14 +7,14 @@ jobs:
     runs-on: macos-12
     timeout-minutes: 30
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Restore Dependency Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
@@ -29,4 +29,4 @@ jobs:
         run: |
           git config user.name "Github Workflow (on behalf of ${{ github.actor }})"
           git config user.email "users.noreply.github.com"
-          npm run ci:publish:dev
+          npx lerna publish prerelease --conventional-commits --conventional-prerelease --preid dev-$(date +\"%Y%m%dT%H%M%S\") --dist-tag dev --allow-branch $GITHUB_REF_NAME --force-publish --no-verify-access --no-changelog --no-git-tag-version --no-push --yes

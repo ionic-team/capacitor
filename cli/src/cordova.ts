@@ -497,7 +497,8 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
               for (const existingElement of existingElementsArray) {
                 if (
                   existingElement.name === requiredElement.name &&
-                  existingElement.value === requiredElement.value
+                  (existingElement.value === requiredElement.value ||
+                    /^[$].{1,}$/.test((requiredElement.value as string).trim()))
                 ) {
                   foundMatch = true;
                   break;
@@ -909,10 +910,16 @@ export async function writeCordovaAndroidManifest(
                         );
                         for (const key of requiredELementAttrKeys) {
                           if (
-                            requiredElement.attrs[key] !==
-                            existingElement.attrs[key]
+                            !/^[$].{1,}$/.test(
+                              (requiredElement.attrs[key] as string).trim(),
+                            )
                           ) {
-                            return false;
+                            if (
+                              requiredElement.attrs[key] !==
+                              existingElement.attrs[key]
+                            ) {
+                              return false;
+                            }
                           }
                         }
                       }
@@ -945,6 +952,7 @@ export async function writeCordovaAndroidManifest(
                     }
                     return true;
                   };
+                  /////////
                   const parsedExistingElements: any[] = [];
                   const rootKeyOfExistingElements =
                     Object.keys(existingElements)[0];
