@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.1](https://github.com/ionic-team/capacitor/compare/4.6.0...4.6.1) (2022-12-05)
+
+
+### Bug Fixes
+
+* **cli:** support variables in config warn checks ([#6136](https://github.com/ionic-team/capacitor/issues/6136)) ([b460add](https://github.com/ionic-team/capacitor/commit/b460add5e22139f234ca8fae98f174bb7c447292))
+
+
+
+
+
+# [4.6.0](https://github.com/ionic-team/capacitor/compare/4.5.0...4.6.0) (2022-12-01)
+
+
+### Bug Fixes
+
+* **cli:** useLegacyBridge should be optional ([#6095](https://github.com/ionic-team/capacitor/issues/6095)) ([20f68fe](https://github.com/ionic-team/capacitor/commit/20f68feab2cb88cf8a79a987533839aa49255607))
+* **cli:** warns about config that is present ([#6060](https://github.com/ionic-team/capacitor/issues/6060)) ([7ac43e7](https://github.com/ionic-team/capacitor/commit/7ac43e722139a61129cfecf98da373659b1aeac8))
+
+
+
+
+
 # [4.5.0](https://github.com/ionic-team/capacitor/compare/4.4.0...4.5.0) (2022-11-16)
 
 
