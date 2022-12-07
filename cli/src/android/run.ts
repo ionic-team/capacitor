@@ -46,9 +46,7 @@ export async function runAndroid(
     config.android.appDir
   }/build/outputs/apk${runFlavor !== '' ? '/' + runFlavor : ''}/debug`;
 
-  const apkName = `app${
-    runFlavor !== '' ? '-' + runFlavor : ''
-  }-debug.apk`;
+  const apkName = `app${runFlavor !== '' ? '-' + runFlavor : ''}-debug.apk`;
 
   const apkPath = resolve(pathToApk, apkName);
 
