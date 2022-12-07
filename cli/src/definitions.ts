@@ -88,7 +88,13 @@ export interface AndroidConfig extends PlatformConfig {
   readonly resDir: string;
   readonly resDirAbs: string;
   readonly buildOutputDir: string;
+  /**
+   * @deprecated Will be removed in Cap. 5 as the `--flavor` option modifies this value.
+   */
   readonly buildOutputDirAbs: string;
+  /**
+   * @deprecated Will be removed in Cap. 5 as the `--flavor` option modifies this value.
+   */
   readonly apkName: string;
   readonly flavor: string;
   readonly buildOptions: {
