@@ -42,14 +42,15 @@ export async function runAndroid(
     }
   }
 
-  const apkPath = resolve(
-    !selectedFlavor
-      ? config.android.buildOutputDirAbs
-      : `android/${config.android.appDir}/build/outputs/apk/${selectedFlavor}/debug`,
-    !selectedFlavor
-      ? config.android.apkName
-      : `app-${selectedFlavor}-debug.apk`,
-  );
+  const pathToApk = `${config.android.platformDirAbs}/${
+    config.android.appDir
+  }/build/outputs/apk${runFlavor !== '' ? '/' + runFlavor : ''}/debug`;
+
+  const apkName = `app${
+    runFlavor !== '' ? '-' + selectedFlavor : ''
+  }-debug.apk`;
+
+  const apkPath = resolve(pathToApk, apkName);
 
   const nativeRunArgs = ['android', '--app', apkPath, '--target', target.id];
 
