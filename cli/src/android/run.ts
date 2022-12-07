@@ -57,7 +57,7 @@ export async function runAndroid(
   debug('Invoking native-run with args: %O', nativeRunArgs);
 
   await runTask(
-    `Deploying ${c.strong(config.android.apkName)} to ${c.input(target.id)}`,
+    `Deploying ${c.strong(apkName)} to ${c.input(target.id)}`,
     async () => runNativeRun(nativeRunArgs),
   );
 }
