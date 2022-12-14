@@ -189,20 +189,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             }
             this.writeRequestBody(dataString != null ? dataString : "");
         } else if (contentType.contains("application/x-www-form-urlencoded")) {
-            StringBuilder builder = new StringBuilder();
-
-            JSObject obj = body.toJSObject();
-            Iterator<String> keys = obj.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                Object d = obj.get(key);
-                builder.append(key).append("=").append(URLEncoder.encode(d.toString(), "UTF-8"));
-
-                if (keys.hasNext()) {
-                    builder.append("&");
-                }
-            }
-            this.writeRequestBody(builder.toString());
+            this.writeRequestBody(body.toString());
         } else {
             this.writeRequestBody(body.toString());
         }
