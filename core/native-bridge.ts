@@ -409,13 +409,16 @@ const initBridge = (w: any): void => {
           resource: RequestInfo | URL,
           options?: RequestInit,
         ) => {
+          // Parse the request arguments to a standard Request object, to support all fetch function signatures.
+          const request = new Request(resource, options);
+
           if (
             !(
-              resource.toString().startsWith('http:') ||
-              resource.toString().startsWith('https:')
+              request.url.startsWith('http:') ||
+              request.url.startsWith('https:')
             )
           ) {
-            return win.CapacitorWebFetch(resource, options);
+            return window.CapacitorWebFetch(resource, options);
           }
 
           try {
@@ -424,10 +427,10 @@ const initBridge = (w: any): void => {
               'CapacitorHttp',
               'request',
               {
-                url: resource,
-                method: options?.method ? options.method : undefined,
-                data: options?.body ? options.body : undefined,
-                headers: options?.headers ? options.headers : undefined,
+                url: request.url,
+                method: request.method,
+                data: request.body,
+                headers: Object.fromEntries(request.headers)
               },
             );
 
