@@ -418,7 +418,7 @@ const initBridge = (w: any): void => {
               request.url.startsWith('https:')
             )
           ) {
-            return window.CapacitorWebFetch(resource, options);
+            return win.CapacitorWebFetch(resource, options);
           }
 
           try {
