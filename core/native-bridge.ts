@@ -422,6 +422,13 @@ const initBridge = (w: any): void => {
           }
 
           try {
+            // Parse data from the request body.
+            let requestData;
+
+            if (request.body) {
+              requestData = await new Response(request.body).json();
+            }
+            
             // intercept request & pass to the bridge
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
@@ -429,7 +436,7 @@ const initBridge = (w: any): void => {
               {
                 url: request.url,
                 method: request.method,
-                data: request.body,
+                data: requestData,
                 headers: Object.fromEntries(request.headers)
               },
             );
