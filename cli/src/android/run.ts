@@ -42,17 +42,20 @@ export async function runAndroid(
     }
   }
 
-  const apkPath = resolve(
-    config.android.buildOutputDirAbs,
-    config.android.apkName,
-  );
+  const pathToApk = `${config.android.platformDirAbs}/${
+    config.android.appDir
+  }/build/outputs/apk${runFlavor !== '' ? '/' + runFlavor : ''}/debug`;
+
+  const apkName = `app${runFlavor !== '' ? '-' + runFlavor : ''}-debug.apk`;
+
+  const apkPath = resolve(pathToApk, apkName);
 
   const nativeRunArgs = ['android', '--app', apkPath, '--target', target.id];
 
   debug('Invoking native-run with args: %O', nativeRunArgs);
 
   await runTask(
-    `Deploying ${c.strong(config.android.apkName)} to ${c.input(target.id)}`,
+    `Deploying ${c.strong(apkName)} to ${c.input(target.id)}`,
     async () => runNativeRun(nativeRunArgs),
   );
 }

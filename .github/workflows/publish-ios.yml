@@ -13,10 +13,13 @@ jobs:
     timeout-minutes: 30
     steps:
       - run: sudo xcode-select --switch /Applications/Xcode_13.3.1.app
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: 'main'
       - name: Install Cocoapods
         run: gem install cocoapods
       - name: Deploy to Cocoapods
