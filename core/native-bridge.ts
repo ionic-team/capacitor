@@ -432,7 +432,7 @@ const initBridge = (w: any): void => {
             );
 
             const data =
-              typeof nativeResponse.data === 'string'
+              !nativeResponse.headers['Content-Type'].startsWith('application/json')
                 ? nativeResponse.data
                 : JSON.stringify(nativeResponse.data);
             // intercept & parse response before returning
@@ -593,7 +593,7 @@ const initBridge = (w: any): void => {
                   this.status = nativeResponse.status;
                   this.response = nativeResponse.data;
                   this.responseText =
-                    typeof nativeResponse.data === 'string'
+                    !nativeResponse.headers['Content-Type'].startsWith('application/json')
                       ? nativeResponse.data
                       : JSON.stringify(nativeResponse.data);
                   this.responseURL = nativeResponse.url;
