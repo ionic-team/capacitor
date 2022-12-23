@@ -112,6 +112,7 @@ export interface IOSConfig extends PlatformConfig {
   readonly minVersion: string;
   readonly podPath: string;
   readonly scheme: string;
+  readonly target: string;
   readonly webDir: Promise<string>;
   readonly webDirAbs: Promise<string>;
   readonly nativeProjectDir: string;

@@ -299,6 +299,21 @@ export interface CapacitorConfig {
     scheme?: string;
 
     /**
+     * iOS build target to use.
+     *
+     * Usually this matches your app's target in Xcode. You can use the
+     * following command to list target:
+     *
+     * ```shell
+     * xcodebuild -workspace ios/App/App.xcworkspace -list
+     * ```
+     *
+     * @since 3.0.0
+     * @default App
+     */
+    target?: string;
+
+    /**
      * User agent of Capacitor Web View on iOS.
      *
      * Overrides global `overrideUserAgent` option.

@@ -48,7 +48,7 @@ export async function runIOS(
     }),
   );
 
-  const appName = `${runScheme}.app`;
+  const appName = `${config.ios.target}.app`;
   const appPath = resolve(
     derivedDataPath,
     'Build/Products',
