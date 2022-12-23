@@ -301,7 +301,7 @@ export interface CapacitorConfig {
     /**
      * iOS build target to use.
      *
-     * Usually this matches your app's target in Xcode. You can use the
+     * Usually this matches your app's scheme in Xcode. You can use the
      * following command to list target:
      *
      * ```shell
