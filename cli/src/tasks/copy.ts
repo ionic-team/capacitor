@@ -97,6 +97,13 @@ export async function copy(
     if (platformName === config.ios.name) {
       if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, await config.ios.webDirAbs);
+        if (config.app.extConfig?.plugins?.Portals?.liveUpdatesKey) {
+          await copySecureLiveUpdatesKey(
+            config.app.extConfig.plugins.Portals.liveUpdatesKey,
+            config.app.rootDir,
+            config.ios.nativeTargetDirAbs,
+          );
+        }
       } else {
         await copyWebDir(
           config,
@@ -104,8 +111,12 @@ export async function copy(
           config.app.webDirAbs,
         );
       }
-      if (usesLiveUpdates) {
-        await copySecureLiveUpdatesKey(config, config.ios.nativeTargetDirAbs);
+      if (usesLiveUpdates && config.app.extConfig?.plugins?.LiveUpdates?.key) {
+        await copySecureLiveUpdatesKey(
+          config.app.extConfig.plugins.LiveUpdates.key,
+          config.app.rootDir,
+          config.ios.nativeTargetDirAbs,
+        );
       }
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -113,6 +124,13 @@ export async function copy(
     } else if (platformName === config.android.name) {
       if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, config.android.webDirAbs);
+        if (config.app.extConfig?.plugins?.Portals?.liveUpdatesKey) {
+          await copySecureLiveUpdatesKey(
+            config.app.extConfig.plugins.Portals.liveUpdatesKey,
+            config.app.rootDir,
+            config.android.assetsDirAbs,
+          );
+        }
       } else {
         await copyWebDir(
           config,
@@ -120,8 +138,12 @@ export async function copy(
           config.app.webDirAbs,
         );
       }
-      if (usesLiveUpdates) {
-        await copySecureLiveUpdatesKey(config, config.android.assetsDirAbs);
+      if (usesLiveUpdates && config.app.extConfig?.plugins?.LiveUpdates?.key) {
+        await copySecureLiveUpdatesKey(
+          config.app.extConfig.plugins.LiveUpdates.key,
+          config.app.rootDir,
+          config.android.assetsDirAbs,
+        );
       }
       await copyCapacitorConfig(config, config.android.assetsDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
@@ -229,15 +251,14 @@ function isPortal(config: any): config is Portal {
   );
 }
 
-async function copySecureLiveUpdatesKey(config: Config, nativeAbsDir: string) {
-  if (!config.app.extConfig?.plugins?.LiveUpdates?.key) {
-    return;
-  }
-
-  const secureLiveUpdatesKeyFile = config.app.extConfig.plugins.LiveUpdates.key;
-  const keyAbsFromPath = join(config.app.rootDir, secureLiveUpdatesKeyFile);
+async function copySecureLiveUpdatesKey(
+  secureLiveUpdatesKeyFile: string,
+  rootDir: string,
+  nativeAbsDir: string,
+) {
+  const keyAbsFromPath = join(rootDir, secureLiveUpdatesKeyFile);
   const keyAbsToPath = join(nativeAbsDir, basename(keyAbsFromPath));
-  const keyRelToDir = relative(config.app.rootDir, nativeAbsDir);
+  const keyRelToDir = relative(rootDir, nativeAbsDir);
 
   if (!(await pathExists(keyAbsFromPath))) {
     logger.warn(

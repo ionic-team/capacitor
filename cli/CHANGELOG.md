@@ -3,6 +3,61 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.1](https://github.com/ionic-team/capacitor/compare/4.6.0...4.6.1) (2022-12-05)
+
+
+### Bug Fixes
+
+* **cli:** support variables in config warn checks ([#6136](https://github.com/ionic-team/capacitor/issues/6136)) ([b460add](https://github.com/ionic-team/capacitor/commit/b460add5e22139f234ca8fae98f174bb7c447292))
+
+
+
+
+
+# [4.6.0](https://github.com/ionic-team/capacitor/compare/4.5.0...4.6.0) (2022-12-01)
+
+
+### Bug Fixes
+
+* **cli:** useLegacyBridge should be optional ([#6095](https://github.com/ionic-team/capacitor/issues/6095)) ([20f68fe](https://github.com/ionic-team/capacitor/commit/20f68feab2cb88cf8a79a987533839aa49255607))
+* **cli:** warns about config that is present ([#6060](https://github.com/ionic-team/capacitor/issues/6060)) ([7ac43e7](https://github.com/ionic-team/capacitor/commit/7ac43e722139a61129cfecf98da373659b1aeac8))
+
+
+
+
+
+# [4.5.0](https://github.com/ionic-team/capacitor/compare/4.4.0...4.5.0) (2022-11-16)
+
+
+### Bug Fixes
+
+* **cli:** add vite config to framework detection ([#6039](https://github.com/ionic-team/capacitor/issues/6039)) ([3796d42](https://github.com/ionic-team/capacitor/commit/3796d42665f3150f99c761aa561a9e34d03cae28))
+* **cli:** calculate padding of super.onCreate(savedInstanceState); line ([#6016](https://github.com/ionic-team/capacitor/issues/6016)) ([5729ac1](https://github.com/ionic-team/capacitor/commit/5729ac19e7880713ec52bac431a2756da5aa3109))
+* **cli:** Update gradle versions only if they are older ([#6015](https://github.com/ionic-team/capacitor/issues/6015)) ([ae94101](https://github.com/ionic-team/capacitor/commit/ae941017fff3bcfa75e0788535f356a56ce6fa05))
+* **cli/ios:** Read handleApplicationNotifications configuration option ([#6030](https://github.com/ionic-team/capacitor/issues/6030)) ([99ccf18](https://github.com/ionic-team/capacitor/commit/99ccf181f6ee8a00ed97bdbf9076e2b2ea27cd57))
+
+
+### Features
+
+* **android/cli:** Allow to use the old addJavascriptInterface bridge ([#6043](https://github.com/ionic-team/capacitor/issues/6043)) ([a6e7c54](https://github.com/ionic-team/capacitor/commit/a6e7c5422687b703492a5fcc49369eacc376143d))
+
+
+
+
+
+# [4.4.0](https://github.com/ionic-team/capacitor/compare/4.3.0...4.4.0) (2022-10-21)
+
+
+### Features
+
+* **cli:** add build command for android ([#5891](https://github.com/ionic-team/capacitor/issues/5891)) ([6d4e620](https://github.com/ionic-team/capacitor/commit/6d4e620308b6dd97376e3af7de1dd1a530083f1c))
+* **cli:** add build command for ios ([#5925](https://github.com/ionic-team/capacitor/issues/5925)) ([8e8414f](https://github.com/ionic-team/capacitor/commit/8e8414fa6f4ccb245576cc113eb969937613bbf7))
+* **cli:** supports secure live updates in Portals for Capacitor config ([#5955](https://github.com/ionic-team/capacitor/issues/5955)) ([a309b45](https://github.com/ionic-team/capacitor/commit/a309b455fdd190613353bdf0eb04469cf4aa6ccd))
+
+
+
+
+
 # [4.3.0](https://github.com/ionic-team/capacitor/compare/4.2.0...4.3.0) (2022-09-21)
 
 

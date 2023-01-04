@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin;
 
+import com.getcapacitor.Bridge;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
@@ -9,18 +10,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 public class CapacitorCookieManager extends CookieManager {
 
     private final android.webkit.CookieManager webkitCookieManager;
+    private final Bridge bridge;
 
     /**
      * Create a new cookie manager with the default cookie store and policy
      */
-    public CapacitorCookieManager() {
-        this(null, null);
+    public CapacitorCookieManager(Bridge bridge) {
+        this(null, null, bridge);
     }
 
     /**
@@ -30,9 +33,29 @@ public class CapacitorCookieManager extends CookieManager {
      * @param policy a {@code CookiePolicy} instance to be used by cookie manager as policy
      *               callback. if {@code null}, ACCEPT_ORIGINAL_SERVER will be used.
      */
-    public CapacitorCookieManager(CookieStore store, CookiePolicy policy) {
+    public CapacitorCookieManager(CookieStore store, CookiePolicy policy, Bridge bridge) {
         super(store, policy);
         webkitCookieManager = android.webkit.CookieManager.getInstance();
+        this.bridge = bridge;
+    }
+
+    public String getSanitizedDomain(String url) {
+        if (url == null || url.isEmpty()) {
+            url = this.bridge.getLocalUrl();
+        }
+
+        try {
+            new URI(url);
+        } catch (Exception ex) {
+            return this.bridge.getServerUrl();
+        }
+
+        return url;
+    }
+
+    private String getDomainFromCookieString(String cookie) {
+        String[] domain = cookie.toLowerCase(Locale.ROOT).split("domain=");
+        return getSanitizedDomain(domain.length <= 1 ? null : domain[1].split(";")[0].trim());
     }
 
     /**
@@ -109,6 +132,11 @@ public class CapacitorCookieManager extends CookieManager {
         setCookie(url, cookieValue);
     }
 
+    public void setCookie(String url, String key, String value, String expires, String path) {
+        String cookieValue = key + "=" + value + "; expires=" + expires + "; path=" + path;
+        setCookie(url, cookieValue);
+    }
+
     /**
      * Removes all cookies. This method is asynchronous.
      */
@@ -130,9 +158,6 @@ public class CapacitorCookieManager extends CookieManager {
         // make sure our args are valid
         if ((uri == null) || (responseHeaders == null)) return;
 
-        // save our url once
-        String url = uri.toString();
-
         // go over the headers
         for (String headerKey : responseHeaders.keySet()) {
             // ignore headers which aren't cookie related
@@ -140,7 +165,11 @@ public class CapacitorCookieManager extends CookieManager {
 
             // process each of the headers
             for (String headerValue : Objects.requireNonNull(responseHeaders.get(headerKey))) {
-                setCookie(url, headerValue);
+                // Set at server url
+                setCookie(uri.toString(), headerValue);
+
+                // Set at local url or domain
+                setCookie(getDomainFromCookieString(headerValue), headerValue);
             }
         }
     }

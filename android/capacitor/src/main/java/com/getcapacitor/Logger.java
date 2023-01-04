@@ -97,7 +97,7 @@ public class Logger {
         Log.e(tag, message, e);
     }
 
-    protected static boolean shouldLog() {
+    public static boolean shouldLog() {
         return config == null || config.isLoggingEnabled();
     }
 }

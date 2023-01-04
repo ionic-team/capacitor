@@ -288,13 +288,6 @@ const initBridge = (w: any): void => {
       return String(msg);
     };
 
-    /**
-     * Safely web decode a string value (inspired by js-cookie)
-     * @param str The string value to decode
-     */
-    const decode = (str: string): string =>
-      str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
-
     const platform = getPlatformId(win);
 
     if (platform == 'android' || platform == 'ios') {
@@ -334,7 +327,7 @@ const initBridge = (w: any): void => {
               // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
 
               const payload = {
-                type: 'CapacitorCookies',
+                type: 'CapacitorCookies.get',
               };
 
               const res = prompt(JSON.stringify(payload));
@@ -347,18 +340,29 @@ const initBridge = (w: any): void => {
           },
           set: function (val) {
             const cookiePairs = val.split(';');
-            for (const cookiePair of cookiePairs) {
-              const cookieKey = cookiePair.split('=')[0];
-              const cookieValue = cookiePair.split('=')[1];
+            const domainSection = val.toLowerCase().split('domain=')[1];
+            const domain =
+              cookiePairs.length > 1 &&
+              domainSection != null &&
+              domainSection.length > 0
+                ? domainSection.split(';')[0].trim()
+                : '';
 
-              if (null == cookieValue) {
-                continue;
-              }
+            if (platform === 'ios') {
+              // Use prompt to synchronously set cookies.
+              // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
 
-              cap.toNative('CapacitorCookies', 'setCookie', {
-                key: cookieKey,
-                value: decode(cookieValue),
-              });
+              const payload = {
+                type: 'CapacitorCookies.set',
+                action: val,
+                domain,
+              };
+
+              prompt(JSON.stringify(payload));
+            } else if (
+              typeof win.CapacitorCookiesAndroidInterface !== 'undefined'
+            ) {
+              win.CapacitorCookiesAndroidInterface.setCookie(domain, val);
             }
           },
         });
@@ -369,6 +373,9 @@ const initBridge = (w: any): void => {
       win.CapacitorWebFetch = window.fetch;
       win.CapacitorWebXMLHttpRequest = {
         abort: window.XMLHttpRequest.prototype.abort,
+        getAllResponseHeaders:
+          window.XMLHttpRequest.prototype.getAllResponseHeaders,
+        getResponseHeader: window.XMLHttpRequest.prototype.getResponseHeader,
         open: window.XMLHttpRequest.prototype.open,
         send: window.XMLHttpRequest.prototype.send,
         setRequestHeader: window.XMLHttpRequest.prototype.setRequestHeader,
@@ -403,8 +410,10 @@ const initBridge = (w: any): void => {
           options?: RequestInit,
         ) => {
           if (
-            resource.toString().startsWith('data:') ||
-            resource.toString().startsWith('blob:')
+            !(
+              resource.toString().startsWith('http:') ||
+              resource.toString().startsWith('https:')
+            )
           ) {
             return win.CapacitorWebFetch(resource, options);
           }
@@ -472,6 +481,12 @@ const initBridge = (w: any): void => {
 
         // XHR patch abort
         window.XMLHttpRequest.prototype.abort = function () {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.abort.call(this);
+          }
           this.readyState = 0;
           this.dispatchEvent(new Event('abort'));
           this.dispatchEvent(new Event('loadend'));
@@ -482,9 +497,21 @@ const initBridge = (w: any): void => {
           method: string,
           url: string,
         ) {
+          this._url = url;
+
+          if (
+            !(url.startsWith('http:') || url.toString().startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
+          }
+
           Object.defineProperties(this, {
             _headers: {
               value: {},
+              writable: true,
+            },
+            _method: {
+              value: method,
               writable: true,
             },
             readyState: {
@@ -513,9 +540,8 @@ const initBridge = (w: any): void => {
               writable: true,
             },
           });
+
           addEventListeners.call(this);
-          this._method = method;
-          this._url = url;
           this.readyState = 1;
         };
 
@@ -524,6 +550,16 @@ const initBridge = (w: any): void => {
           header: string,
           value: string,
         ) {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(
+              this,
+              header,
+              value,
+            );
+          }
           this._headers[header] = value;
         };
 
@@ -531,6 +567,13 @@ const initBridge = (w: any): void => {
         window.XMLHttpRequest.prototype.send = function (
           body?: Document | XMLHttpRequestBodyInit,
         ) {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.send.call(this, body);
+          }
+
           try {
             this.readyState = 2;
 
@@ -585,6 +628,15 @@ const initBridge = (w: any): void => {
 
         // XHR patch getAllResponseHeaders
         window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(
+              this,
+            );
+          }
+
           let returnString = '';
           for (const key in this._headers) {
             if (key != 'Set-Cookie') {
@@ -596,6 +648,15 @@ const initBridge = (w: any): void => {
 
         // XHR patch getResponseHeader
         window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
+          if (
+            this._url == null ||
+            !(this._url.startsWith('http:') || this._url.startsWith('https:'))
+          ) {
+            return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(
+              this,
+              name,
+            );
+          }
           return this._headers[name];
         };
       }

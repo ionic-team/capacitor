@@ -250,8 +250,17 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
                 if let payload = try JSONSerialization.jsonObject(with: dataFromString, options: .fragmentsAllowed) as? [String: AnyObject] {
                     let type = payload["type"] as? String
 
-                    if type == "CapacitorCookies" {
+                    if type == "CapacitorCookies.get" {
                         completionHandler(CapacitorCookieManager(bridge!.config).getCookies())
+                        // Don't present prompt
+                        return
+                    } else if type == "CapacitorCookies.set" {
+                        // swiftlint:disable force_cast
+                        let action = payload["action"] as! String
+                        let domain = payload["domain"] as! String
+                        CapacitorCookieManager(bridge!.config).setCookie(domain, action)
+                        completionHandler("")
+                        // swiftlint:enable force_cast
                         // Don't present prompt
                         return
                     } else if type == "CapacitorCookies.isEnabled" {
