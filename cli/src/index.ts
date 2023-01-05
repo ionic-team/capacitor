@@ -152,9 +152,7 @@ export function runProgram(config: Config): void {
       new Option(
         '--androidreleasetype <androidreleasetype>',
         'Android release type; APK or AAB',
-      )
-        .choices(['AAB', 'APK'])
-        .default('AAB'),
+      ).choices(['AAB', 'APK']),
     )
     .action(
       wrapAction(
