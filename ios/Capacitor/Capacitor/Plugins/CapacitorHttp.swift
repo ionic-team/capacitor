@@ -30,7 +30,7 @@ public class CAPHttpPlugin: CAPPlugin {
         http(call, "PATCH")
     }
 
-    @objc func del(_ call: CAPPluginCall) {
+    @objc func delete(_ call: CAPPluginCall) {
         http(call, "DELETE")
     }
 }
