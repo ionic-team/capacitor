@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.2](https://github.com/ionic-team/capacitor/compare/4.6.1...4.6.2) (2023-01-17)
+
+
+### Bug Fixes
+
+* **android:** get application/x-www-form-urlencoded as string ([#6165](https://github.com/ionic-team/capacitor/issues/6165)) ([0735e89](https://github.com/ionic-team/capacitor/commit/0735e89d48e77a1ddca97a48e3851f4a0a3ea2c1))
+* **ios/android:** better http error handling ([#6208](https://github.com/ionic-team/capacitor/issues/6208)) ([7d4d70a](https://github.com/ionic-team/capacitor/commit/7d4d70a0500b7996c710c0762907f44bdf27c92b))
+
+
+
+
+
 ## [4.6.1](https://github.com/ionic-team/capacitor/compare/4.6.0...4.6.1) (2022-12-05)
 
 **Note:** Version bump only for package @capacitor/android
