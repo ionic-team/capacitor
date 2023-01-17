@@ -34,8 +34,7 @@ public class CapacitorHttp extends Plugin {
                     JSObject response = HttpRequestHandler.request(call, httpMethod);
                     call.resolve(response);
                 } catch (Exception e) {
-                    System.out.println(e.toString());
-                    call.reject(e.getClass().getSimpleName(), e);
+                    call.reject(e.getLocalizedMessage(), e.getClass().getSimpleName(), e);
                 }
             }
         };
