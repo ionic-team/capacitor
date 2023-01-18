@@ -42,7 +42,8 @@ export async function buildCommand(
       config.android.buildOptions.keystoreAliasPassword,
     androidreleasetype:
       buildOptions.androidreleasetype ||
-      config.android.buildOptions.releaseType,
+      config.android.buildOptions.releaseType ||
+      'AAB',
   };
 
   try {

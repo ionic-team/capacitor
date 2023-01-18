@@ -170,7 +170,7 @@ class HttpRequestHandler {
             } catch {
                 // Explicitly reject if the http request body was not set successfully,
                 // so as to not send a known malformed request, and to provide the developer with additional context.
-                call.reject("Error", "REQUEST", error, [:])
+                call.reject(error.localizedDescription, (error as NSError).domain, error, nil)
                 return
             }
         }
@@ -180,7 +180,8 @@ class HttpRequestHandler {
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             urlSession.invalidateAndCancel()
 
-            if error != nil {
+            if let error = error {
+                call.reject(error.localizedDescription, (error as NSError).domain, error, nil)
                 return
             }
 
