@@ -356,7 +356,7 @@ async function generateCordovaPodspec(
       `s.vendored_frameworks = '${customFrameworks.join(`', '`)}'`,
     );
     frameworkDeps.push(
-      `s.exclude_files = 'sources/**/*.framework/Headers/*.h'`,
+      `s.exclude_files = 'sources/**/*.framework/Headers/*.h', 'sources/**/*.framework/PrivateHeaders/*.h'`,
     );
   }
   if (sourceFrameworks.length > 0) {
