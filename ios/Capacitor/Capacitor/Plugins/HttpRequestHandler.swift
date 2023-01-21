@@ -77,7 +77,11 @@ class HttpRequestHandler {
                             urlSafeParams.append(URLQueryItem(name: key, value: str))
                         }
                     } else {
-                        urlSafeParams.append(URLQueryItem(name: key, value: (value as! String)))
+                        if let valueNumber = value as? Double {
+                            urlSafeParams.append(URLQueryItem(name: key, value: String(valueNumber)))
+                        } else {
+                            urlSafeParams.append(URLQueryItem(name: key, value: String(describing: value)))
+                        }
                     }
                 }
 
