@@ -232,7 +232,7 @@ public class WebViewLocalServer {
             );
         }
 
-        if (isLocalFile(request.getUrl()) || isErrorUrl(request.getUrl())) {
+        if (isLocalFile(request.getUrl()) || !bridge.isMinimumWebViewInstalled()) {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
             String mimeType = getMimeType(request.getUrl().getPath(), responseStream);
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
