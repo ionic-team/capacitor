@@ -14,7 +14,7 @@
 </p>
 <p align="center">
   <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=capacitorjs.com&color=blue&style=flat-square" /></a>
-  <a href="https://twitter.com/capacitorjs"><img src="https://img.shields.io/twitter/follow/capacitorjs" /></a>
+  <a href="https://twitter.com/capacitorjs"><img src="https://img.shields.io/badge/follow-%40capacitorjs-1DA1F2?logo=twitter" alt="Follow @capacitorjs" /></a>
 </p>
 
 ---
