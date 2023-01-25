@@ -376,7 +376,9 @@ var nativeBridge = (function (exports) {
                                 url: resource,
                                 method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
-                                headers: (options === null || options === void 0 ? void 0 : options.headers) ? JSON.stringify(options.headers) : undefined,
+                                headers: (options === null || options === void 0 ? void 0 : options.headers)
+                                    ? JSON.stringify(options.headers)
+                                    : undefined,
                             });
                             const data = typeof nativeResponse.data === 'string'
                                 ? nativeResponse.data

@@ -427,7 +427,9 @@ const initBridge = (w: any): void => {
                 url: resource,
                 method: options?.method ? options.method : undefined,
                 data: options?.body ? options.body : undefined,
-                headers: options?.headers ? JSON.stringify(options.headers) : undefined,
+                headers: options?.headers
+                  ? JSON.stringify(options.headers)
+                  : undefined,
               },
             );
 
