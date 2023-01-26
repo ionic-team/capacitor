@@ -378,7 +378,9 @@ var nativeBridge = (function (exports) {
                                 url: resource,
                                 method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
-                                headers: (options === null || options === void 0 ? void 0 : options.headers) ? options.headers : undefined,
+                                headers: (options === null || options === void 0 ? void 0 : options.headers)
+                                    ? JSON.stringify(options.headers)
+                                    : undefined,
                             });
                             const data = typeof nativeResponse.data === 'string'
                                 ? nativeResponse.data
@@ -506,7 +508,7 @@ var nativeBridge = (function (exports) {
                                 url: this._url,
                                 method: this._method,
                                 data: body !== null ? body : undefined,
-                                headers: this._headers,
+                                headers: JSON.stringify(this._headers),
                             })
                                 .then((nativeResponse) => {
                                 // intercept & parse response before returning
