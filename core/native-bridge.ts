@@ -427,7 +427,9 @@ const initBridge = (w: any): void => {
                 url: resource,
                 method: options?.method ? options.method : undefined,
                 data: options?.body ? options.body : undefined,
-                headers: options?.headers ? options.headers : undefined,
+                headers: options?.headers
+                  ? JSON.stringify(options.headers)
+                  : undefined,
               },
             );
 
@@ -583,7 +585,7 @@ const initBridge = (w: any): void => {
                 url: this._url,
                 method: this._method,
                 data: body !== null ? body : undefined,
-                headers: this._headers,
+                headers: JSON.stringify(this._headers),
               })
               .then((nativeResponse: any) => {
                 // intercept & parse response before returning
