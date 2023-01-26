@@ -578,7 +578,7 @@ const initBridge = (w: any): void => {
             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
           }
 
-          const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`
+          const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
           console.time(tag);
 
           try {
