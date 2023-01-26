@@ -219,12 +219,12 @@ const initBridge = (w: any): void => {
 
           c.groupCollapsed(
             '%cresult %c' +
-              result.pluginId +
-              '.' +
-              result.methodName +
-              ' (#' +
-              result.callbackId +
-              ')',
+            result.pluginId +
+            '.' +
+            result.methodName +
+            ' (#' +
+            result.callbackId +
+            ')',
             tagStyles,
             'font-style: italic; font-weight: bold; color: #444',
           );
@@ -248,12 +248,12 @@ const initBridge = (w: any): void => {
         if (isFullConsole(c)) {
           c.groupCollapsed(
             '%cnative %c' +
-              call.pluginId +
-              '.' +
-              call.methodName +
-              ' (#' +
-              call.callbackId +
-              ')',
+            call.pluginId +
+            '.' +
+            call.methodName +
+            ' (#' +
+            call.callbackId +
+            ')',
             'font-weight: lighter; color: gray',
             'font-weight: bold; color: #000',
           );
@@ -321,7 +321,7 @@ const initBridge = (w: any): void => {
 
       if (doPatchCookies) {
         Object.defineProperty(document, 'cookie', {
-          get: function () {
+          get: function() {
             if (platform === 'ios') {
               // Use prompt to synchronously get cookies.
               // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
@@ -338,13 +338,13 @@ const initBridge = (w: any): void => {
               return win.CapacitorCookiesAndroidInterface.getCookies();
             }
           },
-          set: function (val) {
+          set: function(val) {
             const cookiePairs = val.split(';');
             const domainSection = val.toLowerCase().split('domain=')[1];
             const domain =
               cookiePairs.length > 1 &&
-              domainSection != null &&
-              domainSection.length > 0
+                domainSection != null &&
+                domainSection.length > 0
                 ? domainSection.split(';')[0].trim()
                 : '';
 
@@ -418,6 +418,8 @@ const initBridge = (w: any): void => {
             return win.CapacitorWebFetch(resource, options);
           }
 
+          const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
+          console.time(tag);
           try {
             // intercept request & pass to the bridge
             const nativeResponse: HttpResponse = await cap.nativePromise(
@@ -441,46 +443,48 @@ const initBridge = (w: any): void => {
               status: nativeResponse.status,
             });
 
+            console.timeEnd(tag);
             return response;
           } catch (error) {
+            console.timeEnd(tag);
             return Promise.reject(error);
           }
         };
 
         // XHR event listeners
-        const addEventListeners = function () {
-          this.addEventListener('abort', function () {
+        const addEventListeners = function() {
+          this.addEventListener('abort', function() {
             if (typeof this.onabort === 'function') this.onabort();
           });
 
-          this.addEventListener('error', function () {
+          this.addEventListener('error', function() {
             if (typeof this.onerror === 'function') this.onerror();
           });
 
-          this.addEventListener('load', function () {
+          this.addEventListener('load', function() {
             if (typeof this.onload === 'function') this.onload();
           });
 
-          this.addEventListener('loadend', function () {
+          this.addEventListener('loadend', function() {
             if (typeof this.onloadend === 'function') this.onloadend();
           });
 
-          this.addEventListener('loadstart', function () {
+          this.addEventListener('loadstart', function() {
             if (typeof this.onloadstart === 'function') this.onloadstart();
           });
 
-          this.addEventListener('readystatechange', function () {
+          this.addEventListener('readystatechange', function() {
             if (typeof this.onreadystatechange === 'function')
               this.onreadystatechange();
           });
 
-          this.addEventListener('timeout', function () {
+          this.addEventListener('timeout', function() {
             if (typeof this.ontimeout === 'function') this.ontimeout();
           });
         };
 
         // XHR patch abort
-        window.XMLHttpRequest.prototype.abort = function () {
+        window.XMLHttpRequest.prototype.abort = function() {
           if (
             this._url == null ||
             !(this._url.startsWith('http:') || this._url.startsWith('https:'))
@@ -493,7 +497,7 @@ const initBridge = (w: any): void => {
         };
 
         // XHR patch open
-        window.XMLHttpRequest.prototype.open = function (
+        window.XMLHttpRequest.prototype.open = function(
           method: string,
           url: string,
         ) {
@@ -515,10 +519,10 @@ const initBridge = (w: any): void => {
               writable: true,
             },
             readyState: {
-              get: function () {
+              get: function() {
                 return this._readyState ?? 0;
               },
-              set: function (val: number) {
+              set: function(val: number) {
                 this._readyState = val;
                 this.dispatchEvent(new Event('readystatechange'));
               },
@@ -546,7 +550,7 @@ const initBridge = (w: any): void => {
         };
 
         // XHR patch set request header
-        window.XMLHttpRequest.prototype.setRequestHeader = function (
+        window.XMLHttpRequest.prototype.setRequestHeader = function(
           header: string,
           value: string,
         ) {
@@ -564,7 +568,7 @@ const initBridge = (w: any): void => {
         };
 
         // XHR patch send
-        window.XMLHttpRequest.prototype.send = function (
+        window.XMLHttpRequest.prototype.send = function(
           body?: Document | XMLHttpRequestBodyInit,
         ) {
           if (
@@ -573,6 +577,9 @@ const initBridge = (w: any): void => {
           ) {
             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
           }
+
+          const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`
+          console.time(tag);
 
           try {
             this.readyState = 2;
@@ -601,6 +608,7 @@ const initBridge = (w: any): void => {
                   this.dispatchEvent(new Event('load'));
                   this.dispatchEvent(new Event('loadend'));
                 }
+                console.timeEnd(tag);
               })
               .catch((error: any) => {
                 this.dispatchEvent(new Event('loadstart'));
@@ -612,6 +620,7 @@ const initBridge = (w: any): void => {
                 this.readyState = 4;
                 this.dispatchEvent(new Event('error'));
                 this.dispatchEvent(new Event('loadend'));
+                console.timeEnd(tag);
               });
           } catch (error) {
             this.dispatchEvent(new Event('loadstart'));
@@ -623,11 +632,12 @@ const initBridge = (w: any): void => {
             this.readyState = 4;
             this.dispatchEvent(new Event('error'));
             this.dispatchEvent(new Event('loadend'));
+            console.timeEnd(tag);
           }
         };
 
         // XHR patch getAllResponseHeaders
-        window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
+        window.XMLHttpRequest.prototype.getAllResponseHeaders = function() {
           if (
             this._url == null ||
             !(this._url.startsWith('http:') || this._url.startsWith('https:'))
@@ -647,7 +657,7 @@ const initBridge = (w: any): void => {
         };
 
         // XHR patch getResponseHeader
-        window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
+        window.XMLHttpRequest.prototype.getResponseHeader = function(name) {
           if (
             this._url == null ||
             !(this._url.startsWith('http:') || this._url.startsWith('https:'))
@@ -834,7 +844,7 @@ const initBridge = (w: any): void => {
     };
 
     if (win?.androidBridge) {
-      win.androidBridge.onmessage = function (event) {
+      win.androidBridge.onmessage = function(event) {
         returnResult(JSON.parse(event.data));
       };
     }
@@ -944,12 +954,12 @@ initBridge(
   typeof globalThis !== 'undefined'
     ? (globalThis as WindowCapacitor)
     : typeof self !== 'undefined'
-    ? (self as WindowCapacitor)
-    : typeof window !== 'undefined'
-    ? (window as WindowCapacitor)
-    : typeof global !== 'undefined'
-    ? (global as WindowCapacitor)
-    : ({} as WindowCapacitor),
+      ? (self as WindowCapacitor)
+      : typeof window !== 'undefined'
+        ? (window as WindowCapacitor)
+        : typeof global !== 'undefined'
+          ? (global as WindowCapacitor)
+          : ({} as WindowCapacitor),
 );
 
 // Export only for tests
