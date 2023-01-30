@@ -3,13 +3,15 @@ package com.getcapacitor;
 import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
 import static com.getcapacitor.Bridge.DEFAULT_ANDROID_WEBVIEW_VERSION;
 import static com.getcapacitor.Bridge.MINIMUM_ANDROID_WEBVIEW_VERSION;
-import static com.getcapacitor.FileUtils.readFile;
+import static com.getcapacitor.FileUtils.readFileFromAssets;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import androidx.annotation.Nullable;
 import com.getcapacitor.util.JSONUtils;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -138,7 +140,7 @@ public class CapConfig {
             return config;
         }
 
-        config.loadConfigFromAssets(context.getAssets(), path);
+        config.loadConfigFromFile(path);
         config.deserializeConfig(context);
         return config;
     }
@@ -195,7 +197,7 @@ public class CapConfig {
         }
 
         try {
-            String jsonString = readFile(assetManager, path + "capacitor.config.json");
+            String jsonString = readFileFromAssets(assetManager, path + "capacitor.config.json");
             configJSON = new JSONObject(jsonString);
         } catch (IOException ex) {
             Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
@@ -211,14 +213,21 @@ public class CapConfig {
     private void loadConfigFromFile(String path) {
         if (path == null) {
             path = "";
+        } else {
+            // Add slash at the end to form a proper file path if going deeper in assets dir
+            if (path.charAt(path.length()-1) != '/') {
+                path = path + "/";
+            }
         }
 
         try {
-            //String jsonString = readFile(assetManager, path + "capacitor.config.json");
-            String jsonString = "";
+            File configFile = new File(path + "capacitor.config.json");
+            String jsonString = FileUtils.readFileFromDisk(configFile);
             configJSON = new JSONObject(jsonString);
         } catch (JSONException ex) {
             Logger.error("Unable to parse capacitor.config.json. Make sure it's valid json", ex);
+        } catch (IOException ex) {
+            Logger.error("Unable to load capacitor.config.json.", ex);
         }
     }
 
