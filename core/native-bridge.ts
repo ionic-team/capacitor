@@ -418,6 +418,8 @@ const initBridge = (w: any): void => {
             return win.CapacitorWebFetch(resource, options);
           }
 
+          const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
+          console.time(tag);
           try {
             // intercept request & pass to the bridge
             const nativeResponse: HttpResponse = await cap.nativePromise(
@@ -443,8 +445,10 @@ const initBridge = (w: any): void => {
               status: nativeResponse.status,
             });
 
+            console.timeEnd(tag);
             return response;
           } catch (error) {
+            console.timeEnd(tag);
             return Promise.reject(error);
           }
         };
@@ -576,6 +580,9 @@ const initBridge = (w: any): void => {
             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
           }
 
+          const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
+          console.time(tag);
+
           try {
             this.readyState = 2;
 
@@ -603,6 +610,7 @@ const initBridge = (w: any): void => {
                   this.dispatchEvent(new Event('load'));
                   this.dispatchEvent(new Event('loadend'));
                 }
+                console.timeEnd(tag);
               })
               .catch((error: any) => {
                 this.dispatchEvent(new Event('loadstart'));
@@ -614,6 +622,7 @@ const initBridge = (w: any): void => {
                 this.readyState = 4;
                 this.dispatchEvent(new Event('error'));
                 this.dispatchEvent(new Event('loadend'));
+                console.timeEnd(tag);
               });
           } catch (error) {
             this.dispatchEvent(new Event('loadstart'));
@@ -625,6 +634,7 @@ const initBridge = (w: any): void => {
             this.readyState = 4;
             this.dispatchEvent(new Event('error'));
             this.dispatchEvent(new Event('loadend'));
+            console.timeEnd(tag);
           }
         };
 
