@@ -1512,7 +1512,7 @@ public class Bridge {
                 config
             );
 
-            if (webView instanceof  CapacitorWebView) {
+            if (webView instanceof CapacitorWebView) {
                 CapacitorWebView capacitorWebView = (CapacitorWebView) webView;
                 capacitorWebView.setBridge(bridge);
             }

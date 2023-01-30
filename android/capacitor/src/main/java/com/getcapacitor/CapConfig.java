@@ -10,7 +10,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import androidx.annotation.Nullable;
 import com.getcapacitor.util.JSONUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -191,7 +190,7 @@ public class CapConfig {
             path = "";
         } else {
             // Add slash at the end to form a proper file path if going deeper in assets dir
-            if (path.charAt(path.length()-1) != '/') {
+            if (path.charAt(path.length() - 1) != '/') {
                 path = path + "/";
             }
         }
@@ -215,7 +214,7 @@ public class CapConfig {
             path = "";
         } else {
             // Add slash at the end to form a proper file path if going deeper in assets dir
-            if (path.charAt(path.length()-1) != '/') {
+            if (path.charAt(path.length() - 1) != '/') {
                 path = path + "/";
             }
         }
