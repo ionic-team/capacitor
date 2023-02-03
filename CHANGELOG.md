@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.3](https://github.com/ionic-team/capacitor/compare/4.6.2...4.6.3) (2023-02-03)
+
+
+### Bug Fixes
+
+* **cli/cordova:** Exclude private framework Headers ([#6229](https://github.com/ionic-team/capacitor/issues/6229)) ([6c2726d](https://github.com/ionic-team/capacitor/commit/6c2726dc0817c9e57c8b7909e4a69a9b376c425d))
+* **ios:** crash when http headers contain numbers ([#6251](https://github.com/ionic-team/capacitor/issues/6251)) ([028c556](https://github.com/ionic-team/capacitor/commit/028c556a50b41ee99fe8f4f1aa2f42d3fd57f92d))
+
+
+
+
+
 ## [4.6.2](https://github.com/ionic-team/capacitor/compare/4.6.1...4.6.2) (2023-01-17)
 
 
