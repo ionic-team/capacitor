@@ -128,7 +128,7 @@ public class CapConfig {
      * Constructs a Capacitor Configuration from config.json file within the app file-space.
      *
      * @param context The context.
-     * @param path A path relative to the root assets directory.
+     * @param path A path relative to the root of the app file-space.
      * @return A loaded config file, if successful.
      */
     public static CapConfig loadFromFile(Context context, String path) {
