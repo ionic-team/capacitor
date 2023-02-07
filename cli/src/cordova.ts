@@ -931,7 +931,7 @@ export async function writeCordovaAndroidManifest(
                     if (
                       (requiredElement.children !== undefined) !==
                         (existingElement.children !== undefined) &&
-                      requiredElement.children.length !== 0
+                      requiredElement.children?.length !== 0
                     ) {
                       return false;
                     } else {
