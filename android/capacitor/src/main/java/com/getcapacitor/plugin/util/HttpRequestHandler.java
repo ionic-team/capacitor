@@ -45,7 +45,7 @@ public class HttpRequestHandler {
 
         static final ResponseType DEFAULT = TEXT;
 
-        static ResponseType parse(String value) {
+        public static ResponseType parse(String value) {
             for (ResponseType responseType : values()) {
                 if (responseType.name.equalsIgnoreCase(value)) {
                     return responseType;
@@ -58,16 +58,16 @@ public class HttpRequestHandler {
     /**
      * Internal builder class for building a CapacitorHttpUrlConnection
      */
-    private static class HttpURLConnectionBuilder {
+    public static class HttpURLConnectionBuilder {
 
-        private Integer connectTimeout;
-        private Integer readTimeout;
-        private Boolean disableRedirects;
-        private JSObject headers;
-        private String method;
-        private URL url;
+        public Integer connectTimeout;
+        public Integer readTimeout;
+        public Boolean disableRedirects;
+        public JSObject headers;
+        public String method;
+        public URL url;
 
-        private CapacitorHttpUrlConnection connection;
+        public CapacitorHttpUrlConnection connection;
 
         public HttpURLConnectionBuilder setConnectTimeout(Integer connectTimeout) {
             this.connectTimeout = connectTimeout;
@@ -188,7 +188,7 @@ public class HttpRequestHandler {
      * @throws IOException Thrown if the InputStream is unable to be parsed correctly
      * @throws JSONException Thrown if the JSON is unable to be parsed
      */
-    private static JSObject buildResponse(CapacitorHttpUrlConnection connection) throws IOException, JSONException {
+    public static JSObject buildResponse(CapacitorHttpUrlConnection connection) throws IOException, JSONException {
         return buildResponse(connection, ResponseType.DEFAULT);
     }
 
@@ -200,7 +200,7 @@ public class HttpRequestHandler {
      * @throws IOException Thrown if the InputStream is unable to be parsed correctly
      * @throws JSONException Thrown if the JSON is unable to be parsed
      */
-    private static JSObject buildResponse(CapacitorHttpUrlConnection connection, ResponseType responseType)
+    public static JSObject buildResponse(CapacitorHttpUrlConnection connection, ResponseType responseType)
         throws IOException, JSONException {
         int statusCode = connection.getResponseCode();
 
@@ -226,7 +226,7 @@ public class HttpRequestHandler {
      * @throws IOException Thrown if the InputStreams cannot be properly parsed
      * @throws JSONException Thrown if the JSON is malformed when parsing as JSON
      */
-    static Object readData(ICapacitorHttpUrlConnection connection, ResponseType responseType) throws IOException, JSONException {
+    public static Object readData(ICapacitorHttpUrlConnection connection, ResponseType responseType) throws IOException, JSONException {
         InputStream errorStream = connection.getErrorStream();
         String contentType = connection.getHeaderField("Content-Type");
 
@@ -261,7 +261,7 @@ public class HttpRequestHandler {
      * @param mimeTypes The Mime-Type values to check against
      * @return
      */
-    private static boolean isOneOf(String contentType, MimeType... mimeTypes) {
+    public static boolean isOneOf(String contentType, MimeType... mimeTypes) {
         if (contentType != null) {
             for (MimeType mimeType : mimeTypes) {
                 if (contentType.contains(mimeType.getValue())) {
@@ -277,7 +277,7 @@ public class HttpRequestHandler {
      * @param connection The CapacitorHttpUrlConnection connection
      * @return A JSObject of the header values from the CapacitorHttpUrlConnection
      */
-    private static JSObject buildResponseHeaders(CapacitorHttpUrlConnection connection) {
+    public static JSObject buildResponseHeaders(CapacitorHttpUrlConnection connection) {
         JSObject output = new JSObject();
 
         for (Map.Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
@@ -294,7 +294,7 @@ public class HttpRequestHandler {
      * @return A JSObject or JSArray
      * @throws JSONException thrown if the JSON is malformed
      */
-    private static Object parseJSON(String input) throws JSONException {
+    public static Object parseJSON(String input) throws JSONException {
         JSONObject json = new JSONObject();
         try {
             if ("null".equals(input.trim())) {
@@ -323,7 +323,7 @@ public class HttpRequestHandler {
      * @return String value of InputStream
      * @throws IOException thrown if the InputStream is unable to be read as base64
      */
-    private static String readStreamAsBase64(InputStream in) throws IOException {
+    public static String readStreamAsBase64(InputStream in) throws IOException {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[1024];
             int readBytes;
@@ -341,7 +341,7 @@ public class HttpRequestHandler {
      * @return String value of InputStream
      * @throws IOException thrown if the InputStream is unable to be read
      */
-    private static String readStreamAsString(InputStream in) throws IOException {
+    public static String readStreamAsString(InputStream in) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             StringBuilder builder = new StringBuilder();
             String line = reader.readLine();
