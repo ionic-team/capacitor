@@ -80,7 +80,7 @@ On web, this means do not add any third party libraries such as Firebase or Loda
 ### Branches
 
 * [`main`](https://github.com/ionic-team/capacitor/tree/main): Latest Capacitor development branch
-* [`3.x`](https://github.com/ionic-team/capacitor/tree/2.x): Capacitor 3 (bug and security fixes only)
+* [`3.x`](https://github.com/ionic-team/capacitor/tree/2.x): Capacitor 3 (security fixes only)
 * [`2.x`](https://github.com/ionic-team/capacitor/tree/2.x): Capacitor 2 (not maintained)
 * [`1.x`](https://github.com/ionic-team/capacitor/tree/1.x): Capacitor 1 (not maintained)
 
