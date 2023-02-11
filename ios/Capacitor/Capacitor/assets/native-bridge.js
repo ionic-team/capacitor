@@ -2,7 +2,7 @@
 /*! Capacitor: https://capacitorjs.com/ - MIT License */
 /* Generated File. Do not edit. */
 
-const nativeBridge = (function (exports) {
+var nativeBridge = (function (exports) {
     'use strict';
 
     var ExceptionCode;
@@ -370,13 +370,17 @@ const nativeBridge = (function (exports) {
                             resource.toString().startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
                         }
+                        const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
+                        console.time(tag);
                         try {
                             // intercept request & pass to the bridge
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
                                 url: resource,
                                 method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
-                                headers: (options === null || options === void 0 ? void 0 : options.headers) ? options.headers : undefined,
+                                headers: (options === null || options === void 0 ? void 0 : options.headers)
+                                    ? JSON.stringify(options.headers)
+                                    : undefined,
                             });
                             const data = typeof nativeResponse.data === 'string'
                                 ? nativeResponse.data
@@ -386,9 +390,11 @@ const nativeBridge = (function (exports) {
                                 headers: nativeResponse.headers,
                                 status: nativeResponse.status,
                             });
+                            console.timeEnd(tag);
                             return response;
                         }
                         catch (error) {
+                            console.timeEnd(tag);
                             return Promise.reject(error);
                         }
                     };
@@ -492,6 +498,8 @@ const nativeBridge = (function (exports) {
                             !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
                         }
+                        const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
+                        console.time(tag);
                         try {
                             this.readyState = 2;
                             // intercept request & pass to the bridge
@@ -500,7 +508,7 @@ const nativeBridge = (function (exports) {
                                 url: this._url,
                                 method: this._method,
                                 data: body !== null ? body : undefined,
-                                headers: this._headers,
+                                headers: JSON.stringify(this._headers),
                             })
                                 .then((nativeResponse) => {
                                 // intercept & parse response before returning
@@ -518,6 +526,7 @@ const nativeBridge = (function (exports) {
                                     this.dispatchEvent(new Event('load'));
                                     this.dispatchEvent(new Event('loadend'));
                                 }
+                                console.timeEnd(tag);
                             })
                                 .catch((error) => {
                                 this.dispatchEvent(new Event('loadstart'));
@@ -529,6 +538,7 @@ const nativeBridge = (function (exports) {
                                 this.readyState = 4;
                                 this.dispatchEvent(new Event('error'));
                                 this.dispatchEvent(new Event('loadend'));
+                                console.timeEnd(tag);
                             });
                         }
                         catch (error) {
@@ -541,6 +551,7 @@ const nativeBridge = (function (exports) {
                             this.readyState = 4;
                             this.dispatchEvent(new Event('error'));
                             this.dispatchEvent(new Event('loadend'));
+                            console.timeEnd(tag);
                         }
                     };
                     // XHR patch getAllResponseHeaders

@@ -843,8 +843,12 @@ export async function writeCordovaAndroidManifest(
                     const elementsToSearchNextIn = [];
                     for (const existingElement of existingElements) {
                       if (existingElement.name === pathTarget[0]) {
-                        for (const el of existingElement.children) {
-                          elementsToSearchNextIn.push(el);
+                        if (existingElement.children) {
+                          for (const el of existingElement.children) {
+                            elementsToSearchNextIn.push(el);
+                          }
+                        } else {
+                          elementsToSearchNextIn.push(existingElement);
                         }
                       }
                     }
@@ -926,7 +930,8 @@ export async function writeCordovaAndroidManifest(
                     }
                     if (
                       (requiredElement.children !== undefined) !==
-                      (existingElement.children !== undefined)
+                        (existingElement.children !== undefined) &&
+                      requiredElement.children?.length !== 0
                     ) {
                       return false;
                     } else {
@@ -948,11 +953,25 @@ export async function writeCordovaAndroidManifest(
                             return false;
                           }
                         }
+                      } else {
+                        let foundRequiredElement = false;
+                        for (const existingElementItem of existingElement.children) {
+                          const foundRequiredElementIn = doesElementMatch(
+                            requiredElement,
+                            existingElementItem,
+                          );
+                          if (foundRequiredElementIn) {
+                            foundRequiredElement = true;
+                            break;
+                          }
+                        }
+                        if (!foundRequiredElement) {
+                          return false;
+                        }
                       }
                     }
                     return true;
                   };
-                  /////////
                   const parsedExistingElements: any[] = [];
                   const rootKeyOfExistingElements =
                     Object.keys(existingElements)[0];
@@ -984,10 +1003,15 @@ export async function writeCordovaAndroidManifest(
                       ...requiredElements[rootKeyOfRequiredElements]['$'],
                     };
                   }
-                  parseXmlToSearchable(
-                    requiredElements[rootKeyOfRequiredElements]['$$'],
-                    rootOfRequiredElementsToAdd['children'],
-                  );
+                  if (
+                    requiredElements[rootKeyOfRequiredElements]['$$'] !==
+                    undefined
+                  ) {
+                    parseXmlToSearchable(
+                      requiredElements[rootKeyOfRequiredElements]['$$'],
+                      rootOfRequiredElementsToAdd['children'],
+                    );
+                  }
                   parsedRequiredElements.push(rootOfRequiredElementsToAdd);
                   const elementsToSearch = findElementsToSearchIn(
                     parsedExistingElements,

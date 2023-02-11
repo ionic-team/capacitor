@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.3](https://github.com/ionic-team/capacitor/compare/4.6.2...4.6.3) (2023-02-03)
+
+
+### Bug Fixes
+
+* **cli/cordova:** Exclude private framework Headers ([#6229](https://github.com/ionic-team/capacitor/issues/6229)) ([6c2726d](https://github.com/ionic-team/capacitor/commit/6c2726dc0817c9e57c8b7909e4a69a9b376c425d))
+
+
+
+
+
+## [4.6.2](https://github.com/ionic-team/capacitor/compare/4.6.1...4.6.2) (2023-01-17)
+
+
+### Bug Fixes
+
+* **cli:** config file android release type not overridden ([#6205](https://github.com/ionic-team/capacitor/issues/6205)) ([1441c55](https://github.com/ionic-team/capacitor/commit/1441c551737ce42dd2b82fc1a9da1e8311e27f1a))
+* **cli:** flavor flag not using correct apk ([#6151](https://github.com/ionic-team/capacitor/issues/6151)) ([f4e7f19](https://github.com/ionic-team/capacitor/commit/f4e7f19f186e334404b2cd0decc3205e57bf4469))
+
+
+
+
+
 ## [4.6.1](https://github.com/ionic-team/capacitor/compare/4.6.0...4.6.1) (2022-12-05)
 
 

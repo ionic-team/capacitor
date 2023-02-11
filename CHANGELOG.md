@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.3](https://github.com/ionic-team/capacitor/compare/4.6.2...4.6.3) (2023-02-03)
+
+
+### Bug Fixes
+
+* **cli/cordova:** Exclude private framework Headers ([#6229](https://github.com/ionic-team/capacitor/issues/6229)) ([6c2726d](https://github.com/ionic-team/capacitor/commit/6c2726dc0817c9e57c8b7909e4a69a9b376c425d))
+* **ios:** crash when http headers contain numbers ([#6251](https://github.com/ionic-team/capacitor/issues/6251)) ([028c556](https://github.com/ionic-team/capacitor/commit/028c556a50b41ee99fe8f4f1aa2f42d3fd57f92d))
+
+
+
+
+
+## [4.6.2](https://github.com/ionic-team/capacitor/compare/4.6.1...4.6.2) (2023-01-17)
+
+
+### Bug Fixes
+
+* **android:** get application/x-www-form-urlencoded as string ([#6165](https://github.com/ionic-team/capacitor/issues/6165)) ([0735e89](https://github.com/ionic-team/capacitor/commit/0735e89d48e77a1ddca97a48e3851f4a0a3ea2c1))
+* **cli:** config file android release type not overridden ([#6205](https://github.com/ionic-team/capacitor/issues/6205)) ([1441c55](https://github.com/ionic-team/capacitor/commit/1441c551737ce42dd2b82fc1a9da1e8311e27f1a))
+* **cli:** flavor flag not using correct apk ([#6151](https://github.com/ionic-team/capacitor/issues/6151)) ([f4e7f19](https://github.com/ionic-team/capacitor/commit/f4e7f19f186e334404b2cd0decc3205e57bf4469))
+* **ios:** CapacitorHttp cannot use delete method ([#6220](https://github.com/ionic-team/capacitor/issues/6220)) ([4d238a9](https://github.com/ionic-team/capacitor/commit/4d238a9e0dcf1e3e8c105c3aa4c7361abf16398e))
+* **ios:** encode whitespace in http plugin urls ([#6169](https://github.com/ionic-team/capacitor/issues/6169)) ([dccb0a9](https://github.com/ionic-team/capacitor/commit/dccb0a99850c7c878906156a509ecd675836ef1a))
+* **ios/android:** better http error handling ([#6208](https://github.com/ionic-team/capacitor/issues/6208)) ([7d4d70a](https://github.com/ionic-team/capacitor/commit/7d4d70a0500b7996c710c0762907f44bdf27c92b))
+
+
+
+
+
 ## [4.6.1](https://github.com/ionic-team/capacitor/compare/4.6.0...4.6.1) (2022-12-05)
 
 
