@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin.util;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
 import com.getcapacitor.JSArray;
@@ -11,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -23,6 +25,9 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 public class HttpRequestHandler {
 
@@ -99,8 +104,20 @@ public class HttpRequestHandler {
             return this;
         }
 
-        public HttpURLConnectionBuilder openConnection() throws IOException {
+        public HttpURLConnectionBuilder openConnection(Context context) throws IOException {
             connection = new CapacitorHttpUrlConnection((HttpURLConnection) url.openConnection());
+
+            // Attach SSL Certificate if Enterprise Plugin is available
+            try {
+                Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
+                Method method = sslPinningImpl.getDeclaredMethod("getSSLSocketFactory", Context.class);
+                SSLSocketFactory sslSocketFactory = (SSLSocketFactory) method.invoke(sslPinningImpl.newInstance(), context);
+                if (sslSocketFactory != null) {
+                    connection.setSSLSocketFactory(sslSocketFactory);
+                }
+            }
+            catch(Exception ignored) {
+            }
 
             connection.setAllowUserInteraction(false);
             connection.setRequestMethod(method);
@@ -364,7 +381,7 @@ public class HttpRequestHandler {
      * @throws URISyntaxException thrown when the URI is malformed
      * @throws JSONException thrown when the incoming JSON is malformed
      */
-    public static JSObject request(PluginCall call, String httpMethod) throws IOException, URISyntaxException, JSONException {
+    public static JSObject request(PluginCall call, String httpMethod, Context context) throws IOException, URISyntaxException, JSONException {
         String urlString = call.getString("url", "");
         JSObject headers = call.getObject("headers");
         JSObject params = call.getObject("params");
@@ -387,7 +404,7 @@ public class HttpRequestHandler {
             .setConnectTimeout(connectTimeout)
             .setReadTimeout(readTimeout)
             .setDisableRedirects(disableRedirects)
-            .openConnection();
+            .openConnection(context);
 
         CapacitorHttpUrlConnection connection = connectionBuilder.build();
 

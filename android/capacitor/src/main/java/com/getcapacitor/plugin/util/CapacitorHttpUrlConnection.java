@@ -23,6 +23,9 @@ import java.util.Locale;
 import java.util.Map;
 import org.json.JSONException;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
+
 public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 
     private final HttpURLConnection connection;
@@ -362,5 +365,9 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             }
         }
         return result;
+    }
+
+    public void setSSLSocketFactory(SSLSocketFactory socketFactory) {
+        ((HttpsURLConnection) this.connection).setSSLSocketFactory(socketFactory);
     }
 }
