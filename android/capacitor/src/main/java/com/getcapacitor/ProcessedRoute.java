@@ -34,5 +34,4 @@ public class ProcessedRoute {
     public void setIgnoreAssetPath(boolean ignoreAssetPath) {
         this.ignoreAssetPath = ignoreAssetPath;
     }
-
 }
