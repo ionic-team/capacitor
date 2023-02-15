@@ -80,7 +80,8 @@ On web, this means do not add any third party libraries such as Firebase or Loda
 ### Branches
 
 * [`main`](https://github.com/ionic-team/capacitor/tree/main): Latest Capacitor development branch
-* [`2.x`](https://github.com/ionic-team/capacitor/tree/2.x): Capacitor 2 (bug and security fixes only)
+* [`3.x`](https://github.com/ionic-team/capacitor/tree/3.x): Capacitor 3 (security fixes only)
+* [`2.x`](https://github.com/ionic-team/capacitor/tree/2.x): Capacitor 2 (not maintained)
 * [`1.x`](https://github.com/ionic-team/capacitor/tree/1.x): Capacitor 1 (not maintained)
 
 ### Directory Structure
@@ -93,23 +94,3 @@ This monorepo contains core Capacitor components. The current directory structur
 * `ios-template`: Default iOS App installed by the CLI
 * `android`: Capacitor Android Runtime
 * `android-template`: Default Android App installed by the CLI
-
-## Publishing Capacitor
-
-Capacitor packages are published using [Lerna](https://github.com/lerna/lerna) with fixed versioning.
-
-During Capacitor 3 development, the following workflow is used to create dev releases:
-
-1. Create the next development version. The following command will:
-    * Create a release commit with a generated changelog
-    * Create a git tag
-    * Push to the `main` branch
-    * Create a GitHub release
-
-    <br>
-
-    ```
-    npx lerna version prerelease --force-publish
-    ```
-
-1. Wait for CI to publish the new tagged version.
