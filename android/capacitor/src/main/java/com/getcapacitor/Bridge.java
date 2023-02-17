@@ -87,6 +87,8 @@ public class Bridge {
     public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
     public static final int DEFAULT_ANDROID_WEBVIEW_VERSION = 60;
     public static final int MINIMUM_ANDROID_WEBVIEW_VERSION = 55;
+    public static final int DEFAULT_HUAWEI_WEBVIEW_VERSION = 10;
+    public static final int MINIMUM_HUAWEI_WEBVIEW_VERSION = 10;
 
     // Loaded Capacitor config
     private CapConfig config;
@@ -323,6 +325,11 @@ public class Bridge {
         // Check getCurrentWebViewPackage() directly if above Android 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             PackageInfo info = WebView.getCurrentWebViewPackage();
+            if (info.packageName.equals("com.huawei.webview")) {
+                String majorVersionStr = info.versionName.split("\\.")[0];
+                int majorVersion = Integer.parseInt(majorVersionStr);
+                return majorVersion >= config.getMinHuaweiWebViewVersion();
+            }
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
