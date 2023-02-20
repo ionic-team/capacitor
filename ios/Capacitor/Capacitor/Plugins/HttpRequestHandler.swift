@@ -43,7 +43,7 @@ open class HttpRequestHandler {
         public var method: String?
         public var params: [String: String]?
         open var request: CapacitorUrlRequest?
-        
+
         public init() { }
 
         /// Set the URL of the HttpRequest
