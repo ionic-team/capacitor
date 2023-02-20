@@ -181,6 +181,7 @@ async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
   await runTask(
     `Creating ${c.strong(nativeConfigFile)} in ${nativeRelDir}`,
     async () => {
+      delete (config.app.extConfig.android as any)?.buildOptions;
       await writeJSON(nativeConfigFilePath, config.app.extConfig, {
         spaces: '\t',
       });
