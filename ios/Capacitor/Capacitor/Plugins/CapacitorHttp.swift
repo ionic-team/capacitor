@@ -5,7 +5,7 @@ public class CAPHttpPlugin: CAPPlugin {
     @objc func http(_ call: CAPPluginCall, _ httpMethod: String?) {
         do {
             if let clazz = NSClassFromString("SSLPinningHttpRequestHandlerClass") {
-                (clazz as! NSObject.Type).perform(Selector.init(("request:")), with: [
+                (clazz as! NSObject.Type).perform(#selector(self.request(_:)), with: [
                     "call": call,
                     "httpMethod": httpMethod as Any,
                     "config": self.bridge?.config as Any
