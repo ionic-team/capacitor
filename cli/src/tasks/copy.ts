@@ -130,7 +130,7 @@ export async function copy(
         await copySSLCert(
           config.app.extConfig.plugins.SSLPinning?.certs as unknown as string[],
           config.app.rootDir,
-          config.ios.nativeTargetDirAbs,
+          await config.ios.webDirAbs,
         );
       }
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
