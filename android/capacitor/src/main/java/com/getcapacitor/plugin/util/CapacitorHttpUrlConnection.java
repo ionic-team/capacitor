@@ -3,7 +3,6 @@ package com.getcapacitor.plugin.util;
 import android.os.Build;
 import android.os.LocaleList;
 import android.text.TextUtils;
-
 import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -24,10 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.json.JSONException;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
+import org.json.JSONException;
 
 public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 
@@ -379,9 +377,6 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             if (sslSocketFactory != null) {
                 ((HttpsURLConnection) this.connection).setSSLSocketFactory(sslSocketFactory);
             }
-        }
-        catch(Exception ignored) {
-        }
-
+        } catch (Exception ignored) {}
     }
 }
