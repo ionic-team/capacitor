@@ -2,23 +2,16 @@ package com.getcapacitor.plugin.util;
 
 import android.text.TextUtils;
 import android.util.Base64;
-
 import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
 import com.getcapacitor.PluginCall;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -28,10 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.net.ssl.SSLSocketFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HttpRequestHandler {
+
+    public static Bridge bridge = null;
 
     /**
      * An enum specifying conventional HTTP Response Types
@@ -108,33 +104,6 @@ public class HttpRequestHandler {
 
         public HttpURLConnectionBuilder openConnection() throws IOException {
             connection = new CapacitorHttpUrlConnection((HttpURLConnection) url.openConnection());
-
-            connection.setAllowUserInteraction(false);
-            connection.setRequestMethod(method);
-
-            if (connectTimeout != null) connection.setConnectTimeout(connectTimeout);
-            if (readTimeout != null) connection.setReadTimeout(readTimeout);
-            if (disableRedirects != null) connection.setDisableRedirects(disableRedirects);
-
-            connection.setRequestHeaders(headers);
-            return this;
-        }
-
-        public HttpURLConnectionBuilder openConnection(Bridge bridge) throws IOException {
-            connection = new CapacitorHttpUrlConnection((HttpURLConnection) url.openConnection());
-
-            // Attach SSL Certificate if Enterprise Plugin is available
-            try {
-                Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
-                Method method = sslPinningImpl.getDeclaredMethod("getSSLSocketFactory", Bridge.class);
-                SSLSocketFactory sslSocketFactory = (SSLSocketFactory) method.invoke(sslPinningImpl.newInstance(), bridge);
-                if (sslSocketFactory != null) {
-                    connection.setSSLSocketFactory(sslSocketFactory);
-                }
-
-            }
-            catch(Exception ignored) {
-            }
 
             connection.setAllowUserInteraction(false);
             connection.setRequestMethod(method);
@@ -391,56 +360,6 @@ public class HttpRequestHandler {
     }
 
     /**
-     * Makes an Http Request and Validates SSL based on the PluginCall parameters
-     * @param call The Capacitor PluginCall that contains the options need for an Http request
-     * @param httpMethod The HTTP method that overrides the PluginCall HTTP method
-     * @param bridge The Capacitor Bridge which contains the Context and Config for SSL Pinning
-     * @throws IOException throws an IO request when a connection can't be made
-     * @throws URISyntaxException thrown when the URI is malformed
-     * @throws JSONException thrown when the incoming JSON is malformed
-     */
-    public static JSObject request(PluginCall call, String httpMethod, Bridge bridge) throws IOException, URISyntaxException, JSONException {
-        String urlString = call.getString("url", "");
-        JSObject headers = call.getObject("headers");
-        JSObject params = call.getObject("params");
-        Integer connectTimeout = call.getInt("connectTimeout");
-        Integer readTimeout = call.getInt("readTimeout");
-        Boolean disableRedirects = call.getBoolean("disableRedirects");
-        Boolean shouldEncode = call.getBoolean("shouldEncodeUrlParams", true);
-        ResponseType responseType = ResponseType.parse(call.getString("responseType"));
-
-        String method = httpMethod != null ? httpMethod.toUpperCase(Locale.ROOT) : call.getString("method", "GET").toUpperCase(Locale.ROOT);
-
-        boolean isHttpMutate = method.equals("DELETE") || method.equals("PATCH") || method.equals("POST") || method.equals("PUT");
-
-        URL url = new URL(urlString);
-        HttpURLConnectionBuilder connectionBuilder = new HttpURLConnectionBuilder()
-            .setUrl(url)
-            .setMethod(method)
-            .setHeaders(headers)
-            .setUrlParams(params, shouldEncode)
-            .setConnectTimeout(connectTimeout)
-            .setReadTimeout(readTimeout)
-            .setDisableRedirects(disableRedirects)
-            .openConnection(bridge);
-
-        CapacitorHttpUrlConnection connection = connectionBuilder.build();
-
-        // Set HTTP body on a non GET or HEAD request
-        if (isHttpMutate) {
-            JSValue data = new JSValue(call, "data");
-            if (data.getValue() != null) {
-                connection.setDoOutput(true);
-                connection.setRequestBody(call, data);
-            }
-        }
-
-        connection.connect();
-
-        return buildResponse(connection, responseType);
-    }
-
-    /**
      * Makes an Http Request based on the PluginCall parameters
      * @param call The Capacitor PluginCall that contains the options need for an Http request
      * @param httpMethod The HTTP method that overrides the PluginCall HTTP method
@@ -464,16 +383,20 @@ public class HttpRequestHandler {
 
         URL url = new URL(urlString);
         HttpURLConnectionBuilder connectionBuilder = new HttpURLConnectionBuilder()
-                .setUrl(url)
-                .setMethod(method)
-                .setHeaders(headers)
-                .setUrlParams(params, shouldEncode)
-                .setConnectTimeout(connectTimeout)
-                .setReadTimeout(readTimeout)
-                .setDisableRedirects(disableRedirects)
-                .openConnection();
+            .setUrl(url)
+            .setMethod(method)
+            .setHeaders(headers)
+            .setUrlParams(params, shouldEncode)
+            .setConnectTimeout(connectTimeout)
+            .setReadTimeout(readTimeout)
+            .setDisableRedirects(disableRedirects)
+            .openConnection();
 
         CapacitorHttpUrlConnection connection = connectionBuilder.build();
+
+        if (null != bridge) {
+            connection.setSSLSocketFactory(bridge);
+        }
 
         // Set HTTP body on a non GET or HEAD request
         if (isHttpMutate) {
