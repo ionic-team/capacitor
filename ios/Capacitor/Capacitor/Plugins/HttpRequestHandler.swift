@@ -37,12 +37,14 @@ func tryParseJson(_ data: Data) -> Any {
     }
 }
 
-class HttpRequestHandler {
-    public class CapacitorHttpRequestBuilder {
+open class HttpRequestHandler {
+    open class CapacitorHttpRequestBuilder {
         public var url: URL?
         public var method: String?
         public var params: [String: String]?
-        public var request: CapacitorUrlRequest?
+        open var request: CapacitorUrlRequest?
+        
+        public init() { }
 
         /// Set the URL of the HttpRequest
         /// - Throws: an error of URLError if the urlString cannot be parsed
@@ -87,7 +89,7 @@ class HttpRequestHandler {
             return self
         }
 
-        public func openConnection() -> CapacitorHttpRequestBuilder {
+        open func openConnection() -> CapacitorHttpRequestBuilder {
             request = CapacitorUrlRequest(url!, method: method!)
             return self
         }

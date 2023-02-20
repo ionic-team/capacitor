@@ -4,7 +4,15 @@ import Foundation
 public class CAPHttpPlugin: CAPPlugin {
     @objc func http(_ call: CAPPluginCall, _ httpMethod: String?) {
         do {
-            try HttpRequestHandler.request(call, httpMethod, self.bridge?.config)
+            if let clazz = NSClassFromString("SSLPinningHttpRequestHandlerClass") {
+                (clazz as! NSObject.Type).perform(Selector.init(("request:")), with: [
+                    "call": call,
+                    "httpMethod": httpMethod as Any,
+                    "config": self.bridge?.config as Any
+                ])
+            } else {
+                try HttpRequestHandler.request(call, httpMethod, self.bridge?.config)
+            }
         } catch let error {
             call.reject(error.localizedDescription)
         }
