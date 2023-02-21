@@ -112,7 +112,7 @@ public class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
     public func setRequestHeaders(_ headers: [String: String]) {
         headers.keys.forEach { (key: String) in
             let value = headers[key]
-            request.setValue(value!, forHTTPHeaderField: key)
+            request.addValue(value!, forHTTPHeaderField: key)
             self.headers[key] = value
         }
     }
