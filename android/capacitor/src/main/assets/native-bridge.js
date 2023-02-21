@@ -2,7 +2,7 @@
 /*! Capacitor: https://capacitorjs.com/ - MIT License */
 /* Generated File. Do not edit. */
 
-var nativeBridge = (function (exports) {
+const nativeBridge = (function (exports) {
     'use strict';
 
     var ExceptionCode;
@@ -379,7 +379,7 @@ var nativeBridge = (function (exports) {
                                 method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
                                 headers: (options === null || options === void 0 ? void 0 : options.headers)
-                                    ? JSON.stringify(options.headers)
+                                    ? options.headers
                                     : undefined,
                             });
                             const data = typeof nativeResponse.data === 'string'
@@ -508,7 +508,7 @@ var nativeBridge = (function (exports) {
                                 url: this._url,
                                 method: this._method,
                                 data: body !== null ? body : undefined,
-                                headers: JSON.stringify(this._headers),
+                                headers: this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined,
                             })
                                 .then((nativeResponse) => {
                                 // intercept & parse response before returning

@@ -108,11 +108,20 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
     }
 
+    @available(*, deprecated, message: "Use newer function with passed headers of type [String: Any]")
     public func setRequestHeaders(_ headers: [String: String]) {
         headers.keys.forEach { (key: String) in
             let value = headers[key]
             request.addValue(value!, forHTTPHeaderField: key)
             self.headers[key] = value
+        }
+    }
+
+    public func setRequestHeaders(_ headers: [String: Any]) {
+        headers.keys.forEach { (key: String) in
+            let value = headers[key]
+            request.setValue("\(value!)", forHTTPHeaderField: key)
+            self.headers[key] = "\(value!)"
         }
     }
 
