@@ -32,10 +32,23 @@ export const CONFIG_FILE_NAME_TS = 'capacitor.config.ts';
 export const CONFIG_FILE_NAME_JS = 'capacitor.config.js';
 export const CONFIG_FILE_NAME_JSON = 'capacitor.config.json';
 
-export async function loadConfig(): Promise<Config> {
+export async function loadConfig(externalConfig?: ExternalConfig): Promise<Config> {
   const appRootDir = process.cwd();
   const cliRootDir = dirname(__dirname);
-  const conf = await loadExtConfig(appRootDir);
+  let conf: ExtConfigPairs
+
+  if (externalConfig !== undefined) {
+    const extConfigFilePath = resolve(appRootDir, CONFIG_FILE_NAME_JSON);
+
+    conf = {
+      extConfig: externalConfig,
+      extConfigType: 'json',
+      extConfigFilePath,
+      extConfigName: CONFIG_FILE_NAME_JSON,
+    }
+  } else {
+    conf = await loadExtConfig(appRootDir);
+  }
 
   const appId = conf.extConfig.appId ?? '';
   const appName = conf.extConfig.appName ?? '';
