@@ -143,7 +143,7 @@ open class HttpRequestHandler {
     }
 
     public static func request(_ call: CAPPluginCall, _ httpMethod: String?, _ config: InstanceConfiguration?) throws {
-        guard let urlString = call.getString("url")?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { throw URLError(.badURL) }
+        guard var urlString = call.getString("url") else { throw URLError(.badURL) }
         let method = httpMethod ?? call.getString("method", "GET")
 
         // swiftlint:disable force_cast
@@ -152,6 +152,11 @@ open class HttpRequestHandler {
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")
         let readTimeout = call.getDouble("readTimeout")
+
+        if urlString == urlString.removingPercentEncoding {
+            guard let encodedUrlString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)  else { throw URLError(.badURL) }
+            urlString = encodedUrlString
+        }
 
         let request = try CapacitorHttpRequestBuilder()
             .setUrl(urlString)
