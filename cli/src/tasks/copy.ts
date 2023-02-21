@@ -94,6 +94,14 @@ export async function copy(
       usesLiveUpdates = true;
     }
 
+    let usesSSLPinning = false;
+    if (
+      allPlugins.filter(plugin => plugin.id === '@ionic-enterprise/ssl-pinning')
+        .length > 0
+    ) {
+      usesSSLPinning = true;
+    }
+
     if (platformName === config.ios.name) {
       if (usesCapacitorPortals) {
         await copyFederatedWebDirs(config, await config.ios.webDirAbs);
@@ -116,6 +124,13 @@ export async function copy(
           config.app.extConfig.plugins.LiveUpdates.key,
           config.app.rootDir,
           config.ios.nativeTargetDirAbs,
+        );
+      }
+      if (usesSSLPinning && config.app.extConfig?.plugins?.SSLPinning?.certs) {
+        await copySSLCert(
+          config.app.extConfig.plugins.SSLPinning?.certs as unknown as string[],
+          config.app.rootDir,
+          await config.ios.webDirAbs,
         );
       }
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
@@ -141,6 +156,13 @@ export async function copy(
       if (usesLiveUpdates && config.app.extConfig?.plugins?.LiveUpdates?.key) {
         await copySecureLiveUpdatesKey(
           config.app.extConfig.plugins.LiveUpdates.key,
+          config.app.rootDir,
+          config.android.assetsDirAbs,
+        );
+      }
+      if (usesSSLPinning && config.app.extConfig?.plugins?.SSLPinning?.certs) {
+        await copySSLCert(
+          config.app.extConfig.plugins.SSLPinning?.certs as unknown as string[],
           config.app.rootDir,
           config.android.assetsDirAbs,
         );
@@ -278,6 +300,48 @@ async function copySecureLiveUpdatesKey(
     )} to ${keyRelToDir}`,
     async () => {
       return fsCopy(keyAbsFromPath, keyAbsToPath);
+    },
+  );
+}
+
+async function copySSLCert(
+  sslCertPaths: string[],
+  rootDir: string,
+  targetDir: string,
+) {
+  const validCertPaths: string[] = [];
+  for (const sslCertPath of sslCertPaths) {
+    const certAbsFromPath = join(rootDir, sslCertPath);
+    if (!/^.+\.(cer)$/.test(certAbsFromPath)) {
+      logger.warn(
+        `Cannot copy file from ${c.strong(certAbsFromPath)}\n` +
+          `The file is not a .cer SSL Certificate file.`,
+      );
+
+      return;
+    }
+    if (!(await pathExists(certAbsFromPath))) {
+      logger.warn(
+        `Cannot copy SSL Certificate file from ${c.strong(certAbsFromPath)}\n` +
+          `SSL Certificate does not exist at specified path.`,
+      );
+
+      return;
+    }
+    validCertPaths.push(certAbsFromPath);
+  }
+  const certsDirAbsToPath = join(targetDir, 'certs');
+  const certsDirRelToDir = relative(rootDir, targetDir);
+  await runTask(
+    `Copying SSL Certificates from to ${certsDirRelToDir}`,
+    async () => {
+      const promises: Promise<void>[] = [];
+      for (const certPath of validCertPaths) {
+        promises.push(
+          fsCopy(certPath, join(certsDirAbsToPath, basename(certPath))),
+        );
+      }
+      return Promise.all(promises);
     },
   );
 }
