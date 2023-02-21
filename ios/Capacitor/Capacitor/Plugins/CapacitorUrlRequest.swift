@@ -1,14 +1,14 @@
 import Foundation
 
-public class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
-    private var request: URLRequest
-    private var headers: [String: String]
+open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
+    public var request: URLRequest
+    public var headers: [String: String]
 
-    enum CapacitorUrlRequestError: Error {
+    public enum CapacitorUrlRequestError: Error {
         case serializationError(String?)
     }
 
-    init(_ url: URL, method: String) {
+    public init(_ url: URL, method: String) {
         request = URLRequest(url: url)
         request.httpMethod = method
         headers = [:]
@@ -22,7 +22,7 @@ public class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
     }
 
-    private func getRequestDataAsJson(_ data: JSValue) throws -> Data? {
+    public func getRequestDataAsJson(_ data: JSValue) throws -> Data? {
         // We need to check if the JSON is valid before attempting to serialize, as JSONSerialization.data will not throw an exception that can be caught, and will cause the application to crash if it fails.
         if JSONSerialization.isValidJSONObject(data) {
             return try JSONSerialization.data(withJSONObject: data)
@@ -31,7 +31,7 @@ public class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
     }
 
-    private func getRequestDataAsFormUrlEncoded(_ data: JSValue) throws -> Data? {
+    public func getRequestDataAsFormUrlEncoded(_ data: JSValue) throws -> Data? {
         guard var components = URLComponents(url: request.url!, resolvingAgainstBaseURL: false) else { return nil }
         components.queryItems = []
 
@@ -51,7 +51,7 @@ public class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return nil
     }
 
-    private func getRequestDataAsMultipartFormData(_ data: JSValue) throws -> Data {
+    public func getRequestDataAsMultipartFormData(_ data: JSValue) throws -> Data {
         guard let obj = data as? JSObject else {
             // Throw, other data types explicitly not supported.
             throw CapacitorUrlRequestError.serializationError("[ data ] argument for request with content-type [ application/x-www-form-urlencoded ] may only be a plain javascript object")
@@ -77,14 +77,14 @@ public class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return data
     }
 
-    private func getRequestDataAsString(_ data: JSValue) throws -> Data {
+    public func getRequestDataAsString(_ data: JSValue) throws -> Data {
         guard let stringData = data as? String else {
             throw CapacitorUrlRequestError.serializationError("[ data ] argument could not be parsed as string")
         }
         return Data(stringData.utf8)
     }
 
-    func getRequestHeader(_ index: String) -> Any? {
+    public func getRequestHeader(_ index: String) -> Any? {
         var normalized = [:] as [String: Any]
         self.headers.keys.forEach { (key: String) in
             normalized[key.lowercased()] = self.headers[key]
@@ -93,7 +93,7 @@ public class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return normalized[index.lowercased()]
     }
 
-    func getRequestData(_ body: JSValue, _ contentType: String) throws -> Data? {
+    public func getRequestData(_ body: JSValue, _ contentType: String) throws -> Data? {
         // If data can be parsed directly as a string, return that without processing.
         if let strVal = try? getRequestDataAsString(body) {
             return strVal
@@ -136,11 +136,11 @@ public class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return request
     }
 
-    public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+    open func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
         completionHandler(nil)
     }
 
-    public func getUrlSession(_ call: CAPPluginCall) -> URLSession {
+    open func getUrlSession(_ call: CAPPluginCall) -> URLSession {
         let disableRedirects = call.getBool("disableRedirects") ?? false
         if !disableRedirects {
             return URLSession.shared
