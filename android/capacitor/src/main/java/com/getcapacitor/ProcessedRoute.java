@@ -9,6 +9,7 @@ public class ProcessedRoute {
 
     private String path;
     private boolean isAsset;
+    private boolean ignoreAssetPath;
 
     public String getPath() {
         return path;
@@ -24,5 +25,13 @@ public class ProcessedRoute {
 
     public void setAsset(boolean asset) {
         isAsset = asset;
+    }
+
+    public boolean isIgnoreAssetPath() {
+        return ignoreAssetPath;
+    }
+
+    public void setIgnoreAssetPath(boolean ignoreAssetPath) {
+        this.ignoreAssetPath = ignoreAssetPath;
     }
 }
