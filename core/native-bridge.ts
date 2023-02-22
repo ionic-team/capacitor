@@ -423,7 +423,7 @@ const initBridge = (w: any): void => {
           try {
             // intercept request & pass to the bridge
             let headers = options?.headers;
-            if (options && options.headers && (typeof options.headers.entries === 'function') ) {
+            if (typeof options?.headers?.entries === 'function') {
               headers = Object.fromEntries(options.headers.entries());
             }
             const nativeResponse: HttpResponse = await cap.nativePromise(
@@ -433,7 +433,7 @@ const initBridge = (w: any): void => {
                 url: resource,
                 method: options?.method ? options.method : undefined,
                 data: options?.body ? options.body : undefined,
-                headers: headers
+                headers: headers,
               },
             );
 
