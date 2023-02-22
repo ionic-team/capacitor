@@ -423,8 +423,8 @@ const initBridge = (w: any): void => {
           try {
             // intercept request & pass to the bridge
             let headers = options?.headers;
-            if (typeof options?.headers?.entries === 'function') {
-              headers = Object.fromEntries(options.headers.entries());
+            if (options?.headers instanceof Headers) {
+              headers = Object.fromEntries((options.headers as any).entries());
             }
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',

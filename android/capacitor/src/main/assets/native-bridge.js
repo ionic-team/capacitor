@@ -366,7 +366,6 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
-                        var _a;
                         if (!(resource.toString().startsWith('http:') ||
                             resource.toString().startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
@@ -376,14 +375,14 @@ var nativeBridge = (function (exports) {
                         try {
                             // intercept request & pass to the bridge
                             let headers = options === null || options === void 0 ? void 0 : options.headers;
-                            if ((typeof ((_a = options === null || options === void 0 ? void 0 : options.headers) === null || _a === void 0 ? void 0 : _a.entries) === 'function')) {
+                            if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
                                 headers = Object.fromEntries(options.headers.entries());
                             }
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
                                 url: resource,
                                 method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
-                                headers: headers
+                                headers: headers,
                             });
                             const data = typeof nativeResponse.data === 'string'
                                 ? nativeResponse.data
