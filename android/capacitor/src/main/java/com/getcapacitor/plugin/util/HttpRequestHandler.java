@@ -2,6 +2,7 @@ package com.getcapacitor.plugin.util;
 
 import android.text.TextUtils;
 import android.util.Base64;
+import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
@@ -25,6 +26,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class HttpRequestHandler {
+
+    public static Bridge bridge = null;
 
     /**
      * An enum specifying conventional HTTP Response Types
@@ -390,6 +393,10 @@ public class HttpRequestHandler {
             .openConnection();
 
         CapacitorHttpUrlConnection connection = connectionBuilder.build();
+
+        if (null != bridge) {
+            connection.setSSLSocketFactory(bridge);
+        }
 
         // Set HTTP body on a non GET or HEAD request
         if (isHttpMutate) {

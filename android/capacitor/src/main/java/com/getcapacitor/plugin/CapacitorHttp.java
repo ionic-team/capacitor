@@ -31,6 +31,7 @@ public class CapacitorHttp extends Plugin {
             @Override
             public void run() {
                 try {
+                    HttpRequestHandler.bridge = bridge;
                     JSObject response = HttpRequestHandler.request(call, httpMethod);
                     call.resolve(response);
                 } catch (Exception e) {
