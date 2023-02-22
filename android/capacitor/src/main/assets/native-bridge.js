@@ -2,7 +2,7 @@
 /*! Capacitor: https://capacitorjs.com/ - MIT License */
 /* Generated File. Do not edit. */
 
-const nativeBridge = (function (exports) {
+var nativeBridge = (function (exports) {
     'use strict';
 
     var ExceptionCode;
@@ -374,13 +374,15 @@ const nativeBridge = (function (exports) {
                         console.time(tag);
                         try {
                             // intercept request & pass to the bridge
+                            let headers = options === null || options === void 0 ? void 0 : options.headers;
+                            if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
+                                headers = Object.fromEntries(options.headers.entries());
+                            }
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
                                 url: resource,
                                 method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
-                                headers: (options === null || options === void 0 ? void 0 : options.headers)
-                                    ? options.headers
-                                    : undefined,
+                                headers: headers,
                             });
                             const data = typeof nativeResponse.data === 'string'
                                 ? nativeResponse.data
@@ -508,7 +510,9 @@ const nativeBridge = (function (exports) {
                                 url: this._url,
                                 method: this._method,
                                 data: body !== null ? body : undefined,
-                                headers: this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined,
+                                headers: this._headers != null && Object.keys(this._headers).length > 0
+                                    ? this._headers
+                                    : undefined,
                             })
                                 .then((nativeResponse) => {
                                 // intercept & parse response before returning
