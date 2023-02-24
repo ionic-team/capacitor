@@ -111,6 +111,7 @@ export interface IOSConfig extends PlatformConfig {
   readonly cordovaPluginsDirAbs: string;
   readonly minVersion: string;
   readonly podPath: string;
+  readonly podsOptions: string;
   readonly scheme: string;
   readonly webDir: Promise<string>;
   readonly webDirAbs: Promise<string>;

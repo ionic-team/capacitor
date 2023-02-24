@@ -279,6 +279,7 @@ async function loadIOSConfig(
 ): Promise<IOSConfig> {
   const name = 'ios';
   const podPath = determineCocoapodPath();
+  const podsOptions = getCocoaPodsOptions();
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
   const scheme = extConfig.ios?.scheme ?? 'App';
@@ -321,6 +322,7 @@ async function loadIOSConfig(
     webDir: lazy(async () => relative(platformDirAbs, await webDirAbs)),
     webDirAbs,
     podPath,
+    podsOptions,
   };
 }
 
@@ -437,6 +439,10 @@ function determineCocoapodPath(): string {
   }
 
   return 'pod';
+}
+
+function getCocoaPodsOptions(): string {
+  return process.env.PODS_OPTIONS || '';
 }
 
 function formatConfigTS(extConfig: ExternalConfig): string {
