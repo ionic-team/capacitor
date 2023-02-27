@@ -86,7 +86,7 @@ export async function runCommand(
       }
 
       await run(config, platformName, options);
-    } catch (e) {
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }

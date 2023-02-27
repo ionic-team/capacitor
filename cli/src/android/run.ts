@@ -32,7 +32,7 @@ export async function runAndroid(
         cwd: config.android.platformDirAbs,
       }),
     );
-  } catch (e) {
+  } catch (e: any) {
     if (e.includes('EACCES')) {
       throw `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.strong(
         `chmod +x ./${config.android.platformDir}/gradlew`,
