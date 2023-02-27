@@ -267,7 +267,7 @@ const buildUrlParams = (
       item = '';
       value.forEach(str => {
         encodedValue = shouldEncode ? encodeURIComponent(str) : str;
-        item += `${key}=${encodedValue}&`;
+        item += `${key}[]=${encodedValue}&`;
       });
       // last character will always be "&" so slice it off
       item.slice(0, -1);
