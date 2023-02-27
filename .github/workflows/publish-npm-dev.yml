@@ -12,7 +12,9 @@ jobs:
           node-version: 14.x
       - uses: actions/checkout@v3
         with:
+          ref: '4.x'
           fetch-depth: 0
+          token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
       - name: Restore Dependency Cache
         uses: actions/cache@v3
         with:
@@ -31,4 +33,4 @@ jobs:
           git config user.name "Github Workflow (on behalf of ${{ github.actor }})"
           git config user.email "users.noreply.github.com"
           echo $GITHUB_REF_NAME
-          npx lerna publish prerelease --conventional-commits --conventional-prerelease --preid dev-$(date +"%Y%m%dT%H%M%S") --dist-tag dev --allow-branch $GITHUB_REF_NAME --force-publish --no-verify-access --no-changelog --no-git-tag-version --no-push --yes
+          npx lerna publish prerelease --conventional-commits --conventional-prerelease --preid dev-$(date +"%Y%m%dT%H%M%S") --dist-tag dev-4 --allow-branch $GITHUB_REF_NAME --force-publish --no-verify-access --no-changelog --no-git-tag-version --no-push --yes
