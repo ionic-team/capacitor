@@ -12,10 +12,10 @@ jobs:
     runs-on: macos-12
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_13.3.1.app
+      - run: sudo xcode-select --switch /Applications/Xcode_14.2.app
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 18.x
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0

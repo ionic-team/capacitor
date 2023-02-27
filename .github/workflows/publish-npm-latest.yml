@@ -21,7 +21,7 @@ jobs:
           token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 18.x
       - name: Restore Dependency Cache
         uses: actions/cache@v3
         with:

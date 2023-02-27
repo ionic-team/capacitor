@@ -7,14 +7,14 @@ jobs:
     runs-on: macos-12
     timeout-minutes: 30
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
+          node-version: 18.x
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Restore Dependency Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
