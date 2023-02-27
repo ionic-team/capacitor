@@ -64,7 +64,9 @@ async function checkAppSrcDirs(config: Config): Promise<string | null> {
   return checkAndroidManifestFile(config);
 }
 
-async function checkAndroidManifestFile(config: Config): Promise<string | null> {
+async function checkAndroidManifestFile(
+  config: Config,
+): Promise<string | null> {
   const manifestFileName = 'AndroidManifest.xml';
   const manifestFilePath = join(config.android.srcMainDirAbs, manifestFileName);
 
@@ -82,7 +84,10 @@ async function checkAndroidManifestFile(config: Config): Promise<string | null> 
   }
 }
 
-async function checkAndroidManifestData(config: Config, xmlData: any): Promise<string | null> {
+async function checkAndroidManifestData(
+  config: Config,
+  xmlData: any,
+): Promise<string | null> {
   const manifestNode: any = xmlData.manifest;
   if (!manifestNode) {
     return `Missing ${c.input('<manifest>')} XML node in ${c.strong(
