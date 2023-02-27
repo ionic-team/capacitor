@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/ionic-team/capacitor/compare/4.6.3...4.7.0) (2023-02-22)
+
+
+### Bug Fixes
+
+* **cli:** prevent error on manifest element without children ([#6278](https://github.com/ionic-team/capacitor/issues/6278)) ([a7e374f](https://github.com/ionic-team/capacitor/commit/a7e374fc4d834ded437edb4c8a0be98b6691be4c))
+* **cli:** Remove buildOptions from platform capacitor.config.json ([#6292](https://github.com/ionic-team/capacitor/issues/6292)) ([acddcd9](https://github.com/ionic-team/capacitor/commit/acddcd95b40a7d4cc6c7682d2d1019f96dacf68d))
+
+
+### Features
+
+* **cli:** add ssl pinning copy logic ([#6312](https://github.com/ionic-team/capacitor/issues/6312)) ([cce66c1](https://github.com/ionic-team/capacitor/commit/cce66c1d59370ba35db879f4d7a3620d22175ab0))
+
+
+
+
+
 ## [4.6.3](https://github.com/ionic-team/capacitor/compare/4.6.2...4.6.3) (2023-02-03)
 
 

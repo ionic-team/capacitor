@@ -422,6 +422,10 @@ const initBridge = (w: any): void => {
           console.time(tag);
           try {
             // intercept request & pass to the bridge
+            let headers = options?.headers;
+            if (options?.headers instanceof Headers) {
+              headers = Object.fromEntries((options.headers as any).entries());
+            }
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
               'request',
@@ -429,9 +433,7 @@ const initBridge = (w: any): void => {
                 url: resource,
                 method: options?.method ? options.method : undefined,
                 data: options?.body ? options.body : undefined,
-                headers: options?.headers
-                  ? JSON.stringify(options.headers)
-                  : undefined,
+                headers: headers,
               },
             );
 
@@ -592,7 +594,10 @@ const initBridge = (w: any): void => {
                 url: this._url,
                 method: this._method,
                 data: body !== null ? body : undefined,
-                headers: JSON.stringify(this._headers),
+                headers:
+                  this._headers != null && Object.keys(this._headers).length > 0
+                    ? this._headers
+                    : undefined,
               })
               .then((nativeResponse: any) => {
                 // intercept & parse response before returning
