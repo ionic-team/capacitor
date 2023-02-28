@@ -26,7 +26,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
   lint:
     runs-on: macos-12
     timeout-minutes: 30
@@ -39,7 +39,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run lint
   test-cli:
@@ -57,7 +57,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
         working-directory: ./cli
@@ -78,7 +78,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
         working-directory: ./core
@@ -104,7 +104,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run verify
         working-directory: ./ios
@@ -125,7 +125,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run verify
         working-directory: ./android
