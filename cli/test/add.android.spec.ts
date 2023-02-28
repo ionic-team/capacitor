@@ -16,20 +16,13 @@ describe.each([false, true])(
     beforeAll(async () => {
       // These commands are slowww...
       jest.setTimeout(150000);
-      console.log('1');
       appDirObj = await makeAppDir(monoRepoLike);
-      console.log('2');
       const appDir = appDirObj.appDir;
-      console.log('3');
       // Init in this directory so we can test add
       await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
-      console.log('4');
       await installPlatform(appDir, 'android');
-      console.log('5');
       await run(appDir, `add android`);
-      console.log('6');
       FS = new MappedFS(appDir);
-      console.log('7');
     });
 
     afterAll(() => {
@@ -37,7 +30,6 @@ describe.each([false, true])(
     });
 
     it('Should add', async () => {
-      console.log(FS);
       expect(await FS.exists('android/')).toBe(true);
     });
 
