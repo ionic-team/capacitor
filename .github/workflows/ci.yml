@@ -3,8 +3,11 @@ name: CI
 on:
   push:
     branches:
-      - '**'
+      - main
   pull_request:
+    types:
+      - 'synchronize'
+      - 'opened'
     branches:
       - '**'
 
