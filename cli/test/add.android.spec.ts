@@ -13,7 +13,6 @@ let appDir: string;
 describe.each([false, true])(
   'Add: Android (monoRepoLike: %p)',
   monoRepoLike => {
-
     beforeAll(async () => {
       // These commands are slowww...
       jest.setTimeout(150000);
