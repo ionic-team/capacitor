@@ -26,7 +26,7 @@ jobs:
           node-version: 18.x
       - uses: actions/checkout@v3
       - name: Restore Dependency Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
