@@ -1511,6 +1511,12 @@ public class Bridge {
                 preferences,
                 config
             );
+
+            if (webView instanceof CapacitorWebView) {
+                CapacitorWebView capacitorWebView = (CapacitorWebView) webView;
+                capacitorWebView.setBridge(bridge);
+            }
+
             bridge.setCordovaWebView(mockWebView);
             bridge.setWebViewListeners(webViewListeners);
             bridge.setRouteProcessor(routeProcessor);

@@ -353,7 +353,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         await runTask(`Upgrading gradle wrapper files`, () => {
           return updateGradleWrapperFiles(config.android.platformDirAbs);
         });
-      } catch (e) {
+      } catch (e: any) {
         if (e.includes('EACCES')) {
           logger.error(
             `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
