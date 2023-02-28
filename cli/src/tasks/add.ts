@@ -119,7 +119,7 @@ export async function addCommand(
       }
 
       printNextSteps(platformName);
-    } catch (e) {
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }
