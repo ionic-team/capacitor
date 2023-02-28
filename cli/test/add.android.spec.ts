@@ -37,6 +37,7 @@ describe.each([false, true])(
     });
 
     it('Should add', async () => {
+      console.log(FS);
       expect(await FS.exists('android/')).toBe(true);
     });
 
