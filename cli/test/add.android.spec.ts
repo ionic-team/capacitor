@@ -11,25 +11,17 @@ describe.each([false, true])(
   'Add: Android (monoRepoLike: %p)',
   monoRepoLike => {
     let appDirObj: any;
-    let FS: MappedFS;
+    let appDir: string;
 
     beforeAll(async () => {
       // These commands are slowww...
       jest.setTimeout(150000);
-      console.log('1');
       appDirObj = await makeAppDir(monoRepoLike);
-      console.log('2');
-      const appDir = appDirObj.appDir;
-      console.log('3');
+      appDir = appDirObj.appDir;
       // Init in this directory so we can test add
       await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
-      console.log('4');
       await installPlatform(appDir, 'android');
-      console.log('5');
       await run(appDir, `add android`);
-      console.log('6');
-      FS = new MappedFS(appDir);
-      console.log('7');
     });
 
     afterAll(() => {
@@ -37,11 +29,12 @@ describe.each([false, true])(
     });
 
     it('Should add', async () => {
-      console.log(FS);
+      const FS = new MappedFS(appDir);
       expect(await FS.exists('android/')).toBe(true);
     });
 
     it('Should have Cordova JS copied', async () => {
+      const FS = new MappedFS(appDir);
       expect(
         await FS.exists('android/app/src/main/assets/public/cordova.js'),
       ).toBe(true);
@@ -53,6 +46,7 @@ describe.each([false, true])(
     });
 
     it('Should rename package', async () => {
+      const FS = new MappedFS(appDir);
       expect(
         await FS.exists(
           'android/app/src/main/java/com/getcapacitor/cli/test/MainActivity.java',
@@ -61,6 +55,7 @@ describe.each([false, true])(
     });
 
     it('Should rename package in main activity', async () => {
+      const FS = new MappedFS(appDir);
       const activityContent = await FS.read(
         'android/app/src/main/java/com/getcapacitor/cli/test/MainActivity.java',
       );
@@ -69,12 +64,14 @@ describe.each([false, true])(
     });
 
     it('Should rename app id in build.gradle', async () => {
+      const FS = new MappedFS(appDir);
       const gradleContent = await FS.read('android/app/build.gradle');
       const regex = new RegExp(`applicationId "${APP_ID}"`);
       expect(regex.test(gradleContent)).toBe(true);
     });
 
     it('Should update strings.xml', async () => {
+      const FS = new MappedFS(appDir);
       const stringsContent = await FS.read(
         'android/app/src/main/res/values/strings.xml',
       );
