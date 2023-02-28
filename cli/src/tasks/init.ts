@@ -50,7 +50,7 @@ export async function initCommand(
       () => checkAppId(config, appId),
     ]);
 
-    const androidScheme = config.app.extConfig.server?.androidScheme ?? 'https'
+    const androidScheme = config.app.extConfig.server?.androidScheme ?? 'https';
 
     const cordova = await getCordovaPreferences(config);
 
@@ -62,7 +62,7 @@ export async function initCommand(
         webDir,
         bundledWebRuntime: false,
         server: {
-          androidScheme: androidScheme
+          androidScheme: androidScheme,
         },
         cordova,
       },
