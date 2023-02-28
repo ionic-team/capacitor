@@ -7,11 +7,12 @@ import {
   installPlatform,
 } from './util';
 
+let appDirObj: any;
+let appDir: string;
+
 describe.each([false, true])(
   'Add: Android (monoRepoLike: %p)',
   monoRepoLike => {
-    let appDirObj: any;
-    let appDir: string;
 
     beforeAll(async () => {
       // These commands are slowww...
