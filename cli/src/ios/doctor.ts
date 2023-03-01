@@ -25,7 +25,7 @@ export async function doctorIOS(config: Config): Promise<void> {
       checkXcode,
     ]);
     logSuccess('iOS looking great! 👌');
-  } catch (e) {
+  } catch (e: any) {
     fatal(e.stack ?? e);
   }
 }
