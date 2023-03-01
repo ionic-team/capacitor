@@ -17,7 +17,7 @@ export async function doctorAndroid(config: Config): Promise<void> {
       () => checkAppSrcDirs(config),
     ]);
     logSuccess('Android looking great! 👌');
-  } catch (e) {
+  } catch (e: any) {
     if (!isFatal(e)) {
       fatal(e.stack ?? e);
     }
@@ -26,7 +26,7 @@ export async function doctorAndroid(config: Config): Promise<void> {
   }
 }
 
-async function checkAppSrcDirs(config: Config) {
+async function checkAppSrcDirs(config: Config): Promise<string | null> {
   if (!(await pathExists(config.android.appDirAbs))) {
     return `${c.strong(
       config.android.appDir,
@@ -64,7 +64,9 @@ async function checkAppSrcDirs(config: Config) {
   return checkAndroidManifestFile(config);
 }
 
-async function checkAndroidManifestFile(config: Config) {
+async function checkAndroidManifestFile(
+  config: Config,
+): Promise<string | null> {
   const manifestFileName = 'AndroidManifest.xml';
   const manifestFilePath = join(config.android.srcMainDirAbs, manifestFileName);
 
@@ -77,12 +79,15 @@ async function checkAndroidManifestFile(config: Config) {
   try {
     const xmlData = await readXML(manifestFilePath);
     return checkAndroidManifestData(config, xmlData);
-  } catch (e) {
+  } catch (e: any) {
     return e;
   }
 }
 
-async function checkAndroidManifestData(config: Config, xmlData: any) {
+async function checkAndroidManifestData(
+  config: Config,
+  xmlData: any,
+): Promise<string | null> {
   const manifestNode: any = xmlData.manifest;
   if (!manifestNode) {
     return `Missing ${c.input('<manifest>')} XML node in ${c.strong(
