@@ -63,7 +63,7 @@ export async function initCommand(
       },
       isNewConfig && tsInstalled ? 'ts' : 'json',
     );
-  } catch (e) {
+  } catch (e: any) {
     if (!isFatal(e)) {
       output.write(
         'Usage: npx cap init appName appId\n' +

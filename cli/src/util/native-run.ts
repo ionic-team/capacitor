@@ -45,7 +45,7 @@ export async function getPlatformTargets(
         errors.push(e);
       });
     }
-  } catch (e) {
+  } catch (e: any) {
     const err = JSON.parse(e);
     errors.push(err);
   }
