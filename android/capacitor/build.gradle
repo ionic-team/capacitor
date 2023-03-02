@@ -21,7 +21,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
+        classpath 'com.android.tools.build:gradle:7.4.1'
 
         if (System.getenv("CAP_PUBLISH") == "true") {
             classpath 'io.github.gradle-nexus:publish-plugin:1.1.0'
