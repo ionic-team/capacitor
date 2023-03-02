@@ -14,14 +14,16 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 18.x
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
       - name: Restore Dependency Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
           npm whoami

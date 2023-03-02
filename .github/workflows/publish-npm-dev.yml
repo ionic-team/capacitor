@@ -9,7 +9,9 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 18.x
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -17,7 +19,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - name: NPM Install
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
