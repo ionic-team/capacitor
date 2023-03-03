@@ -5,7 +5,7 @@ ext {
     androidxActivityVersion = '1.6.1'
     androidxAppCompatVersion = '1.6.1'
     androidxCoordinatorLayoutVersion = '1.2.0'
-    androidxCoreVersion = '1.8.0'
+    androidxCoreVersion = '1.9.0'
     androidxFragmentVersion = '1.5.5'
     coreSplashScreenVersion = '1.0.0'
     androidxWebkitVersion = '1.6.0'
