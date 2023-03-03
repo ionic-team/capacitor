@@ -52,7 +52,7 @@
     "debug": "^4.3.4",
     "env-paths": "^2.2.0",
     "kleur": "^4.1.4",
-    "native-run": "^1.6.0",
+    "native-run": "^1.7.2",
     "open": "^8.4.0",
     "plist": "^3.0.5",
     "prompts": "^2.4.2",
