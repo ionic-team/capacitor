@@ -369,8 +369,8 @@ public class HttpRequestHandler {
      */
     public static JSObject request(PluginCall call, String httpMethod) throws IOException, URISyntaxException, JSONException {
         String urlString = call.getString("url", "");
-        JSObject headers = call.getObject("headers");
-        JSObject params = call.getObject("params");
+        JSObject headers = call.getObject("headers", new JSObject());
+        JSObject params = call.getObject("params", new JSObject());
         Integer connectTimeout = call.getInt("connectTimeout");
         Integer readTimeout = call.getInt("readTimeout");
         Boolean disableRedirects = call.getBoolean("disableRedirects");
