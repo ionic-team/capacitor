@@ -80,7 +80,8 @@ public class PermissionHelper {
             PackageManager pm = context.getPackageManager();
             PackageInfo packageInfo;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS));
+                packageInfo =
+                    pm.getPackageInfo(context.getPackageName(), PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS));
             } else {
                 packageInfo = InternalUtils.getPackageInfoLegacy(pm, context.getPackageName(), PackageManager.GET_PERMISSIONS);
             }

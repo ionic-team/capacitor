@@ -11,12 +11,12 @@ public class InternalUtils {
     }
 
     @SuppressWarnings("deprecation")
-    public static PackageInfo getPackageInfoLegacy(PackageManager pm, String packageName, long flags) throws PackageManager.NameNotFoundException {
+    public static PackageInfo getPackageInfoLegacy(PackageManager pm, String packageName, long flags)
+        throws PackageManager.NameNotFoundException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags));
         } else {
             return pm.getPackageInfo(packageName, (int) flags);
         }
     }
-
 }
