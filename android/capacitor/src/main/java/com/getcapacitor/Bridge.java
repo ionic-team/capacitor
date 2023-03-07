@@ -335,12 +335,7 @@ public class Bridge {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 webViewPackage = "com.android.chrome";
             }
-            PackageInfo info;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                info = pm.getPackageInfo(webViewPackage, PackageManager.PackageInfoFlags.of(0));
-            } else {
-                info = InternalUtils.getPackageInfoLegacy(pm, webViewPackage);
-            }
+            PackageInfo info = InternalUtils.getPackageInfo(pm, webViewPackage);
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
@@ -349,12 +344,7 @@ public class Bridge {
         }
 
         try {
-            PackageInfo info;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                info = pm.getPackageInfo("com.android.webview", PackageManager.PackageInfoFlags.of(0));
-            } else {
-                info = InternalUtils.getPackageInfoLegacy(pm, "com.android.webview");
-            }
+            PackageInfo info = InternalUtils.getPackageInfo(pm, "com.android.webview");
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
@@ -402,12 +392,7 @@ public class Bridge {
 
         try {
             PackageManager pm = getContext().getPackageManager();
-            PackageInfo pInfo;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                pInfo = pm.getPackageInfo(getContext().getPackageName(), PackageManager.PackageInfoFlags.of(0));
-            } else {
-                pInfo = InternalUtils.getPackageInfoLegacy(pm, getContext().getPackageName());
-            }
+            PackageInfo pInfo = InternalUtils.getPackageInfo(pm, getContext().getPackageName());
             versionCode = Integer.toString((int) PackageInfoCompat.getLongVersionCode(pInfo));
             versionName = pInfo.versionName;
         } catch (Exception ex) {
