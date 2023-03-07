@@ -3,6 +3,7 @@ package com.getcapacitor.util;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import androidx.core.app.ActivityCompat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +78,12 @@ public class PermissionHelper {
         String[] requestedPermissions = null;
         try {
             PackageManager pm = context.getPackageManager();
-            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
+            PackageInfo packageInfo;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS));
+            } else {
+                packageInfo = InternalUtils.getPackageInfoLegacy(pm, context.getPackageName(), PackageManager.GET_PERMISSIONS);
+            }
 
             if (packageInfo != null) {
                 requestedPermissions = packageInfo.requestedPermissions;
