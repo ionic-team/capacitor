@@ -32,6 +32,7 @@ import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.util.HostMask;
+import com.getcapacitor.util.InternalUtils;
 import com.getcapacitor.util.PermissionHelper;
 import com.getcapacitor.util.WebColor;
 import java.io.File;
@@ -334,7 +335,7 @@ public class Bridge {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 webViewPackage = "com.android.chrome";
             }
-            PackageInfo info = pm.getPackageInfo(webViewPackage, 0);
+            PackageInfo info = InternalUtils.getPackageInfo(pm, webViewPackage);
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
@@ -343,7 +344,7 @@ public class Bridge {
         }
 
         try {
-            PackageInfo info = pm.getPackageInfo("com.android.webview", 0);
+            PackageInfo info = InternalUtils.getPackageInfo(pm, "com.android.webview");
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
@@ -390,7 +391,8 @@ public class Bridge {
         String lastVersionName = prefs.getString(LAST_BINARY_VERSION_NAME, null);
 
         try {
-            PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+            PackageManager pm = getContext().getPackageManager();
+            PackageInfo pInfo = InternalUtils.getPackageInfo(pm, getContext().getPackageName());
             versionCode = Integer.toString((int) PackageInfoCompat.getLongVersionCode(pInfo));
             versionName = pInfo.versionName;
         } catch (Exception ex) {
