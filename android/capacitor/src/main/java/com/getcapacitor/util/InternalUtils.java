@@ -10,13 +10,17 @@ public class InternalUtils {
         return InternalUtils.getPackageInfo(pm, packageName, 0);
     }
 
-    @SuppressWarnings("deprecation")
     public static PackageInfo getPackageInfo(PackageManager pm, String packageName, long flags)
         throws PackageManager.NameNotFoundException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags));
         } else {
-            return pm.getPackageInfo(packageName, (int) flags);
+            return getPackageInfoLegacy(pm, packageName, (int) flags);
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static PackageInfo getPackageInfoLegacy(PackageManager pm, String packageName, long flags) throws PackageManager.NameNotFoundException {
+        return pm.getPackageInfo(packageName, (int) flags);
     }
 }
