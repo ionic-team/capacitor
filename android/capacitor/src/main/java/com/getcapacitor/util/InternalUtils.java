@@ -20,7 +20,8 @@ public class InternalUtils {
     }
 
     @SuppressWarnings("deprecation")
-    private static PackageInfo getPackageInfoLegacy(PackageManager pm, String packageName, long flags) throws PackageManager.NameNotFoundException {
+    private static PackageInfo getPackageInfoLegacy(PackageManager pm, String packageName, long flags)
+        throws PackageManager.NameNotFoundException {
         return pm.getPackageInfo(packageName, (int) flags);
     }
 }
