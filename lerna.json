@@ -1,10 +1,5 @@
 {
-  "packages": [
-    "./android/",
-    "./ios/",
-    "./cli/",
-    "./core/"
-  ],
+  "useWorkspaces": true,
   "command": {
     "bootstrap": {
       "hoist": true
