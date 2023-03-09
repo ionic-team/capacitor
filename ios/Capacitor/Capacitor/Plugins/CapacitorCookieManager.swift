@@ -88,7 +88,7 @@ public class CapacitorCookieManager {
         let jar = HTTPCookieStorage.shared
         guard let url = self.getServerUrl() else { return "" }
         guard let cookies = jar.cookies(for: url) else { return "" }
-        return cookies.map({"\($0.name)=\($0.value)"}).joined(separator: ";")
+        return cookies.map({"\($0.name)=\($0.value)"}).joined(separator: "; ")
     }
 
     public func deleteCookie(_ url: URL, _ key: String) {
