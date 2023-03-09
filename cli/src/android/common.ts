@@ -137,6 +137,11 @@ export async function editProjectSettingsAndroid(
     /applicationId "[^"]+"/,
     `applicationId "${appId}"`,
   );
+  // Update the namespace in build.gradle
+  gradleContent = gradleContent.replace(
+    /namespace "[^"]+"/,
+    `namespace "${appId}"`,
+  );
 
   await writeFile(buildGradlePath, gradleContent, { encoding: 'utf-8' });
 
