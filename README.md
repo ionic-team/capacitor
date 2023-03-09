@@ -7,7 +7,7 @@
 </div>
 <br />
 <p align="center">
-  <a href="https://github.com/ionic-team/capacitor/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/workflow/status/ionic-team/capacitor/CI?style=flat-square" /></a>
+  <a href="https://github.com/ionic-team/capacitor/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/actions/workflow/status/ionic-team/capacitor/ci.yml?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/dw/@capacitor/core?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/v/@capacitor/core?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/l/@capacitor/core?style=flat-square" /></a>
@@ -19,7 +19,9 @@
 
 ---
 
-Capacitor is a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom native plugins that your app may need. Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores _and_ the mobile web.
+Capacitor lets you run web apps natively on iOS, Android, Web, and more with a single codebase and cross-platform APIs.
+
+Capacitor provides a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom native plugins that your app may need. Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores _and_ the mobile web.
 
 Capacitor comes with a Plugin API for building native plugins. Plugins can be written inside Capacitor apps or packaged into an npm dependency for community use. Plugin authors are encouraged to use Swift to develop plugins in iOS and Kotlin (or Java) in Android.
 
@@ -80,6 +82,15 @@ Made possible by the Capacitor community. 💖
 <!-- CONTRIBUTORS:START -->
 
 <p align="center">
+  <a href="https://github.com/crhayes"><img src="https://github.com/crhayes.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/markemer"><img src="https://github.com/markemer.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/junxiong96"><img src="https://github.com/junxiong96.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/dtarnawsky"><img src="https://github.com/dtarnawsky.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/dallastjames"><img src="https://github.com/dallastjames.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/arnold-plakolli"><img src="https://github.com/arnold-plakolli.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/zookatron"><img src="https://github.com/zookatron.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/giralte-ionic"><img src="https://github.com/giralte-ionic.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/Steven0351"><img src="https://github.com/Steven0351.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/samydoesit"><img src="https://github.com/samydoesit.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/hermitdemschoenenleben"><img src="https://github.com/hermitdemschoenenleben.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/carldea"><img src="https://github.com/carldea.png?size=100" width="50" height="50" /></a>

@@ -1,0 +1,34 @@
+name: Publish NPM Alpha
+
+on: workflow_dispatch
+
+jobs:
+  deploy-npm-alpha:
+    runs-on: macos-12
+    timeout-minutes: 30
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Restore Dependency Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
+      - run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          npm whoami
+          npm install
+      - name: Version & Publish
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          git config user.name "Github Workflow (on behalf of ${{ github.actor }})"
+          git config user.email "users.noreply.github.com"
+          npm run ci:publish:alpha

@@ -117,7 +117,7 @@ async function loadExtConfigTS(
       extConfigFilePath: extConfigFilePath,
       extConfig,
     };
-  } catch (e) {
+  } catch (e: any) {
     if (!isFatal(e)) {
       fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
     }
@@ -138,7 +138,7 @@ async function loadExtConfigJS(
       extConfigFilePath: extConfigFilePath,
       extConfig: require(extConfigFilePath),
     };
-  } catch (e) {
+  } catch (e: any) {
     fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
   }
 }
@@ -236,6 +236,14 @@ async function loadAndroidConfig(
   const buildOutputDir = `${apkPath}/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
   const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
+  const buildOptions = {
+    keystorePath: extConfig.android?.buildOptions?.keystorePath,
+    keystorePassword: extConfig.android?.buildOptions?.keystorePassword,
+    keystoreAlias: extConfig.android?.buildOptions?.keystoreAlias,
+    keystoreAliasPassword:
+      extConfig.android?.buildOptions?.keystoreAliasPassword,
+    releaseType: extConfig.android?.buildOptions?.releaseType,
+  };
 
   return {
     name,
@@ -261,6 +269,7 @@ async function loadAndroidConfig(
     buildOutputDir,
     buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
     flavor,
+    buildOptions,
   };
 }
 

@@ -104,7 +104,7 @@ export async function addCommand(
       await editPlatforms(config, platformName);
 
       if (await pathExists(config.app.webDirAbs)) {
-        await sync(config, platformName, false);
+        await sync(config, platformName, false, false);
         if (platformName === config.android.name) {
           await runTask('Syncing Gradle', async () => {
             return createLocalProperties(config.android.platformDirAbs);
@@ -119,7 +119,7 @@ export async function addCommand(
       }
 
       printNextSteps(platformName);
-    } catch (e) {
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }

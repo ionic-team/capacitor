@@ -164,9 +164,8 @@ async function generatePodFile(
         return '';
       }
 
-      return `  pod '${p.ios.name}', :path => '${relative(
-        podfilePath,
-        await realpath(p.rootPath),
+      return `  pod '${p.ios.name}', :path => '${convertToUnixPath(
+        relative(podfilePath, await realpath(p.rootPath)),
       )}'\n`;
     }),
   );
@@ -357,7 +356,7 @@ async function generateCordovaPodspec(
       `s.vendored_frameworks = '${customFrameworks.join(`', '`)}'`,
     );
     frameworkDeps.push(
-      `s.exclude_files = 'sources/**/*.framework/Headers/*.h'`,
+      `s.exclude_files = 'sources/**/*.framework/Headers/*.h', 'sources/**/*.framework/PrivateHeaders/*.h'`,
     );
   }
   if (sourceFrameworks.length > 0) {

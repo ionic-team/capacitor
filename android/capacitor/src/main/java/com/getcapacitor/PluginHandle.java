@@ -16,7 +16,7 @@ public class PluginHandle {
     private final Bridge bridge;
     private final Class<? extends Plugin> pluginClass;
 
-    private Map<String, PluginMethodHandle> pluginMethods = new HashMap<>();
+    private final Map<String, PluginMethodHandle> pluginMethods = new HashMap<>();
 
     private final String pluginId;
 
@@ -28,9 +28,9 @@ public class PluginHandle {
     private Plugin instance;
 
     @SuppressWarnings("deprecation")
-    public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException, PluginLoadException {
+    private PluginHandle(Class<? extends Plugin> clazz, Bridge bridge) throws InvalidPluginException {
         this.bridge = bridge;
-        this.pluginClass = pluginClass;
+        this.pluginClass = clazz;
 
         CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
         if (pluginAnnotation == null) {
@@ -57,9 +57,17 @@ public class PluginHandle {
             this.pluginAnnotation = pluginAnnotation;
         }
 
-        this.indexMethods(pluginClass);
+        this.indexMethods(clazz);
+    }
 
+    public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException, PluginLoadException {
+        this(pluginClass, bridge);
         this.load();
+    }
+
+    public PluginHandle(Bridge bridge, Plugin plugin) throws InvalidPluginException {
+        this(plugin.getClass(), bridge);
+        this.loadInstance(plugin);
     }
 
     public Class<? extends Plugin> getPluginClass() {
@@ -94,14 +102,19 @@ public class PluginHandle {
 
         try {
             this.instance = this.pluginClass.newInstance();
-            this.instance.setPluginHandle(this);
-            this.instance.setBridge(this.bridge);
-            this.instance.load();
-            this.instance.initializeActivityLaunchers();
-            return this.instance;
+            return this.loadInstance(instance);
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");
         }
+    }
+
+    public Plugin loadInstance(Plugin plugin) {
+        this.instance = plugin;
+        this.instance.setPluginHandle(this);
+        this.instance.setBridge(this.bridge);
+        this.instance.load();
+        this.instance.initializeActivityLaunchers();
+        return this.instance;
     }
 
     /**

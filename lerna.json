@@ -1,21 +1,16 @@
 {
-  "packages": [
-    "./android/",
-    "./ios/",
-    "./cli/",
-    "./core/"
-  ],
+  "useWorkspaces": true,
   "command": {
     "bootstrap": {
       "hoist": true
     },
     "version": {
-      "allowBranch": "capacitor-4",
+      "allowBranch": "main",
       "conventionalCommits": true,
       "createRelease": "github",
       "message": "Release %s",
       "tagVersionPrefix": ""
     }
   },
-  "version": "4.0.0-alpha.2"
+  "version": "4.7.0"
 }

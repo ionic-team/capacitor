@@ -41,7 +41,7 @@
 
 - (void)addEventListener:(NSString *)eventName listener:(CAPPluginCall *)listener {
   NSMutableArray *listenersForEvent = [self.eventListeners objectForKey:eventName];
-  if(!listenersForEvent) {
+  if(listenersForEvent == nil || [listenersForEvent count] == 0) {
     listenersForEvent = [[NSMutableArray alloc] initWithObjects:listener, nil];
     [self.eventListeners setValue:listenersForEvent forKey:eventName];
     
@@ -143,6 +143,15 @@
     vc.popoverPresentationController.sourceView = self.bridge.viewController.view;
     vc.popoverPresentationController.permittedArrowDirections = 0;
   }
+}
+
+-(void)setCenteredPopover:(UIViewController* _Nonnull) vc size:(CGSize) size {
+    if (self.bridge.viewController != nil) {
+      vc.popoverPresentationController.sourceRect = CGRectMake(self.bridge.viewController.view.center.x, self.bridge.viewController.view.center.y, 0, 0);
+      vc.preferredContentSize = size;
+      vc.popoverPresentationController.sourceView = self.bridge.viewController.view;
+      vc.popoverPresentationController.permittedArrowDirections = 0;
+    }
 }
 
 -(BOOL)supportsPopover {

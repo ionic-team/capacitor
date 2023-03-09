@@ -12,7 +12,7 @@ import Cordova
 
     public var isStatusBarVisible = true
     public var statusBarStyle: UIStatusBarStyle = .default
-    public var statusBarAnimation: UIStatusBarAnimation = .slide
+    public var statusBarAnimation: UIStatusBarAnimation = .fade
     @objc public var supportedOrientations: [Int] = []
 
     public lazy final var isNewBinary: Bool = {
@@ -42,7 +42,7 @@ import Cordova
         setScreenOrientationDefaults()
 
         // get the web view
-        let assetHandler = WebViewAssetHandler()
+        let assetHandler = WebViewAssetHandler(router: router())
         assetHandler.setAssetPath(configuration.appLocation.path)
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
@@ -90,6 +90,10 @@ import Cordova
         return descriptor
     }
 
+    open func router() -> Router {
+        return _Router()
+    }
+
     /**
      The WKWebViewConfiguration to use for the webview.
 
@@ -101,6 +105,7 @@ import Cordova
      */
     open func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
         let webViewConfiguration = WKWebViewConfiguration()
+        webViewConfiguration.websiteDataStore.httpCookieStore.add(CapacitorWKCookieObserver())
         webViewConfiguration.allowsInlineMediaPlayback = true
         webViewConfiguration.suppressesIncrementalRendering = false
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
@@ -171,11 +176,7 @@ import Cordova
             }
             if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
                 if statusBarStyle == "UIStatusBarStyleDarkContent" {
-                    if #available(iOS 13.0, *) {
-                        self.statusBarStyle = .darkContent
-                    } else {
-                        self.statusBarStyle = .default
-                    }
+                    self.statusBarStyle = .darkContent
                 } else if statusBarStyle != "UIStatusBarStyleDefault" {
                     self.statusBarStyle = .lightContent
                 }
@@ -263,16 +264,10 @@ extension CAPBridgeViewController {
     }
 
     @objc public func setServerBasePath(path: String) {
-        let url = URL(fileURLWithPath: path, isDirectory: true)
-        guard let capBridge = capacitorBridge, FileManager.default.fileExists(atPath: url.path) else {
-            return
-        }
-        capBridge.config = capBridge.config.updatingAppLocation(url)
-        capBridge.webViewAssetHandler.setAssetPath(url.path)
-        if let url = capacitorBridge?.config.serverURL {
-            DispatchQueue.main.async { [weak self] in
-                _ = self?.webView?.load(URLRequest(url: url))
-            }
+        guard let capBridge = capacitorBridge else { return }
+        capBridge.setServerBasePath(path)
+        DispatchQueue.main.async { [weak self] in
+            _ = self?.webView?.load(URLRequest(url: capBridge.config.serverURL))
         }
     }
 }
@@ -300,7 +295,7 @@ extension CAPBridgeViewController {
         if let backgroundColor = configuration.backgroundColor {
             aWebView.backgroundColor = backgroundColor
             aWebView.scrollView.backgroundColor = backgroundColor
-        } else if #available(iOS 13, *) {
+        } else {
             // Use the system background colors if background is not set by user
             aWebView.backgroundColor = UIColor.systemBackground
             aWebView.scrollView.backgroundColor = UIColor.systemBackground
