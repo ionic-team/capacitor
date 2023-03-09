@@ -6,14 +6,14 @@
 //  Copyright © 2022 Drifty Co. All rights reserved.
 //
 
-extension CAPPlugin {
-    func load(as bridgedType: CAPBridgedPlugin.Type, on bridge: CAPBridgeProtocol) {
+extension CAPBridgedPlugin where Self: CAPPlugin {
+    func load(on bridge: CAPBridgeProtocol) {
         self.bridge = bridge
         webView = bridge.webView
-        pluginId = bridgedType.pluginId()
-        pluginName = bridgedType.jsName()
         shouldStringifyDatesInCalls = true
         retainedEventArguments = [:]
+        pluginId = identifier
+        pluginName = jsName
         load()
     }
 }
