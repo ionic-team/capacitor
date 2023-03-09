@@ -12,11 +12,11 @@ const debug = Debug('capacitor:android:run');
 
 export async function runAndroid(
   config: Config,
-  options: RunCommandOptions,
+  { target: selectedTarget, flavor: selectedFlavor }: RunCommandOptions,
 ): Promise<void> {
   const target = await promptForPlatformTarget(
     await getPlatformTargets('android'),
-    options.target,
+    selectedTarget,
   );
 
   const runFlavor = selectedFlavor || config.android?.flavor || '';
