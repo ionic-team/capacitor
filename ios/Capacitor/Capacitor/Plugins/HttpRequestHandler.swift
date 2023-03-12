@@ -146,7 +146,7 @@ open class HttpRequestHandler {
         guard var urlString = call.getString("url") else { throw URLError(.badURL) }
         let method = httpMethod ?? call.getString("method", "GET")
 
-        let headers = (call.getObject("headers") ?? [:]) as [String: Any]
+        var headers = (call.getObject("headers") ?? [:]) as [String: Any]
         let params = (call.getObject("params") ?? [:]) as [String: Any]
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")
@@ -165,9 +165,9 @@ open class HttpRequestHandler {
             .openConnection()
             .build()
 
-            if (gzipCompression) {
-                        headers["Content-Encoding"] = "gzip"
-                    }
+        if (gzipCompression) {
+            headers["Content-Encoding"] = "gzip"
+        }
 
         request.setRequestHeaders(headers)
 
