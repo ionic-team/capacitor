@@ -19,11 +19,11 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownServiceException;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.GZIPOutputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import org.json.JSONException;
@@ -205,7 +205,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      * @param body The string value to write to the connection stream.
      */
     private void writeRequestBody(String body, boolean gzipCompression) throws IOException {
-         if (gzipCompression) {
+        if (gzipCompression) {
             try (GZIPOutputStream gos = new GZIPOutputStream(connection.getOutputStream())) {
                 gos.write(body.getBytes(StandardCharsets.UTF_8));
                 gos.flush();
