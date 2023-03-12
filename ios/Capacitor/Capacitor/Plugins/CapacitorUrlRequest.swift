@@ -166,7 +166,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         let dataBody = try getRequestDataAsString(body)
 
         // gzip compression
-        let compressedData: Data = self.gzipCompress(dataBody)
+        let compressedData: Data = try self.gzipCompress(data: dataBody)
         return compressedData
     }
 
