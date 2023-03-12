@@ -375,11 +375,17 @@ public class HttpRequestHandler {
         Integer readTimeout = call.getInt("readTimeout");
         Boolean disableRedirects = call.getBoolean("disableRedirects");
         Boolean shouldEncode = call.getBoolean("shouldEncodeUrlParams", true);
+        Boolean gzipCompression = call.getBoolean("gzipCompression", false);
         ResponseType responseType = ResponseType.parse(call.getString("responseType"));
 
         String method = httpMethod != null ? httpMethod.toUpperCase(Locale.ROOT) : call.getString("method", "GET").toUpperCase(Locale.ROOT);
 
         boolean isHttpMutate = method.equals("DELETE") || method.equals("PATCH") || method.equals("POST") || method.equals("PUT");
+
+        // Set gzip header if compression is enabled
+        if (gzipCompression) {
+            headers.put("Content-Encoding", "gzip");
+        }
 
         URL url = new URL(urlString);
         HttpURLConnectionBuilder connectionBuilder = new HttpURLConnectionBuilder()

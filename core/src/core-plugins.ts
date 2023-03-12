@@ -1,3 +1,5 @@
+import * as Pako from 'pako';
+
 import type { Plugin } from './definitions';
 import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
@@ -194,6 +196,11 @@ export interface HttpOptions {
    * (already encoded, azure/firebase testing, etc.). The default is _true_.
    */
   shouldEncodeUrlParams?: boolean;
+  /**
+   * Use this option if you need a gzip compression of the data payload
+   * A compatible consumer interface must be ensured. The default is _false_.
+   */
+  gzipCompression?: boolean;
 }
 
 export interface HttpParams {
@@ -304,7 +311,15 @@ export const buildRequestInit = (
 
   // If body is already a string, then pass it through as-is.
   if (typeof options.data === 'string') {
-    output.body = options.data;
+    if (options?.gzipCompression && options.headers) {
+      options.headers['Content-Encoding'] = 'gzip';
+      output.headers = options.headers;
+
+      const gzippedData: Uint8Array = Pako.gzip(options.data);
+      output.body = gzippedData.buffer;
+    } else {
+      output.body = options.data;
+    }
   }
   // Build request initializers based off of content-type
   else if (type.includes('application/x-www-form-urlencoded')) {

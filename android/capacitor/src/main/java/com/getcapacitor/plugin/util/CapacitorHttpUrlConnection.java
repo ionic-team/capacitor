@@ -19,6 +19,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownServiceException;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPOutputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -175,6 +176,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      */
     public void setRequestBody(PluginCall call, JSValue body) throws JSONException, IOException {
         String contentType = connection.getRequestProperty("Content-Type");
+        Boolean gzipCompression = call.getBoolean("gzipCompression", false);
         String dataString = "";
 
         if (contentType == null || contentType.isEmpty()) return;
@@ -191,9 +193,9 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             } else if (body == null) {
                 dataString = call.getString("data");
             }
-            this.writeRequestBody(dataString != null ? dataString : "");
+            this.writeRequestBody(dataString != null ? dataString : "", gzipCompression);
         } else {
-            this.writeRequestBody(body.toString());
+            this.writeRequestBody(body.toString(), gzipCompression);
         }
     }
 
@@ -202,10 +204,17 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      *
      * @param body The string value to write to the connection stream.
      */
-    private void writeRequestBody(String body) throws IOException {
-        try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
-            os.write(body.getBytes(StandardCharsets.UTF_8));
-            os.flush();
+    private void writeRequestBody(String body, boolean gzipCompression) throws IOException {
+         if (gzipCompression) {
+            try (GZIPOutputStream gos = new GZIPOutputStream(connection.getOutputStream())) {
+                gos.write(body.getBytes(StandardCharsets.UTF_8));
+                gos.flush();
+            }
+        } else {
+            try (DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
+                dos.write(body.getBytes(StandardCharsets.UTF_8));
+                dos.flush();
+            }
         }
     }
 

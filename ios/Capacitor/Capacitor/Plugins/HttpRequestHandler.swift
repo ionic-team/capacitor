@@ -151,6 +151,7 @@ open class HttpRequestHandler {
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")
         let readTimeout = call.getDouble("readTimeout")
+        let gzipCompression = call.getBool("gzipCompression") ?? false
 
         if urlString == urlString.removingPercentEncoding {
             guard let encodedUrlString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)  else { throw URLError(.badURL) }
@@ -164,6 +165,10 @@ open class HttpRequestHandler {
             .openConnection()
             .build()
 
+            if (gzipCompression) {
+                        headers["Content-Encoding"] = "gzip"
+                    }
+
         request.setRequestHeaders(headers)
 
         // Timeouts in iOS are in seconds. So read the value in millis and divide by 1000
@@ -172,7 +177,7 @@ open class HttpRequestHandler {
 
         if let data = call.options["data"] as? JSValue {
             do {
-                try request.setRequestBody(data)
+                try request.setRequestBody(data, gzipCompression)
             } catch {
                 // Explicitly reject if the http request body was not set successfully,
                 // so as to not send a known malformed request, and to provide the developer with additional context.
