@@ -16,7 +16,7 @@
 @property (nonatomic, strong, nullable) NSMutableDictionary<NSString *, id> *retainedEventArguments;
 @property (nonatomic, assign) BOOL shouldStringifyDatesInCalls;
 
-- (instancetype _Nonnull) initWithBridge:(id<CAPBridgeProtocol> _Nonnull) bridge pluginId:(NSString* _Nonnull) pluginId pluginName:(NSString* _Nonnull) pluginName;
+- (instancetype _Nonnull) initWithBridge:(id<CAPBridgeProtocol> _Nonnull) bridge pluginId:(NSString* _Nonnull) pluginId pluginName:(NSString* _Nonnull) pluginName DEPRECATED_MSG_ATTRIBUTE("This initializer is deprecated and is not suggested for use. Any data set through this init method will be overridden when it is loaded on the bridge.");
 - (void)addEventListener:(NSString* _Nonnull)eventName listener:(CAPPluginCall* _Nonnull)listener;
 - (void)removeEventListener:(NSString* _Nonnull)eventName listener:(CAPPluginCall* _Nonnull)listener;
 - (void)notifyListeners:(NSString* _Nonnull)eventName data:(NSDictionary<NSString *, id>* _Nullable)data;

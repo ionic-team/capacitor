@@ -49,7 +49,7 @@ export async function updateCommand(
       const now = +new Date();
       const diff = (now - then) / 1000;
       logger.info(`Update finished in ${diff}s`);
-    } catch (e) {
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }

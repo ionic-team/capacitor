@@ -15,7 +15,7 @@ jobs:
     name: ${{ github.event_name }}/${{ github.event.action }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ionic-team/bot@main
         with:
           repo-token: ${{ secrets.BOT_TOKEN }}

@@ -89,6 +89,7 @@
 		A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */; };
 		A71289E627F380A500DADDF3 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289E527F380A500DADDF3 /* Router.swift */; };
 		A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289EA27F380FD00DADDF3 /* RouterTests.swift */; };
+		A7DB03AC29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */; };
 		A7F7EDCD291EC75C0015B73B /* CAPPlugin+LoadInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */; };
 		A7F7EDD5292BE8520015B73B /* CAPInstancePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDD4292BE8520015B73B /* CAPInstancePlugin.swift */; };
 /* End PBXBuildFile section */
@@ -227,6 +228,7 @@
 		A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookieManager.swift; sourceTree = "<group>"; };
 		A71289E527F380A500DADDF3 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		A71289EA27F380FD00DADDF3 /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
+		A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CAPBridgedPlugin+getMethod.swift"; sourceTree = "<group>"; };
 		A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CAPPlugin+LoadInstance.swift"; sourceTree = "<group>"; };
 		A7F7EDD4292BE8520015B73B /* CAPInstancePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstancePlugin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -318,6 +320,7 @@
 				62959B012524DA7700A3D7F1 /* CAPPlugin.m */,
 				A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */,
 				62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */,
+				A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */,
 				62959B092524DA7700A3D7F1 /* CAPPluginMethod.h */,
 				62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */,
 				62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */,
@@ -649,6 +652,7 @@
 				623D68FA254C5037002D01D1 /* KeyPath.swift in Sources */,
 				62959B222524DA7800A3D7F1 /* Console.swift in Sources */,
 				62959B3A2524DA7800A3D7F1 /* CAPLog.swift in Sources */,
+				A7DB03AC29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift in Sources */,
 				6214934725509C3F006C36F9 /* CAPInstanceConfiguration.swift in Sources */,
 				623D6914254C7030002D01D1 /* CAPInstanceDescriptor.swift in Sources */,
 				621ECCE3254206A600D3D615 /* CAPApplicationDelegateProxy.swift in Sources */,

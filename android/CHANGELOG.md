@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/ionic-team/capacitor/compare/4.6.3...4.7.0) (2023-02-22)
+
+
+### Bug Fixes
+
+* handle fetch headers that are Headers objects ([#6320](https://github.com/ionic-team/capacitor/issues/6320)) ([cb00e49](https://github.com/ionic-team/capacitor/commit/cb00e4952acca8e877555f30b2190f6685d25934))
+* **ios:** Correctly Attach Headers to Request ([#6303](https://github.com/ionic-team/capacitor/issues/6303)) ([a3f875c](https://github.com/ionic-team/capacitor/commit/a3f875cf42e111fde07d6e87643264b19ed77573))
+
+
+### Features
+
+* **android:** add ability to create config from a custom file path ([#6264](https://github.com/ionic-team/capacitor/issues/6264)) ([42b4f0f](https://github.com/ionic-team/capacitor/commit/42b4f0f416c8038ae368860007910bb09c8ec84e))
+* **android:** Add SSL Pinning logic ([#6314](https://github.com/ionic-team/capacitor/issues/6314)) ([07f113e](https://github.com/ionic-team/capacitor/commit/07f113e6933e15c45d772f69f7128cbb3706f7b9))
+* **android:** enable loading of assets outside of the content web asset directory ([#6301](https://github.com/ionic-team/capacitor/issues/6301)) ([364497d](https://github.com/ionic-team/capacitor/commit/364497d4aca93fc716a0673ef9103479aed791ec))
+
+
+
+
+
+## [4.6.3](https://github.com/ionic-team/capacitor/compare/4.6.2...4.6.3) (2023-02-03)
+
+
+### Bug Fixes
+
+* **ios:** crash when http headers contain numbers ([#6251](https://github.com/ionic-team/capacitor/issues/6251)) ([028c556](https://github.com/ionic-team/capacitor/commit/028c556a50b41ee99fe8f4f1aa2f42d3fd57f92d))
+
+
+
+
+
 ## [4.6.2](https://github.com/ionic-team/capacitor/compare/4.6.1...4.6.2) (2023-01-17)
 
 

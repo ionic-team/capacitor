@@ -1,5 +1,5 @@
 import { writeFileSync, unlinkSync } from '@ionic/utils-fs';
-import { join } from 'path';
+import { basename, join } from 'path';
 import rimraf from 'rimraf';
 
 import { runTask } from '../common';
@@ -19,7 +19,7 @@ export async function buildiOS(
       'xcodebuild',
       [
         '-workspace',
-        `${theScheme}.xcworkspace`,
+        basename(await config.ios.nativeXcodeWorkspaceDirAbs),
         '-scheme',
         `${theScheme}`,
         '-destination',

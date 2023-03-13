@@ -418,8 +418,14 @@ const initBridge = (w: any): void => {
             return win.CapacitorWebFetch(resource, options);
           }
 
+          const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
+          console.time(tag);
           try {
             // intercept request & pass to the bridge
+            let headers = options?.headers;
+            if (options?.headers instanceof Headers) {
+              headers = Object.fromEntries((options.headers as any).entries());
+            }
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
               'request',
@@ -427,7 +433,7 @@ const initBridge = (w: any): void => {
                 url: resource,
                 method: options?.method ? options.method : undefined,
                 data: options?.body ? options.body : undefined,
-                headers: options?.headers ? options.headers : undefined,
+                headers: headers,
               },
             );
 
@@ -447,8 +453,10 @@ const initBridge = (w: any): void => {
               status: nativeResponse.status,
             });
 
+            console.timeEnd(tag);
             return response;
           } catch (error) {
+            console.timeEnd(tag);
             return Promise.reject(error);
           }
         };
@@ -580,6 +588,9 @@ const initBridge = (w: any): void => {
             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
           }
 
+          const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
+          console.time(tag);
+
           try {
             this.readyState = 2;
 
@@ -589,7 +600,10 @@ const initBridge = (w: any): void => {
                 url: this._url,
                 method: this._method,
                 data: body !== null ? body : undefined,
-                headers: this._headers,
+                headers:
+                  this._headers != null && Object.keys(this._headers).length > 0
+                    ? this._headers
+                    : undefined,
               })
               .then((nativeResponse: any) => {
                 // intercept & parse response before returning
@@ -607,6 +621,7 @@ const initBridge = (w: any): void => {
                   this.dispatchEvent(new Event('load'));
                   this.dispatchEvent(new Event('loadend'));
                 }
+                console.timeEnd(tag);
               })
               .catch((error: any) => {
                 this.dispatchEvent(new Event('loadstart'));
@@ -618,6 +633,7 @@ const initBridge = (w: any): void => {
                 this.readyState = 4;
                 this.dispatchEvent(new Event('error'));
                 this.dispatchEvent(new Event('loadend'));
+                console.timeEnd(tag);
               });
           } catch (error) {
             this.dispatchEvent(new Event('loadstart'));
@@ -629,6 +645,7 @@ const initBridge = (w: any): void => {
             this.readyState = 4;
             this.dispatchEvent(new Event('error'));
             this.dispatchEvent(new Event('loadend'));
+            console.timeEnd(tag);
           }
         };
 
