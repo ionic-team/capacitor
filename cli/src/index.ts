@@ -202,14 +202,15 @@ export function runProgram(config: Config): void {
       wrapAction(
         telemetryAction(
           config,
-          async (platform, { scheme, flavor, list, target, sync }) => {
+          async (platform, { scheme, flavor, list, target, sync, forwardPorts }) => {
             const { runCommand } = await import('./tasks/run');
             await runCommand(config, platform, {
               scheme,
               flavor,
               list,
               target,
-              sync,
+              sync, 
+              forwardPorts
             });
           },
         ),
