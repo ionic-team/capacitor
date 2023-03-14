@@ -148,7 +148,7 @@
 		50503EDF1FC08594003606DC /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE81FC08595003606DC /* CapacitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapacitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EED1FC08595003606DC /* CapacitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorTests.swift; sourceTree = "<group>"; };
-		5405D8B129C0949F008F945E /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data+Gzip.swift; sourceTree = "<group>"; };
+		5405D8B129C0949F008F945E /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Gzip.swift"; sourceTree = "<group>"; };
 		55F6736826C371E6001E7AB9 /* CAPWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPWebView.swift; sourceTree = "<group>"; };
 		6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstanceConfiguration.swift; sourceTree = "<group>"; };
 		621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPBridgedJSTypes.m; sourceTree = "<group>"; };
