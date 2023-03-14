@@ -1,5 +1,4 @@
 import Foundation
-import Compression
 
 open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
     public var request: URLRequest
@@ -126,47 +125,12 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
     }
 
-    private func gzipCompress(data: Data) throws -> Data {
-        let stream = OutputStream(toMemory: ())
-        let windowBits = Int32(15)
-        let level = Int32(COMPRESSION_LEVEL_DEFAULT)
-        let strategy = Int32(COMPRESSION_STRATEGY_DEFAULT)
-        let status = compression_stream_init(&stream.stream, COMPRESSION_STREAM_ENCODE, COMPRESSION_ZLIB, windowBits)
-        guard status == COMPRESSION_STATUS_OK else {
-            throw NSError(domain: "compression_stream_init", code: Int(status), userInfo: nil)
-        }
-        var compressedData = Data()
-        let bufferSize = 1024 * 1024
-        var buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
-        defer {
-            buffer.deallocate()
-        }
-        stream.open()
-        defer {
-            stream.close()
-        }
-        var inputSize = data.count
-        var outputSize = 0
-        while inputSize > 0 {
-            let count = min(inputSize, bufferSize)
-            data.copyBytes(to: buffer, from: 0..<count)
-            let flags: Int32 = inputSize == count ? Int32(COMPRESSION_STREAM_FINALIZE.rawValue) : 0
-            let result = compression_stream_process(&stream.stream, flags, buffer, count, compressedData.withUnsafeMutableBytes { $0.baseAddress! }, compressedData.count, &outputSize)
-            guard result == COMPRESSION_STATUS_OK else {
-                throw NSError(domain: "compression_stream_process", code: Int(result), userInfo: nil)
-            }
-            compressedData.count += outputSize
-            inputSize -= count
-        }
-        return compressedData
-    }
-
     private func getRequestDataAsGzip(_ body: JSValue) throws -> Data? {
         // string to Data
         let dataBody = try getRequestDataAsString(body)
 
         // gzip compression
-        let compressedData: Data = try self.gzipCompress(data: dataBody)
+        let compressedData: Data = try dataBody.gzipped()
         return compressedData
     }
 
