@@ -182,7 +182,6 @@ export function runProgram(config: Config): void {
         ),
       ),
     );
-
   program
     .command(`run [platform]`)
     .description(
@@ -195,11 +194,18 @@ export function runProgram(config: Config): void {
     .allowUnknownOption(true)
     .option('--target <id>', 'use a specific target')
     .option('--no-sync', `do not run ${c.input('sync')}`)
+    .option(
+      '--forwardPorts <port:port>',
+      'Automatically run "adb reverse" for better live-reloading support',
+    )
     .action(
       wrapAction(
         telemetryAction(
           config,
-          async (platform, { scheme, flavor, list, target, sync }) => {
+          async (
+            platform,
+            { scheme, flavor, list, target, sync, forwardPorts },
+          ) => {
             const { runCommand } = await import('./tasks/run');
             await runCommand(config, platform, {
               scheme,
@@ -207,6 +213,7 @@ export function runProgram(config: Config): void {
               list,
               target,
               sync,
+              forwardPorts,
             });
           },
         ),
