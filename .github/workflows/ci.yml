@@ -31,6 +31,8 @@ jobs:
       - name: NPM ^9.5.0
         run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN || github.token }}
       - name: Restore Dependency Cache
         uses: actions/cache@v3
         with:
