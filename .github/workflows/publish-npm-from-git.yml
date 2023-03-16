@@ -1,9 +1,18 @@
-name: Publish NPM Alpha
+name: Publish NPM From Git
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      disttag:
+        type: choice
+        description: Dist Tag
+        options:
+          - next
+          - latest
+          - dev
 
 jobs:
-  deploy-npm-alpha:
+  deploy-npm-rc:
     runs-on: macos-12
     timeout-minutes: 30
     steps:
@@ -33,4 +42,4 @@ jobs:
         run: |
           git config user.name "Github Workflow (on behalf of ${{ github.actor }})"
           git config user.email "users.noreply.github.com"
-          npm run ci:publish:alpha
+          npx lerna publish from-git --dist-tag ${{ github.event.inputs.disttag }} --force-publish --no-verify-access --yes
