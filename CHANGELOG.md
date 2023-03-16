@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.1](https://github.com/ionic-team/capacitor/compare/4.7.0...4.7.1) (2023-03-16)
+
+
+### Bug Fixes
+
+* **cli:** point build to proper workspace name ([#6373](https://github.com/ionic-team/capacitor/issues/6373)) ([81af12a](https://github.com/ionic-team/capacitor/commit/81af12a3381c605d4b2a681c69a78dd363a70af0))
+* **iOS:** Separate cookies by ; rather than ; when accessing through document.cookie (Cap 4.x) ([#6380](https://github.com/ionic-team/capacitor/issues/6380)) ([1902b77](https://github.com/ionic-team/capacitor/commit/1902b77213e36bd9899634e7c86c9a02aab39932))
+
+
+
+
+
 # [4.7.0](https://github.com/ionic-team/capacitor/compare/4.6.3...4.7.0) (2023-02-22)
 
 
