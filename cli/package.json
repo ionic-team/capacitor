@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "5.0.0-alpha.1",
+  "version": "4.7.1",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -65,6 +65,7 @@
   "devDependencies": {
     "@types/debug": "^4.1.7",
     "@types/jest": "^26.0.4",
+    "@types/node": "18.11.18",
     "@types/plist": "^3.0.2",
     "@types/prompts": "^2.0.14",
     "@types/rimraf": "^3.0.2",

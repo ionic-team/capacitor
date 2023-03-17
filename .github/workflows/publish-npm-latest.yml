@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy-npm-latest:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/4.x'
     runs-on: macos-12
     timeout-minutes: 30
     steps:
