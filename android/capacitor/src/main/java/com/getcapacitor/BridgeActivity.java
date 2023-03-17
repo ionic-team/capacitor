@@ -22,7 +22,8 @@ public class BridgeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bridgeBuilder.setInstanceState(savedInstanceState);
-        getApplication().setTheme(R.style.AppTheme_NoActionBar);
+        getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
+        setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
         setTheme(R.style.AppTheme_NoActionBar);
         setContentView(R.layout.bridge_layout_main);
         PluginManager loader = new PluginManager(getAssets());

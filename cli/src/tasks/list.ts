@@ -18,7 +18,7 @@ export async function listCommand(
     await allSerial(
       platforms.map(platformName => () => list(config, platformName)),
     );
-  } catch (e: any) {
+  } catch (e) {
     if (isFatal(e)) {
       throw e;
     }

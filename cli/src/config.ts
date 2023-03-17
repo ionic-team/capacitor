@@ -117,7 +117,7 @@ async function loadExtConfigTS(
       extConfigFilePath: extConfigFilePath,
       extConfig,
     };
-  } catch (e: any) {
+  } catch (e) {
     if (!isFatal(e)) {
       fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
     }
@@ -138,7 +138,7 @@ async function loadExtConfigJS(
       extConfigFilePath: extConfigFilePath,
       extConfig: require(extConfigFilePath),
     };
-  } catch (e: any) {
+  } catch (e) {
     fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
   }
 }

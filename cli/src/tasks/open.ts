@@ -43,7 +43,7 @@ export async function openCommand(
 
     try {
       await open(config, platformName);
-    } catch (e: any) {
+    } catch (e) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }

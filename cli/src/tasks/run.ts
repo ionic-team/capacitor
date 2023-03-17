@@ -24,7 +24,6 @@ export interface RunCommandOptions {
   list?: boolean;
   target?: string;
   sync?: boolean;
-  forwardPorts?: string;
 }
 
 export async function runCommand(
@@ -87,7 +86,7 @@ export async function runCommand(
       }
 
       await run(config, platformName, options);
-    } catch (e: any) {
+    } catch (e) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }

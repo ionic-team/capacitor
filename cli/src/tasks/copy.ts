@@ -48,7 +48,7 @@ export async function copyCommand(
       await allSerial(
         platforms.map(platformName => () => copy(config, platformName, inline)),
       );
-    } catch (e: any) {
+    } catch (e) {
       if (isFatal(e)) {
         throw e;
       }

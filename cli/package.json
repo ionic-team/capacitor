@@ -52,7 +52,7 @@
     "debug": "^4.3.4",
     "env-paths": "^2.2.0",
     "kleur": "^4.1.4",
-    "native-run": "^1.7.2",
+    "native-run": "^1.6.0",
     "open": "^8.4.0",
     "plist": "^3.0.5",
     "prompts": "^2.4.2",
@@ -76,7 +76,7 @@
     "jest": "^26.1.0",
     "tmp": "^0.2.1",
     "ts-jest": "^26.1.3",
-    "typescript": "~4.9.5"
+    "typescript": "~4.1.2"
   },
   "jest": {
     "preset": "ts-jest"

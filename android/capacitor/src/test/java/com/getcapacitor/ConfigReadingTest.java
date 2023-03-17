@@ -93,7 +93,7 @@ public class ConfigReadingTest {
 
             try (MockedStatic<Logger> logger = mockStatic(Logger.class)) {
                 CapConfig config = CapConfig.loadDefault(context);
-                logger.verify(() -> Logger.error(eq(errText), any()), times(1));
+                logger.verify(times(1), () -> Logger.error(eq(errText), any()));
             }
         } catch (IOException e) {
             fail();

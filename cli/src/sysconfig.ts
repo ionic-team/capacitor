@@ -36,7 +36,7 @@ export async function readConfig(): Promise<SystemConfig> {
 
   try {
     return await readJSON(SYSCONFIG_PATH);
-  } catch (e: any) {
+  } catch (e) {
     if (e.code !== 'ENOENT') {
       throw e;
     }

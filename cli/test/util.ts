@@ -205,10 +205,7 @@ async function makeCordovaPlugin(cordovaPluginPath: string) {
 }
 
 class MappedFS {
-  private rootDir: string;
-  constructor(rootDir: string) {
-    this.rootDir = rootDir;
-  }
+  constructor(private rootDir: string) {}
   async read(path: string): Promise<string> {
     return await readFile(resolve(this.rootDir, path), { encoding: 'utf-8' });
   }

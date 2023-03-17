@@ -77,7 +77,7 @@ public class PermissionHelper {
         String[] requestedPermissions = null;
         try {
             PackageManager pm = context.getPackageManager();
-            PackageInfo packageInfo = InternalUtils.getPackageInfo(pm, context.getPackageName(), PackageManager.GET_PERMISSIONS);
+            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
 
             if (packageInfo != null) {
                 requestedPermissions = packageInfo.requestedPermissions;
