@@ -5,15 +5,8 @@ on:
     branches:
       - 4.x
   pull_request:
-    types:
-      - 'synchronize'
-      - 'opened'
     branches:
       - '**'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   setup:
@@ -27,27 +20,23 @@ jobs:
       - name: Get Latest
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
-      - name: NPM ^9.5.0
-        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+          node-version: 14.x
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           token: ${{ secrets.CAP_GH_RELEASE_TOKEN || github.token}}
       - name: Restore Dependency Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v1
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
   lint:
     runs-on: macos-12
     timeout-minutes: 30
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.x
-      - name: NPM ^9.5.0
-        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+          node-version: 14.x
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -56,7 +45,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run lint
   test-cli:
@@ -68,9 +57,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.x
-      - name: NPM ^9.5.0
-        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+          node-version: 14.x
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -79,7 +66,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
         working-directory: ./cli
@@ -94,9 +81,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.x
-      - name: NPM ^9.5.0
-        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+          node-version: 14.x
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -105,7 +90,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
         working-directory: ./core
@@ -120,14 +105,12 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - /Applications/Xcode_14.2.app
+          - /Applications/Xcode_13.3.1.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.x
-      - name: NPM ^9.5.0
-        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+          node-version: 14.x
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -136,7 +119,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run verify
         working-directory: ./ios
@@ -151,9 +134,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.x
-      - name: NPM ^9.5.0
-        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+          node-version: 14.x
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -162,7 +143,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run verify
         working-directory: ./android
