@@ -56,27 +56,28 @@ internal class JSExport {
     /**
      Export the JS required to implement the given plugin.
      */
-    static func exportJS(for plugin: CapacitorPlugin, in userContentController: WKUserContentController) {
+    static func exportJS(userContentController: WKUserContentController, pluginClassName: String, pluginType: CAPPlugin.Type) {
         var lines = [String]()
 
         lines.append("""
                     (function(w) {
                     var a = (w.Capacitor = w.Capacitor || {});
                     var p = (a.Plugins = a.Plugins || {});
-                    var t = (p['\(plugin.jsName)'] = {});
+                    var t = (p['\(pluginClassName)'] = {});
                     t.addListener = function(eventName, callback) {
-                    return w.Capacitor.addListener('\(plugin.jsName)', eventName, callback);
+                    return w.Capacitor.addListener('\(pluginClassName)', eventName, callback);
                     }
                     """)
-
-        for method in plugin.pluginMethods {
-            lines.append(generateMethod(pluginClassName: plugin.jsName, method: method))
+        if let bridgeType = pluginType as? CAPBridgedPlugin.Type, let methods = bridgeType.pluginMethods() as? [CAPPluginMethod] {
+            for method in methods {
+                lines.append(generateMethod(pluginClassName: pluginClassName, method: method))
+            }
         }
 
         lines.append("""
             })(window);
             """)
-        if let data = try? JSONEncoder().encode(createPluginHeader(for: plugin)),
+        if let data = try? JSONEncoder().encode(createPluginHeader(pluginClassName: pluginClassName, pluginType: pluginType)),
            let header = String(data: data, encoding: .utf8) {
             lines.append("""
                 (function(w) {
@@ -91,20 +92,19 @@ internal class JSExport {
         userContentController.addUserScript(userScript)
     }
 
-    private static func createPluginHeader(for plugin: CapacitorPlugin) -> PluginHeader? {
-        let methods = [
-            PluginHeaderMethod(name: "addListener", rtype: nil),
-            PluginHeaderMethod(name: "removeListener", rtype: nil),
-            PluginHeaderMethod(name: "removeAllListeners", rtype: "promise"),
-            PluginHeaderMethod(name: "checkPermissions", rtype: "promise"),
-            PluginHeaderMethod(name: "requestPermissions", rtype: "promise")
-        ]
+    private static func createPluginHeader(pluginClassName: String, pluginType: CAPPlugin.Type) -> PluginHeader? {
+        if let bridgeType = pluginType as? CAPBridgedPlugin.Type, let pluginMethods = bridgeType.pluginMethods() as? [CAPPluginMethod] {
+            let methods = [
+                PluginHeaderMethod(name: "addListener", rtype: nil),
+                PluginHeaderMethod(name: "removeListener", rtype: nil),
+                PluginHeaderMethod(name: "removeAllListeners", rtype: "promise"),
+                PluginHeaderMethod(name: "checkPermissions", rtype: "promise"),
+                PluginHeaderMethod(name: "requestPermissions", rtype: "promise")
+            ]
+            return PluginHeader(name: pluginClassName, methods: methods + pluginMethods.map { createPluginHeaderMethod(method: $0) })
+        }
 
-        return PluginHeader(
-            name: plugin.jsName,
-            methods: methods + plugin.pluginMethods.map(createPluginHeaderMethod)
-        )
-
+        return nil
     }
 
     private static func createPluginHeaderMethod(method: CAPPluginMethod) -> PluginHeaderMethod {
