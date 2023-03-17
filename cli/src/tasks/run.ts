@@ -24,6 +24,7 @@ export interface RunCommandOptions {
   list?: boolean;
   target?: string;
   sync?: boolean;
+  forwardPorts?: string;
 }
 
 export async function runCommand(
