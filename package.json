@@ -1,6 +1,12 @@
 {
   "name": "capacitor",
   "private": true,
+  "workspaces": [
+    "./android/",
+    "./ios/",
+    "./cli/",
+    "./core/"
+  ],
   "scripts": {
     "ci:publish:nightly": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid nightly-$(date +\"%Y%m%dT%H%M%S\") --dist-tag nightly --force-publish --no-verify-access --no-changelog --no-git-tag-version --no-push --yes",
     "ci:publish:alpha": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid alpha --dist-tag next --force-publish --no-verify-access --yes",
@@ -15,7 +21,6 @@
     "prettier": "prettier \"**/*.{css,html,java,js,mjs,ts}\"",
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
-    "postinstall": "lerna bootstrap",
     "version": "npm run sync-peer-dependencies"
   },
   "prettier": "@ionic/prettier-config",
@@ -28,7 +33,7 @@
     "@ionic/swiftlint-config": "^1.1.2",
     "@types/tar": "^6.1.2",
     "eslint": "~7.27.0",
-    "lerna": "^3.22.1",
+    "lerna": "^6.5.1",
     "prettier": "~2.3.0",
     "prettier-plugin-java": "~1.1.1",
     "swiftlint": "^1.0.1",
