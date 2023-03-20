@@ -384,9 +384,13 @@ var nativeBridge = (function (exports) {
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
                                 headers: headers,
                             });
-                            const data = typeof nativeResponse.data === 'string'
+                            let data = typeof nativeResponse.data === 'string'
                                 ? nativeResponse.data
                                 : JSON.stringify(nativeResponse.data);
+                            // use null data for 204 No Content HTTP response
+                            if (nativeResponse.status === 204) {
+                                data = null;
+                            }
                             // intercept & parse response before returning
                             const response = new Response(data, {
                                 headers: nativeResponse.headers,
