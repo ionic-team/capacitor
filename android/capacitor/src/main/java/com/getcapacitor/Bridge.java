@@ -370,6 +370,10 @@ public class Bridge {
             }
         }
 
+        if (url.getScheme().equals("data")) {
+            return false;
+        }
+
         if (!url.toString().startsWith(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
             try {
                 Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
