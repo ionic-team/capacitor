@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.RenderProcessGoneDetail;
+import android.webkit.WebView;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -1004,6 +1006,23 @@ public class Plugin {
     @SuppressWarnings("unused")
     public Boolean shouldOverrideLoad(Uri url) {
         return null;
+    }
+
+
+    /**
+     * Give the plugins a chance to record or respond to a WebView render process terminating.
+     *
+     * Note: A plugin must not attempt to recover a webview that it does not own/manage.
+     * Returning true without proper recovery will leave the webview in
+     * an invalid state. See {@link android.webkit.WebViewClient#onRenderProcessGone} for information about
+     * how to properly recover a webview.
+     *
+     * Returning true indicates the WebView termination has been handled by the plugin.
+     * Returning false indicates the WebView termination has not been handled.
+     */
+    @SuppressWarnings("unused")
+    public boolean onRenderProcessGone(final WebView view, RenderProcessGoneDetail detail) {
+        return false;
     }
 
     /**

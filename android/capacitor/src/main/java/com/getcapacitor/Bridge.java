@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -395,6 +396,22 @@ public class Bridge {
             return true;
         }
         return false;
+    }
+
+    public boolean onRenderProcessGone(final WebView view, RenderProcessGoneDetail detail) {
+        /*
+         * Give plugins the chance to handle or record render process removal
+         */
+        boolean result = false;
+        for (Map.Entry<String, PluginHandle> entry : plugins.entrySet()) {
+            Plugin plugin = entry.getValue().getInstance();
+            if (plugin != null) {
+                if (plugin.onRenderProcessGone(view, detail)) {
+                    result = true;
+                }
+            }
+        }
+        return result;
     }
 
     private boolean isNewBinary() {
