@@ -82,7 +82,7 @@ public class Plugin {
 
     // Stored results of an event if an event was fired and
     // no listeners were attached yet. Only stores the last value.
-    private final Map<String, JSObject> retainedEventArguments;
+    private final Map<String, List<JSObject>> retainedEventArguments;
 
     public Plugin() {
         eventListeners = new HashMap<>();
@@ -664,7 +664,14 @@ public class Plugin {
         if (listeners == null || listeners.isEmpty()) {
             Logger.debug(getLogTag(), "No listeners found for event " + eventName);
             if (retainUntilConsumed) {
-                retainedEventArguments.put(eventName, data);
+                List<JSObject> argList = retainedEventArguments.get(eventName);
+
+                if (argList == null) {
+                    argList = new ArrayList<JSObject>();
+                }
+
+                argList.add(data);
+                retainedEventArguments.put(eventName, argList);
             }
             return;
         }
@@ -703,12 +710,15 @@ public class Plugin {
      * @param eventName
      */
     private void sendRetainedArgumentsForEvent(String eventName) {
-        JSObject retained = retainedEventArguments.get(eventName);
-        if (retained == null) {
+        List<JSObject> retainedArgs = retainedEventArguments.get(eventName);
+        if (retainedArgs == null) {
             return;
         }
 
-        notifyListeners(eventName, retained);
+        for (JSObject retained : retainedArgs) {
+            notifyListeners(eventName, retained);
+        }
+
         retainedEventArguments.remove(eventName);
     }
 
@@ -800,12 +810,10 @@ public class Plugin {
             JSArray providedPerms = call.getArray("permissions");
             List<String> providedPermsList = null;
 
-            if (providedPerms != null) {
-                try {
-                    providedPermsList = providedPerms.toList();
-                } catch (JSONException ignore) {
-                    // do nothing
-                }
+            try {
+                providedPermsList = providedPerms.toList();
+            } catch (JSONException ignore) {
+                // do nothing
             }
 
             // If call was made without any custom permissions, request all from plugin annotation
