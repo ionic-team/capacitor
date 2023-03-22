@@ -541,7 +541,7 @@ var nativeBridge = (function (exports) {
                         console.time(tag);
                         try {
                             this.readyState = 2;
-                            let data = body !== null ? body : undefined;
+                            const data = body !== null ? body : undefined;
                             convertBody(body)
                                 .then(({ data, type, headers }) => {
                                 const otherHeaders = this._headers != null && Object.keys(this._headers).length > 0
