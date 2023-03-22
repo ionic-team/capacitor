@@ -384,7 +384,7 @@ var nativeBridge = (function (exports) {
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
                                 headers: headers,
                             });
-                            let data = typeof nativeResponse.data === 'string'
+                            let data = !nativeResponse.headers['Content-Type'].startsWith('application/json')
                                 ? nativeResponse.data
                                 : JSON.stringify(nativeResponse.data);
                             // use null data for 204 No Content HTTP response
@@ -526,7 +526,7 @@ var nativeBridge = (function (exports) {
                                     this.status = nativeResponse.status;
                                     this.response = nativeResponse.data;
                                     this.responseText =
-                                        typeof nativeResponse.data === 'string'
+                                        !nativeResponse.headers['Content-Type'].startsWith('application/json')
                                             ? nativeResponse.data
                                             : JSON.stringify(nativeResponse.data);
                                     this.responseURL = nativeResponse.url;
