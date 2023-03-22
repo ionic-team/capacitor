@@ -6,7 +6,7 @@ export async function readXML(path: string): Promise<any> {
     const xmlStr = await readFile(path, { encoding: 'utf-8' });
     try {
       return await xml2js.parseStringPromise(xmlStr);
-    } catch (e) {
+    } catch (e: any) {
       throw `Error parsing: ${path}, ${e.stack ?? e}`;
     }
   } catch (e) {

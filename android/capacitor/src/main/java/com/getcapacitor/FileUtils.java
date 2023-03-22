@@ -37,6 +37,7 @@ import android.provider.OpenableColumns;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -142,19 +143,38 @@ public class FileUtils {
     }
 
     /**
-     * Read a plaintext file.
+     * Read a plaintext file from the assets directory.
      *
      * @param assetManager Used to open the file.
      * @param fileName The path of the file to read.
      * @return The contents of the file path.
      * @throws IOException Thrown if any issues reading the provided file path.
      */
-    static String readFile(AssetManager assetManager, String fileName) throws IOException {
+    static String readFileFromAssets(AssetManager assetManager, String fileName) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open(fileName)))) {
             StringBuilder buffer = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
+                buffer.append(line).append("\n");
+            }
+
+            return buffer.toString();
+        }
+    }
+
+    /**
+     * Read a plaintext file from within the app disk space.
+     *
+     * @param file The file to read.
+     * @return The contents of the file path.
+     * @throws IOException Thrown if any issues reading the provided file path.
+     */
+    static String readFileFromDisk(File file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            StringBuilder buffer = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line).append("\n");
             }
 
             return buffer.toString();

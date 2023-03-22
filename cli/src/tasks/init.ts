@@ -50,6 +50,8 @@ export async function initCommand(
       () => checkAppId(config, appId),
     ]);
 
+    const androidScheme = config.app.extConfig.server?.androidScheme ?? 'https';
+
     const cordova = await getCordovaPreferences(config);
 
     await runMergeConfig(
@@ -59,11 +61,14 @@ export async function initCommand(
         appName,
         webDir,
         bundledWebRuntime: false,
+        server: {
+          androidScheme: androidScheme,
+        },
         cordova,
       },
       isNewConfig && tsInstalled ? 'ts' : 'json',
     );
-  } catch (e) {
+  } catch (e: any) {
     if (!isFatal(e)) {
       output.write(
         'Usage: npx cap init appName appId\n' +

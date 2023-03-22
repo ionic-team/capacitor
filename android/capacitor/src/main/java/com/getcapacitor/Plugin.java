@@ -800,10 +800,12 @@ public class Plugin {
             JSArray providedPerms = call.getArray("permissions");
             List<String> providedPermsList = null;
 
-            try {
-                providedPermsList = providedPerms.toList();
-            } catch (JSONException ignore) {
-                // do nothing
+            if (providedPerms != null) {
+                try {
+                    providedPermsList = providedPerms.toList();
+                } catch (JSONException ignore) {
+                    // do nothing
+                }
             }
 
             // If call was made without any custom permissions, request all from plugin annotation

@@ -77,19 +77,7 @@ export async function editProjectSettingsAndroid(
     .replace(/"/g, '\\"')
     .replace(/'/g, "\\'");
 
-  const manifestPath = resolve(
-    config.android.srcMainDirAbs,
-    'AndroidManifest.xml',
-  );
   const buildGradlePath = resolve(config.android.appDirAbs, 'build.gradle');
-
-  let manifestContent = await readFile(manifestPath, { encoding: 'utf-8' });
-
-  manifestContent = manifestContent.replace(
-    /com.getcapacitor.myapp/g,
-    `${appId}`,
-  );
-  await writeFile(manifestPath, manifestContent, { encoding: 'utf-8' });
 
   const domainPath = appId.split('.').join('/');
   // Make the package source path to the new plugin Java file
@@ -136,6 +124,11 @@ export async function editProjectSettingsAndroid(
   gradleContent = gradleContent.replace(
     /applicationId "[^"]+"/,
     `applicationId "${appId}"`,
+  );
+  // Update the namespace in build.gradle
+  gradleContent = gradleContent.replace(
+    /namespace "[^"]+"/,
+    `namespace "${appId}"`,
   );
 
   await writeFile(buildGradlePath, gradleContent, { encoding: 'utf-8' });
