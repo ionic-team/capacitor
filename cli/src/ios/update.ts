@@ -106,9 +106,6 @@ async function updatePodfile(
 
   const podCommandExists = await isInstalled('pod');
   if (podCommandExists) {
-    if (!deployment) {
-      await remove(podfileLockPath);
-    }
     await runCommand(
       config.ios.podPath,
       ['install', ...(deployment ? ['--deployment'] : [])],
