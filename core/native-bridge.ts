@@ -437,10 +437,16 @@ const initBridge = (w: any): void => {
               },
             );
 
-            const data =
+            let data =
               typeof nativeResponse.data === 'string'
                 ? nativeResponse.data
                 : JSON.stringify(nativeResponse.data);
+
+            // use null data for 204 No Content HTTP response
+            if (nativeResponse.status === 204) {
+              data = null;
+            }
+
             // intercept & parse response before returning
             const response = new Response(data, {
               headers: nativeResponse.headers,
