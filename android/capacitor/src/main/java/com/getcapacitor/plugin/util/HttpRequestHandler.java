@@ -308,6 +308,9 @@ public class HttpRequestHandler {
                 return new JSONObject().put("flag", "false");
             } else if (input.trim().length() <= 0) {
                 return "";
+            } else if (input.trim().matches("^\".*\"$")) {
+                // a string enclosed in " " is a json value, return the string without the quotes
+                return input.trim().substring(1, input.trim().length() - 1);
             } else {
                 try {
                     return new JSObject(input);

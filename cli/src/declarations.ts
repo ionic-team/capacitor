@@ -36,7 +36,10 @@ export interface CapacitorConfig {
    * will create a `capacitor.js` file that you'll need to add as a script in
    * your `index.html` file.
    *
+   * It's deprecated and will be removed in Capacitor 6
+   *
    * @since 1.0.0
+   * @deprecated 5.0.0
    * @default false
    */
   bundledWebRuntime?: boolean;

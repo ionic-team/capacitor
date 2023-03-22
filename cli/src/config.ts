@@ -58,7 +58,6 @@ export async function loadConfig(): Promise<Config> {
         version: '1.0.0',
       },
       ...conf,
-      bundledWebRuntime: conf.extConfig.bundledWebRuntime ?? false,
     },
   };
 
@@ -457,6 +456,17 @@ export function checkExternalConfig(config: ExtConfigPairs): void {
     logger.warn(
       `The ${c.strong('hideLogs')} configuration option has been deprecated. ` +
         `Please update to use ${c.strong('loggingBehavior')} instead.`,
+    );
+  }
+  if (typeof config.extConfig.bundledWebRuntime !== 'undefined') {
+    let actionMessage = `Can be safely deleted.`;
+    if (config.extConfig.bundledWebRuntime === true) {
+      actionMessage = `Please, use a bundler to bundle Capacitor and its plugins.`;
+    }
+    logger.warn(
+      `The ${c.strong(
+        'bundledWebRuntime',
+      )} configuration option has been deprecated. ${actionMessage}`,
     );
   }
 }
