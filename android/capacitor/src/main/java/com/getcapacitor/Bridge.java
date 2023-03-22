@@ -32,6 +32,7 @@ import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.util.HostMask;
+import com.getcapacitor.util.InternalUtils;
 import com.getcapacitor.util.PermissionHelper;
 import com.getcapacitor.util.WebColor;
 import java.io.File;
