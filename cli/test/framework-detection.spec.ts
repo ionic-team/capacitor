@@ -23,7 +23,6 @@ describe('framework detection', () => {
         extConfigName: '',
         extConfigFilePath: '',
         extConfig: null as any,
-        bundledWebRuntime: true,
       },
       android: null as any,
       ios: null as any,
