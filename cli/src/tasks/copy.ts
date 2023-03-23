@@ -1,4 +1,9 @@
-import { copy as fsCopy, pathExists, remove, writeJSON } from '@ionic/utils-fs';
+import {
+  copy as fsCopy,
+  outputJSON,
+  pathExists,
+  remove,
+} from '@ionic/utils-fs';
 import { basename, join, relative, resolve } from 'path';
 
 import c from '../colors';
@@ -204,7 +209,7 @@ async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
     `Creating ${c.strong(nativeConfigFile)} in ${nativeRelDir}`,
     async () => {
       delete (config.app.extConfig.android as any)?.buildOptions;
-      await writeJSON(nativeConfigFilePath, config.app.extConfig, {
+      await outputJSON(nativeConfigFilePath, config.app.extConfig, {
         spaces: '\t',
       });
     },
