@@ -141,6 +141,7 @@ export function runProgram(config: Config): void {
     .command('build <platform>')
     .description('builds the release version of the selected platform')
     .option('--scheme <schemeToBuild>', 'iOS Scheme to build')
+    .option('--flavor <flavorToBuild>', 'Android Flavor to build')
     .option('--keystorepath <keystorePath>', 'Path to the keystore')
     .option('--keystorepass <keystorePass>', 'Password to the keystore')
     .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')

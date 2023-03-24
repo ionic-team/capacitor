@@ -13,7 +13,8 @@ export async function buildAndroid(
 ): Promise<void> {
   const releaseType = buildOptions.androidreleasetype ?? 'AAB';
   const releaseTypeIsAAB = releaseType === 'AAB';
-  const arg = releaseTypeIsAAB ? ':app:bundleRelease' : 'assembleRelease';
+  const flavor = buildOptions.flavor ?? "";
+  const arg = releaseTypeIsAAB ? `:app:bundle${flavor}Release` : `assemble${flavor}Release`;
   const gradleArgs = [arg];
 
   if (
