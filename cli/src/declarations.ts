@@ -229,6 +229,20 @@ export interface CapacitorConfig {
      */
     minWebViewVersion?: number;
 
+    /**
+     * The minimum supported Huawei webview version on Android supported by your app.
+     *
+     * The minimum supported cannot be lower than version `10`, which is required for Capacitor.
+     *
+     * If the device uses a lower WebView version, an error message will be shown on Logcat.
+     * If `server.errorPath` is configured, the WebView will redirect to that file, so can be
+     * used to show a custom error.
+     *
+     * @since 4.6.4
+     * @default 10
+     */
+    minHuaweiWebViewVersion?: number;
+
     buildOptions?: {
       /**
        * Path to your keystore

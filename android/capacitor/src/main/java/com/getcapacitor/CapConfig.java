@@ -2,7 +2,9 @@ package com.getcapacitor;
 
 import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
 import static com.getcapacitor.Bridge.DEFAULT_ANDROID_WEBVIEW_VERSION;
+import static com.getcapacitor.Bridge.DEFAULT_HUAWEI_WEBVIEW_VERSION;
 import static com.getcapacitor.Bridge.MINIMUM_ANDROID_WEBVIEW_VERSION;
+import static com.getcapacitor.Bridge.MINIMUM_HUAWEI_WEBVIEW_VERSION;
 import static com.getcapacitor.FileUtils.readFileFromAssets;
 
 import android.content.Context;
@@ -48,6 +50,7 @@ public class CapConfig {
     private boolean initialFocus = true;
     private boolean useLegacyBridge = false;
     private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
+    private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
     private String errorPath;
 
     // Embedded
@@ -172,6 +175,7 @@ public class CapConfig {
         this.initialFocus = builder.initialFocus;
         this.useLegacyBridge = builder.useLegacyBridge;
         this.minWebViewVersion = builder.minWebViewVersion;
+        this.minHuaweiWebViewVersion = builder.minHuaweiWebViewVersion;
         this.errorPath = builder.errorPath;
 
         // Embedded
@@ -263,6 +267,7 @@ public class CapConfig {
                 JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
             );
         minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", DEFAULT_ANDROID_WEBVIEW_VERSION);
+        minHuaweiWebViewVersion = JSONUtils.getInt(configJSON, "android.minHuaweiWebViewVersion", DEFAULT_HUAWEI_WEBVIEW_VERSION);
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         useLegacyBridge = JSONUtils.getBoolean(configJSON, "android.useLegacyBridge", useLegacyBridge);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
@@ -374,6 +379,15 @@ public class CapConfig {
         }
 
         return minWebViewVersion;
+    }
+
+    public int getMinHuaweiWebViewVersion() {
+        if (minHuaweiWebViewVersion < MINIMUM_HUAWEI_WEBVIEW_VERSION) {
+            Logger.warn("Specified minimum Huawei webview version is too low, defaulting to " + MINIMUM_HUAWEI_WEBVIEW_VERSION);
+            return MINIMUM_HUAWEI_WEBVIEW_VERSION;
+        }
+
+        return minHuaweiWebViewVersion;
     }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
@@ -535,6 +549,7 @@ public class CapConfig {
         private boolean initialFocus = false;
         private boolean useLegacyBridge = false;
         private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
+        private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
 
         // Embedded
         private String startPath = null;
