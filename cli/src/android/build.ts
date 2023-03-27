@@ -13,7 +13,10 @@ export async function buildAndroid(
 ): Promise<void> {
   const releaseType = buildOptions.androidreleasetype ?? 'AAB';
   const releaseTypeIsAAB = releaseType === 'AAB';
-  const arg = releaseTypeIsAAB ? ':app:bundleRelease' : 'assembleRelease';
+  const flavor = buildOptions.flavor ?? '';
+  const arg = releaseTypeIsAAB
+    ? `:app:bundle${flavor}Release`
+    : `assemble${flavor}Release`;
   const gradleArgs = [arg];
 
   if (
@@ -46,7 +49,7 @@ export async function buildAndroid(
     'build',
     'outputs',
     releaseTypeIsAAB ? 'bundle' : 'apk',
-    'release',
+    buildOptions.flavor ? `${flavor}Release` : 'release',
   );
 
   const unsignedReleaseName = `app${
