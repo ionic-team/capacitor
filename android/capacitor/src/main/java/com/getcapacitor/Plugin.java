@@ -710,16 +710,17 @@ public class Plugin {
      * @param eventName
      */
     private void sendRetainedArgumentsForEvent(String eventName) {
+        // copy retained args and null source to prevent potential race conditions
         List<JSObject> retainedArgs = retainedEventArguments.get(eventName);
         if (retainedArgs == null) {
             return;
         }
 
+        retainedEventArguments.remove(eventName);
+
         for (JSObject retained : retainedArgs) {
             notifyListeners(eventName, retained);
         }
-
-        retainedEventArguments.remove(eventName);
     }
 
     /**

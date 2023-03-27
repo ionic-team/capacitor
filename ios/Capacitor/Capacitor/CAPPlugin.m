@@ -52,16 +52,17 @@
 }
 
 - (void)sendRetainedArgumentsForEvent:(NSString *)eventName {
+    // copy retained args and null source to prevent potential race conditions
     NSMutableArray *retained = [self.retainedEventArguments objectForKey:eventName];
     if (retained == nil) {
         return;
     }
     
+    [self.retainedEventArguments removeObjectForKey:eventName];
+    
     for(id data in retained) {
         [self notifyListeners:eventName data:data];
     }
-  
-    [self.retainedEventArguments removeObjectForKey:eventName];
 }
 
 - (void)removeEventListener:(NSString *)eventName listener:(CAPPluginCall *)listener {
