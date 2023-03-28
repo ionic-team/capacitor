@@ -1,7 +1,6 @@
 {
   "appId": "com.capacitorjs.testshostapp",
   "appName": "testshostapp",
-  "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",
   "overrideUserAgent": "level 1 override",
