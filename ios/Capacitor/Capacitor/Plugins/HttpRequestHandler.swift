@@ -1,16 +1,16 @@
 import Foundation
 
 /// See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
-private enum ResponseType: String {
+public enum ResponseType: String {
     case arrayBuffer = "arraybuffer"
     case blob = "blob"
     case document = "document"
     case json = "json"
     case text = "text"
 
-    static let `default`: ResponseType = .text
+    public static let `default`: ResponseType = .text
 
-    init(string: String?) {
+    public init(string: String?) {
         guard let string = string else {
             self = .default
             return
@@ -31,18 +31,20 @@ private enum ResponseType: String {
 /// - Returns: The parsed value or an error
 func tryParseJson(_ data: Data) -> Any {
     do {
-        return try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
+        return try JSONSerialization.jsonObject(with: data, options: [.mutableContainers, .fragmentsAllowed])
     } catch {
         return error.localizedDescription
     }
 }
 
-class HttpRequestHandler {
-    private class CapacitorHttpRequestBuilder {
-        private var url: URL?
-        private var method: String?
-        private var params: [String: String]?
-        private var request: CapacitorUrlRequest?
+open class HttpRequestHandler {
+    open class CapacitorHttpRequestBuilder {
+        public var url: URL?
+        public var method: String?
+        public var params: [String: String]?
+        open var request: CapacitorUrlRequest?
+
+        public init() { }
 
         /// Set the URL of the HttpRequest
         /// - Throws: an error of URLError if the urlString cannot be parsed
@@ -87,7 +89,7 @@ class HttpRequestHandler {
             return self
         }
 
-        public func openConnection() -> CapacitorHttpRequestBuilder {
+        open func openConnection() -> CapacitorHttpRequestBuilder {
             request = CapacitorUrlRequest(url!, method: method!)
             return self
         }
@@ -97,7 +99,7 @@ class HttpRequestHandler {
         }
     }
 
-    private static func setCookiesFromResponse(_ response: HTTPURLResponse, _ config: InstanceConfiguration?) {
+    public static func setCookiesFromResponse(_ response: HTTPURLResponse, _ config: InstanceConfiguration?) {
         let headers = response.allHeaderFields
         if let cookies = headers["Set-Cookie"] as? String {
             for cookie in cookies.components(separatedBy: ",") {
@@ -115,7 +117,7 @@ class HttpRequestHandler {
         CapacitorCookieManager(config).syncCookiesToWebView()
     }
 
-    private static func buildResponse(_ data: Data?, _ response: HTTPURLResponse, responseType: ResponseType = .default) -> [String: Any] {
+    public static func buildResponse(_ data: Data?, _ response: HTTPURLResponse, responseType: ResponseType = .default) -> [String: Any] {
         var output = [:] as [String: Any]
 
         output["status"] = response.statusCode
@@ -144,8 +146,7 @@ class HttpRequestHandler {
         guard var urlString = call.getString("url") else { throw URLError(.badURL) }
         let method = httpMethod ?? call.getString("method", "GET")
 
-        // swiftlint:disable force_cast
-        let headers = (call.getObject("headers") ?? [:]) as! [String: String]
+        let headers = (call.getObject("headers") ?? [:]) as [String: Any]
         let params = (call.getObject("params") ?? [:]) as [String: Any]
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")

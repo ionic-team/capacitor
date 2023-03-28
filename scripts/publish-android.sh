@@ -24,7 +24,7 @@ else
     printf %"s\n" "Publishing $CAP_VERSION to MavenCentral production..."
 
     # Build and publish
-    $DIR/gradlew clean build publishReleasePublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository --max-workers 1 -b $DIR/capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true > $LOG_OUTPUT 2>&1
+    $DIR/gradlew clean build publishReleasePublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository --max-workers 1 -b $DIR/capacitor/build.gradle -Pandroid.useAndroidX=true > $LOG_OUTPUT 2>&1
 
     echo $RESULT
 

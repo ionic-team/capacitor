@@ -67,7 +67,7 @@ export interface AppConfig {
    * loader. If you're not using something like rollup or webpack or dynamic ES
    * module imports, set this to "true" and import "capacitor.js" manually.
    */
-  readonly bundledWebRuntime: boolean;
+  readonly bundledWebRuntime?: boolean;
 }
 
 export interface AndroidConfig extends PlatformConfig {

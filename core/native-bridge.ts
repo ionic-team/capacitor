@@ -422,6 +422,10 @@ const initBridge = (w: any): void => {
           console.time(tag);
           try {
             // intercept request & pass to the bridge
+            let headers = options?.headers;
+            if (options?.headers instanceof Headers) {
+              headers = Object.fromEntries((options.headers as any).entries());
+            }
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
               'request',
@@ -429,16 +433,21 @@ const initBridge = (w: any): void => {
                 url: resource,
                 method: options?.method ? options.method : undefined,
                 data: options?.body ? options.body : undefined,
-                headers: options?.headers
-                  ? JSON.stringify(options.headers)
-                  : undefined,
+                headers: headers,
               },
             );
 
-            const data =
-              typeof nativeResponse.data === 'string'
-                ? nativeResponse.data
-                : JSON.stringify(nativeResponse.data);
+            let data = !nativeResponse.headers['Content-Type'].startsWith(
+              'application/json',
+            )
+              ? nativeResponse.data
+              : JSON.stringify(nativeResponse.data);
+
+            // use null data for 204 No Content HTTP response
+            if (nativeResponse.status === 204) {
+              data = null;
+            }
+
             // intercept & parse response before returning
             const response = new Response(data, {
               headers: nativeResponse.headers,
@@ -592,7 +601,10 @@ const initBridge = (w: any): void => {
                 url: this._url,
                 method: this._method,
                 data: body !== null ? body : undefined,
-                headers: JSON.stringify(this._headers),
+                headers:
+                  this._headers != null && Object.keys(this._headers).length > 0
+                    ? this._headers
+                    : undefined,
               })
               .then((nativeResponse: any) => {
                 // intercept & parse response before returning
@@ -601,10 +613,11 @@ const initBridge = (w: any): void => {
                   this._headers = nativeResponse.headers;
                   this.status = nativeResponse.status;
                   this.response = nativeResponse.data;
-                  this.responseText =
-                    typeof nativeResponse.data === 'string'
-                      ? nativeResponse.data
-                      : JSON.stringify(nativeResponse.data);
+                  this.responseText = !nativeResponse.headers[
+                    'Content-Type'
+                  ].startsWith('application/json')
+                    ? nativeResponse.data
+                    : JSON.stringify(nativeResponse.data);
                   this.responseURL = nativeResponse.url;
                   this.readyState = 4;
                   this.dispatchEvent(new Event('load'));

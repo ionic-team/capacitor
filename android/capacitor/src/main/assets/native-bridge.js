@@ -374,17 +374,23 @@ var nativeBridge = (function (exports) {
                         console.time(tag);
                         try {
                             // intercept request & pass to the bridge
+                            let headers = options === null || options === void 0 ? void 0 : options.headers;
+                            if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
+                                headers = Object.fromEntries(options.headers.entries());
+                            }
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
                                 url: resource,
                                 method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
-                                headers: (options === null || options === void 0 ? void 0 : options.headers)
-                                    ? JSON.stringify(options.headers)
-                                    : undefined,
+                                headers: headers,
                             });
-                            const data = typeof nativeResponse.data === 'string'
+                            let data = !nativeResponse.headers['Content-Type'].startsWith('application/json')
                                 ? nativeResponse.data
                                 : JSON.stringify(nativeResponse.data);
+                            // use null data for 204 No Content HTTP response
+                            if (nativeResponse.status === 204) {
+                                data = null;
+                            }
                             // intercept & parse response before returning
                             const response = new Response(data, {
                                 headers: nativeResponse.headers,
@@ -508,7 +514,9 @@ var nativeBridge = (function (exports) {
                                 url: this._url,
                                 method: this._method,
                                 data: body !== null ? body : undefined,
-                                headers: JSON.stringify(this._headers),
+                                headers: this._headers != null && Object.keys(this._headers).length > 0
+                                    ? this._headers
+                                    : undefined,
                             })
                                 .then((nativeResponse) => {
                                 // intercept & parse response before returning
@@ -518,7 +526,7 @@ var nativeBridge = (function (exports) {
                                     this.status = nativeResponse.status;
                                     this.response = nativeResponse.data;
                                     this.responseText =
-                                        typeof nativeResponse.data === 'string'
+                                        !nativeResponse.headers['Content-Type'].startsWith('application/json')
                                             ? nativeResponse.data
                                             : JSON.stringify(nativeResponse.data);
                                     this.responseURL = nativeResponse.url;
