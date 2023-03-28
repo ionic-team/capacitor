@@ -60,7 +60,6 @@ export async function initCommand(
         appId,
         appName,
         webDir,
-        bundledWebRuntime: false,
         server: {
           androidScheme: androidScheme,
         },
