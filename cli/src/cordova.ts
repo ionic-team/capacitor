@@ -954,7 +954,10 @@ export async function writeCordovaAndroidManifest(
                           }
                         }
                       } else {
-                        if (requiredElement.children === undefined && existingElement.children === undefined) {
+                        if (
+                          requiredElement.children === undefined &&
+                          existingElement.children === undefined
+                        ) {
                           return true;
                         } else {
                           let foundRequiredElement = false;
