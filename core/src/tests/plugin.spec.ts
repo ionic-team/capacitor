@@ -23,7 +23,7 @@ describe('plugin', () => {
     global.setImmediate = global.setTimeout;
   });
 
-  it('error from missing method from native implementation', async (done) => {
+  it('error from missing method from native implementation', async done => {
     // mock the global with the android bridge
     mockAndroidBridge();
     initBridge(win);
