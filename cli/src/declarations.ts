@@ -242,20 +242,6 @@ export interface CapacitorConfig {
       keystorePassword?: string;
 
       /**
-       * Alias in the keystore to use
-       *
-       * @since 4.4.0
-       */
-      keystoreAlias?: string;
-
-      /**
-       * Password for the alias in the keystore to use
-       *
-       * @since 4.4.0
-       */
-      keystoreAliasPassword?: string;
-
-      /**
        * Bundle type for your release build
        *
        * @since 4.4.0

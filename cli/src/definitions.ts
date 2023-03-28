@@ -100,8 +100,6 @@ export interface AndroidConfig extends PlatformConfig {
   readonly buildOptions: {
     keystorePath?: string;
     keystorePassword?: string;
-    keystoreAlias?: string;
-    keystoreAliasPassword?: string;
     releaseType?: 'AAB' | 'APK';
   };
 }

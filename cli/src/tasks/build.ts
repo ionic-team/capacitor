@@ -8,8 +8,6 @@ export interface BuildCommandOptions {
   scheme?: string;
   keystorepath?: string;
   keystorepass?: string;
-  keystorealias?: string;
-  keystorealiaspass?: string;
   androidreleasetype?: 'AAB' | 'APK';
 }
 
@@ -35,11 +33,6 @@ export async function buildCommand(
       buildOptions.keystorepath || config.android.buildOptions.keystorePath,
     keystorepass:
       buildOptions.keystorepass || config.android.buildOptions.keystorePassword,
-    keystorealias:
-      buildOptions.keystorealias || config.android.buildOptions.keystoreAlias,
-    keystorealiaspass:
-      buildOptions.keystorealiaspass ||
-      config.android.buildOptions.keystoreAliasPassword,
     androidreleasetype:
       buildOptions.androidreleasetype ||
       config.android.buildOptions.releaseType ||
