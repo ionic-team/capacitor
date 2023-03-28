@@ -40,6 +40,7 @@ if (System.getenv("CAP_PUBLISH") == "true") {
 }
 
 android {
+    namespace "com.getcapacitor.android"
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 33
     defaultConfig {
         minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 22
