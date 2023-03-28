@@ -31,7 +31,7 @@ public enum ResponseType: String {
 /// - Returns: The parsed value or an error
 func tryParseJson(_ data: Data) -> Any {
     do {
-        return try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
+        return try JSONSerialization.jsonObject(with: data, options: [.mutableContainers, .fragmentsAllowed])
     } catch {
         return error.localizedDescription
     }
