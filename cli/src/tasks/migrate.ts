@@ -104,7 +104,8 @@ export async function migrateCommand(config: Config): Promise<void> {
           initial: 'y',
         },
       );
-      const { installerType } = await logPrompt('What dependency manager do you use?',
+      const { installerType } = await logPrompt(
+        'What dependency manager do you use?',
         {
           type: 'select',
           name: 'installerType',
@@ -112,21 +113,24 @@ export async function migrateCommand(config: Config): Promise<void> {
           choices: [
             { title: 'NPM', value: 'npm' },
             { title: 'Yarn', value: 'yarn' },
-            { title: 'PNPM', value: 'pnpm' }
+            { title: 'PNPM', value: 'pnpm' },
           ],
-          initial: 0
+          initial: 0,
         },
-      )
+      );
       const runNpmInstall =
         typeof depInstallConfirm === 'string' &&
         depInstallConfirm.toLowerCase() === 'y';
 
       try {
-        await runTask(`Installing Latest Modules using ${installerType}.`, () => {
-          return installLatestLibs(installerType, runNpmInstall, config);
-        });
+        await runTask(
+          `Installing Latest Modules using ${installerType}.`,
+          () => {
+            return installLatestLibs(installerType, runNpmInstall, config);
+          },
+        );
       } catch (ex) {
-        console.log(ex)
+        console.log(ex);
         logger.error(
           `${installerType} install failed. Try deleting node_modules folder and running ${c.input(
             `${installerType} install --force`,
@@ -271,7 +275,11 @@ export async function migrateCommand(config: Config): Promise<void> {
   //*/
 }
 
-async function installLatestLibs(dependencyManager: string, runInstall: boolean, config: Config) {
+async function installLatestLibs(
+  dependencyManager: string,
+  runInstall: boolean,
+  config: Config,
+) {
   const pkgJsonPath = join(config.app.rootDir, 'package.json');
   const pkgJsonFile = readFile(pkgJsonPath);
   if (!pkgJsonFile) {
@@ -309,9 +317,7 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
 }
 
 async function writeBreakingChanges() {
-  const breaking = [
-    '@capacitor/device'
-  ];
+  const breaking = ['@capacitor/device'];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
