@@ -10,7 +10,6 @@ import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
 import { runCommand, getCommandOutput } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
-import { readXML } from '../util/xml';
 
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
