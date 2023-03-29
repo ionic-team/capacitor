@@ -60,6 +60,7 @@ android {
         baseline file("lint-baseline.xml")
         abortOnError true
         warningsAsErrors true
+        lintConfig file('lint.xml')
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
