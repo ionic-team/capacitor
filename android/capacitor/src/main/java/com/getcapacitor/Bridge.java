@@ -381,7 +381,11 @@ public class Bridge {
             return false;
         }
 
-        if (!url.toString().startsWith(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
+        Uri appUri = Uri.parse(appUrl);
+        if (
+            !(url.getHost().equals(appUri.getHost()) && url.getScheme().equals(appUri.getScheme())) &&
+            !appAllowNavigationMask.matches(url.getHost())
+        ) {
             try {
                 Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
                 getContext().startActivity(openIntent);
