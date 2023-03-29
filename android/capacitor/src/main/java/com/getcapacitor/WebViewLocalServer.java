@@ -17,10 +17,14 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Base64;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebView;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -154,6 +158,19 @@ public class WebViewLocalServer {
         return uri;
     }
 
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (request.isRedirect() && isServerUrl(request.getUrl())) {
+                Logger.debug("Manually handling redirect to " + request.getUrl());
+                view.evaluateJavascript("location.replace(\"" + request.getUrl() + "\")", null);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Attempt to retrieve the WebResourceResponse associated with the given <code>request</code>.
      * This method should be invoked from within
@@ -197,6 +214,15 @@ public class WebViewLocalServer {
 
     private boolean isAllowedUrl(Uri loadingUrl) {
         return !(bridge.getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()));
+    }
+
+    private boolean isServerUrl(Uri loadingUrl) {
+        if (bridge.getServerUrl() == null) {
+            return loadingUrl.getHost().equalsIgnoreCase(bridge.getHost());
+        } else {
+            Uri serverUrl = Uri.parse(bridge.getServerUrl());
+            return (serverUrl.getScheme().equals(loadingUrl.getScheme()) && serverUrl.getHost().equals(loadingUrl.getHost()));
+        }
     }
 
     private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
@@ -356,6 +382,7 @@ public class WebViewLocalServer {
                     conn.setRequestMethod(method);
                     conn.setReadTimeout(30 * 1000);
                     conn.setConnectTimeout(30 * 1000);
+                    conn.setInstanceFollowRedirects(false);
                     if (request.getUrl().getUserInfo() != null) {
                         byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
                         String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
@@ -369,6 +396,36 @@ public class WebViewLocalServer {
                         }
                     }
                     InputStream responseStream = conn.getInputStream();
+
+                    if (conn.getResponseCode() == 302) {
+                        Logger.debug("302 Detected");
+                        String location = conn.getHeaderField("Location");
+                        Uri locationUri = Uri.parse(location);
+
+                        /* To maintain the same security setting in the default HttpURLConnection
+                         * the scheme must match in order to follow the redirect. Alternatively
+                         * the request is for our trusted capacitor server and must match the url */
+                        if (locationUri.getScheme().equals(request.getUrl().getScheme()) || isServerUrl(locationUri)) {
+                            Logger.debug("302 Security PASSED");
+                            /* Force the webpage to reload through javascript. If left to default
+                             * behavior, the webview would not call `shouldInterceptRequest` for
+                             * subsequent redirect URLs preventing Capacitor from injecting js in
+                             * the final redirection.
+                             * see https://developer.android.com/reference/android/webkit/WebViewClient#shouldInterceptRequest(android.webkit.WebView,%20android.webkit.WebResourceRequest) */
+
+                            String html = "<script>location.replace(\"" + location + "\")</script>";
+
+                            return new WebResourceResponse(
+                                "text/html",
+                                handler.getEncoding(),
+                                handler.getStatusCode(),
+                                handler.getReasonPhrase(),
+                                handler.getResponseHeaders(),
+                                new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8))
+                            );
+                        }
+                    }
+
                     responseStream = jsInjector.getInjectedStream(responseStream);
                     return new WebResourceResponse(
                         "text/html",

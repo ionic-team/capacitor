@@ -25,7 +25,12 @@ public class BridgeWebViewClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         Uri url = request.getUrl();
-        return bridge.launchIntent(url);
+        boolean shouldOverride = bridge.launchIntent(url);
+        Logger.debug("ShouldOverrideUrlLoading (result:"+shouldOverride+") " + request.getMethod() + ": " + request.getUrl().toString());
+        if (!shouldOverride) {
+            shouldOverride = bridge.getLocalServer().shouldOverrideUrlLoading(view, request);
+        }
+        return shouldOverride;
     }
 
     @Deprecated
