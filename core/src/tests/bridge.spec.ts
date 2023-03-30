@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { initBridge } from '../../native-bridge';
 import type {
   CapacitorInstance,
@@ -13,6 +17,10 @@ describe('bridge', () => {
   beforeEach(() => {
     win = {};
     initBridge(win);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    window.prompt = () => {};
   });
 
   it('android nativePromise error', done => {

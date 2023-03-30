@@ -12,6 +12,7 @@ extension CAPBridgedPlugin where Self: CAPPlugin {
         webView = bridge.webView
         shouldStringifyDatesInCalls = true
         retainedEventArguments = [:]
+        eventListeners = [:]
         pluginId = identifier
         pluginName = jsName
         load()

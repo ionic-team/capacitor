@@ -40,6 +40,7 @@ if (System.getenv("CAP_PUBLISH") == "true") {
 }
 
 android {
+    namespace "com.getcapacitor.android"
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 33
     defaultConfig {
         minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 22
@@ -59,6 +60,7 @@ android {
         baseline file("lint-baseline.xml")
         abortOnError true
         warningsAsErrors true
+        lintConfig file('lint.xml')
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
