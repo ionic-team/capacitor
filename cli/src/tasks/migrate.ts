@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
+import { writeFileSync, readFileSync, readdirSync, existsSync, removeSync } from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
 import { file } from 'tmp';
@@ -143,6 +143,11 @@ export async function migrateCommand(config: Config): Promise<void> {
         allDependencies['@capacitor/ios'] &&
         existsSync(config.ios.platformDirAbs)
       ) {
+        //Update icon to single 1024 x 1024 icon
+        await runTask('Update App Icon to only 1024 x 1024', () => {
+          return updateAppIcons(config)
+        })
+
         //Remove Podfile.lock from .gitignore
         await runTask('Remove Podfile.lock from iOS .gitignore', () => {
           return updateIosGitIgnore(
@@ -477,6 +482,60 @@ async function updateIosGitIgnore(filename: string) {
     }
   }
   writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
+}
+
+async function updateAppIcons(config: Config) {
+  const iconToKeep = "AppIcon-512@2x.png"
+  const contentsFile = "Contents.json"
+
+  const newContentsFileContents = `{
+    "images" : [
+      {
+        "filename" : "AppIcon-512@2x.png",
+        "idiom" : "universal",
+        "platform" : "ios",
+        "size" : "1024x1024"
+      }
+    ],
+    "info" : {
+      "author" : "xcode",
+      "version" : 1
+    }
+}`
+
+  const path = join(config.ios.platformDirAbs, 'App', 'App', 'Assets.xcassets', 'AppIcon.appiconset')
+
+  try {
+    if (!existsSync(path)) {
+      logger.error(`Unable to find ${path}. Try updating it manually`);
+      return;
+    }
+
+    if (!existsSync(join(path, iconToKeep))) {
+      logger.error(`Unable to find ${iconToKeep}. Try updating it manually`);
+      return;
+    }
+
+    if (!existsSync(join(path, contentsFile))) {
+      logger.error(`Unable to find ${path}. Try updating it manually`);
+      return;
+    }
+
+    const filenames = readdirSync(path)
+
+    for (const filename of filenames) {
+      if (filename != iconToKeep && filename != contentsFile) {
+        removeSync(join(path, filename))
+      }
+    }
+
+    writeFileSync(join(path, contentsFile), newContentsFileContents)
+
+  } catch (err) {
+    logger.error(
+      `Updating the App Icon failed: ${err}`,
+    );
+  }
 }
 
 async function updateGradleProperties(filename: string) {
