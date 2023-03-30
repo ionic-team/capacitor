@@ -27,8 +27,6 @@ import org.json.JSONObject;
 
 public class HttpRequestHandler {
 
-    public static Bridge bridge = null;
-
     /**
      * An enum specifying conventional HTTP Response Types
      * See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
@@ -370,7 +368,8 @@ public class HttpRequestHandler {
      * @throws URISyntaxException thrown when the URI is malformed
      * @throws JSONException thrown when the incoming JSON is malformed
      */
-    public static JSObject request(PluginCall call, String httpMethod) throws IOException, URISyntaxException, JSONException {
+    public static JSObject request(PluginCall call, String httpMethod, Bridge bridge)
+        throws IOException, URISyntaxException, JSONException {
         String urlString = call.getString("url", "");
         JSObject headers = call.getObject("headers", new JSObject());
         JSObject params = call.getObject("params", new JSObject());

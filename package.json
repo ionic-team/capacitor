@@ -42,5 +42,6 @@
   },
   "dependencies": {
     "pako": "^2.1.0"
+    "rimraf": "^4.4.1"
   }
 }
