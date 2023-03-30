@@ -41,7 +41,7 @@
     "@types/pako": "^2.0.0"
   },
   "dependencies": {
-    "pako": "^2.1.0"
+    "pako": "^2.1.0",
     "rimraf": "^4.4.1"
   }
 }
