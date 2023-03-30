@@ -61,6 +61,10 @@ export async function migrateCommand(config: Config): Promise<void> {
     fatal('Config data missing');
   }
 
+  if (!checkCapacitorMajorVersion(config, "4")) {
+    fatal(`This script requires Capacitor 4 only`)
+  }
+
   const variablesAndClasspaths:
     | {
         'variables': any;
@@ -306,6 +310,21 @@ export async function migrateCommand(config: Config): Promise<void> {
     fatal(`User canceled migration.`);
   }
   //*/
+}
+
+function checkCapacitorMajorVersion(config: Config, checkVersion: string): boolean {
+  const pkgJsonPath = join(config.app.rootDir, 'package.json');
+  const pkgJsonFile = readFile(pkgJsonPath);
+  if (!pkgJsonFile) {
+    return false;
+  }
+  const pkgJson: any = JSON.parse(pkgJsonFile);
+
+  const capacitorVersionString = pkgJson['dependencies']['@capacitor/core'] as string
+
+  const capacitorVersion = capacitorVersionString.match(/\^?([0-9]+)\.([0-9]+)\.([0-9]+)/) ?? []
+
+  return capacitorVersion[1] == checkVersion
 }
 
 async function installLatestLibs(
