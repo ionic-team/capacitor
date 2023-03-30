@@ -1,6 +1,7 @@
 import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
+import { file } from 'tmp';
 
 import c from '../colors';
 import { runTask } from '../common';
@@ -46,8 +47,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^5.0.0';
-const pluginVersion = '^5.0.0';
+const coreVersion = 'next'; // TODO: Update when Capacitor 5 releases
+const pluginVersion = 'next'; // TODO: Update when Capacitor 5 releases
 const gradleVersion = '7.5';
 
 export async function migrateCommand(config: Config): Promise<void> {
@@ -137,6 +138,22 @@ export async function migrateCommand(config: Config): Promise<void> {
         );
       }
 
+      // Update iOS Projects
+      if (
+        allDependencies['@capacitor/ios'] &&
+        existsSync(config.ios.platformDirAbs)
+      ) {
+        console.log("eslint - shush")
+        //Update icon to single 1024 x 1024 icon
+
+        //Remove Podfile.lock from .gitignore
+        await runTask('Remove Podfile.lock from iOS .gitignore', () => {
+          return updateIosGitIgnore(
+            join(config.ios.platformDirAbs, '.gitignore')
+          )
+        })
+      }
+
       if (
         allDependencies['@capacitor/android'] &&
         existsSync(config.android.platformDirAbs)
@@ -147,6 +164,16 @@ export async function migrateCommand(config: Config): Promise<void> {
             variablesAndClasspaths,
           );
         });
+
+        // Remove enableJetifier
+         await runTask('Remove android.enableJetifier=true from gradle.properties', () => {
+            return updateGradleProperties(
+              join(
+              config.android.platformDirAbs, 
+              'gradle.properties',
+              )
+            )
+         })
 
         // Update gradle-wrapper.properties
         await runTask(
@@ -307,7 +334,7 @@ async function installLatestLibs(
 
   if (runInstall) {
     rimraf.sync(join(config.app.rootDir, 'node_modules/@capacitor/!(cli)'));
-    const test = await runCommand(dependencyManager, ['install']);
+    await runCommand(dependencyManager, ['install']);
   } else {
     logger.info(
       `Please run an install command with your package manager of choice. (ex: yarn install)`,
@@ -435,6 +462,43 @@ async function updateGradleWrapperFiles(platformDir: string) {
       cwd: platformDir,
     },
   );
+}
+
+async function updateIosGitIgnore(filename: string) {
+  const txt = readFile(filename)
+  if (!txt) {
+    return;
+  }
+  const lines = txt.split('\n');
+  let linesToKeep = ''
+  for (const line of lines) {
+    // check for enableJetifier
+    const podfileMatch = (line.match(/.+Podfile\.lock/) || [])
+
+    if (podfileMatch.length == 0) {
+      linesToKeep += line + '\n'
+    }
+  }
+  writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
+}
+
+async function updateGradleProperties(filename: string) {
+  const txt = readFile(filename)
+  if (!txt) {
+    return;
+  }
+  const lines = txt.split('\n');
+  let linesToKeep = ''
+  for (const line of lines) {
+    // check for enableJetifier
+    const jetifierMatch = (line.match(/android\.enableJetifier\s*=\s*true/) || [])
+    const commentMatch = (line.match(/# Automatically convert third-party libraries to use AndroidX/) || [])
+
+    if (jetifierMatch.length == 0 && commentMatch.length == 0) {
+      linesToKeep += line + '\n'
+    }
+  }
+  writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
 }
 
 async function updateBuildGradle(
