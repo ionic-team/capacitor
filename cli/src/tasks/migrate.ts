@@ -143,9 +143,6 @@ export async function migrateCommand(config: Config): Promise<void> {
         allDependencies['@capacitor/ios'] &&
         existsSync(config.ios.platformDirAbs)
       ) {
-        console.log("eslint - shush")
-        //Update icon to single 1024 x 1024 icon
-
         //Remove Podfile.lock from .gitignore
         await runTask('Remove Podfile.lock from iOS .gitignore', () => {
           return updateIosGitIgnore(
