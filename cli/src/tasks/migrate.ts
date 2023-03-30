@@ -1,4 +1,10 @@
-import { writeFileSync, readFileSync, readdirSync, existsSync, removeSync } from '@ionic/utils-fs';
+import {
+  writeFileSync,
+  readFileSync,
+  readdirSync,
+  existsSync,
+  removeSync,
+} from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
 import { file } from 'tmp';
@@ -145,15 +151,15 @@ export async function migrateCommand(config: Config): Promise<void> {
       ) {
         //Update icon to single 1024 x 1024 icon
         await runTask('Update App Icon to only 1024 x 1024', () => {
-          return updateAppIcons(config)
-        })
+          return updateAppIcons(config);
+        });
 
         //Remove Podfile.lock from .gitignore
         await runTask('Remove Podfile.lock from iOS .gitignore', () => {
           return updateIosGitIgnore(
-            join(config.ios.platformDirAbs, '.gitignore')
-          )
-        })
+            join(config.ios.platformDirAbs, '.gitignore'),
+          );
+        });
       }
 
       if (
@@ -168,14 +174,14 @@ export async function migrateCommand(config: Config): Promise<void> {
         });
 
         // Remove enableJetifier
-         await runTask('Remove android.enableJetifier=true from gradle.properties', () => {
+        await runTask(
+          'Remove android.enableJetifier=true from gradle.properties',
+          () => {
             return updateGradleProperties(
-              join(
-              config.android.platformDirAbs, 
-              'gradle.properties',
-              )
-            )
-         })
+              join(config.android.platformDirAbs, 'gradle.properties'),
+            );
+          },
+        );
 
         // Update gradle-wrapper.properties
         await runTask(
@@ -467,26 +473,26 @@ async function updateGradleWrapperFiles(platformDir: string) {
 }
 
 async function updateIosGitIgnore(filename: string) {
-  const txt = readFile(filename)
+  const txt = readFile(filename);
   if (!txt) {
     return;
   }
   const lines = txt.split('\n');
-  let linesToKeep = ''
+  let linesToKeep = '';
   for (const line of lines) {
     // check for enableJetifier
-    const podfileMatch = (line.match(/.+Podfile\.lock/) || [])
+    const podfileMatch = line.match(/.+Podfile\.lock/) || [];
 
     if (podfileMatch.length == 0) {
-      linesToKeep += line + '\n'
+      linesToKeep += line + '\n';
     }
   }
   writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
 }
 
 async function updateAppIcons(config: Config) {
-  const iconToKeep = "AppIcon-512@2x.png"
-  const contentsFile = "Contents.json"
+  const iconToKeep = 'AppIcon-512@2x.png';
+  const contentsFile = 'Contents.json';
 
   const newContentsFileContents = `{
     "images" : [
@@ -501,9 +507,15 @@ async function updateAppIcons(config: Config) {
       "author" : "xcode",
       "version" : 1
     }
-}`
+}`;
 
-  const path = join(config.ios.platformDirAbs, 'App', 'App', 'Assets.xcassets', 'AppIcon.appiconset')
+  const path = join(
+    config.ios.platformDirAbs,
+    'App',
+    'App',
+    'Assets.xcassets',
+    'AppIcon.appiconset',
+  );
 
   try {
     if (!existsSync(path)) {
@@ -521,37 +533,38 @@ async function updateAppIcons(config: Config) {
       return;
     }
 
-    const filenames = readdirSync(path)
+    const filenames = readdirSync(path);
 
     for (const filename of filenames) {
       if (filename != iconToKeep && filename != contentsFile) {
-        removeSync(join(path, filename))
+        removeSync(join(path, filename));
       }
     }
 
-    writeFileSync(join(path, contentsFile), newContentsFileContents)
-
+    writeFileSync(join(path, contentsFile), newContentsFileContents);
   } catch (err) {
-    logger.error(
-      `Updating the App Icon failed: ${err}`,
-    );
+    logger.error(`Updating the App Icon failed: ${err}`);
   }
 }
 
 async function updateGradleProperties(filename: string) {
-  const txt = readFile(filename)
+  const txt = readFile(filename);
   if (!txt) {
     return;
   }
   const lines = txt.split('\n');
-  let linesToKeep = ''
+  let linesToKeep = '';
   for (const line of lines) {
     // check for enableJetifier
-    const jetifierMatch = (line.match(/android\.enableJetifier\s*=\s*true/) || [])
-    const commentMatch = (line.match(/# Automatically convert third-party libraries to use AndroidX/) || [])
+    const jetifierMatch =
+      line.match(/android\.enableJetifier\s*=\s*true/) || [];
+    const commentMatch =
+      line.match(
+        /# Automatically convert third-party libraries to use AndroidX/,
+      ) || [];
 
     if (jetifierMatch.length == 0 && commentMatch.length == 0) {
-      linesToKeep += line + '\n'
+      linesToKeep += line + '\n';
     }
   }
   writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
