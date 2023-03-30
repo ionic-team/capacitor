@@ -7,7 +7,6 @@ import {
 } from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
-import { file } from 'tmp';
 
 import c from '../colors';
 import { runTask } from '../common';
