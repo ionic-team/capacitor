@@ -954,19 +954,26 @@ export async function writeCordovaAndroidManifest(
                           }
                         }
                       } else {
-                        let foundRequiredElement = false;
-                        for (const existingElementItem of existingElement.children) {
-                          const foundRequiredElementIn = doesElementMatch(
-                            requiredElement,
-                            existingElementItem,
-                          );
-                          if (foundRequiredElementIn) {
-                            foundRequiredElement = true;
-                            break;
+                        if (
+                          requiredElement.children === undefined &&
+                          existingElement.children === undefined
+                        ) {
+                          return true;
+                        } else {
+                          let foundRequiredElement = false;
+                          for (const existingElementItem of existingElement.children) {
+                            const foundRequiredElementIn = doesElementMatch(
+                              requiredElement,
+                              existingElementItem,
+                            );
+                            if (foundRequiredElementIn) {
+                              foundRequiredElement = true;
+                              break;
+                            }
                           }
-                        }
-                        if (!foundRequiredElement) {
-                          return false;
+                          if (!foundRequiredElement) {
+                            return false;
+                          }
                         }
                       }
                     }
