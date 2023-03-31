@@ -121,7 +121,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         typeof depInstallConfirm === 'string' &&
         depInstallConfirm.toLowerCase() === 'y';
 
-      let installerType = 'npm'
+      let installerType = 'npm';
       if (runNpmInstall) {
         const { manager } = await logPrompt(
           'What dependency manager do you use?',
@@ -137,7 +137,7 @@ export async function migrateCommand(config: Config): Promise<void> {
             initial: 0,
           },
         );
-        installerType = manager
+        installerType = manager;
       }
 
       try {
