@@ -61,9 +61,11 @@ export async function migrateCommand(config: Config): Promise<void> {
     fatal('Config data missing');
   }
 
-  const capMajor = await checkCapacitorMajorVersion(config)
+  const capMajor = await checkCapacitorMajorVersion(config);
   if (capMajor < 4) {
-    fatal("Migrate can only be used on capacitor 4 and above, please use the CLI in Capacitor 4 to upgrade to 4 first")
+    fatal(
+      'Migrate can only be used on capacitor 4 and above, please use the CLI in Capacitor 4 to upgrade to 4 first',
+    );
   }
 
   const variablesAndClasspaths:
@@ -314,10 +316,11 @@ export async function migrateCommand(config: Config): Promise<void> {
 }
 
 async function checkCapacitorMajorVersion(config: Config): Promise<number> {
-  const capacitorVersion = await getCoreVersion(config)
-  const versionArray = capacitorVersion.match(/([0-9]+)\.([0-9]+)\.([0-9]+)/) ?? [];
-  const majorVersion = parseInt(versionArray[1])
-  return majorVersion
+  const capacitorVersion = await getCoreVersion(config);
+  const versionArray =
+    capacitorVersion.match(/([0-9]+)\.([0-9]+)\.([0-9]+)/) ?? [];
+  const majorVersion = parseInt(versionArray[1]);
+  return majorVersion;
 }
 
 async function installLatestLibs(
