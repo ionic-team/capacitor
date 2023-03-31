@@ -517,7 +517,7 @@ async function updateAppIcons(config: Config) {
   const newContentsFileContents = `{
     "images" : [
       {
-        "filename" : "AppIcon-512@2x.png",
+        "filename" : "${iconToKeep}",
         "idiom" : "universal",
         "platform" : "ios",
         "size" : "1024x1024"
@@ -537,34 +537,30 @@ async function updateAppIcons(config: Config) {
     'AppIcon.appiconset',
   );
 
-  try {
-    if (!existsSync(path)) {
-      logger.error(`Unable to find ${path}. Try updating it manually`);
-      return;
-    }
-
-    if (!existsSync(join(path, iconToKeep))) {
-      logger.error(`Unable to find ${iconToKeep}. Try updating it manually`);
-      return;
-    }
-
-    if (!existsSync(join(path, contentsFile))) {
-      logger.error(`Unable to find ${path}. Try updating it manually`);
-      return;
-    }
-
-    const filenames = readdirSync(path);
-
-    for (const filename of filenames) {
-      if (filename != iconToKeep && filename != contentsFile) {
-        removeSync(join(path, filename));
-      }
-    }
-
-    writeFileSync(join(path, contentsFile), newContentsFileContents);
-  } catch (err) {
-    logger.error(`Updating the App Icon failed: ${err}`);
+  if (!existsSync(path)) {
+    logger.error(`Unable to find ${path}. Try updating it manually`);
+    return;
   }
+
+  if (!existsSync(join(path, iconToKeep))) {
+    logger.error(`Unable to find ${iconToKeep}. Try updating it manually`);
+    return;
+  }
+
+  if (!existsSync(join(path, contentsFile))) {
+    logger.error(`Unable to find ${path}. Try updating it manually`);
+    return;
+  }
+
+  const filenames = readdirSync(path);
+
+  for (const filename of filenames) {
+    if (filename != iconToKeep && filename != contentsFile) {
+      removeSync(join(path, filename));
+    }
+  }
+
+  writeFileSync(join(path, contentsFile), newContentsFileContents);
 }
 
 async function updateGradleProperties(filename: string) {
