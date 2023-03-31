@@ -10,7 +10,6 @@ import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
 import { runCommand, getCommandOutput } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
-import { readXML } from '../util/xml';
 
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
@@ -40,15 +39,16 @@ const plugins = [
   '@capacitor/preferences',
   '@capacitor/push-notifications',
   '@capacitor/screen-reader',
+  '@capacitor/screen-orientation',
   '@capacitor/share',
   '@capacitor/splash-screen',
   '@capacitor/status-bar',
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^4.0.0';
-const pluginVersion = '^4.0.0';
-const gradleVersion = '7.4.2';
+const coreVersion = '^5.0.0';
+const pluginVersion = '^5.0.0';
+const gradleVersion = '7.5';
 
 export async function migrateCommand(config: Config): Promise<void> {
   if (config === null) {
@@ -61,7 +61,7 @@ export async function migrateCommand(config: Config): Promise<void> {
         'com.android.tools.build:gradle': string;
         'com.google.gms:google-services': string;
       }
-    | undefined = await getAndroidVarriablesAndClasspaths(config);
+    | undefined = await getAndroidVariablesAndClasspaths(config);
 
   if (!variablesAndClasspaths) {
     fatal('Variable and Classpath info could not be read.');
@@ -80,7 +80,7 @@ export async function migrateCommand(config: Config): Promise<void> {
   logger.info(monorepoWarning);
 
   const { migrateconfirm } = await logPrompt(
-    `Capacitor 4 sets a deployment target of iOS 13 and Android 12 (SDK 32). \n`,
+    `Capacitor 5 sets a deployment target of iOS 13 and Android 13 (SDK 33). \n`,
     {
       type: 'text',
       name: 'migrateconfirm',
@@ -94,160 +94,63 @@ export async function migrateCommand(config: Config): Promise<void> {
     migrateconfirm.toLowerCase() === 'y'
   ) {
     try {
-      const { npmInstallConfirm } = await logPrompt(
-        `Would you like the migrator to run npm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
+      const { depInstallConfirm } = await logPrompt(
+        `Would you like the migrator to run npm, yarn, or pnpm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
         {
           type: 'text',
-          name: 'npmInstallConfirm',
-          message: `Run Npm Install? (Y/n)`,
+          name: 'depInstallConfirm',
+          message: `Run Dependency Install? (Y/n)`,
           initial: 'y',
         },
       );
+      const { installerType } = await logPrompt(
+        'What dependency manager do you use?',
+        {
+          type: 'select',
+          name: 'installerType',
+          message: `Dependency Management Tool`,
+          choices: [
+            { title: 'NPM', value: 'npm' },
+            { title: 'Yarn', value: 'yarn' },
+            { title: 'PNPM', value: 'pnpm' },
+          ],
+          initial: 0,
+        },
+      );
       const runNpmInstall =
-        typeof npmInstallConfirm === 'string' &&
-        npmInstallConfirm.toLowerCase() === 'y';
-
-      try {
-        await runTask(`Installing Latest NPM Modules.`, () => {
-          return installLatestNPMLibs(runNpmInstall, config);
-        });
-      } catch (ex) {
-        logger.error(
-          `npm install failed. Try deleting node_modules folder and running ${c.input(
-            'npm install --force',
-          )} manually.`,
-        );
-      }
+        typeof depInstallConfirm === 'string' &&
+        depInstallConfirm.toLowerCase() === 'y';
 
       try {
         await runTask(
-          `Migrating @capacitor/storage to @capacitor/preferences.`,
+          `Installing Latest Modules using ${installerType}.`,
           () => {
-            return migrateStoragePluginToPreferences(runNpmInstall);
+            return installLatestLibs(installerType, runNpmInstall, config);
           },
         );
       } catch (ex) {
+        console.log(ex);
         logger.error(
-          `@capacitor/preferences failed to install. Try deleting node_modules folder and running ${c.input(
-            'npm install @capacitor/preferences --force',
+          `${installerType} install failed. Try deleting node_modules folder and running ${c.input(
+            `${installerType} install --force`,
           )} manually.`,
         );
-      }
-
-      if (
-        allDependencies['@capacitor/ios'] &&
-        existsSync(config.ios.platformDirAbs)
-      ) {
-        // Set deployment target to 13.0
-        await runTask(`Migrating deployment target to 13.0.`, () => {
-          return updateFile(
-            config,
-            join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'),
-            'IPHONEOS_DEPLOYMENT_TARGET = ',
-            ';',
-            '13.0',
-          );
-        });
-
-        // Update Podfile to 13.0
-        await runTask(`Migrating Podfile to 13.0.`, () => {
-          return updateFile(
-            config,
-            join(config.ios.nativeProjectDirAbs, 'Podfile'),
-            `platform :ios, '`,
-            `'`,
-            '13.0',
-          );
-        });
-
-        await runTask(`Migrating Podfile to use post_install script.`, () => {
-          return podfileAssertDeploymentTarget(
-            join(config.ios.nativeProjectDirAbs, 'Podfile'),
-          );
-        });
-
-        // Remove touchesBegan
-        await runTask(
-          `Migrating AppDelegate.swift by removing touchesBegan.`,
-          () => {
-            return updateFile(
-              config,
-              join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift'),
-              `override func touchesBegan`,
-              `}`,
-              undefined,
-              true,
-            );
-          },
-        );
-
-        // Remove NSAppTransportSecurity
-        await runTask(
-          `Migrating Info.plist by removing NSAppTransportSecurity key.`,
-          () => {
-            return removeKey(
-              join(config.ios.nativeTargetDirAbs, 'Info.plist'),
-              'NSAppTransportSecurity',
-            );
-          },
-        );
-
-        // Remove USE_PUSH
-        await runTask(`Migrating by removing USE_PUSH.`, () => {
-          return replacePush(
-            join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'),
-          );
-        });
-
-        // Remove from App Delegate
-        await runTask(`Migrating App Delegate.`, () => {
-          return replaceIfUsePush(config);
-        });
       }
 
       if (
         allDependencies['@capacitor/android'] &&
         existsSync(config.android.platformDirAbs)
       ) {
-        // AndroidManifest.xml add attribute: <activity android:exported="true"
-        await runTask(
-          `Migrating AndroidManifest.xml by adding android:exported attribute to Activity.`,
-          () => {
-            return updateAndroidManifest(
-              join(config.android.srcMainDirAbs, 'AndroidManifest.xml'),
-            );
-          },
-        );
-
-        // Update build.gradle
-        const { leaveJCenterPrompt } = await logPrompt(
-          `Some projects still require JCenter to function. If your project does, please answer yes below.`,
-          {
-            type: 'text',
-            name: 'leaveJCenterPrompt',
-            message: `Keep JCenter if present? (y/N)`,
-            initial: 'n',
-          },
-        );
         await runTask(`Migrating build.gradle file.`, () => {
           return updateBuildGradle(
             join(config.android.platformDirAbs, 'build.gradle'),
-            typeof leaveJCenterPrompt === 'string' &&
-              leaveJCenterPrompt.toLowerCase() === 'y',
             variablesAndClasspaths,
-          );
-        });
-
-        // Update app.gradle
-        await runTask(`Migrating app/build.gradle file.`, () => {
-          return updateAppBuildGradle(
-            join(config.android.appDirAbs, 'build.gradle'),
           );
         });
 
         // Update gradle-wrapper.properties
         await runTask(
-          `Migrating gradle-wrapper.properties by updating gradle version from 7.0 to ${gradleVersion}.`,
+          `Migrating gradle-wrapper.properties by updating gradle version to ${gradleVersion}.`,
           () => {
             return updateGradleWrapper(
               join(
@@ -309,11 +212,11 @@ export async function migrateCommand(config: Config): Promise<void> {
               }
             }
             const pluginVariables: { [key: string]: string } = {
-              firebaseMessagingVersion: '23.0.5',
-              playServicesLocationVersion: '20.0.0',
-              androidxBrowserVersion: '1.4.0',
-              androidxMaterialVersion: '1.6.1',
-              androidxExifInterfaceVersion: '1.3.3',
+              firebaseMessagingVersion: '23.1.2',
+              playServicesLocationVersion: '21.0.1',
+              androidxBrowserVersion: '1.5.0',
+              androidxMaterialVersion: '1.8.0',
+              androidxExifInterfaceVersion: '1.3.6',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(
@@ -328,20 +231,7 @@ export async function migrateCommand(config: Config): Promise<void> {
           })();
         });
 
-        // remove init
-        await runTask('Migrating MainActivity', () => {
-          return migrateMainActivity(config);
-        });
-
         rimraf.sync(join(config.android.appDirAbs, 'build'));
-
-        // add new splashscreen
-        await runTask(
-          'Migrate to Android 12 Splashscreen and apply DayNight theme.',
-          () => {
-            return addNewSplashScreen(config);
-          },
-        );
       }
 
       // Run Cap Sync
@@ -384,7 +274,11 @@ export async function migrateCommand(config: Config): Promise<void> {
   //*/
 }
 
-async function installLatestNPMLibs(runInstall: boolean, config: Config) {
+async function installLatestLibs(
+  dependencyManager: string,
+  runInstall: boolean,
+  config: Config,
+) {
   const pkgJsonPath = join(config.app.rootDir, 'package.json');
   const pkgJsonFile = readFile(pkgJsonPath);
   if (!pkgJsonFile) {
@@ -413,7 +307,7 @@ async function installLatestNPMLibs(runInstall: boolean, config: Config) {
 
   if (runInstall) {
     rimraf.sync(join(config.app.rootDir, 'node_modules/@capacitor/!(cli)'));
-    await runCommand('npm', ['i']);
+    const test = await runCommand(dependencyManager, ['install']);
   } else {
     logger.info(
       `Please run an install command with your package manager of choice. (ex: yarn install)`,
@@ -421,29 +315,8 @@ async function installLatestNPMLibs(runInstall: boolean, config: Config) {
   }
 }
 
-async function migrateStoragePluginToPreferences(runInstall: boolean) {
-  if (allDependencies['@capacitor/storage']) {
-    logger.info(
-      'NOTE: @capacitor/storage was renamed to @capacitor/preferences, please be sure to replace occurances in your code.',
-    );
-    if (runInstall) {
-      await getCommandOutput('npm', ['uninstall', '@capacitor/storage']);
-      await runCommand('npm', ['i', `@capacitor/preferences@${pluginVersion}`]);
-    } else {
-      logger.info(
-        `Please manually uninstall @capacitor/storage and replace it with @capacitor/preferences@${pluginVersion}`,
-      );
-    }
-  }
-}
-
 async function writeBreakingChanges() {
-  const breaking = [
-    '@capacitor/storage',
-    '@capacitor/camera',
-    '@capacitor/push-notifications',
-    '@capacitor/local-notifications',
-  ];
+  const breaking = ['@capacitor/device'];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
@@ -452,135 +325,14 @@ async function writeBreakingChanges() {
   }
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/updating/4-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
   }
-  if (allDependencies['@capacitor/android']) {
-    logger.info(
-      'Warning: The Android Gradle plugin was updated and it requires Java 11 to run. You may need to select this in Android Studio.',
-    );
-  }
 }
 
-async function updateAndroidManifest(filename: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-
-  const hasAndroidExportedAlreadySet = new RegExp(
-    /<activity([^>]*(android:exported=")[^>]*)>/g,
-  ).test(txt);
-  let isAndroidExportedSetToFalse = false;
-  if (hasAndroidExportedAlreadySet) {
-    isAndroidExportedSetToFalse = new RegExp(
-      /<activity([^>]*(android:exported="false")[^>]*)>/g,
-    ).test(txt);
-  }
-
-  // AndroidManifest.xml add attribute: <activity android:exported="true"
-  if (hasAndroidExportedAlreadySet && !isAndroidExportedSetToFalse) {
-    return; // Probably already updated manually
-  }
-  let replaced = txt;
-  if (!hasAndroidExportedAlreadySet) {
-    replaced = setAllStringIn(
-      txt,
-      '<activity',
-      ' ',
-      `\n            android:exported="true"\n`,
-    );
-  } else {
-    logger.info(
-      `Found 'android:exported="false"' in your AndroidManifest.xml, if this is not intentional please update it manually to "true".`,
-    );
-  }
-  if (txt == replaced) {
-    logger.error(`Unable to update Android Manifest. Missing <activity> tag`);
-    return;
-  }
-  writeFileSync(filename, replaced, 'utf-8');
-}
-
-async function updateBuildGradle(
-  filename: string,
-  leaveJCenter: boolean,
-  variablesAndClasspaths: {
-    'variables': any;
-    'com.android.tools.build:gradle': string;
-    'com.google.gms:google-services': string;
-  },
-) {
-  // In build.gradle add dependencies:
-  // classpath 'com.android.tools.build:gradle:7.2.1'
-  // classpath 'com.google.gms:google-services:4.3.13'
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  const neededDeps: { [key: string]: string } = {
-    'com.android.tools.build:gradle':
-      variablesAndClasspaths['com.android.tools.build:gradle'],
-    'com.google.gms:google-services':
-      variablesAndClasspaths['com.google.gms:google-services'],
-  };
-  let replaced = txt;
-
-  for (const dep of Object.keys(neededDeps)) {
-    if (replaced.includes(`classpath '${dep}`)) {
-      const semver = await import('semver');
-      const firstIndex = replaced.indexOf(dep) + dep.length + 1;
-      const existingVersion =
-        '' + replaced.substring(firstIndex, replaced.indexOf("'", firstIndex));
-      if (semver.gte(neededDeps[dep], existingVersion)) {
-        replaced = setAllStringIn(
-          replaced,
-          `classpath '${dep}:`,
-          `'`,
-          neededDeps[dep],
-        );
-        logger.info(`Set ${dep} = ${neededDeps[dep]}.`);
-      }
-    }
-  }
-
-  // Replace jcenter()
-  const lines = replaced.split('\n');
-  let inRepositories = false;
-  let hasMavenCentral = false;
-  let final = '';
-  for (const line of lines) {
-    if (line.includes('repositories {')) {
-      inRepositories = true;
-      hasMavenCentral = false;
-    } else if (line.trim() == '}') {
-      // Make sure we have mavenCentral()
-      if (inRepositories && !hasMavenCentral) {
-        final += '        mavenCentral()\n';
-        logger.info(`Added mavenCentral().`);
-      }
-      inRepositories = false;
-    }
-    if (inRepositories && line.trim() === 'mavenCentral()') {
-      hasMavenCentral = true;
-    }
-    if (inRepositories && line.trim() === 'jcenter()' && !leaveJCenter) {
-      // skip jCentral()
-      logger.info(`Removed jcenter().`);
-    } else {
-      final += line + '\n';
-    }
-  }
-
-  if (txt !== final) {
-    writeFileSync(filename, final, 'utf-8');
-    return;
-  }
-}
-
-async function getAndroidVarriablesAndClasspaths(config: Config) {
+async function getAndroidVariablesAndClasspaths(config: Config) {
   const tempAndroidTemplateFolder = join(
     config.cli.assetsDirAbs,
     'tempAndroidTemplate',
@@ -652,30 +404,6 @@ function readFile(filename: string): string | undefined {
   }
 }
 
-async function updateAppBuildGradle(filename: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  let replaced = txt;
-  if (!txt.includes('androidx.coordinatorlayout:coordinatorlayout:')) {
-    replaced = replaced.replace(
-      'dependencies {',
-      'dependencies {\n    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"',
-    );
-  }
-  if (!txt.includes('androidx.core:core-splashscreen:')) {
-    replaced = replaced.replace(
-      'dependencies {',
-      'dependencies {\n    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"',
-    );
-  }
-  // const lines = txt.split('\n');
-  if (replaced !== txt) {
-    writeFileSync(filename, replaced, 'utf-8');
-  }
-}
-
 async function updateGradleWrapper(filename: string) {
   const txt = readFile(filename);
   if (!txt) {
@@ -707,6 +435,48 @@ async function updateGradleWrapperFiles(platformDir: string) {
       cwd: platformDir,
     },
   );
+}
+
+async function updateBuildGradle(
+  filename: string,
+  variablesAndClasspaths: {
+    'variables': any;
+    'com.android.tools.build:gradle': string;
+    'com.google.gms:google-services': string;
+  },
+) {
+  // In build.gradle add dependencies:
+  // classpath 'com.android.tools.build:gradle:7.4.1'
+  // classpath 'com.google.gms:google-services:4.3.13'
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+  const neededDeps: { [key: string]: string } = {
+    'com.android.tools.build:gradle':
+      variablesAndClasspaths['com.android.tools.build:gradle'],
+    'com.google.gms:google-services':
+      variablesAndClasspaths['com.google.gms:google-services'],
+  };
+  let replaced = txt;
+
+  for (const dep of Object.keys(neededDeps)) {
+    if (replaced.includes(`classpath '${dep}`)) {
+      const semver = await import('semver');
+      const firstIndex = replaced.indexOf(dep) + dep.length + 1;
+      const existingVersion =
+        '' + replaced.substring(firstIndex, replaced.indexOf("'", firstIndex));
+      if (semver.gte(neededDeps[dep], existingVersion)) {
+        replaced = setAllStringIn(
+          replaced,
+          `classpath '${dep}:`,
+          `'`,
+          neededDeps[dep],
+        );
+        logger.info(`Set ${dep} = ${neededDeps[dep]}.`);
+      }
+    }
+  }
 }
 
 async function updateFile(
@@ -784,238 +554,4 @@ function setAllStringIn(
     }
   }
   return result;
-}
-
-async function replaceIfUsePush(config: Config) {
-  const startLine = '#if USE_PUSH';
-  const endLine = '#endif';
-  const filename = join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift');
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  const lines = txt.split('\n');
-  let startLineIndex: number | null = null;
-  let endLineIndex: number | null = null;
-  for (const [key, item] of lines.entries()) {
-    if (item.includes(startLine)) {
-      startLineIndex = key;
-      break;
-    }
-  }
-  if (startLineIndex !== null) {
-    for (const [key, item] of lines.entries()) {
-      if (item.includes(endLine) && key > startLineIndex) {
-        endLineIndex = key;
-        break;
-      }
-    }
-    if (endLineIndex !== null) {
-      lines[endLineIndex] = '';
-      lines[startLineIndex] = '';
-      writeFileSync(filename, lines.join('\n'), 'utf-8');
-    }
-  }
-}
-
-async function replacePush(filename: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  let replaced = txt;
-  replaced = replaced.replace('DEBUG USE_PUSH', 'DEBUG');
-  replaced = replaced.replace('USE_PUSH', '""');
-  if (replaced != txt) {
-    writeFileSync(filename, replaced, 'utf-8');
-  }
-}
-
-async function removeKey(filename: string, key: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  let lines = txt.split('\n');
-  let removed = false;
-  let removing = false;
-  lines = lines.filter(line => {
-    if (removing && line.includes('</dict>')) {
-      removing = false;
-      return false;
-    }
-    if (line.includes(`<key>${key}</key`)) {
-      removing = true;
-      removed = true;
-    }
-    return !removing;
-  });
-
-  if (removed) {
-    writeFileSync(filename, lines.join('\n'), 'utf-8');
-  }
-}
-
-async function podfileAssertDeploymentTarget(filename: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  let replaced = txt;
-  if (
-    !replaced.includes(
-      `require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers`,
-    )
-  ) {
-    replaced =
-      `require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'\n\n` +
-      txt;
-  }
-  if (replaced.includes('post_install do |installer|')) {
-    if (!replaced.includes(`assertDeploymentTarget(installer)`)) {
-      replaced = replaced.replace(
-        'post_install do |installer|',
-        `post_install do |installer|\n  assertDeploymentTarget(installer)\n`,
-      );
-    }
-  } else {
-    replaced =
-      replaced +
-      `\n\npost_install do |installer|\n  assertDeploymentTarget(installer)\nend\n`;
-  }
-  writeFileSync(filename, replaced, 'utf-8');
-}
-
-async function migrateMainActivity(config: Config) {
-  const xmlData = await readXML(
-    join(config.android.srcMainDirAbs, 'AndroidManifest.xml'),
-  );
-  const manifestNode: any = xmlData.manifest;
-  const applicationChildNodes: any[] = manifestNode.application;
-  let mainActivityClassPath = '';
-  applicationChildNodes.find(applicationChildNode => {
-    const activityChildNodes: any[] = applicationChildNode.activity;
-    if (!Array.isArray(activityChildNodes)) {
-      return false;
-    }
-
-    const mainActivityNode = activityChildNodes.find(activityChildNode => {
-      const intentFilterChildNodes: any[] = activityChildNode['intent-filter'];
-      if (!Array.isArray(intentFilterChildNodes)) {
-        return false;
-      }
-
-      return intentFilterChildNodes.find(intentFilterChildNode => {
-        const actionChildNodes: any[] = intentFilterChildNode.action;
-        if (!Array.isArray(actionChildNodes)) {
-          return false;
-        }
-
-        const mainActionChildNode = actionChildNodes.find(actionChildNode => {
-          const androidName = actionChildNode.$['android:name'];
-          return androidName === 'android.intent.action.MAIN';
-        });
-
-        if (!mainActionChildNode) {
-          return false;
-        }
-
-        const categoryChildNodes: any[] = intentFilterChildNode.category;
-        if (!Array.isArray(categoryChildNodes)) {
-          return false;
-        }
-
-        return categoryChildNodes.find(categoryChildNode => {
-          const androidName = categoryChildNode.$['android:name'];
-          return androidName === 'android.intent.category.LAUNCHER';
-        });
-      });
-    });
-
-    if (mainActivityNode) {
-      mainActivityClassPath = mainActivityNode.$['android:name'];
-    }
-
-    return mainActivityNode;
-  });
-  const mainActivityClassName: any = mainActivityClassPath.split('.').pop();
-  const mainActivityPathArray = mainActivityClassPath.split('.');
-  mainActivityPathArray.pop();
-  const mainActivityClassFileName = `${mainActivityClassName}.java`;
-  const mainActivityClassFilePath = join(
-    join(config.android.srcMainDirAbs, 'java'),
-    ...mainActivityPathArray,
-    mainActivityClassFileName,
-  );
-
-  let data = readFile(mainActivityClassFilePath);
-
-  if (data) {
-    const bindex = data.indexOf('this.init(savedInstanceState');
-    if (bindex !== -1) {
-      const eindex = data.indexOf('}});', bindex) + 4;
-
-      data = data.replace(data.substring(bindex, eindex), '');
-
-      data = data.replace('// Initializes the Bridge', '');
-    }
-
-    const rindex = data.indexOf('registerPlugin');
-    const superLine = 'super.onCreate(savedInstanceState);';
-    if (rindex !== -1) {
-      if (data.indexOf(superLine) < rindex) {
-        const linePadding =
-          rindex - data.indexOf(superLine) - superLine.length - 1;
-        data = data.replace(`${superLine}\n${' '.repeat(linePadding)}`, '');
-        const eindex = data.lastIndexOf('.class);') + 8;
-        data = data.replace(
-          data.substring(bindex, eindex),
-          `${data.substring(bindex, eindex)}\n${
-            ' '.repeat(linePadding) + superLine.padStart(linePadding)
-          }`,
-        );
-      }
-    }
-
-    if (bindex == -1 && rindex == -1) {
-      return;
-    }
-
-    writeFileSync(mainActivityClassFilePath, data);
-  }
-}
-
-async function addNewSplashScreen(config: Config) {
-  const stylePath = join(
-    config.android.srcMainDirAbs,
-    'res',
-    'values',
-    'styles.xml',
-  );
-  let stylesXml = readFile(stylePath);
-
-  if (!stylesXml) return;
-
-  stylesXml = stylesXml.replace(
-    `parent="AppTheme.NoActionBar"`,
-    `parent="Theme.SplashScreen"`,
-  );
-
-  // revert wrong replaces
-  stylesXml = stylesXml.replace(
-    `name="Theme.SplashScreen"`,
-    `name="AppTheme.NoActionBar"`,
-  );
-  stylesXml = stylesXml.replace(
-    `name="Theme.SplashScreenLaunch"`,
-    `name="AppTheme.NoActionBarLaunch"`,
-  );
-
-  // Apply DayNight theme
-  stylesXml = stylesXml.replace(
-    `parent="Theme.AppCompat.NoActionBar"`,
-    `parent="Theme.AppCompat.DayNight.NoActionBar"`,
-  );
-
-  writeFileSync(stylePath, stylesXml);
 }
