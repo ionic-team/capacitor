@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.3](https://github.com/ionic-team/capacitor/compare/4.7.2...4.7.3) (2023-03-31)
+
+
+### Bug Fixes
+
+* **android:** remove stored references to bridge that holds it in memory ([#6448](https://github.com/ionic-team/capacitor/issues/6448)) ([#6455](https://github.com/ionic-team/capacitor/issues/6455)) ([8fa2d1c](https://github.com/ionic-team/capacitor/commit/8fa2d1c560321d9eb91edb1c81bf64f802289604))
+
+
+
+
+
 ## [4.7.2](https://github.com/ionic-team/capacitor/compare/4.7.1...4.7.2) (2023-03-31)
 
 
