@@ -116,23 +116,29 @@ export async function migrateCommand(config: Config): Promise<void> {
           initial: 'y',
         },
       );
-      const { installerType } = await logPrompt(
-        'What dependency manager do you use?',
-        {
-          type: 'select',
-          name: 'installerType',
-          message: `Dependency Management Tool`,
-          choices: [
-            { title: 'NPM', value: 'npm' },
-            { title: 'Yarn', value: 'yarn' },
-            { title: 'PNPM', value: 'pnpm' },
-          ],
-          initial: 0,
-        },
-      );
+
       const runNpmInstall =
         typeof depInstallConfirm === 'string' &&
         depInstallConfirm.toLowerCase() === 'y';
+
+      let installerType = 'npm'
+      if (runNpmInstall) {
+        const { manager } = await logPrompt(
+          'What dependency manager do you use?',
+          {
+            type: 'select',
+            name: 'manager',
+            message: `Dependency Management Tool`,
+            choices: [
+              { title: 'NPM', value: 'npm' },
+              { title: 'Yarn', value: 'yarn' },
+              { title: 'PNPM', value: 'pnpm' },
+            ],
+            initial: 0,
+          },
+        );
+        installerType = manager
+      }
 
       try {
         await runTask(
