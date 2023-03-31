@@ -9,7 +9,7 @@ import { join } from 'path';
 import rimraf from 'rimraf';
 
 import c from '../colors';
-import { runTask } from '../common';
+import { getCoreVersion, runTask } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger, logPrompt, logSuccess } from '../log';
@@ -61,8 +61,9 @@ export async function migrateCommand(config: Config): Promise<void> {
     fatal('Config data missing');
   }
 
-  if (!checkCapacitorMajorVersion(config, '4')) {
-    fatal(`This script requires Capacitor 4 only`);
+  const capMajor = await checkCapacitorMajorVersion(config)
+  if (capMajor < 4) {
+    fatal("Migrate can only be used on capacitor 4 and above, please use the CLI in Capacitor 4 to upgrade to 4 first")
   }
 
   const variablesAndClasspaths:
@@ -312,25 +313,11 @@ export async function migrateCommand(config: Config): Promise<void> {
   //*/
 }
 
-function checkCapacitorMajorVersion(
-  config: Config,
-  checkVersion: string,
-): boolean {
-  const pkgJsonPath = join(config.app.rootDir, 'package.json');
-  const pkgJsonFile = readFile(pkgJsonPath);
-  if (!pkgJsonFile) {
-    return false;
-  }
-  const pkgJson: any = JSON.parse(pkgJsonFile);
-
-  const capacitorVersionString = pkgJson['dependencies'][
-    '@capacitor/core'
-  ] as string;
-
-  const capacitorVersion =
-    capacitorVersionString.match(/\^?([0-9]+)\.([0-9]+)\.([0-9]+)/) ?? [];
-
-  return capacitorVersion[1] == checkVersion;
+async function checkCapacitorMajorVersion(config: Config): Promise<number> {
+  const capacitorVersion = await getCoreVersion(config)
+  const versionArray = capacitorVersion.match(/([0-9]+)\.([0-9]+)\.([0-9]+)/) ?? [];
+  const majorVersion = parseInt(versionArray[1])
+  return majorVersion
 }
 
 async function installLatestLibs(
