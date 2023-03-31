@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/5.0.0-alpha.1...5.0.0-beta.0) (2023-03-31)
+
+### Bug Fixes
+
+- 204 http response ([#6266](https://github.com/ionic-team/capacitor/issues/6266)) ([771f6ce](https://github.com/ionic-team/capacitor/commit/771f6ce1f35159848db218a42dc4f56b5106f750))
+- **android:** Allow WebView to load data urls ([#6418](https://github.com/ionic-team/capacitor/issues/6418)) ([daf2ec6](https://github.com/ionic-team/capacitor/commit/daf2ec64df0c567c6a42560488e5d2515eff8a33))
+- **android:** proper app url check for launching intents ([#6450](https://github.com/ionic-team/capacitor/issues/6450)) ([302ba35](https://github.com/ionic-team/capacitor/commit/302ba353acbd6d67e96e2b28870bc9c5bb4e9af0))
+- **android:** remove stored references to bridge that holds it in memory ([#6448](https://github.com/ionic-team/capacitor/issues/6448)) ([4737d2b](https://github.com/ionic-team/capacitor/commit/4737d2b46b480c7c0246ac6414494cbbdac7811b))
+
+### Features
+
+- **android:** Fix for [#6258](https://github.com/ionic-team/capacitor/issues/6258), Add support for modern Huawei devices ([#6402](https://github.com/ionic-team/capacitor/issues/6402)) ([17f2f4a](https://github.com/ionic-team/capacitor/commit/17f2f4ac744a038c1dae3cbd74a670d5ede92ef3))
+- retain multiple calls per event until consumed ([#6419](https://github.com/ionic-team/capacitor/issues/6419)) ([5aba2cb](https://github.com/ionic-team/capacitor/commit/5aba2cbe29bdbab2a7af861c65d8323acf9c54a6))
+
 # [5.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/4.7.0...5.0.0-alpha.1) (2023-03-16)
 
 ### Bug Fixes
