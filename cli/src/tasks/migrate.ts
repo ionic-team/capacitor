@@ -1,9 +1,15 @@
-import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
+import {
+  writeFileSync,
+  readFileSync,
+  readdirSync,
+  existsSync,
+  removeSync,
+} from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
 
 import c from '../colors';
-import { runTask } from '../common';
+import { getCoreVersion, runTask } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger, logPrompt, logSuccess } from '../log';
@@ -46,13 +52,20 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^5.0.0';
-const pluginVersion = '^5.0.0';
+const coreVersion = 'next'; // TODO: Update when Capacitor 5 releases
+const pluginVersion = 'next'; // TODO: Update when Capacitor 5 releases
 const gradleVersion = '7.5';
 
 export async function migrateCommand(config: Config): Promise<void> {
   if (config === null) {
     fatal('Config data missing');
+  }
+
+  const capMajor = await checkCapacitorMajorVersion(config);
+  if (capMajor < 4) {
+    fatal(
+      'Migrate can only be used on capacitor 4 and above, please use the CLI in Capacitor 4 to upgrade to 4 first',
+    );
   }
 
   const variablesAndClasspaths:
@@ -103,23 +116,29 @@ export async function migrateCommand(config: Config): Promise<void> {
           initial: 'y',
         },
       );
-      const { installerType } = await logPrompt(
-        'What dependency manager do you use?',
-        {
-          type: 'select',
-          name: 'installerType',
-          message: `Dependency Management Tool`,
-          choices: [
-            { title: 'NPM', value: 'npm' },
-            { title: 'Yarn', value: 'yarn' },
-            { title: 'PNPM', value: 'pnpm' },
-          ],
-          initial: 0,
-        },
-      );
+
       const runNpmInstall =
         typeof depInstallConfirm === 'string' &&
         depInstallConfirm.toLowerCase() === 'y';
+
+      let installerType = 'npm';
+      if (runNpmInstall) {
+        const { manager } = await logPrompt(
+          'What dependency manager do you use?',
+          {
+            type: 'select',
+            name: 'manager',
+            message: `Dependency Management Tool`,
+            choices: [
+              { title: 'NPM', value: 'npm' },
+              { title: 'Yarn', value: 'yarn' },
+              { title: 'PNPM', value: 'pnpm' },
+            ],
+            initial: 0,
+          },
+        );
+        installerType = manager;
+      }
 
       try {
         await runTask(
@@ -137,6 +156,24 @@ export async function migrateCommand(config: Config): Promise<void> {
         );
       }
 
+      // Update iOS Projects
+      if (
+        allDependencies['@capacitor/ios'] &&
+        existsSync(config.ios.platformDirAbs)
+      ) {
+        //Update icon to single 1024 x 1024 icon
+        await runTask('Update App Icon to only 1024 x 1024', () => {
+          return updateAppIcons(config);
+        });
+
+        //Remove Podfile.lock from .gitignore
+        await runTask('Remove Podfile.lock from iOS .gitignore', () => {
+          return updateIosGitIgnore(
+            join(config.ios.platformDirAbs, '.gitignore'),
+          );
+        });
+      }
+
       if (
         allDependencies['@capacitor/android'] &&
         existsSync(config.android.platformDirAbs)
@@ -147,6 +184,16 @@ export async function migrateCommand(config: Config): Promise<void> {
             variablesAndClasspaths,
           );
         });
+
+        // Remove enableJetifier
+        await runTask(
+          'Remove android.enableJetifier=true from gradle.properties',
+          () => {
+            return updateGradleProperties(
+              join(config.android.platformDirAbs, 'gradle.properties'),
+            );
+          },
+        );
 
         // Update gradle-wrapper.properties
         await runTask(
@@ -274,6 +321,14 @@ export async function migrateCommand(config: Config): Promise<void> {
   //*/
 }
 
+async function checkCapacitorMajorVersion(config: Config): Promise<number> {
+  const capacitorVersion = await getCoreVersion(config);
+  const versionArray =
+    capacitorVersion.match(/([0-9]+)\.([0-9]+)\.([0-9]+)/) ?? [];
+  const majorVersion = parseInt(versionArray[1]);
+  return majorVersion;
+}
+
 async function installLatestLibs(
   dependencyManager: string,
   runInstall: boolean,
@@ -307,7 +362,7 @@ async function installLatestLibs(
 
   if (runInstall) {
     rimraf.sync(join(config.app.rootDir, 'node_modules/@capacitor/!(cli)'));
-    const test = await runCommand(dependencyManager, ['install']);
+    await runCommand(dependencyManager, ['install']);
   } else {
     logger.info(
       `Please run an install command with your package manager of choice. (ex: yarn install)`,
@@ -435,6 +490,100 @@ async function updateGradleWrapperFiles(platformDir: string) {
       cwd: platformDir,
     },
   );
+}
+
+async function updateIosGitIgnore(filename: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+  const lines = txt.split('\n');
+  let linesToKeep = '';
+  for (const line of lines) {
+    // check for enableJetifier
+    const podfileMatch = line.match(/.+Podfile\.lock/) || [];
+
+    if (podfileMatch.length == 0) {
+      linesToKeep += line + '\n';
+    }
+  }
+  writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
+}
+
+async function updateAppIcons(config: Config) {
+  const iconToKeep = 'AppIcon-512@2x.png';
+  const contentsFile = 'Contents.json';
+
+  const newContentsFileContents = `{
+    "images" : [
+      {
+        "filename" : "${iconToKeep}",
+        "idiom" : "universal",
+        "platform" : "ios",
+        "size" : "1024x1024"
+      }
+    ],
+    "info" : {
+      "author" : "xcode",
+      "version" : 1
+    }
+}`;
+
+  const path = join(
+    config.ios.platformDirAbs,
+    'App',
+    'App',
+    'Assets.xcassets',
+    'AppIcon.appiconset',
+  );
+
+  if (!existsSync(path)) {
+    logger.error(`Unable to find ${path}. Try updating it manually`);
+    return;
+  }
+
+  if (!existsSync(join(path, iconToKeep))) {
+    logger.error(`Unable to find ${iconToKeep}. Try updating it manually`);
+    return;
+  }
+
+  if (!existsSync(join(path, contentsFile))) {
+    logger.error(`Unable to find ${path}. Try updating it manually`);
+    return;
+  }
+
+  const filenames = readdirSync(path);
+
+  for (const filename of filenames) {
+    if (filename != iconToKeep && filename != contentsFile) {
+      removeSync(join(path, filename));
+    }
+  }
+
+  writeFileSync(join(path, contentsFile), newContentsFileContents);
+}
+
+async function updateGradleProperties(filename: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+  const lines = txt.split('\n');
+  let linesToKeep = '';
+  for (const line of lines) {
+    // check for enableJetifier
+    const jetifierMatch =
+      line.match(/android\.enableJetifier\s*=\s*true/) || [];
+    const commentMatch =
+      line.match(
+        /# Automatically convert third-party libraries to use AndroidX/,
+      ) || [];
+
+    if (jetifierMatch.length == 0 && commentMatch.length == 0) {
+      linesToKeep += line + '\n';
+    }
+  }
+  writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
 }
 
 async function updateBuildGradle(
