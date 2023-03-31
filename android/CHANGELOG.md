@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.2](https://github.com/ionic-team/capacitor/compare/4.7.1...4.7.2) (2023-03-31)
+
+
+### Bug Fixes
+
+* **android:** proper app url check for launching intents ([#6451](https://github.com/ionic-team/capacitor/issues/6451)) ([6f8d1ad](https://github.com/ionic-team/capacitor/commit/6f8d1adb6514fe3cd64674215d87ae55d5f12f35))
+
+
+
+
+
 ## [4.7.1](https://github.com/ionic-team/capacitor/compare/4.7.0...4.7.1) (2023-03-16)
 
 **Note:** Version bump only for package @capacitor/android

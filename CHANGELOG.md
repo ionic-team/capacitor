@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.2](https://github.com/ionic-team/capacitor/compare/4.7.1...4.7.2) (2023-03-31)
+
+
+### Bug Fixes
+
+* **android:** proper app url check for launching intents ([#6451](https://github.com/ionic-team/capacitor/issues/6451)) ([6f8d1ad](https://github.com/ionic-team/capacitor/commit/6f8d1adb6514fe3cd64674215d87ae55d5f12f35))
+* **cli:** Fix cordova plugin config checker over checking on 4.x ([#6443](https://github.com/ionic-team/capacitor/issues/6443)) ([5ce68bb](https://github.com/ionic-team/capacitor/commit/5ce68bbb290f63ca1d15a9f87e0c2254896e0bfe))
+
+
+
+
+
 ## [4.7.1](https://github.com/ionic-team/capacitor/compare/4.7.0...4.7.1) (2023-03-16)
 
 
