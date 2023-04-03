@@ -370,6 +370,11 @@ async function installLatestLibs(
   if (runInstall) {
     rimraf.sync(join(config.app.rootDir, 'node_modules/@capacitor/!(cli)'));
     await runCommand(dependencyManager, ['install']);
+    if (dependencyManager == 'yarn') {
+      await runCommand(dependencyManager, ['upgrade']);
+    } else {
+      await runCommand(dependencyManager, ['update']);
+    }
   } else {
     logger.info(
       `Please run an install command with your package manager of choice. (ex: yarn install)`,
