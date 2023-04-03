@@ -56,7 +56,7 @@ const coreVersion = 'next'; // TODO: Update when Capacitor 5 releases
 const pluginVersion = 'next'; // TODO: Update when Capacitor 5 releases
 const gradleVersion = '7.5';
 
-export async function migrateCommand(config: Config): Promise<void> {
+export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
   if (config === null) {
     fatal('Config data missing');
   }
@@ -92,7 +92,7 @@ export async function migrateCommand(config: Config): Promise<void> {
 
   logger.info(monorepoWarning);
 
-  const { migrateconfirm } = await logPrompt(
+  const { migrateconfirm } = noprompt ? 'y' : await logPrompt(
     `Capacitor 5 sets a deployment target of iOS 13 and Android 13 (SDK 33). \n`,
     {
       type: 'text',
@@ -107,7 +107,7 @@ export async function migrateCommand(config: Config): Promise<void> {
     migrateconfirm.toLowerCase() === 'y'
   ) {
     try {
-      const { depInstallConfirm } = await logPrompt(
+      const { depInstallConfirm } = noprompt ? 'y' : await logPrompt(
         `Would you like the migrator to run npm, yarn, or pnpm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
         {
           type: 'text',
@@ -123,7 +123,7 @@ export async function migrateCommand(config: Config): Promise<void> {
 
       let installerType = 'npm';
       if (runNpmInstall) {
-        const { manager } = await logPrompt(
+        const { manager } = packagemanager ? packagemanager : await logPrompt(
           'What dependency manager do you use?',
           {
             type: 'select',

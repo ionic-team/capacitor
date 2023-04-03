@@ -301,13 +301,15 @@ export function runProgram(config: Config): void {
 
   program
     .command('migrate')
+    .option('--noprompt', 'do not prompt for confirmation')
+    .option('--packagemanager <packageManager>', 'The package manager to use for dependency installs (npm, pnpm, yarn)')
     .description(
       'Migrate your current Capacitor app to the latest major version of Capacitor.',
     )
     .action(
       wrapAction(async () => {
         const { migrateCommand } = await import('./tasks/migrate');
-        await migrateCommand(config);
+        await migrateCommand(config, noprompt, packagemanager);
       }),
     );
 
