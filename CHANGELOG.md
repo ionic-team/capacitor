@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0-beta.1](https://github.com/ionic-team/capacitor/compare/5.0.0-beta.0...5.0.0-beta.1) (2023-04-03)
+
+### Bug Fixes
+
+- copy url from nativeResponse to response in native-bridge.ts ([#6397](https://github.com/ionic-team/capacitor/issues/6397)) ([e81a2ff](https://github.com/ionic-team/capacitor/commit/e81a2ff42ddd446f3004ab5af6e74209f7ff076a))
+
+### Features
+
+- **cli:** add npm update step to migrate ([#6462](https://github.com/ionic-team/capacitor/issues/6462)) ([65520c3](https://github.com/ionic-team/capacitor/commit/65520c36cdb4ac6f8811eb72624c447f2a0d884a))
+- **cli:** non interactive migrate ([#6461](https://github.com/ionic-team/capacitor/issues/6461)) ([53dfeaf](https://github.com/ionic-team/capacitor/commit/53dfeaf77ace5b165260b68351eae8e5bf72ea0a))
+
 # [5.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/5.0.0-alpha.1...5.0.0-beta.0) (2023-03-31)
 
 ### Bug Fixes
