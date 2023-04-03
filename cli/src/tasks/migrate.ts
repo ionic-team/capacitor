@@ -56,7 +56,11 @@ const coreVersion = 'next'; // TODO: Update when Capacitor 5 releases
 const pluginVersion = 'next'; // TODO: Update when Capacitor 5 releases
 const gradleVersion = '7.5';
 
-export async function migrateCommand(config: Config): Promise<void> {
+export async function migrateCommand(
+  config: Config,
+  noprompt: boolean,
+  packagemanager: string,
+): Promise<void> {
   if (config === null) {
     fatal('Config data missing');
   }
@@ -92,30 +96,34 @@ export async function migrateCommand(config: Config): Promise<void> {
 
   logger.info(monorepoWarning);
 
-  const { migrateconfirm } = await logPrompt(
-    `Capacitor 5 sets a deployment target of iOS 13 and Android 13 (SDK 33). \n`,
-    {
-      type: 'text',
-      name: 'migrateconfirm',
-      message: `Are you sure you want to migrate? (Y/n)`,
-      initial: 'y',
-    },
-  );
+  const { migrateconfirm } = noprompt
+    ? { migrateconfirm: 'y' }
+    : await logPrompt(
+        `Capacitor 5 sets a deployment target of iOS 13 and Android 13 (SDK 33). \n`,
+        {
+          type: 'text',
+          name: 'migrateconfirm',
+          message: `Are you sure you want to migrate? (Y/n)`,
+          initial: 'y',
+        },
+      );
 
   if (
     typeof migrateconfirm === 'string' &&
     migrateconfirm.toLowerCase() === 'y'
   ) {
     try {
-      const { depInstallConfirm } = await logPrompt(
-        `Would you like the migrator to run npm, yarn, or pnpm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
-        {
-          type: 'text',
-          name: 'depInstallConfirm',
-          message: `Run Dependency Install? (Y/n)`,
-          initial: 'y',
-        },
-      );
+      const { depInstallConfirm } = noprompt
+        ? { depInstallConfirm: 'y' }
+        : await logPrompt(
+            `Would you like the migrator to run npm, yarn, or pnpm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
+            {
+              type: 'text',
+              name: 'depInstallConfirm',
+              message: `Run Dependency Install? (Y/n)`,
+              initial: 'y',
+            },
+          );
 
       const runNpmInstall =
         typeof depInstallConfirm === 'string' &&
@@ -123,20 +131,19 @@ export async function migrateCommand(config: Config): Promise<void> {
 
       let installerType = 'npm';
       if (runNpmInstall) {
-        const { manager } = await logPrompt(
-          'What dependency manager do you use?',
-          {
-            type: 'select',
-            name: 'manager',
-            message: `Dependency Management Tool`,
-            choices: [
-              { title: 'NPM', value: 'npm' },
-              { title: 'Yarn', value: 'yarn' },
-              { title: 'PNPM', value: 'pnpm' },
-            ],
-            initial: 0,
-          },
-        );
+        const { manager } = packagemanager
+          ? { manager: packagemanager }
+          : await logPrompt('What dependency manager do you use?', {
+              type: 'select',
+              name: 'manager',
+              message: `Dependency Management Tool`,
+              choices: [
+                { title: 'NPM', value: 'npm' },
+                { title: 'Yarn', value: 'yarn' },
+                { title: 'PNPM', value: 'pnpm' },
+              ],
+              initial: 0,
+            });
         installerType = manager;
       }
 
