@@ -97,7 +97,7 @@ export async function migrateCommand(
   logger.info(monorepoWarning);
 
   const { migrateconfirm } = noprompt
-    ? 'y'
+    ? { migrateconfirm: 'y' }
     : await logPrompt(
         `Capacitor 5 sets a deployment target of iOS 13 and Android 13 (SDK 33). \n`,
         {
@@ -114,7 +114,7 @@ export async function migrateCommand(
   ) {
     try {
       const { depInstallConfirm } = noprompt
-        ? 'y'
+        ? { depInstallConfirm: 'y' }
         : await logPrompt(
             `Would you like the migrator to run npm, yarn, or pnpm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
             {
@@ -132,7 +132,7 @@ export async function migrateCommand(
       let installerType = 'npm';
       if (runNpmInstall) {
         const { manager } = packagemanager
-          ? packagemanager
+          ? { manager: packagemanager }
           : await logPrompt('What dependency manager do you use?', {
               type: 'select',
               name: 'manager',

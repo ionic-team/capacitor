@@ -310,7 +310,7 @@ export function runProgram(config: Config): void {
       'Migrate your current Capacitor app to the latest major version of Capacitor.',
     )
     .action(
-      wrapAction(async () => {
+      wrapAction(async ({ noprompt, packagemanager }) => {
         const { migrateCommand } = await import('./tasks/migrate');
         await migrateCommand(config, noprompt, packagemanager);
       }),
