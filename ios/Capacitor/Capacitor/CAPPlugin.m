@@ -52,13 +52,17 @@
 }
 
 - (void)sendRetainedArgumentsForEvent:(NSString *)eventName {
-  id retained = [self.retainedEventArguments objectForKey:eventName];
-  if (retained == nil) {
-    return;
-  }
-  
-  [self notifyListeners:eventName data:retained];
-  [self.retainedEventArguments removeObjectForKey:eventName];
+    // copy retained args and null source to prevent potential race conditions
+    NSMutableArray *retained = [self.retainedEventArguments objectForKey:eventName];
+    if (retained == nil) {
+        return;
+    }
+    
+    [self.retainedEventArguments removeObjectForKey:eventName];
+    
+    for(id data in retained) {
+        [self notifyListeners:eventName data:data];
+    }
 }
 
 - (void)removeEventListener:(NSString *)eventName listener:(CAPPluginCall *)listener {
@@ -79,7 +83,12 @@
   NSArray<CAPPluginCall *> *listenersForEvent = [self.eventListeners objectForKey:eventName];
   if(listenersForEvent == nil || [listenersForEvent count] == 0) {
     if (retain == YES) {
-      [self.retainedEventArguments setObject:data forKey:eventName];
+        
+        if ([self.retainedEventArguments objectForKey:eventName] == nil) {
+            [self.retainedEventArguments setObject:[[NSMutableArray alloc] init] forKey:eventName];
+        }
+        
+        [[self.retainedEventArguments objectForKey:eventName] addObject:data];
     }
     return;
   }
