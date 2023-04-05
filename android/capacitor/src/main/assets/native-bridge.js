@@ -392,6 +392,14 @@ var nativeBridge = (function (exports) {
                                 headers: nativeResponse.headers,
                                 status: nativeResponse.status,
                             });
+                            /*
+                             * copy url to response, `cordova-plugin-ionic` uses this url from the response
+                             * we need `Object.defineProperty` because url is an inherited getter on the Response
+                             * see: https://stackoverflow.com/a/57382543
+                             * */
+                            Object.defineProperty(response, 'url', {
+                                value: nativeResponse.url,
+                            });
                             console.timeEnd(tag);
                             return response;
                         }
