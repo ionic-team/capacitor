@@ -81,7 +81,7 @@ export async function installCocoaPodsPlugins(
 ): Promise<void> {
   await runTask(
     `Updating iOS native dependencies with ${c.input(
-      `${config.ios.podPath} install`,
+      `${await config.ios.podPath} install`,
     )}`,
     () => {
       return updatePodfile(config, plugins, deployment);
@@ -96,7 +96,6 @@ async function updatePodfile(
 ): Promise<void> {
   const dependenciesContent = await generatePodFile(config, plugins);
   const podfilePath = join(config.ios.nativeProjectDirAbs, 'Podfile');
-  const podfileLockPath = join(config.ios.nativeProjectDirAbs, 'Podfile.lock');
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
   podfileContent = podfileContent.replace(
     /(def capacitor_pods)[\s\S]+?(\nend)/,
@@ -104,16 +103,23 @@ async function updatePodfile(
   );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
+  const podPath = await config.ios.podPath;
+  const useBundler = podPath.startsWith('bundle');
   const podCommandExists = await isInstalled('pod');
-  if (podCommandExists) {
-    if (!deployment) {
-      await remove(podfileLockPath);
+  if (useBundler || podCommandExists) {
+    if (useBundler) {
+      await runCommand(
+        'bundle',
+        ['exec', 'pod', 'install', ...(deployment ? ['--deployment'] : [])],
+        { cwd: config.ios.nativeProjectDirAbs },
+      );
+    } else {
+      await runCommand(
+        podPath,
+        ['install', ...(deployment ? ['--deployment'] : [])],
+        { cwd: config.ios.nativeProjectDirAbs },
+      );
     }
-    await runCommand(
-      config.ios.podPath,
-      ['install', ...(deployment ? ['--deployment'] : [])],
-      { cwd: config.ios.nativeProjectDirAbs },
-    );
   } else {
     logger.warn('Skipping pod install because CocoaPods is not installed');
   }

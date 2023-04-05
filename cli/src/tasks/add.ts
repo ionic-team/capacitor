@@ -27,8 +27,9 @@ import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
 import {
   editProjectSettingsIOS,
-  checkIOSPackage,
+  checkBundler,
   checkCocoaPods,
+  checkIOSPackage,
 } from '../ios/common';
 import { logger, logSuccess, output } from '../log';
 
@@ -140,7 +141,10 @@ function printNextSteps(platformName: string) {
 
 function addChecks(config: Config, platformName: string): CheckFunction[] {
   if (platformName === config.ios.name) {
-    return [() => checkIOSPackage(config), () => checkCocoaPods(config)];
+    return [
+      () => checkIOSPackage(config),
+      () => checkBundler(config) || checkCocoaPods(config),
+    ];
   } else if (platformName === config.android.name) {
     return [() => checkAndroidPackage(config)];
   } else if (platformName === config.web.name) {

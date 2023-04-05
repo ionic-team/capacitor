@@ -17,7 +17,6 @@ internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 // swiftlint:disable type_body_length
 internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
-
     // this decision is needed before the bridge is instantiated,
     // so we need a class property to avoid duplication
     internal static var isDevEnvironment: Bool {
