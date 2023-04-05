@@ -17,7 +17,10 @@ import java.util.Objects;
 public class CapacitorCookieManager extends CookieManager {
 
     private final android.webkit.CookieManager webkitCookieManager;
-    private final Bridge bridge;
+
+    private final String localUrl;
+
+    private final String serverUrl;
 
     /**
      * Create a new cookie manager with the default cookie store and policy
@@ -36,18 +39,19 @@ public class CapacitorCookieManager extends CookieManager {
     public CapacitorCookieManager(CookieStore store, CookiePolicy policy, Bridge bridge) {
         super(store, policy);
         webkitCookieManager = android.webkit.CookieManager.getInstance();
-        this.bridge = bridge;
+        this.localUrl = bridge.getLocalUrl();
+        this.serverUrl = bridge.getServerUrl();
     }
 
     public String getSanitizedDomain(String url) {
         if (url == null || url.isEmpty()) {
-            url = this.bridge.getLocalUrl();
+            url = this.localUrl;
         }
 
         try {
             new URI(url);
         } catch (Exception ex) {
-            return this.bridge.getServerUrl();
+            return this.serverUrl;
         }
 
         return url;
