@@ -137,10 +137,9 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
 
         }
 
-
         data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
 
-        return data;
+        return data
     }
 
     public func getRequestData(_ body: JSValue, _ contentType: String, _ dataType: String) throws -> Data? {

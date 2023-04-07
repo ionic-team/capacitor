@@ -52,7 +52,7 @@ internal extension WKWebView {
         let swizzleFourArgClosure = { (method: Method, selector: Selector) in
             let originalImp: IMP = method_getImplementation(method)
             let original: FourArgClosureType = unsafeBitCast(originalImp, to: FourArgClosureType.self)
-            let block : @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Any?) -> Void = { (me, arg0, arg1, arg2, arg3) in
+            let block: @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Any?) -> Void = { (me, arg0, arg1, arg2, arg3) in
                 if let webview = containingWebView(me), let flag = webview.capacitor.keyboardShouldRequireUserInteraction {
                     original(me, selector, arg0, !flag, arg2, arg3)
                 } else {
@@ -66,7 +66,7 @@ internal extension WKWebView {
         let swizzleFiveArgClosure = { (method: Method, selector: Selector) in
             let originalImp: IMP = method_getImplementation(method)
             let original: FiveArgClosureType = unsafeBitCast(originalImp, to: FiveArgClosureType.self)
-            let block : @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Bool, Any?) -> Void = { (me, arg0, arg1, arg2, arg3, arg4) in
+            let block: @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Bool, Any?) -> Void = { (me, arg0, arg1, arg2, arg3, arg4) in
                 if let webview = containingWebView(me), let flag = webview.capacitor.keyboardShouldRequireUserInteraction {
                     original(me, selector, arg0, !flag, arg2, arg3, arg4)
                 } else {

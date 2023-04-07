@@ -18,44 +18,63 @@ import { CapacitorException } from './src/util';
 // eslint-disable-next-line
 let dummy = {};
 
-const readFileAsBase64 = (file: File): Promise<string> => new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onloadend = (e) => {
-    const data = reader.result as string;
-    resolve(btoa(data));
-  };
-  reader.onerror = reject;
+const readFileAsBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = e => {
+      const data = reader.result as string;
+      resolve(btoa(data));
+    };
+    reader.onerror = reject;
 
-  reader.readAsBinaryString(file);
-});
+    reader.readAsBinaryString(file);
+  });
 
 const convertFormData = async (formData: FormData): Promise<any> => {
   const newFormData: CapFormDataEntry[] = [];
   for (const pair of formData.entries()) {
     const [key, value] = pair;
-    if ((value) instanceof File) {
+    if (value instanceof File) {
       const base64File = await readFileAsBase64(value);
-      newFormData.push({ key, value: base64File, type: 'base64File', contentType: value.type, fileName: value.name });
+      newFormData.push({
+        key,
+        value: base64File,
+        type: 'base64File',
+        contentType: value.type,
+        fileName: value.name,
+      });
     } else {
-      newFormData.push({ key, value, type: 'string'});
+      newFormData.push({ key, value, type: 'string' });
     }
   }
 
   return newFormData;
-}
+};
 
-const convertBody = async (body: Document | XMLHttpRequestBodyInit | ReadableStream<any> | undefined): Promise<any> => {
+const convertBody = async (
+  body: Document | XMLHttpRequestBodyInit | ReadableStream<any> | undefined,
+): Promise<any> => {
   if (body instanceof FormData) {
     const formData = await convertFormData(body);
     const boundary = `${Date.now()}`;
-    return { data: formData, type: 'formData', headers: { 'Content-Type': `multipart/form-data; boundary=--${boundary}` } };
+    return {
+      data: formData,
+      type: 'formData',
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=--${boundary}`,
+      },
+    };
   } else if (body instanceof File) {
     const fileData = await readFileAsBase64(body);
-    return { data: fileData, type: 'file', headers: { 'Content-Type': body.type } };
+    return {
+      data: fileData,
+      type: 'file',
+      headers: { 'Content-Type': body.type },
+    };
   }
 
   return { data: body, type: 'json' };
-}
+};
 
 const initBridge = (w: any): void => {
   const getPlatformId = (win: WindowCapacitor): 'android' | 'ios' | 'web' => {
@@ -462,10 +481,16 @@ const initBridge = (w: any): void => {
           console.time(tag);
           try {
             // intercept request & pass to the bridge
-            const { data: requestData, type, headers } = await convertBody(options?.body || undefined);
+            const {
+              data: requestData,
+              type,
+              headers,
+            } = await convertBody(options?.body || undefined);
             let optionHeaders = options?.headers;
             if (options?.headers instanceof Headers) {
-              optionHeaders = Object.fromEntries((options.headers as any).entries());
+              optionHeaders = Object.fromEntries(
+                (options.headers as any).entries(),
+              );
             }
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
@@ -633,55 +658,55 @@ const initBridge = (w: any): void => {
           try {
             this.readyState = 2;
             const data = body !== null ? body : undefined;
-            convertBody(body)
-              .then(({ data, type, headers }) => {
-                 const otherHeaders = this._headers != null && Object.keys(this._headers).length > 0
-                     ? this._headers
-                     : undefined;
+            convertBody(body).then(({ data, type, headers }) => {
+              const otherHeaders =
+                this._headers != null && Object.keys(this._headers).length > 0
+                  ? this._headers
+                  : undefined;
 
-                 // intercept request & pass to the bridge
-                  cap
-                  .nativePromise('CapacitorHttp', 'request', {
-                    url: this._url,
-                    method: this._method,
-                    data: data !== null ? data : undefined,
-                    headers: {
-                      ...headers,
-                      ...otherHeaders,
-                    },
-                    dataType: type,
-                  })
-                  .then((nativeResponse: any) => {
-                    // intercept & parse response before returning
-                    if (this.readyState == 2) {
-                      this.dispatchEvent(new Event('loadstart'));
-                      this._headers = nativeResponse.headers;
-                      this.status = nativeResponse.status;
-                      this.response = nativeResponse.data;
-                      this.responseText =
-                        typeof nativeResponse.data === 'string'
-                          ? nativeResponse.data
-                          : JSON.stringify(nativeResponse.data);
-                      this.responseURL = nativeResponse.url;
-                      this.readyState = 4;
-                      this.dispatchEvent(new Event('load'));
-                      this.dispatchEvent(new Event('loadend'));
-                    }
-                    console.timeEnd(tag);
-                  })
-                  .catch((error: any) => {
+              // intercept request & pass to the bridge
+              cap
+                .nativePromise('CapacitorHttp', 'request', {
+                  url: this._url,
+                  method: this._method,
+                  data: data !== null ? data : undefined,
+                  headers: {
+                    ...headers,
+                    ...otherHeaders,
+                  },
+                  dataType: type,
+                })
+                .then((nativeResponse: any) => {
+                  // intercept & parse response before returning
+                  if (this.readyState == 2) {
                     this.dispatchEvent(new Event('loadstart'));
-                    this.status = error.status;
-                    this._headers = error.headers;
-                    this.response = error.data;
-                    this.responseText = JSON.stringify(error.data);
-                    this.responseURL = error.url;
+                    this._headers = nativeResponse.headers;
+                    this.status = nativeResponse.status;
+                    this.response = nativeResponse.data;
+                    this.responseText =
+                      typeof nativeResponse.data === 'string'
+                        ? nativeResponse.data
+                        : JSON.stringify(nativeResponse.data);
+                    this.responseURL = nativeResponse.url;
                     this.readyState = 4;
-                    this.dispatchEvent(new Event('error'));
+                    this.dispatchEvent(new Event('load'));
                     this.dispatchEvent(new Event('loadend'));
-                    console.timeEnd(tag);
-                  });
-              });
+                  }
+                  console.timeEnd(tag);
+                })
+                .catch((error: any) => {
+                  this.dispatchEvent(new Event('loadstart'));
+                  this.status = error.status;
+                  this._headers = error.headers;
+                  this.response = error.data;
+                  this.responseText = JSON.stringify(error.data);
+                  this.responseURL = error.url;
+                  this.readyState = 4;
+                  this.dispatchEvent(new Event('error'));
+                  this.dispatchEvent(new Event('loadend'));
+                  console.timeEnd(tag);
+                });
+            });
           } catch (error) {
             this.dispatchEvent(new Event('loadstart'));
             this.status = 500;

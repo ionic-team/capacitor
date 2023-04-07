@@ -222,18 +222,18 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 
     private void writeFormDataRequestBody(String contentType, JSArray entries) throws IOException, JSONException {
         try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
-            String boundary =  contentType.split(";")[1].split("=")[1];
+            String boundary = contentType.split(";")[1].split("=")[1];
             String lineEnd = "\r\n";
             String twoHyphens = "--";
 
-            for (Object e: entries.toList()) {
+            for (Object e : entries.toList()) {
                 if (e instanceof JSONObject) {
                     JSONObject entry = (JSONObject) e;
                     String type = entry.getString("type");
                     String key = entry.getString("key");
                     String value = entry.getString("value");
                     if (type.equals("string")) {
-                        os.writeBytes( twoHyphens + boundary + lineEnd);
+                        os.writeBytes(twoHyphens + boundary + lineEnd);
                         os.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd + lineEnd);
                         os.writeBytes(value);
                         os.writeBytes(lineEnd);

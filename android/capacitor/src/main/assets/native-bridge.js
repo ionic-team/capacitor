@@ -37,7 +37,7 @@ var nativeBridge = (function (exports) {
     let dummy = {};
     const readFileAsBase64 = (file) => new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = (e) => {
+        reader.onloadend = e => {
             const data = reader.result;
             resolve(btoa(data));
         };
@@ -48,9 +48,15 @@ var nativeBridge = (function (exports) {
         const newFormData = [];
         for (const pair of formData.entries()) {
             const [key, value] = pair;
-            if ((value) instanceof File) {
+            if (value instanceof File) {
                 const base64File = await readFileAsBase64(value);
-                newFormData.push({ key, value: base64File, type: 'base64File', contentType: value.type, fileName: value.name });
+                newFormData.push({
+                    key,
+                    value: base64File,
+                    type: 'base64File',
+                    contentType: value.type,
+                    fileName: value.name,
+                });
             }
             else {
                 newFormData.push({ key, value, type: 'string' });
@@ -62,11 +68,21 @@ var nativeBridge = (function (exports) {
         if (body instanceof FormData) {
             const formData = await convertFormData(body);
             const boundary = `${Date.now()}`;
-            return { data: formData, type: 'formData', headers: { 'Content-Type': `multipart/form-data; boundary=--${boundary}` } };
+            return {
+                data: formData,
+                type: 'formData',
+                headers: {
+                    'Content-Type': `multipart/form-data; boundary=--${boundary}`,
+                },
+            };
         }
         else if (body instanceof File) {
             const fileData = await readFileAsBase64(body);
-            return { data: fileData, type: 'file', headers: { 'Content-Type': body.type } };
+            return {
+                data: fileData,
+                type: 'file',
+                headers: { 'Content-Type': body.type },
+            };
         }
         return { data: body, type: 'json' };
     };
@@ -409,7 +425,7 @@ var nativeBridge = (function (exports) {
                         console.time(tag);
                         try {
                             // intercept request & pass to the bridge
-                            const { data: requestData, type, headers } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || undefined);
+                            const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || undefined);
                             let optionHeaders = options === null || options === void 0 ? void 0 : options.headers;
                             if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
                                 optionHeaders = Object.fromEntries(options.headers.entries());
@@ -542,8 +558,7 @@ var nativeBridge = (function (exports) {
                         try {
                             this.readyState = 2;
                             const data = body !== null ? body : undefined;
-                            convertBody(body)
-                                .then(({ data, type, headers }) => {
+                            convertBody(body).then(({ data, type, headers }) => {
                                 const otherHeaders = this._headers != null && Object.keys(this._headers).length > 0
                                     ? this._headers
                                     : undefined;
