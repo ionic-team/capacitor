@@ -210,8 +210,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self?.tmpWindow = nil
         })
 
-
+        #if DEBUG
         self.webView?.setInspectableIfRequired(true)
+        #endif
     }
 
     deinit {
