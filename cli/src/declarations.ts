@@ -614,10 +614,10 @@ export interface PluginsConfig {
    * @since 1.0.0
    */
   [key: string]:
-  | {
-    [key: string]: any;
-  }
-  | undefined;
+    | {
+        [key: string]: any;
+      }
+    | undefined;
 
   /**
    * FederatedCapacitor plugin configuration

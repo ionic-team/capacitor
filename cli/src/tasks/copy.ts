@@ -224,11 +224,11 @@ async function copyWebDir(
       `Cannot copy web assets from ${c.strong(
         webRelDir,
       )} to ${nativeRelDir}\n` +
-      `Web asset directory specified by ${c.input(
-        'webDir',
-      )} does not exist. This is not an error because ${c.input(
-        'server.url',
-      )} is set in config.`,
+        `Web asset directory specified by ${c.input(
+          'webDir',
+        )} does not exist. This is not an error because ${c.input(
+          'server.url',
+        )} is set in config.`,
     );
 
     return;
@@ -290,7 +290,7 @@ async function copySecureLiveUpdatesKey(
       `Cannot copy Secure Live Updates signature file from ${c.strong(
         keyAbsFromPath,
       )} to ${keyRelToDir}\n` +
-      `Signature file does not exist at specified key path.`,
+        `Signature file does not exist at specified key path.`,
     );
 
     return;
@@ -317,7 +317,7 @@ async function copySSLCert(
     if (!/^.+\.(cer)$/.test(certAbsFromPath)) {
       logger.warn(
         `Cannot copy file from ${c.strong(certAbsFromPath)}\n` +
-        `The file is not a .cer SSL Certificate file.`,
+          `The file is not a .cer SSL Certificate file.`,
       );
 
       return;
@@ -325,7 +325,7 @@ async function copySSLCert(
     if (!(await pathExists(certAbsFromPath))) {
       logger.warn(
         `Cannot copy SSL Certificate file from ${c.strong(certAbsFromPath)}\n` +
-        `SSL Certificate does not exist at specified path.`,
+          `SSL Certificate does not exist at specified path.`,
       );
 
       return;
