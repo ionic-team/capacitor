@@ -15,7 +15,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import type { Portal } from '../declarations';
+import type { FederatedApp } from '../declarations';
 import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { logger } from '../log';
@@ -77,13 +77,13 @@ export async function copy(
     );
 
     const allPlugins = await getPlugins(config, platformName);
-    let usesCapacitorPortals = false;
+    let usesFederatedCapacitor = false;
     if (
       allPlugins.filter(
-        plugin => plugin.id === '@ionic-enterprise/capacitor-portals',
+        plugin => plugin.id === '@ionic-enterprise/federated-capacitor',
       ).length > 0
     ) {
-      usesCapacitorPortals = true;
+      usesFederatedCapacitor = true;
     }
 
     let usesLiveUpdates = false;
@@ -103,11 +103,11 @@ export async function copy(
     }
 
     if (platformName === config.ios.name) {
-      if (usesCapacitorPortals) {
+      if (usesFederatedCapacitor) {
         await copyFederatedWebDirs(config, await config.ios.webDirAbs);
-        if (config.app.extConfig?.plugins?.Portals?.liveUpdatesKey) {
+        if (config.app.extConfig?.plugins?.FederatedCapacitor?.liveUpdatesKey) {
           await copySecureLiveUpdatesKey(
-            config.app.extConfig.plugins.Portals.liveUpdatesKey,
+            config.app.extConfig.plugins.FederatedCapacitor.liveUpdatesKey,
             config.app.rootDir,
             config.ios.nativeTargetDirAbs,
           );
@@ -137,11 +137,11 @@ export async function copy(
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
     } else if (platformName === config.android.name) {
-      if (usesCapacitorPortals) {
+      if (usesFederatedCapacitor) {
         await copyFederatedWebDirs(config, config.android.webDirAbs);
-        if (config.app.extConfig?.plugins?.Portals?.liveUpdatesKey) {
+        if (config.app.extConfig?.plugins?.FederatedCapacitor?.liveUpdatesKey) {
           await copySecureLiveUpdatesKey(
-            config.app.extConfig.plugins.Portals.liveUpdatesKey,
+            config.app.extConfig.plugins.FederatedCapacitor.liveUpdatesKey,
             config.app.rootDir,
             config.android.assetsDirAbs,
           );
@@ -172,9 +172,9 @@ export async function copy(
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
       await writeCordovaAndroidManifest(cordovaPlugins, config, platformName);
     } else if (platformName === config.web.name) {
-      if (usesCapacitorPortals) {
+      if (usesFederatedCapacitor) {
         logger.info(
-          'Capacitor Portals Plugin installed, skipping web bundling...',
+          'FederatedCapacitor Plugin installed, skipping web bundling...',
         );
       } else {
         await copyWeb(config);
@@ -244,33 +244,35 @@ async function copyWebDir(
 }
 
 async function copyFederatedWebDirs(config: Config, nativeAbsDir: string) {
-  logger.info('Capacitor Portals Plugin Loaded - Copying Web Assets');
+  logger.info('FederatedCapacitor Plugin Loaded - Copying Web Assets');
 
-  if (!config.app.extConfig?.plugins?.Portals) {
-    throw `Capacitor Portals plugin is present but no valid config is defined.`;
+  if (!config.app.extConfig?.plugins?.FederatedCapacitor) {
+    throw `FederatedCapacitor plugin is present but no valid config is defined.`;
   }
 
-  const portalsConfig = config.app.extConfig.plugins.Portals;
-  if (!isPortal(portalsConfig.shell)) {
-    throw `Capacitor Portals plugin is present but no valid Shell application is defined in the config.`;
-  }
+  const federatedConfig = config.app.extConfig.plugins.FederatedCapacitor;
+  if (federatedConfig) {
+    if (!isFederatedApp(federatedConfig.shell)) {
+      throw `FederatedCapacitor plugin is present but no valid Shell application is defined in the config.`;
+    }
 
-  if (!portalsConfig.apps.every(isPortal)) {
-    throw `Capacitor Portals plugin is present but there is a problem with the apps defined in the config.`;
-  }
+    if (!federatedConfig.apps.every(isFederatedApp)) {
+      throw `FederatedCapacitor plugin is present but there is a problem with the apps defined in the config.`;
+    }
 
-  await Promise.all(
-    [...portalsConfig.apps, portalsConfig.shell].map(app => {
-      const appDir = resolve(config.app.rootDir, app.webDir);
-      return copyWebDir(config, resolve(nativeAbsDir, app.name), appDir);
-    }),
-  );
+    await Promise.all(
+      [...federatedConfig.apps, federatedConfig.shell].map(app => {
+        const appDir = resolve(config.app.rootDir, app.webDir);
+        return copyWebDir(config, resolve(nativeAbsDir, app.name), appDir);
+      }),
+    );
+  }
 }
 
-function isPortal(config: any): config is Portal {
+function isFederatedApp(config: any): config is FederatedApp {
   return (
-    (config as Portal).webDir !== undefined &&
-    (config as Portal).name !== undefined
+    (config as FederatedApp).webDir !== undefined &&
+    (config as FederatedApp).name !== undefined
   );
 }
 
