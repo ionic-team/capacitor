@@ -68,7 +68,7 @@ export async function buildAndroid(
     `${join(releasePath, unsignedReleaseName)}`,
     '--out',
     `${join(releasePath, signedReleaseName)}`,
-  ]
+  ];
 
   await runTask('Signing Release', async () => {
     await runCommand('apksigner', signingArgs, {
