@@ -591,7 +591,7 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
-export interface Portal {
+export interface FederatedApp {
   name: string;
   webDir: string;
   liveUpdateConfig?: LiveUpdateConfig;
@@ -614,19 +614,19 @@ export interface PluginsConfig {
    * @since 1.0.0
    */
   [key: string]:
-    | {
-        [key: string]: any;
-      }
-    | undefined;
+  | {
+    [key: string]: any;
+  }
+  | undefined;
 
   /**
-   * Capacitor Portals plugin configuration
+   * FederatedCapacitor plugin configuration
    *
-   * @since 3.5.0
+   * @since 5.0.0
    */
-  Portals?: {
-    shell: Portal;
-    apps: Portal[];
+  FederatedCapacitor?: {
+    shell: FederatedApp;
+    apps: FederatedApp[];
     liveUpdatesKey?: string;
   };
 
