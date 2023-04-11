@@ -37,7 +37,7 @@ var nativeBridge = (function (exports) {
     let dummy = {};
     const readFileAsBase64 = (file) => new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = e => {
+        reader.onloadend = () => {
             const data = reader.result;
             resolve(btoa(data));
         };
@@ -557,7 +557,6 @@ var nativeBridge = (function (exports) {
                         console.time(tag);
                         try {
                             this.readyState = 2;
-                            const data = body !== null ? body : undefined;
                             convertBody(body).then(({ data, type, headers }) => {
                                 const otherHeaders = this._headers != null && Object.keys(this._headers).length > 0
                                     ? this._headers

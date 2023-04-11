@@ -21,7 +21,7 @@ let dummy = {};
 const readFileAsBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onloadend = e => {
+    reader.onloadend = () => {
       const data = reader.result as string;
       resolve(btoa(data));
     };
@@ -657,7 +657,6 @@ const initBridge = (w: any): void => {
 
           try {
             this.readyState = 2;
-            const data = body !== null ? body : undefined;
             convertBody(body).then(({ data, type, headers }) => {
               const otherHeaders =
                 this._headers != null && Object.keys(this._headers).length > 0
