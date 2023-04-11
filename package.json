@@ -31,13 +31,21 @@
     "@ionic/eslint-config": "^0.3.0",
     "@ionic/prettier-config": "~1.0.1",
     "@ionic/swiftlint-config": "^1.1.2",
-    "@types/tar": "^6.1.2",
+    "@types/tar": "6.1.4",
     "eslint": "~7.27.0",
     "lerna": "^6.5.1",
     "prettier": "~2.3.0",
     "prettier-plugin-java": "~1.1.1",
     "swiftlint": "^1.0.1",
-    "tar": "^6.1.11",
-    "rimraf": "^4.4.1"
+    "tar": "6.1.13",
+    "rimraf": "^5.0.0"
+  },
+  "overrides": {
+    "@types/tar@6.1.4": {
+      "minipass": "4.2.5"
+    },
+    "tar@6.1.13": {
+      "minipass": "4.2.5"
+    }
   }
 }
