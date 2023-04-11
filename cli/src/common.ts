@@ -146,7 +146,7 @@ export async function checkAppName(
   name: string,
 ): Promise<string | null> {
   // We allow pretty much anything right now, have fun
-  if (!name || !name.length) {
+  if (!name?.length) {
     return `Must provide an app name. For example: 'Spacebook'`;
   }
   return null;
