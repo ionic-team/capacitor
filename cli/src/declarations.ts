@@ -458,7 +458,7 @@ export interface CapacitorConfig {
      * On iOS 16.4 and greater, always enable debuggable web content.
      *
      * This is automatically enabled during development.
-     * 
+     *
      * @since 5.0.0
      * @default false
      */
