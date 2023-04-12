@@ -442,7 +442,7 @@ export interface CapacitorConfig {
      *
      * This is always `true` for development builds.
      *
-     * @since 5.0.0
+     * @since 4.7.4
      * @default false
      */
     webContentsDebuggingEnabled?: boolean;
