@@ -144,11 +144,6 @@ export function runProgram(config: Config): void {
     .option('--flavor <flavorToBuild>', 'Android Flavor to build')
     .option('--keystorepath <keystorePath>', 'Path to the keystore')
     .option('--keystorepass <keystorePass>', 'Password to the keystore')
-    .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
-    .option(
-      '--keystorealiaspass <keystoreAliasPass>',
-      'Password for the Key Alias',
-    )
     .addOption(
       new Option(
         '--androidreleasetype <androidreleasetype>',
@@ -165,8 +160,6 @@ export function runProgram(config: Config): void {
               scheme,
               keystorepath,
               keystorepass,
-              keystorealias,
-              keystorealiaspass,
               androidreleasetype,
             },
           ) => {
@@ -175,8 +168,6 @@ export function runProgram(config: Config): void {
               scheme,
               keystorepath,
               keystorepass,
-              keystorealias,
-              keystorealiaspass,
               androidreleasetype,
             });
           },
