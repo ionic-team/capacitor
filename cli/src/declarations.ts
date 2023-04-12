@@ -455,9 +455,9 @@ export interface CapacitorConfig {
     handleApplicationNotifications?: boolean;
 
     /**
-     * On iOS 16.4 and greater, always enable debuggable web content.
+     * On iOS 16.4 and greater, enable debuggable web content for release builds.
      *
-     * This is automatically enabled during development.
+     * This is always `true` for development builds.
      *
      * @since 5.0.0
      * @default false
