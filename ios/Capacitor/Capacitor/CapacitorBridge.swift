@@ -210,9 +210,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self?.tmpWindow = nil
         })
 
-        #if DEBUG
-        self.webView?.setInspectableIfRequired(true)
-        #endif
+        self.setupWebDebugging(configuration: configuration)
     }
 
     deinit {
@@ -420,6 +418,19 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     func docLink(_ url: String) -> String {
         return "\(type(of: self).capacitorSite)docs/\(url)"
+    }
+
+    private func setupWebDebugging(configuration: InstanceConfiguration) {
+        let isWebDebuggable = configuration.isWebDebuggable
+        if isWebDebuggable, #unavailable(iOS 16.4) {
+            CAPLog.print("⚡️ Warning: isWebDebuggable only functions as intended on iOS 16.4 and above.")
+        }
+
+        #if DEBUG
+        self.webView?.setInspectableIfRequired(true)
+        #else
+        self.webView?.setInspectableIfRequired(isWebDebuggable)
+        #endif
     }
 
     /**
