@@ -431,6 +431,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         #else
         self.webView?.setInspectableIfRequired(isWebDebuggable)
         #endif
+        if isDevEnvironment {
+            self.webView?.setInspectableIfRequired(true)
+        } else {
+            self.webView?.setInspectableIfRequired(isWebDebuggable)
+        }
     }
 
     /**
