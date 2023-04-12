@@ -1,4 +1,5 @@
 import { readFile, writeFile } from '@ionic/utils-fs';
+import { execSync } from 'child_process';
 import { resolve } from 'path';
 
 import c from '../colors';
@@ -6,16 +7,46 @@ import { checkCapacitorPlatform } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import { OS } from '../definitions';
 import type { Config } from '../definitions';
+import { logger } from '../log';
 import { PluginType, getPluginPlatform } from '../plugin';
 import type { Plugin } from '../plugin';
-import { isInstalled } from '../util/subprocess';
+import { isInstalled, runCommand } from '../util/subprocess';
 
 export async function checkIOSPackage(config: Config): Promise<string | null> {
   return checkCapacitorPlatform(config, 'ios');
 }
 
+function execBundler() {
+  try {
+    const bundleOutput = execSync('bundle &> /dev/null ; echo $?');
+    return parseInt(bundleOutput.toString());
+  } catch (e: any) {
+    return -1;
+  }
+}
+
+export async function checkBundler(config: Config): Promise<string | null> {
+  if (config.cli.os === OS.Mac) {
+    let bundlerResult = execBundler();
+    if (bundlerResult === 1) {
+      // Bundler version is outdated
+      logger.info(`Using ${c.strong('Gemfile')}: Bundler update needed...`);
+      await runCommand('gem', ['install', 'bundler']);
+      bundlerResult = execBundler();
+    }
+    if (bundlerResult === 0) {
+      // Bundler in use, all gems current
+      logger.info(`Using ${c.strong('Gemfile')}: RubyGems bundle installed`);
+    }
+  }
+  return null;
+}
+
 export async function checkCocoaPods(config: Config): Promise<string | null> {
-  if (!(await isInstalled(config.ios.podPath)) && config.cli.os === OS.Mac) {
+  if (
+    !(await isInstalled(await config.ios.podPath)) &&
+    config.cli.os === OS.Mac
+  ) {
     return (
       `CocoaPods is not installed.\n` +
       `See this install guide: ${c.strong(

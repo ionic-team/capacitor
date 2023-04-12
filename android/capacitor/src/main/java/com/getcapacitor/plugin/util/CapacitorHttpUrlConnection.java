@@ -338,7 +338,6 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      * This is called as early as possible to allow overrides by user-provided values.
      */
     private void setDefaultRequestProperties() {
-        connection.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.name());
         String acceptLanguage = buildDefaultAcceptLanguageProperty();
         if (!TextUtils.isEmpty(acceptLanguage)) {
             connection.setRequestProperty("Accept-Language", acceptLanguage);

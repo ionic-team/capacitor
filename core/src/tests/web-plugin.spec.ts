@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { initBridge } from '../../native-bridge';
 import type { WindowCapacitor } from '../definitions-internal';
 import { createCapacitor } from '../runtime';
