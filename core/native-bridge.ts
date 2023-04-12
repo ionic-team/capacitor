@@ -136,7 +136,7 @@ const initBridge = (w: any): void => {
     if (nav) {
       nav.app = nav.app || {};
       nav.app.exitApp = () => {
-        if (!cap.Plugins || !cap.Plugins.App) {
+        if (!cap.Plugins?.App) {
           win.console.warn('App plugin not installed');
         } else {
           cap.nativeCallback('App', 'exitApp', {});
@@ -154,7 +154,7 @@ const initBridge = (w: any): void => {
         } else if (eventName === 'backbutton' && cap.Plugins.App) {
           // Add a dummy listener so Capacitor doesn't do the default
           // back button action
-          if (!cap.Plugins || !cap.Plugins.App) {
+          if (!cap.Plugins?.App) {
             win.console.warn('App plugin not installed');
           } else {
             cap.Plugins.App.addListener('backButton', () => {
