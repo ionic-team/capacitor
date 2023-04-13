@@ -136,6 +136,10 @@ internal extension InstanceDescriptor {
             }
             if let webContentsDebuggingEnabled = config[keyPath: "ios.webContentsDebuggingEnabled"] as? Bool {
                 isWebDebuggable = webContentsDebuggingEnabled
+            } else {
+                #if DEBUG
+                    isWebDebuggable = true
+                #endif
             }
         }
     }
