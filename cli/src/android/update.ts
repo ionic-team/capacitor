@@ -300,7 +300,7 @@ export async function handleCordovaPluginsGradle(
   const kotlinNeeded = await kotlinNeededCheck(config, cordovaPlugins);
   const kotlinVersionString =
     config.app.extConfig.cordova?.preferences?.GradlePluginKotlinVersion ??
-    '1.7.0';
+    '1.8.20';
   const frameworksArray: any[] = [];
   let prefsArray: any[] = [];
   const applyArray: any[] = [];
