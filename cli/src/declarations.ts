@@ -453,6 +453,16 @@ export interface CapacitorConfig {
      * @default true
      */
     handleApplicationNotifications?: boolean;
+
+    /**
+     * Using Xcode 14.3, on iOS 16.4 and greater, enable debuggable web content for release builds.
+     *
+     * If not set, it's `true` for development builds.
+     *
+     * @since 4.8.0
+     * @default false
+     */
+    webContentsDebuggingEnabled?: boolean;
   };
 
   server?: {
