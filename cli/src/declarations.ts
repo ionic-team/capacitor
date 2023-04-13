@@ -635,7 +635,7 @@ export interface PluginsConfig {
    * @since 5.0.0
    */
   FederatedCapacitor?: {
-    shell: FederatedApp;
+    shell: Omit<FederatedApp, 'webDir'>;
     apps: FederatedApp[];
     liveUpdatesKey?: string;
   };
