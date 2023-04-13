@@ -116,7 +116,7 @@ internal extension WKWebView {
     // This is in here because iOS 16.4 needs this - but will fail to compile under Xcode < 14.3
     func setInspectableIfRequired(_ shouldInspect: Bool) {
         if responds(to: Selector(("setInspectable:"))) {
-            perform(Selector(("setInspectable:")), with: NSNumber(booleanLiteral: shouldInspect))
+            perform(Selector(("setInspectable:")), with: ObjCBool(booleanLiteral: shouldInspect))
         }
     }
 }
