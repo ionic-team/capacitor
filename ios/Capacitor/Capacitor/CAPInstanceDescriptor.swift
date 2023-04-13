@@ -138,7 +138,7 @@ internal extension InstanceDescriptor {
                 isWebDebuggable = webContentsDebuggingEnabled
             } else {
                 #if DEBUG
-                    isWebDebuggable = true
+                isWebDebuggable = true
                 #endif
             }
         }
