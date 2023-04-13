@@ -444,11 +444,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             CAPLog.print("⚡️ Warning: isWebDebuggable only functions as intended on iOS 16.4 and above.")
         }
 
-        if isDevEnvironment {
-            self.webView?.setInspectableIfRequired(true)
-        } else {
-            self.webView?.setInspectableIfRequired(isWebDebuggable)
-        }
+        self.webView?.setInspectableIfRequired(isWebDebuggable)
     }
 
     /**
