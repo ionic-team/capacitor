@@ -111,12 +111,4 @@ internal extension WKWebView {
             objc_setAssociatedObject(self, &associatedKeyboardFlagHandle, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-
-    // TODO: Remove this after Xcode 14.3 is required
-    // This is in here because iOS 16.4 needs this - but will fail to compile under Xcode < 14.3
-    func setInspectableIfRequired(_ shouldInspect: Bool) {
-        if responds(to: Selector(("setInspectable:"))) {
-            perform(Selector(("setInspectable:")), with: ObjCBool(booleanLiteral: shouldInspect))
-        }
-    }
 }
