@@ -94,6 +94,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, assign) BOOL handleApplicationNotifications;
 /**
+ @brief Enables web debugging by setting isInspectable of  @c WKWebView to @c true on iOS 16.4 and greater
+ @discussion Defaults to true in debug mode and false in production
+ */
+@property (nonatomic, assign) BOOL isWebDebuggable;
+/**
  @brief How the web view will inset its content
  @discussion Set by @c ios.contentInset in the configuration file. Corresponds to @c contentInsetAdjustmentBehavior on WKWebView.
  */

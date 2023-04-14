@@ -134,6 +134,13 @@ internal extension InstanceDescriptor {
             if let handleNotifications = config[keyPath: "ios.handleApplicationNotifications"] as? Bool {
                 handleApplicationNotifications = handleNotifications
             }
+            if let webContentsDebuggingEnabled = config[keyPath: "ios.webContentsDebuggingEnabled"] as? Bool {
+                isWebDebuggable = webContentsDebuggingEnabled
+            } else {
+                #if DEBUG
+                isWebDebuggable = true
+                #endif
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity
