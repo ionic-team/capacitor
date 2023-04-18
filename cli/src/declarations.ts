@@ -45,15 +45,6 @@ export interface CapacitorConfig {
   bundledWebRuntime?: boolean;
 
   /**
-   * Hide or show the native logs for iOS and Android.
-   *
-   * @since 2.1.0
-   * @deprecated 3.0.0
-   * @default false
-   */
-  hideLogs?: boolean;
-
-  /**
    * The build configuration (as defined by the native app) under which Capacitor
    * will send statements to the log system. This applies to log statements in
    * native code as well as statements redirected from JavaScript (`console.debug`,
@@ -166,17 +157,6 @@ export interface CapacitorConfig {
      * @default false
      */
     webContentsDebuggingEnabled?: boolean;
-
-    /**
-     * Hide or show the native logs for Android.
-     *
-     * Overrides global `hideLogs` option.
-     *
-     * @since 2.1.0
-     * @deprecated 3.0.0
-     * @default false
-     */
-    hideLogs?: boolean;
 
     /**
      * The build configuration under which Capacitor will generate logs on Android.
@@ -387,17 +367,6 @@ export interface CapacitorConfig {
      * @since 2.0.0
      */
     allowsLinkPreview?: boolean;
-
-    /**
-     * Hide or show the native logs for iOS.
-     *
-     * Overrides global `hideLogs` option.
-     *
-     * @since 1.1.0
-     * @deprecated 3.0.0
-     * @default false
-     */
-    hideLogs?: boolean;
 
     /**
      * The build configuration under which Capacitor will generate logs on iOS.
