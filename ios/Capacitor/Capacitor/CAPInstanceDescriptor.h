@@ -75,7 +75,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 @property (nonatomic, retain, nonnull) NSDictionary *pluginConfigurations;
 /**
  @brief The build configurations under which logging should be enabled.
- @discussion Defaults to @c debug. Set by @c loggingBehavior in the configuration file but will inherit the deprecated @c hideLogs flag if @c loggingBehavior is absent.
+ @discussion Defaults to @c debug. Set by @c loggingBehavior in the configuration file.
  */
 @property (nonatomic, assign) CAPInstanceLoggingBehavior loggingBehavior;
 /**

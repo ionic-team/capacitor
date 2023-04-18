@@ -11,7 +11,6 @@
     "overrideUserAgent": "level 2 override",
   	"appendUserAgent": "level 2 append",
   	"backgroundColor": "#000000",
-  	"hideLogs": false,
   	"allowsLinkPreview": false,
   	"scrollEnabled": false,
   	"contentInset": "scrollableAxes"
