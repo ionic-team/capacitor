@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0-beta.2](https://github.com/ionic-team/capacitor/compare/5.0.0-beta.1...5.0.0-beta.2) (2023-04-13)
+
+### Bug Fixes
+
+- **android:** launching intents without host ([#6489](https://github.com/ionic-team/capacitor/issues/6489)) ([95f7474](https://github.com/ionic-team/capacitor/commit/95f747401ac5a666de4338a18666060e9c1ff39e))
+- **android:** unify kotlin dependency version ([#6501](https://github.com/ionic-team/capacitor/issues/6501)) ([0a40477](https://github.com/ionic-team/capacitor/commit/0a4047768cbde9bc17d92955e64ab11d2e3b3335))
+- **cookies:** check isEnabled before setting cookieHandler ([bb04f24](https://github.com/ionic-team/capacitor/commit/bb04f24f0b4a99e46ed5ca047d3d3df81804d516))
+- **ios/android:** copy url from nativeResponse to response ([#6482](https://github.com/ionic-team/capacitor/issues/6482)) ([828fb71](https://github.com/ionic-team/capacitor/commit/828fb71ebb52c0655d5879ad0edaac7368ab2b96))
+- remove accept-charset ([#6386](https://github.com/ionic-team/capacitor/issues/6386)) ([bbf6f7e](https://github.com/ionic-team/capacitor/commit/bbf6f7e1af0c49c0bc917942b6715c613be3f557))
+
+### Features
+
+- **ios:** Add Bundler support ([#5205](https://github.com/ionic-team/capacitor/issues/5205)) ([f21c6d0](https://github.com/ionic-team/capacitor/commit/f21c6d01fc30e46c151afc93da9727dbf6c9ddcf))
+- **ios:** add webContentsDebuggingEnabled configuration ([#6495](https://github.com/ionic-team/capacitor/issues/6495)) ([c691e4a](https://github.com/ionic-team/capacitor/commit/c691e4aecbfb7a45ce0465d1fe9020ab715815d3))
+
 # [5.0.0-beta.1](https://github.com/ionic-team/capacitor/compare/5.0.0-beta.0...5.0.0-beta.1) (2023-04-03)
 
 ### Bug Fixes

@@ -486,16 +486,6 @@ export default config;\n`;
 }
 
 export function checkExternalConfig(config: ExtConfigPairs): void {
-  if (
-    typeof config.extConfig.hideLogs !== 'undefined' ||
-    typeof config.extConfig.android?.hideLogs !== 'undefined' ||
-    typeof config.extConfig.ios?.hideLogs !== 'undefined'
-  ) {
-    logger.warn(
-      `The ${c.strong('hideLogs')} configuration option has been deprecated. ` +
-        `Please update to use ${c.strong('loggingBehavior')} instead.`,
-    );
-  }
   if (typeof config.extConfig.bundledWebRuntime !== 'undefined') {
     let actionMessage = `Can be safely deleted.`;
     if (config.extConfig.bundledWebRuntime === true) {

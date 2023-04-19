@@ -275,12 +275,8 @@ public class CapConfig {
         String logBehavior = JSONUtils.getString(
             configJSON,
             "android.loggingBehavior",
-            JSONUtils.getString(configJSON, "loggingBehavior", null)
+            JSONUtils.getString(configJSON, "loggingBehavior", LOG_BEHAVIOR_DEBUG)
         );
-        if (logBehavior == null) {
-            boolean hideLogs = JSONUtils.getBoolean(configJSON, "android.hideLogs", JSONUtils.getBoolean(configJSON, "hideLogs", false));
-            logBehavior = hideLogs ? LOG_BEHAVIOR_NONE : LOG_BEHAVIOR_DEBUG;
-        }
         switch (logBehavior.toLowerCase(Locale.ROOT)) {
             case LOG_BEHAVIOR_PRODUCTION:
                 loggingEnabled = true;

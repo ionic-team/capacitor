@@ -12,3 +12,5 @@ FOUNDATION_EXPORT const unsigned char CapacitorVersionString[];
 #import <Capacitor/CAPPluginMethod.h>
 #import <Capacitor/CAPInstanceDescriptor.h>
 #import <Capacitor/CAPInstanceConfiguration.h>
+#import <Capacitor/WKWebView+Capacitor.h>
+

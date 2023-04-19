@@ -45,15 +45,6 @@ export interface CapacitorConfig {
   bundledWebRuntime?: boolean;
 
   /**
-   * Hide or show the native logs for iOS and Android.
-   *
-   * @since 2.1.0
-   * @deprecated 3.0.0
-   * @default false
-   */
-  hideLogs?: boolean;
-
-  /**
    * The build configuration (as defined by the native app) under which Capacitor
    * will send statements to the log system. This applies to log statements in
    * native code as well as statements redirected from JavaScript (`console.debug`,
@@ -166,17 +157,6 @@ export interface CapacitorConfig {
      * @default false
      */
     webContentsDebuggingEnabled?: boolean;
-
-    /**
-     * Hide or show the native logs for Android.
-     *
-     * Overrides global `hideLogs` option.
-     *
-     * @since 2.1.0
-     * @deprecated 3.0.0
-     * @default false
-     */
-    hideLogs?: boolean;
 
     /**
      * The build configuration under which Capacitor will generate logs on Android.
@@ -389,17 +369,6 @@ export interface CapacitorConfig {
     allowsLinkPreview?: boolean;
 
     /**
-     * Hide or show the native logs for iOS.
-     *
-     * Overrides global `hideLogs` option.
-     *
-     * @since 1.1.0
-     * @deprecated 3.0.0
-     * @default false
-     */
-    hideLogs?: boolean;
-
-    /**
      * The build configuration under which Capacitor will generate logs on iOS.
      *
      * Overrides global `loggingBehavior` option.
@@ -453,6 +422,16 @@ export interface CapacitorConfig {
      * @default true
      */
     handleApplicationNotifications?: boolean;
+
+    /**
+     * Using Xcode 14.3, on iOS 16.4 and greater, enable debuggable web content for release builds.
+     *
+     * If not set, it's `true` for development builds.
+     *
+     * @since 4.8.0
+     * @default false
+     */
+    webContentsDebuggingEnabled?: boolean;
   };
 
   server?: {
@@ -625,7 +604,7 @@ export interface PluginsConfig {
    * @since 5.0.0
    */
   FederatedCapacitor?: {
-    shell: FederatedApp;
+    shell: Omit<FederatedApp, 'webDir'>;
     apps: FederatedApp[];
     liveUpdatesKey?: string;
   };

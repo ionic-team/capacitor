@@ -20,17 +20,18 @@ public class CapacitorCookies extends Plugin {
     @Override
     public void load() {
         this.bridge.getWebView().addJavascriptInterface(this, "CapacitorCookiesAndroidInterface");
-        if (isEnabled()) {
-            this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL, this.bridge);
-            CookieHandler.setDefault(cookieManager);
-        }
         super.load();
     }
 
     @JavascriptInterface
     public boolean isEnabled() {
         PluginConfig pluginConfig = getBridge().getConfig().getPluginConfiguration("CapacitorCookies");
-        return pluginConfig.getBoolean("enabled", false);
+        boolean isEnabled = pluginConfig.getBoolean("enabled", false);
+        if (isEnabled) {
+            this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL, this.bridge);
+            CookieHandler.setDefault(cookieManager);
+        }
+        return isEnabled;
     }
 
     /**
