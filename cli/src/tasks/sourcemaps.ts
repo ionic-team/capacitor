@@ -12,7 +12,10 @@ function walkDirectory(dirPath: string) {
       walkDirectory(targetFile);
     } else {
       const mapFile = join(dirPath, `${file}.map`);
-      if (extname(file) === '.js' && existsSync(mapFile)) {
+      if (
+        (extname(file) === '.js' || extname(file) === '.css') &&
+        existsSync(mapFile)
+      ) {
         const bufMap = readFileSync(mapFile).toString('base64');
         const bufFile = readFileSync(targetFile, 'utf8');
         const result = bufFile.replace(
