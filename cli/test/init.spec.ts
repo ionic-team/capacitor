@@ -31,7 +31,6 @@ describe('Init', () => {
     const jsonContents = JSON.parse(fileContents);
     expect(jsonContents.appId).toEqual(APP_ID);
     expect(jsonContents.appName).toEqual(APP_NAME);
-    expect(jsonContents.bundledWebRuntime).toEqual(false);
     expect(jsonContents.webDir).toEqual('www');
   });
 
@@ -43,7 +42,6 @@ describe('Init', () => {
     const jsonContents = JSON.parse(fileContents);
     expect(jsonContents.appId).toEqual(APP_ID);
     expect(jsonContents.appName).toEqual(APP_NAME);
-    expect(jsonContents.bundledWebRuntime).toEqual(false);
     expect(jsonContents.webDir).toEqual('build');
   });
 });

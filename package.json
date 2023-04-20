@@ -1,6 +1,12 @@
 {
   "name": "capacitor",
   "private": true,
+  "workspaces": [
+    "./android/",
+    "./ios/",
+    "./cli/",
+    "./core/"
+  ],
   "scripts": {
     "ci:publish:nightly": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid nightly-$(date +\"%Y%m%dT%H%M%S\") --dist-tag nightly --force-publish --no-verify-access --no-changelog --no-git-tag-version --no-push --yes",
     "ci:publish:alpha": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid alpha --dist-tag next --force-publish --no-verify-access --yes",
@@ -15,23 +21,23 @@
     "prettier": "prettier \"**/*.{css,html,java,js,mjs,ts}\"",
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
-    "postinstall": "lerna bootstrap",
     "version": "npm run sync-peer-dependencies"
   },
   "prettier": "@ionic/prettier-config",
-  "eslintConfig": {
-    "extends": "@ionic/eslint-config/recommended"
-  },
   "devDependencies": {
-    "@ionic/eslint-config": "^0.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
     "@ionic/prettier-config": "~1.0.1",
     "@ionic/swiftlint-config": "^1.1.2",
     "@types/tar": "^6.1.2",
-    "eslint": "~7.27.0",
-    "lerna": "^3.22.1",
+    "eslint": "~8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.0",
+    "lerna": "^6.5.1",
     "prettier": "~2.3.0",
     "prettier-plugin-java": "~1.1.1",
     "swiftlint": "^1.0.1",
-    "tar": "^6.1.11"
+    "tar": "^6.1.11",
+    "rimraf": "^4.4.1"
   }
 }

@@ -158,7 +158,6 @@ extension CAPWebView {
         webView.scrollView.alwaysBounceVertical = false
         webView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
         webView.allowsLinkPreview = configuration.allowLinkPreviews
-        webView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
         webView.scrollView.isScrollEnabled = configuration.scrollingEnabled
 
         if let overrideUserAgent = configuration.overridenUserAgentString {
