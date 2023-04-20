@@ -27,7 +27,7 @@
     "cross platform"
   ],
   "engines": {
-    "node": ">=12.4.0"
+    "node": ">=16.0.0"
   },
   "main": "dist/index.js",
   "types": "dist/declarations.d.ts",
