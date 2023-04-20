@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin.util;
 
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 import com.getcapacitor.Bridge;
@@ -140,6 +141,7 @@ public class HttpRequestHandler {
                     StringBuilder value = new StringBuilder();
                     JSONArray arr = params.getJSONArray(key);
                     for (int x = 0; x < arr.length(); x++) {
+                        String encodedValue = Uri.encode(arr.getString(x));
                         value.append(key).append("=").append(arr.getString(x));
                         if (x != arr.length() - 1) {
                             value.append("&");
@@ -153,6 +155,7 @@ public class HttpRequestHandler {
                     if (urlQueryBuilder.length() > 0) {
                         urlQueryBuilder.append("&");
                     }
+                    String encodedValue = Uri.encode(params.getString(key),"UTF-8");
                     urlQueryBuilder.append(key).append("=").append(params.getString(key));
                 }
             }
