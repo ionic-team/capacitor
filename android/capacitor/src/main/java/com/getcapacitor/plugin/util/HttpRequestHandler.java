@@ -155,7 +155,7 @@ public class HttpRequestHandler {
                     if (urlQueryBuilder.length() > 0) {
                         urlQueryBuilder.append("&");
                     }
-                    String encodedValue = Uri.encode(params.getString(key),"UTF-8");
+                    String encodedValue = Uri.encode(params.getString(key), "UTF-8");
                     urlQueryBuilder.append(key).append("=").append(params.getString(key));
                 }
             }
