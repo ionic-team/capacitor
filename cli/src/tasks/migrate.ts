@@ -202,6 +202,20 @@ export async function migrateCommand(
           },
         );
 
+        // Move package from android manifest
+        await runTask('Migrating package from Manifest to build.gradle', () => {
+          return movePackageFromManifestToBuildGradle(
+            join(
+              config.android.platformDirAbs,
+              'app',
+              'src',
+              'main',
+              'AndroidManifest.xml',
+            ),
+            join(config.android.platformDirAbs, 'app', 'build.gradle'),
+          );
+        });
+
         // Update gradle-wrapper.properties
         await runTask(
           `Migrating gradle-wrapper.properties by updating gradle version to ${gradleVersion}.`,
@@ -597,6 +611,80 @@ async function updateGradleProperties(filename: string) {
     }
   }
   writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
+}
+
+async function movePackageFromManifestToBuildGradle(
+  manifestFilename: string,
+  buildGradleFilename: string,
+) {
+  const manifestText = readFile(manifestFilename);
+  const buildGradleText = readFile(buildGradleFilename);
+
+  if (!manifestText) {
+    logger.error(
+      `Could not read ${manifestFilename}. Check its permissions and if it exists.`,
+    );
+    return;
+  }
+
+  if (!buildGradleText) {
+    logger.error(
+      `Could not read ${buildGradleFilename}. Check its permissions and if it exists.`,
+    );
+    return;
+  }
+
+  const namespaceExists = new RegExp(/\s+namespace\s+/).test(buildGradleText);
+  if (namespaceExists) {
+    logger.error('Found namespace in build.gradle already, skipping migration');
+    return;
+  }
+
+  let packageName: string;
+  const manifestRegEx = new RegExp(/<manifest ([^>]*package="(.+)"[^>]*)>/);
+  const manifestResults = manifestRegEx.exec(manifestText);
+
+  if (manifestResults === null) {
+    logger.error(`Unable to update Android Manifest. Missing <activity> tag`);
+    return;
+  } else {
+    packageName = manifestResults[2];
+  }
+
+  let manifestReplaced = manifestText;
+
+  manifestReplaced = setAllStringIn(
+    manifestText,
+    '<manifest xmlns:android="http://schemas.android.com/apk/res/android"',
+    '>',
+    ``,
+  );
+
+  if (manifestText == manifestReplaced) {
+    logger.error(
+      `Unable to update Android Manifest: no changes were detected in Android Manifest file`,
+    );
+    return;
+  }
+
+  let buildGradleReplaced = buildGradleText;
+
+  buildGradleReplaced = setAllStringIn(
+    buildGradleText,
+    'android {',
+    ' \n',
+    `namespace "${packageName}"\n`,
+  );
+
+  if (buildGradleText == buildGradleReplaced) {
+    logger.error(
+      `Unable to update buildGradleText: no changes were detected in Android Manifest file`,
+    );
+    return;
+  }
+
+  writeFileSync(manifestFilename, manifestReplaced, 'utf-8');
+  writeFileSync(buildGradleFilename, buildGradleReplaced, 'utf-8');
 }
 
 async function updateBuildGradle(
