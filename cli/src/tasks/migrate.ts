@@ -54,7 +54,7 @@ const plugins = [
 ];
 const coreVersion = 'next'; // TODO: Update when Capacitor 5 releases
 const pluginVersion = 'next'; // TODO: Update when Capacitor 5 releases
-const gradleVersion = '7.5';
+const gradleVersion = '8.0.2';
 
 export async function migrateCommand(
   config: Config,
@@ -202,6 +202,20 @@ export async function migrateCommand(
           },
         );
 
+        // Move package from android manifest
+        await runTask('Migrating package from Manifest to build.gradle', () => {
+          return movePackageFromManifestToBuildGradle(
+            join(
+              config.android.platformDirAbs,
+              'app',
+              'src',
+              'main',
+              'AndroidManifest.xml',
+            ),
+            join(config.android.platformDirAbs, 'app', 'build.gradle'),
+          );
+        });
+
         // Update gradle-wrapper.properties
         await runTask(
           `Migrating gradle-wrapper.properties by updating gradle version to ${gradleVersion}.`,
@@ -271,6 +285,7 @@ export async function migrateCommand(
               androidxBrowserVersion: '1.5.0',
               androidxMaterialVersion: '1.8.0',
               androidxExifInterfaceVersion: '1.3.6',
+              androidxCoreKTXVersion: '1.10.0',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(
@@ -598,6 +613,80 @@ async function updateGradleProperties(filename: string) {
   writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
 }
 
+async function movePackageFromManifestToBuildGradle(
+  manifestFilename: string,
+  buildGradleFilename: string,
+) {
+  const manifestText = readFile(manifestFilename);
+  const buildGradleText = readFile(buildGradleFilename);
+
+  if (!manifestText) {
+    logger.error(
+      `Could not read ${manifestFilename}. Check its permissions and if it exists.`,
+    );
+    return;
+  }
+
+  if (!buildGradleText) {
+    logger.error(
+      `Could not read ${buildGradleFilename}. Check its permissions and if it exists.`,
+    );
+    return;
+  }
+
+  const namespaceExists = new RegExp(/\s+namespace\s+/).test(buildGradleText);
+  if (namespaceExists) {
+    logger.error('Found namespace in build.gradle already, skipping migration');
+    return;
+  }
+
+  let packageName: string;
+  const manifestRegEx = new RegExp(/<manifest ([^>]*package="(.+)"[^>]*)>/);
+  const manifestResults = manifestRegEx.exec(manifestText);
+
+  if (manifestResults === null) {
+    logger.error(`Unable to update Android Manifest. Missing <activity> tag`);
+    return;
+  } else {
+    packageName = manifestResults[2];
+  }
+
+  let manifestReplaced = manifestText;
+
+  manifestReplaced = setAllStringIn(
+    manifestText,
+    '<manifest xmlns:android="http://schemas.android.com/apk/res/android"',
+    '>',
+    ``,
+  );
+
+  if (manifestText == manifestReplaced) {
+    logger.error(
+      `Unable to update Android Manifest: no changes were detected in Android Manifest file`,
+    );
+    return;
+  }
+
+  let buildGradleReplaced = buildGradleText;
+
+  buildGradleReplaced = setAllStringIn(
+    buildGradleText,
+    'android {',
+    ' \n',
+    `namespace "${packageName}"\n`,
+  );
+
+  if (buildGradleText == buildGradleReplaced) {
+    logger.error(
+      `Unable to update buildGradleText: no changes were detected in Android Manifest file`,
+    );
+    return;
+  }
+
+  writeFileSync(manifestFilename, manifestReplaced, 'utf-8');
+  writeFileSync(buildGradleFilename, buildGradleReplaced, 'utf-8');
+}
+
 async function updateBuildGradle(
   filename: string,
   variablesAndClasspaths: {
@@ -607,8 +696,8 @@ async function updateBuildGradle(
   },
 ) {
   // In build.gradle add dependencies:
-  // classpath 'com.android.tools.build:gradle:7.4.1'
-  // classpath 'com.google.gms:google-services:4.3.13'
+  // classpath 'com.android.tools.build:gradle:8.0.0'
+  // classpath 'com.google.gms:google-services:4.3.15'
   const txt = readFile(filename);
   if (!txt) {
     return;
@@ -638,6 +727,7 @@ async function updateBuildGradle(
       }
     }
   }
+  writeFileSync(filename, replaced, 'utf-8');
 }
 
 async function updateFile(
