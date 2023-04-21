@@ -142,7 +142,7 @@ public class HttpRequestHandler {
                     JSONArray arr = params.getJSONArray(key);
                     for (int x = 0; x < arr.length(); x++) {
                         String decodeValue = Uri.decode(arr.getString(x));
-                        String encodeValue= Uri.encode(decodeValue, "UTF-8");
+                        String encodeValue = Uri.encode(decodeValue, "UTF-8");
                         value.append(key).append("=").append(encodeValue);
                         if (x != arr.length() - 1) {
                             value.append("&");
@@ -158,7 +158,7 @@ public class HttpRequestHandler {
                     }
                     // to prevent double encoding have to decode and encode back
                     String decodeValue = Uri.decode(params.getString(key));
-                    String encodeValue= Uri.encode(decodeValue, "UTF-8");
+                    String encodeValue = Uri.encode(decodeValue, "UTF-8");
                     urlQueryBuilder.append(key).append("=").append(encodeValue);
                 }
             }
