@@ -660,8 +660,8 @@ async function movePackageFromManifestToBuildGradle(manifestFilename: string, bu
   buildGradleReplaced = setAllStringIn(
     buildGradleText,
     'android {',
-    '\n',
-    `\n    namespace "${packageName}"`,
+    ' \n',
+    `namespace "${packageName}"\n`,
   );
 
   if (buildGradleText == buildGradleReplaced) {
