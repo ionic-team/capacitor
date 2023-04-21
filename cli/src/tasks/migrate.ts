@@ -54,7 +54,7 @@ const plugins = [
 ];
 const coreVersion = 'next'; // TODO: Update when Capacitor 5 releases
 const pluginVersion = 'next'; // TODO: Update when Capacitor 5 releases
-const gradleVersion = '7.5';
+const gradleVersion = '8.0.2';
 
 export async function migrateCommand(
   config: Config,
@@ -271,6 +271,7 @@ export async function migrateCommand(
               androidxBrowserVersion: '1.5.0',
               androidxMaterialVersion: '1.8.0',
               androidxExifInterfaceVersion: '1.3.6',
+              androidxCoreKTXVersion: '1.10.0',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(
@@ -607,8 +608,8 @@ async function updateBuildGradle(
   },
 ) {
   // In build.gradle add dependencies:
-  // classpath 'com.android.tools.build:gradle:7.4.1'
-  // classpath 'com.google.gms:google-services:4.3.13'
+  // classpath 'com.android.tools.build:gradle:8.0.0'
+  // classpath 'com.google.gms:google-services:4.3.15'
   const txt = readFile(filename);
   if (!txt) {
     return;
@@ -638,6 +639,7 @@ async function updateBuildGradle(
       }
     }
   }
+  writeFileSync(filename, replaced, 'utf-8');
 }
 
 async function updateFile(
