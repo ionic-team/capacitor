@@ -85,7 +85,7 @@ jobs:
       - run: npm test
         working-directory: ./core
   test-ios:
-    runs-on: macos-latest
+    runs-on: macos-11
     timeout-minutes: 30
     needs:
       - setup
@@ -128,7 +128,7 @@ jobs:
       - run: npm run verify
         working-directory: ./android
   deploy-next:
-    runs-on: macos-latest
+    runs-on: macos-11
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Release') && (contains(github.event.head_commit.message, 'rc') || contains(github.event.head_commit.message, 'beta') || contains(github.event.head_commit.message, 'alpha'))
     timeout-minutes: 30
     needs:
