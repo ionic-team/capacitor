@@ -44,10 +44,10 @@
     "watch": "npm run assets && tsc -w"
   },
   "dependencies": {
-    "@ionic/cli-framework-output": "^2.2.1",
-    "@ionic/utils-fs": "^3.1.5",
-    "@ionic/utils-subprocess": "^2.1.6",
-    "@ionic/utils-terminal": "^2.3.0",
+    "@ionic/cli-framework-output": "2.2.5",
+    "@ionic/utils-fs": "3.1.6",
+    "@ionic/utils-subprocess": "2.1.11",
+    "@ionic/utils-terminal": "2.3.3",
     "@types/node": "18.11.18",
     "commander": "^6.0.0",
     "debug": "^4.2.0",
