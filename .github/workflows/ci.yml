@@ -137,6 +137,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
+      - name: set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
       - name: NPM ^9.5.0
         run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
       - uses: actions/checkout@v3
