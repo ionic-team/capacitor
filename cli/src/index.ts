@@ -156,12 +156,7 @@ export function runProgram(config: Config): void {
           config,
           async (
             platform,
-            {
-              scheme,
-              keystorepath,
-              keystorepass,
-              androidreleasetype,
-            },
+            { scheme, keystorepath, keystorepass, androidreleasetype },
           ) => {
             const { buildCommand } = await import('./tasks/build');
             await buildCommand(config, platform, {
