@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/ionic-team/capacitor/compare/4.7.3...4.8.0) (2023-04-26)
+
+
+### Bug Fixes
+
+* **android:** launching intents without host  ([#6493](https://github.com/ionic-team/capacitor/issues/6493)) ([6028ff4](https://github.com/ionic-team/capacitor/commit/6028ff482b489c150e348a3b536387c321b39b80))
+* **cli:** Pin [@ionic](https://github.com/ionic) dependencies for node 12 support ([#6527](https://github.com/ionic-team/capacitor/issues/6527)) ([dd2d617](https://github.com/ionic-team/capacitor/commit/dd2d6172e174963114d119b55cb0b0e43faf8b63))
+* **cli:** Pin @ionic/utils-subprocess version for node 12 support ([#6524](https://github.com/ionic-team/capacitor/issues/6524)) ([c714408](https://github.com/ionic-team/capacitor/commit/c7144081532c486ef2d5fa42881ae2421b81e3eb))
+* **cookies:** check isEnabled before setting cookieHandler ([24a28cb](https://github.com/ionic-team/capacitor/commit/24a28cb0a391dcd7f305000c4973b4c2c9a79359))
+* **cookies:** init cookie manager after server url is set ([4000b02](https://github.com/ionic-team/capacitor/commit/4000b0259223fcd505bbd5393e2458f0abd3b156))
+* **http:** copy native response url to fetch response ([42d2eb3](https://github.com/ionic-team/capacitor/commit/42d2eb3c3c04e087b88df7252cd2c323b00a3f95))
+
+
+### Features
+
+* **ios:** add webContentsDebuggingEnabled configuration ([#6500](https://github.com/ionic-team/capacitor/issues/6500)) ([b9e345a](https://github.com/ionic-team/capacitor/commit/b9e345a8f02229650eabc829d49c9d9e7227eb57))
+
+
+
+
+
 ## [4.7.3](https://github.com/ionic-team/capacitor/compare/4.7.2...4.7.3) (2023-03-31)
 
 

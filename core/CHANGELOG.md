@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/ionic-team/capacitor/compare/4.7.3...4.8.0) (2023-04-26)
+
+
+### Bug Fixes
+
+* **http:** copy native response url to fetch response ([42d2eb3](https://github.com/ionic-team/capacitor/commit/42d2eb3c3c04e087b88df7252cd2c323b00a3f95))
+
+
+
+
+
 ## [4.7.3](https://github.com/ionic-team/capacitor/compare/4.7.2...4.7.3) (2023-03-31)
 
 **Note:** Version bump only for package @capacitor/core

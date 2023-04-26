@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/ionic-team/capacitor/compare/4.7.3...4.8.0) (2023-04-26)
+
+
+### Bug Fixes
+
+* **cli:** Pin [@ionic](https://github.com/ionic) dependencies for node 12 support ([#6527](https://github.com/ionic-team/capacitor/issues/6527)) ([dd2d617](https://github.com/ionic-team/capacitor/commit/dd2d6172e174963114d119b55cb0b0e43faf8b63))
+* **cli:** Pin @ionic/utils-subprocess version for node 12 support ([#6524](https://github.com/ionic-team/capacitor/issues/6524)) ([c714408](https://github.com/ionic-team/capacitor/commit/c7144081532c486ef2d5fa42881ae2421b81e3eb))
+
+
+### Features
+
+* **ios:** add webContentsDebuggingEnabled configuration ([#6500](https://github.com/ionic-team/capacitor/issues/6500)) ([b9e345a](https://github.com/ionic-team/capacitor/commit/b9e345a8f02229650eabc829d49c9d9e7227eb57))
+
+
+
+
+
 ## [4.7.3](https://github.com/ionic-team/capacitor/compare/4.7.2...4.7.3) (2023-03-31)
 
 **Note:** Version bump only for package @capacitor/cli
