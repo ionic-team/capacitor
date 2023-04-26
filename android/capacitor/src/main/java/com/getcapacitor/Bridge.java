@@ -84,6 +84,7 @@ public class Bridge {
     public static final String DEFAULT_WEB_ASSET_DIR = "public";
     public static final String CAPACITOR_HTTP_SCHEME = "http";
     public static final String CAPACITOR_HTTPS_SCHEME = "https";
+    public static final String CAPACITOR_MEDIA_START = "/_capacitor_media_";
     public static final String CAPACITOR_FILE_START = "/_capacitor_file_";
     public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
     public static final int DEFAULT_ANDROID_WEBVIEW_VERSION = 60;

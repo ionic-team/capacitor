@@ -369,6 +369,7 @@ const initBridge = (w: any): void => {
       }
 
       // patch fetch / XHR on Android/iOS
+
       // store original fetch & XHR functions
       win.CapacitorWebFetch = window.fetch;
       win.CapacitorWebXMLHttpRequest = {
@@ -380,6 +381,31 @@ const initBridge = (w: any): void => {
         send: window.XMLHttpRequest.prototype.send,
         setRequestHeader: window.XMLHttpRequest.prototype.setRequestHeader,
       };
+
+      // media types that we want to intercept and route to our custom protocol handlers
+      const fileExtensions = [
+        'pdf',
+        'jpg',
+        'jpeg',
+        'png',
+        'gif',
+        'bmp',
+        'svg',
+        'wasm',
+      ];
+      const mediaContentTypes = [
+        'application/pdf',
+        'application/octet-stream',
+        'application/wasm',
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'video/mp4',
+        'video/webm',
+        'audio/mpeg',
+        'audio/wav',
+      ];
+      const responseTypes = ['arraybuffer', 'blob'];
 
       let doPatchHttp = false;
 
@@ -426,6 +452,30 @@ const initBridge = (w: any): void => {
             if (options?.headers instanceof Headers) {
               headers = Object.fromEntries((options.headers as any).entries());
             }
+
+            const url = new URL(resource.toString());
+            const extension = url.pathname.split('.').pop()?.toLowerCase();
+            const contentType =
+              headers?.['Content-Type'] ?? headers?.['content-type'];
+
+            if (
+              (null != extension && fileExtensions.includes(extension)) ||
+              (contentType != null && mediaContentTypes.includes(contentType))
+            ) {
+              if (platform === 'ios') {
+                url.protocol = 'capacitor-http:';
+              } else if (platform === 'android') {
+                url.pathname += '/_capacitor_media_';
+              }
+              const modifiedResource = url.toString();
+              const response = await win.CapacitorWebFetch(
+                modifiedResource,
+                options,
+              );
+              console.timeEnd(tag);
+              return response;
+            }
+
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
               'request',
@@ -599,53 +649,119 @@ const initBridge = (w: any): void => {
           }
 
           const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
-          console.time(tag);
 
           try {
-            this.readyState = 2;
-
             // intercept request & pass to the bridge
-            cap
-              .nativePromise('CapacitorHttp', 'request', {
-                url: this._url,
-                method: this._method,
-                data: body !== null ? body : undefined,
-                headers:
-                  this._headers != null && Object.keys(this._headers).length > 0
-                    ? this._headers
-                    : undefined,
-              })
-              .then((nativeResponse: any) => {
-                // intercept & parse response before returning
-                if (this.readyState == 2) {
-                  this.dispatchEvent(new Event('loadstart'));
-                  this._headers = nativeResponse.headers;
-                  this.status = nativeResponse.status;
-                  this.response = nativeResponse.data;
-                  this.responseText = !nativeResponse.headers[
-                    'Content-Type'
-                  ].startsWith('application/json')
-                    ? nativeResponse.data
-                    : JSON.stringify(nativeResponse.data);
-                  this.responseURL = nativeResponse.url;
+
+            const url = new URL(this._url);
+            const extension = url.pathname.split('.').pop()?.toLowerCase();
+            const contentType =
+              this._headers?.['Content-Type'] ??
+              this._headers?.['content-type'];
+
+            if (
+              (null != this.responseType &&
+                responseTypes.includes(this.responseType)) ||
+              (null != extension && fileExtensions.includes(extension)) ||
+              (contentType != null && mediaContentTypes.includes(contentType))
+            ) {
+              if (platform === 'ios') {
+                url.protocol = 'capacitor-http:';
+              } else if (platform === 'android') {
+                url.pathname += '/_capacitor_media_';
+              }
+
+              this._url = url.toString();
+              const xhr = new XMLHttpRequest();
+              win.CapacitorWebXMLHttpRequest.open.call(
+                xhr,
+                this._method,
+                url.toString(),
+              );
+              for (const header in this._headers) {
+                win.CapacitorWebXMLHttpRequest.setRequestHeader.call(
+                  xhr,
+                  header,
+                  this._headers[header],
+                );
+              }
+              xhr.responseType = this.responseType;
+              win.CapacitorWebXMLHttpRequest.send.call(xhr, body);
+              xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
                   this.readyState = 4;
+                  this.status = xhr.status;
+                  this.response = xhr.response;
+                  if (
+                    null === xhr.responseType ||
+                    xhr.responseType === '' ||
+                    xhr.responseType === 'text'
+                  ) {
+                    this.responseText = xhr.responseText;
+                  }
+                  this.responseURL = xhr.responseURL;
                   this.dispatchEvent(new Event('load'));
                   this.dispatchEvent(new Event('loadend'));
                 }
-                console.timeEnd(tag);
-              })
-              .catch((error: any) => {
-                this.dispatchEvent(new Event('loadstart'));
-                this.status = error.status;
-                this._headers = error.headers;
-                this.response = error.data;
-                this.responseText = JSON.stringify(error.data);
-                this.responseURL = error.url;
-                this.readyState = 4;
+              };
+
+              xhr.onerror = () => {
+                this.readyState = xhr.readyState;
+                this.status = xhr.status;
+                this.response = xhr.response;
+                this.responseText = xhr.responseText;
+                this.responseURL = xhr.responseURL;
                 this.dispatchEvent(new Event('error'));
                 this.dispatchEvent(new Event('loadend'));
-                console.timeEnd(tag);
-              });
+              };
+            } else {
+              this.readyState = 2;
+              console.time(tag);
+
+              cap
+                .nativePromise('CapacitorHttp', 'request', {
+                  url: this._url,
+                  method: this._method,
+                  data: body !== null ? body : undefined,
+                  headers:
+                    this._headers != null &&
+                    Object.keys(this._headers).length > 0
+                      ? this._headers
+                      : undefined,
+                })
+                .then((nativeResponse: any) => {
+                  // intercept & parse response before returning
+                  if (this.readyState == 2) {
+                    this.dispatchEvent(new Event('loadstart'));
+                    this._headers = nativeResponse.headers;
+                    this.status = nativeResponse.status;
+                    this.response = nativeResponse.data;
+                    this.responseText = !nativeResponse.headers[
+                      'Content-Type'
+                    ].startsWith('application/json')
+                      ? nativeResponse.data
+                      : JSON.stringify(nativeResponse.data);
+                    this.responseURL = nativeResponse.url;
+                    this.readyState = 4;
+                    this.dispatchEvent(new Event('load'));
+                    this.dispatchEvent(new Event('loadend'));
+                  }
+                  console.timeEnd(tag);
+                })
+
+                .catch((error: any) => {
+                  this.dispatchEvent(new Event('loadstart'));
+                  this.status = error.status;
+                  this._headers = error.headers;
+                  this.response = error.data;
+                  this.responseText = JSON.stringify(error.data);
+                  this.responseURL = error.url;
+                  this.readyState = 4;
+                  this.dispatchEvent(new Event('error'));
+                  this.dispatchEvent(new Event('loadend'));
+                  console.timeEnd(tag);
+                });
+            }
           } catch (error) {
             this.dispatchEvent(new Event('loadstart'));
             this.status = 500;

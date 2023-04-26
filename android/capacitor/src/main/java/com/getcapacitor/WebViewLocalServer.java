@@ -21,6 +21,8 @@ import android.util.Base64;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import com.getcapacitor.plugin.util.CapacitorHttpUrlConnection;
+import com.getcapacitor.plugin.util.HttpRequestHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -29,6 +31,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -165,6 +168,16 @@ public class WebViewLocalServer {
      */
     public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
         Uri loadingUrl = request.getUrl();
+
+        if (loadingUrl.getPath().endsWith(Bridge.CAPACITOR_MEDIA_START)) {
+            Logger.debug("Handling request for media: " + request.getUrl().toString());
+            try {
+                return handleMediaRequest(request);
+            } catch (Exception e) {
+                Logger.error(e.getLocalizedMessage());
+            }
+        }
+
         PathHandler handler;
         synchronized (uriMatcher) {
             handler = (PathHandler) uriMatcher.match(request.getUrl());
@@ -197,6 +210,70 @@ public class WebViewLocalServer {
 
     private boolean isAllowedUrl(Uri loadingUrl) {
         return !(bridge.getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()));
+    }
+
+    private WebResourceResponse handleMediaRequest(WebResourceRequest request) throws IOException {
+        String urlString = request.getUrl().toString().replace(Bridge.CAPACITOR_MEDIA_START, "");
+        URL url = new URL(urlString);
+        JSObject headers = new JSObject();
+
+        for (Map.Entry<String, String> header : request.getRequestHeaders().entrySet()) {
+            headers.put(header.getKey(), header.getValue());
+        }
+
+        HttpRequestHandler.HttpURLConnectionBuilder connectionBuilder = new HttpRequestHandler.HttpURLConnectionBuilder()
+            .setUrl(url)
+            .setMethod(request.getMethod())
+            .setHeaders(headers)
+            .openConnection();
+
+        CapacitorHttpUrlConnection connection = connectionBuilder.build();
+
+        if (null != bridge) {
+            connection.setSSLSocketFactory(bridge);
+        }
+
+        connection.connect();
+
+        String mimeType = null;
+        String encoding = null;
+        Map<String, String> responseHeaders = new LinkedHashMap<>();
+        for (Map.Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
+            StringBuilder builder = new StringBuilder();
+            for (String value : entry.getValue()) {
+                builder.append(value);
+                builder.append(", ");
+            }
+            builder.setLength(builder.length() - 2);
+
+            if ("Content-Type".equalsIgnoreCase(entry.getKey())) {
+                String[] contentTypeParts = builder.toString().split(";");
+                mimeType = contentTypeParts[0].trim();
+                if (contentTypeParts.length > 1) {
+                    String[] encodingParts = contentTypeParts[1].split("=");
+                    if (encodingParts.length > 1) {
+                        encoding = encodingParts[1].trim();
+                    }
+                }
+            } else if ("Access-Control-Allow-Origin".equalsIgnoreCase(entry.getKey())) {
+                continue;
+            }
+
+            responseHeaders.put(entry.getKey(), builder.toString());
+        }
+
+        if (!responseHeaders.containsKey("Access-Control-Allow-Origin") && bridge != null) {
+            responseHeaders.put("Access-Control-Allow-Origin", bridge.getLocalUrl());
+        }
+
+        return new WebResourceResponse(
+            mimeType,
+            encoding,
+            connection.getResponseCode(),
+            "OK",
+            responseHeaders,
+            connection.getInputStream()
+        );
     }
 
     private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {

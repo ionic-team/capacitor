@@ -136,7 +136,8 @@ var nativeBridge = (function (exports) {
             if (nav) {
                 nav.app = nav.app || {};
                 nav.app.exitApp = () => {
-                    if (!cap.Plugins || !cap.Plugins.App) {
+                    var _a;
+                    if (!((_a = cap.Plugins) === null || _a === void 0 ? void 0 : _a.App)) {
                         win.console.warn('App plugin not installed');
                     }
                     else {
@@ -147,6 +148,7 @@ var nativeBridge = (function (exports) {
             if (doc) {
                 const docAddEventListener = doc.addEventListener;
                 doc.addEventListener = (...args) => {
+                    var _a;
                     const eventName = args[0];
                     const handler = args[1];
                     if (eventName === 'deviceready' && handler) {
@@ -155,7 +157,7 @@ var nativeBridge = (function (exports) {
                     else if (eventName === 'backbutton' && cap.Plugins.App) {
                         // Add a dummy listener so Capacitor doesn't do the default
                         // back button action
-                        if (!cap.Plugins || !cap.Plugins.App) {
+                        if (!((_a = cap.Plugins) === null || _a === void 0 ? void 0 : _a.App)) {
                             win.console.warn('App plugin not installed');
                         }
                         else {
@@ -344,6 +346,11 @@ var nativeBridge = (function (exports) {
                     send: window.XMLHttpRequest.prototype.send,
                     setRequestHeader: window.XMLHttpRequest.prototype.setRequestHeader,
                 };
+                // media types that we want to intercept and route to our custom protocol handlers
+                const fileExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'wasm'];
+                const mediaContentTypes = ['application/pdf', 'application/octet-stream', 'application/wasm',
+                    'image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm', 'audio/mpeg', 'audio/wav'];
+                const responseTypes = ['arraybuffer', 'blob'];
                 let doPatchHttp = false;
                 // check if capacitor http is disabled before patching
                 if (platform === 'ios') {
@@ -366,6 +373,7 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
+                        var _a, _b;
                         if (!(resource.toString().startsWith('http:') ||
                             resource.toString().startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
@@ -377,6 +385,23 @@ var nativeBridge = (function (exports) {
                             let headers = options === null || options === void 0 ? void 0 : options.headers;
                             if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
                                 headers = Object.fromEntries(options.headers.entries());
+                            }
+                            const url = new URL(resource.toString());
+                            const extension = (_a = url.pathname.split('.').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+                            const contentType = (_b = headers === null || headers === void 0 ? void 0 : headers['Content-Type']) !== null && _b !== void 0 ? _b : headers === null || headers === void 0 ? void 0 : headers['content-type'];
+                            if ((null != extension &&
+                                fileExtensions.includes(extension)) ||
+                                (contentType != null && mediaContentTypes.includes(contentType))) {
+                                if (platform === 'ios') {
+                                    url.protocol = 'capacitor-http:';
+                                }
+                                else if (platform === 'android') {
+                                    url.pathname += '/_capacitor_media_';
+                                }
+                                const modifiedResource = url.toString();
+                                const response = await win.CapacitorWebFetch(modifiedResource, options);
+                                console.timeEnd(tag);
+                                return response;
                             }
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
                                 url: resource,
@@ -508,53 +533,99 @@ var nativeBridge = (function (exports) {
                     };
                     // XHR patch send
                     window.XMLHttpRequest.prototype.send = function (body) {
+                        var _a, _b, _c, _d;
                         if (this._url == null ||
                             !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
                         }
                         const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
-                        console.time(tag);
                         try {
-                            this.readyState = 2;
                             // intercept request & pass to the bridge
-                            cap
-                                .nativePromise('CapacitorHttp', 'request', {
-                                url: this._url,
-                                method: this._method,
-                                data: body !== null ? body : undefined,
-                                headers: this._headers != null && Object.keys(this._headers).length > 0
-                                    ? this._headers
-                                    : undefined,
-                            })
-                                .then((nativeResponse) => {
-                                // intercept & parse response before returning
-                                if (this.readyState == 2) {
-                                    this.dispatchEvent(new Event('loadstart'));
-                                    this._headers = nativeResponse.headers;
-                                    this.status = nativeResponse.status;
-                                    this.response = nativeResponse.data;
-                                    this.responseText = !nativeResponse.headers['Content-Type'].startsWith('application/json')
-                                        ? nativeResponse.data
-                                        : JSON.stringify(nativeResponse.data);
-                                    this.responseURL = nativeResponse.url;
-                                    this.readyState = 4;
-                                    this.dispatchEvent(new Event('load'));
-                                    this.dispatchEvent(new Event('loadend'));
+                            const url = new URL(this._url);
+                            const extension = (_a = url.pathname.split('.').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+                            const contentType = (_c = (_b = this._headers) === null || _b === void 0 ? void 0 : _b['Content-Type']) !== null && _c !== void 0 ? _c : (_d = this._headers) === null || _d === void 0 ? void 0 : _d['content-type'];
+                            if ((null != this.responseType && responseTypes.includes(this.responseType)) ||
+                                (null != extension && fileExtensions.includes(extension)) ||
+                                (contentType != null && mediaContentTypes.includes(contentType))) {
+                                if (platform === 'ios') {
+                                    url.protocol = 'capacitor-http:';
                                 }
-                                console.timeEnd(tag);
-                            })
-                                .catch((error) => {
-                                this.dispatchEvent(new Event('loadstart'));
-                                this.status = error.status;
-                                this._headers = error.headers;
-                                this.response = error.data;
-                                this.responseText = JSON.stringify(error.data);
-                                this.responseURL = error.url;
-                                this.readyState = 4;
-                                this.dispatchEvent(new Event('error'));
-                                this.dispatchEvent(new Event('loadend'));
-                                console.timeEnd(tag);
-                            });
+                                else if (platform === 'android') {
+                                    url.pathname += '/_capacitor_media_';
+                                }
+                                this._url = url.toString();
+                                const xhr = new XMLHttpRequest();
+                                win.CapacitorWebXMLHttpRequest.open.call(xhr, this._method, url.toString());
+                                for (const header in this._headers) {
+                                    win.CapacitorWebXMLHttpRequest.setRequestHeader.call(xhr, header, this._headers[header]);
+                                }
+                                xhr.responseType = this.responseType;
+                                win.CapacitorWebXMLHttpRequest.send.call(xhr, body);
+                                xhr.onreadystatechange = () => {
+                                    if (xhr.readyState === 4) {
+                                        this.readyState = 4;
+                                        this.status = xhr.status;
+                                        this.response = xhr.response;
+                                        if (null === xhr.responseType || xhr.responseType === '' || xhr.responseType === 'text') {
+                                            this.responseText = xhr.responseText;
+                                        }
+                                        this.responseURL = xhr.responseURL;
+                                        this.dispatchEvent(new Event('load'));
+                                        this.dispatchEvent(new Event('loadend'));
+                                    }
+                                };
+                                xhr.onerror = () => {
+                                    this.readyState = xhr.readyState;
+                                    this.status = xhr.status;
+                                    this.response = xhr.response;
+                                    this.responseText = xhr.responseText;
+                                    this.responseURL = xhr.responseURL;
+                                    this.dispatchEvent(new Event('error'));
+                                    this.dispatchEvent(new Event('loadend'));
+                                };
+                            }
+                            else {
+                                this.readyState = 2;
+                                console.time(tag);
+                                cap
+                                    .nativePromise('CapacitorHttp', 'request', {
+                                    url: this._url,
+                                    method: this._method,
+                                    data: body !== null ? body : undefined,
+                                    headers: this._headers != null && Object.keys(this._headers).length > 0
+                                        ? this._headers
+                                        : undefined,
+                                })
+                                    .then((nativeResponse) => {
+                                    // intercept & parse response before returning
+                                    if (this.readyState == 2) {
+                                        this.dispatchEvent(new Event('loadstart'));
+                                        this._headers = nativeResponse.headers;
+                                        this.status = nativeResponse.status;
+                                        this.response = nativeResponse.data;
+                                        this.responseText = !nativeResponse.headers['Content-Type'].startsWith('application/json')
+                                            ? nativeResponse.data
+                                            : JSON.stringify(nativeResponse.data);
+                                        this.responseURL = nativeResponse.url;
+                                        this.readyState = 4;
+                                        this.dispatchEvent(new Event('load'));
+                                        this.dispatchEvent(new Event('loadend'));
+                                    }
+                                    console.timeEnd(tag);
+                                })
+                                    .catch((error) => {
+                                    this.dispatchEvent(new Event('loadstart'));
+                                    this.status = error.status;
+                                    this._headers = error.headers;
+                                    this.response = error.data;
+                                    this.responseText = JSON.stringify(error.data);
+                                    this.responseURL = error.url;
+                                    this.readyState = 4;
+                                    this.dispatchEvent(new Event('error'));
+                                    this.dispatchEvent(new Event('loadend'));
+                                    console.timeEnd(tag);
+                                });
+                            }
                         }
                         catch (error) {
                             this.dispatchEvent(new Event('loadstart'));

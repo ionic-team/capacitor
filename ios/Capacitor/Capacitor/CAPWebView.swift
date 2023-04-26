@@ -150,6 +150,7 @@ extension CAPWebView {
         // setup the web view configuration
         let webViewConfig = webViewConfiguration(for: configuration)
         webViewConfig.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
+        webViewConfig.setURLSchemeHandler(assetHandler, forURLScheme: InstanceDescriptorDefaults.httpScheme)
         webViewConfig.userContentController = delegationHandler.contentController
         // create the web view and set its properties
         loadInitialContext(webViewConfig.userContentController)

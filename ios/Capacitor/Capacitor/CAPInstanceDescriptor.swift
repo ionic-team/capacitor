@@ -1,6 +1,7 @@
 import Foundation
 
 public enum InstanceDescriptorDefaults {
+    static let httpScheme = "capacitor-http"
     static let scheme = "capacitor"
     static let hostname = "localhost"
 }
