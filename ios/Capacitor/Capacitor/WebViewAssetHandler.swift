@@ -5,9 +5,11 @@ import MobileCoreServices
 // swiftlint:disable type_body_length
 internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
+    private var serverURL: String
 
-    init(router: Router) {
+    init(router: Router, serverURL: String) {
         self.router = router
+        self.serverURL = serverURL
         super.init()
     }
 
@@ -33,6 +35,8 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             var data = Data()
             let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
             var headers =  [
+                "Access-Control-Allow-Origin": self.serverURL,
+                "Access-Control-Allow-Methods": "GET, OPTIONS",
                 "Content-Type": mimeType,
                 "Cache-Control": "no-cache"
             ]
