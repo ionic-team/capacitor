@@ -2,6 +2,10 @@ name: Publish Latest
 
 on: workflow_dispatch
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   publish-npm-latest:
     uses: ./.github/workflows/publish-npm-latest.yml
