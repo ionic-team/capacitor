@@ -403,7 +403,12 @@ async function installLatestLibs(
 }
 
 async function writeBreakingChanges() {
-  const breaking = ['@capacitor/camera', '@capacitor/device', '@capacitor/local-notifications', '@capacitor/push-notifications'];
+  const breaking = [
+    '@capacitor/camera',
+    '@capacitor/device',
+    '@capacitor/local-notifications',
+    '@capacitor/push-notifications',
+  ];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
