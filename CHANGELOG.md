@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/5.0.0-rc.0...5.0.0-rc.1) (2023-05-02)
+
+### Bug Fixes
+
+- **cli:** Avoid infinite loop in namespace migration ([#6551](https://github.com/ionic-team/capacitor/issues/6551)) ([d3aacde](https://github.com/ionic-team/capacitor/commit/d3aacdeb0c86d3941464954e7d1f582e405be489))
+- **cli:** Migrate more plugin variables ([#6552](https://github.com/ionic-team/capacitor/issues/6552)) ([b7da5b9](https://github.com/ionic-team/capacitor/commit/b7da5b988ce7da5ea3991eaec46b9e52ff3635f1))
+
 # [5.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/5.0.0-beta.3...5.0.0-rc.0) (2023-05-01)
 
 **Note:** Version bump only for package capacitor
