@@ -294,21 +294,26 @@ export async function migrateCommand(
         return getCommandOutput('npx', ['cap', 'sync']);
       });
 
-      try {
-        await runTask(`Upgrading gradle wrapper files`, () => {
-          return updateGradleWrapperFiles(config.android.platformDirAbs);
-        });
-      } catch (e: any) {
-        if (e.includes('EACCES')) {
-          logger.error(
-            `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
-              `chmod +x ./${config.android.platformDir}/gradlew`,
-            )} and ${c.input(
-              `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version ${gradleVersion} --warning-mode all`,
-            )} to update the files manually`,
-          );
-        } else {
-          logger.error(`gradle wrapper files were not updated`);
+      if (
+        allDependencies['@capacitor/android'] &&
+        existsSync(config.android.platformDirAbs)
+      ) {
+        try {
+          await runTask(`Upgrading gradle wrapper files`, () => {
+            return updateGradleWrapperFiles(config.android.platformDirAbs);
+          });
+        } catch (e: any) {
+          if (e.includes('EACCES')) {
+            logger.error(
+              `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
+                `chmod +x ./${config.android.platformDir}/gradlew`,
+              )} and ${c.input(
+                `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version ${gradleVersion} --warning-mode all`,
+              )} to update the files manually`,
+            );
+          } else {
+            logger.error(`gradle wrapper files were not updated`);
+          }
         }
       }
 
