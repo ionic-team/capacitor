@@ -286,6 +286,11 @@ export async function migrateCommand(
               androidxMaterialVersion: '1.8.0',
               androidxExifInterfaceVersion: '1.3.6',
               androidxCoreKTXVersion: '1.10.0',
+              googleMapsPlayServicesVersion: '18.1.0',
+              googleMapsUtilsVersion: '3.4.0',
+              googleMapsKtxVersion: '3.4.0',
+              googleMapsUtilsKtxVersion: '3.4.0',
+              kotlinxCoroutinesVersion: '1.6.4',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(
@@ -398,16 +403,22 @@ async function installLatestLibs(
 }
 
 async function writeBreakingChanges() {
-  const breaking = ['@capacitor/device'];
+  const breaking = [
+    '@capacitor/camera',
+    '@capacitor/device',
+    '@capacitor/local-notifications',
+    '@capacitor/push-notifications',
+  ];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
       broken.push(lib);
     }
   }
+  // TODO - remove "next" from the url once capacitor 5 is final
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
