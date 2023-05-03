@@ -29,30 +29,31 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     return
                 }
 
-                let response = response as! HTTPURLResponse
-                let existingHeaders = response.allHeaderFields
-                // Allow CORS since request is being made from "localhost" to "capacitor://localhost" for example
-                let newHeaders: [String: String] = [
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, HEAD",
-                    "Access-Control-Allow-Headers": "*"
-                ]
+                if let response = response as? HTTPURLResponse {
+                    let existingHeaders = response.allHeaderFields
+                    // Allow CORS since request is being made from "localhost" to "capacitor://localhost" for example
+                    let newHeaders: [String: String] = [
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, HEAD",
+                        "Access-Control-Allow-Headers": "*"
+                    ]
 
-                let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (current, _) in current }) as! [String: String]
+                    if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (current, _) in current }) as? [String: String] {
 
-                let modifiedResponse = HTTPURLResponse(
-                    url: response.url!,
-                    statusCode: response.statusCode,
-                    httpVersion: nil,
-                    headerFields: mergedHeaders
-                )!
+                        let modifiedResponse = HTTPURLResponse(
+                            url: response.url!,
+                            statusCode: response.statusCode,
+                            httpVersion: nil,
+                            headerFields: mergedHeaders
+                        )!
 
-                urlSchemeTask.didReceive(modifiedResponse)
+                        urlSchemeTask.didReceive(modifiedResponse)
 
-                if let data = data {
-                    urlSchemeTask.didReceive(data)
+                        if let data = data {
+                            urlSchemeTask.didReceive(data)
+                        }
+                    }
                 }
-
                 urlSchemeTask.didFinish()
                 return
             }
