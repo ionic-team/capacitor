@@ -209,6 +209,20 @@ export async function migrateCommand(
           },
         );
 
+        // Move package from android manifest
+        await runTask('Migrating package from Manifest to build.gradle', () => {
+          return movePackageFromManifestToBuildGradle(
+            join(
+              config.android.platformDirAbs,
+              'app',
+              'src',
+              'main',
+              'AndroidManifest.xml',
+            ),
+            join(config.android.platformDirAbs, 'app', 'build.gradle'),
+          );
+        });
+
         // Update gradle-wrapper.properties
         await runTask(
           `Migrating gradle-wrapper.properties by updating gradle version to ${gradleVersion}.`,
@@ -279,6 +293,11 @@ export async function migrateCommand(
               androidxMaterialVersion: '1.8.0',
               androidxExifInterfaceVersion: '1.3.6',
               androidxCoreKTXVersion: '1.10.0',
+              googleMapsPlayServicesVersion: '18.1.0',
+              googleMapsUtilsVersion: '3.4.0',
+              googleMapsKtxVersion: '3.4.0',
+              googleMapsUtilsKtxVersion: '3.4.0',
+              kotlinxCoroutinesVersion: '1.6.4',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(
@@ -396,16 +415,22 @@ async function installLatestLibs(
 }
 
 async function writeBreakingChanges() {
-  const breaking = ['@capacitor/device'];
+  const breaking = [
+    '@capacitor/camera',
+    '@capacitor/device',
+    '@capacitor/local-notifications',
+    '@capacitor/push-notifications',
+  ];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
       broken.push(lib);
     }
   }
+  // TODO - remove "next" from the url once capacitor 5 is final
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
@@ -609,6 +634,80 @@ async function updateGradleProperties(filename: string) {
     }
   }
   writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
+}
+
+async function movePackageFromManifestToBuildGradle(
+  manifestFilename: string,
+  buildGradleFilename: string,
+) {
+  const manifestText = readFile(manifestFilename);
+  const buildGradleText = readFile(buildGradleFilename);
+
+  if (!manifestText) {
+    logger.error(
+      `Could not read ${manifestFilename}. Check its permissions and if it exists.`,
+    );
+    return;
+  }
+
+  if (!buildGradleText) {
+    logger.error(
+      `Could not read ${buildGradleFilename}. Check its permissions and if it exists.`,
+    );
+    return;
+  }
+
+  const namespaceExists = new RegExp(/\s+namespace\s+/).test(buildGradleText);
+  if (namespaceExists) {
+    logger.error('Found namespace in build.gradle already, skipping migration');
+    return;
+  }
+
+  let packageName: string;
+  const manifestRegEx = new RegExp(/<manifest ([^>]*package="(.+)"[^>]*)>/);
+  const manifestResults = manifestRegEx.exec(manifestText);
+
+  if (manifestResults === null) {
+    logger.error(`Unable to update Android Manifest. Missing <activity> tag`);
+    return;
+  } else {
+    packageName = manifestResults[2];
+  }
+
+  let manifestReplaced = manifestText;
+
+  manifestReplaced = setAllStringIn(
+    manifestText,
+    '<manifest xmlns:android="http://schemas.android.com/apk/res/android"',
+    '>',
+    ``,
+  );
+
+  if (manifestText == manifestReplaced) {
+    logger.error(
+      `Unable to update Android Manifest: no changes were detected in Android Manifest file`,
+    );
+    return;
+  }
+
+  let buildGradleReplaced = buildGradleText;
+
+  buildGradleReplaced = setAllStringIn(
+    buildGradleText,
+    'android {',
+    '\n',
+    `\n    namespace "${packageName}"`,
+  );
+
+  if (buildGradleText == buildGradleReplaced) {
+    logger.error(
+      `Unable to update buildGradleText: no changes were detected in Android Manifest file`,
+    );
+    return;
+  }
+
+  writeFileSync(manifestFilename, manifestReplaced, 'utf-8');
+  writeFileSync(buildGradleFilename, buildGradleReplaced, 'utf-8');
 }
 
 async function updateBuildGradle(
