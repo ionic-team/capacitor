@@ -8,12 +8,12 @@
     "./core/"
   ],
   "scripts": {
-    "ci:publish:nightly": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid nightly-$(date +\"%Y%m%dT%H%M%S\") --dist-tag nightly --force-publish --no-verify-access --no-changelog --no-git-tag-version --no-push --yes",
-    "ci:publish:alpha": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid alpha --dist-tag next --force-publish --no-verify-access --yes",
-    "ci:publish:beta": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid beta --dist-tag next --force-publish --no-verify-access --yes",
-    "ci:publish:rc": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid rc --dist-tag next --force-publish --no-verify-access --yes",
-    "ci:publish:latest": "lerna publish --conventional-commits --dist-tag latest --force-publish --no-verify-access --yes",
-    "ci:publish:dev": "lerna publish prerelease --conventional-commits --conventional-prerelease --preid dev-$(date +\"%Y%m%dT%H%M%S\") --dist-tag dev --force-publish --no-verify-access --no-changelog --no-git-tag-version --no-push --yes",
+    "ci:publish:nightly": "lerna version prerelease --conventional-commits --conventional-prerelease --preid nightly-$(date +\"%Y%m%dT%H%M%S\") --force-publish --no-changelog --no-git-tag-version --no-push --yes && lerna exec -- npm publish --tag nightly --provenance",
+    "ci:publish:alpha": "lerna version prerelease --conventional-commits --conventional-prerelease --preid alpha --force-publish --yes && lerna exec -- npm publish --tag next --provenance",
+    "ci:publish:beta": "lerna version prerelease --conventional-commits --conventional-prerelease --preid beta --force-publish --yes && lerna exec -- npm publish --tag next --provenance",
+    "ci:publish:rc": "lerna version prerelease --conventional-commits --conventional-prerelease --preid rc --force-publish --yes && lerna exec -- npm publish --tag next --provenance",
+    "ci:publish:latest": "lerna version --conventional-commits --force-publish --yes && lerna exec -- npm publish --tag latest --provenance",
+    "ci:publish:dev": "lerna version prerelease --conventional-commits --conventional-prerelease --preid dev-$(date +\"%Y%m%dT%H%M%S\") --force-publish --no-changelog --no-git-tag-version --no-push --yes && lerna exec -- npm publish --tag dev --provenance",
     "build:nativebridge": "lerna run build:nativebridge",
     "sync-peer-dependencies": "node scripts/sync-peer-dependencies.mjs",
     "lint": "npm run eslint && npm run prettier -- --check && npm run swiftlint -- lint",
