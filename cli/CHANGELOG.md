@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0-rc.2](https://github.com/ionic-team/capacitor/compare/5.0.0-rc.1...5.0.0-rc.2) (2023-05-03)
+
+### Bug Fixes
+
+- check for android and JDK ([#6554](https://github.com/ionic-team/capacitor/issues/6554)) ([ddcc818](https://github.com/ionic-team/capacitor/commit/ddcc818e828b290459d3ddffe9102fc312139823))
+
 # [5.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/5.0.0-rc.0...5.0.0-rc.1) (2023-05-02)
 
 ### Bug Fixes
