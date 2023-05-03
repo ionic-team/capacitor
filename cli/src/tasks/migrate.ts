@@ -9,7 +9,7 @@ import { join } from 'path';
 import rimraf from 'rimraf';
 
 import c from '../colors';
-import { getCoreVersion, runTask } from '../common';
+import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger, logPrompt, logSuccess } from '../log';
@@ -52,8 +52,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = 'next'; // TODO: Update when Capacitor 5 releases
-const pluginVersion = 'next'; // TODO: Update when Capacitor 5 releases
+const coreVersion = '5.0.0'; // TODO: Update when Capacitor 5 releases
+const pluginVersion = '5.0.0'; // TODO: Update when Capacitor 5 releases
 const gradleVersion = '8.0.2';
 
 export async function migrateCommand(
@@ -70,6 +70,13 @@ export async function migrateCommand(
     fatal(
       'Migrate can only be used on capacitor 4 and above, please use the CLI in Capacitor 4 to upgrade to 4 first',
     );
+  }
+
+  const jdkMajor = await checkJDKMajorVersion()
+
+  if (jdkMajor < 17) {
+    logger.warn(`JDK Version: ${jdkMajor}`)
+    logger.warn("Capacitor 5 requires JDK 17 or higher. Some steps may fail.")
   }
 
   const variablesAndClasspaths:
