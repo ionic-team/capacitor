@@ -75,7 +75,6 @@ export async function migrateCommand(
   const jdkMajor = await checkJDKMajorVersion();
 
   if (jdkMajor < 17) {
-    logger.warn(`JDK Version: ${jdkMajor}`);
     logger.warn('Capacitor 5 requires JDK 17 or higher. Some steps may fail.');
   }
 
