@@ -50,3 +50,5 @@ export type {
   PluginConfig,
   PluginRegistry,
 } from './legacy/legacy-definitions';
+
+export { CapPlugin, PluginMethod } from './decorators';

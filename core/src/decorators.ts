@@ -1,22 +1,23 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 import { CapacitorException, ExceptionCode } from './util';
 
 export function CapPlugin(pluginName: string) {
-  return function (constructor: Function) {
-    // Check if the decorator is being used on a class constructor.
-    if (!constructor.prototype) {
-      throw new Error('The @CapPlugin decorator can only be used on classes.');
-    }
-
-    // The rest of the decorator implementation.
-    constructor.prototype.pluginName = pluginName;
+  return function <T extends { new (...args: any[]): {} }>(constructor: T) {
+    return class extends constructor {
+      pluginName = pluginName;
+    };
   };
 }
 
 export function PluginMethod(
+  // @ts-ignore
   target: Object,
   propertyKey: string | symbol,
   descriptor: TypedPropertyDescriptor<any>
-) {
+): TypedPropertyDescriptor<any> {
   // Check if the decorator is being used on a method.
   if (!propertyKey || !descriptor || typeof descriptor.value !== 'function') {
     throw new Error('The @PluginMethod decorator can only be used on methods.');
@@ -35,13 +36,13 @@ export function PluginMethod(
       const plginName = this.pluginName;
       const [passedArgs] = args;
 
-      const pluginHeader = (window as any).Capacitor.PluginHeaders?.find(h => h.name === plginName);
+      const pluginHeader = (window as any).Capacitor.PluginHeaders?.find((h: any) => h.name === plginName);
 
       let methodDescriptor: any;
       let isPromiseMethod = false;
 
       if (pluginHeader) {
-        const methodHeader = pluginHeader?.methods.find(m => functionPropertyKey === m.name);
+        const methodHeader = pluginHeader?.methods.find((m: any) => functionPropertyKey === m.name);
         if (methodHeader) {
           if (methodHeader.rtype === 'promise') {
             isPromiseMethod = true;
@@ -63,9 +64,10 @@ export function PluginMethod(
       }
 
       if (isPromiseMethod) {
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
           try {
-            const res = await methodDescriptor(plginName, functionPropertyKey.toString(), passedArgs['options']);
+            const res = await methodDescriptor(plginName, functionPropertyKey.toString(), passedArgs);
             resolve(res);
           } catch (e) {
             reject(e);
