@@ -858,6 +858,9 @@ export async function patchOldCapacitorPlugins(
         );
         const gradleContent = readFile(buildGradlePath);
         if (!gradleContent?.includes('namespace')) {
+          logger.warn(
+            `${p.id} doesn't officially support Capacitor ${coreVersion} yet, doing our best moving it's package to build.gradle so it builds`,
+          );
           movePackageFromManifestToBuildGradle(manifestPath, buildGradlePath);
         }
       }
