@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { initBridge } from '../../native-bridge';
 import type { CapacitorGlobal, Plugin } from '../definitions';
 import type {
@@ -14,6 +18,9 @@ describe('plugin', () => {
 
   beforeEach(() => {
     win = {};
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    global.setImmediate = global.setTimeout;
   });
 
   it('error from missing method from native implementation', async done => {

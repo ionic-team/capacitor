@@ -112,6 +112,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
     @Override
     public void clearCache() {}
 
+    @Deprecated
     @Override
     public void clearCache(boolean b) {}
 
@@ -181,6 +182,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
         this.pluginManager.onDestroy();
     }
 
+    @Deprecated
     @Override
     public void sendJavascript(String statememt) {
         nativeToJsMessageQueue.addJavaScript(statememt);
@@ -198,14 +200,17 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
     @Override
     public void showWebPage(String url, boolean openExternal, boolean clearHistory, Map<String, Object> params) {}
 
+    @Deprecated
     @Override
     public boolean isCustomViewShowing() {
         return false;
     }
 
+    @Deprecated
     @Override
     public void showCustomView(View view, WebChromeClient.CustomViewCallback callback) {}
 
+    @Deprecated
     @Override
     public void hideCustomView() {}
 

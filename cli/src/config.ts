@@ -9,7 +9,6 @@ import Debug from 'debug';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
-import { OS } from './definitions';
 import type {
   AndroidConfig,
   AppConfig,
@@ -19,12 +18,14 @@ import type {
   IOSConfig,
   WebConfig,
 } from './definitions';
+import { OS } from './definitions';
 import { fatal, isFatal } from './errors';
 import { logger } from './log';
 import { tryFn } from './util/fn';
 import { formatJSObject } from './util/js';
-import { resolveNode, requireTS } from './util/node';
+import { requireTS, resolveNode } from './util/node';
 import { lazy } from './util/promise';
+import { getCommandOutput } from './util/subprocess';
 
 const debug = Debug('capacitor:config');
 
@@ -58,7 +59,6 @@ export async function loadConfig(): Promise<Config> {
         version: '1.0.0',
       },
       ...conf,
-      bundledWebRuntime: conf.extConfig.bundledWebRuntime ?? false,
     },
   };
 
@@ -117,7 +117,7 @@ async function loadExtConfigTS(
       extConfigFilePath: extConfigFilePath,
       extConfig,
     };
-  } catch (e) {
+  } catch (e: any) {
     if (!isFatal(e)) {
       fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
     }
@@ -138,7 +138,7 @@ async function loadExtConfigJS(
       extConfigFilePath: extConfigFilePath,
       extConfig: require(extConfigFilePath),
     };
-  } catch (e) {
+  } catch (e: any) {
     fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
   }
 }
@@ -236,10 +236,18 @@ async function loadAndroidConfig(
   const buildOutputDir = `${apkPath}/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
   const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
+  const buildOptions = {
+    keystorePath: extConfig.android?.buildOptions?.keystorePath,
+    keystorePassword: extConfig.android?.buildOptions?.keystorePassword,
+    keystoreAlias: extConfig.android?.buildOptions?.keystoreAlias,
+    keystoreAliasPassword:
+      extConfig.android?.buildOptions?.keystoreAliasPassword,
+    releaseType: extConfig.android?.buildOptions?.releaseType,
+  };
 
   return {
     name,
-    minVersion: '21',
+    minVersion: '22',
     studioPath,
     platformDir,
     platformDirAbs,
@@ -261,6 +269,7 @@ async function loadAndroidConfig(
     buildOutputDir,
     buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
     flavor,
+    buildOptions,
   };
 }
 
@@ -269,7 +278,6 @@ async function loadIOSConfig(
   extConfig: ExternalConfig,
 ): Promise<IOSConfig> {
   const name = 'ios';
-  const podPath = determineCocoapodPath();
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
   const scheme = extConfig.ios?.scheme ?? 'App';
@@ -282,6 +290,13 @@ async function loadIOSConfig(
   const nativeXcodeWorkspaceDirAbs = lazy(() =>
     determineXcodeWorkspaceDirAbs(nativeProjectDirAbs, scheme),
   );
+  const podPath = lazy(() =>
+    determineGemfileOrCocoapodPath(
+      rootDir,
+      platformDirAbs,
+      nativeProjectDirAbs,
+    ),
+  );
   const webDirAbs = lazy(() =>
     determineIOSWebDirAbs(
       nativeProjectDirAbs,
@@ -293,7 +308,7 @@ async function loadIOSConfig(
 
   return {
     name,
-    minVersion: '12.0',
+    minVersion: '13.0',
     platformDir,
     platformDirAbs,
     scheme,
@@ -423,12 +438,43 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
   return '';
 }
 
-function determineCocoapodPath(): string {
+async function determineGemfileOrCocoapodPath(
+  rootDir: string,
+  platformDir: any,
+  nativeProjectDirAbs: string,
+): Promise<string> {
   if (process.env.CAPACITOR_COCOAPODS_PATH) {
     return process.env.CAPACITOR_COCOAPODS_PATH;
   }
 
-  return 'pod';
+  // Look for 'Gemfile' in app directories
+  const appSpecificGemfileExists =
+    (await pathExists(resolve(rootDir, 'Gemfile'))) ||
+    (await pathExists(resolve(platformDir, 'Gemfile'))) ||
+    (await pathExists(resolve(nativeProjectDirAbs, 'Gemfile')));
+
+  // Multi-app projects might share a single global 'Gemfile' at the Git repository root directory.
+  let globalGemfileExists = false;
+  if (!appSpecificGemfileExists) {
+    try {
+      const output = await getCommandOutput(
+        'git',
+        ['rev-parse', '--show-toplevel'],
+        { cwd: rootDir },
+      );
+      if (output != null) {
+        globalGemfileExists = await pathExists(resolve(output, 'Gemfile'));
+      }
+    } catch (e) {
+      // Nothing
+    }
+  }
+
+  if (appSpecificGemfileExists || globalGemfileExists) {
+    return 'bundle exec pod';
+  } else {
+    return 'pod';
+  }
 }
 
 function formatConfigTS(extConfig: ExternalConfig): string {
@@ -441,14 +487,15 @@ export default config;\n`;
 }
 
 export function checkExternalConfig(config: ExtConfigPairs): void {
-  if (
-    typeof config.extConfig.hideLogs !== 'undefined' ||
-    typeof config.extConfig.android?.hideLogs !== 'undefined' ||
-    typeof config.extConfig.ios?.hideLogs !== 'undefined'
-  ) {
+  if (typeof config.extConfig.bundledWebRuntime !== 'undefined') {
+    let actionMessage = `Can be safely deleted.`;
+    if (config.extConfig.bundledWebRuntime === true) {
+      actionMessage = `Please, use a bundler to bundle Capacitor and its plugins.`;
+    }
     logger.warn(
-      `The ${c.strong('hideLogs')} configuration option has been deprecated. ` +
-        `Please update to use ${c.strong('loggingBehavior')} instead.`,
+      `The ${c.strong(
+        'bundledWebRuntime',
+      )} configuration option has been deprecated. ${actionMessage}`,
     );
   }
 }

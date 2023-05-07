@@ -36,19 +36,13 @@ export interface CapacitorConfig {
    * will create a `capacitor.js` file that you'll need to add as a script in
    * your `index.html` file.
    *
+   * It's deprecated and will be removed in Capacitor 6
+   *
    * @since 1.0.0
+   * @deprecated 5.0.0
    * @default false
    */
   bundledWebRuntime?: boolean;
-
-  /**
-   * Hide or show the native logs for iOS and Android.
-   *
-   * @since 2.1.0
-   * @deprecated 3.0.0
-   * @default false
-   */
-  hideLogs?: boolean;
 
   /**
    * The build configuration (as defined by the native app) under which Capacitor
@@ -165,17 +159,6 @@ export interface CapacitorConfig {
     webContentsDebuggingEnabled?: boolean;
 
     /**
-     * Hide or show the native logs for Android.
-     *
-     * Overrides global `hideLogs` option.
-     *
-     * @since 2.1.0
-     * @deprecated 3.0.0
-     * @default false
-     */
-    hideLogs?: boolean;
-
-    /**
      * The build configuration under which Capacitor will generate logs on Android.
      *
      * Overrides global `loggingBehavior` option.
@@ -211,6 +194,81 @@ export interface CapacitorConfig {
      * @default true
      */
     initialFocus?: boolean;
+
+    /**
+     * The minimum supported webview version on Android supported by your app.
+     *
+     * The minimum supported cannot be lower than version `55`, which is required for Capacitor.
+     *
+     * If the device uses a lower WebView version, an error message will be shown on Logcat.
+     * If `server.errorPath` is configured, the WebView will redirect to that file, so can be
+     * used to show a custom error.
+     *
+     * @since 4.0.0
+     * @default 60
+     */
+    minWebViewVersion?: number;
+
+    /**
+     * The minimum supported Huawei webview version on Android supported by your app.
+     *
+     * The minimum supported cannot be lower than version `10`, which is required for Capacitor.
+     *
+     * If the device uses a lower WebView version, an error message will be shown on Logcat.
+     * If `server.errorPath` is configured, the WebView will redirect to that file, so can be
+     * used to show a custom error.
+     *
+     * @since 4.6.4
+     * @default 10
+     */
+    minHuaweiWebViewVersion?: number;
+
+    buildOptions?: {
+      /**
+       * Path to your keystore
+       *
+       * @since 4.4.0
+       */
+      keystorePath?: string;
+
+      /**
+       * Password to your keystore
+       *
+       * @since 4.4.0
+       */
+      keystorePassword?: string;
+
+      /**
+       * Alias in the keystore to use
+       *
+       * @since 4.4.0
+       */
+      keystoreAlias?: string;
+
+      /**
+       * Password for the alias in the keystore to use
+       *
+       * @since 4.4.0
+       */
+      keystoreAliasPassword?: string;
+
+      /**
+       * Bundle type for your release build
+       *
+       * @since 4.4.0
+       * @default "AAB"
+       */
+      releaseType?: 'AAB' | 'APK';
+    };
+
+    /**
+     * Use legacy [addJavascriptInterface](https://developer.android.com/reference/android/webkit/WebView#addJavascriptInterface(java.lang.Object,%20java.lang.String))
+     * instead of the new and more secure [addWebMessageListener](https://developer.android.com/reference/androidx/webkit/WebViewCompat#addWebMessageListener(android.webkit.WebView,java.lang.String,java.util.Set%3Cjava.lang.String%3E,androidx.webkit.WebViewCompat.WebMessageListener))
+     *
+     * @since 4.5.0
+     * @default false
+     */
+    useLegacyBridge?: boolean;
   };
 
   ios?: {
@@ -311,17 +369,6 @@ export interface CapacitorConfig {
     allowsLinkPreview?: boolean;
 
     /**
-     * Hide or show the native logs for iOS.
-     *
-     * Overrides global `hideLogs` option.
-     *
-     * @since 1.1.0
-     * @deprecated 3.0.0
-     * @default false
-     */
-    hideLogs?: boolean;
-
-    /**
      * The build configuration under which Capacitor will generate logs on iOS.
      *
      * Overrides global `loggingBehavior` option.
@@ -354,6 +401,37 @@ export interface CapacitorConfig {
      * @default false
      */
     limitsNavigationsToAppBoundDomains?: boolean;
+
+    /**
+     * The content mode for the web view to use when it loads and renders web content.
+     *
+     * - 'recommended': The content mode that is appropriate for the current device.
+     * - 'desktop': The content mode that represents a desktop experience.
+     * - 'mobile': The content mode that represents a mobile experience.
+     *
+     * @since 4.0.0
+     * @default recommended
+     */
+    preferredContentMode?: 'recommended' | 'desktop' | 'mobile';
+
+    /**
+     * Configure if Capacitor will handle local/push notifications.
+     * Set to false if you want to use your own UNUserNotificationCenter to handle notifications.
+     *
+     * @since 4.5.0
+     * @default true
+     */
+    handleApplicationNotifications?: boolean;
+
+    /**
+     * Using Xcode 14.3, on iOS 16.4 and greater, enable debuggable web content for release builds.
+     *
+     * If not set, it's `true` for development builds.
+     *
+     * @since 4.8.0
+     * @default false
+     */
+    webContentsDebuggingEnabled?: boolean;
   };
 
   server?: {
@@ -376,6 +454,7 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on iOS.
      *
+     * [Can't be set to schemes that the WKWebView already handles, such as http or https](https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/2875766-seturlschemehandler)
      * This can be useful when migrating from
      * [`cordova-plugin-ionic-webview`](https://github.com/ionic-team/cordova-plugin-ionic-webview),
      * where the default scheme on iOS is `ionic`.
@@ -431,6 +510,15 @@ export interface CapacitorConfig {
      * @default []
      */
     allowNavigation?: string[];
+
+    /**
+     * Specify path to a local html page to display in case of errors.
+     * On Android the html file won't have access to Capacitor plugins.
+     *
+     * @since 4.0.0
+     * @default null
+     */
+    errorPath?: string;
   };
 
   cordova?: {
@@ -482,11 +570,21 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
-export interface Portal {
+export interface FederatedApp {
   name: string;
   webDir: string;
-  appId?: string;
+  liveUpdateConfig?: LiveUpdateConfig;
 }
+
+export interface LiveUpdateConfig {
+  appId: string;
+  channel: string;
+  autoUpdateMethod: AutoUpdateMethod;
+  maxVersions?: number;
+  key?: string;
+}
+
+export type AutoUpdateMethod = 'none' | 'background';
 
 export interface PluginsConfig {
   /**
@@ -501,12 +599,48 @@ export interface PluginsConfig {
     | undefined;
 
   /**
-   * Capacitor Portals plugin configuration
+   * FederatedCapacitor plugin configuration
    *
-   * @since 3.5.0
+   * @since 5.0.0
    */
-  Portals?: {
-    shell: Portal;
-    apps: Portal[];
+  FederatedCapacitor?: {
+    shell: Omit<FederatedApp, 'webDir'>;
+    apps: FederatedApp[];
+    liveUpdatesKey?: string;
+  };
+
+  /**
+   * Capacitor Live Updates plugin configuration
+   *
+   * @since 4.2.0
+   */
+  LiveUpdates?: LiveUpdateConfig;
+
+  /**
+   * Capacitor Cookies plugin configuration
+   *
+   * @since 4.3.0
+   */
+  CapacitorCookies?: {
+    /**
+     * Enable CapacitorCookies to override the global `document.cookie` on native.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+  };
+
+  /**
+   * Capacitor Http plugin configuration
+   *
+   * @since 4.3.0
+   */
+  CapacitorHttp?: {
+    /**
+     * Enable CapacitorHttp to override the global `fetch` and `XMLHttpRequest` on native.
+     *
+     * @default false
+     */
+    enabled?: boolean;
   };
 }

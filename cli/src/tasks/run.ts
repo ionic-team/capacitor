@@ -19,9 +19,12 @@ import { getPlatformTargets } from '../util/native-run';
 import { sync } from './sync';
 
 export interface RunCommandOptions {
+  scheme?: string;
+  flavor?: string;
   list?: boolean;
   target?: string;
   sync?: boolean;
+  forwardPorts?: string;
 }
 
 export async function runCommand(
@@ -80,11 +83,11 @@ export async function runCommand(
 
     try {
       if (options.sync) {
-        await sync(config, platformName, false);
+        await sync(config, platformName, false, true);
       }
 
       await run(config, platformName, options);
-    } catch (e) {
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }

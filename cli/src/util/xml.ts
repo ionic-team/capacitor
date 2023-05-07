@@ -6,7 +6,7 @@ export async function readXML(path: string): Promise<any> {
     const xmlStr = await readFile(path, { encoding: 'utf-8' });
     try {
       return await xml2js.parseStringPromise(xmlStr);
-    } catch (e) {
+    } catch (e: any) {
       throw `Error parsing: ${path}, ${e.stack ?? e}`;
     }
   } catch (e) {
@@ -14,9 +14,13 @@ export async function readXML(path: string): Promise<any> {
   }
 }
 
-export function parseXML(xmlStr: string): any {
+export function parseXML(xmlStr: string, options?: xml2js.OptionsV2): any {
+  const parser =
+    options !== undefined
+      ? new xml2js.Parser({ ...options })
+      : new xml2js.Parser();
   let xmlObj;
-  xml2js.parseString(xmlStr, (err: any, result: any) => {
+  parser.parseString(xmlStr, (err: any, result: any) => {
     if (!err) {
       xmlObj = result;
     }

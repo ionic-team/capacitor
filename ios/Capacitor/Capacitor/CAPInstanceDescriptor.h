@@ -54,6 +54,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *urlScheme;
 /**
+ @brief The path to a local html page to display in case of errors.
+ @discussion Defaults to nil.
+ */
+@property (nonatomic, copy, nullable) NSString *errorPath;
+/**
  @brief The hostname that will be used for the server URL.
  @discussion Defaults to @c localhost. Set by @c server.hostname in the configuration file.
  */
@@ -70,7 +75,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 @property (nonatomic, retain, nonnull) NSDictionary *pluginConfigurations;
 /**
  @brief The build configurations under which logging should be enabled.
- @discussion Defaults to @c debug. Set by @c loggingBehavior in the configuration file but will inherit the deprecated @c hideLogs flag if @c loggingBehavior is absent.
+ @discussion Defaults to @c debug. Set by @c loggingBehavior in the configuration file.
  */
 @property (nonatomic, assign) CAPInstanceLoggingBehavior loggingBehavior;
 /**
@@ -88,6 +93,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @discussion Defaults to @c true. Required to be @c true for notification plugins to work correctly. Set to @c false if your application will handle notifications independently.
  */
 @property (nonatomic, assign) BOOL handleApplicationNotifications;
+/**
+ @brief Enables web debugging by setting isInspectable of  @c WKWebView to @c true on iOS 16.4 and greater
+ @discussion Defaults to true in debug mode and false in production
+ */
+@property (nonatomic, assign) BOOL isWebDebuggable;
 /**
  @brief How the web view will inset its content
  @discussion Set by @c ios.contentInset in the configuration file. Corresponds to @c contentInsetAdjustmentBehavior on WKWebView.
@@ -108,6 +118,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @discussion Defaults to @c false. Set by @c ios.limitsNavigationsToAppBoundDomains in the configuration file.  Required to be @c true for plugins to work if the app includes @c WKAppBoundDomains in the Info.plist.
  */
 @property (nonatomic, assign) BOOL limitsNavigationsToAppBoundDomains;
+/**
+ @brief The content mode for the web view to use when it loads and renders web content.
+ @discussion Defaults to  @c recommended. Set by @c ios.preferredContentMode in the configuration file.
+ */
+@property (nonatomic, copy, nullable) NSString *preferredContentMode;
 /**
  @brief The parser used to load the cofiguration for Cordova plugins.
  */

@@ -239,7 +239,11 @@ project(':${getGradlePackageName(
           `apply from: "${relativePluginPath}/${framework.$.src}"`,
         );
       } else if (!framework.$.type && !framework.$.custom) {
-        frameworksArray.push(`    implementation "${framework.$.src}"`);
+        if (framework.$.src.startsWith('platform(')) {
+          frameworksArray.push(`    implementation ${framework.$.src}`);
+        } else {
+          frameworksArray.push(`    implementation "${framework.$.src}"`);
+        }
       }
     });
     prefsArray = prefsArray.concat(getAllElements(p, platform, 'preference'));
@@ -254,8 +258,8 @@ project(':${getGradlePackageName(
 
 android {
   compileOptions {
-      sourceCompatibility JavaVersion.VERSION_1_8
-      targetCompatibility JavaVersion.VERSION_1_8
+      sourceCompatibility JavaVersion.VERSION_17
+      targetCompatibility JavaVersion.VERSION_17
   }
 }
 
@@ -294,12 +298,9 @@ export async function handleCordovaPluginsGradle(
     'build.gradle',
   );
   const kotlinNeeded = await kotlinNeededCheck(config, cordovaPlugins);
-  const isKotlinVersionInVariablesGradle = (
-    await getVariablesGradleFile(config)
-  ).includes('kotlin_version');
   const kotlinVersionString =
     config.app.extConfig.cordova?.preferences?.GradlePluginKotlinVersion ??
-    '1.4.32';
+    '1.8.20';
   const frameworksArray: any[] = [];
   let prefsArray: any[] = [];
   const applyArray: any[] = [];
@@ -327,7 +328,11 @@ export async function handleCordovaPluginsGradle(
   });
   let frameworkString = frameworksArray
     .map(f => {
-      return `    implementation "${f}"`;
+      if (f.startsWith('platform(')) {
+        return `    implementation ${f}`;
+      } else {
+        return `    implementation "${f}"`;
+      }
     })
     .join('\n');
   frameworkString = await replaceFrameworkVariables(
@@ -352,15 +357,15 @@ export async function handleCordovaPluginsGradle(
   if (kotlinNeeded) {
     buildGradle = buildGradle.replace(
       /(buildscript\s{\n(\t|\s{4})repositories\s{\n((\t{2}|\s{8}).+\n)+(\t|\s{4})}\n(\t|\s{4})dependencies\s{\n(\t{2}|\s{8}).+)\n((\t|\s{4})}\n}\n)/,
-      `$1\n        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:` +
-        (isKotlinVersionInVariablesGradle
-          ? '$kotlin_version'
-          : kotlinVersionString) +
-        `"\n$8`,
+      `$1\n        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"\n$8`,
     );
     buildGradle = buildGradle.replace(
       /(ext\s{)/,
-      `$1\n    kotlin_version = project.hasProperty('kotlin_version') ? rootProject.ext.kotlin_version : '${kotlinVersionString}'\n    androidxCoreKTXVersion = project.hasProperty('androidxCoreKTXVersion') ? rootProject.ext.androidxCoreKTXVersion : '1.6.0'`,
+      `$1\n    androidxCoreKTXVersion = project.hasProperty('androidxCoreKTXVersion') ? rootProject.ext.androidxCoreKTXVersion : '1.8.0'`,
+    );
+    buildGradle = buildGradle.replace(
+      /(buildscript\s{)/,
+      `$1\n    ext.kotlin_version = project.hasProperty('kotlin_version') ? rootProject.ext.kotlin_version : '${kotlinVersionString}'`,
     );
     buildGradle = buildGradle.replace(
       /(apply\splugin:\s'com\.android\.library')/,

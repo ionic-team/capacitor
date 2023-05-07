@@ -1,0 +1,34 @@
+name: Publish NPM RC
+
+on: workflow_dispatch
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  deploy-npm-rc:
+    runs-on: macos-12
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+          cache: npm
+          cache-dependency-path: '**/package.json'
+      - run: |
+          npm install
+      - name: Version & Publish
+        env: 
+          GH_TOKEN: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          git config user.name "Github Workflow (on behalf of ${{ github.actor }})"
+          git config user.email "users.noreply.github.com"
+          npm whoami
+          npm run ci:publish:rc

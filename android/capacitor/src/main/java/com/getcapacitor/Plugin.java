@@ -82,7 +82,7 @@ public class Plugin {
 
     // Stored results of an event if an event was fired and
     // no listeners were attached yet. Only stores the last value.
-    private final Map<String, JSObject> retainedEventArguments;
+    private final Map<String, List<JSObject>> retainedEventArguments;
 
     public Plugin() {
         eventListeners = new HashMap<>();
@@ -664,7 +664,14 @@ public class Plugin {
         if (listeners == null || listeners.isEmpty()) {
             Logger.debug(getLogTag(), "No listeners found for event " + eventName);
             if (retainUntilConsumed) {
-                retainedEventArguments.put(eventName, data);
+                List<JSObject> argList = retainedEventArguments.get(eventName);
+
+                if (argList == null) {
+                    argList = new ArrayList<JSObject>();
+                }
+
+                argList.add(data);
+                retainedEventArguments.put(eventName, argList);
             }
             return;
         }
@@ -703,13 +710,17 @@ public class Plugin {
      * @param eventName
      */
     private void sendRetainedArgumentsForEvent(String eventName) {
-        JSObject retained = retainedEventArguments.get(eventName);
-        if (retained == null) {
+        // copy retained args and null source to prevent potential race conditions
+        List<JSObject> retainedArgs = retainedEventArguments.get(eventName);
+        if (retainedArgs == null) {
             return;
         }
 
-        notifyListeners(eventName, retained);
         retainedEventArguments.remove(eventName);
+
+        for (JSObject retained : retainedArgs) {
+            notifyListeners(eventName, retained);
+        }
     }
 
     /**
@@ -745,9 +756,10 @@ public class Plugin {
      * @param call
      */
     @SuppressWarnings("unused")
-    @PluginMethod(returnType = PluginMethod.RETURN_NONE)
+    @PluginMethod(returnType = PluginMethod.RETURN_PROMISE)
     public void removeAllListeners(PluginCall call) {
         eventListeners.clear();
+        call.resolve();
     }
 
     /**
@@ -788,15 +800,7 @@ public class Plugin {
     public void requestPermissions(PluginCall call) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
-            // handle permission requests for plugins defined with @NativePlugin (prior to 3.0.0)
-            NativePlugin legacyAnnotation = this.handle.getLegacyPluginAnnotation();
-            String[] perms = legacyAnnotation.permissions();
-            if (perms.length > 0) {
-                saveCall(call);
-                pluginRequestPermissions(perms, legacyAnnotation.permissionRequestCode());
-            } else {
-                call.resolve();
-            }
+            handleLegacyPermission(call);
         } else {
             // handle permission requests for plugins defined with @CapacitorPlugin (since 3.0.0)
             String[] permAliases = null;
@@ -807,10 +811,12 @@ public class Plugin {
             JSArray providedPerms = call.getArray("permissions");
             List<String> providedPermsList = null;
 
-            try {
-                providedPermsList = providedPerms.toList();
-            } catch (JSONException ignore) {
-                // do nothing
+            if (providedPerms != null) {
+                try {
+                    providedPermsList = providedPerms.toList();
+                } catch (JSONException ignore) {
+                    // do nothing
+                }
             }
 
             // If call was made without any custom permissions, request all from plugin annotation
@@ -859,6 +865,19 @@ public class Plugin {
                 // no permissions are defined on the plugin, resolve undefined
                 call.resolve();
             }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void handleLegacyPermission(PluginCall call) {
+        // handle permission requests for plugins defined with @NativePlugin (prior to 3.0.0)
+        NativePlugin legacyAnnotation = this.handle.getLegacyPluginAnnotation();
+        String[] perms = legacyAnnotation.permissions();
+        if (perms.length > 0) {
+            saveCall(call);
+            pluginRequestPermissions(perms, legacyAnnotation.permissionRequestCode());
+        } else {
+            call.resolve();
         }
     }
 

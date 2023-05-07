@@ -12,14 +12,20 @@ const debug = Debug('capacitor:android:run');
 
 export async function runAndroid(
   config: Config,
-  { target: selectedTarget }: RunCommandOptions,
+  {
+    target: selectedTarget,
+    flavor: selectedFlavor,
+    forwardPorts: selectedPorts,
+  }: RunCommandOptions,
 ): Promise<void> {
   const target = await promptForPlatformTarget(
     await getPlatformTargets('android'),
     selectedTarget,
   );
 
-  const arg = `assemble${config.android?.flavor || ''}Debug`;
+  const runFlavor = selectedFlavor || config.android?.flavor || '';
+
+  const arg = `assemble${runFlavor}Debug`;
   const gradleArgs = [arg];
 
   debug('Invoking ./gradlew with args: %O', gradleArgs);
@@ -30,7 +36,7 @@ export async function runAndroid(
         cwd: config.android.platformDirAbs,
       }),
     );
-  } catch (e) {
+  } catch (e: any) {
     if (e.includes('EACCES')) {
       throw `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.strong(
         `chmod +x ./${config.android.platformDir}/gradlew`,
@@ -40,17 +46,24 @@ export async function runAndroid(
     }
   }
 
-  const apkPath = resolve(
-    config.android.buildOutputDirAbs,
-    config.android.apkName,
-  );
+  const pathToApk = `${config.android.platformDirAbs}/${
+    config.android.appDir
+  }/build/outputs/apk${runFlavor !== '' ? '/' + runFlavor : ''}/debug`;
+
+  const apkName = `app${runFlavor !== '' ? '-' + runFlavor : ''}-debug.apk`;
+
+  const apkPath = resolve(pathToApk, apkName);
 
   const nativeRunArgs = ['android', '--app', apkPath, '--target', target.id];
+
+  if (selectedPorts) {
+    nativeRunArgs.push('--forward', `${selectedPorts}`);
+  }
 
   debug('Invoking native-run with args: %O', nativeRunArgs);
 
   await runTask(
-    `Deploying ${c.strong(config.android.apkName)} to ${c.input(target.id)}`,
+    `Deploying ${c.strong(apkName)} to ${c.input(target.id)}`,
     async () => runNativeRun(nativeRunArgs),
   );
 }

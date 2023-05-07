@@ -4,6 +4,8 @@
 @protocol CAPBridgeProtocol;
 @class CAPPluginCall;
 
+@class PluginConfig;
+
 @interface CAPPlugin : NSObject
 
 @property (nonatomic, weak, nullable) WKWebView *webView;
@@ -11,10 +13,10 @@
 @property (nonatomic, strong, nonnull) NSString *pluginId;
 @property (nonatomic, strong, nonnull) NSString *pluginName;
 @property (nonatomic, strong, nullable) NSMutableDictionary<NSString *, NSMutableArray<CAPPluginCall *>*> *eventListeners;
-@property (nonatomic, strong, nullable) NSMutableDictionary<NSString *, id> *retainedEventArguments;
+@property (nonatomic, strong, nullable) NSMutableDictionary<NSString *, NSMutableArray<id> *> *retainedEventArguments;
 @property (nonatomic, assign) BOOL shouldStringifyDatesInCalls;
 
-- (instancetype _Nonnull) initWithBridge:(id<CAPBridgeProtocol> _Nonnull) bridge pluginId:(NSString* _Nonnull) pluginId pluginName:(NSString* _Nonnull) pluginName;
+- (instancetype _Nonnull) initWithBridge:(id<CAPBridgeProtocol> _Nonnull) bridge pluginId:(NSString* _Nonnull) pluginId pluginName:(NSString* _Nonnull) pluginName DEPRECATED_MSG_ATTRIBUTE("This initializer is deprecated and is not suggested for use. Any data set through this init method will be overridden when it is loaded on the bridge.");
 - (void)addEventListener:(NSString* _Nonnull)eventName listener:(CAPPluginCall* _Nonnull)listener;
 - (void)removeEventListener:(NSString* _Nonnull)eventName listener:(CAPPluginCall* _Nonnull)listener;
 - (void)notifyListeners:(NSString* _Nonnull)eventName data:(NSDictionary<NSString *, id>* _Nullable)data;
@@ -44,8 +46,10 @@
 -(NSString* _Nonnull)getId;
 -(BOOL)getBool:(CAPPluginCall* _Nonnull) call field:(NSString* _Nonnull)field defaultValue:(BOOL)defaultValue DEPRECATED_MSG_ATTRIBUTE("Use accessors on CAPPluginCall instead. See CAPBridgedJSTypes.h for Obj-C implementations.");
 -(NSString* _Nullable)getString:(CAPPluginCall* _Nonnull)call field:(NSString* _Nonnull)field defaultValue:(NSString* _Nonnull)defaultValue DEPRECATED_MSG_ATTRIBUTE("Use accessors on CAPPluginCall instead. See CAPBridgedJSTypes.h for Obj-C implementations.");
--(id _Nullable)getConfigValue:(NSString* _Nonnull)key;
--(void)setCenteredPopover:(UIViewController* _Nonnull)vc;
--(BOOL)supportsPopover;
+-(id _Nullable)getConfigValue:(NSString* _Nonnull)key __deprecated_msg("use getConfig() and access config values using the methods available depending on the type.");
+-(PluginConfig* _Nonnull)getConfig;
+-(void)setCenteredPopover:(UIViewController* _Nonnull) vc;
+-(void)setCenteredPopover:(UIViewController* _Nonnull) vc size:(CGSize) size;
+-(BOOL)supportsPopover DEPRECATED_MSG_ATTRIBUTE("All iOS 13+ devices support popover");
 
 @end

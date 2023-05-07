@@ -96,6 +96,9 @@ internal extension InstanceDescriptor {
             if let urlString = config[keyPath: "server.url"] as? String {
                 serverURL = urlString
             }
+            if let errorPathString = (config[keyPath: "server.errorPath"] as? String) {
+                errorPath = errorPathString
+            }
             if let insetBehavior = config[keyPath: "ios.contentInset"] as? String {
                 let availableInsets: [String: UIScrollView.ContentInsetAdjustmentBehavior] = ["automatic": .automatic,
                                                                                               "scrollableAxes": .scrollableAxes,
@@ -114,16 +117,26 @@ internal extension InstanceDescriptor {
             if let pluginConfig = config[keyPath: "plugins"] as? JSObject {
                 pluginConfigurations = pluginConfig
             }
-            // `hideLogs` is deprecated so it's used as a fallback option
             if let value = (config[keyPath: "ios.loggingBehavior"] as? String) ?? (config[keyPath: "loggingBehavior"] as? String) {
                 if let behavior = InstanceLoggingBehavior.behavior(from: value) {
                     loggingBehavior = behavior
                 }
-            } else if let hideLogs = (config[keyPath: "ios.hideLogs"] as? Bool) ?? (config[keyPath: "hideLogs"] as? Bool), hideLogs {
-                loggingBehavior = .none
             }
             if let limitsNavigations = config[keyPath: "ios.limitsNavigationsToAppBoundDomains"] as? Bool {
                 limitsNavigationsToAppBoundDomains = limitsNavigations
+            }
+            if let preferredMode = (config[keyPath: "ios.preferredContentMode"] as? String) {
+                preferredContentMode = preferredMode
+            }
+            if let handleNotifications = config[keyPath: "ios.handleApplicationNotifications"] as? Bool {
+                handleApplicationNotifications = handleNotifications
+            }
+            if let webContentsDebuggingEnabled = config[keyPath: "ios.webContentsDebuggingEnabled"] as? Bool {
+                isWebDebuggable = webContentsDebuggingEnabled
+            } else {
+                #if DEBUG
+                isWebDebuggable = true
+                #endif
             }
         }
     }
