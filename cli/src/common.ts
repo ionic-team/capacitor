@@ -536,7 +536,7 @@ export function resolvePlatform(
 }
 
 export async function checkJDKMajorVersion(): Promise<number> {
-  const string = await runCommand('java', ['--version']);
+  const string = await runCommand('java', ['-version']);
   const versionRegex = RegExp(/([0-9]+)\.?([0-9]*)\.?([0-9]*)/);
   const versionMatch = versionRegex.exec(string);
 
