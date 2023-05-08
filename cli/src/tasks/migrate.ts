@@ -52,8 +52,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '5.0.0';
-const pluginVersion = '5.0.0';
+const coreVersion = '^5.0.0';
+const pluginVersion = '^5.0.0';
 const gradleVersion = '8.0.2';
 
 export async function migrateCommand(
@@ -426,10 +426,9 @@ async function writeBreakingChanges() {
       broken.push(lib);
     }
   }
-  // TODO - remove "next" from the url once capacitor 5 is final
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
