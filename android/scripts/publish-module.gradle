@@ -28,16 +28,13 @@ afterEvaluate {
                 groupId 'com.capacitorjs'
                 artifactId 'core'
                 version LIB_VERSION
-
                 // Two artifacts, the `aar` (or `jar`) and the sources
                 if (project.plugins.findPlugin("com.android.library")) {
-                    artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+                    from components.release
                 } else {
                     artifact("$buildDir/libs/${project.getName()}-${version}.jar")
                 }
-
                 artifact androidSourcesJar
-
                 // POM Data
                 pom {
                     name = 'core'
@@ -55,7 +52,6 @@ afterEvaluate {
                             email = 'hi@ionic.io'
                         }
                     }
-
                     // Version Control Info
                     scm {
                         connection = 'scm:git:github.com:ionic-team/capacitor.git'
