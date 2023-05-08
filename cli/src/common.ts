@@ -536,26 +536,30 @@ export function resolvePlatform(
 }
 
 export async function checkJDKMajorVersion(): Promise<number> {
-  const string = await runCommand('java', ['--version']);
-  const versionRegex = RegExp(/([0-9]+)\.?([0-9]*)\.?([0-9]*)/);
-  const versionMatch = versionRegex.exec(string);
+  try {
+    const string = await runCommand('java', ['--version']);
+    const versionRegex = RegExp(/([0-9]+)\.?([0-9]*)\.?([0-9]*)/);
+    const versionMatch = versionRegex.exec(string);
 
-  if (versionMatch === null) {
-    return -1;
-  }
+    if (versionMatch === null) {
+      return -1;
+    }
 
-  const firstVersionNumber = parseInt(versionMatch[1]);
-  const secondVersionNumber = parseInt(versionMatch[2]);
+    const firstVersionNumber = parseInt(versionMatch[1]);
+    const secondVersionNumber = parseInt(versionMatch[2]);
 
-  if (typeof firstVersionNumber === 'number' && firstVersionNumber != 1) {
-    return firstVersionNumber;
-  } else if (
-    typeof secondVersionNumber === 'number' &&
-    firstVersionNumber == 1 &&
-    secondVersionNumber < 9
-  ) {
-    return secondVersionNumber;
-  } else {
+    if (typeof firstVersionNumber === 'number' && firstVersionNumber != 1) {
+      return firstVersionNumber;
+    } else if (
+      typeof secondVersionNumber === 'number' &&
+      firstVersionNumber == 1 &&
+      secondVersionNumber < 9
+    ) {
+      return secondVersionNumber;
+    } else {
+      return -1;
+    }
+  } catch (e) {
     return -1;
   }
 }
