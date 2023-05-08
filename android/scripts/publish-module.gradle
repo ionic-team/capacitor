@@ -54,6 +54,7 @@ afterEvaluate {
                             email = 'hi@ionic.io'
                         }
                     }
+
                     // Version Control Info
                     scm {
                         connection = 'scm:git:github.com:ionic-team/capacitor.git'
