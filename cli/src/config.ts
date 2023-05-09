@@ -482,7 +482,7 @@ async function determineGemfileOrCocoapodPath(
 
   const cocoapodsInGemfile = new RegExp(/gem 'cocoapods'/).test(gemfileText)
 
-  if ((appSpecificGemfileExists || globalGemfileExists) && cocoapodsInGemfile) {
+  if (cocoapodsInGemfile) {
     return 'bundle exec pod';
   } else {
     return 'pod';
