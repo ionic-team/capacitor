@@ -446,16 +446,16 @@ async function determineGemfileOrCocoapodPath(
     return process.env.CAPACITOR_COCOAPODS_PATH;
   }
 
-  let gemfilePath = ""
+  let gemfilePath = '';
   if (await pathExists(resolve(rootDir, 'Gemfile'))) {
-    gemfilePath = resolve(rootDir, 'Gemfile')
+    gemfilePath = resolve(rootDir, 'Gemfile');
   } else if (await pathExists(resolve(platformDir, 'Gemfile'))) {
-    gemfilePath = resolve(platformDir, 'Gemfile')
+    gemfilePath = resolve(platformDir, 'Gemfile');
   } else if (await pathExists(resolve(nativeProjectDirAbs, 'Gemfile'))) {
-    gemfilePath = resolve(nativeProjectDirAbs, 'Gemfile')
+    gemfilePath = resolve(nativeProjectDirAbs, 'Gemfile');
   }
 
-  const appSpecificGemfileExists = gemfilePath != ""
+  const appSpecificGemfileExists = gemfilePath != '';
 
   // Multi-app projects might share a single global 'Gemfile' at the Git repository root directory.
   if (!appSpecificGemfileExists) {
@@ -466,7 +466,7 @@ async function determineGemfileOrCocoapodPath(
         { cwd: rootDir },
       );
       if (output != null) {
-        gemfilePath = resolve(output, 'Gemfile')
+        gemfilePath = resolve(output, 'Gemfile');
       }
     } catch (e: any) {
       // Nothing
@@ -476,9 +476,9 @@ async function determineGemfileOrCocoapodPath(
   const gemfileText = (await readFile(gemfilePath)).toString();
   if (!gemfileText) {
     return 'pod';
-  } 
+  }
 
-  const cocoapodsInGemfile = new RegExp(/gem 'cocoapods'/).test(gemfileText)
+  const cocoapodsInGemfile = new RegExp(/gem 'cocoapods'/).test(gemfileText);
 
   if (cocoapodsInGemfile) {
     return 'bundle exec pod';

@@ -108,11 +108,11 @@ async function updatePodfile(
   const podCommandExists = await isInstalled('pod');
   if (useBundler || podCommandExists) {
     if (useBundler) {
-        await runCommand(
-          'bundle',
-          ['exec', 'pod', 'install', ...(deployment ? ['--deployment'] : [])],
-          { cwd: config.ios.nativeProjectDirAbs },
-        );
+      await runCommand(
+        'bundle',
+        ['exec', 'pod', 'install', ...(deployment ? ['--deployment'] : [])],
+        { cwd: config.ios.nativeProjectDirAbs },
+      );
     } else {
       await runCommand(
         podPath,
