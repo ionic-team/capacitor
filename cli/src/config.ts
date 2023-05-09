@@ -473,16 +473,19 @@ async function determineGemfileOrCocoapodPath(
     }
   }
 
-  const gemfileText = (await readFile(gemfilePath)).toString();
-  if (!gemfileText) {
-    return 'pod';
-  }
+  try {
+    const gemfileText = (await readFile(gemfilePath)).toString();
+    if (!gemfileText) {
+      return 'pod';
+    }
+    const cocoapodsInGemfile = new RegExp(/gem 'cocoapods'/).test(gemfileText);
 
-  const cocoapodsInGemfile = new RegExp(/gem 'cocoapods'/).test(gemfileText);
-
-  if (cocoapodsInGemfile) {
-    return 'bundle exec pod';
-  } else {
+    if (cocoapodsInGemfile) {
+      return 'bundle exec pod';
+    } else {
+      return 'pod';
+    }
+  } catch {
     return 'pod';
   }
 }
