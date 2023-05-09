@@ -30,6 +30,8 @@ jobs:
           cache: npm
           cache-dependency-path: '**/package.json'
       - run: |
+          npm instal -g npm@^9.5.0
+      - run: |
           npm install
       - name: Version & Publish
         env: 
