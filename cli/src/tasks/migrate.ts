@@ -8,11 +8,13 @@ import {
 import { join } from 'path';
 import rimraf from 'rimraf';
 
+import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
 import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger, logPrompt, logSuccess } from '../log';
+import { getPlugins } from '../plugin';
 import { deleteFolderRecursive } from '../util/fs';
 import { runCommand, getCommandOutput } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
@@ -52,8 +54,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '5.0.0';
-const pluginVersion = '5.0.0';
+const coreVersion = '^5.0.0';
+const pluginVersion = '^5.0.0';
 const gradleVersion = '8.0.2';
 
 export async function migrateCommand(
@@ -312,6 +314,13 @@ export async function migrateCommand(
         });
 
         rimraf.sync(join(config.android.appDirAbs, 'build'));
+
+        await runTask(
+          'Migrating package from Manifest to build.gradle in Capacitor plugins',
+          () => {
+            return patchOldCapacitorPlugins(config);
+          },
+        );
       }
 
       // Run Cap Sync
@@ -426,10 +435,9 @@ async function writeBreakingChanges() {
       broken.push(lib);
     }
   }
-  // TODO - remove "next" from the url once capacitor 5 is final
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
@@ -663,24 +671,19 @@ async function movePackageFromManifestToBuildGradle(
   }
 
   let packageName: string;
-  const manifestRegEx = new RegExp(/<manifest ([^>]*package="(.+)"[^>]*)>/);
+  const manifestRegEx = new RegExp(/package="(.+)"/);
   const manifestResults = manifestRegEx.exec(manifestText);
 
   if (manifestResults === null) {
-    logger.error(`Unable to update Android Manifest. Missing <activity> tag`);
+    logger.error(`Unable to update Android Manifest. Package not found.`);
     return;
   } else {
-    packageName = manifestResults[2];
+    packageName = manifestResults[1];
   }
 
   let manifestReplaced = manifestText;
 
-  manifestReplaced = setAllStringIn(
-    manifestText,
-    '<manifest xmlns:android="http://schemas.android.com/apk/res/android"',
-    '>',
-    ``,
-  );
+  manifestReplaced = manifestReplaced.replace(manifestRegEx, '');
 
   if (manifestText == manifestReplaced) {
     logger.error(
@@ -827,4 +830,40 @@ function setAllStringIn(
     }
   }
   return result;
+}
+
+export async function patchOldCapacitorPlugins(
+  config: Config,
+): Promise<void[]> {
+  const allPlugins = await getPlugins(config, 'android');
+  const androidPlugins = await getAndroidPlugins(allPlugins);
+  return await Promise.all(
+    androidPlugins.map(async p => {
+      if (p.manifest?.android?.src) {
+        const buildGradlePath = join(
+          config.app.rootDir,
+          'node_modules',
+          p.id,
+          p.manifest.android.src,
+          'build.gradle',
+        );
+        const manifestPath = join(
+          config.app.rootDir,
+          'node_modules',
+          p.id,
+          p.manifest.android.src,
+          'src',
+          'main',
+          'AndroidManifest.xml',
+        );
+        const gradleContent = readFile(buildGradlePath);
+        if (!gradleContent?.includes('namespace')) {
+          logger.warn(
+            `${p.id} doesn't officially support Capacitor ${coreVersion} yet, doing our best moving it's package to build.gradle so it builds`,
+          );
+          movePackageFromManifestToBuildGradle(manifestPath, buildGradlePath);
+        }
+      }
+    }),
+  );
 }
