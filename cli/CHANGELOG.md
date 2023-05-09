@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.2](https://github.com/ionic-team/capacitor/compare/5.0.1...5.0.2) (2023-05-09)
+
+### Bug Fixes
+
+- **cli:** handle unrecognized java --version ([#6577](https://github.com/ionic-team/capacitor/issues/6577)) ([56b0037](https://github.com/ionic-team/capacitor/commit/56b0037a70d64019563b6e55e53de423f471fe2f))
+- **cli:** Move package to build.gradle in Capacitor plugins ([#6569](https://github.com/ionic-team/capacitor/issues/6569)) ([8cb26cd](https://github.com/ionic-team/capacitor/commit/8cb26cd97a4f9cf59abb6b3828a07555a6af0b15))
+- fallback to plain `pod` if `Gemfile` does not contain CocoaPods ([#6581](https://github.com/ionic-team/capacitor/issues/6581)) ([3a41b4c](https://github.com/ionic-team/capacitor/commit/3a41b4c1b70af7a45201fb11b04dc5558893aa7e))
+
 ## [5.0.1](https://github.com/ionic-team/capacitor/compare/5.0.0...5.0.1) (2023-05-05)
 
 ### Bug Fixes
