@@ -458,7 +458,6 @@ async function determineGemfileOrCocoapodPath(
   const appSpecificGemfileExists = gemfilePath != ""
 
   // Multi-app projects might share a single global 'Gemfile' at the Git repository root directory.
-  let globalGemfileExists = false;
   if (!appSpecificGemfileExists) {
     try {
       const output = await getCommandOutput(
@@ -467,7 +466,6 @@ async function determineGemfileOrCocoapodPath(
         { cwd: rootDir },
       );
       if (output != null) {
-        globalGemfileExists = await pathExists(resolve(output, 'Gemfile'));
         gemfilePath = resolve(output, 'Gemfile')
       }
     } catch (e: any) {
