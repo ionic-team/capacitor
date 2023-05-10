@@ -204,9 +204,7 @@ export async function migrateCommand(
         await runTask(
           'Remove android.enableJetifier=true from gradle.properties',
           () => {
-            return updateGradleProperties(
-              join(config.android.platformDirAbs, 'gradle.properties'),
-            );
+            return updateGradleProperties(config);
           },
         );
 
@@ -620,27 +618,22 @@ async function updateAppIcons(config: Config) {
   writeFileSync(join(path, contentsFile), newContentsFileContents);
 }
 
-async function updateGradleProperties(filename: string) {
-  const txt = readFile(filename);
+export async function updateGradleProperties(config: Config): Promise<void> {
+  const filename = join(config.android.platformDirAbs, 'gradle.properties');
+  const jetifierText = 'android.enableJetifier=true\n';
+  const commentText =
+    '# Automatically convert third-party libraries to use AndroidX\n';
+  let txt = readFile(filename);
   if (!txt) {
     return;
   }
-  const lines = txt.split('\n');
-  let linesToKeep = '';
-  for (const line of lines) {
-    // check for enableJetifier
-    const jetifierMatch =
-      line.match(/android\.enableJetifier\s*=\s*true/) || [];
-    const commentMatch =
-      line.match(
-        /# Automatically convert third-party libraries to use AndroidX/,
-      ) || [];
-
-    if (jetifierMatch.length == 0 && commentMatch.length == 0) {
-      linesToKeep += line + '\n';
-    }
+  if (txt.includes(jetifierText) && !(await needsJetifier(config))) {
+    txt = txt.replace(jetifierText, '').replace(commentText, '');
+  } else if (!txt.includes(jetifierText) && (await needsJetifier(config))) {
+    txt = txt.concat(commentText).concat(jetifierText);
+    logger.info(`gradle.properties was modified to add ${jetifierText}`);
   }
-  writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
+  writeFileSync(filename, txt, { encoding: 'utf-8' });
 }
 
 async function movePackageFromManifestToBuildGradle(
@@ -866,4 +859,10 @@ export async function patchOldCapacitorPlugins(
       }
     }),
   );
+}
+
+async function needsJetifier(config: Config): Promise<boolean> {
+  const jetifierPlugins = ['@ionic-enterprise/identity-vault'];
+  const allPlugins = await getPlugins(config, 'android');
+  return allPlugins.some((p: any) => jetifierPlugins.includes(p.id));
 }

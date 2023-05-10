@@ -31,7 +31,10 @@ import {
 } from '../plugin';
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
-import { patchOldCapacitorPlugins } from '../tasks/migrate';
+import {
+  patchOldCapacitorPlugins,
+  updateGradleProperties,
+} from '../tasks/migrate';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
@@ -56,6 +59,7 @@ export async function updateAndroid(config: Config): Promise<void> {
     p => getPluginType(p, platform) === PluginType.Cordova,
   );
   await patchOldCapacitorPlugins(config);
+  await updateGradleProperties(config);
   if (cordovaPlugins.length > 0) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
