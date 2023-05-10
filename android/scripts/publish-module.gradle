@@ -31,7 +31,7 @@ afterEvaluate {
 
                 // Two artifacts, the `aar` (or `jar`) and the sources
                 if (project.plugins.findPlugin("com.android.library")) {
-                    artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+                    from components.release
                 } else {
                     artifact("$buildDir/libs/${project.getName()}-${version}.jar")
                 }
