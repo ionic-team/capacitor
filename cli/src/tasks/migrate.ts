@@ -630,8 +630,9 @@ export async function updateGradleProperties(config: Config): Promise<void> {
   if (txt.includes(jetifierText) && !(await needsJetifier(config))) {
     txt = txt.replace(jetifierText, '').replace(commentText, '');
   } else if (!txt.includes(jetifierText) && (await needsJetifier(config))) {
-    txt = txt.concat(commentText).concat(jetifierText);
-    logger.info(`gradle.properties was modified to add ${jetifierText}`);
+    logger.warn(
+      `Some of your plugins require jetifier to be enabled. Add the following line to android/gradle.properties:\n${jetifierText}`,
+    );
   }
   writeFileSync(filename, txt, { encoding: 'utf-8' });
 }
