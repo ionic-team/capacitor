@@ -26,19 +26,20 @@
   },
   "prettier": "@ionic/prettier-config",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.58.0",
-    "@typescript-eslint/parser": "^5.58.0",
     "@ionic/prettier-config": "~1.0.1",
     "@ionic/swiftlint-config": "^1.1.2",
+    "@types/node": "^18.16.8",
     "@types/tar": "^6.1.2",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
     "eslint": "~8.38.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.0",
     "lerna": "^6.5.1",
     "prettier": "~2.3.0",
     "prettier-plugin-java": "~1.1.1",
+    "rimraf": "^4.4.1",
     "swiftlint": "^1.0.1",
-    "tar": "^6.1.11",
-    "rimraf": "^4.4.1"
+    "tar": "^6.1.11"
   }
 }
