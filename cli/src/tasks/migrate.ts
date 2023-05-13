@@ -16,6 +16,7 @@ import { fatal } from '../errors';
 import { logger, logPrompt, logSuccess } from '../log';
 import { getPlugins } from '../plugin';
 import { deleteFolderRecursive } from '../util/fs';
+import { resolveNode } from '../util/node';
 import { runCommand, getCommandOutput } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -840,28 +841,28 @@ export async function patchOldCapacitorPlugins(
   return await Promise.all(
     androidPlugins.map(async p => {
       if (p.manifest?.android?.src) {
-        const buildGradlePath = join(
+        const buildGradlePath = resolveNode(
           config.app.rootDir,
-          'node_modules',
           p.id,
           p.manifest.android.src,
           'build.gradle',
         );
-        const manifestPath = join(
+        const manifestPath = resolveNode(
           config.app.rootDir,
-          'node_modules',
           p.id,
           p.manifest.android.src,
           'src',
           'main',
           'AndroidManifest.xml',
         );
-        const gradleContent = readFile(buildGradlePath);
-        if (!gradleContent?.includes('namespace')) {
-          logger.warn(
-            `${p.id} doesn't officially support Capacitor ${coreVersion} yet, doing our best moving it's package to build.gradle so it builds`,
-          );
-          movePackageFromManifestToBuildGradle(manifestPath, buildGradlePath);
+        if (buildGradlePath && manifestPath) {
+          const gradleContent = readFile(buildGradlePath);
+          if (!gradleContent?.includes('namespace')) {
+            logger.warn(
+              `${p.id} doesn't officially support Capacitor ${coreVersion} yet, doing our best moving it's package to build.gradle so it builds`,
+            );
+            movePackageFromManifestToBuildGradle(manifestPath, buildGradlePath);
+          }
         }
       }
     }),
