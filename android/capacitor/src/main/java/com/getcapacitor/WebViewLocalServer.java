@@ -29,6 +29,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -360,9 +361,12 @@ public class WebViewLocalServer {
                         String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
                         conn.setRequestProperty("Authorization", "Basic " + base64);
                     }
-                    String cookie = conn.getHeaderField("Set-Cookie");
-                    if (cookie != null) {
-                        CookieManager.getInstance().setCookie(url, cookie);
+
+                    List<String> cookies = conn.getHeaderFields().get("Set-Cookie");
+                    if (cookies != null) {
+                        for (String cookie : cookies) {
+                            CookieManager.getInstance().setCookie(url, cookie);
+                        }
                     }
                     InputStream responseStream = conn.getInputStream();
                     responseStream = jsInjector.getInjectedStream(responseStream);
@@ -480,10 +484,12 @@ public class WebViewLocalServer {
 
                 // Pass path to routeProcessor if present
                 RouteProcessor routeProcessor = bridge.getRouteProcessor();
+                boolean ignoreAssetPath = false;
                 if (routeProcessor != null) {
                     ProcessedRoute processedRoute = bridge.getRouteProcessor().process("", path);
                     path = processedRoute.getPath();
                     isAsset = processedRoute.isAsset();
+                    ignoreAssetPath = processedRoute.isIgnoreAssetPath();
                 }
 
                 try {
@@ -497,6 +503,8 @@ public class WebViewLocalServer {
                         }
 
                         stream = protocolHandler.openFile(path);
+                    } else if (ignoreAssetPath) {
+                        stream = protocolHandler.openAsset(path);
                     } else {
                         stream = protocolHandler.openAsset(assetPath + path);
                     }

@@ -7,7 +7,7 @@
 </div>
 <br />
 <p align="center">
-  <a href="https://github.com/ionic-team/capacitor/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/workflow/status/ionic-team/capacitor/CI?style=flat-square" /></a>
+  <a href="https://github.com/ionic-team/capacitor/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/actions/workflow/status/ionic-team/capacitor/ci.yml?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/dw/@capacitor/core?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/v/@capacitor/core?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/l/@capacitor/core?style=flat-square" /></a>
@@ -82,6 +82,18 @@ Made possible by the Capacitor community. 💖
 <!-- CONTRIBUTORS:START -->
 
 <p align="center">
+  <a href="https://github.com/ltm"><img src="https://github.com/ltm.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/stewones"><img src="https://github.com/stewones.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/wilgert"><img src="https://github.com/wilgert.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/saschpe"><img src="https://github.com/saschpe.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/zakuru"><img src="https://github.com/zakuru.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/JanMisker"><img src="https://github.com/JanMisker.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/piotr-zurek"><img src="https://github.com/piotr-zurek.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/crhayes"><img src="https://github.com/crhayes.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/markemer"><img src="https://github.com/markemer.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/junxiong96"><img src="https://github.com/junxiong96.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/dtarnawsky"><img src="https://github.com/dtarnawsky.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/dallastjames"><img src="https://github.com/dallastjames.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/arnold-plakolli"><img src="https://github.com/arnold-plakolli.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/zookatron"><img src="https://github.com/zookatron.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/giralte-ionic"><img src="https://github.com/giralte-ionic.png?size=100" width="50" height="50" /></a>

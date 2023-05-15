@@ -32,6 +32,7 @@ import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.util.HostMask;
+import com.getcapacitor.util.InternalUtils;
 import com.getcapacitor.util.PermissionHelper;
 import com.getcapacitor.util.WebColor;
 import java.io.File;
@@ -87,6 +88,8 @@ public class Bridge {
     public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
     public static final int DEFAULT_ANDROID_WEBVIEW_VERSION = 60;
     public static final int MINIMUM_ANDROID_WEBVIEW_VERSION = 55;
+    public static final int DEFAULT_HUAWEI_WEBVIEW_VERSION = 10;
+    public static final int MINIMUM_HUAWEI_WEBVIEW_VERSION = 10;
 
     // Loaded Capacitor config
     private CapConfig config;
@@ -120,6 +123,8 @@ public class Bridge {
 
     private final List<Class<? extends Plugin>> initialPlugins;
 
+    private final List<Plugin> pluginInstances;
+
     // A map of Plugin Id's to PluginHandle's
     private Map<String, PluginHandle> plugins = new HashMap<>();
 
@@ -142,6 +147,9 @@ public class Bridge {
     // An interface to manipulate route resolving
     private RouteProcessor routeProcessor;
 
+    // A pre-determined path to load the bridge
+    private ServerPath serverPath;
+
     /**
      * Create the Bridge with a reference to the main {@link Activity} for the
      * app, and a reference to the {@link WebView} our app will use.
@@ -159,25 +167,29 @@ public class Bridge {
         CordovaPreferences preferences,
         CapConfig config
     ) {
-        this(context, null, webView, initialPlugins, cordovaInterface, pluginManager, preferences, config);
+        this(context, null, null, webView, initialPlugins, new ArrayList<>(), cordovaInterface, pluginManager, preferences, config);
     }
 
     private Bridge(
         AppCompatActivity context,
+        ServerPath serverPath,
         Fragment fragment,
         WebView webView,
         List<Class<? extends Plugin>> initialPlugins,
+        List<Plugin> pluginInstances,
         MockCordovaInterfaceImpl cordovaInterface,
         PluginManager pluginManager,
         CordovaPreferences preferences,
         CapConfig config
     ) {
         this.app = new App();
+        this.serverPath = serverPath;
         this.context = context;
         this.fragment = fragment;
         this.webView = webView;
         this.webViewClient = new BridgeWebViewClient(this);
         this.initialPlugins = initialPlugins;
+        this.pluginInstances = pluginInstances;
         this.cordovaInterface = cordovaInterface;
         this.preferences = preferences;
 
@@ -294,8 +306,17 @@ public class Bridge {
             }
         }
 
-        // Get to work
-        webView.loadUrl(appUrl);
+        // If serverPath configured, start server based on provided path
+        if (serverPath != null) {
+            if (serverPath.getType() == ServerPath.PathType.ASSET_PATH) {
+                setServerAssetPath(serverPath.getPath());
+            } else {
+                setServerBasePath(serverPath.getPath());
+            }
+        } else {
+            // Get to work
+            webView.loadUrl(appUrl);
+        }
     }
 
     @SuppressLint("WebViewApiAvailability")
@@ -305,6 +326,11 @@ public class Bridge {
         // Check getCurrentWebViewPackage() directly if above Android 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             PackageInfo info = WebView.getCurrentWebViewPackage();
+            if (info.packageName.equals("com.huawei.webview")) {
+                String majorVersionStr = info.versionName.split("\\.")[0];
+                int majorVersion = Integer.parseInt(majorVersionStr);
+                return majorVersion >= config.getMinHuaweiWebViewVersion();
+            }
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
@@ -316,7 +342,7 @@ public class Bridge {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 webViewPackage = "com.android.chrome";
             }
-            PackageInfo info = pm.getPackageInfo(webViewPackage, 0);
+            PackageInfo info = InternalUtils.getPackageInfo(pm, webViewPackage);
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
@@ -325,7 +351,7 @@ public class Bridge {
         }
 
         try {
-            PackageInfo info = pm.getPackageInfo("com.android.webview", 0);
+            PackageInfo info = InternalUtils.getPackageInfo(pm, "com.android.webview");
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
@@ -351,7 +377,15 @@ public class Bridge {
             }
         }
 
-        if (!url.toString().contains(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
+        if (url.getScheme().equals("data")) {
+            return false;
+        }
+
+        Uri appUri = Uri.parse(appUrl);
+        if (
+            !(appUri.getHost().equals(url.getHost()) && url.getScheme().equals(appUri.getScheme())) &&
+            !appAllowNavigationMask.matches(url.getHost())
+        ) {
             try {
                 Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
                 getContext().startActivity(openIntent);
@@ -372,7 +406,8 @@ public class Bridge {
         String lastVersionName = prefs.getString(LAST_BINARY_VERSION_NAME, null);
 
         try {
-            PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+            PackageManager pm = getContext().getPackageManager();
+            PackageInfo pInfo = InternalUtils.getPackageInfo(pm, getContext().getPackageName());
             versionCode = Integer.toString((int) PackageInfoCompat.getLongVersionCode(pInfo));
             versionName = pInfo.versionName;
         } catch (Exception ex) {
@@ -514,6 +549,7 @@ public class Bridge {
     /**
      * Initialize the WebView, setting required flags
      */
+    @SuppressLint("SetJavaScriptEnabled")
     private void initWebView() {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -556,10 +592,16 @@ public class Bridge {
      * Register our core Plugin APIs
      */
     private void registerAllPlugins() {
+        this.registerPlugin(com.getcapacitor.plugin.CapacitorCookies.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
+        this.registerPlugin(com.getcapacitor.plugin.CapacitorHttp.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
             this.registerPlugin(pluginClass);
+        }
+
+        for (Plugin plugin : pluginInstances) {
+            registerPluginInstance(plugin);
         }
     }
 
@@ -570,6 +612,12 @@ public class Bridge {
     public void registerPlugins(Class<? extends Plugin>[] pluginClasses) {
         for (Class<? extends Plugin> plugin : pluginClasses) {
             this.registerPlugin(plugin);
+        }
+    }
+
+    public void registerPluginInstances(Plugin[] pluginInstances) {
+        for (Plugin plugin : pluginInstances) {
+            this.registerPluginInstance(plugin);
         }
     }
 
@@ -589,39 +637,65 @@ public class Bridge {
      * @param pluginClass a class inheriting from Plugin
      */
     public void registerPlugin(Class<? extends Plugin> pluginClass) {
-        String pluginName;
-
-        CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
-        if (pluginAnnotation == null) {
-            pluginName = this.getLegacyPluginName(pluginClass);
-            if (pluginName == null) {
-                return;
-            }
-        } else {
-            pluginName = pluginAnnotation.name();
-        }
-
-        String pluginId = pluginClass.getSimpleName();
-
-        // Use the supplied name as the id if available
-        if (!pluginName.equals("")) {
-            pluginId = pluginName;
-        }
-
-        Logger.debug("Registering plugin: " + pluginId);
+        String pluginId = pluginId(pluginClass);
+        if (pluginId == null) return;
 
         try {
             this.plugins.put(pluginId, new PluginHandle(this, pluginClass));
         } catch (InvalidPluginException ex) {
-            Logger.error(
-                "NativePlugin " +
-                pluginClass.getName() +
-                " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
-                " the class extends Plugin"
-            );
+            logInvalidPluginException(pluginClass);
         } catch (PluginLoadException ex) {
-            Logger.error("NativePlugin " + pluginClass.getName() + " failed to load", ex);
+            logPluginLoadException(pluginClass, ex);
         }
+    }
+
+    public void registerPluginInstance(Plugin plugin) {
+        Class<? extends Plugin> clazz = plugin.getClass();
+        String pluginId = pluginId(clazz);
+        if (pluginId == null) return;
+
+        try {
+            this.plugins.put(pluginId, new PluginHandle(this, plugin));
+        } catch (InvalidPluginException ex) {
+            logInvalidPluginException(clazz);
+        }
+    }
+
+    private String pluginId(Class<? extends Plugin> clazz) {
+        String pluginName = pluginName(clazz);
+        String pluginId = clazz.getSimpleName();
+        if (pluginName == null) return null;
+
+        if (!pluginName.equals("")) {
+            pluginId = pluginName;
+        }
+        Logger.debug("Registering plugin instance: " + pluginId);
+        return pluginId;
+    }
+
+    private String pluginName(Class<? extends Plugin> clazz) {
+        String pluginName;
+        CapacitorPlugin pluginAnnotation = clazz.getAnnotation(CapacitorPlugin.class);
+        if (pluginAnnotation == null) {
+            pluginName = this.getLegacyPluginName(clazz);
+        } else {
+            pluginName = pluginAnnotation.name();
+        }
+
+        return pluginName;
+    }
+
+    private void logInvalidPluginException(Class<? extends Plugin> clazz) {
+        Logger.error(
+            "NativePlugin " +
+            clazz.getName() +
+            " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
+            " the class extends Plugin"
+        );
+    }
+
+    private void logPluginLoadException(Class<? extends Plugin> clazz, Exception ex) {
+        Logger.error("NativePlugin " + clazz.getName() + " failed to load", ex);
     }
 
     public PluginHandle getPlugin(String pluginId) {
@@ -688,16 +762,18 @@ public class Bridge {
                 return;
             }
 
-            Logger.verbose(
-                "callback: " +
-                call.getCallbackId() +
-                ", pluginId: " +
-                plugin.getId() +
-                ", methodName: " +
-                methodName +
-                ", methodData: " +
-                call.getData().toString()
-            );
+            if (Logger.shouldLog()) {
+                Logger.verbose(
+                    "callback: " +
+                    call.getCallbackId() +
+                    ", pluginId: " +
+                    plugin.getId() +
+                    ", methodName: " +
+                    methodName +
+                    ", methodData: " +
+                    call.getData().toString()
+                );
+            }
 
             Runnable currentThreadTask = () -> {
                 try {
@@ -1299,6 +1375,7 @@ public class Bridge {
 
     public void setWebViewClient(BridgeWebViewClient client) {
         this.webViewClient = client;
+        webView.setWebViewClient(client);
     }
 
     List<WebViewListener> getWebViewListeners() {
@@ -1315,6 +1392,10 @@ public class Bridge {
 
     void setRouteProcessor(RouteProcessor routeProcessor) {
         this.routeProcessor = routeProcessor;
+    }
+
+    ServerPath getServerPath() {
+        return serverPath;
     }
 
     /**
@@ -1338,10 +1419,12 @@ public class Bridge {
         private Bundle instanceState = null;
         private CapConfig config = null;
         private List<Class<? extends Plugin>> plugins = new ArrayList<>();
+        private List<Plugin> pluginInstances = new ArrayList<>();
         private AppCompatActivity activity;
         private Fragment fragment;
         private RouteProcessor routeProcessor;
         private final List<WebViewListener> webViewListeners = new ArrayList<>();
+        private ServerPath serverPath;
 
         public Builder(AppCompatActivity activity) {
             this.activity = activity;
@@ -1380,6 +1463,16 @@ public class Bridge {
             return this;
         }
 
+        public Builder addPluginInstance(Plugin plugin) {
+            this.pluginInstances.add(plugin);
+            return this;
+        }
+
+        public Builder addPluginInstances(List<Plugin> plugins) {
+            this.pluginInstances.addAll(plugins);
+            return this;
+        }
+
         public Builder addWebViewListener(WebViewListener webViewListener) {
             webViewListeners.add(webViewListener);
             return this;
@@ -1395,6 +1488,11 @@ public class Bridge {
 
         public Builder setRouteProcessor(RouteProcessor routeProcessor) {
             this.routeProcessor = routeProcessor;
+            return this;
+        }
+
+        public Builder setServerPath(ServerPath serverPath) {
+            this.serverPath = serverPath;
             return this;
         }
 
@@ -1418,7 +1516,24 @@ public class Bridge {
             cordovaInterface.onCordovaInit(pluginManager);
 
             // Bridge initialization
-            Bridge bridge = new Bridge(activity, fragment, webView, plugins, cordovaInterface, pluginManager, preferences, config);
+            Bridge bridge = new Bridge(
+                activity,
+                serverPath,
+                fragment,
+                webView,
+                plugins,
+                pluginInstances,
+                cordovaInterface,
+                pluginManager,
+                preferences,
+                config
+            );
+
+            if (webView instanceof CapacitorWebView) {
+                CapacitorWebView capacitorWebView = (CapacitorWebView) webView;
+                capacitorWebView.setBridge(bridge);
+            }
+
             bridge.setCordovaWebView(mockWebView);
             bridge.setWebViewListeners(webViewListeners);
             bridge.setRouteProcessor(routeProcessor);

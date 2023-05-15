@@ -318,7 +318,7 @@ public class PluginCall {
     }
 
     public JSObject getObject(String name) {
-        return this.getObject(name, new JSObject());
+        return this.getObject(name, null);
     }
 
     @Nullable
@@ -339,7 +339,7 @@ public class PluginCall {
     }
 
     public JSArray getArray(String name) {
-        return this.getArray(name, new JSArray());
+        return this.getArray(name, null);
     }
 
     /**

@@ -12,7 +12,6 @@ import { logger } from '../log';
 import { allSerial } from '../util/promise';
 
 import { copy, copyCommand } from './copy';
-import { inlineSourceMaps } from './sourcemaps';
 import { update, updateChecks, updateCommand } from './update';
 
 /**
@@ -22,12 +21,12 @@ export async function syncCommand(
   config: Config,
   selectedPlatformName: string,
   deployment: boolean,
-  inline: boolean,
+  inline = false,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     try {
-      await copyCommand(config, selectedPlatformName);
-    } catch (e) {
+      await copyCommand(config, selectedPlatformName, inline);
+    } catch (e: any) {
       logger.error(e.stack ?? e);
     }
     await updateCommand(config, selectedPlatformName, deployment);
@@ -48,7 +47,7 @@ export async function syncCommand(
       const now = +new Date();
       const diff = (now - then) / 1000;
       logger.info(`Sync finished in ${diff}s`);
-    } catch (e) {
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }
@@ -62,7 +61,7 @@ export async function sync(
   config: Config,
   platformName: string,
   deployment: boolean,
-  inline: boolean,
+  inline = false,
 ): Promise<void> {
   await runPlatformHook(
     config,
@@ -72,11 +71,8 @@ export async function sync(
   );
 
   try {
-    await copy(config, platformName);
-    if (inline) {
-      await inlineSourceMaps(config, platformName);
-    }
-  } catch (e) {
+    await copy(config, platformName, inline);
+  } catch (e: any) {
     logger.error(e.stack ?? e);
   }
   await update(config, platformName, deployment);

@@ -11,14 +11,25 @@ import android.webkit.WebView;
 public class CapacitorWebView extends WebView {
 
     private BaseInputConnection capInputConnection;
+    private Bridge bridge;
 
     public CapacitorWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    public void setBridge(Bridge bridge) {
+        this.bridge = bridge;
+    }
+
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        CapConfig config = CapConfig.loadDefault(getContext());
+        CapConfig config;
+        if (bridge != null) {
+            config = bridge.getConfig();
+        } else {
+            config = CapConfig.loadDefault(getContext());
+        }
+
         boolean captureInput = config.isInputCaptured();
         if (captureInput) {
             if (capInputConnection == null) {
