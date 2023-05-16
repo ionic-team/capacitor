@@ -842,14 +842,12 @@ export async function patchOldCapacitorPlugins(
     androidPlugins.map(async p => {
       if (p.manifest?.android?.src) {
         const buildGradlePath = resolveNode(
-          config.app.rootDir,
-          p.id,
+          p.rootPath,
           p.manifest.android.src,
           'build.gradle',
         );
         const manifestPath = resolveNode(
-          config.app.rootDir,
-          p.id,
+          p.rootPath,
           p.manifest.android.src,
           'src',
           'main',
