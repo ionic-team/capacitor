@@ -4,6 +4,7 @@ apply plugin: 'signing'
 def LIB_VERSION = System.getenv('CAP_VERSION')
 
 task androidSourcesJar(type: Jar) {
+    dependsOn(':bundleReleaseAar')
     archiveClassifier.set('sources')
     if (project.plugins.findPlugin("com.android.library")) {
         from android.sourceSets.main.java.srcDirs
