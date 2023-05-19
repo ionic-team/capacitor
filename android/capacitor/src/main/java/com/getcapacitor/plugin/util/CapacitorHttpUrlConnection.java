@@ -3,6 +3,7 @@ package com.getcapacitor.plugin.util;
 import android.os.Build;
 import android.os.LocaleList;
 import android.text.TextUtils;
+import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
@@ -10,6 +11,7 @@ import com.getcapacitor.PluginCall;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
@@ -21,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import org.json.JSONException;
 
 public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
@@ -188,21 +192,6 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                 dataString = call.getString("data");
             }
             this.writeRequestBody(dataString != null ? dataString : "");
-        } else if (contentType.contains("application/x-www-form-urlencoded")) {
-            StringBuilder builder = new StringBuilder();
-
-            JSObject obj = body.toJSObject();
-            Iterator<String> keys = obj.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                Object d = obj.get(key);
-                builder.append(key).append("=").append(URLEncoder.encode(d.toString(), "UTF-8"));
-
-                if (keys.hasNext()) {
-                    builder.append("&");
-                }
-            }
-            this.writeRequestBody(builder.toString());
         } else {
             this.writeRequestBody(body.toString());
         }
@@ -349,7 +338,6 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      * This is called as early as possible to allow overrides by user-provided values.
      */
     private void setDefaultRequestProperties() {
-        connection.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.name());
         String acceptLanguage = buildDefaultAcceptLanguageProperty();
         if (!TextUtils.isEmpty(acceptLanguage)) {
             connection.setRequestProperty("Accept-Language", acceptLanguage);
@@ -377,5 +365,17 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             }
         }
         return result;
+    }
+
+    public void setSSLSocketFactory(Bridge bridge) {
+        // Attach SSL Certificates if Enterprise Plugin is available
+        try {
+            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
+            Method method = sslPinningImpl.getDeclaredMethod("getSSLSocketFactory", Bridge.class);
+            SSLSocketFactory sslSocketFactory = (SSLSocketFactory) method.invoke(sslPinningImpl.newInstance(), bridge);
+            if (sslSocketFactory != null) {
+                ((HttpsURLConnection) this.connection).setSSLSocketFactory(sslSocketFactory);
+            }
+        } catch (Exception ignored) {}
     }
 }

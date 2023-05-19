@@ -16,16 +16,14 @@
 @class CAPPlugin;
 
 @protocol CAPBridgedPlugin <NSObject>
-+(NSString *)pluginId;
-+(NSString *)jsName;
-+(NSArray *)pluginMethods;
-+(CAPPluginMethod *)getMethod:(NSString *)methodName;
-@optional
+@property (nonnull, readonly) NSString *identifier;
+@property (nonnull, readonly) NSString *jsName;
+@property (nonnull, readonly) NSArray<CAPPluginMethod *> *pluginMethods;
 @end
 
 #define CAP_PLUGIN_CONFIG(plugin_id, js_name) \
-+ (NSString *)pluginId { return @#plugin_id; } \
-+ (NSString *)jsName { return @js_name; }
+- (NSString *)identifier { return @#plugin_id; } \
+- (NSString *)jsName { return @js_name; }
 #define CAP_PLUGIN_METHOD(method_name, method_return_type) \
 [methods addObject:[[CAPPluginMethod alloc] initWithName:@#method_name returnType:method_return_type]]
 
@@ -35,19 +33,10 @@
 @interface objc_name (CAPPluginCategory) <CAPBridgedPlugin> \
 @end \
 @implementation objc_name (CAPPluginCategory) \
-+ (NSArray *)pluginMethods { \
+- (NSArray *)pluginMethods { \
   NSMutableArray *methods = [NSMutableArray new]; \
   methods_body \
   return methods; \
-} \
-+ (CAPPluginMethod *)getMethod:(NSString *)methodName { \
-  NSArray *methods = [self pluginMethods]; \
-  for(CAPPluginMethod *method in methods) { \
-    if([method.name isEqualToString:methodName]) { \
-      return method; \
-    } \
-  } \
-  return nil; \
 } \
 CAP_PLUGIN_CONFIG(objc_name, js_name) \
 @end

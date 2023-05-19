@@ -12,7 +12,7 @@ import {
 import type { CheckFunction } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
-import { checkCocoaPods } from '../ios/common';
+import { checkBundler, checkCocoaPods } from '../ios/common';
 import { updateIOS } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
@@ -49,7 +49,7 @@ export async function updateCommand(
       const now = +new Date();
       const diff = (now - then) / 1000;
       logger.info(`Update finished in ${diff}s`);
-    } catch (e) {
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }
@@ -66,7 +66,7 @@ export function updateChecks(
   const checks: CheckFunction[] = [];
   for (const platformName of platforms) {
     if (platformName === config.ios.name) {
-      checks.push(() => checkCocoaPods(config));
+      checks.push(() => checkBundler(config) || checkCocoaPods(config));
     } else if (platformName === config.android.name) {
       continue;
     } else if (platformName === config.web.name) {
