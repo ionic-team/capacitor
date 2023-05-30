@@ -1,15 +1,20 @@
-name: Publish NPM Nightly
+name: Publish NPM Latest From Prerelease
 
-on:
- schedule:
-   - cron: '0 15 * * 1-5'
+on: 
+  workflow_call:
+    secrets:
+      CAP_GH_RELEASE_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
+  workflow_dispatch:
 
 permissions:
   contents: write
   id-token: write
 
 jobs:
-  deploy-npm-nightly:
+  deploy-npm-latest:
     if: github.ref == 'refs/heads/main'
     runs-on: macos-12
     timeout-minutes: 30
@@ -34,4 +39,4 @@ jobs:
           git config user.name "Github Workflow (on behalf of ${{ github.actor }})"
           git config user.email "users.noreply.github.com"
           npm whoami
-          npm run ci:publish:nightly
+          npm run ci:publish:latest-from-pre

@@ -8,12 +8,15 @@ import {
 import { join } from 'path';
 import rimraf from 'rimraf';
 
+import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
-import { getCoreVersion, runTask } from '../common';
+import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger, logPrompt, logSuccess } from '../log';
+import { getPlugins } from '../plugin';
 import { deleteFolderRecursive } from '../util/fs';
+import { resolveNode } from '../util/node';
 import { runCommand, getCommandOutput } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -52,9 +55,10 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = 'next'; // TODO: Update when Capacitor 5 releases
-const pluginVersion = 'next'; // TODO: Update when Capacitor 5 releases
+const coreVersion = '^5.0.0';
+const pluginVersion = '^5.0.0';
 const gradleVersion = '8.0.2';
+let installFailed = false;
 
 export async function migrateCommand(
   config: Config,
@@ -72,6 +76,12 @@ export async function migrateCommand(
     );
   }
 
+  const jdkMajor = await checkJDKMajorVersion();
+
+  if (jdkMajor < 17) {
+    logger.warn('Capacitor 5 requires JDK 17 or higher. Some steps may fail.');
+  }
+
   const variablesAndClasspaths:
     | {
         'variables': any;
@@ -83,8 +93,6 @@ export async function migrateCommand(
   if (!variablesAndClasspaths) {
     fatal('Variable and Classpath info could not be read.');
   }
-
-  //*
 
   allDependencies = {
     ...config.app.package.dependencies,
@@ -155,12 +163,12 @@ export async function migrateCommand(
           },
         );
       } catch (ex) {
-        console.log(ex);
         logger.error(
           `${installerType} install failed. Try deleting node_modules folder and running ${c.input(
             `${installerType} install --force`,
           )} manually.`,
         );
+        installFailed = true;
       }
 
       // Update iOS Projects
@@ -286,6 +294,11 @@ export async function migrateCommand(
               androidxMaterialVersion: '1.8.0',
               androidxExifInterfaceVersion: '1.3.6',
               androidxCoreKTXVersion: '1.10.0',
+              googleMapsPlayServicesVersion: '18.1.0',
+              googleMapsUtilsVersion: '3.4.0',
+              googleMapsKtxVersion: '3.4.0',
+              googleMapsUtilsKtxVersion: '3.4.0',
+              kotlinxCoroutinesVersion: '1.6.4',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(
@@ -301,28 +314,54 @@ export async function migrateCommand(
         });
 
         rimraf.sync(join(config.android.appDirAbs, 'build'));
-      }
 
-      // Run Cap Sync
-      await runTask(`Running cap sync.`, () => {
-        return getCommandOutput('npx', ['cap', 'sync']);
-      });
-
-      try {
-        await runTask(`Upgrading gradle wrapper files`, () => {
-          return updateGradleWrapperFiles(config.android.platformDirAbs);
-        });
-      } catch (e: any) {
-        if (e.includes('EACCES')) {
-          logger.error(
-            `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
-              `chmod +x ./${config.android.platformDir}/gradlew`,
-            )} and ${c.input(
-              `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version ${gradleVersion} --warning-mode all`,
-            )} to update the files manually`,
+        if (!installFailed) {
+          await runTask(
+            'Migrating package from Manifest to build.gradle in Capacitor plugins',
+            () => {
+              return patchOldCapacitorPlugins(config);
+            },
           );
         } else {
-          logger.error(`gradle wrapper files were not updated`);
+          logger.warn(
+            'Skipped migrating package from Manifest to build.gradle in Capacitor plugins',
+          );
+        }
+      }
+
+      if (!installFailed) {
+        // Run Cap Sync
+        await runTask(`Running cap sync.`, () => {
+          return getCommandOutput('npx', ['cap', 'sync']);
+        });
+      } else {
+        logger.warn('Skipped Running cap sync.');
+      }
+
+      if (
+        allDependencies['@capacitor/android'] &&
+        existsSync(config.android.platformDirAbs)
+      ) {
+        if (!installFailed) {
+          try {
+            await runTask(`Upgrading gradle wrapper files`, () => {
+              return updateGradleWrapperFiles(config.android.platformDirAbs);
+            });
+          } catch (e: any) {
+            if (e.includes('EACCES')) {
+              logger.error(
+                `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
+                  `chmod +x ./${config.android.platformDir}/gradlew`,
+                )} and ${c.input(
+                  `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version ${gradleVersion} --warning-mode all`,
+                )} to update the files manually`,
+              );
+            } else {
+              logger.error(`gradle wrapper files were not updated`);
+            }
+          }
+        } else {
+          logger.warn('Skipped upgrading gradle wrapper files');
         }
       }
 
@@ -331,16 +370,21 @@ export async function migrateCommand(
         return writeBreakingChanges();
       });
 
-      logSuccess(
-        `Migration to Capacitor ${coreVersion} is complete. Run and test your app!`,
-      );
+      if (!installFailed) {
+        logSuccess(
+          `Migration to Capacitor ${coreVersion} is complete. Run and test your app!`,
+        );
+      } else {
+        logger.warn(
+          `Migration to Capacitor ${coreVersion} is incomplete. Check the log messages for more information.`,
+        );
+      }
     } catch (err) {
       fatal(`Failed to migrate: ${err}`);
     }
   } else {
     fatal(`User canceled migration.`);
   }
-  //*/
 }
 
 async function checkCapacitorMajorVersion(config: Config): Promise<number> {
@@ -398,7 +442,12 @@ async function installLatestLibs(
 }
 
 async function writeBreakingChanges() {
-  const breaking = ['@capacitor/device'];
+  const breaking = [
+    '@capacitor/camera',
+    '@capacitor/device',
+    '@capacitor/local-notifications',
+    '@capacitor/push-notifications',
+  ];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
@@ -641,24 +690,19 @@ async function movePackageFromManifestToBuildGradle(
   }
 
   let packageName: string;
-  const manifestRegEx = new RegExp(/<manifest ([^>]*package="(.+)"[^>]*)>/);
+  const manifestRegEx = new RegExp(/package="([^"]+)"/);
   const manifestResults = manifestRegEx.exec(manifestText);
 
   if (manifestResults === null) {
-    logger.error(`Unable to update Android Manifest. Missing <activity> tag`);
+    logger.error(`Unable to update Android Manifest. Package not found.`);
     return;
   } else {
-    packageName = manifestResults[2];
+    packageName = manifestResults[1];
   }
 
   let manifestReplaced = manifestText;
 
-  manifestReplaced = setAllStringIn(
-    manifestText,
-    '<manifest xmlns:android="http://schemas.android.com/apk/res/android"',
-    '>',
-    ``,
-  );
+  manifestReplaced = manifestReplaced.replace(manifestRegEx, '');
 
   if (manifestText == manifestReplaced) {
     logger.error(
@@ -672,8 +716,8 @@ async function movePackageFromManifestToBuildGradle(
   buildGradleReplaced = setAllStringIn(
     buildGradleText,
     'android {',
-    ' \n',
-    `namespace "${packageName}"\n`,
+    '\n',
+    `\n    namespace "${packageName}"`,
   );
 
   if (buildGradleText == buildGradleReplaced) {
@@ -805,4 +849,46 @@ function setAllStringIn(
     }
   }
   return result;
+}
+
+export async function patchOldCapacitorPlugins(
+  config: Config,
+): Promise<void[]> {
+  const allPlugins = await getPlugins(config, 'android');
+  const androidPlugins = await getAndroidPlugins(allPlugins);
+  return await Promise.all(
+    androidPlugins.map(async p => {
+      if (p.manifest?.android?.src) {
+        const buildGradlePath = resolveNode(
+          config.app.rootDir,
+          p.id,
+          p.manifest.android.src,
+          'build.gradle',
+        );
+        const manifestPath = resolveNode(
+          config.app.rootDir,
+          p.id,
+          p.manifest.android.src,
+          'src',
+          'main',
+          'AndroidManifest.xml',
+        );
+        if (buildGradlePath && manifestPath) {
+          const gradleContent = readFile(buildGradlePath);
+          if (!gradleContent?.includes('namespace')) {
+            if (plugins.includes(p.id)) {
+              logger.warn(
+                `You are using an outdated version of ${p.id}, update the plugin to version ${pluginVersion}`,
+              );
+            } else {
+              logger.warn(
+                `${p.id}@${p.version} doesn't officially support Capacitor ${coreVersion} yet, doing our best moving it's package to build.gradle so it builds`,
+              );
+            }
+            movePackageFromManifestToBuildGradle(manifestPath, buildGradlePath);
+          }
+        }
+      }
+    }),
+  );
 }
