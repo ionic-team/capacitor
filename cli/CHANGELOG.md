@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.4](https://github.com/ionic-team/capacitor/compare/5.0.3...5.0.4) (2023-05-23)
+
+### Bug Fixes
+
+- **cli:** correct migration of package from AndroidManifest.xml to build.gradle ([#6607](https://github.com/ionic-team/capacitor/issues/6607)) ([1c26a3e](https://github.com/ionic-team/capacitor/commit/1c26a3e57f356a0972bd43854ca86770a49f2d63))
+- **cli:** Don't succeed migration if npm install failed ([#6595](https://github.com/ionic-team/capacitor/issues/6595)) ([6843d96](https://github.com/ionic-team/capacitor/commit/6843d9642fad9a322579cbe5f01563929a83dbf5))
+- **cli:** proper plugin module patch in monorepos ([#6589](https://github.com/ionic-team/capacitor/issues/6589)) ([d49e632](https://github.com/ionic-team/capacitor/commit/d49e6324ab5e0bea58ff6ca32feb7ea39d33a772))
+
 ## [5.0.3](https://github.com/ionic-team/capacitor/compare/5.0.2...5.0.3) (2023-05-10)
 
 **Note:** Version bump only for package @capacitor/cli
