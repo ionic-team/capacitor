@@ -136,7 +136,8 @@ var nativeBridge = (function (exports) {
             if (nav) {
                 nav.app = nav.app || {};
                 nav.app.exitApp = () => {
-                    if (!cap.Plugins || !cap.Plugins.App) {
+                    var _a;
+                    if (!((_a = cap.Plugins) === null || _a === void 0 ? void 0 : _a.App)) {
                         win.console.warn('App plugin not installed');
                     }
                     else {
@@ -147,6 +148,7 @@ var nativeBridge = (function (exports) {
             if (doc) {
                 const docAddEventListener = doc.addEventListener;
                 doc.addEventListener = (...args) => {
+                    var _a;
                     const eventName = args[0];
                     const handler = args[1];
                     if (eventName === 'deviceready' && handler) {
@@ -155,7 +157,7 @@ var nativeBridge = (function (exports) {
                     else if (eventName === 'backbutton' && cap.Plugins.App) {
                         // Add a dummy listener so Capacitor doesn't do the default
                         // back button action
-                        if (!cap.Plugins || !cap.Plugins.App) {
+                        if (!((_a = cap.Plugins) === null || _a === void 0 ? void 0 : _a.App)) {
                             win.console.warn('App plugin not installed');
                         }
                         else {
@@ -366,6 +368,7 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
+                        var _a;
                         if (!(resource.toString().startsWith('http:') ||
                             resource.toString().startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
@@ -384,9 +387,8 @@ var nativeBridge = (function (exports) {
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
                                 headers: headers,
                             });
-                            let data = !nativeResponse.headers['Content-Type'].startsWith('application/json')
-                                ? nativeResponse.data
-                                : JSON.stringify(nativeResponse.data);
+                            let data = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                ? JSON.stringify(nativeResponse.data) : nativeResponse.data;
                             // use null data for 204 No Content HTTP response
                             if (nativeResponse.status === 204) {
                                 data = null;
@@ -527,15 +529,15 @@ var nativeBridge = (function (exports) {
                                     : undefined,
                             })
                                 .then((nativeResponse) => {
+                                var _a;
                                 // intercept & parse response before returning
                                 if (this.readyState == 2) {
                                     this.dispatchEvent(new Event('loadstart'));
                                     this._headers = nativeResponse.headers;
                                     this.status = nativeResponse.status;
                                     this.response = nativeResponse.data;
-                                    this.responseText = !nativeResponse.headers['Content-Type'].startsWith('application/json')
-                                        ? nativeResponse.data
-                                        : JSON.stringify(nativeResponse.data);
+                                    this.responseText = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                        ? JSON.stringify(nativeResponse.data) : nativeResponse.data;
                                     this.responseURL = nativeResponse.url;
                                     this.readyState = 4;
                                     this.dispatchEvent(new Event('load'));
