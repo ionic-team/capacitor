@@ -437,11 +437,11 @@ const initBridge = (w: any): void => {
               },
             );
 
-            let data = !nativeResponse.headers['Content-Type'].startsWith(
+            let data = nativeResponse.headers['Content-Type']?.startsWith(
               'application/json',
             )
-              ? nativeResponse.data
-              : JSON.stringify(nativeResponse.data);
+              ? JSON.stringify(nativeResponse.data)
+              : nativeResponse.data;
 
             // use null data for 204 No Content HTTP response
             if (nativeResponse.status === 204) {
@@ -622,11 +622,11 @@ const initBridge = (w: any): void => {
                   this._headers = nativeResponse.headers;
                   this.status = nativeResponse.status;
                   this.response = nativeResponse.data;
-                  this.responseText = !nativeResponse.headers[
+                  this.responseText = nativeResponse.headers[
                     'Content-Type'
-                  ].startsWith('application/json')
-                    ? nativeResponse.data
-                    : JSON.stringify(nativeResponse.data);
+                  ]?.startsWith('application/json')
+                    ? JSON.stringify(nativeResponse.data)
+                    : nativeResponse.data;
                   this.responseURL = nativeResponse.url;
                   this.readyState = 4;
                   this.dispatchEvent(new Event('load'));
