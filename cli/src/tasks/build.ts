@@ -9,7 +9,10 @@ export interface BuildCommandOptions {
   flavor?: string;
   keystorepath?: string;
   keystorepass?: string;
+  keystorealias?: string;
+  keystorealiaspass?: string;
   androidreleasetype?: 'AAB' | 'APK';
+  signingtype?: 'apksigner' | 'jarsigner';
 }
 
 export async function buildCommand(
@@ -35,10 +38,19 @@ export async function buildCommand(
       buildOptions.keystorepath || config.android.buildOptions.keystorePath,
     keystorepass:
       buildOptions.keystorepass || config.android.buildOptions.keystorePassword,
+    keystorealias:
+      buildOptions.keystorealias || config.android.buildOptions.keystoreAlias,
+    keystorealiaspass:
+      buildOptions.keystorealiaspass ||
+      config.android.buildOptions.keystoreAliasPassword,
     androidreleasetype:
       buildOptions.androidreleasetype ||
       config.android.buildOptions.releaseType ||
       'AAB',
+    signingtype:
+      buildOptions.signingtype ||
+      config.android.buildOptions.signingType ||
+      'jarsigner',
   };
 
   try {

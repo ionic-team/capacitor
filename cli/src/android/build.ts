@@ -19,10 +19,6 @@ export async function buildAndroid(
     : `assemble${flavor}Release`;
   const gradleArgs = [arg];
 
-  if (!buildOptions.keystorepath || !buildOptions.keystorepass) {
-    throw 'Missing options. Please supply all options for android signing. (Keystore Path, Keystore Password)';
-  }
-
   try {
     await runTask('Running Gradle build', async () =>
       runCommand('./gradlew', gradleArgs, {
@@ -58,6 +54,38 @@ export async function buildAndroid(
     `-release-signed.${releaseType.toLowerCase()}`,
   );
 
+  if (buildOptions.signingtype == 'jarsigner') {
+    await signWithJarSigner(
+      config,
+      buildOptions,
+      releasePath,
+      signedReleaseName,
+      unsignedReleaseName,
+    );
+  } else {
+    await signWithApkSigner(
+      config,
+      buildOptions,
+      releasePath,
+      signedReleaseName,
+      unsignedReleaseName,
+    );
+  }
+
+  logSuccess(`Successfully generated ${signedReleaseName} at: ${releasePath}`);
+}
+
+async function signWithApkSigner(
+  config: Config,
+  buildOptions: BuildCommandOptions,
+  releasePath: string,
+  signedReleaseName: string,
+  unsignedReleaseName: string,
+) {
+  if (!buildOptions.keystorepath || !buildOptions.keystorepass) {
+    throw 'Missing options. Please supply all options for android signing. (Keystore Path, Keystore Password)';
+  }
+
   const signingArgs = [
     'sign',
     '--ks',
@@ -75,6 +103,44 @@ export async function buildAndroid(
       cwd: config.android.platformDirAbs,
     });
   });
+}
 
-  logSuccess(`Successfully generated ${signedReleaseName} at: ${releasePath}`);
+async function signWithJarSigner(
+  config: Config,
+  buildOptions: BuildCommandOptions,
+  releasePath: string,
+  signedReleaseName: string,
+  unsignedReleaseName: string,
+) {
+  if (
+    !buildOptions.keystorepath ||
+    !buildOptions.keystorealias ||
+    !buildOptions.keystorealiaspass ||
+    !buildOptions.keystorepass
+  ) {
+    throw 'Missing options. Please supply all options for android signing. (Keystore Path, Keystore Password, Keystore Key Alias, Keystore Key Password)';
+  }
+
+  const signingArgs = [
+    '-sigalg',
+    'SHA1withRSA',
+    '-digestalg',
+    'SHA1',
+    '-keystore',
+    buildOptions.keystorepath,
+    '-keypass',
+    buildOptions.keystorealiaspass,
+    '-storepass',
+    buildOptions.keystorepass,
+    `-signedjar`,
+    `${join(releasePath, signedReleaseName)}`,
+    `${join(releasePath, unsignedReleaseName)}`,
+    buildOptions.keystorealias,
+  ];
+
+  await runTask('Signing Release', async () => {
+    await runCommand('jarsigner', signingArgs, {
+      cwd: config.android.platformDirAbs,
+    });
+  });
 }

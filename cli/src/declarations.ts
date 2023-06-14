@@ -239,12 +239,34 @@ export interface CapacitorConfig {
       keystorePassword?: string;
 
       /**
+       * Alias in the keystore to use
+       *
+       * @since 4.4.0
+       */
+      keystoreAlias?: string;
+
+      /**
+       * Password for the alias in the keystore to use
+       *
+       * @since 4.4.0
+       */
+      keystoreAliasPassword?: string;
+
+      /**
        * Bundle type for your release build
        *
        * @since 4.4.0
        * @default "AAB"
        */
       releaseType?: 'AAB' | 'APK';
+
+      /**
+       * Program to sign your build with
+       *
+       * @since 5.1.0
+       * @default "jarsigner"
+       */
+      signingType?: 'apksigner' | 'jarsigner';
     };
 
     /**

@@ -144,11 +144,22 @@ export function runProgram(config: Config): void {
     .option('--flavor <flavorToBuild>', 'Android Flavor to build')
     .option('--keystorepath <keystorePath>', 'Path to the keystore')
     .option('--keystorepass <keystorePass>', 'Password to the keystore')
+    .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
+    .option(
+      '--keystorealiaspass <keystoreAliasPass>',
+      'Password for the Key Alias',
+    )
     .addOption(
       new Option(
         '--androidreleasetype <androidreleasetype>',
         'Android release type; APK or AAB',
       ).choices(['AAB', 'APK']),
+    )
+    .addOption(
+      new Option(
+        '--signing-type <signingtype>',
+        'Program used to sign apps (default: jarsigner)',
+      ).choices(['apksigner', 'jarsigner']),
     )
     .action(
       wrapAction(
@@ -156,14 +167,25 @@ export function runProgram(config: Config): void {
           config,
           async (
             platform,
-            { scheme, keystorepath, keystorepass, androidreleasetype },
+            {
+              scheme,
+              keystorepath,
+              keystorepass,
+              keystorealias,
+              keystorealiaspass,
+              androidreleasetype,
+              signingtype,
+            },
           ) => {
             const { buildCommand } = await import('./tasks/build');
             await buildCommand(config, platform, {
               scheme,
               keystorepath,
               keystorepass,
+              keystorealias,
+              keystorealiaspass,
               androidreleasetype,
+              signingtype,
             });
           },
         ),
