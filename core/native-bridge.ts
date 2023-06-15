@@ -369,7 +369,6 @@ const initBridge = (w: any): void => {
       }
 
       // patch fetch / XHR on Android/iOS
-
       // store original fetch & XHR functions
       win.CapacitorWebFetch = window.fetch;
       win.CapacitorWebXMLHttpRequest = {
@@ -487,11 +486,11 @@ const initBridge = (w: any): void => {
               },
             );
 
-            let data = !nativeResponse.headers['Content-Type'].startsWith(
+            let data = nativeResponse.headers['Content-Type']?.startsWith(
               'application/json',
             )
-              ? nativeResponse.data
-              : JSON.stringify(nativeResponse.data);
+              ? JSON.stringify(nativeResponse.data)
+              : nativeResponse.data;
 
             // use null data for 204 No Content HTTP response
             if (nativeResponse.status === 204) {
@@ -652,7 +651,6 @@ const initBridge = (w: any): void => {
 
           try {
             // intercept request & pass to the bridge
-
             const url = new URL(this._url);
             const extension = url.pathname.split('.').pop()?.toLowerCase();
             const contentType =
@@ -736,11 +734,11 @@ const initBridge = (w: any): void => {
                     this._headers = nativeResponse.headers;
                     this.status = nativeResponse.status;
                     this.response = nativeResponse.data;
-                    this.responseText = !nativeResponse.headers[
+                    this.responseText = nativeResponse.headers[
                       'Content-Type'
-                    ].startsWith('application/json')
-                      ? nativeResponse.data
-                      : JSON.stringify(nativeResponse.data);
+                    ]?.startsWith('application/json')
+                      ? JSON.stringify(nativeResponse.data)
+                      : nativeResponse.data;
                     this.responseURL = nativeResponse.url;
                     this.readyState = 4;
                     this.dispatchEvent(new Event('load'));

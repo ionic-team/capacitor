@@ -347,9 +347,28 @@ var nativeBridge = (function (exports) {
                     setRequestHeader: window.XMLHttpRequest.prototype.setRequestHeader,
                 };
                 // media types that we want to intercept and route to our custom protocol handlers
-                const fileExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'wasm'];
-                const mediaContentTypes = ['application/pdf', 'application/octet-stream', 'application/wasm',
-                    'image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm', 'audio/mpeg', 'audio/wav'];
+                const fileExtensions = [
+                    'pdf',
+                    'jpg',
+                    'jpeg',
+                    'png',
+                    'gif',
+                    'bmp',
+                    'svg',
+                    'wasm',
+                ];
+                const mediaContentTypes = [
+                    'application/pdf',
+                    'application/octet-stream',
+                    'application/wasm',
+                    'image/jpeg',
+                    'image/png',
+                    'image/gif',
+                    'video/mp4',
+                    'video/webm',
+                    'audio/mpeg',
+                    'audio/wav',
+                ];
                 const responseTypes = ['arraybuffer', 'blob'];
                 let doPatchHttp = false;
                 // check if capacitor http is disabled before patching
@@ -373,7 +392,7 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
-                        var _a, _b;
+                        var _a, _b, _c;
                         if (!(resource.toString().startsWith('http:') ||
                             resource.toString().startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
@@ -389,8 +408,7 @@ var nativeBridge = (function (exports) {
                             const url = new URL(resource.toString());
                             const extension = (_a = url.pathname.split('.').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
                             const contentType = (_b = headers === null || headers === void 0 ? void 0 : headers['Content-Type']) !== null && _b !== void 0 ? _b : headers === null || headers === void 0 ? void 0 : headers['content-type'];
-                            if ((null != extension &&
-                                fileExtensions.includes(extension)) ||
+                            if ((null != extension && fileExtensions.includes(extension)) ||
                                 (contentType != null && mediaContentTypes.includes(contentType))) {
                                 if (platform === 'ios') {
                                     url.protocol = 'capacitor-http:';
@@ -409,9 +427,9 @@ var nativeBridge = (function (exports) {
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
                                 headers: headers,
                             });
-                            let data = !nativeResponse.headers['Content-Type'].startsWith('application/json')
-                                ? nativeResponse.data
-                                : JSON.stringify(nativeResponse.data);
+                            let data = ((_c = nativeResponse.headers['Content-Type']) === null || _c === void 0 ? void 0 : _c.startsWith('application/json'))
+                                ? JSON.stringify(nativeResponse.data)
+                                : nativeResponse.data;
                             // use null data for 204 No Content HTTP response
                             if (nativeResponse.status === 204) {
                                 data = null;
@@ -544,7 +562,8 @@ var nativeBridge = (function (exports) {
                             const url = new URL(this._url);
                             const extension = (_a = url.pathname.split('.').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
                             const contentType = (_c = (_b = this._headers) === null || _b === void 0 ? void 0 : _b['Content-Type']) !== null && _c !== void 0 ? _c : (_d = this._headers) === null || _d === void 0 ? void 0 : _d['content-type'];
-                            if ((null != this.responseType && responseTypes.includes(this.responseType)) ||
+                            if ((null != this.responseType &&
+                                responseTypes.includes(this.responseType)) ||
                                 (null != extension && fileExtensions.includes(extension)) ||
                                 (contentType != null && mediaContentTypes.includes(contentType))) {
                                 if (platform === 'ios') {
@@ -566,7 +585,9 @@ var nativeBridge = (function (exports) {
                                         this.readyState = 4;
                                         this.status = xhr.status;
                                         this.response = xhr.response;
-                                        if (null === xhr.responseType || xhr.responseType === '' || xhr.responseType === 'text') {
+                                        if (null === xhr.responseType ||
+                                            xhr.responseType === '' ||
+                                            xhr.responseType === 'text') {
                                             this.responseText = xhr.responseText;
                                         }
                                         this.responseURL = xhr.responseURL;
@@ -597,15 +618,16 @@ var nativeBridge = (function (exports) {
                                         : undefined,
                                 })
                                     .then((nativeResponse) => {
+                                    var _a;
                                     // intercept & parse response before returning
                                     if (this.readyState == 2) {
                                         this.dispatchEvent(new Event('loadstart'));
                                         this._headers = nativeResponse.headers;
                                         this.status = nativeResponse.status;
                                         this.response = nativeResponse.data;
-                                        this.responseText = !nativeResponse.headers['Content-Type'].startsWith('application/json')
-                                            ? nativeResponse.data
-                                            : JSON.stringify(nativeResponse.data);
+                                        this.responseText = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                            ? JSON.stringify(nativeResponse.data)
+                                            : nativeResponse.data;
                                         this.responseURL = nativeResponse.url;
                                         this.readyState = 4;
                                         this.dispatchEvent(new Event('load'));
