@@ -16,7 +16,7 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         router.basePath = assetPath
     }
 
-    func setServerUrl(_ serverUrl: String) {
+    func setServerUrl(_ serverUrl: String?) {
         self.serverUrl = serverUrl
     }
 
