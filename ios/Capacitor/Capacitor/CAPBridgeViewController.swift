@@ -42,8 +42,9 @@ import Cordova
         setScreenOrientationDefaults()
 
         // get the web view
-        let assetHandler = WebViewAssetHandler(router: router(), serverURL: configuration.serverURL.absoluteString)
+        let assetHandler = WebViewAssetHandler(router: router())
         assetHandler.setAssetPath(configuration.appLocation.path)
+        assetHandler.setServerUrl(configuration.serverURL.absoluteString)
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView

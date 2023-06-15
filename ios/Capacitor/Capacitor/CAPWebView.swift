@@ -26,8 +26,9 @@ open class CAPWebView: UIView {
     private lazy var configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)
 
     private lazy var assetHandler: WebViewAssetHandler = {
-        let handler = WebViewAssetHandler(router: router, serverURL: bridge.config.serverURL.absoluteString)
+        let handler = WebViewAssetHandler(router: router)
         handler.setAssetPath(configuration.appLocation.path)
+        handler.setServerUrl(bridge.config.serverURL.absoluteString)
         return handler
     }()
 
