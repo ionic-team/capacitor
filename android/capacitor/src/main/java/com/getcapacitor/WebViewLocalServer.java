@@ -263,7 +263,10 @@ public class WebViewLocalServer {
         }
 
         if (!responseHeaders.containsKey("Access-Control-Allow-Origin") && bridge != null) {
-            responseHeaders.put("Access-Control-Allow-Origin", bridge.getLocalUrl());
+            String origin = (null == bridge.getServerUrl() || bridge.getServerUrl().equals(bridge.getLocalUrl()))
+                ? bridge.getLocalUrl()
+                : bridge.getServerUrl();
+            responseHeaders.put("Access-Control-Allow-Origin", origin);
         }
 
         return new WebResourceResponse(

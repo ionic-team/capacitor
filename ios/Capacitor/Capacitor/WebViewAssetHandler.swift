@@ -34,7 +34,7 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     // Allow CORS since request is being made from "localhost" to "capacitor://localhost" for example
                     let newHeaders: [String: String] = [
                         "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, HEAD",
+                        "Access-Control-Allow-Methods": urlSchemeTask.request.httpMethod ?? "GET",
                         "Access-Control-Allow-Headers": "*"
                     ]
 
