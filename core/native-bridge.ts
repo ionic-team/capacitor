@@ -455,7 +455,8 @@ const initBridge = (w: any): void => {
             const url = new URL(resource.toString());
             const extension = url.pathname.split('.').pop()?.toLowerCase();
             const contentType =
-              headers?.['Content-Type'] ?? headers?.['content-type'];
+              (headers as any)?.['Content-Type'] ??
+              (headers as any)?.['content-type'];
 
             if (
               (null != extension && fileExtensions.includes(extension)) ||
@@ -654,8 +655,8 @@ const initBridge = (w: any): void => {
             const url = new URL(this._url);
             const extension = url.pathname.split('.').pop()?.toLowerCase();
             const contentType =
-              this._headers?.['Content-Type'] ??
-              this._headers?.['content-type'];
+              (this._headers as any)?.['Content-Type'] ??
+              (this._headers as any)?.['content-type'];
 
             if (
               (null != this.responseType &&
@@ -734,9 +735,9 @@ const initBridge = (w: any): void => {
                     this._headers = nativeResponse.headers;
                     this.status = nativeResponse.status;
                     this.response = nativeResponse.data;
-                    this.responseText = nativeResponse.headers[
-                      'Content-Type'
-                    ]?.startsWith('application/json')
+                    this.responseText = contentType?.startsWith(
+                      'application/json',
+                    )
                       ? JSON.stringify(nativeResponse.data)
                       : nativeResponse.data;
                     this.responseURL = nativeResponse.url;

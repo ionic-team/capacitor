@@ -613,19 +613,19 @@ var nativeBridge = (function (exports) {
                                     url: this._url,
                                     method: this._method,
                                     data: body !== null ? body : undefined,
-                                    headers: this._headers != null && Object.keys(this._headers).length > 0
+                                    headers: this._headers != null &&
+                                        Object.keys(this._headers).length > 0
                                         ? this._headers
                                         : undefined,
                                 })
                                     .then((nativeResponse) => {
-                                    var _a;
                                     // intercept & parse response before returning
                                     if (this.readyState == 2) {
                                         this.dispatchEvent(new Event('loadstart'));
                                         this._headers = nativeResponse.headers;
                                         this.status = nativeResponse.status;
                                         this.response = nativeResponse.data;
-                                        this.responseText = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                        this.responseText = (contentType === null || contentType === void 0 ? void 0 : contentType.startsWith('application/json'))
                                             ? JSON.stringify(nativeResponse.data)
                                             : nativeResponse.data;
                                         this.responseURL = nativeResponse.url;
