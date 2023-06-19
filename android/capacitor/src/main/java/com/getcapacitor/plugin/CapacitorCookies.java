@@ -20,15 +20,18 @@ public class CapacitorCookies extends Plugin {
     @Override
     public void load() {
         this.bridge.getWebView().addJavascriptInterface(this, "CapacitorCookiesAndroidInterface");
-        this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL);
-        CookieHandler.setDefault(cookieManager);
         super.load();
     }
 
     @JavascriptInterface
     public boolean isEnabled() {
         PluginConfig pluginConfig = getBridge().getConfig().getPluginConfiguration("CapacitorCookies");
-        return pluginConfig.getBoolean("enabled", false);
+        boolean isEnabled = pluginConfig.getBoolean("enabled", false);
+        if (isEnabled) {
+            this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL, this.bridge);
+            CookieHandler.setDefault(cookieManager);
+        }
+        return isEnabled;
     }
 
     /**
@@ -74,7 +77,8 @@ public class CapacitorCookies extends Plugin {
         try {
             String url = getServerUrl(null);
             if (!url.isEmpty()) {
-                return cookieManager.getCookieString(url);
+                String cookieString = cookieManager.getCookieString(url);
+                return (null == cookieString) ? "" : cookieString;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,11 +88,11 @@ public class CapacitorCookies extends Plugin {
     }
 
     @JavascriptInterface
-    public void setCookie(String key, String value) {
-        String url = getServerUrl(null);
+    public void setCookie(String domain, String action) {
+        String url = cookieManager.getSanitizedDomain(domain);
 
         if (!url.isEmpty()) {
-            cookieManager.setCookie(url, key, value);
+            cookieManager.setCookie(url, action);
         }
     }
 
@@ -110,9 +114,11 @@ public class CapacitorCookies extends Plugin {
         String key = call.getString("key");
         String value = call.getString("value");
         String url = getServerUrl(call);
+        String expires = call.getString("expires", "");
+        String path = call.getString("path", "/");
 
         if (!url.isEmpty()) {
-            cookieManager.setCookie(url, key, value);
+            cookieManager.setCookie(url, key, value, expires, path);
             call.resolve();
         }
     }

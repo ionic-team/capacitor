@@ -6,6 +6,7 @@ import { buildiOS } from '../ios/build';
 
 export interface BuildCommandOptions {
   scheme?: string;
+  flavor?: string;
   keystorepath?: string;
   keystorepass?: string;
   keystorealias?: string;
@@ -31,6 +32,7 @@ export async function buildCommand(
 
   const buildCommandOptions: BuildCommandOptions = {
     scheme: buildOptions.scheme || config.ios.scheme,
+    flavor: buildOptions.flavor || config.android.flavor,
     keystorepath:
       buildOptions.keystorepath || config.android.buildOptions.keystorePath,
     keystorepass:
@@ -42,7 +44,8 @@ export async function buildCommand(
       config.android.buildOptions.keystoreAliasPassword,
     androidreleasetype:
       buildOptions.androidreleasetype ||
-      config.android.buildOptions.releaseType,
+      config.android.buildOptions.releaseType ||
+      'AAB',
   };
 
   try {

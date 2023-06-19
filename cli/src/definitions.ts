@@ -67,7 +67,7 @@ export interface AppConfig {
    * loader. If you're not using something like rollup or webpack or dynamic ES
    * module imports, set this to "true" and import "capacitor.js" manually.
    */
-  readonly bundledWebRuntime: boolean;
+  readonly bundledWebRuntime?: boolean;
 }
 
 export interface AndroidConfig extends PlatformConfig {
@@ -88,7 +88,13 @@ export interface AndroidConfig extends PlatformConfig {
   readonly resDir: string;
   readonly resDirAbs: string;
   readonly buildOutputDir: string;
+  /**
+   * @deprecated Will be removed in Cap. 5 as the `--flavor` option modifies this value.
+   */
   readonly buildOutputDirAbs: string;
+  /**
+   * @deprecated Will be removed in Cap. 5 as the `--flavor` option modifies this value.
+   */
   readonly apkName: string;
   readonly flavor: string;
   readonly buildOptions: {
@@ -104,7 +110,7 @@ export interface IOSConfig extends PlatformConfig {
   readonly cordovaPluginsDir: string;
   readonly cordovaPluginsDirAbs: string;
   readonly minVersion: string;
-  readonly podPath: string;
+  readonly podPath: Promise<string>;
   readonly scheme: string;
   readonly webDir: Promise<string>;
   readonly webDirAbs: Promise<string>;

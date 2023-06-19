@@ -92,10 +92,14 @@ export class CapacitorCookiesPluginWeb
       )}`; // Default is "; expires="
 
       const path = (options.path || '/').replace('path=', ''); // Default is "path=/"
+      const domain =
+        options.url != null && options.url.length > 0
+          ? `domain=${options.url}`
+          : '';
 
       document.cookie = `${encodedKey}=${
         encodedValue || ''
-      }${expires}; path=${path}`;
+      }${expires}; path=${path}; ${domain};`;
     } catch (error) {
       return Promise.reject(error);
     }

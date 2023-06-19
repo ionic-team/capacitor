@@ -494,10 +494,12 @@ public class WebViewLocalServer {
 
                 // Pass path to routeProcessor if present
                 RouteProcessor routeProcessor = bridge.getRouteProcessor();
+                boolean ignoreAssetPath = false;
                 if (routeProcessor != null) {
                     ProcessedRoute processedRoute = bridge.getRouteProcessor().process("", path);
                     path = processedRoute.getPath();
                     isAsset = processedRoute.isAsset();
+                    ignoreAssetPath = processedRoute.isIgnoreAssetPath();
                 }
 
                 try {
@@ -511,6 +513,8 @@ public class WebViewLocalServer {
                         }
 
                         stream = protocolHandler.openFile(path);
+                    } else if (ignoreAssetPath) {
+                        stream = protocolHandler.openAsset(path);
                     } else {
                         stream = protocolHandler.openAsset(assetPath + path);
                     }

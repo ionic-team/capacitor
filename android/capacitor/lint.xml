@@ -2,4 +2,8 @@
 <lint>
     <issue id="GradleDependency" severity="ignore" />
     <issue id="AndroidGradlePluginVersion" severity="ignore" />
+    <issue id="DiscouragedApi">
+        <ignore path="src/main/java/com/getcapacitor/plugin/util/AssetUtil.java" />
+    </issue>
+    <issue id="ObsoleteSdkInt" severity="informational" />
 </lint>

@@ -1,10 +1,5 @@
 {
-  "packages": [
-    "./android/",
-    "./ios/",
-    "./cli/",
-    "./core/"
-  ],
+  "useWorkspaces": true,
   "command": {
     "bootstrap": {
       "hoist": true
@@ -17,5 +12,5 @@
       "tagVersionPrefix": ""
     }
   },
-  "version": "4.5.0"
+  "version": "5.0.5"
 }

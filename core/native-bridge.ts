@@ -136,7 +136,7 @@ const initBridge = (w: any): void => {
     if (nav) {
       nav.app = nav.app || {};
       nav.app.exitApp = () => {
-        if (!cap.Plugins || !cap.Plugins.App) {
+        if (!cap.Plugins?.App) {
           win.console.warn('App plugin not installed');
         } else {
           cap.nativeCallback('App', 'exitApp', {});
@@ -154,7 +154,7 @@ const initBridge = (w: any): void => {
         } else if (eventName === 'backbutton' && cap.Plugins.App) {
           // Add a dummy listener so Capacitor doesn't do the default
           // back button action
-          if (!cap.Plugins || !cap.Plugins.App) {
+          if (!cap.Plugins?.App) {
             win.console.warn('App plugin not installed');
           } else {
             cap.Plugins.App.addListener('backButton', () => {
@@ -340,33 +340,29 @@ const initBridge = (w: any): void => {
           },
           set: function (val) {
             const cookiePairs = val.split(';');
-            for (const cookiePair of cookiePairs) {
-              const cookieKey = cookiePair.split('=')[0];
-              const cookieValue = cookiePair.split('=')[1];
+            const domainSection = val.toLowerCase().split('domain=')[1];
+            const domain =
+              cookiePairs.length > 1 &&
+              domainSection != null &&
+              domainSection.length > 0
+                ? domainSection.split(';')[0].trim()
+                : '';
 
-              if (null == cookieValue) {
-                continue;
-              }
+            if (platform === 'ios') {
+              // Use prompt to synchronously set cookies.
+              // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
 
-              if (platform === 'ios') {
-                // Use prompt to synchronously set cookies.
-                // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+              const payload = {
+                type: 'CapacitorCookies.set',
+                action: val,
+                domain,
+              };
 
-                const payload = {
-                  type: 'CapacitorCookies.set',
-                  key: cookieKey,
-                  value: cookieValue,
-                };
-
-                prompt(JSON.stringify(payload));
-              } else if (
-                typeof win.CapacitorCookiesAndroidInterface !== 'undefined'
-              ) {
-                win.CapacitorCookiesAndroidInterface.setCookie(
-                  cookieKey,
-                  cookieValue,
-                );
-              }
+              prompt(JSON.stringify(payload));
+            } else if (
+              typeof win.CapacitorCookiesAndroidInterface !== 'undefined'
+            ) {
+              win.CapacitorCookiesAndroidInterface.setCookie(domain, val);
             }
           },
         });
@@ -422,8 +418,14 @@ const initBridge = (w: any): void => {
             return win.CapacitorWebFetch(resource, options);
           }
 
+          const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
+          console.time(tag);
           try {
             // intercept request & pass to the bridge
+            let headers = options?.headers;
+            if (options?.headers instanceof Headers) {
+              headers = Object.fromEntries((options.headers as any).entries());
+            }
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
               'request',
@@ -431,22 +433,40 @@ const initBridge = (w: any): void => {
                 url: resource,
                 method: options?.method ? options.method : undefined,
                 data: options?.body ? options.body : undefined,
-                headers: options?.headers ? options.headers : undefined,
+                headers: headers,
               },
             );
 
-            const data =
-              typeof nativeResponse.data === 'string'
-                ? nativeResponse.data
-                : JSON.stringify(nativeResponse.data);
+            let data = nativeResponse.headers['Content-Type']?.startsWith(
+              'application/json',
+            )
+              ? JSON.stringify(nativeResponse.data)
+              : nativeResponse.data;
+
+            // use null data for 204 No Content HTTP response
+            if (nativeResponse.status === 204) {
+              data = null;
+            }
+
             // intercept & parse response before returning
             const response = new Response(data, {
               headers: nativeResponse.headers,
               status: nativeResponse.status,
             });
 
+            /*
+             * copy url to response, `cordova-plugin-ionic` uses this url from the response
+             * we need `Object.defineProperty` because url is an inherited getter on the Response
+             * see: https://stackoverflow.com/a/57382543
+             * */
+            Object.defineProperty(response, 'url', {
+              value: nativeResponse.url,
+            });
+
+            console.timeEnd(tag);
             return response;
           } catch (error) {
+            console.timeEnd(tag);
             return Promise.reject(error);
           }
         };
@@ -578,6 +598,9 @@ const initBridge = (w: any): void => {
             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
           }
 
+          const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
+          console.time(tag);
+
           try {
             this.readyState = 2;
 
@@ -587,7 +610,10 @@ const initBridge = (w: any): void => {
                 url: this._url,
                 method: this._method,
                 data: body !== null ? body : undefined,
-                headers: this._headers,
+                headers:
+                  this._headers != null && Object.keys(this._headers).length > 0
+                    ? this._headers
+                    : undefined,
               })
               .then((nativeResponse: any) => {
                 // intercept & parse response before returning
@@ -596,15 +622,17 @@ const initBridge = (w: any): void => {
                   this._headers = nativeResponse.headers;
                   this.status = nativeResponse.status;
                   this.response = nativeResponse.data;
-                  this.responseText =
-                    typeof nativeResponse.data === 'string'
-                      ? nativeResponse.data
-                      : JSON.stringify(nativeResponse.data);
+                  this.responseText = nativeResponse.headers[
+                    'Content-Type'
+                  ]?.startsWith('application/json')
+                    ? JSON.stringify(nativeResponse.data)
+                    : nativeResponse.data;
                   this.responseURL = nativeResponse.url;
                   this.readyState = 4;
                   this.dispatchEvent(new Event('load'));
                   this.dispatchEvent(new Event('loadend'));
                 }
+                console.timeEnd(tag);
               })
               .catch((error: any) => {
                 this.dispatchEvent(new Event('loadstart'));
@@ -616,6 +644,7 @@ const initBridge = (w: any): void => {
                 this.readyState = 4;
                 this.dispatchEvent(new Event('error'));
                 this.dispatchEvent(new Event('loadend'));
+                console.timeEnd(tag);
               });
           } catch (error) {
             this.dispatchEvent(new Event('loadstart'));
@@ -627,6 +656,7 @@ const initBridge = (w: any): void => {
             this.readyState = 4;
             this.dispatchEvent(new Event('error'));
             this.dispatchEvent(new Event('loadend'));
+            console.timeEnd(tag);
           }
         };
 

@@ -7,6 +7,7 @@ import type { Config, PackageJson } from './definitions';
 import { fatal } from './errors';
 import { output, logger } from './log';
 import { resolveNode } from './util/node';
+import { runCommand } from './util/subprocess';
 
 export type CheckFunction = () => Promise<string | null>;
 
@@ -146,7 +147,7 @@ export async function checkAppName(
   name: string,
 ): Promise<string | null> {
   // We allow pretty much anything right now, have fun
-  if (!name || !name.length) {
+  if (!name?.length) {
     return `Must provide an app name. For example: 'Spacebook'`;
   }
   return null;
@@ -532,4 +533,33 @@ export function resolvePlatform(
   }
 
   return null;
+}
+
+export async function checkJDKMajorVersion(): Promise<number> {
+  try {
+    const string = await runCommand('java', ['--version']);
+    const versionRegex = RegExp(/([0-9]+)\.?([0-9]*)\.?([0-9]*)/);
+    const versionMatch = versionRegex.exec(string);
+
+    if (versionMatch === null) {
+      return -1;
+    }
+
+    const firstVersionNumber = parseInt(versionMatch[1]);
+    const secondVersionNumber = parseInt(versionMatch[2]);
+
+    if (typeof firstVersionNumber === 'number' && firstVersionNumber != 1) {
+      return firstVersionNumber;
+    } else if (
+      typeof secondVersionNumber === 'number' &&
+      firstVersionNumber == 1 &&
+      secondVersionNumber < 9
+    ) {
+      return secondVersionNumber;
+    } else {
+      return -1;
+    }
+  } catch (e) {
+    return -1;
+  }
 }

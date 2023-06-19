@@ -2,7 +2,7 @@
 /*! Capacitor: https://capacitorjs.com/ - MIT License */
 /* Generated File. Do not edit. */
 
-const nativeBridge = (function (exports) {
+var nativeBridge = (function (exports) {
     'use strict';
 
     var ExceptionCode;
@@ -136,7 +136,8 @@ const nativeBridge = (function (exports) {
             if (nav) {
                 nav.app = nav.app || {};
                 nav.app.exitApp = () => {
-                    if (!cap.Plugins || !cap.Plugins.App) {
+                    var _a;
+                    if (!((_a = cap.Plugins) === null || _a === void 0 ? void 0 : _a.App)) {
                         win.console.warn('App plugin not installed');
                     }
                     else {
@@ -147,6 +148,7 @@ const nativeBridge = (function (exports) {
             if (doc) {
                 const docAddEventListener = doc.addEventListener;
                 doc.addEventListener = (...args) => {
+                    var _a;
                     const eventName = args[0];
                     const handler = args[1];
                     if (eventName === 'deviceready' && handler) {
@@ -155,7 +157,7 @@ const nativeBridge = (function (exports) {
                     else if (eventName === 'backbutton' && cap.Plugins.App) {
                         // Add a dummy listener so Capacitor doesn't do the default
                         // back button action
-                        if (!cap.Plugins || !cap.Plugins.App) {
+                        if (!((_a = cap.Plugins) === null || _a === void 0 ? void 0 : _a.App)) {
                             win.console.warn('App plugin not installed');
                         }
                         else {
@@ -311,25 +313,24 @@ const nativeBridge = (function (exports) {
                         },
                         set: function (val) {
                             const cookiePairs = val.split(';');
-                            for (const cookiePair of cookiePairs) {
-                                const cookieKey = cookiePair.split('=')[0];
-                                const cookieValue = cookiePair.split('=')[1];
-                                if (null == cookieValue) {
-                                    continue;
-                                }
-                                if (platform === 'ios') {
-                                    // Use prompt to synchronously set cookies.
-                                    // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
-                                    const payload = {
-                                        type: 'CapacitorCookies.set',
-                                        key: cookieKey,
-                                        value: cookieValue,
-                                    };
-                                    prompt(JSON.stringify(payload));
-                                }
-                                else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
-                                    win.CapacitorCookiesAndroidInterface.setCookie(cookieKey, cookieValue);
-                                }
+                            const domainSection = val.toLowerCase().split('domain=')[1];
+                            const domain = cookiePairs.length > 1 &&
+                                domainSection != null &&
+                                domainSection.length > 0
+                                ? domainSection.split(';')[0].trim()
+                                : '';
+                            if (platform === 'ios') {
+                                // Use prompt to synchronously set cookies.
+                                // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
+                                const payload = {
+                                    type: 'CapacitorCookies.set',
+                                    action: val,
+                                    domain,
+                                };
+                                prompt(JSON.stringify(payload));
+                            }
+                            else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
+                                win.CapacitorCookiesAndroidInterface.setCookie(domain, val);
                             }
                         },
                     });
@@ -367,29 +368,49 @@ const nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
+                        var _a;
                         if (!(resource.toString().startsWith('http:') ||
                             resource.toString().startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
                         }
+                        const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
+                        console.time(tag);
                         try {
                             // intercept request & pass to the bridge
+                            let headers = options === null || options === void 0 ? void 0 : options.headers;
+                            if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
+                                headers = Object.fromEntries(options.headers.entries());
+                            }
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
                                 url: resource,
                                 method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
-                                headers: (options === null || options === void 0 ? void 0 : options.headers) ? options.headers : undefined,
+                                headers: headers,
                             });
-                            const data = typeof nativeResponse.data === 'string'
-                                ? nativeResponse.data
-                                : JSON.stringify(nativeResponse.data);
+                            let data = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                ? JSON.stringify(nativeResponse.data) : nativeResponse.data;
+                            // use null data for 204 No Content HTTP response
+                            if (nativeResponse.status === 204) {
+                                data = null;
+                            }
                             // intercept & parse response before returning
                             const response = new Response(data, {
                                 headers: nativeResponse.headers,
                                 status: nativeResponse.status,
                             });
+                            /*
+                             * copy url to response, `cordova-plugin-ionic` uses this url from the response
+                             * we need `Object.defineProperty` because url is an inherited getter on the Response
+                             * see: https://stackoverflow.com/a/57382543
+                             * */
+                            Object.defineProperty(response, 'url', {
+                                value: nativeResponse.url,
+                            });
+                            console.timeEnd(tag);
                             return response;
                         }
                         catch (error) {
+                            console.timeEnd(tag);
                             return Promise.reject(error);
                         }
                     };
@@ -426,7 +447,8 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch abort
                     window.XMLHttpRequest.prototype.abort = function () {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.abort.call(this);
                         }
                         this.readyState = 0;
@@ -480,16 +502,20 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch set request header
                     window.XMLHttpRequest.prototype.setRequestHeader = function (header, value) {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(this, header, value);
                         }
                         this._headers[header] = value;
                     };
                     // XHR patch send
                     window.XMLHttpRequest.prototype.send = function (body) {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
                         }
+                        const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
+                        console.time(tag);
                         try {
                             this.readyState = 2;
                             // intercept request & pass to the bridge
@@ -498,24 +524,26 @@ const nativeBridge = (function (exports) {
                                 url: this._url,
                                 method: this._method,
                                 data: body !== null ? body : undefined,
-                                headers: this._headers,
+                                headers: this._headers != null && Object.keys(this._headers).length > 0
+                                    ? this._headers
+                                    : undefined,
                             })
                                 .then((nativeResponse) => {
+                                var _a;
                                 // intercept & parse response before returning
                                 if (this.readyState == 2) {
                                     this.dispatchEvent(new Event('loadstart'));
                                     this._headers = nativeResponse.headers;
                                     this.status = nativeResponse.status;
                                     this.response = nativeResponse.data;
-                                    this.responseText =
-                                        typeof nativeResponse.data === 'string'
-                                            ? nativeResponse.data
-                                            : JSON.stringify(nativeResponse.data);
+                                    this.responseText = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                        ? JSON.stringify(nativeResponse.data) : nativeResponse.data;
                                     this.responseURL = nativeResponse.url;
                                     this.readyState = 4;
                                     this.dispatchEvent(new Event('load'));
                                     this.dispatchEvent(new Event('loadend'));
                                 }
+                                console.timeEnd(tag);
                             })
                                 .catch((error) => {
                                 this.dispatchEvent(new Event('loadstart'));
@@ -527,6 +555,7 @@ const nativeBridge = (function (exports) {
                                 this.readyState = 4;
                                 this.dispatchEvent(new Event('error'));
                                 this.dispatchEvent(new Event('loadend'));
+                                console.timeEnd(tag);
                             });
                         }
                         catch (error) {
@@ -539,11 +568,13 @@ const nativeBridge = (function (exports) {
                             this.readyState = 4;
                             this.dispatchEvent(new Event('error'));
                             this.dispatchEvent(new Event('loadend'));
+                            console.timeEnd(tag);
                         }
                     };
                     // XHR patch getAllResponseHeaders
                     window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(this);
                         }
                         let returnString = '';
@@ -556,7 +587,8 @@ const nativeBridge = (function (exports) {
                     };
                     // XHR patch getResponseHeader
                     window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
-                        if (this._url == null || !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                        if (this._url == null ||
+                            !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                         }
                         return this._headers[name];
