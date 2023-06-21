@@ -158,6 +158,7 @@ extension CAPWebView {
         webView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
         webView.allowsLinkPreview = configuration.allowLinkPreviews
         webView.scrollView.isScrollEnabled = configuration.scrollingEnabled
+        webview.allowBackForwardNavigationGestures = configuration.allowBackForwardNavigationGestures
 
         if let overrideUserAgent = configuration.overridenUserAgentString {
             webView.customUserAgent = overrideUserAgent

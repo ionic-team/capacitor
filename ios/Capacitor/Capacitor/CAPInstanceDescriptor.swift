@@ -114,6 +114,11 @@ internal extension InstanceDescriptor {
             if let scrollEnabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
                 scrollingEnabled = scrollEnabled
             }
+
+            if let allowBackForwardNav = config[keyPath: "ios.allowsBackForwardNavigationGestures"] as? Bool {
+                allowsBackForwardNavigationGestures = allowBackForwardNav
+            }
+            
             if let pluginConfig = config[keyPath: "plugins"] as? JSObject {
                 pluginConfigurations = pluginConfig
             }

@@ -84,6 +84,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, assign) BOOL scrollingEnabled;
 /**
+ @brief Whether or not the user can navigate through forward and backward gestures.
+ @discussion Set by @c ios.allowBackForwardNavigationGestures in the configuration file. Corresponds to @c allowBackForwardNavigationGestures on WKWebView.
+ */
+@property (nonatomic, assign) BOOL allowBackForwardNavigationGestures;
+/**
  @brief Whether or not the web view will preview links.
  @discussion Set by @c ios.allowsLinkPreview in the configuration file. Corresponds to @c allowsLinkPreview on WKWebView.
  */
