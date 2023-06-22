@@ -123,6 +123,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
                 data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
                 data.append("Content-Disposition: form-data; name=\"\(key!)\"; filename=\"\(fileName!)\"\r\n".data(using: .utf8)!)
                 data.append("Content-Type: \(fileContentType!)\r\n".data(using: .utf8)!)
+                data.append("Content-Transfer-Encoding: binary\r\n".data(using: .utf8)!)
                 data.append("\r\n".data(using: .utf8)!)
 
                 data.append(Data(base64Encoded: value)!)
