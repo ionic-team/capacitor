@@ -16,10 +16,18 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     }
 
     func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        if urlSchemeTask.request.url?.scheme == InstanceDescriptorDefaults.httpScheme {
-            let url = urlSchemeTask.request.url!
+        let url = urlSchemeTask.request.url!
+        if url.path.starts(with: CapacitorBridge.mediaStartIdentifier) {
             var urlRequest = urlSchemeTask.request
-            urlRequest.url = URL(string: url.absoluteString.replacingOccurrences(of: InstanceDescriptorDefaults.httpScheme, with: "https"))
+            var targetUrl = url.absoluteString
+                .replacingOccurrences(of: CapacitorBridge.mediaStartIdentifier, with: "")
+
+            // Only replace first occurrence of the scheme
+            if let range = targetUrl.range(of: InstanceDescriptorDefaults.scheme) {
+                targetUrl = targetUrl.replacingCharacters(in: range, with: "https")
+            }
+
+            urlRequest.url = URL(string: targetUrl)
 
             let urlSession = URLSession.shared
             let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
@@ -61,7 +69,6 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             task.resume()
         } else {
             let startPath: String
-            let url = urlSchemeTask.request.url!
             let stringToLoad = url.path
 
             if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {

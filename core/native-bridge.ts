@@ -463,10 +463,10 @@ const initBridge = (w: any): void => {
               (contentType != null && mediaContentTypes.includes(contentType))
             ) {
               if (platform === 'ios') {
-                url.protocol = 'capacitor-http:';
-              } else if (platform === 'android') {
-                url.pathname += '/_capacitor_media_';
+                url.protocol = win.WEBVIEW_SERVER_URL ?? '';
               }
+              url.pathname = '/_capacitor_media_' + url.pathname;
+
               const modifiedResource = url.toString();
               const response = await win.CapacitorWebFetch(
                 modifiedResource,
@@ -665,10 +665,9 @@ const initBridge = (w: any): void => {
               (contentType != null && mediaContentTypes.includes(contentType))
             ) {
               if (platform === 'ios') {
-                url.protocol = 'capacitor-http:';
-              } else if (platform === 'android') {
-                url.pathname += '/_capacitor_media_';
+                url.protocol = win.WEBVIEW_SERVER_URL ?? '';
               }
+              url.pathname = '/_capacitor_media_' + url.pathname;
 
               this._url = url.toString();
               const xhr = new XMLHttpRequest();

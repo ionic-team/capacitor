@@ -169,7 +169,7 @@ public class WebViewLocalServer {
     public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
         Uri loadingUrl = request.getUrl();
 
-        if (loadingUrl.getPath().endsWith(Bridge.CAPACITOR_MEDIA_START)) {
+        if (loadingUrl.getPath().startsWith(Bridge.CAPACITOR_MEDIA_START)) {
             Logger.debug("Handling request for media: " + request.getUrl().toString());
             try {
                 return handleMediaRequest(request);

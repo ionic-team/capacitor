@@ -392,7 +392,7 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
-                        var _a, _b, _c;
+                        var _a, _b, _c, _d;
                         if (!(resource.toString().startsWith('http:') ||
                             resource.toString().startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
@@ -411,11 +411,9 @@ var nativeBridge = (function (exports) {
                             if ((null != extension && fileExtensions.includes(extension)) ||
                                 (contentType != null && mediaContentTypes.includes(contentType))) {
                                 if (platform === 'ios') {
-                                    url.protocol = 'capacitor-http:';
+                                    url.protocol = (_c = win.WEBVIEW_SERVER_URL) !== null && _c !== void 0 ? _c : '';
                                 }
-                                else if (platform === 'android') {
-                                    url.pathname += '/_capacitor_media_';
-                                }
+                                url.pathname = '/_capacitor_media_' + url.pathname;
                                 const modifiedResource = url.toString();
                                 const response = await win.CapacitorWebFetch(modifiedResource, options);
                                 console.timeEnd(tag);
@@ -427,7 +425,7 @@ var nativeBridge = (function (exports) {
                                 data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
                                 headers: headers,
                             });
-                            let data = ((_c = nativeResponse.headers['Content-Type']) === null || _c === void 0 ? void 0 : _c.startsWith('application/json'))
+                            let data = ((_d = nativeResponse.headers['Content-Type']) === null || _d === void 0 ? void 0 : _d.startsWith('application/json'))
                                 ? JSON.stringify(nativeResponse.data)
                                 : nativeResponse.data;
                             // use null data for 204 No Content HTTP response
@@ -551,7 +549,7 @@ var nativeBridge = (function (exports) {
                     };
                     // XHR patch send
                     window.XMLHttpRequest.prototype.send = function (body) {
-                        var _a, _b, _c, _d;
+                        var _a, _b, _c, _d, _e;
                         if (this._url == null ||
                             !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
                             return win.CapacitorWebXMLHttpRequest.send.call(this, body);
@@ -567,11 +565,9 @@ var nativeBridge = (function (exports) {
                                 (null != extension && fileExtensions.includes(extension)) ||
                                 (contentType != null && mediaContentTypes.includes(contentType))) {
                                 if (platform === 'ios') {
-                                    url.protocol = 'capacitor-http:';
+                                    url.protocol = (_e = win.WEBVIEW_SERVER_URL) !== null && _e !== void 0 ? _e : '';
                                 }
-                                else if (platform === 'android') {
-                                    url.pathname += '/_capacitor_media_';
-                                }
+                                url.pathname = '/_capacitor_media_' + url.pathname;
                                 this._url = url.toString();
                                 const xhr = new XMLHttpRequest();
                                 win.CapacitorWebXMLHttpRequest.open.call(xhr, this._method, url.toString());
