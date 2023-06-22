@@ -5,7 +5,7 @@ import MobileCoreServices
 // swiftlint:disable type_body_length
 internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
-    private var serverUrl: String?
+    private var serverUrl: URL?
 
     init(router: Router) {
         self.router = router
@@ -16,7 +16,7 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         router.basePath = assetPath
     }
 
-    func setServerUrl(_ serverUrl: String?) {
+    func setServerUrl(_ serverUrl: URL?) {
         self.serverUrl = serverUrl
     }
 
@@ -43,8 +43,8 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             ]
 
             // if using live reload, then set CORS headers
-            if self.serverUrl != nil && self.serverUrl != localUrl.absoluteString {
-                headers["Access-Control-Allow-Origin"] = self.serverUrl
+            if self.serverUrl != nil && self.serverUrl?.scheme != localUrl.scheme  {
+                headers["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString
                 headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
             }
 
