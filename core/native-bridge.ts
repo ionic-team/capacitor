@@ -414,31 +414,13 @@ const initBridge = (w: any): void => {
         'avi',
         'mkv',
       ];
+
       const mediaContentTypes = [
-        'application/pdf',
-        'application/octet-stream',
-        'application/wasm',
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/bmp',
-        'image/svg+xml',
-        'image/webp',
-        'video/mp4',
-        'video/webm',
-        'video/3gpp',
-        'video/3gpp2',
-        'video/ogg',
-        'video/x-matroska',
-        'video/quicktime',
-        'audio/mpeg',
-        'audio/wav',
-        'audio/ogg',
-        'audio/opus',
-        'audio/webm',
-        'audio/flac',
-        'audio/x-flac',
-        'audio/aac',
+        'application/*',
+        'audio/*',
+        'image/*',
+        'model/*',
+        'video/*',
       ];
       const responseTypes = ['arraybuffer', 'blob'];
 
@@ -501,10 +483,22 @@ const initBridge = (w: any): void => {
             const forceMediaRequest =
               (headers as any)?.['X-Capacitor-Force-Media-Request'] ?? false;
 
+            // Check if the contentType matches any of the mediaContentTypes
+            const isMediaType = mediaContentTypes.some(type => {
+              if (type.endsWith('/*')) {
+                // Match wildcard patterns
+                const category = type.split('/')[0];
+                return contentType?.startsWith(category);
+              } else {
+                // Match specific types
+                return contentType === type;
+              }
+            });
+
             if (
               forceMediaRequest ||
-              (null != extension && fileExtensions.includes(extension)) ||
-              (contentType != null && mediaContentTypes.includes(contentType))
+              isMediaType ||
+              (null != extension && fileExtensions.includes(extension))
             ) {
               if (platform === 'ios') {
                 url.protocol = win.WEBVIEW_SERVER_URL ?? '';
@@ -710,12 +704,24 @@ const initBridge = (w: any): void => {
               (this._headers as any)?.['X-Capacitor-Force-Media-Request'] ??
               false;
 
+            // Check if the contentType matches any of the mediaContentTypes
+            const isMediaType = mediaContentTypes.some(type => {
+              if (type.endsWith('/*')) {
+                // Match wildcard patterns
+                const category = type.split('/')[0];
+                return contentType?.startsWith(category);
+              } else {
+                // Match specific types
+                return contentType === type;
+              }
+            });
+
             if (
               forceMediaRequest ||
+              isMediaType ||
               (null != this.responseType &&
                 responseTypes.includes(this.responseType)) ||
-              (null != extension && fileExtensions.includes(extension)) ||
-              (contentType != null && mediaContentTypes.includes(contentType))
+              (null != extension && fileExtensions.includes(extension))
             ) {
               if (platform === 'ios') {
                 url.protocol = win.WEBVIEW_SERVER_URL ?? '';

@@ -348,14 +348,43 @@ var nativeBridge = (function (exports) {
                 };
                 // media types that we want to intercept and route to our custom protocol handlers
                 const fileExtensions = [
-                    'pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'wasm', 'webm', 'mp4', 'm4a', 'mp3', 'wav', 'ogg', 'oga',
-                    'opus', 'webp', 'flac', 'x-flac', 'aac', '3gp', '3gpp', 'm3u8', 'ts', 'm4v', 'f4v', 'flv', 'mov', 'avi', 'mkv'
+                    'pdf',
+                    'jpg',
+                    'jpeg',
+                    'png',
+                    'gif',
+                    'bmp',
+                    'svg',
+                    'wasm',
+                    'webm',
+                    'mp4',
+                    'm4a',
+                    'mp3',
+                    'wav',
+                    'ogg',
+                    'oga',
+                    'opus',
+                    'webp',
+                    'flac',
+                    'x-flac',
+                    'aac',
+                    '3gp',
+                    '3gpp',
+                    'm3u8',
+                    'ts',
+                    'm4v',
+                    'f4v',
+                    'flv',
+                    'mov',
+                    'avi',
+                    'mkv',
                 ];
                 const mediaContentTypes = [
-                    'application/pdf', 'application/octet-stream', 'application/wasm',
-                    'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/svg+xml', 'image/webp',
-                    'video/mp4', 'video/webm', 'video/3gpp', 'video/3gpp2', 'video/ogg', 'video/x-matroska', 'video/quicktime',
-                    'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/opus', 'audio/webm', 'audio/flac', 'audio/x-flac', 'audio/aac'
+                    'application/*',
+                    'audio/*',
+                    'image/*',
+                    'model/*',
+                    'video/*',
                 ];
                 const responseTypes = ['arraybuffer', 'blob'];
                 let doPatchHttp = false;
@@ -394,12 +423,26 @@ var nativeBridge = (function (exports) {
                                 headers = Object.fromEntries(options.headers.entries());
                             }
                             const url = new URL(resource.toString());
-                            const extension = (_a = url.href.split('?')[0].split('.').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+                            const extension = (_a = url.href
+                                .split('?')[0]
+                                .split('.')
+                                .pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
                             const contentType = (_b = headers === null || headers === void 0 ? void 0 : headers['Content-Type']) !== null && _b !== void 0 ? _b : headers === null || headers === void 0 ? void 0 : headers['content-type'];
                             const forceMediaRequest = (_c = headers === null || headers === void 0 ? void 0 : headers['X-Capacitor-Force-Media-Request']) !== null && _c !== void 0 ? _c : false;
-                            if (forceMediaRequest ||
-                                (null != extension && fileExtensions.includes(extension)) ||
-                                (contentType != null && mediaContentTypes.includes(contentType))) {
+                            // Check if the contentType matches any of the mediaContentTypes
+                            const isMediaType = mediaContentTypes.some(type => {
+                                if (type.endsWith('/*')) {
+                                    // Match wildcard patterns
+                                    const category = type.split('/')[0];
+                                    return contentType === null || contentType === void 0 ? void 0 : contentType.startsWith(category);
+                                }
+                                else {
+                                    // Match specific types
+                                    return contentType === type;
+                                }
+                            });
+                            if (forceMediaRequest || isMediaType ||
+                                (null != extension && fileExtensions.includes(extension))) {
                                 if (platform === 'ios') {
                                     url.protocol = (_d = win.WEBVIEW_SERVER_URL) !== null && _d !== void 0 ? _d : '';
                                 }
@@ -548,14 +591,28 @@ var nativeBridge = (function (exports) {
                         try {
                             // intercept request & pass to the bridge
                             const url = new URL(this._url);
-                            const extension = (_a = url.href.split('?')[0].split('.').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+                            const extension = (_a = url.href
+                                .split('?')[0]
+                                .split('.')
+                                .pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
                             const contentType = (_c = (_b = this._headers) === null || _b === void 0 ? void 0 : _b['Content-Type']) !== null && _c !== void 0 ? _c : (_d = this._headers) === null || _d === void 0 ? void 0 : _d['content-type'];
                             const forceMediaRequest = (_f = (_e = this._headers) === null || _e === void 0 ? void 0 : _e['X-Capacitor-Force-Media-Request']) !== null && _f !== void 0 ? _f : false;
-                            if (forceMediaRequest ||
+                            // Check if the contentType matches any of the mediaContentTypes
+                            const isMediaType = mediaContentTypes.some(type => {
+                                if (type.endsWith('/*')) {
+                                    // Match wildcard patterns
+                                    const category = type.split('/')[0];
+                                    return contentType === null || contentType === void 0 ? void 0 : contentType.startsWith(category);
+                                }
+                                else {
+                                    // Match specific types
+                                    return contentType === type;
+                                }
+                            });
+                            if (forceMediaRequest || isMediaType ||
                                 (null != this.responseType &&
                                     responseTypes.includes(this.responseType)) ||
-                                (null != extension && fileExtensions.includes(extension)) ||
-                                (contentType != null && mediaContentTypes.includes(contentType))) {
+                                (null != extension && fileExtensions.includes(extension))) {
                                 if (platform === 'ios') {
                                     url.protocol = (_g = win.WEBVIEW_SERVER_URL) !== null && _g !== void 0 ? _g : '';
                                 }
