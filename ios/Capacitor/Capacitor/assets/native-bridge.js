@@ -387,6 +387,13 @@ var nativeBridge = (function (exports) {
                     'video/*',
                 ];
                 const responseTypes = ['arraybuffer', 'blob'];
+                // content types that are in this category we do not want to route to our custom scheme
+                const textContentTypes = [
+                    'text/*',
+                    'application/json',
+                    'application/x-www-form-urlencoded',
+                    'multipart/form-data',
+                ];
                 let doPatchHttp = false;
                 // check if capacitor http is disabled before patching
                 if (platform === 'ios') {
@@ -441,7 +448,19 @@ var nativeBridge = (function (exports) {
                                     return contentType === type;
                                 }
                             });
-                            if (forceMediaRequest || isMediaType ||
+                            const isTextType = textContentTypes.some(type => {
+                                if (type.endsWith('/*')) {
+                                    // Match wildcard patterns
+                                    const category = type.split('/')[0];
+                                    return contentType === null || contentType === void 0 ? void 0 : contentType.startsWith(category);
+                                }
+                                else {
+                                    // Match specific types
+                                    return contentType === type;
+                                }
+                            });
+                            if (forceMediaRequest ||
+                                (isMediaType && !isTextType) ||
                                 (null != extension && fileExtensions.includes(extension))) {
                                 if (platform === 'ios') {
                                     url.protocol = (_d = win.WEBVIEW_SERVER_URL) !== null && _d !== void 0 ? _d : '';
@@ -609,7 +628,19 @@ var nativeBridge = (function (exports) {
                                     return contentType === type;
                                 }
                             });
-                            if (forceMediaRequest || isMediaType ||
+                            const isTextType = textContentTypes.some(type => {
+                                if (type.endsWith('/*')) {
+                                    // Match wildcard patterns
+                                    const category = type.split('/')[0];
+                                    return contentType === null || contentType === void 0 ? void 0 : contentType.startsWith(category);
+                                }
+                                else {
+                                    // Match specific types
+                                    return contentType === type;
+                                }
+                            });
+                            if (forceMediaRequest ||
+                                (isMediaType && !isTextType) ||
                                 (null != this.responseType &&
                                     responseTypes.includes(this.responseType)) ||
                                 (null != extension && fileExtensions.includes(extension))) {

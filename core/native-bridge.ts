@@ -422,7 +422,16 @@ const initBridge = (w: any): void => {
         'model/*',
         'video/*',
       ];
+
       const responseTypes = ['arraybuffer', 'blob'];
+
+      // content types that are in this category we do not want to route to our custom scheme
+      const textContentTypes = [
+        'text/*',
+        'application/json',
+        'application/x-www-form-urlencoded',
+        'multipart/form-data',
+      ];
 
       let doPatchHttp = false;
 
@@ -495,9 +504,20 @@ const initBridge = (w: any): void => {
               }
             });
 
+            const isTextType = textContentTypes.some(type => {
+              if (type.endsWith('/*')) {
+                // Match wildcard patterns
+                const category = type.split('/')[0];
+                return contentType?.startsWith(category);
+              } else {
+                // Match specific types
+                return contentType === type;
+              }
+            });
+
             if (
               forceMediaRequest ||
-              isMediaType ||
+              (isMediaType && !isTextType) ||
               (null != extension && fileExtensions.includes(extension))
             ) {
               if (platform === 'ios') {
@@ -716,9 +736,20 @@ const initBridge = (w: any): void => {
               }
             });
 
+            const isTextType = textContentTypes.some(type => {
+              if (type.endsWith('/*')) {
+                // Match wildcard patterns
+                const category = type.split('/')[0];
+                return contentType?.startsWith(category);
+              } else {
+                // Match specific types
+                return contentType === type;
+              }
+            });
+
             if (
               forceMediaRequest ||
-              isMediaType ||
+              (isMediaType && !isTextType) ||
               (null != this.responseType &&
                 responseTypes.includes(this.responseType)) ||
               (null != extension && fileExtensions.includes(extension))
