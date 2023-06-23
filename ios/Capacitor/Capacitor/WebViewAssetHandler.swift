@@ -21,127 +21,80 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     }
 
     func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+        let startPath: String
         let url = urlSchemeTask.request.url!
+        let stringToLoad = url.path
+
         if url.path.starts(with: CapacitorBridge.mediaStartIdentifier) {
-            var urlRequest = urlSchemeTask.request
-            var targetUrl = url.absoluteString
-                .replacingOccurrences(of: CapacitorBridge.mediaStartIdentifier, with: "")
-
-            // Only replace first occurrence of the scheme
-            if let range = targetUrl.range(of: InstanceDescriptorDefaults.scheme) {
-                targetUrl = targetUrl.replacingCharacters(in: range, with: "https")
-            }
-
-            urlRequest.url = URL(string: targetUrl)
-
-            let urlSession = URLSession.shared
-            let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
-                urlSession.invalidateAndCancel()
-                if let error = error {
-                    urlSchemeTask.didFailWithError(error)
-                    return
-                }
-
-                if let response = response as? HTTPURLResponse {
-                    let existingHeaders = response.allHeaderFields
-                    // Allow CORS since request is being made from "localhost" to "capacitor://localhost" for example
-                    let newHeaders: [String: String] = [
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Methods": urlSchemeTask.request.httpMethod ?? "GET",
-                        "Access-Control-Allow-Headers": "*"
-                    ]
-
-                    if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (current, _) in current }) as? [String: String] {
-
-                        let modifiedResponse = HTTPURLResponse(
-                            url: response.url!,
-                            statusCode: response.statusCode,
-                            httpVersion: nil,
-                            headerFields: mergedHeaders
-                        )!
-
-                        urlSchemeTask.didReceive(modifiedResponse)
-
-                        if let data = data {
-                            urlSchemeTask.didReceive(data)
-                        }
-                    }
-                }
-                urlSchemeTask.didFinish()
-                return
-            }
-
-            task.resume()
-        } else {
-            let startPath: String
-            let stringToLoad = url.path
-
-            if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
-                startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
-            } else {
-                startPath = router.route(for: stringToLoad)
-            }
-
-            let localUrl = URL.init(string: url.absoluteString)!
-            let fileUrl = URL.init(fileURLWithPath: startPath)
-
-            do {
-                var data = Data()
-                let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
-                var headers =  [
-                    "Content-Type": mimeType,
-                    "Cache-Control": "no-cache"
-                ]
-
-                // if using live reload, then set CORS headers
-                if self.serverUrl != nil && self.serverUrl?.scheme != localUrl.scheme {
-                    headers["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString
-                    headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-                }
-
-                if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"),
-                   let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize,
-                   isMediaExtension(pathExtension: url.pathExtension) {
-                    let fileHandle = try FileHandle(forReadingFrom: fileUrl)
-                    let parts = rangeString.components(separatedBy: "=")
-                    let streamParts = parts[1].components(separatedBy: "-")
-                    let fromRange = Int(streamParts[0]) ?? 0
-                    var toRange = totalSize - 1
-                    if streamParts.count > 1 {
-                        toRange = Int(streamParts[1]) ?? toRange
-                    }
-                    let rangeLength = toRange - fromRange + 1
-                    try fileHandle.seek(toOffset: UInt64(fromRange))
-                    data = fileHandle.readData(ofLength: rangeLength)
-                    headers["Accept-Ranges"] = "bytes"
-                    headers["Content-Range"] = "bytes \(fromRange)-\(toRange)/\(totalSize)"
-                    headers["Content-Length"] = String(data.count)
-                    let response = HTTPURLResponse(url: localUrl, statusCode: 206, httpVersion: nil, headerFields: headers)
-                    urlSchemeTask.didReceive(response!)
-                    try fileHandle.close()
-                } else {
-                    if !stringToLoad.contains("cordova.js") {
-                        if isMediaExtension(pathExtension: url.pathExtension) {
-                            data = try Data(contentsOf: fileUrl, options: Data.ReadingOptions.mappedIfSafe)
-                        } else {
-                            data = try Data(contentsOf: fileUrl)
-                        }
-                    }
-                    let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
-                    let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
-                    if isMediaExtension(pathExtension: url.pathExtension) {
-                        urlSchemeTask.didReceive(urlResponse)
-                    } else {
-                        urlSchemeTask.didReceive(httpResponse!)
-                    }
-                }
-                urlSchemeTask.didReceive(data)
-            } catch let error as NSError {
-                urlSchemeTask.didFailWithError(error)
-                return
-            }
-            urlSchemeTask.didFinish()
+            handleHttpMediaRequest(urlSchemeTask)
+            return
         }
+
+        if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
+            startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
+        } else {
+            startPath = router.route(for: stringToLoad)
+        }
+
+        let localUrl = URL.init(string: url.absoluteString)!
+        let fileUrl = URL.init(fileURLWithPath: startPath)
+
+        do {
+            var data = Data()
+            let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
+            var headers =  [
+                "Content-Type": mimeType,
+                "Cache-Control": "no-cache"
+            ]
+
+            // if using live reload, then set CORS headers
+            if self.serverUrl != nil && self.serverUrl?.scheme != localUrl.scheme {
+                headers["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString
+                headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+            }
+
+            if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"),
+               let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize,
+               isMediaExtension(pathExtension: url.pathExtension) {
+                let fileHandle = try FileHandle(forReadingFrom: fileUrl)
+                let parts = rangeString.components(separatedBy: "=")
+                let streamParts = parts[1].components(separatedBy: "-")
+                let fromRange = Int(streamParts[0]) ?? 0
+                var toRange = totalSize - 1
+                if streamParts.count > 1 {
+                    toRange = Int(streamParts[1]) ?? toRange
+                }
+                let rangeLength = toRange - fromRange + 1
+                try fileHandle.seek(toOffset: UInt64(fromRange))
+                data = fileHandle.readData(ofLength: rangeLength)
+                headers["Accept-Ranges"] = "bytes"
+                headers["Content-Range"] = "bytes \(fromRange)-\(toRange)/\(totalSize)"
+                headers["Content-Length"] = String(data.count)
+                let response = HTTPURLResponse(url: localUrl, statusCode: 206, httpVersion: nil, headerFields: headers)
+                urlSchemeTask.didReceive(response!)
+                try fileHandle.close()
+            } else {
+                if !stringToLoad.contains("cordova.js") {
+                    if isMediaExtension(pathExtension: url.pathExtension) {
+                        data = try Data(contentsOf: fileUrl, options: Data.ReadingOptions.mappedIfSafe)
+                    } else {
+                        data = try Data(contentsOf: fileUrl)
+                    }
+                }
+                let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
+                let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
+                if isMediaExtension(pathExtension: url.pathExtension) {
+                    urlSchemeTask.didReceive(urlResponse)
+                } else {
+                    urlSchemeTask.didReceive(httpResponse!)
+                }
+            }
+            urlSchemeTask.didReceive(data)
+        } catch let error as NSError {
+            urlSchemeTask.didFailWithError(error)
+            return
+        }
+        urlSchemeTask.didFinish()
     }
 
     func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
@@ -171,6 +124,62 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             return true
         }
         return false
+    }
+
+    /**
+     Handle HTTP requests for Blobs, FIles, Media, or any content type that cannot easily be transferrable across the bridge
+     */
+    func handleHttpMediaRequest(_ urlSchemeTask: WKURLSchemeTask) {
+        var urlRequest = urlSchemeTask.request
+        let url = urlRequest.url!
+        var targetUrl = url.absoluteString
+            .replacingOccurrences(of: CapacitorBridge.mediaStartIdentifier, with: "")
+
+        // Only replace first occurrence of the scheme
+        if let range = targetUrl.range(of: InstanceDescriptorDefaults.scheme) {
+            targetUrl = targetUrl.replacingCharacters(in: range, with: "https")
+        }
+
+        urlRequest.url = URL(string: targetUrl)
+
+        let urlSession = URLSession.shared
+        let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
+            urlSession.invalidateAndCancel()
+            if let error = error {
+                urlSchemeTask.didFailWithError(error)
+                return
+            }
+
+            if let response = response as? HTTPURLResponse {
+                let existingHeaders = response.allHeaderFields
+                // Allow CORS since request is being made from "localhost" to "capacitor://localhost" for example
+                let newHeaders: [String: String] = [
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": urlSchemeTask.request.httpMethod ?? "GET",
+                    "Access-Control-Allow-Headers": "*"
+                ]
+
+                if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (current, _) in current }) as? [String: String] {
+
+                    let modifiedResponse = HTTPURLResponse(
+                        url: response.url!,
+                        statusCode: response.statusCode,
+                        httpVersion: nil,
+                        headerFields: mergedHeaders
+                    )!
+
+                    urlSchemeTask.didReceive(modifiedResponse)
+
+                    if let data = data {
+                        urlSchemeTask.didReceive(data)
+                    }
+                }
+            }
+            urlSchemeTask.didFinish()
+            return
+        }
+
+        task.resume()
     }
 
     let mimeTypes = [
