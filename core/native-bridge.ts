@@ -391,6 +391,28 @@ const initBridge = (w: any): void => {
         'bmp',
         'svg',
         'wasm',
+        'webm',
+        'mp4',
+        'm4a',
+        'mp3',
+        'wav',
+        'ogg',
+        'oga',
+        'opus',
+        'webp',
+        'flac',
+        'x-flac',
+        'aac',
+        '3gp',
+        '3gpp',
+        'm3u8',
+        'ts',
+        'm4v',
+        'f4v',
+        'flv',
+        'mov',
+        'avi',
+        'mkv',
       ];
       const mediaContentTypes = [
         'application/pdf',
@@ -399,10 +421,24 @@ const initBridge = (w: any): void => {
         'image/jpeg',
         'image/png',
         'image/gif',
+        'image/bmp',
+        'image/svg+xml',
+        'image/webp',
         'video/mp4',
         'video/webm',
+        'video/3gpp',
+        'video/3gpp2',
+        'video/ogg',
+        'video/x-matroska',
+        'video/quicktime',
         'audio/mpeg',
         'audio/wav',
+        'audio/ogg',
+        'audio/opus',
+        'audio/webm',
+        'audio/flac',
+        'audio/x-flac',
+        'audio/aac',
       ];
       const responseTypes = ['arraybuffer', 'blob'];
 
@@ -453,12 +489,20 @@ const initBridge = (w: any): void => {
             }
 
             const url = new URL(resource.toString());
-            const extension = url.pathname.split('.').pop()?.toLowerCase();
+            const extension = url.href
+              .split('?')[0]
+              .split('.')
+              .pop()
+              ?.toLowerCase();
             const contentType =
               (headers as any)?.['Content-Type'] ??
               (headers as any)?.['content-type'];
 
+            const forceMediaRequest =
+              (headers as any)?.['X-Capacitor-Force-Media-Request'] ?? false;
+
             if (
+              forceMediaRequest ||
               (null != extension && fileExtensions.includes(extension)) ||
               (contentType != null && mediaContentTypes.includes(contentType))
             ) {
@@ -653,12 +697,21 @@ const initBridge = (w: any): void => {
           try {
             // intercept request & pass to the bridge
             const url = new URL(this._url);
-            const extension = url.pathname.split('.').pop()?.toLowerCase();
+            const extension = url.href
+              .split('?')[0]
+              .split('.')
+              .pop()
+              ?.toLowerCase();
             const contentType =
               (this._headers as any)?.['Content-Type'] ??
               (this._headers as any)?.['content-type'];
 
+            const forceMediaRequest =
+              (this._headers as any)?.['X-Capacitor-Force-Media-Request'] ??
+              false;
+
             if (
+              forceMediaRequest ||
               (null != this.responseType &&
                 responseTypes.includes(this.responseType)) ||
               (null != extension && fileExtensions.includes(extension)) ||
