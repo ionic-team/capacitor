@@ -409,6 +409,7 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         "vsw": "application/vnd.visio",
         "vsx": "application/vnd.visio",
         "vtx": "application/vnd.visio",
+        "wasm": "application/wasm",
         "wav": "audio/wav",
         "wax": "audio/x-ms-wax",
         "wbmp": "image/vnd.wap.wbmp",
