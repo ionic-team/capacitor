@@ -259,6 +259,14 @@ export interface CapacitorConfig {
        * @default "AAB"
        */
       releaseType?: 'AAB' | 'APK';
+
+      /**
+       * Program to sign your build with
+       *
+       * @since 5.1.0
+       * @default "jarsigner"
+       */
+      signingType?: 'apksigner' | 'jarsigner';
     };
 
     /**
