@@ -239,9 +239,6 @@ async function loadAndroidConfig(
   const buildOptions = {
     keystorePath: extConfig.android?.buildOptions?.keystorePath,
     keystorePassword: extConfig.android?.buildOptions?.keystorePassword,
-    keystoreAlias: extConfig.android?.buildOptions?.keystoreAlias,
-    keystoreAliasPassword:
-      extConfig.android?.buildOptions?.keystoreAliasPassword,
     releaseType: extConfig.android?.buildOptions?.releaseType,
   };
 

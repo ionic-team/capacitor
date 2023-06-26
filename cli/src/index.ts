@@ -155,6 +155,12 @@ export function runProgram(config: Config): void {
         'Android release type; APK or AAB',
       ).choices(['AAB', 'APK']),
     )
+    .addOption(
+      new Option(
+        '--signing-type <signingtype>',
+        'Program used to sign apps (default: jarsigner)',
+      ).choices(['apksigner', 'jarsigner']),
+    )
     .action(
       wrapAction(
         telemetryAction(
@@ -168,6 +174,7 @@ export function runProgram(config: Config): void {
               keystorealias,
               keystorealiaspass,
               androidreleasetype,
+              signingtype,
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
@@ -178,6 +185,7 @@ export function runProgram(config: Config): void {
               keystorealias,
               keystorealiaspass,
               androidreleasetype,
+              signingtype,
             });
           },
         ),
