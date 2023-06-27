@@ -103,6 +103,7 @@ export interface AndroidConfig extends PlatformConfig {
     keystoreAlias?: string;
     keystoreAliasPassword?: string;
     releaseType?: 'AAB' | 'APK';
+    signingType?: 'apksigner' | 'jarsigner';
   };
 }
 
