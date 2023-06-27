@@ -252,7 +252,7 @@ async function copyFederatedWebDirs(config: Config, nativeAbsDir: string) {
 
   const federatedConfig = config.app.extConfig.plugins.FederatedCapacitor;
   if (federatedConfig) {
-    if (!isFederatedApp(federatedConfig.shell)) {
+    if (federatedConfig.shell.name === undefined) {
       throw `FederatedCapacitor plugin is present but no valid Shell application is defined in the config.`;
     }
 
@@ -260,12 +260,22 @@ async function copyFederatedWebDirs(config: Config, nativeAbsDir: string) {
       throw `FederatedCapacitor plugin is present but there is a problem with the apps defined in the config.`;
     }
 
-    await Promise.all(
-      [...federatedConfig.apps, federatedConfig.shell].map(app => {
+    const copyApps = (): Promise<void>[] => {
+      return federatedConfig.apps.map(app => {
         const appDir = resolve(config.app.rootDir, app.webDir);
         return copyWebDir(config, resolve(nativeAbsDir, app.name), appDir);
-      }),
-    );
+      });
+    };
+
+    const copyShell = (): Promise<void> => {
+      return copyWebDir(
+        config,
+        resolve(nativeAbsDir, federatedConfig.shell.name),
+        config.app.webDirAbs,
+      );
+    };
+
+    await Promise.all([...copyApps(), copyShell()]);
   }
 }
 

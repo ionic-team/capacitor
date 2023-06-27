@@ -252,9 +252,6 @@ async function loadAndroidConfig(
   const buildOptions = {
     keystorePath: extConfig.android?.buildOptions?.keystorePath,
     keystorePassword: extConfig.android?.buildOptions?.keystorePassword,
-    keystoreAlias: extConfig.android?.buildOptions?.keystoreAlias,
-    keystoreAliasPassword:
-      extConfig.android?.buildOptions?.keystoreAliasPassword,
     releaseType: extConfig.android?.buildOptions?.releaseType,
   };
 
@@ -459,14 +456,18 @@ async function determineGemfileOrCocoapodPath(
     return process.env.CAPACITOR_COCOAPODS_PATH;
   }
 
-  // Look for 'Gemfile' in app directories
-  const appSpecificGemfileExists =
-    (await pathExists(resolve(rootDir, 'Gemfile'))) ||
-    (await pathExists(resolve(platformDir, 'Gemfile'))) ||
-    (await pathExists(resolve(nativeProjectDirAbs, 'Gemfile')));
+  let gemfilePath = '';
+  if (await pathExists(resolve(rootDir, 'Gemfile'))) {
+    gemfilePath = resolve(rootDir, 'Gemfile');
+  } else if (await pathExists(resolve(platformDir, 'Gemfile'))) {
+    gemfilePath = resolve(platformDir, 'Gemfile');
+  } else if (await pathExists(resolve(nativeProjectDirAbs, 'Gemfile'))) {
+    gemfilePath = resolve(nativeProjectDirAbs, 'Gemfile');
+  }
+
+  const appSpecificGemfileExists = gemfilePath != '';
 
   // Multi-app projects might share a single global 'Gemfile' at the Git repository root directory.
-  let globalGemfileExists = false;
   if (!appSpecificGemfileExists) {
     try {
       const output = await getCommandOutput(
@@ -475,16 +476,26 @@ async function determineGemfileOrCocoapodPath(
         { cwd: rootDir },
       );
       if (output != null) {
-        globalGemfileExists = await pathExists(resolve(output, 'Gemfile'));
+        gemfilePath = resolve(output, 'Gemfile');
       }
-    } catch (e) {
+    } catch (e: any) {
       // Nothing
     }
   }
 
-  if (appSpecificGemfileExists || globalGemfileExists) {
-    return 'bundle exec pod';
-  } else {
+  try {
+    const gemfileText = (await readFile(gemfilePath)).toString();
+    if (!gemfileText) {
+      return 'pod';
+    }
+    const cocoapodsInGemfile = new RegExp(/gem 'cocoapods'/).test(gemfileText);
+
+    if (cocoapodsInGemfile) {
+      return 'bundle exec pod';
+    } else {
+      return 'pod';
+    }
+  } catch {
     return 'pod';
   }
 }
@@ -499,16 +510,6 @@ export default config;\n`;
 }
 
 export function checkExternalConfig(config: ExtConfigPairs): void {
-  if (
-    typeof config.extConfig.hideLogs !== 'undefined' ||
-    typeof config.extConfig.android?.hideLogs !== 'undefined' ||
-    typeof config.extConfig.ios?.hideLogs !== 'undefined'
-  ) {
-    logger.warn(
-      `The ${c.strong('hideLogs')} configuration option has been deprecated. ` +
-        `Please update to use ${c.strong('loggingBehavior')} instead.`,
-    );
-  }
   if (typeof config.extConfig.bundledWebRuntime !== 'undefined') {
     let actionMessage = `Can be safely deleted.`;
     if (config.extConfig.bundledWebRuntime === true) {

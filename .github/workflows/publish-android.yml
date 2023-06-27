@@ -32,10 +32,10 @@ jobs:
           fetch-depth: 0
           ref: 'main'
           token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
-      - name: set up JDK 11
+      - name: set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'zulu'
       - name: Grant execute permission for gradlew
         run: chmod +x ./android/gradlew
