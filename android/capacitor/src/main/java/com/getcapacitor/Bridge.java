@@ -104,7 +104,7 @@ public class Bridge {
     private String appUrlConfig;
     private HostMask appAllowNavigationMask;
     private Set<String> allowedOriginRules = new HashSet<String>();
-    ArrayList<String> authorities = new ArrayList<>();
+    private ArrayList<String> authorities = new ArrayList<>();
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
