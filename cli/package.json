@@ -63,6 +63,7 @@
     "xml2js": "^0.5.0"
   },
   "devDependencies": {
+    "@types/babel__traverse": "7.17.1",
     "@types/debug": "^4.1.7",
     "@types/jest": "^26.0.4",
     "@types/node": "18.11.18",
