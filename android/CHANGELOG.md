@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.1](https://github.com/ionic-team/capacitor/compare/4.8.0...4.8.1) (2023-06-29)
+
+
+### Bug Fixes
+
+* **android:** Move bridge localUrl initialization to initWebView ([#6686](https://github.com/ionic-team/capacitor/issues/6686)) ([85fd4a6](https://github.com/ionic-team/capacitor/commit/85fd4a61a7ab90cfb1492c19b0d77c185798de68))
+* **android:** revert cookie manager initialization to plugin load for 4.x  ([2ea82f4](https://github.com/ionic-team/capacitor/commit/2ea82f437020ecd74d6124f5123816383332d87a))
+
+
+
+
+
 # [4.8.0](https://github.com/ionic-team/capacitor/compare/4.7.3...4.8.0) (2023-04-26)
 
 
