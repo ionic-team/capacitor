@@ -93,7 +93,66 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return normalized[index.lowercased()]
     }
 
-    public func getRequestData(_ body: JSValue, _ contentType: String) throws -> Data? {
+    func getRequestDataFromFormData(_ data: JSValue) throws -> Data? {
+        guard let list = data as? JSArray else {
+            // Throw, other data types explicitly not supported.
+            throw CapacitorUrlRequestError.serializationError("Data must be an array for FormData")
+        }
+
+        var data = Data()
+
+        // Update the contentType with the new boundary
+        let boundary = UUID().uuidString
+        let contentType = "multipart/form-data; boundary=\(boundary)"
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+        headers["Content-Type"] = contentType
+
+        for entry in list {
+            guard let item = entry as? [String: String] else {
+                throw CapacitorUrlRequestError.serializationError("Data must be an array for FormData")
+            }
+
+            let type = item["type"]
+            let key = item["key"]
+            let value = item["value"]!
+
+            if type == "base64File" {
+                let fileName = item["fileName"]
+                let fileContentType = item["contentType"]
+
+                data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+                data.append("Content-Disposition: form-data; name=\"\(key!)\"; filename=\"\(fileName!)\"\r\n".data(using: .utf8)!)
+                data.append("Content-Type: \(fileContentType!)\r\n".data(using: .utf8)!)
+                data.append("Content-Transfer-Encoding: binary\r\n".data(using: .utf8)!)
+                data.append("\r\n".data(using: .utf8)!)
+
+                data.append(Data(base64Encoded: value)!)
+
+                data.append("\r\n".data(using: .utf8)!)
+            } else if type == "string" {
+                data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+                data.append("Content-Disposition: form-data; name=\"\(key!)\"\r\n".data(using: .utf8)!)
+                data.append(value.data(using: .utf8)!)
+                data.append("\r\n".data(using: .utf8)!)
+            }
+
+        }
+
+        data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+
+        return data
+    }
+
+    public func getRequestData(_ body: JSValue, _ contentType: String, _ dataType: String) throws -> Data? {
+        if dataType == "file" {
+            guard let stringData = body as? String else {
+                throw CapacitorUrlRequestError.serializationError("[ data ] argument could not be parsed as string")
+            }
+            return Data(base64Encoded: stringData)
+        } else if dataType == "formData" {
+            return try getRequestDataFromFormData(body)
+        }
+
         // If data can be parsed directly as a string, return that without processing.
         if let strVal = try? getRequestDataAsString(body) {
             return strVal
@@ -125,11 +184,11 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
     }
 
-    public func setRequestBody(_ body: JSValue) throws {
+    public func setRequestBody(_ body: JSValue, _ dataType: String) throws {
         let contentType = self.getRequestHeader("Content-Type") as? String
 
         if contentType != nil {
-            request.httpBody = try getRequestData(body, contentType!)
+            request.httpBody = try getRequestData(body, contentType!, dataType)
         }
     }
 
