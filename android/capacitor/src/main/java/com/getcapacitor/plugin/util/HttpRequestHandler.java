@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -396,7 +397,7 @@ public class HttpRequestHandler {
 
         CapacitorHttpUrlConnection connection = connectionBuilder.build();
 
-        if (null != bridge) {
+        if (null != bridge && !isDomainExcludedFromSSL(bridge, url)) {
             connection.setSSLSocketFactory(bridge);
         }
 
@@ -412,6 +413,16 @@ public class HttpRequestHandler {
         connection.connect();
 
         return buildResponse(connection, responseType);
+    }
+
+    private static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
+        try {
+            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
+            Method method = sslPinningImpl.getDeclaredMethod("isDomainExcluded", Bridge.class, URL.class);
+            return (Boolean) method.invoke(sslPinningImpl.newInstance(), bridge, url);
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     @FunctionalInterface
