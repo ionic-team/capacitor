@@ -14,6 +14,6 @@ comment:
   labels:
     - label: "type: bug"
     message: >
-    This issue has been labeled as `type: bug`. This label is added to issues
-    that that have been reproduced and are being tracked in our internal issue tracker.
-  dryRun: false
+      This issue has been labeled as `type: bug`. This label is added to issues
+      that that have been reproduced and are being tracked in our internal issue tracker.
+    dryRun: false
