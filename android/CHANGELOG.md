@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/ionic-team/capacitor/compare/5.0.5...5.1.0) (2023-06-29)
+
+### Bug Fixes
+
+- **android:** Move bridge localUrl initialization to initWebView ([#6685](https://github.com/ionic-team/capacitor/issues/6685)) ([7f5f0ca](https://github.com/ionic-team/capacitor/commit/7f5f0ca4220d40d6a19c778c18f9534ef3b65899))
+- **android:** revert cookie manager initialization to plugin load ([53a2d47](https://github.com/ionic-team/capacitor/commit/53a2d4792e026a89723a672a01fc34990add71f0))
+
+### Features
+
+- **android:** add check for excluded domains before ssl request ([7906d36](https://github.com/ionic-team/capacitor/commit/7906d3616e8bfb2e2c1c81ee123424c06fc4e5ab))
+
 ## [5.0.5](https://github.com/ionic-team/capacitor/compare/5.0.4...5.0.5) (2023-06-09)
 
 ### Bug Fixes
