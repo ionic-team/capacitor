@@ -1,17 +1,4 @@
 tasks:
-  - name: add-comment
-    on:
-      issues:
-        types: [labeled]
-    condition: 'payload.label.name == "needs reproduction"'
-    config:
-      comment: |
-        This issue may need more information before it can be addressed. In particular, it will need a reliable Code Reproduction that demonstrates the issue.
-
-        Please see the Contributing Guide for [how to create a Code Reproduction](https://github.com/ionic-team/capacitor/blob/HEAD/CONTRIBUTING.md#creating-a-code-reproduction).
-
-        Thanks!
-        Ionitron 💙
   - name: add-label
     on:
       issues:
