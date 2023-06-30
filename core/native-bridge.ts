@@ -507,7 +507,8 @@ const initBridge = (w: any): void => {
               },
             );
 
-            let data = nativeResponse.headers['Content-Type']?.startsWith(
+            const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
+            let data = contentType?.startsWith(
               'application/json',
             )
               ? JSON.stringify(nativeResponse.data)

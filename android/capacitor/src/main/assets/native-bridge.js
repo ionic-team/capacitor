@@ -419,7 +419,6 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
-                        var _a;
                         if (!(resource.toString().startsWith('http:') ||
                             resource.toString().startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
@@ -440,7 +439,8 @@ var nativeBridge = (function (exports) {
                                 dataType: type,
                                 headers: Object.assign(Object.assign({}, headers), optionHeaders),
                             });
-                            let data = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                            const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
+                            let data = (contentType === null || contentType === void 0 ? void 0 : contentType.startsWith('application/json'))
                                 ? JSON.stringify(nativeResponse.data)
                                 : nativeResponse.data;
                             // use null data for 204 No Content HTTP response
