@@ -13,15 +13,15 @@ lockClosed:
 comment:
   labels:
     - label: "type: bug"
-    message: >
-      This issue has been labeled as `type: bug`. This label is added to issues
-      that that have been reproduced and are being tracked in our internal issue tracker.
+      message: >
+        This issue has been labeled as `type: bug`. This label is added to issues
+        that that have been reproduced and are being tracked in our internal issue tracker.
     - label: "needs reproduction"
-    message: >
-      This issue may need more information before it can be addressed. In particular, it will need a reliable Code Reproduction that demonstrates the issue.
+      message: >
+        This issue may need more information before it can be addressed. In particular, it will need a reliable Code Reproduction that demonstrates the issue.
 
-      Please see the Contributing Guide for [how to create a Code Reproduction](https://github.com/ionic-team/capacitor/blob/HEAD/CONTRIBUTING.md#creating-a-code-reproduction).
+        Please see the Contributing Guide for [how to create a Code Reproduction](https://github.com/ionic-team/capacitor/blob/HEAD/CONTRIBUTING.md#creating-a-code-reproduction).
 
-      Thanks!
-      Ionitron 💙
-    dryRun: false
+        Thanks!
+        Ionitron 💙
+  dryRun: false
