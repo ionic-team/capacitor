@@ -26,6 +26,7 @@ import { formatJSObject } from './util/js';
 import { requireTS, resolveNode } from './util/node';
 import { lazy } from './util/promise';
 import { getCommandOutput } from './util/subprocess';
+import { parseApkNameFromFlavor } from './common';
 
 const debug = Debug('capacitor:config');
 
@@ -226,13 +227,11 @@ async function loadAndroidConfig(
   const webDir = `${assetsDir}/public`;
   const resDir = `${srcMainDir}/res`;
   let apkPath = `${appDir}/build/outputs/apk/`;
-  let flavorPrefix = '';
   const flavor = extConfig.android?.flavor || '';
   if (extConfig.android?.flavor) {
     apkPath = `${apkPath}/${extConfig.android?.flavor}`;
-    flavorPrefix = `-${extConfig.android?.flavor}`;
   }
-  const apkName = `app${flavorPrefix}-debug.apk`;
+  const apkName = parseApkNameFromFlavor(flavor);
   const buildOutputDir = `${apkPath}/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
   const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
