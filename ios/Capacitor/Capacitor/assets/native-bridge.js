@@ -439,7 +439,8 @@ var nativeBridge = (function (exports) {
                                 dataType: type,
                                 headers: Object.assign(Object.assign({}, headers), optionHeaders),
                             });
-                            const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
+                            const contentType = nativeResponse.headers['Content-Type'] ||
+                                nativeResponse.headers['content-type'];
                             let data = (contentType === null || contentType === void 0 ? void 0 : contentType.startsWith('application/json'))
                                 ? JSON.stringify(nativeResponse.data)
                                 : nativeResponse.data;
@@ -593,10 +594,9 @@ var nativeBridge = (function (exports) {
                                         this._headers = nativeResponse.headers;
                                         this.status = nativeResponse.status;
                                         this.response = nativeResponse.data;
-                                        this.responseText =
-                                            ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
-                                                ? JSON.stringify(nativeResponse.data)
-                                                : nativeResponse.data;
+                                        this.responseText = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                            ? JSON.stringify(nativeResponse.data)
+                                            : nativeResponse.data;
                                         this.responseURL = nativeResponse.url;
                                         this.readyState = 4;
                                         this.dispatchEvent(new Event('load'));

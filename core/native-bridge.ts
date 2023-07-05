@@ -507,10 +507,10 @@ const initBridge = (w: any): void => {
               },
             );
 
-            const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
-            let data = contentType?.startsWith(
-              'application/json',
-            )
+            const contentType =
+              nativeResponse.headers['Content-Type'] ||
+              nativeResponse.headers['content-type'];
+            let data = contentType?.startsWith('application/json')
               ? JSON.stringify(nativeResponse.data)
               : nativeResponse.data;
 
@@ -699,12 +699,11 @@ const initBridge = (w: any): void => {
                     this._headers = nativeResponse.headers;
                     this.status = nativeResponse.status;
                     this.response = nativeResponse.data;
-                    this.responseText =
-                       nativeResponse.headers[
-                        'Content-Type'
-                  ]?.startsWith('application/json')
-                        ? JSON.stringify(nativeResponse.data)
-                    : nativeResponse.data;
+                    this.responseText = nativeResponse.headers[
+                      'Content-Type'
+                    ]?.startsWith('application/json')
+                      ? JSON.stringify(nativeResponse.data)
+                      : nativeResponse.data;
                     this.responseURL = nativeResponse.url;
                     this.readyState = 4;
                     this.dispatchEvent(new Event('load'));
