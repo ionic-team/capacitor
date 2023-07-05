@@ -104,6 +104,7 @@ public class Bridge {
     private String appUrlConfig;
     private HostMask appAllowNavigationMask;
     private Set<String> allowedOriginRules = new HashSet<String>();
+    private ArrayList<String> authorities = new ArrayList<>();
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
@@ -208,7 +209,6 @@ public class Bridge {
         // Grab any intent info that our app was launched with
         Intent intent = context.getIntent();
         this.intentUri = intent.getData();
-
         // Register our core plugins
         this.registerAllPlugins();
 
@@ -231,7 +231,9 @@ public class Bridge {
                     allowedOriginRules.add(allowNavigation);
                 }
             }
+            authorities.addAll(Arrays.asList(appAllowNavigationConfig));
         }
+        this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
     }
 
     public App getApp() {
@@ -239,43 +241,6 @@ public class Bridge {
     }
 
     private void loadWebView() {
-        appUrlConfig = this.getServerUrl();
-        String[] appAllowNavigationConfig = this.config.getAllowNavigation();
-
-        ArrayList<String> authorities = new ArrayList<>();
-
-        if (appAllowNavigationConfig != null) {
-            authorities.addAll(Arrays.asList(appAllowNavigationConfig));
-        }
-        this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
-        String authority = this.getHost();
-        authorities.add(authority);
-        String scheme = this.getScheme();
-
-        localUrl = scheme + "://" + authority;
-
-        if (appUrlConfig != null) {
-            try {
-                URL appUrlObject = new URL(appUrlConfig);
-                authorities.add(appUrlObject.getAuthority());
-            } catch (Exception ex) {
-                Logger.error("Provided server url is invalid: " + ex.getMessage());
-                return;
-            }
-            localUrl = appUrlConfig;
-            appUrl = appUrlConfig;
-        } else {
-            appUrl = localUrl;
-            // custom URL schemes requires path ending with /
-            if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
-                appUrl += "/";
-            }
-        }
-
-        String appUrlPath = this.config.getStartPath();
-        if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
-            appUrl += appUrlPath;
-        }
         final boolean html5mode = this.config.isHTML5Mode();
 
         // Start the local web server
@@ -295,7 +260,6 @@ public class Bridge {
                 setServerBasePath(path);
             }
         }
-
         if (!this.isMinimumWebViewInstalled()) {
             String errorUrl = this.getErrorUrl();
             if (errorUrl != null) {
@@ -586,6 +550,36 @@ public class Bridge {
         }
 
         WebView.setWebContentsDebuggingEnabled(this.config.isWebContentsDebuggingEnabled());
+
+        appUrlConfig = this.getServerUrl();
+        String authority = this.getHost();
+        authorities.add(authority);
+        String scheme = this.getScheme();
+
+        localUrl = scheme + "://" + authority;
+
+        if (appUrlConfig != null) {
+            try {
+                URL appUrlObject = new URL(appUrlConfig);
+                authorities.add(appUrlObject.getAuthority());
+            } catch (Exception ex) {
+                Logger.error("Provided server url is invalid: " + ex.getMessage());
+                return;
+            }
+            localUrl = appUrlConfig;
+            appUrl = appUrlConfig;
+        } else {
+            appUrl = localUrl;
+            // custom URL schemes requires path ending with /
+            if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
+                appUrl += "/";
+            }
+        }
+
+        String appUrlPath = this.config.getStartPath();
+        if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
+            appUrl += appUrlPath;
+        }
     }
 
     /**
