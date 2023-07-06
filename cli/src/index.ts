@@ -157,7 +157,7 @@ export function runProgram(config: Config): void {
     )
     .addOption(
       new Option(
-        '--signing-type <signingtype>',
+        '--signingtype <signingtype>',
         'Program used to sign apps (default: jarsigner)',
       ).choices(['apksigner', 'jarsigner']),
     )
