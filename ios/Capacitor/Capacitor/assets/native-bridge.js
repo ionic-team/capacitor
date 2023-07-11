@@ -35,6 +35,57 @@ var nativeBridge = (function (exports) {
     // For removing exports for iOS/Android, keep let for reassignment
     // eslint-disable-next-line
     let dummy = {};
+    const readFileAsBase64 = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const data = reader.result;
+            resolve(btoa(data));
+        };
+        reader.onerror = reject;
+        reader.readAsBinaryString(file);
+    });
+    const convertFormData = async (formData) => {
+        const newFormData = [];
+        for (const pair of formData.entries()) {
+            const [key, value] = pair;
+            if (value instanceof File) {
+                const base64File = await readFileAsBase64(value);
+                newFormData.push({
+                    key,
+                    value: base64File,
+                    type: 'base64File',
+                    contentType: value.type,
+                    fileName: value.name,
+                });
+            }
+            else {
+                newFormData.push({ key, value, type: 'string' });
+            }
+        }
+        return newFormData;
+    };
+    const convertBody = async (body) => {
+        if (body instanceof FormData) {
+            const formData = await convertFormData(body);
+            const boundary = `${Date.now()}`;
+            return {
+                data: formData,
+                type: 'formData',
+                headers: {
+                    'Content-Type': `multipart/form-data; boundary=--${boundary}`,
+                },
+            };
+        }
+        else if (body instanceof File) {
+            const fileData = await readFileAsBase64(body);
+            return {
+                data: fileData,
+                type: 'file',
+                headers: { 'Content-Type': body.type },
+            };
+        }
+        return { data: body, type: 'json' };
+    };
     const initBridge = (w) => {
         const getPlatformId = (win) => {
             var _a, _b;
@@ -136,7 +187,8 @@ var nativeBridge = (function (exports) {
             if (nav) {
                 nav.app = nav.app || {};
                 nav.app.exitApp = () => {
-                    if (!cap.Plugins || !cap.Plugins.App) {
+                    var _a;
+                    if (!((_a = cap.Plugins) === null || _a === void 0 ? void 0 : _a.App)) {
                         win.console.warn('App plugin not installed');
                     }
                     else {
@@ -147,6 +199,7 @@ var nativeBridge = (function (exports) {
             if (doc) {
                 const docAddEventListener = doc.addEventListener;
                 doc.addEventListener = (...args) => {
+                    var _a;
                     const eventName = args[0];
                     const handler = args[1];
                     if (eventName === 'deviceready' && handler) {
@@ -155,7 +208,7 @@ var nativeBridge = (function (exports) {
                     else if (eventName === 'backbutton' && cap.Plugins.App) {
                         // Add a dummy listener so Capacitor doesn't do the default
                         // back button action
-                        if (!cap.Plugins || !cap.Plugins.App) {
+                        if (!((_a = cap.Plugins) === null || _a === void 0 ? void 0 : _a.App)) {
                             win.console.warn('App plugin not installed');
                         }
                         else {
@@ -374,19 +427,23 @@ var nativeBridge = (function (exports) {
                         console.time(tag);
                         try {
                             // intercept request & pass to the bridge
-                            let headers = options === null || options === void 0 ? void 0 : options.headers;
+                            const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || undefined);
+                            let optionHeaders = options === null || options === void 0 ? void 0 : options.headers;
                             if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
-                                headers = Object.fromEntries(options.headers.entries());
+                                optionHeaders = Object.fromEntries(options.headers.entries());
                             }
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
                                 url: resource,
                                 method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
-                                data: (options === null || options === void 0 ? void 0 : options.body) ? options.body : undefined,
-                                headers: headers,
+                                data: requestData,
+                                dataType: type,
+                                headers: Object.assign(Object.assign({}, headers), optionHeaders),
                             });
-                            let data = !nativeResponse.headers['Content-Type'].startsWith('application/json')
-                                ? nativeResponse.data
-                                : JSON.stringify(nativeResponse.data);
+                            const contentType = nativeResponse.headers['Content-Type'] ||
+                                nativeResponse.headers['content-type'];
+                            let data = (contentType === null || contentType === void 0 ? void 0 : contentType.startsWith('application/json'))
+                                ? JSON.stringify(nativeResponse.data)
+                                : nativeResponse.data;
                             // use null data for 204 No Content HTTP response
                             if (nativeResponse.status === 204) {
                                 data = null;
@@ -516,44 +573,49 @@ var nativeBridge = (function (exports) {
                         console.time(tag);
                         try {
                             this.readyState = 2;
-                            // intercept request & pass to the bridge
-                            cap
-                                .nativePromise('CapacitorHttp', 'request', {
-                                url: this._url,
-                                method: this._method,
-                                data: body !== null ? body : undefined,
-                                headers: this._headers != null && Object.keys(this._headers).length > 0
+                            convertBody(body).then(({ data, type, headers }) => {
+                                const otherHeaders = this._headers != null && Object.keys(this._headers).length > 0
                                     ? this._headers
-                                    : undefined,
-                            })
-                                .then((nativeResponse) => {
-                                // intercept & parse response before returning
-                                if (this.readyState == 2) {
+                                    : undefined;
+                                // intercept request & pass to the bridge
+                                cap
+                                    .nativePromise('CapacitorHttp', 'request', {
+                                    url: this._url,
+                                    method: this._method,
+                                    data: data !== null ? data : undefined,
+                                    headers: Object.assign(Object.assign({}, headers), otherHeaders),
+                                    dataType: type,
+                                })
+                                    .then((nativeResponse) => {
+                                    var _a;
+                                    // intercept & parse response before returning
+                                    if (this.readyState == 2) {
+                                        this.dispatchEvent(new Event('loadstart'));
+                                        this._headers = nativeResponse.headers;
+                                        this.status = nativeResponse.status;
+                                        this.response = nativeResponse.data;
+                                        this.responseText = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                            ? JSON.stringify(nativeResponse.data)
+                                            : nativeResponse.data;
+                                        this.responseURL = nativeResponse.url;
+                                        this.readyState = 4;
+                                        this.dispatchEvent(new Event('load'));
+                                        this.dispatchEvent(new Event('loadend'));
+                                    }
+                                    console.timeEnd(tag);
+                                })
+                                    .catch((error) => {
                                     this.dispatchEvent(new Event('loadstart'));
-                                    this._headers = nativeResponse.headers;
-                                    this.status = nativeResponse.status;
-                                    this.response = nativeResponse.data;
-                                    this.responseText = !nativeResponse.headers['Content-Type'].startsWith('application/json')
-                                        ? nativeResponse.data
-                                        : JSON.stringify(nativeResponse.data);
-                                    this.responseURL = nativeResponse.url;
+                                    this.status = error.status;
+                                    this._headers = error.headers;
+                                    this.response = error.data;
+                                    this.responseText = JSON.stringify(error.data);
+                                    this.responseURL = error.url;
                                     this.readyState = 4;
-                                    this.dispatchEvent(new Event('load'));
+                                    this.dispatchEvent(new Event('error'));
                                     this.dispatchEvent(new Event('loadend'));
-                                }
-                                console.timeEnd(tag);
-                            })
-                                .catch((error) => {
-                                this.dispatchEvent(new Event('loadstart'));
-                                this.status = error.status;
-                                this._headers = error.headers;
-                                this.response = error.data;
-                                this.responseText = JSON.stringify(error.data);
-                                this.responseURL = error.url;
-                                this.readyState = 4;
-                                this.dispatchEvent(new Event('error'));
-                                this.dispatchEvent(new Event('loadend'));
-                                console.timeEnd(tag);
+                                    console.timeEnd(tag);
+                                });
                             });
                         }
                         catch (error) {
