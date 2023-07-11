@@ -379,6 +379,7 @@ public class HttpRequestHandler {
         Boolean disableRedirects = call.getBoolean("disableRedirects");
         Boolean shouldEncode = call.getBoolean("shouldEncodeUrlParams", true);
         ResponseType responseType = ResponseType.parse(call.getString("responseType"));
+        String dataType = call.getString("dataType");
 
         String method = httpMethod != null ? httpMethod.toUpperCase(Locale.ROOT) : call.getString("method", "GET").toUpperCase(Locale.ROOT);
 
@@ -406,7 +407,7 @@ public class HttpRequestHandler {
             JSValue data = new JSValue(call, "data");
             if (data.getValue() != null) {
                 connection.setDoOutput(true);
-                connection.setRequestBody(call, data);
+                connection.setRequestBody(call, data, dataType);
             }
         }
 
