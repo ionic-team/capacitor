@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.1](https://github.com/ionic-team/capacitor/compare/5.1.0...5.1.1) (2023-07-05)
+
+### Bug Fixes
+
+- **ios:** Revert server url addition for CAPWebView. ([#6705](https://github.com/ionic-team/capacitor/issues/6705)) ([1b8352d](https://github.com/ionic-team/capacitor/commit/1b8352dc5124dc3f57d7881d619537cbf8c3674b))
+
 # [5.1.0](https://github.com/ionic-team/capacitor/compare/5.0.5...5.1.0) (2023-06-29)
 
 ### Bug Fixes

@@ -194,6 +194,11 @@ export interface HttpOptions {
    * (already encoded, azure/firebase testing, etc.). The default is _true_.
    */
   shouldEncodeUrlParams?: boolean;
+  /**
+   * This is used if we've had to convert the data from a JS type that needs
+   * special handling in the native layer
+   */
+  dataType?: 'file' | 'formData';
 }
 
 export interface HttpParams {
