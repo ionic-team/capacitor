@@ -414,7 +414,7 @@ async function installLatestLibs(
       pkgJson['devDependencies'][devDepKey] = pluginVersion;
     }
   }
-  for (const depKey of Object.keys(pkgJson['dependencies'])) {
+  for (const depKey of Object.keys(pkgJson['dependencies'] || {})) {
     if (libs.includes(depKey)) {
       pkgJson['dependencies'][depKey] = coreVersion;
     } else if (plugins.includes(depKey)) {
