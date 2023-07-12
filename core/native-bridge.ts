@@ -588,9 +588,7 @@ const initBridge = (w: any): void => {
               writable: true,
             },
           });
-          xhr.addEventListener('timeout', function () {
-            if (typeof this.ontimeout === 'function') this.ontimeout();
-          });
+
           xhr.readyState = 0;
           const prototype = win.CapacitorWebXMLHttpRequest.prototype;
 
@@ -783,7 +781,7 @@ const initBridge = (w: any): void => {
           };
 
           // XHR patch getResponseHeader
-          prototype.getResponseHeader = function (name) {
+          prototype.getResponseHeader = function (name: string) {
             if (
               this._url == null ||
               !(this._url.startsWith('http:') || this._url.startsWith('https:'))

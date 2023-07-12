@@ -511,10 +511,6 @@ var nativeBridge = (function (exports) {
                                 writable: true,
                             },
                         });
-                        xhr.addEventListener('timeout', function () {
-                            if (typeof this.ontimeout === 'function')
-                                this.ontimeout();
-                        });
                         xhr.readyState = 0;
                         const prototype = win.CapacitorWebXMLHttpRequest.prototype;
                         // XHR patch abort
@@ -583,8 +579,12 @@ var nativeBridge = (function (exports) {
                                             }));
                                             this._headers = nativeResponse.headers;
                                             this.status = nativeResponse.status;
-                                            if (this.responseType === "" || this.responseType === "text") {
-                                                this.response = (typeof nativeResponse.data !== 'string') ? JSON.stringify(nativeResponse.data) : nativeResponse.data;
+                                            if (this.responseType === '' ||
+                                                this.responseType === 'text') {
+                                                this.response =
+                                                    typeof nativeResponse.data !== 'string'
+                                                        ? JSON.stringify(nativeResponse.data)
+                                                        : nativeResponse.data;
                                             }
                                             else {
                                                 this.response = nativeResponse.data;
