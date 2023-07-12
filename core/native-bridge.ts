@@ -10,12 +10,71 @@ import type {
   MessageCallData,
   PluginResult,
   WindowCapacitor,
+  CapFormDataEntry,
 } from './src/definitions-internal';
 import { CapacitorException } from './src/util';
 
 // For removing exports for iOS/Android, keep let for reassignment
 // eslint-disable-next-line
 let dummy = {};
+
+const readFileAsBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const data = reader.result as string;
+      resolve(btoa(data));
+    };
+    reader.onerror = reject;
+
+    reader.readAsBinaryString(file);
+  });
+
+const convertFormData = async (formData: FormData): Promise<any> => {
+  const newFormData: CapFormDataEntry[] = [];
+  for (const pair of formData.entries()) {
+    const [key, value] = pair;
+    if (value instanceof File) {
+      const base64File = await readFileAsBase64(value);
+      newFormData.push({
+        key,
+        value: base64File,
+        type: 'base64File',
+        contentType: value.type,
+        fileName: value.name,
+      });
+    } else {
+      newFormData.push({ key, value, type: 'string' });
+    }
+  }
+
+  return newFormData;
+};
+
+const convertBody = async (
+  body: Document | XMLHttpRequestBodyInit | ReadableStream<any> | undefined,
+): Promise<any> => {
+  if (body instanceof FormData) {
+    const formData = await convertFormData(body);
+    const boundary = `${Date.now()}`;
+    return {
+      data: formData,
+      type: 'formData',
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=--${boundary}`,
+      },
+    };
+  } else if (body instanceof File) {
+    const fileData = await readFileAsBase64(body);
+    return {
+      data: fileData,
+      type: 'file',
+      headers: { 'Content-Type': body.type },
+    };
+  }
+
+  return { data: body, type: 'json' };
+};
 
 const initBridge = (w: any): void => {
   const getPlatformId = (win: WindowCapacitor): 'android' | 'ios' | 'web' => {
@@ -422,9 +481,16 @@ const initBridge = (w: any): void => {
           console.time(tag);
           try {
             // intercept request & pass to the bridge
-            let headers = options?.headers;
+            const {
+              data: requestData,
+              type,
+              headers,
+            } = await convertBody(options?.body || undefined);
+            let optionHeaders = options?.headers;
             if (options?.headers instanceof Headers) {
-              headers = Object.fromEntries((options.headers as any).entries());
+              optionHeaders = Object.fromEntries(
+                (options.headers as any).entries(),
+              );
             }
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
@@ -432,14 +498,19 @@ const initBridge = (w: any): void => {
               {
                 url: resource,
                 method: options?.method ? options.method : undefined,
-                data: options?.body ? options.body : undefined,
-                headers: headers,
+                data: requestData,
+                dataType: type,
+                headers: {
+                  ...headers,
+                  ...optionHeaders,
+                },
               },
             );
 
-            let data = nativeResponse.headers['Content-Type']?.startsWith(
-              'application/json',
-            )
+            const contentType =
+              nativeResponse.headers['Content-Type'] ||
+              nativeResponse.headers['content-type'];
+            let data = contentType?.startsWith('application/json')
               ? JSON.stringify(nativeResponse.data)
               : nativeResponse.data;
 
@@ -603,49 +674,56 @@ const initBridge = (w: any): void => {
 
           try {
             this.readyState = 2;
+            convertBody(body).then(({ data, type, headers }) => {
+              const otherHeaders =
+                this._headers != null && Object.keys(this._headers).length > 0
+                  ? this._headers
+                  : undefined;
 
-            // intercept request & pass to the bridge
-            cap
-              .nativePromise('CapacitorHttp', 'request', {
-                url: this._url,
-                method: this._method,
-                data: body !== null ? body : undefined,
-                headers:
-                  this._headers != null && Object.keys(this._headers).length > 0
-                    ? this._headers
-                    : undefined,
-              })
-              .then((nativeResponse: any) => {
-                // intercept & parse response before returning
-                if (this.readyState == 2) {
+              // intercept request & pass to the bridge
+              cap
+                .nativePromise('CapacitorHttp', 'request', {
+                  url: this._url,
+                  method: this._method,
+                  data: data !== null ? data : undefined,
+                  headers: {
+                    ...headers,
+                    ...otherHeaders,
+                  },
+                  dataType: type,
+                })
+                .then((nativeResponse: any) => {
+                  // intercept & parse response before returning
+                  if (this.readyState == 2) {
+                    this.dispatchEvent(new Event('loadstart'));
+                    this._headers = nativeResponse.headers;
+                    this.status = nativeResponse.status;
+                    this.response = nativeResponse.data;
+                    this.responseText = nativeResponse.headers[
+                      'Content-Type'
+                    ]?.startsWith('application/json')
+                      ? JSON.stringify(nativeResponse.data)
+                      : nativeResponse.data;
+                    this.responseURL = nativeResponse.url;
+                    this.readyState = 4;
+                    this.dispatchEvent(new Event('load'));
+                    this.dispatchEvent(new Event('loadend'));
+                  }
+                  console.timeEnd(tag);
+                })
+                .catch((error: any) => {
                   this.dispatchEvent(new Event('loadstart'));
-                  this._headers = nativeResponse.headers;
-                  this.status = nativeResponse.status;
-                  this.response = nativeResponse.data;
-                  this.responseText = nativeResponse.headers[
-                    'Content-Type'
-                  ]?.startsWith('application/json')
-                    ? JSON.stringify(nativeResponse.data)
-                    : nativeResponse.data;
-                  this.responseURL = nativeResponse.url;
+                  this.status = error.status;
+                  this._headers = error.headers;
+                  this.response = error.data;
+                  this.responseText = JSON.stringify(error.data);
+                  this.responseURL = error.url;
                   this.readyState = 4;
-                  this.dispatchEvent(new Event('load'));
+                  this.dispatchEvent(new Event('error'));
                   this.dispatchEvent(new Event('loadend'));
-                }
-                console.timeEnd(tag);
-              })
-              .catch((error: any) => {
-                this.dispatchEvent(new Event('loadstart'));
-                this.status = error.status;
-                this._headers = error.headers;
-                this.response = error.data;
-                this.responseText = JSON.stringify(error.data);
-                this.responseURL = error.url;
-                this.readyState = 4;
-                this.dispatchEvent(new Event('error'));
-                this.dispatchEvent(new Event('loadend'));
-                console.timeEnd(tag);
-              });
+                  console.timeEnd(tag);
+                });
+            });
           } catch (error) {
             this.dispatchEvent(new Event('loadstart'));
             this.status = 500;
