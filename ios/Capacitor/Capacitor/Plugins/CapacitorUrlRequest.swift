@@ -144,7 +144,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return data
     }
 
-    public func getRequestData(_ body: JSValue, _ contentType: String, _ dataType: String) throws -> Data? {
+    public func getRequestData(_ body: JSValue, _ contentType: String, _ dataType: String? = nil) throws -> Data? {
         if dataType == "file" {
             guard let stringData = body as? String else {
                 throw CapacitorUrlRequestError.serializationError("[ data ] argument could not be parsed as string")
@@ -185,7 +185,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
     }
 
-    public func setRequestBody(_ body: JSValue, _ dataType: String) throws {
+    public func setRequestBody(_ body: JSValue, _ dataType: String? = nil) throws {
         let contentType = self.getRequestHeader("Content-Type") as? String
 
         if contentType != nil {

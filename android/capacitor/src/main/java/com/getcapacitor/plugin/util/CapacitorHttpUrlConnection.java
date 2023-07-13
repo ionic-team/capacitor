@@ -175,6 +175,16 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      * @throws JSONException
      * @throws IOException
      */
+    public void setRequestBody(PluginCall call, JSValue body) throws JSONException, IOException {
+        setRequestBody(call, body, null);
+    }
+
+    /**
+     *
+     * @param call
+     * @throws JSONException
+     * @throws IOException
+     */
     public void setRequestBody(PluginCall call, JSValue body, String bodyType) throws JSONException, IOException {
         String contentType = connection.getRequestProperty("Content-Type");
         String dataString = "";
@@ -194,14 +204,14 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                 dataString = call.getString("data");
             }
             this.writeRequestBody(dataString != null ? dataString : "");
-        } else if (bodyType.equals("file")) {
+        } else if (bodyType != null && bodyType.equals("file")) {
             try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     os.write(Base64.getDecoder().decode(body.toString()));
                 }
                 os.flush();
             }
-        } else if (bodyType.equals("formData")) {
+        } else if (bodyType != null && bodyType.equals("formData")) {
             this.writeFormDataRequestBody(contentType, body.toJSArray());
         } else {
             this.writeRequestBody(body.toString());
