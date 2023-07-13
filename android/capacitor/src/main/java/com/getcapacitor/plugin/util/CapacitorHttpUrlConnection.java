@@ -178,6 +178,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
     public void setRequestBody(PluginCall call, JSValue body) throws JSONException, IOException {
         setRequestBody(call, body, null);
     }
+
     /**
      *
      * @param call
