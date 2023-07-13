@@ -234,8 +234,11 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                     String value = entry.getString("value");
                     if (type.equals("string")) {
                         os.writeBytes(twoHyphens + boundary + lineEnd);
-                        os.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd + lineEnd);
-                        os.writeBytes(value);
+                        os.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd);
+                        os.writeBytes(lineEnd);
+
+                        os.write(value.getBytes(StandardCharsets.UTF_8));
+
                         os.writeBytes(lineEnd);
                     } else if (type.equals("base64File")) {
                         String fileName = entry.getString("fileName");
