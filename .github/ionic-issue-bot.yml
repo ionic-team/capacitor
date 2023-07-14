@@ -18,9 +18,11 @@ comment:
         that that have been reproduced and are being tracked in our internal issue tracker.
     - label: "needs reproduction"
       message: >
-        This issue may need more information before it can be addressed. In particular, it will need a reliable Code Reproduction that demonstrates the issue.
+        This issue needs more information before it can be addressed.
+        In particular, the reporter needs to provide a minimal sample app that demonstrates the issue.
+        If no sample app is provided within 15 days, the issue will be closed.
 
-        Please see the Contributing Guide for [how to create a Code Reproduction](https://github.com/ionic-team/capacitor/blob/HEAD/CONTRIBUTING.md#creating-a-code-reproduction).
+        Please see the Contributing Guide for [how to create a Sample App](https://github.com/ionic-team/capacitor/blob/HEAD/CONTRIBUTING.md#creating-a-code-reproduction).
 
         Thanks!
         Ionitron 💙
