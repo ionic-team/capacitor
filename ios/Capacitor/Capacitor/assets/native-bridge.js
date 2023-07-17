@@ -528,6 +528,7 @@ var nativeBridge = (function (exports) {
                         // XHR patch open
                         prototype.open = function (method, url) {
                             this._url = url;
+                            this._method = method;
                             if (!(url.startsWith('http:') || url.toString().startsWith('https:'))) {
                                 return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
                             }
