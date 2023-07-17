@@ -573,11 +573,16 @@ var nativeBridge = (function (exports) {
                                         // intercept & parse response before returning
                                         if (this.readyState == 2) {
                                             //TODO: Add progress event emission on native side
-                                            this.dispatchEvent(new ProgressEvent('progress', {
-                                                lengthComputable: true,
-                                                loaded: nativeResponse.data.length,
-                                                total: nativeResponse.data.length,
-                                            }));
+                                            if (typeof ProgressEvent !== 'undefined') {
+                                                this.dispatchEvent(new ProgressEvent('progress', {
+                                                    lengthComputable: true,
+                                                    loaded: nativeResponse.data.length,
+                                                    total: nativeResponse.data.length,
+                                                }));
+                                            }
+                                            else {
+                                                this.dispatchEvent(new Event('progress'));
+                                            }
                                             this._headers = nativeResponse.headers;
                                             this.status = nativeResponse.status;
                                             if (this.responseType === '' ||
@@ -609,11 +614,16 @@ var nativeBridge = (function (exports) {
                                         this.responseText = JSON.stringify(error.data);
                                         this.responseURL = error.url;
                                         this.readyState = 4;
-                                        this.dispatchEvent(new ProgressEvent('progress', {
-                                            lengthComputable: false,
-                                            loaded: 0,
-                                            total: 0,
-                                        }));
+                                        if (typeof ProgressEvent !== 'undefined') {
+                                            this.dispatchEvent(new ProgressEvent('progress', {
+                                                lengthComputable: false,
+                                                loaded: 0,
+                                                total: 0,
+                                            }));
+                                        }
+                                        else {
+                                            this.dispatchEvent(new Event('progress'));
+                                        }
                                         setTimeout(() => {
                                             this.dispatchEvent(new Event('error'));
                                             this.dispatchEvent(new Event('loadend'));
@@ -629,11 +639,16 @@ var nativeBridge = (function (exports) {
                                 this.responseText = error.toString();
                                 this.responseURL = this._url;
                                 this.readyState = 4;
-                                this.dispatchEvent(new ProgressEvent('progress', {
-                                    lengthComputable: false,
-                                    loaded: 0,
-                                    total: 0,
-                                }));
+                                if (typeof ProgressEvent !== 'undefined') {
+                                    this.dispatchEvent(new ProgressEvent('progress', {
+                                        lengthComputable: false,
+                                        loaded: 0,
+                                        total: 0,
+                                    }));
+                                }
+                                else {
+                                    this.dispatchEvent(new Event('progress'));
+                                }
                                 setTimeout(() => {
                                     this.dispatchEvent(new Event('error'));
                                     this.dispatchEvent(new Event('loadend'));
