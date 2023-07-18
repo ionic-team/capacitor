@@ -610,6 +610,7 @@ const initBridge = (w: any): void => {
           // XHR patch open
           prototype.open = function (method: string, url: string) {
             this._url = url;
+            this._method = method;
 
             if (
               !(url.startsWith('http:') || url.toString().startsWith('https:'))
