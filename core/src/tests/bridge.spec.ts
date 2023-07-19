@@ -70,12 +70,14 @@ describe.each(platforms)('%s bridge', (platformName, setup) => {
 
   beforeEach(() => {
     win = {};
-    initBridge(win);
     mocks = setup(win);
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     window.prompt = () => {};
+
+    initBridge(win);
   });
 
   it('getPlatform', () => {
@@ -92,7 +94,6 @@ describe.each(platforms)('%s bridge', (platformName, setup) => {
       data: null,
       error: { message: 'darn it' },
     });
-    initBridge(win);
 
     win.Capacitor.nativePromise('id', 'method')
       .then(() => {
@@ -113,7 +114,6 @@ describe.each(platforms)('%s bridge', (platformName, setup) => {
       success: true,
       data: { mph: 88 },
     });
-    initBridge(win);
 
     win.Capacitor.nativePromise('id', 'method')
       .then(data => {
@@ -133,7 +133,6 @@ describe.each(platforms)('%s bridge', (platformName, setup) => {
       success: false,
       error: { message: 'darn it' },
     });
-    initBridge(win);
 
     win.Capacitor.nativeCallback(
       'pluginName',
@@ -156,7 +155,6 @@ describe.each(platforms)('%s bridge', (platformName, setup) => {
       data: { mph: 88 },
       success: true,
     });
-    initBridge(win);
 
     win.Capacitor.nativeCallback(
       'pluginName',
