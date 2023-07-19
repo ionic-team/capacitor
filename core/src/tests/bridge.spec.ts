@@ -4,38 +4,88 @@
 
 import { initBridge } from '../../native-bridge';
 import type {
-  CapacitorInstance,
   PluginResult,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor } from '../runtime';
 
-describe('bridge', () => {
+const platforms: [name: string, setup: (win: WindowCapacitor) => { mockPluginResult: (pluginResult: PluginResult) => void }][] = [
+  [
+    'ios',
+    (win: WindowCapacitor) => {
+      const mockPostMessage = jest.fn();
+      win.webkit = {
+        messageHandlers: {
+          bridge: {
+            postMessage: mockPostMessage,
+          }
+        }
+      };
+
+      return {
+        mockPluginResult: (pluginResult: PluginResult) => {
+          mockPostMessage.mockImplementation((m) => {
+            pluginResult.callbackId = m.callbackId;
+            pluginResult.methodName = m.methodName;
+            win.Capacitor.fromNative(pluginResult);
+          });
+        },
+      }
+    },
+  ],
+  [
+    'android',
+    (win: WindowCapacitor) => {
+      const mockPostMessage = jest.fn();
+      win.androidBridge = {
+        postMessage: mockPostMessage,
+      };
+
+      return {
+        mockPluginResult: (pluginResult: PluginResult) => {
+          mockPostMessage.mockImplementation((m) => {
+            const d = JSON.parse(m);
+            pluginResult.callbackId = d.callbackId;
+            pluginResult.methodName = d.methodName;
+
+            win.androidBridge.onmessage({ data: JSON.stringify(pluginResult) });
+          });
+        },
+      };
+    },
+  ],
+];
+
+describe.each(platforms)('%s bridge', (platformName, setup) => {
   let win: WindowCapacitor;
-  let cap: CapacitorInstance;
+  let mocks: { mockPluginResult: (pluginResult: PluginResult) => void};
 
   beforeEach(() => {
     win = {};
     initBridge(win);
+    mocks = setup(win);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     window.prompt = () => {};
   });
 
-  it('android nativePromise error', done => {
-    mockAndroidPluginResult({
+  it('getPlatform', () => {
+    expect(win.Capacitor.getPlatform()).toBe(platformName);
+  });
+
+  it('isNativePlatform', () => {
+    expect(win.Capacitor.isNativePlatform()).toBe(true);
+  });
+
+  it('nativePromise error', done => {
+    mocks.mockPluginResult({
       success: false,
       data: null,
       error: { message: 'darn it' },
     });
     initBridge(win);
 
-    cap = createCapacitor(win);
-    expect(cap.getPlatform()).toBe('android');
-    expect(cap.isNativePlatform()).toBe(true);
-
-    cap
+    win.Capacitor
       .nativePromise('id', 'method')
       .then(() => {
         done('should throw error');
@@ -50,18 +100,14 @@ describe('bridge', () => {
       });
   });
 
-  it('android nativePromise success', done => {
-    mockAndroidPluginResult({
+  it('nativePromise success', done => {
+    mocks.mockPluginResult({
       success: true,
       data: { mph: 88 },
     });
     initBridge(win);
 
-    cap = createCapacitor(win);
-    expect(cap.getPlatform()).toBe('android');
-    expect(cap.isNativePlatform()).toBe(true);
-
-    cap
+    win.Capacitor
       .nativePromise('id', 'method')
       .then(data => {
         try {
@@ -74,19 +120,15 @@ describe('bridge', () => {
       .catch(done);
   });
 
-  it('ios nativeCallback w/ callback error', done => {
-    mockIosPluginResult({
+  it('nativeCallback w/ callback error', done => {
+    mocks.mockPluginResult({
       data: null,
       success: false,
       error: { message: 'darn it' },
     });
     initBridge(win);
 
-    cap = createCapacitor(win);
-    expect(cap.getPlatform()).toBe('ios');
-    expect(cap.isNativePlatform()).toBe(true);
-
-    cap.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
+    win.Capacitor.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
       try {
         expect(data).toEqual(null);
         expect(err.message).toBe('darn it');
@@ -97,18 +139,14 @@ describe('bridge', () => {
     });
   });
 
-  it('ios nativeCallback w/ options and callback, success', done => {
-    mockIosPluginResult({
+  it('nativeCallback w/ options and callback, success', done => {
+    mocks.mockPluginResult({
       data: { mph: 88 },
       success: true,
     });
     initBridge(win);
 
-    cap = createCapacitor(win);
-    expect(cap.getPlatform()).toBe('ios');
-    expect(cap.isNativePlatform()).toBe(true);
-
-    cap.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
+    win.Capacitor.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
       try {
         expect(data).toEqual({ mph: 88 });
         expect(err).toBe(undefined);
@@ -118,33 +156,4 @@ describe('bridge', () => {
       }
     });
   });
-
-  const mockAndroidPluginResult = (pluginResult: PluginResult) => {
-    win.androidBridge = {
-      postMessage: m => {
-        const d = JSON.parse(m);
-        Promise.resolve().then(() => {
-          pluginResult.callbackId = d.callbackId;
-          pluginResult.methodName = d.methodName;
-          cap.fromNative(pluginResult);
-        });
-      },
-    };
-  };
-
-  const mockIosPluginResult = (pluginResult: PluginResult) => {
-    win.webkit = {
-      messageHandlers: {
-        bridge: {
-          postMessage: m => {
-            Promise.resolve().then(() => {
-              pluginResult.callbackId = m.callbackId;
-              pluginResult.methodName = m.methodName;
-              cap.fromNative(pluginResult);
-            });
-          },
-        },
-      },
-    };
-  };
 });
