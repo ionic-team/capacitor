@@ -466,7 +466,7 @@ const initBridge = (w: any): void => {
 
       if (doPatchHttp) {
         // fetch patch
-        window.fetch = async (
+        win.fetch = async (
           resource: RequestInfo | URL,
           options?: RequestInit,
         ) => {
@@ -549,7 +549,7 @@ const initBridge = (w: any): void => {
           new (): XMLHttpRequest;
         }
 
-        window.XMLHttpRequest = function () {
+        win.XMLHttpRequest = function () {
           const xhr = new win.CapacitorWebXMLHttpRequest.constructor();
           Object.defineProperties(xhr, {
             _headers: {
