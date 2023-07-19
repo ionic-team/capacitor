@@ -6,34 +6,6 @@ import 'isomorphic-fetch';
 import { initBridge } from '../../native-bridge';
 import { MessageCallData, PluginResult, WindowCapacitor } from '../definitions-internal';
 
-const createMockResponse = (win: WindowCapacitor, response: Partial<PluginResult> = {}) => (m: string) => {
-  const data: MessageCallData = JSON.parse(m);
-  const result = {
-    callbackId: data.callbackId,
-    methodName: data.methodName,
-    pluginId: data.pluginId,
-    success: true,
-    data: {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: {
-        test: 'value',
-      },
-      status: 200,
-    },
-    ...response,
-  };
-
-  setTimeout(() => {
-    if (result.success) {
-      win.androidBridge.onmessage({data: JSON.stringify(result)});
-    } else {
-      win.androidBridge.onmessage({data: JSON.stringify(result)});
-    }
-  });
-};
-
 describe('http', () => {
   let win: WindowCapacitor;
   const testFile = new File(['foo'], 'foo.txt', { type: 'text/plain' });
@@ -41,6 +13,34 @@ describe('http', () => {
 
   describe('android', () => {
     let mockPostMessage: jest.Mock<void, [string]>;
+
+    const createMockResponse = (win: WindowCapacitor, response: Partial<PluginResult> = {}) => (m: string) => {
+      const data: MessageCallData = JSON.parse(m);
+      const result = {
+        callbackId: data.callbackId,
+        methodName: data.methodName,
+        pluginId: data.pluginId,
+        success: true,
+        data: {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: {
+            test: 'value',
+          },
+          status: 200,
+        },
+        ...response,
+      };
+
+      setTimeout(() => {
+        if (result.success) {
+          win.androidBridge.onmessage({data: JSON.stringify(result)});
+        } else {
+          win.androidBridge.onmessage({data: JSON.stringify(result)});
+        }
+      });
+    };
 
     beforeEach(() => {
       mockPostMessage = jest.fn();
