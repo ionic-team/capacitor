@@ -32,6 +32,7 @@ const readFileAsBase64 = (file: File): Promise<string> =>
 
 const convertFormData = async (formData: FormData): Promise<any> => {
   const newFormData: CapFormDataEntry[] = [];
+  // @ts-ignore
   for (const pair of formData.entries()) {
     const [key, value] = pair;
     if (value instanceof File) {
@@ -466,7 +467,7 @@ const initBridge = (w: any): void => {
 
       if (doPatchHttp) {
         // fetch patch
-        window.fetch = async (
+        win.fetch = async (
           resource: RequestInfo | URL,
           options?: RequestInit,
         ) => {
@@ -549,7 +550,7 @@ const initBridge = (w: any): void => {
           new (): XMLHttpRequest;
         }
 
-        window.XMLHttpRequest = function () {
+        win.XMLHttpRequest = function () {
           const xhr = new win.CapacitorWebXMLHttpRequest.constructor();
           Object.defineProperties(xhr, {
             _headers: {

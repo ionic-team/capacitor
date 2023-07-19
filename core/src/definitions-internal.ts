@@ -213,6 +213,8 @@ export interface WindowCapacitor {
       exitApp?: () => void;
     };
   };
+  fetch?: typeof window.fetch;
+  XMLHttpRequest?: typeof window.XMLHttpRequest;
 }
 
 export interface CapFormDataEntry {
