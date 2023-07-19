@@ -3,12 +3,14 @@
  */
 
 import { initBridge } from '../../native-bridge';
-import type {
-  PluginResult,
-  WindowCapacitor,
-} from '../definitions-internal';
+import type { PluginResult, WindowCapacitor } from '../definitions-internal';
 
-const platforms: [name: string, setup: (win: WindowCapacitor) => { mockPluginResult: (pluginResult: PluginResult) => void }][] = [
+const platforms: [
+  name: string,
+  setup: (win: WindowCapacitor) => {
+    mockPluginResult: (pluginResult: PluginResult) => void;
+  },
+][] = [
   [
     'ios',
     (win: WindowCapacitor) => {
@@ -17,20 +19,22 @@ const platforms: [name: string, setup: (win: WindowCapacitor) => { mockPluginRes
         messageHandlers: {
           bridge: {
             postMessage: mockPostMessage,
-          }
-        }
+          },
+        },
       };
 
       return {
         mockPluginResult: (pluginResult: PluginResult) => {
-          mockPostMessage.mockImplementation((m) => {
+          mockPostMessage.mockImplementation(m => {
             pluginResult.callbackId = m.callbackId;
             pluginResult.methodName = m.methodName;
 
-            Promise.resolve().then(() => win.Capacitor.fromNative(pluginResult));
+            Promise.resolve().then(() =>
+              win.Capacitor.fromNative(pluginResult),
+            );
           });
         },
-      }
+      };
     },
   ],
   [
@@ -43,12 +47,16 @@ const platforms: [name: string, setup: (win: WindowCapacitor) => { mockPluginRes
 
       return {
         mockPluginResult: (pluginResult: PluginResult) => {
-          mockPostMessage.mockImplementation((m) => {
+          mockPostMessage.mockImplementation(m => {
             const d = JSON.parse(m);
             pluginResult.callbackId = d.callbackId;
             pluginResult.methodName = d.methodName;
 
-            Promise.resolve().then(() => win.androidBridge.onmessage({ data: JSON.stringify(pluginResult) }));
+            Promise.resolve().then(() =>
+              win.androidBridge.onmessage({
+                data: JSON.stringify(pluginResult),
+              }),
+            );
           });
         },
       };
@@ -58,7 +66,7 @@ const platforms: [name: string, setup: (win: WindowCapacitor) => { mockPluginRes
 
 describe.each(platforms)('%s bridge', (platformName, setup) => {
   let win: WindowCapacitor;
-  let mocks: { mockPluginResult: (pluginResult: PluginResult) => void};
+  let mocks: { mockPluginResult: (pluginResult: PluginResult) => void };
 
   beforeEach(() => {
     win = {};
@@ -86,8 +94,7 @@ describe.each(platforms)('%s bridge', (platformName, setup) => {
     });
     initBridge(win);
 
-    win.Capacitor
-      .nativePromise('id', 'method')
+    win.Capacitor.nativePromise('id', 'method')
       .then(() => {
         done('should throw error');
       })
@@ -108,8 +115,7 @@ describe.each(platforms)('%s bridge', (platformName, setup) => {
     });
     initBridge(win);
 
-    win.Capacitor
-      .nativePromise('id', 'method')
+    win.Capacitor.nativePromise('id', 'method')
       .then(data => {
         try {
           expect(data).toEqual({ mph: 88 });
@@ -129,15 +135,20 @@ describe.each(platforms)('%s bridge', (platformName, setup) => {
     });
     initBridge(win);
 
-    win.Capacitor.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
-      try {
-        expect(data).toEqual(null);
-        expect(err.message).toBe('darn it');
-        done();
-      } catch (e) {
-        done(e);
-      }
-    });
+    win.Capacitor.nativeCallback(
+      'pluginName',
+      'methodName',
+      {},
+      (data, err) => {
+        try {
+          expect(data).toEqual(null);
+          expect(err.message).toBe('darn it');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      },
+    );
   });
 
   it('nativeCallback w/ options and callback, success', done => {
@@ -147,14 +158,19 @@ describe.each(platforms)('%s bridge', (platformName, setup) => {
     });
     initBridge(win);
 
-    win.Capacitor.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
-      try {
-        expect(data).toEqual({ mph: 88 });
-        expect(err).toBe(undefined);
-        done();
-      } catch (e) {
-        done(e);
-      }
-    });
+    win.Capacitor.nativeCallback(
+      'pluginName',
+      'methodName',
+      {},
+      (data, err) => {
+        try {
+          expect(data).toEqual({ mph: 88 });
+          expect(err).toBe(undefined);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      },
+    );
   });
 });
