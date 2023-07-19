@@ -4,7 +4,7 @@
 
 import 'isomorphic-fetch';
 import { initBridge } from '../../native-bridge';
-import { MessageCallData, PluginResult, WindowCapacitor } from '../definitions-internal';
+import type { MessageCallData, PluginResult, WindowCapacitor } from '../definitions-internal';
 
 describe('http', () => {
   let win: WindowCapacitor;
@@ -345,7 +345,8 @@ describe('http', () => {
         mockPostMessage.mockImplementation(createMockResponse(win, {
           error: {
             message: '',
-            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore: Error handling is expecting extra properties here...
             status: 500,
           },
           success: false,

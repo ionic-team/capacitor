@@ -32,7 +32,6 @@ const readFileAsBase64 = (file: File): Promise<string> =>
 
 const convertFormData = async (formData: FormData): Promise<any> => {
   const newFormData: CapFormDataEntry[] = [];
-  // @ts-ignore
   for (const pair of formData.entries()) {
     const [key, value] = pair;
     if (value instanceof File) {
