@@ -26,7 +26,8 @@ const platforms: [name: string, setup: (win: WindowCapacitor) => { mockPluginRes
           mockPostMessage.mockImplementation((m) => {
             pluginResult.callbackId = m.callbackId;
             pluginResult.methodName = m.methodName;
-            win.Capacitor.fromNative(pluginResult);
+
+            Promise.resolve().then(() => win.Capacitor.fromNative(pluginResult));
           });
         },
       }
@@ -47,7 +48,7 @@ const platforms: [name: string, setup: (win: WindowCapacitor) => { mockPluginRes
             pluginResult.callbackId = d.callbackId;
             pluginResult.methodName = d.methodName;
 
-            win.androidBridge.onmessage({ data: JSON.stringify(pluginResult) });
+            Promise.resolve().then(() => win.androidBridge.onmessage({ data: JSON.stringify(pluginResult) }));
           });
         },
       };
