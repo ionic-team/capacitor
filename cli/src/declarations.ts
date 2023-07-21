@@ -483,9 +483,8 @@ export interface CapacitorConfig {
     /**
      * Load an external URL in the Web View.
      *
-     * This is intended for use with live-reload servers.
-     *
-     * **This is not intended for use in production.**
+     * This is intended for use with live-reload servers, and server-side
+     * rendered apps that aren't exportable to static files.
      *
      * @since 1.0.0
      */
