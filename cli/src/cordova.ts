@@ -489,6 +489,9 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
           existingElementsArray: any[],
         ) => {
           for (const requiredElement of requiredElementsArray) {
+            if (requiredElementsArray === undefined) {
+              return false;
+            }
             if (
               requiredElement.name === 'key' ||
               requiredElement.name === 'string'
