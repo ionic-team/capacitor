@@ -747,7 +747,7 @@ const initBridge = (w: any): void => {
         window.XMLHttpRequest.prototype.getResponseHeader = function (
           name: string,
         ) {
-          if (this._useVanilla) {
+          if (!this._useCapacitor) {
             return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(
               this,
               name,

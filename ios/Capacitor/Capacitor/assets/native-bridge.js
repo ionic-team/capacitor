@@ -647,7 +647,7 @@ var nativeBridge = (function (exports) {
                     };
                     // XHR patch getResponseHeader
                     window.XMLHttpRequest.prototype.getResponseHeader = function (name) {
-                        if (this._useVanilla) {
+                        if (!this._useCapacitor) {
                             return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                         }
                         return this._headers[name];
