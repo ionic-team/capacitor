@@ -6,11 +6,11 @@ import type { HttpResponse } from './src/core-plugins';
 import type {
   CallData,
   CapacitorInstance,
+  CapFormDataEntry,
   ErrorCallData,
   MessageCallData,
   PluginResult,
   WindowCapacitor,
-  CapFormDataEntry,
 } from './src/definitions-internal';
 import { CapacitorException } from './src/util';
 
@@ -545,19 +545,23 @@ const initBridge = (w: any): void => {
         };
 
         // XHR patch
-        interface PatchedXMLHttpRequestConstructor extends XMLHttpRequest {
-          new (): XMLHttpRequest;
-        }
+        window.XMLHttpRequest.prototype.open = function (method, url) {
+          const isAbsoluteUrl = /(http(s?)):\/\//i.test(url);
+          const useVanilla = !isAbsoluteUrl || !url || this.readyState !== 0;
+          if (useVanilla) {
+            return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
+          }
 
-        window.XMLHttpRequest = function () {
-          const xhr = new win.CapacitorWebXMLHttpRequest.constructor();
-          Object.defineProperties(xhr, {
+          Object.defineProperties(this, {
+            _useCapacitor: {
+              value: true,
+            },
             _headers: {
               value: {},
               writable: true,
             },
             _method: {
-              value: xhr.method,
+              value: method,
               writable: true,
             },
             readyState: {
@@ -589,215 +593,183 @@ const initBridge = (w: any): void => {
             },
           });
 
-          xhr.readyState = 0;
-          const prototype = win.CapacitorWebXMLHttpRequest.prototype;
+          this._url = url;
+          this._method = method;
+          setTimeout(() => {
+            this.dispatchEvent(new Event('loadstart'));
+          });
+          this.readyState = 1;
+        };
 
-          // XHR patch abort
-          prototype.abort = function () {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
-              return win.CapacitorWebXMLHttpRequest.abort.call(this);
-            }
-            this.readyState = 0;
-            setTimeout(() => {
-              this.dispatchEvent(new Event('abort'));
-              this.dispatchEvent(new Event('loadend'));
-            });
-          };
+        // XHR patch abort
+        window.XMLHttpRequest.prototype.abort = function () {
+          if (!this._useCapacitor) {
+            return win.CapacitorWebXMLHttpRequest.abort.call(this);
+          }
 
-          // XHR patch open
-          prototype.open = function (method: string, url: string) {
-            this._url = url;
-            this._method = method;
+          this.readyState = 0;
+          setTimeout(() => {
+            this.dispatchEvent(new Event('abort'));
+            this.dispatchEvent(new Event('loadend'));
+          });
+        };
 
-            if (
-              !(url.startsWith('http:') || url.toString().startsWith('https:'))
-            ) {
-              return win.CapacitorWebXMLHttpRequest.open.call(
-                this,
-                method,
-                url,
-              );
-            }
+        // XHR patch send
+        window.XMLHttpRequest.prototype.send = function (
+          body?: Document | XMLHttpRequestBodyInit,
+        ) {
+          if (!this._useCapacitor) {
+            return win.CapacitorWebXMLHttpRequest.send.call(this, body);
+          }
 
-            setTimeout(() => {
-              this.dispatchEvent(new Event('loadstart'));
-            });
-            this.readyState = 1;
-          };
+          const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
+          console.time(tag);
 
-          // XHR patch set request header
-          prototype.setRequestHeader = function (
-            header: string,
-            value: string,
-          ) {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
-              return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(
-                this,
-                header,
-                value,
-              );
-            }
-            this._headers[header] = value;
-          };
+          try {
+            this.readyState = 2;
+            convertBody(body).then(({ data, type, headers }) => {
+              const otherHeaders =
+                this._headers != null && Object.keys(this._headers).length > 0
+                  ? this._headers
+                  : undefined;
 
-          // XHR patch send
-          prototype.send = function (body?: Document | XMLHttpRequestBodyInit) {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
-              return win.CapacitorWebXMLHttpRequest.send.call(this, body);
-            }
-
-            const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${
-              this._url
-            }`;
-            console.time(tag);
-
-            try {
-              this.readyState = 2;
-              convertBody(body).then(({ data, type, headers }) => {
-                const otherHeaders =
-                  this._headers != null && Object.keys(this._headers).length > 0
-                    ? this._headers
-                    : undefined;
-
-                // intercept request & pass to the bridge
-                cap
-                  .nativePromise('CapacitorHttp', 'request', {
-                    url: this._url,
-                    method: this._method,
-                    data: data !== null ? data : undefined,
-                    headers: {
-                      ...headers,
-                      ...otherHeaders,
-                    },
-                    dataType: type,
-                  })
-                  .then((nativeResponse: any) => {
-                    // intercept & parse response before returning
-                    if (this.readyState == 2) {
-                      //TODO: Add progress event emission on native side
-                      this.dispatchEvent(
-                        new ProgressEvent('progress', {
-                          lengthComputable: true,
-                          loaded: nativeResponse.data.length,
-                          total: nativeResponse.data.length,
-                        }),
-                      );
-                      this._headers = nativeResponse.headers;
-                      this.status = nativeResponse.status;
-                      if (
-                        this.responseType === '' ||
-                        this.responseType === 'text'
-                      ) {
-                        this.response =
-                          typeof nativeResponse.data !== 'string'
-                            ? JSON.stringify(nativeResponse.data)
-                            : nativeResponse.data;
-                      } else {
-                        this.response = nativeResponse.data;
-                      }
-                      this.responseText = nativeResponse.headers[
-                        'Content-Type'
-                      ]?.startsWith('application/json')
-                        ? JSON.stringify(nativeResponse.data)
-                        : nativeResponse.data;
-                      this.responseURL = nativeResponse.url;
-                      this.readyState = 4;
-                      setTimeout(() => {
-                        this.dispatchEvent(new Event('load'));
-                        this.dispatchEvent(new Event('loadend'));
-                      });
-                    }
-                    console.timeEnd(tag);
-                  })
-                  .catch((error: any) => {
-                    this.status = error.status;
-                    this._headers = error.headers;
-                    this.response = error.data;
-                    this.responseText = JSON.stringify(error.data);
-                    this.responseURL = error.url;
-                    this.readyState = 4;
+              // intercept request & pass to the bridge
+              cap
+                .nativePromise('CapacitorHttp', 'request', {
+                  url: this._url,
+                  method: this._method,
+                  data: data !== null ? data : undefined,
+                  headers: {
+                    ...headers,
+                    ...otherHeaders,
+                  },
+                  dataType: type,
+                })
+                .then((nativeResponse: any) => {
+                  // intercept & parse response before returning
+                  if (this.readyState == 2) {
+                    //TODO: Add progress event emission on native side
                     this.dispatchEvent(
                       new ProgressEvent('progress', {
-                        lengthComputable: false,
-                        loaded: 0,
-                        total: 0,
+                        lengthComputable: true,
+                        loaded: nativeResponse.data.length,
+                        total: nativeResponse.data.length,
                       }),
                     );
+                    this._headers = nativeResponse.headers;
+                    this.status = nativeResponse.status;
+                    if (
+                      this.responseType === '' ||
+                      this.responseType === 'text'
+                    ) {
+                      this.response =
+                        typeof nativeResponse.data !== 'string'
+                          ? JSON.stringify(nativeResponse.data)
+                          : nativeResponse.data;
+                    } else {
+                      this.response = nativeResponse.data;
+                    }
+                    this.responseText = nativeResponse.headers[
+                      'Content-Type'
+                    ]?.startsWith('application/json')
+                      ? JSON.stringify(nativeResponse.data)
+                      : nativeResponse.data;
+                    this.responseURL = nativeResponse.url;
+                    this.readyState = 4;
                     setTimeout(() => {
-                      this.dispatchEvent(new Event('error'));
+                      this.dispatchEvent(new Event('load'));
                       this.dispatchEvent(new Event('loadend'));
                     });
-                    console.timeEnd(tag);
+                  }
+                  console.timeEnd(tag);
+                })
+                .catch((error: any) => {
+                  this.status = error.status;
+                  this._headers = error.headers;
+                  this.response = error.data;
+                  this.responseText = JSON.stringify(error.data);
+                  this.responseURL = error.url;
+                  this.readyState = 4;
+                  this.dispatchEvent(
+                    new ProgressEvent('progress', {
+                      lengthComputable: false,
+                      loaded: 0,
+                      total: 0,
+                    }),
+                  );
+                  setTimeout(() => {
+                    this.dispatchEvent(new Event('error'));
+                    this.dispatchEvent(new Event('loadend'));
                   });
-              });
-            } catch (error) {
-              this.status = 500;
-              this._headers = {};
-              this.response = error;
-              this.responseText = error.toString();
-              this.responseURL = this._url;
-              this.readyState = 4;
-              this.dispatchEvent(
-                new ProgressEvent('progress', {
-                  lengthComputable: false,
-                  loaded: 0,
-                  total: 0,
-                }),
-              );
-              setTimeout(() => {
-                this.dispatchEvent(new Event('error'));
-                this.dispatchEvent(new Event('loadend'));
-              });
-              console.timeEnd(tag);
-            }
-          };
+                  console.timeEnd(tag);
+                });
+            });
+          } catch (error) {
+            this.status = 500;
+            this._headers = {};
+            this.response = error;
+            this.responseText = error.toString();
+            this.responseURL = this._url;
+            this.readyState = 4;
+            this.dispatchEvent(
+              new ProgressEvent('progress', {
+                lengthComputable: false,
+                loaded: 0,
+                total: 0,
+              }),
+            );
+            setTimeout(() => {
+              this.dispatchEvent(new Event('error'));
+              this.dispatchEvent(new Event('loadend'));
+            });
+            console.timeEnd(tag);
+          }
+        };
 
-          // XHR patch getAllResponseHeaders
-          prototype.getAllResponseHeaders = function () {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
-              return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(
-                this,
-              );
-            }
+        // XHR patch getAllResponseHeaders
+        window.XMLHttpRequest.prototype.getAllResponseHeaders = function () {
+          if (!this._useCapacitor) {
+            return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(
+              this,
+            );
+          }
 
-            let returnString = '';
-            for (const key in this._headers) {
-              if (key != 'Set-Cookie') {
-                returnString += key + ': ' + this._headers[key] + '\r\n';
-              }
+          let returnString = '';
+          for (const key in this._headers) {
+            if (key != 'Set-Cookie') {
+              returnString += key + ': ' + this._headers[key] + '\r\n';
             }
-            return returnString;
-          };
+          }
+          return returnString;
+        };
 
-          // XHR patch getResponseHeader
-          prototype.getResponseHeader = function (name: string) {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
-              return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(
-                this,
-                name,
-              );
-            }
-            return this._headers[name];
-          };
+        // XHR patch getResponseHeader
+        window.XMLHttpRequest.prototype.getResponseHeader = function (
+          name: string,
+        ) {
+          if (this._useVanilla) {
+            return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(
+              this,
+              name,
+            );
+          }
+          return this._headers[name];
+        };
 
-          Object.setPrototypeOf(xhr, prototype);
-          return xhr;
-        } as unknown as PatchedXMLHttpRequestConstructor;
+        // XHR patch set request header
+        window.XMLHttpRequest.prototype.setRequestHeader = function (
+          header: string,
+          value: string,
+        ) {
+          if (!this._useCapacitor) {
+            return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(
+              this,
+              header,
+              value,
+            );
+          }
+          this._headers[header] = value;
+        };
       }
     }
 
