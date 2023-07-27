@@ -45,6 +45,7 @@ var nativeBridge = (function (exports) {
         reader.readAsBinaryString(file);
     });
     const convertFormData = async (formData) => {
+        console.log("convertFormData formData: ", formData);
         const newFormData = [];
         for (const pair of formData.entries()) {
             const [key, value] = pair;
@@ -65,8 +66,11 @@ var nativeBridge = (function (exports) {
         return newFormData;
     };
     const convertBody = async (body) => {
+        console.log("convertBody body: ", body);
         if (body instanceof FormData) {
+            console.log("convertBody body instanceof FormData");
             const formData = await convertFormData(body);
+            console.log("convertBody convertFormData formData: ", formData);
             const boundary = `${Date.now()}`;
             return {
                 data: formData,
@@ -77,6 +81,7 @@ var nativeBridge = (function (exports) {
             };
         }
         else if (body instanceof File) {
+            console.log("convertBody body instanceof File");
             const fileData = await readFileAsBase64(body);
             return {
                 data: fileData,
