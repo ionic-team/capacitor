@@ -1,6 +1,5 @@
-import { pathExists, readFile } from '@ionic/utils-fs';
-import { accessSync } from 'fs';
-import { join } from 'path';
+import { pathExists, readdirp, readFile } from '@ionic/utils-fs';
+import { join, extname, parse } from 'path';
 
 import c from '../colors';
 import { check } from '../common';
@@ -95,13 +94,6 @@ async function checkAndroidManifestData(
     )}`;
   }
 
-  const packageId = manifestNode.$['package'];
-  if (!packageId) {
-    return `Missing ${c.input('<manifest package="">')} attribute in ${c.strong(
-      config.android.srcMainDir,
-    )}`;
-  }
-
   const applicationChildNodes: any[] = manifestNode.application;
   if (!Array.isArray(manifestNode.application)) {
     return `Missing ${c.input(
@@ -176,22 +168,10 @@ async function checkAndroidManifestData(
     )}`;
   }
 
-  return checkPackage(config, packageId, mainActivityClassPath);
+  return checkPackage(config, mainActivityClassPath);
 }
 
-async function checkPackage(
-  config: Config,
-  packageId: string,
-  mainActivityClassPath: string,
-) {
-  if (mainActivityClassPath.indexOf(packageId) !== 0) {
-    return (
-      `MainActivity ${mainActivityClassPath} is not in manifest package ${c.input(
-        packageId,
-      )}.\n` + `Please update the packages to be the same.`
-    );
-  }
-
+async function checkPackage(config: Config, mainActivityClassPath: string) {
   const appSrcMainJavaDir = join(config.android.srcMainDirAbs, 'java');
   if (!(await pathExists(appSrcMainJavaDir))) {
     return `${c.strong('java')} directory is missing in ${c.strong(
@@ -199,35 +179,23 @@ async function checkPackage(
     )}`;
   }
 
-  let checkPath = appSrcMainJavaDir;
-  const packageParts = packageId.split('.');
-
-  for (const packagePart of packageParts) {
-    try {
-      accessSync(join(checkPath, packagePart));
-      checkPath = join(checkPath, packagePart);
-    } catch (e) {
-      return (
-        `${c.strong(packagePart)} is missing in ${checkPath}.\n` +
-        `Please create a directory structure matching the Package ID ${c.input(
-          packageId,
-        )} within the ${appSrcMainJavaDir} directory.`
-      );
-    }
-  }
-
   const mainActivityClassName: any = mainActivityClassPath.split('.').pop();
-  const mainActivityClassFileName = `${mainActivityClassName}.java`;
-  const mainActivityClassFilePath = join(checkPath, mainActivityClassFileName);
 
-  if (!(await pathExists(mainActivityClassFilePath))) {
-    return `Main activity file (${mainActivityClassFileName}) is missing in ${checkPath}`;
+  const srcFiles = await readdirp(appSrcMainJavaDir, {
+    filter: entry =>
+      !entry.stats.isDirectory() &&
+      ['.java', '.kt'].includes(extname(entry.path)) &&
+      mainActivityClassName === parse(entry.path).name,
+  });
+
+  if (srcFiles.length == 0) {
+    return `Main activity file (${mainActivityClassName}) is missing`;
   }
 
-  return checkBuildGradle(config, packageId);
+  return checkBuildGradle(config);
 }
 
-async function checkBuildGradle(config: Config, packageId: string) {
+async function checkBuildGradle(config: Config) {
   const fileName = 'build.gradle';
   const filePath = join(config.android.appDirAbs, fileName);
 
@@ -241,11 +209,11 @@ async function checkBuildGradle(config: Config, packageId: string) {
 
   fileContent = fileContent.replace(/'|"/g, '').replace(/\s+/g, ' ');
 
-  const searchFor = `applicationId ${packageId}`;
+  const searchFor = `applicationId`;
 
   if (fileContent.indexOf(searchFor) === -1) {
     return `${c.strong('build.gradle')} file missing ${c.input(
-      `applicationId "${packageId}"`,
+      `applicationId`,
     )} config in ${filePath}`;
   }
 
