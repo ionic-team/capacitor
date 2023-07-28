@@ -43,7 +43,7 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             ]
 
             // if using live reload, then set CORS headers
-            if self.serverUrl != nil && self.serverUrl?.scheme != localUrl.scheme  {
+            if self.serverUrl != nil && self.serverUrl?.scheme != localUrl.scheme {
                 headers["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString
                 headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
             }
