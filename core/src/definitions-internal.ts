@@ -214,3 +214,11 @@ export interface WindowCapacitor {
     };
   };
 }
+
+export interface CapFormDataEntry {
+  key: string;
+  value: string;
+  type: 'base64File' | 'string';
+  contentType?: string;
+  fileName?: string;
+}

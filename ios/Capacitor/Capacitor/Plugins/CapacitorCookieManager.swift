@@ -21,7 +21,7 @@ public class CapacitorCookieManager {
     }
 
     public func getServerUrl() -> URL? {
-        return self.config?.serverURL
+        return self.config?.serverURL ?? self.config?.localURL
     }
 
     private func isUrlSanitized(_ urlString: String) -> Bool {
