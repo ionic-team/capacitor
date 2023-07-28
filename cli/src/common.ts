@@ -566,5 +566,5 @@ export async function checkJDKMajorVersion(): Promise<number> {
 
 export function parseApkNameFromFlavor(flavor: string): string {
   const convertedName = flavor.replace(/([A-Z])/g, '-$1').toLowerCase();
-  return `app-${ convertedName ? `${convertedName}-` : '' }debug.apk`;
+  return `app-${convertedName ? `${convertedName}-` : ''}debug.apk`;
 }

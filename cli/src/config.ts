@@ -9,6 +9,7 @@ import Debug from 'debug';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
+import { parseApkNameFromFlavor } from './common';
 import type {
   AndroidConfig,
   AppConfig,
@@ -26,7 +27,6 @@ import { formatJSObject } from './util/js';
 import { requireTS, resolveNode } from './util/node';
 import { lazy } from './util/promise';
 import { getCommandOutput } from './util/subprocess';
-import { parseApkNameFromFlavor } from './common';
 
 const debug = Debug('capacitor:config');
 
