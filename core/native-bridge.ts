@@ -546,7 +546,7 @@ const initBridge = (w: any): void => {
 
         // XHR patch
         window.XMLHttpRequest.prototype.open = function (method, url) {
-          const isAbsoluteUrl = /(http(s?)):\/\//i.test(url);
+          const isAbsoluteUrl = /(http(s?)):\/\//i.test(url.toString());
           const useVanilla = !isAbsoluteUrl || !url || this.readyState !== 0;
           if (useVanilla) {
             return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
