@@ -1037,6 +1037,7 @@ const initBridge = (w: any): void => {
       });
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cap.withPlugin = (_pluginId, _fn) => dummy;
 
     cap.Exception = CapacitorException;
