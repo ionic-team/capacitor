@@ -394,7 +394,8 @@ const initBridge = (w: any): void => {
             } else if (
               typeof win.CapacitorCookiesAndroidInterface !== 'undefined'
             ) {
-              return win.CapacitorCookiesAndroidInterface.getCookies();
+              // return original document.cookie since Android does not support filtering of `httpOnly` cookies
+              return win.CapacitorCookiesDescriptor?.get?.call(document) ?? '';
             }
           },
           set: function (val) {

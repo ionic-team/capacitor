@@ -1,16 +1,17 @@
 package com.getcapacitor.plugin;
 
 import android.webkit.JavascriptInterface;
-import androidx.annotation.Nullable;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginConfig;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieHandler;
 import java.net.HttpCookie;
-import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @CapacitorPlugin
 public class CapacitorCookies extends Plugin {
@@ -32,25 +33,40 @@ public class CapacitorCookies extends Plugin {
     }
 
     @JavascriptInterface
-    public String getCookies() {
-        String cookieString = cookieManager.getCookieString(null);
-        return (null == cookieString) ? "" : cookieString;
-    }
-
-    @JavascriptInterface
     public void setCookie(String domain, String action) {
         cookieManager.setCookie(domain, action);
     }
 
     @PluginMethod
     public void getCookies(PluginCall call) {
-        String url = call.getString("url");
-        JSObject cookiesMap = new JSObject();
-        HttpCookie[] cookies = cookieManager.getCookies(url);
-        for (HttpCookie cookie : cookies) {
-            cookiesMap.put(cookie.getName(), cookie.getValue());
-        }
-        call.resolve(cookiesMap);
+        this.bridge.eval(
+                "document.cookie",
+                value -> {
+                    String cookies = value.substring(1, value.length() - 1);
+                    String[] cookieArray = cookies.split(";");
+
+                    JSObject cookieMap = new JSObject();
+
+                    for (String cookie : cookieArray) {
+                        if (cookie.length() > 0) {
+                            String[] keyValue = cookie.split("=", 2);
+
+                            if (keyValue.length == 2) {
+                                String key = keyValue[0].trim();
+                                String val = keyValue[1].trim();
+                                try {
+                                    key = URLDecoder.decode(keyValue[0].trim(), StandardCharsets.UTF_8.name());
+                                    val = URLDecoder.decode(keyValue[1].trim(), StandardCharsets.UTF_8.name());
+                                } catch (UnsupportedEncodingException ignored) {}
+
+                                cookieMap.put(key, val);
+                            }
+                        }
+                    }
+
+                    call.resolve(cookieMap);
+                }
+            );
     }
 
     @PluginMethod
