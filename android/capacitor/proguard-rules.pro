@@ -13,6 +13,8 @@
      @com.getcapacitor.PluginMethod public <methods>;
  }
 
+ -keep public class * extends com.getcapacitor.Plugin { *; }
+
 # Rules for Capacitor v2 plugins and annotations
 # These are deprecated but can still be used with Capacitor for now
 -keep @com.getcapacitor.NativePlugin public class * {
