@@ -77,7 +77,9 @@ public class CapacitorCookieManager {
         let jar = HTTPCookieStorage.shared
         if let cookies = jar.cookies(for: url) {
             for cookie in cookies {
-                cookiesMap[cookie.name] = cookie.value
+                if !cookie.isHTTPOnly {
+                    cookiesMap[cookie.name] = cookie.value
+                }
             }
         }
         return cookiesMap
@@ -88,7 +90,8 @@ public class CapacitorCookieManager {
         let jar = HTTPCookieStorage.shared
         guard let url = self.getServerUrl() else { return "" }
         guard let cookies = jar.cookies(for: url) else { return "" }
-        return cookies.map({"\($0.name)=\($0.value)"}).joined(separator: "; ")
+        let filteredCookies = cookies.filter { !$0.isHTTPOnly }
+        return filteredCookies.map({"\($0.name)=\($0.value)"}).joined(separator: "; ")
     }
 
     public func deleteCookie(_ url: URL, _ key: String) {

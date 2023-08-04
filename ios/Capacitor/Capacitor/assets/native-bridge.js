@@ -349,6 +349,7 @@ var nativeBridge = (function (exports) {
                 if (doPatchCookies) {
                     Object.defineProperty(document, 'cookie', {
                         get: function () {
+                            var _a, _b, _c;
                             if (platform === 'ios') {
                                 // Use prompt to synchronously get cookies.
                                 // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
@@ -359,7 +360,8 @@ var nativeBridge = (function (exports) {
                                 return res;
                             }
                             else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
-                                return win.CapacitorCookiesAndroidInterface.getCookies();
+                                // return original document.cookie since Android does not support filtering of `httpOnly` cookies
+                                return (_c = (_b = (_a = win.CapacitorCookiesDescriptor) === null || _a === void 0 ? void 0 : _a.get) === null || _b === void 0 ? void 0 : _b.call(document)) !== null && _c !== void 0 ? _c : '';
                             }
                         },
                         set: function (val) {
