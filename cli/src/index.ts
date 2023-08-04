@@ -174,7 +174,7 @@ export function runProgram(config: Config): void {
               keystorealias,
               keystorealiaspass,
               androidreleasetype,
-              signingtype,
+              signingType,
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
@@ -185,7 +185,7 @@ export function runProgram(config: Config): void {
               keystorealias,
               keystorealiaspass,
               androidreleasetype,
-              signingtype,
+              signingtype: signingType,
             });
           },
         ),
