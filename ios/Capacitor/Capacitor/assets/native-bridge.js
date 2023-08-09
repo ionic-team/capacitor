@@ -500,7 +500,8 @@ var nativeBridge = (function (exports) {
                         xhr.readyState = 0;
                         const prototype = win.CapacitorWebXMLHttpRequest.prototype;
                         const isRelativeURL = (url) => !url || !(url.startsWith('http:') || url.startsWith('https:'));
-                        const isProgressEventAvailable = () => typeof ProgressEvent !== 'undefined' && ProgressEvent.prototype instanceof Event;
+                        const isProgressEventAvailable = () => typeof ProgressEvent !== 'undefined' &&
+                            ProgressEvent.prototype instanceof Event;
                         // XHR patch abort
                         prototype.abort = function () {
                             if (isRelativeURL(this._url)) {

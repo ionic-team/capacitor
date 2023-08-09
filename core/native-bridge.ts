@@ -577,7 +577,7 @@ const initBridge = (w: any): void => {
           xhr.readyState = 0;
           const prototype = win.CapacitorWebXMLHttpRequest.prototype;
 
-          const isRelativeURL = url =>
+          const isRelativeURL = (url: string | undefined) =>
             !url || !(url.startsWith('http:') || url.startsWith('https:'));
           const isProgressEventAvailable = () =>
             typeof ProgressEvent !== 'undefined' &&
