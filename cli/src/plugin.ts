@@ -5,6 +5,7 @@ import c from './colors';
 import type { Config } from './definitions';
 import { fatal } from './errors';
 import { logger } from './log';
+import { findPackageRelativePathInMonorepo, isMonorepo } from './util/monorepotools';
 import { resolveNode } from './util/node';
 import { readXML } from './util/xml';
 
@@ -74,7 +75,20 @@ export async function resolvePlugin(
   name: string,
 ): Promise<Plugin | null> {
   try {
-    const packagePath = resolveNode(config.app.rootDir, name, 'package.json');
+    const isMonoRepoProject = isMonorepo(config.app.rootDir);
+    let pathSegments = name;
+    if (isMonoRepoProject) {
+      const potentialPath = findPackageRelativePathInMonorepo(name, config.app.rootDir);
+      if (potentialPath) {
+        pathSegments = potentialPath;
+      } else {
+        fatal(
+          `Unable to find ${c.strong(`${potentialPath}`)}.\n` +
+            `Are you sure ${c.strong(name)} is installed?`,
+        );
+      }
+    }
+    const packagePath = resolveNode(config.app.rootDir, pathSegments, 'package.json');
     if (!packagePath) {
       fatal(
         `Unable to find ${c.strong(`node_modules/${name}`)}.\n` +
