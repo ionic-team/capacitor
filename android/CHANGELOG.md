@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.3](https://github.com/ionic-team/capacitor/compare/5.2.2...5.2.3) (2023-08-10)
+
+### Bug Fixes
+
+- **android:** allow single input file selection from samsumg gallery ([#6778](https://github.com/ionic-team/capacitor/issues/6778)) ([3d57ecd](https://github.com/ionic-team/capacitor/commit/3d57ecdf7631d1581047bd5d9f86ea657ecad845))
+- **android:** avoid R8 optimizations remove plugin classes ([#6783](https://github.com/ionic-team/capacitor/issues/6783)) ([cc85df5](https://github.com/ionic-team/capacitor/commit/cc85df5f3a6999883623054573bafc30665e41e7))
+- **cookies:** hide httpOnly cookies from client ([0cc927e](https://github.com/ionic-team/capacitor/commit/0cc927ef5f0f7076a6d486d666d78483f1d71c54))
+- **http:** return valid response for relative url xhr requests ([bde6569](https://github.com/ionic-team/capacitor/commit/bde65696218f97a8328041f137457f46e5eb766a))
+
 ## [5.2.2](https://github.com/ionic-team/capacitor/compare/5.2.1...5.2.2) (2023-07-19)
 
 ### Bug Fixes

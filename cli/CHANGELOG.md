@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.3](https://github.com/ionic-team/capacitor/compare/5.2.2...5.2.3) (2023-08-10)
+
+### Bug Fixes
+
+- **cli:** remove package related checks on doctor command ([#6773](https://github.com/ionic-team/capacitor/issues/6773)) ([4499b6b](https://github.com/ionic-team/capacitor/commit/4499b6bb6c52e9bc7fdfdb35ee2519881996eedf))
+- **cli:** signing type option issue ([#6716](https://github.com/ionic-team/capacitor/issues/6716)) ([ee0f745](https://github.com/ionic-team/capacitor/commit/ee0f7457e458ca4bb4eb74f67552ac2ace76016b))
+
 ## [5.2.2](https://github.com/ionic-team/capacitor/compare/5.2.1...5.2.2) (2023-07-19)
 
 **Note:** Version bump only for package @capacitor/cli

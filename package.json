@@ -2,10 +2,10 @@
   "name": "capacitor",
   "private": true,
   "workspaces": [
-    "./android/",
-    "./ios/",
-    "./cli/",
-    "./core/"
+    "android",
+    "ios",
+    "cli",
+    "core"
   ],
   "scripts": {
     "ci:publish:nightly": "lerna version prerelease --conventional-commits --conventional-prerelease --preid nightly-$(date +\"%Y%m%dT%H%M%S\") --force-publish --no-changelog --no-git-tag-version --no-push --yes && lerna exec -- npm publish --tag nightly --provenance",
