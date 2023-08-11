@@ -91,6 +91,7 @@ export async function update(
       'capacitor:update:before',
     );
 
+    console.log(`Updating native dependencies...`);
     if (platformName === config.ios.name) {
       await updateIOS(config, deployment);
     } else if (platformName === config.android.name) {
