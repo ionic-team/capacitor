@@ -114,7 +114,8 @@ async function updatePodfile(
       end
     end
   end
-end`);
+end`,
+  );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
   const podPath = await config.ios.podPath;

@@ -49,6 +49,7 @@ export const requireTS = (ts: typeof typescript, p: string): unknown => {
   return m;
 };
 
+/*
 function customRequireResolve(request: string, baseDir: string) {
   // Try to get an absolute path based on the baseDir and request.
   const possiblePath = join(baseDir, request);
@@ -72,6 +73,18 @@ export function resolveNode(
 ): string | null {
   try {
     return customRequireResolve(pathSegments.join('/'), root);
+  } catch (e) {
+    return null;
+  }
+}
+*/
+
+export function resolveNode(
+  root: string,
+  ...pathSegments: string[]
+): string | null {
+  try {
+    return require.resolve(pathSegments.join('/'), { paths: [root] });
   } catch (e) {
     return null;
   }
