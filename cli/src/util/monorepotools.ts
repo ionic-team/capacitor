@@ -32,9 +32,7 @@ export function findMonorepoRoot(currentPath: string): string {
  */
 export function findNXMonorepoRoot(currentPath: string): string {
   const nxJsonPath = join(currentPath, 'nx.json');
-  if (
-    existsSync(nxJsonPath)
-  ) {
+  if (existsSync(nxJsonPath)) {
     return currentPath;
   }
   const parentPath = dirname(currentPath);

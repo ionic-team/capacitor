@@ -39,19 +39,24 @@ export async function loadConfig(): Promise<Config> {
   const cliRootDir = dirname(__dirname);
   const conf = await loadExtConfig(appRootDir);
 
-  const depsForNx = (await (async (): Promise<{devDependencies: any, dependencies: any} | object> => {
+  const depsForNx = await (async (): Promise<
+    { devDependencies: any; dependencies: any } | object
+  > => {
     if (isNXMonorepo(appRootDir)) {
       const rootOfNXMonorepo = findNXMonorepoRoot(appRootDir);
-      const pkgJSONOfMonorepoRoot: any = await tryFn(readJSON, resolve(rootOfNXMonorepo, 'package.json'));
+      const pkgJSONOfMonorepoRoot: any = await tryFn(
+        readJSON,
+        resolve(rootOfNXMonorepo, 'package.json'),
+      );
       const devDependencies = pkgJSONOfMonorepoRoot?.devDependencies ?? {};
       const dependencies = pkgJSONOfMonorepoRoot?.dependencies ?? {};
       return {
         devDependencies,
         dependencies,
-      }
+      };
     }
     return {};
-  })());
+  })();
 
   const appId = conf.extConfig.appId ?? '';
   const appName = conf.extConfig.appName ?? '';
