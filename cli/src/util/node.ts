@@ -1,5 +1,5 @@
-import { lstatSync, readFileSync, realpathSync } from '@ionic/utils-fs';
-import { join, resolve } from 'path';
+import { readFileSync } from '@ionic/utils-fs';
+import { resolve } from 'path';
 import type typescript from 'typescript';
 
 interface NodeModuleWithCompile extends NodeJS.Module {
@@ -48,36 +48,6 @@ export const requireTS = (ts: typeof typescript, p: string): unknown => {
 
   return m;
 };
-
-/*
-function customRequireResolve(request: string, baseDir: string) {
-  // Try to get an absolute path based on the baseDir and request.
-  const possiblePath = join(baseDir, request);
-
-  // Check if it's a symlink.
-  try {
-      if (lstatSync(possiblePath).isSymbolicLink()) {
-          const realPath = realpathSync(possiblePath);
-          return realPath;
-      }
-      return possiblePath;
-  } catch (e) {
-      // If there's an error resolving the path, fallback to the original require.resolve.
-      return require.resolve(request, { paths: [baseDir] });
-  }
-}
-
-export function resolveNode(
-  root: string,
-  ...pathSegments: string[]
-): string | null {
-  try {
-    return customRequireResolve(pathSegments.join('/'), root);
-  } catch (e) {
-    return null;
-  }
-}
-*/
 
 export function resolveNode(
   root: string,
