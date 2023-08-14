@@ -25,6 +25,26 @@ export function findMonorepoRoot(currentPath: string): string {
 }
 
 /**
+ * Finds the NX monorepo root from the given path.
+ * @param currentPath - The current path to start searching from.
+ * @returns The path to the monorepo root.
+ * @throws An error if the monorepo root is not found.
+ */
+export function findNXMonorepoRoot(currentPath: string): string {
+  const nxJsonPath = join(currentPath, 'nx.json');
+  if (
+    existsSync(nxJsonPath)
+  ) {
+    return currentPath;
+  }
+  const parentPath = dirname(currentPath);
+  if (parentPath === currentPath) {
+    throw new Error('Monorepo root not found');
+  }
+  return findNXMonorepoRoot(parentPath);
+}
+
+/**
  * Finds the path to a package within the node_modules folder,
  * searching up the directory hierarchy until the last possible directory is reached.
  * @param packageName - The name of the package to find.
@@ -75,6 +95,20 @@ export function findPackageRelativePathInMonorepo(
 export function isMonorepo(currentPath: string): boolean {
   try {
     findMonorepoRoot(currentPath);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
+ * Detects if the current directory is part of a nx integrated monorepo.
+ * @param currentPath - The current path to start searching from.
+ * @returns True if the current directory is part of a monorepo, false otherwise.
+ */
+export function isNXMonorepo(currentPath: string): boolean {
+  try {
+    findNXMonorepoRoot(currentPath);
     return true;
   } catch (error) {
     return false;
