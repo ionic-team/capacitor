@@ -572,33 +572,20 @@ const initBridge = (w: any): void => {
                 });
               },
             },
-            response: {
-              value: '',
-              writable: true,
-            },
-            responseText: {
-              value: '',
-              writable: true,
-            },
-            responseURL: {
-              value: '',
-              writable: true,
-            },
-            status: {
-              value: 0,
-              writable: true,
-            },
           });
 
           xhr.readyState = 0;
           const prototype = win.CapacitorWebXMLHttpRequest.prototype;
 
+          const isRelativeURL = (url: string | undefined) =>
+            !url || !(url.startsWith('http:') || url.startsWith('https:'));
+          const isProgressEventAvailable = () =>
+            typeof ProgressEvent !== 'undefined' &&
+            ProgressEvent.prototype instanceof Event;
+
           // XHR patch abort
           prototype.abort = function () {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.abort.call(this);
             }
             this.readyState = 0;
@@ -613,9 +600,7 @@ const initBridge = (w: any): void => {
             this._url = url;
             this._method = method;
 
-            if (
-              !(url.startsWith('http:') || url.toString().startsWith('https:'))
-            ) {
+            if (isRelativeURL(url)) {
               return win.CapacitorWebXMLHttpRequest.open.call(
                 this,
                 method,
@@ -634,10 +619,7 @@ const initBridge = (w: any): void => {
             header: string,
             value: string,
           ) {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(
                 this,
                 header,
@@ -649,10 +631,7 @@ const initBridge = (w: any): void => {
 
           // XHR patch send
           prototype.send = function (body?: Document | XMLHttpRequestBodyInit) {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.send.call(this, body);
             }
 
@@ -663,6 +642,26 @@ const initBridge = (w: any): void => {
 
             try {
               this.readyState = 2;
+
+              Object.defineProperties(this, {
+                response: {
+                  value: '',
+                  writable: true,
+                },
+                responseText: {
+                  value: '',
+                  writable: true,
+                },
+                responseURL: {
+                  value: '',
+                  writable: true,
+                },
+                status: {
+                  value: 0,
+                  writable: true,
+                },
+              });
+
               convertBody(body).then(({ data, type, headers }) => {
                 const otherHeaders =
                   this._headers != null && Object.keys(this._headers).length > 0
@@ -685,13 +684,15 @@ const initBridge = (w: any): void => {
                     // intercept & parse response before returning
                     if (this.readyState == 2) {
                       //TODO: Add progress event emission on native side
-                      this.dispatchEvent(
-                        new ProgressEvent('progress', {
-                          lengthComputable: true,
-                          loaded: nativeResponse.data.length,
-                          total: nativeResponse.data.length,
-                        }),
-                      );
+                      if (isProgressEventAvailable()) {
+                        this.dispatchEvent(
+                          new ProgressEvent('progress', {
+                            lengthComputable: true,
+                            loaded: nativeResponse.data.length,
+                            total: nativeResponse.data.length,
+                          }),
+                        );
+                      }
                       this._headers = nativeResponse.headers;
                       this.status = nativeResponse.status;
                       if (
@@ -726,13 +727,15 @@ const initBridge = (w: any): void => {
                     this.responseText = JSON.stringify(error.data);
                     this.responseURL = error.url;
                     this.readyState = 4;
-                    this.dispatchEvent(
-                      new ProgressEvent('progress', {
-                        lengthComputable: false,
-                        loaded: 0,
-                        total: 0,
-                      }),
-                    );
+                    if (isProgressEventAvailable()) {
+                      this.dispatchEvent(
+                        new ProgressEvent('progress', {
+                          lengthComputable: false,
+                          loaded: 0,
+                          total: 0,
+                        }),
+                      );
+                    }
                     setTimeout(() => {
                       this.dispatchEvent(new Event('error'));
                       this.dispatchEvent(new Event('loadend'));
@@ -747,13 +750,15 @@ const initBridge = (w: any): void => {
               this.responseText = error.toString();
               this.responseURL = this._url;
               this.readyState = 4;
-              this.dispatchEvent(
-                new ProgressEvent('progress', {
-                  lengthComputable: false,
-                  loaded: 0,
-                  total: 0,
-                }),
-              );
+              if (isProgressEventAvailable()) {
+                this.dispatchEvent(
+                  new ProgressEvent('progress', {
+                    lengthComputable: false,
+                    loaded: 0,
+                    total: 0,
+                  }),
+                );
+              }
               setTimeout(() => {
                 this.dispatchEvent(new Event('error'));
                 this.dispatchEvent(new Event('loadend'));
@@ -764,10 +769,7 @@ const initBridge = (w: any): void => {
 
           // XHR patch getAllResponseHeaders
           prototype.getAllResponseHeaders = function () {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(
                 this,
               );
@@ -784,10 +786,7 @@ const initBridge = (w: any): void => {
 
           // XHR patch getResponseHeader
           prototype.getResponseHeader = function (name: string) {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(
                 this,
                 name,
