@@ -669,7 +669,9 @@ var nativeBridge = (function (exports) {
                             if (isRelativeURL(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                             }
-                            return this._headers[name];
+                            // The search for the name is case insenstive. The Swift Code makes sure that the keys
+                            // in the headers dictionary are already lowercased.
+                            return this._headers[name.toLowerCase()];
                         };
                         Object.setPrototypeOf(xhr, prototype);
                         return xhr;
