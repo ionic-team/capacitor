@@ -423,9 +423,24 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
+                        var _a;
                         if (!(resource.toString().startsWith('http:') ||
                             resource.toString().startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
+                        }
+                        if (!(options === null || options === void 0 ? void 0 : options.method) ||
+                            options.method.toLocaleUpperCase() === 'GET' ||
+                            options.method.toLocaleUpperCase() === 'HEAD' ||
+                            options.method.toLocaleUpperCase() === 'OPTIONS' ||
+                            options.method.toLocaleUpperCase() === 'TRACE') {
+                            const url = new URL(resource.toString());
+                            if (platform === 'ios') {
+                                url.protocol = (_a = win.WEBVIEW_SERVER_URL) !== null && _a !== void 0 ? _a : '';
+                            }
+                            url.pathname = '/_capacitor_http_interceptor_' + url.pathname;
+                            const modifiedResource = url.toString();
+                            const response = await win.CapacitorWebFetch(modifiedResource, options);
+                            return response;
                         }
                         const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
                         console.time(tag);
@@ -499,7 +514,9 @@ var nativeBridge = (function (exports) {
                         });
                         xhr.readyState = 0;
                         const prototype = win.CapacitorWebXMLHttpRequest.prototype;
-                        const isRelativeURL = (url) => !url || !(url.startsWith('http:') || url.startsWith('https:'));
+                        const isRelativeURL = (url) => !url ||
+                            !(url.startsWith('http:') || url.startsWith('https:')) ||
+                            url.indexOf('/_capacitor_http_interceptor_') > -1;
                         const isProgressEventAvailable = () => typeof ProgressEvent !== 'undefined' &&
                             ProgressEvent.prototype instanceof Event;
                         // XHR patch abort
@@ -515,10 +532,25 @@ var nativeBridge = (function (exports) {
                         };
                         // XHR patch open
                         prototype.open = function (method, url) {
+                            var _a;
+                            this._method = method.toLocaleUpperCase();
                             this._url = url;
-                            this._method = method;
-                            if (isRelativeURL(url)) {
-                                return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
+                            if (!this._method ||
+                                this._method === 'GET' ||
+                                this._method === 'HEAD' ||
+                                this._method === 'OPTIONS' ||
+                                this._method === 'TRACE') {
+                                if (isRelativeURL(url)) {
+                                    return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
+                                }
+                                const modifiedUrl = new URL(this._url);
+                                if (platform === 'ios') {
+                                    modifiedUrl.protocol = (_a = win.WEBVIEW_SERVER_URL) !== null && _a !== void 0 ? _a : '';
+                                }
+                                modifiedUrl.pathname =
+                                    '/_capacitor_http_interceptor_' + modifiedUrl.pathname;
+                                this._url = modifiedUrl.toString();
+                                return win.CapacitorWebXMLHttpRequest.open.call(this, method, this._url);
                             }
                             setTimeout(() => {
                                 this.dispatchEvent(new Event('loadstart'));

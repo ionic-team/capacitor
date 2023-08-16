@@ -480,6 +480,28 @@ const initBridge = (w: any): void => {
             return win.CapacitorWebFetch(resource, options);
           }
 
+          if (
+            !options?.method ||
+            options.method.toLocaleUpperCase() === 'GET' ||
+            options.method.toLocaleUpperCase() === 'HEAD' ||
+            options.method.toLocaleUpperCase() === 'OPTIONS' ||
+            options.method.toLocaleUpperCase() === 'TRACE'
+          ) {
+            const url = new URL(resource.toString());
+            if (platform === 'ios') {
+              url.protocol = win.WEBVIEW_SERVER_URL ?? '';
+            }
+            url.pathname = '/_capacitor_http_interceptor_' + url.pathname;
+
+            const modifiedResource = url.toString();
+            const response = await win.CapacitorWebFetch(
+              modifiedResource,
+              options,
+            );
+
+            return response;
+          }
+
           const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
           console.time(tag);
           try {
@@ -578,7 +600,9 @@ const initBridge = (w: any): void => {
           const prototype = win.CapacitorWebXMLHttpRequest.prototype;
 
           const isRelativeURL = (url: string | undefined) =>
-            !url || !(url.startsWith('http:') || url.startsWith('https:'));
+            !url ||
+            !(url.startsWith('http:') || url.startsWith('https:')) ||
+            url.indexOf('/_capacitor_http_interceptor_') > -1;
           const isProgressEventAvailable = () =>
             typeof ProgressEvent !== 'undefined' &&
             ProgressEvent.prototype instanceof Event;
@@ -597,14 +621,37 @@ const initBridge = (w: any): void => {
 
           // XHR patch open
           prototype.open = function (method: string, url: string) {
+            this._method = method.toLocaleUpperCase();
             this._url = url;
-            this._method = method;
 
-            if (isRelativeURL(url)) {
+            if (
+              !this._method ||
+              this._method === 'GET' ||
+              this._method === 'HEAD' ||
+              this._method === 'OPTIONS' ||
+              this._method === 'TRACE'
+            ) {
+              if (isRelativeURL(url)) {
+                return win.CapacitorWebXMLHttpRequest.open.call(
+                  this,
+                  method,
+                  url,
+                );
+              }
+
+              const modifiedUrl = new URL(this._url);
+              if (platform === 'ios') {
+                modifiedUrl.protocol = win.WEBVIEW_SERVER_URL ?? '';
+              }
+              modifiedUrl.pathname =
+                '/_capacitor_http_interceptor_' + modifiedUrl.pathname;
+
+              this._url = modifiedUrl.toString();
+
               return win.CapacitorWebXMLHttpRequest.open.call(
                 this,
                 method,
-                url,
+                this._url,
               );
             }
 

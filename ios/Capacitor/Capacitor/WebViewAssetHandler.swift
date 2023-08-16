@@ -25,6 +25,11 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
 
+        if url.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
+            handleCapacitorHttpRequest(urlSchemeTask)
+            return
+        }
+
         if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
             startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
         } else {
@@ -119,6 +124,62 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             return true
         }
         return false
+    }
+
+    func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask) {
+        var urlRequest = urlSchemeTask.request
+        let url = urlRequest.url!
+        var targetUrl = url.absoluteString
+            .replacingOccurrences(of: CapacitorBridge.httpInterceptorStartIdentifier, with: "")
+
+        // Only replace first occurrence of the scheme
+        if let range = targetUrl.range(of: InstanceDescriptorDefaults.scheme) {
+            targetUrl = targetUrl.replacingCharacters(in: range, with: "https")
+        }
+
+        urlRequest.url = URL(string: targetUrl)
+
+        let urlSession = URLSession.shared
+        let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
+            urlSession.invalidateAndCancel()
+            if let error = error {
+                urlSchemeTask.didFailWithError(error)
+                return
+            }
+
+            if let response = response as? HTTPURLResponse {
+                let existingHeaders = response.allHeaderFields
+                var newHeaders: [AnyHashable: Any] = [:]
+
+                // if using live reload, then set CORS headers
+                if self.serverUrl != nil && self.serverUrl?.scheme != urlRequest.url?.scheme {
+                    newHeaders = [
+                        "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
+                        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"
+                    ]
+                }
+
+                if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (current, _) in current }) as? [String: String] {
+
+                    let modifiedResponse = HTTPURLResponse(
+                        url: response.url!,
+                        statusCode: response.statusCode,
+                        httpVersion: nil,
+                        headerFields: mergedHeaders
+                    )!
+
+                    urlSchemeTask.didReceive(modifiedResponse)
+
+                    if let data = data {
+                        urlSchemeTask.didReceive(data)
+                    }
+                }
+            }
+            urlSchemeTask.didFinish()
+            return
+        }
+
+        task.resume()
     }
 
     let mimeTypes = [
