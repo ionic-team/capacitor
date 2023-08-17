@@ -19,8 +19,8 @@ android {
     namespace "capacitor.cordova.android.plugins"
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 33
     defaultConfig {
-        minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 22
-        targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 33
+        minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion as Integer : 22
+        targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion as Integer : 33
         versionCode 1
         versionName "1.0"
     }
@@ -46,7 +46,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "org.apache.cordova:framework:$cordovaAndroidVersion"
     // SUB-PROJECT DEPENDENCIES START
-    
+
     // SUB-PROJECT DEPENDENCIES END
 }
 
