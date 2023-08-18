@@ -411,9 +411,15 @@ public class HttpRequestHandler {
             }
         }
 
+        call.getData().put("activeCapacitorHttpUrlConnection", connection);
         connection.connect();
 
-        return buildResponse(connection, responseType);
+        JSObject response = buildResponse(connection, responseType);
+
+        connection.disconnect();
+        call.getData().remove("activeCapacitorHttpUrlConnection");
+
+        return response;
     }
 
     private static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
