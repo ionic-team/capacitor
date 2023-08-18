@@ -4,7 +4,4 @@
    <FileRef
       location = "group:Capacitor.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:../CapacitorCordova/CapacitorCordova.xcodeproj">
-   </FileRef>
 </Workspace>

@@ -7,22 +7,19 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ionic-team/capacitor.git"
+    "url": "git+https://github.com/agoda-com/capacitor.git"
   },
   "bugs": {
-    "url": "https://github.com/ionic-team/capacitor/issues"
+    "url": "https://github.com/agoda-com/capacitor/issues"
   },
   "files": [
     "Capacitor/Capacitor/",
-    "CapacitorCordova/CapacitorCordova/",
     "Capacitor.podspec",
-    "CapacitorCordova.podspec",
     "scripts/pods_helpers.rb"
   ],
   "scripts": {
-    "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova",
-    "xc:build:Capacitor": "cd Capacitor && xcodebuild -workspace Capacitor.xcworkspace -scheme Capacitor && cd ..",
-    "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd .."
+    "verify": "npm run xc:build:Capacitor",
+    "xc:build:Capacitor": "cd Capacitor && xcodebuild -workspace Capacitor.xcworkspace -scheme Capacitor && cd .."
   },
   "peerDependencies": {
     "@capacitor/core": "^5.2.0"

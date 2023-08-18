@@ -1,6 +1,5 @@
 import UIKit
 import WebKit
-import Cordova
 
 @objc open class CAPBridgeViewController: UIViewController {
     private var capacitorBridge: CapacitorBridge?
@@ -51,7 +50,6 @@ import Cordova
         // create the bridge
         capacitorBridge = CapacitorBridge(with: configuration,
                                           delegate: self,
-                                          cordovaConfiguration: configDescriptor.cordovaConfiguration,
                                           assetHandler: assetHandler,
                                           delegationHandler: delegationHandler)
         capacitorDidLoad()
@@ -78,7 +76,7 @@ import Cordova
      */
     open func instanceDescriptor() -> InstanceDescriptor {
         let descriptor = InstanceDescriptor.init()
-        if !isNewBinary && !descriptor.cordovaDeployDisabled {
+        if !isNewBinary {
             if let persistedPath = UserDefaults.standard.string(forKey: "serverBasePath"), !persistedPath.isEmpty {
                 if let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first {
                     descriptor.appLocation = URL(fileURLWithPath: libPath, isDirectory: true)
@@ -333,12 +331,6 @@ extension CAPBridgeViewController {
             }
             if descriptor.warnings.contains(.invalidFile) {
                 CAPLog.print("Unable to parse capacitor.config.json. Make sure it's valid JSON.")
-            }
-            if descriptor.warnings.contains(.missingCordovaFile) {
-                CAPLog.print("Unable to find config.xml, make sure it exists and run npx cap copy.")
-            }
-            if descriptor.warnings.contains(.invalidCordovaFile) {
-                CAPLog.print("Unable to parse config.xml. Make sure it's valid XML.")
             }
         }
     }

@@ -49,7 +49,6 @@
         }
         _errorPath = descriptor.errorPath;
         // extract the one value we care about from the cordova configuration
-        _cordovaDeployDisabled = [descriptor cordovaDeployDisabled];
     }
     return self;
 }
@@ -69,7 +68,6 @@
         _allowLinkPreviews = configuration.allowLinkPreviews;
         _handleApplicationNotifications = configuration.handleApplicationNotifications;
         _isWebDebuggable = configuration.isWebDebuggable;
-        _cordovaDeployDisabled = configuration.cordovaDeployDisabled;
         _contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior;
         // we don't care about internal usage of deprecated APIs and the framework should build cleanly
 #pragma clang diagnostic push

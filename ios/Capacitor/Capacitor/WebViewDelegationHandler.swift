@@ -197,8 +197,6 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
                 let options = ["options": args]
 
                 CAPLog.print("To Native Cordova -> ", pluginId, method, callbackId, options)
-
-                bridge.handleCordovaJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
             }
         }
     }
