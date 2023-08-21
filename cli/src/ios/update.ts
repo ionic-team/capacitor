@@ -101,6 +101,21 @@ async function updatePodfile(
     /(def capacitor_pods)[\s\S]+?(\nend)/,
     `$1${dependenciesContent}$2`,
   );
+  podfileContent = podfileContent.replace(
+    `require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'`,
+    `def assertDeploymentTarget(installer)
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # ensure IPHONEOS_DEPLOYMENT_TARGET is at least 13.0
+      deployment_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f
+      should_upgrade = deployment_target < 13.0 && deployment_target != 0.0
+      if should_upgrade
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      end
+    end
+  end
+end`,
+  );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
   const podPath = await config.ios.podPath;
