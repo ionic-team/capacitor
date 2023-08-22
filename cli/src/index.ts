@@ -219,7 +219,17 @@ export function runProgram(config: Config): void {
           config,
           async (
             platform,
-            { scheme, flavor, list, target, sync, forwardPorts, liveReload, host, port },
+            {
+              scheme,
+              flavor,
+              list,
+              target,
+              sync,
+              forwardPorts,
+              liveReload,
+              host,
+              port,
+            },
           ) => {
             const { runCommand } = await import('./tasks/run');
             await runCommand(config, platform, {
@@ -231,7 +241,7 @@ export function runProgram(config: Config): void {
               forwardPorts,
               liveReload,
               host,
-              port
+              port,
             });
           },
         ),

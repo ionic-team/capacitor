@@ -37,7 +37,8 @@ export async function runCommand(
   selectedPlatformName: string,
   options: RunCommandOptions,
 ): Promise<void> {
-  options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
+  options.host =
+    options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
   options.port = options.port ?? '3000';
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
@@ -91,12 +92,17 @@ export async function runCommand(
     try {
       if (options.sync) {
         if (options.liveReload) {
-          const newExtConfig = await CapLiveReloadHelper.editExtConfigForLiveReload(config, platformName, options);
+          const newExtConfig =
+            await CapLiveReloadHelper.editExtConfigForLiveReload(
+              config,
+              platformName,
+              options,
+            );
           const cfg: {
-            -readonly [K in keyof Config]: Config[K] 
+            -readonly [K in keyof Config]: Config[K];
           } = config;
           const cfgapp: {
-            -readonly [K in keyof AppConfig]: AppConfig[K] 
+            -readonly [K in keyof AppConfig]: AppConfig[K];
           } = config.app;
           cfgapp.extConfig = newExtConfig;
           cfg.app = cfgapp;
@@ -106,7 +112,11 @@ export async function runCommand(
         }
       } else {
         if (options.liveReload) {
-          await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options);
+          await CapLiveReloadHelper.editCapConfigForLiveReload(
+            config,
+            platformName,
+            options,
+          );
         }
       }
       await run(config, platformName, options);
@@ -117,7 +127,9 @@ export async function runCommand(
           }
           process.exit();
         });
-        console.log(`\nApp running with live reload listing for: http://${options.host}:${options.port}. Press Ctrl+C to quit.`);
+        console.log(
+          `\nApp running with live reload listing for: http://${options.host}:${options.port}. Press Ctrl+C to quit.`,
+        );
         await sleepForever();
       }
     } catch (e: any) {
