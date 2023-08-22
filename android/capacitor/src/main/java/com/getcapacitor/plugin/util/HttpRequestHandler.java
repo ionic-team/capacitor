@@ -310,10 +310,10 @@ public class HttpRequestHandler {
             } else if (input.trim().matches("^\".*\"$")) {
                 // a string enclosed in " " is a json value, return the string without the quotes
                 return input.trim().substring(1, input.trim().length() - 1);
-            } else if (input.trim().matches("^-?\\d+(\\.\\d+)?$")) {
-                return Double.parseDouble(input.trim());
             } else if (input.trim().matches("^-?\\d+$")) {
                 return Integer.parseInt(input.trim());
+            } else if (input.trim().matches("^-?\\d+(\\.\\d+)?$")) {
+                return Double.parseDouble(input.trim());
             } else {
                 try {
                     return new JSObject(input);
