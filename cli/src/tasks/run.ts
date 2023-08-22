@@ -15,7 +15,7 @@ import type { AppConfig, Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { runIOS } from '../ios/run';
 import { logger, output } from '../log';
-import { CapLiveReloadHeler } from '../util/livereload';
+import { CapLiveReloadHelper } from '../util/livereload';
 import { getPlatformTargets } from '../util/native-run';
 
 import { sync } from './sync';
@@ -37,7 +37,7 @@ export async function runCommand(
   selectedPlatformName: string,
   options: RunCommandOptions,
 ): Promise<void> {
-  options.host = options.host ?? 'localhost';
+  options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
   options.port = options.port ?? '3000';
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
@@ -91,7 +91,7 @@ export async function runCommand(
     try {
       if (options.sync) {
         if (options.liveReload) {
-          const newExtConfig = await CapLiveReloadHeler.editExtConfigForLiveReload(config, platformName, options);
+          const newExtConfig = await CapLiveReloadHelper.editExtConfigForLiveReload(config, platformName, options);
           const cfg: {
             -readonly [K in keyof Config]: Config[K] 
           } = config;
@@ -106,14 +106,14 @@ export async function runCommand(
         }
       } else {
         if (options.liveReload) {
-          await CapLiveReloadHeler.editCapConfigForLiveReload(config, platformName, options);
+          await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options);
         }
       }
       await run(config, platformName, options);
       if (options.liveReload) {
         process.on('SIGINT', async () => {
           if (options.liveReload) {
-            await CapLiveReloadHeler.revertCapConfigForLiveReload();
+            await CapLiveReloadHelper.revertCapConfigForLiveReload();
           }
           process.exit();
         });
