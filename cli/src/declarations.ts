@@ -588,7 +588,7 @@ export interface LiveUpdateConfig {
   appId: string;
   channel: string;
   autoUpdateMethod: AutoUpdateMethod;
-  strategy: LiveUpdateStrategy;
+  strategy?: LiveUpdateStrategy;
   maxVersions?: number;
   key?: string;
 }
