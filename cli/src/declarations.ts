@@ -588,11 +588,14 @@ export interface LiveUpdateConfig {
   appId: string;
   channel: string;
   autoUpdateMethod: AutoUpdateMethod;
+  strategy: LiveUpdateStrategy;
   maxVersions?: number;
   key?: string;
 }
 
 export type AutoUpdateMethod = 'none' | 'background';
+
+export type LiveUpdateStrategy = 'zip' | 'differential';
 
 export interface PluginsConfig {
   /**
