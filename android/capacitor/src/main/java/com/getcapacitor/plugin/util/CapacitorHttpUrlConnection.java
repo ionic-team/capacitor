@@ -52,6 +52,10 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
         return connection;
     }
 
+    public void disconnect() {
+        connection.disconnect();
+    }
+
     /**
      * Set the value of the {@code allowUserInteraction} field of
      * this {@code URLConnection}.

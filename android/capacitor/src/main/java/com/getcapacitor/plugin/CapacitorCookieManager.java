@@ -47,6 +47,10 @@ public class CapacitorCookieManager extends CookieManager {
         this.serverUrl = bridge.getServerUrl();
     }
 
+    public void removeSessionCookies() {
+        this.webkitCookieManager.removeSessionCookies(null);
+    }
+
     public String getSanitizedDomain(String url) throws URISyntaxException {
         if (url == null || url.isEmpty()) {
             url = this.serverUrl;
