@@ -42,4 +42,14 @@ public abstract class WebViewListener {
     public void onPageStarted(WebView webView) {
         // Override me to add behavior to the page started event
     }
+
+    /**
+     * Callback for page-visit changes that should lead to the user having different browsing state
+     * and history.
+     *
+     * @param canGoBack Whether or not the user can go further back in the visit history
+     */
+    public void onUpdateVisitedHistory(boolean canGoBack) {
+        // Override me to add behavior to the page-visit history update
+    }
 }
