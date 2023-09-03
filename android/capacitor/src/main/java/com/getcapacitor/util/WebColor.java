@@ -11,7 +11,7 @@ public class WebColor {
      */
     public static int parseColor(String colorString) {
         String formattedColor = colorString;
-        if (colorString.charAt(0) != '#') {
+        if (colorString.length() > 0 && colorString.charAt(0) != '#') {
             formattedColor = "#" + formattedColor;
         }
 
