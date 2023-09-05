@@ -210,13 +210,26 @@ export function runProgram(config: Config): void {
       '--forwardPorts <port:port>',
       'Automatically run "adb reverse" for better live-reloading support',
     )
+    .option('-l, --live-reload', 'Enable Live Reload')
+    .option('--host <host>', 'Host used for live reload')
+    .option('--port <port>', 'Port used for live reload')
     .action(
       wrapAction(
         telemetryAction(
           config,
           async (
             platform,
-            { scheme, flavor, list, target, sync, forwardPorts },
+            {
+              scheme,
+              flavor,
+              list,
+              target,
+              sync,
+              forwardPorts,
+              liveReload,
+              host,
+              port,
+            },
           ) => {
             const { runCommand } = await import('./tasks/run');
             await runCommand(config, platform, {
@@ -226,6 +239,9 @@ export function runProgram(config: Config): void {
               target,
               sync,
               forwardPorts,
+              liveReload,
+              host,
+              port,
             });
           },
         ),
