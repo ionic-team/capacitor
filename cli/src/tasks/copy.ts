@@ -374,7 +374,7 @@ interface FederatedCapacitor {
 
 declare module '../declarations' {
   interface PluginsConfig {
-    LiveUpdates?: LiveUpdateConfig,
-    FederatedCapacitor?: FederatedCapacitor
+    LiveUpdates?: LiveUpdateConfig;
+    FederatedCapacitor?: FederatedCapacitor;
   }
 }
