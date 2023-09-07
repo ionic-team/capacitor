@@ -174,7 +174,7 @@ export async function migrateCommand(
         allDependencies['@capacitor/ios'] &&
         existsSync(config.ios.platformDirAbs)
       ) {
-
+        // ios template changes
       }
 
       if (
