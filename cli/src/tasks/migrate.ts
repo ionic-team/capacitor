@@ -1,9 +1,7 @@
 import {
   writeFileSync,
   readFileSync,
-  readdirSync,
   existsSync,
-  removeSync,
 } from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
@@ -176,17 +174,7 @@ export async function migrateCommand(
         allDependencies['@capacitor/ios'] &&
         existsSync(config.ios.platformDirAbs)
       ) {
-        //Update icon to single 1024 x 1024 icon
-        await runTask('Update App Icon to only 1024 x 1024', () => {
-          return updateAppIcons(config);
-        });
 
-        //Remove Podfile.lock from .gitignore
-        await runTask('Remove Podfile.lock from iOS .gitignore', () => {
-          return updateIosGitIgnore(
-            join(config.ios.platformDirAbs, '.gitignore'),
-          );
-        });
       }
 
       if (
@@ -197,30 +185,6 @@ export async function migrateCommand(
           return updateBuildGradle(
             join(config.android.platformDirAbs, 'build.gradle'),
             variablesAndClasspaths,
-          );
-        });
-
-        // Remove enableJetifier
-        await runTask(
-          'Remove android.enableJetifier=true from gradle.properties',
-          () => {
-            return updateGradleProperties(
-              join(config.android.platformDirAbs, 'gradle.properties'),
-            );
-          },
-        );
-
-        // Move package from android manifest
-        await runTask('Migrating package from Manifest to build.gradle', () => {
-          return movePackageFromManifestToBuildGradle(
-            join(
-              config.android.platformDirAbs,
-              'app',
-              'src',
-              'main',
-              'AndroidManifest.xml',
-            ),
-            join(config.android.platformDirAbs, 'app', 'build.gradle'),
           );
         });
 
@@ -566,100 +530,6 @@ async function updateGradleWrapperFiles(platformDir: string) {
       cwd: platformDir,
     },
   );
-}
-
-async function updateIosGitIgnore(filename: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  const lines = txt.split('\n');
-  let linesToKeep = '';
-  for (const line of lines) {
-    // check for enableJetifier
-    const podfileMatch = line.match(/.+Podfile\.lock/) || [];
-
-    if (podfileMatch.length == 0) {
-      linesToKeep += line + '\n';
-    }
-  }
-  writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
-}
-
-async function updateAppIcons(config: Config) {
-  const iconToKeep = 'AppIcon-512@2x.png';
-  const contentsFile = 'Contents.json';
-
-  const newContentsFileContents = `{
-    "images" : [
-      {
-        "filename" : "${iconToKeep}",
-        "idiom" : "universal",
-        "platform" : "ios",
-        "size" : "1024x1024"
-      }
-    ],
-    "info" : {
-      "author" : "xcode",
-      "version" : 1
-    }
-}`;
-
-  const path = join(
-    config.ios.platformDirAbs,
-    'App',
-    'App',
-    'Assets.xcassets',
-    'AppIcon.appiconset',
-  );
-
-  if (!existsSync(path)) {
-    logger.error(`Unable to find ${path}. Try updating it manually`);
-    return;
-  }
-
-  if (!existsSync(join(path, iconToKeep))) {
-    logger.error(`Unable to find ${iconToKeep}. Try updating it manually`);
-    return;
-  }
-
-  if (!existsSync(join(path, contentsFile))) {
-    logger.error(`Unable to find ${path}. Try updating it manually`);
-    return;
-  }
-
-  const filenames = readdirSync(path);
-
-  for (const filename of filenames) {
-    if (filename != iconToKeep && filename != contentsFile) {
-      removeSync(join(path, filename));
-    }
-  }
-
-  writeFileSync(join(path, contentsFile), newContentsFileContents);
-}
-
-async function updateGradleProperties(filename: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  const lines = txt.split('\n');
-  let linesToKeep = '';
-  for (const line of lines) {
-    // check for enableJetifier
-    const jetifierMatch =
-      line.match(/android\.enableJetifier\s*=\s*true/) || [];
-    const commentMatch =
-      line.match(
-        /# Automatically convert third-party libraries to use AndroidX/,
-      ) || [];
-
-    if (jetifierMatch.length == 0 && commentMatch.length == 0) {
-      linesToKeep += line + '\n';
-    }
-  }
-  writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
 }
 
 async function movePackageFromManifestToBuildGradle(
