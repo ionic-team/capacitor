@@ -53,8 +53,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^5.0.0';
-const pluginVersion = '^5.0.0';
+const coreVersion = '^6.0.0';
+const pluginVersion = '^6.0.0';
 const gradleVersion = '8.0.2';
 let installFailed = false;
 
@@ -68,16 +68,16 @@ export async function migrateCommand(
   }
 
   const capMajor = await checkCapacitorMajorVersion(config);
-  if (capMajor < 4) {
+  if (capMajor < 5) {
     fatal(
-      'Migrate can only be used on capacitor 4 and above, please use the CLI in Capacitor 4 to upgrade to 4 first',
+      'Migrate can only be used on capacitor 5 and above, please use the CLI in Capacitor 5 to upgrade to 5 first',
     );
   }
 
   const jdkMajor = await checkJDKMajorVersion();
 
   if (jdkMajor < 17) {
-    logger.warn('Capacitor 5 requires JDK 17 or higher. Some steps may fail.');
+    logger.warn('Capacitor 6 requires JDK 17 or higher. Some steps may fail.');
   }
 
   const variablesAndClasspaths:
@@ -105,7 +105,7 @@ export async function migrateCommand(
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
     : await logPrompt(
-        `Capacitor 5 sets a deployment target of iOS 13 and Android 13 (SDK 33). \n`,
+        `Capacitor 6 sets a deployment target of iOS 13 and Android 14 (SDK 34). \n`,
         {
           type: 'text',
           name: 'migrateconfirm',
