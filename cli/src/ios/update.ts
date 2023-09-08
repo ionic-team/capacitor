@@ -94,7 +94,8 @@ async function updatePodfile(
   plugins: Plugin[],
   deployment: boolean,
 ): Promise<void> {
-  const {dependenciesContent, relativeCapacitoriOSPath} = await generatePodFile(config, plugins);
+  const { dependenciesContent, relativeCapacitoriOSPath } =
+    await generatePodFile(config, plugins);
   const podfilePath = join(config.ios.nativeProjectDirAbs, 'Podfile');
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
   podfileContent = podfileContent.replace(
@@ -103,7 +104,7 @@ async function updatePodfile(
   );
   podfileContent = podfileContent.replace(
     `require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'`,
-    `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`
+    `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`,
   );
   podfileContent = podfileContent.replace(
     `def assertDeploymentTarget(installer)
@@ -118,7 +119,7 @@ async function updatePodfile(
     end
   end
 end`,
-    `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`
+    `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`,
   );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
@@ -162,7 +163,7 @@ end`,
 async function generatePodFile(
   config: Config,
   plugins: Plugin[],
-): Promise<{dependenciesContent: string, relativeCapacitoriOSPath: string}> {
+): Promise<{ dependenciesContent: string; relativeCapacitoriOSPath: string }> {
   const capacitoriOSPath = resolveNode(
     config.app.rootDir,
     '@capacitor/ios',
@@ -239,10 +240,13 @@ async function generatePodFile(
       `  pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
-  return {dependenciesContent: `
+  return {
+    dependenciesContent: `
   pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
   pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'
-${pods.join('').trimRight()}`, relativeCapacitoriOSPath};
+${pods.join('').trimRight()}`,
+    relativeCapacitoriOSPath,
+  };
 }
 
 function getFrameworkName(framework: any) {
