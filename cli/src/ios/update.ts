@@ -94,8 +94,8 @@ async function updatePodfile(
   plugins: Plugin[],
   deployment: boolean,
 ): Promise<void> {
-  const { dependenciesContent, relativeCapacitoriOSPath } =
-    await generatePodFile(config, plugins);
+  const dependenciesContent = await generatePodFile(config, plugins);
+  const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
   const podfilePath = join(config.ios.nativeProjectDirAbs, 'Podfile');
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
   podfileContent = podfileContent.replace(
@@ -103,7 +103,7 @@ async function updatePodfile(
     `$1${dependenciesContent}$2`,
   );
   podfileContent = podfileContent.replace(
-    `require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'`,
+    /(require_relative)[\s\S]+?(@capacitor\/ios\/scripts\/pods_helpers')/,
     `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`,
   );
   podfileContent = podfileContent.replace(
@@ -160,15 +160,13 @@ end`,
   }
 }
 
-async function generatePodFile(
-  config: Config,
-  plugins: Plugin[],
-): Promise<{ dependenciesContent: string; relativeCapacitoriOSPath: string }> {
+async function getRelativeCapacitoriOSPath(config: Config) {
   const capacitoriOSPath = resolveNode(
     config.app.rootDir,
     '@capacitor/ios',
     'package.json',
   );
+
   if (!capacitoriOSPath) {
     fatal(
       `Unable to find ${c.strong('node_modules/@capacitor/ios')}.\n` +
@@ -176,10 +174,19 @@ async function generatePodFile(
     );
   }
 
-  const podfilePath = config.ios.nativeProjectDirAbs;
-  const relativeCapacitoriOSPath = convertToUnixPath(
-    relative(podfilePath, await realpath(dirname(capacitoriOSPath))),
+  return convertToUnixPath(
+    relative(
+      config.ios.nativeProjectDirAbs,
+      await realpath(dirname(capacitoriOSPath)),
+    ),
   );
+}
+
+async function generatePodFile(
+  config: Config,
+  plugins: Plugin[],
+): Promise<string> {
+  const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
 
   const capacitorPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Core,
@@ -191,7 +198,7 @@ async function generatePodFile(
       }
 
       return `  pod '${p.ios.name}', :path => '${convertToUnixPath(
-        relative(podfilePath, await realpath(p.rootPath)),
+        relative(config.ios.nativeProjectDirAbs, await realpath(p.rootPath)),
       )}'\n`;
     }),
   );
@@ -240,13 +247,10 @@ async function generatePodFile(
       `  pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
-  return {
-    dependenciesContent: `
+  return `
   pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
   pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'
-${pods.join('').trimRight()}`,
-    relativeCapacitoriOSPath,
-  };
+${pods.join('').trimRight()}`;
 }
 
 function getFrameworkName(framework: any) {
