@@ -37,7 +37,7 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
   lint:
-    runs-on: macos-12
+    runs-on: macos-13
     timeout-minutes: 30
     steps:
       - uses: actions/setup-node@v3
@@ -54,7 +54,7 @@ jobs:
       - run: npm install
       - run: npm run lint
   test-cli:
-    runs-on: macos-12
+    runs-on: macos-13
     timeout-minutes: 30
     needs:
       - setup
@@ -100,7 +100,7 @@ jobs:
       - run: npm test
         working-directory: ./core
   test-ios:
-    runs-on: macos-12
+    runs-on: macos-13
     timeout-minutes: 30
     needs:
       - setup
@@ -108,7 +108,7 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - /Applications/Xcode_14.2.app
+          - /Applications/Xcode_15.0.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/setup-node@v3
