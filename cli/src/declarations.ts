@@ -578,22 +578,6 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
-export interface FederatedApp {
-  name: string;
-  webDir: string;
-  liveUpdateConfig?: LiveUpdateConfig;
-}
-
-export interface LiveUpdateConfig {
-  appId: string;
-  channel: string;
-  autoUpdateMethod: AutoUpdateMethod;
-  maxVersions?: number;
-  key?: string;
-}
-
-export type AutoUpdateMethod = 'none' | 'background';
-
 export interface PluginsConfig {
   /**
    * Plugin configuration by class name.
@@ -605,24 +589,6 @@ export interface PluginsConfig {
         [key: string]: any;
       }
     | undefined;
-
-  /**
-   * FederatedCapacitor plugin configuration
-   *
-   * @since 5.0.0
-   */
-  FederatedCapacitor?: {
-    shell: Omit<FederatedApp, 'webDir'>;
-    apps: FederatedApp[];
-    liveUpdatesKey?: string;
-  };
-
-  /**
-   * Capacitor Live Updates plugin configuration
-   *
-   * @since 4.2.0
-   */
-  LiveUpdates?: LiveUpdateConfig;
 
   /**
    * Capacitor Cookies plugin configuration
