@@ -300,7 +300,7 @@ public class Bridge {
                 int majorVersion = Integer.parseInt(majorVersionStr);
                 return majorVersion >= config.getMinWebViewVersion();
             } catch (Exception ex) {
-                Logger.warn("Unable to get package info for 'com.huawei.webview'" + ex.toString());
+                Logger.warn("Unable to get package info for '" + info.packageName + "'" + ex.toString());
                 return false;
             }
         }
