@@ -289,8 +289,8 @@ public class Bridge {
 
         // Check getCurrentWebViewPackage() directly if above Android 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PackageInfo info = WebView.getCurrentWebViewPackage();
             try {
-                PackageInfo info = WebView.getCurrentWebViewPackage();
                 if (info.packageName.equals("com.huawei.webview")) {
                     String majorVersionStr = info.versionName.split("\\.")[0];
                     int majorVersion = Integer.parseInt(majorVersionStr);
