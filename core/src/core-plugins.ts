@@ -1,4 +1,5 @@
 import type { Plugin } from './definitions';
+import type { WindowCapacitor } from './definitions-internal';
 import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
 
@@ -341,6 +342,30 @@ export const buildRequestInit = (
   }
 
   return output;
+};
+
+const CAPACITOR_HTTP_INTERCEPTOR = '/_capacitor_http_interceptor_';
+const CAPACITOR_HTTPS_INTERCEPTOR = '/_capacitor_https_interceptor_';
+
+export const isRelativeOrProxyUrl = (url: string | undefined): boolean =>
+  !url ||
+  !(url.startsWith('http:') || url.startsWith('https:')) ||
+  url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1 ||
+  url.indexOf(CAPACITOR_HTTPS_INTERCEPTOR) > -1;
+
+export const createProxyUrl = (url: string, win: WindowCapacitor): string => {
+  if (isRelativeOrProxyUrl(url)) return url;
+
+  const proxyUrl = new URL(url);
+  const isHttps = proxyUrl.protocol === 'https:';
+
+  if (win.webkit?.messageHandlers?.bridge) {
+    proxyUrl.protocol = win.WEBVIEW_SERVER_URL ?? 'capacitor:';
+  }
+  proxyUrl.pathname =
+    (isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR) +
+    proxyUrl.pathname;
+  return proxyUrl.toString();
 };
 
 // WEB IMPLEMENTATION

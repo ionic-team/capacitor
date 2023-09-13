@@ -15,6 +15,8 @@ limitations under the License.
  */
 package com.getcapacitor;
 
+import static com.getcapacitor.plugin.util.HttpRequestHandler.isDomainExcludedFromSSL;
+
 import android.content.Context;
 import android.net.Uri;
 import android.util.Base64;
@@ -170,12 +172,21 @@ public class WebViewLocalServer {
     public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
         Uri loadingUrl = request.getUrl();
 
-        if (null != loadingUrl.getPath() && loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START)) {
-            Logger.debug("Handling CapacitorHttp request: " + request.getUrl().toString());
-            try {
-                return handleCapacitorHttpRequest(request);
-            } catch (Exception e) {
-                Logger.error(e.getLocalizedMessage());
+        if (null != loadingUrl.getPath()) {
+            if (loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START)) {
+                Logger.debug("Handling CapacitorHttp request: " + request.getUrl().toString());
+                try {
+                    return handleCapacitorHttpRequest(request, false);
+                } catch (Exception e) {
+                    Logger.error(e.getLocalizedMessage());
+                }
+            } else if (loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START)) {
+                Logger.debug("Handling CapacitorHttp request: " + request.getUrl().toString());
+                try {
+                    return handleCapacitorHttpRequest(request, true);
+                } catch (Exception e) {
+                    Logger.error(e.getLocalizedMessage());
+                }
             }
         }
 
@@ -211,16 +222,6 @@ public class WebViewLocalServer {
 
     private boolean isAllowedUrl(Uri loadingUrl) {
         return !(bridge.getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()));
-    }
-
-    private Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
-        try {
-            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
-            Method method = sslPinningImpl.getDeclaredMethod("isDomainExcluded", Bridge.class, URL.class);
-            return (Boolean) method.invoke(sslPinningImpl.newInstance(), bridge, url);
-        } catch (Exception ignored) {
-            return false;
-        }
     }
 
     private String getReasonPhraseFromResponseCode(int code) {
@@ -259,8 +260,12 @@ public class WebViewLocalServer {
         };
     }
 
-    private WebResourceResponse handleCapacitorHttpRequest(WebResourceRequest request) throws IOException {
-        String urlString = request.getUrl().toString().replace(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START, "");
+    private WebResourceResponse handleCapacitorHttpRequest(WebResourceRequest request, Boolean isHttpsRequest) throws IOException {
+        String urlString = request
+            .getUrl()
+            .toString()
+            .replace(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START, "")
+            .replace(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START, "");
         URL url = new URL(urlString);
         JSObject headers = new JSObject();
 

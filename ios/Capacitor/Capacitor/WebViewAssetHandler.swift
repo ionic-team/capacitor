@@ -20,13 +20,23 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         self.serverUrl = serverUrl
     }
 
+    private func isUsingLiveReload(_ localUrl: URL) -> Bool {
+        return self.serverUrl != nil && self.serverUrl?.scheme != localUrl.scheme
+    }
+
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         let startPath: String
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
+        let localUrl = URL.init(string: url.absoluteString)!
 
         if url.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
-            handleCapacitorHttpRequest(urlSchemeTask)
+            handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
+            return
+        }
+
+        if url.path.starts(with: CapacitorBridge.httpsInterceptorStartIdentifier) {
+            handleCapacitorHttpRequest(urlSchemeTask, localUrl, true)
             return
         }
 
@@ -36,7 +46,6 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             startPath = router.route(for: stringToLoad)
         }
 
-        let localUrl = URL.init(string: url.absoluteString)!
         let fileUrl = URL.init(fileURLWithPath: startPath)
 
         do {
@@ -48,7 +57,7 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             ]
 
             // if using live reload, then set CORS headers
-            if self.serverUrl != nil && self.serverUrl?.scheme != localUrl.scheme {
+            if isUsingLiveReload(localUrl) {
                 headers["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString
                 headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
             }
@@ -126,15 +135,16 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         return false
     }
 
-    func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask) {
+    func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) {
         var urlRequest = urlSchemeTask.request
         let url = urlRequest.url!
         var targetUrl = url.absoluteString
             .replacingOccurrences(of: CapacitorBridge.httpInterceptorStartIdentifier, with: "")
+            .replacingOccurrences(of: CapacitorBridge.httpsInterceptorStartIdentifier, with: "")
 
         // Only replace first occurrence of the scheme
-        if let range = targetUrl.range(of: InstanceDescriptorDefaults.scheme) {
-            targetUrl = targetUrl.replacingCharacters(in: range, with: "https")
+        if let range = targetUrl.range(of: self.serverUrl?.scheme ?? InstanceDescriptorDefaults.scheme) {
+            targetUrl = targetUrl.replacingCharacters(in: range, with: isHttpsRequest ? "https" : "http")
         }
 
         urlRequest.url = URL(string: targetUrl)
@@ -152,7 +162,7 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 var newHeaders: [AnyHashable: Any] = [:]
 
                 // if using live reload, then set CORS headers
-                if self.serverUrl != nil && self.serverUrl?.scheme != urlRequest.url?.scheme {
+                if self.isUsingLiveReload(url) {
                     newHeaders = [
                         "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
                         "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"

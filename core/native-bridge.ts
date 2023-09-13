@@ -2,7 +2,7 @@
  * Note: When making changes to this file, run `npm run build:nativebridge`
  * afterwards to build the nativebridge.js files to the android and iOS projects.
  */
-import type { HttpResponse } from './src/core-plugins';
+import { isRelativeOrProxyUrl, type HttpResponse, createProxyUrl } from './src/core-plugins';
 import type {
   CallData,
   CapacitorInstance,
@@ -487,13 +487,7 @@ const initBridge = (w: any): void => {
             options.method.toLocaleUpperCase() === 'OPTIONS' ||
             options.method.toLocaleUpperCase() === 'TRACE'
           ) {
-            const url = new URL(resource.toString());
-            if (platform === 'ios') {
-              url.protocol = win.WEBVIEW_SERVER_URL ?? '';
-            }
-            url.pathname = '/_capacitor_http_interceptor_' + url.pathname;
-
-            const modifiedResource = url.toString();
+            const modifiedResource = createProxyUrl(resource.toString(), win);
             const response = await win.CapacitorWebFetch(
               modifiedResource,
               options,
@@ -599,17 +593,13 @@ const initBridge = (w: any): void => {
           xhr.readyState = 0;
           const prototype = win.CapacitorWebXMLHttpRequest.prototype;
 
-          const isRelativeURL = (url: string | undefined) =>
-            !url ||
-            !(url.startsWith('http:') || url.startsWith('https:')) ||
-            url.indexOf('/_capacitor_http_interceptor_') > -1;
           const isProgressEventAvailable = () =>
             typeof ProgressEvent !== 'undefined' &&
             ProgressEvent.prototype instanceof Event;
 
           // XHR patch abort
           prototype.abort = function () {
-            if (isRelativeURL(this._url)) {
+            if (isRelativeOrProxyUrl(this._url)) {
               return win.CapacitorWebXMLHttpRequest.abort.call(this);
             }
             this.readyState = 0;
@@ -631,7 +621,7 @@ const initBridge = (w: any): void => {
               this._method === 'OPTIONS' ||
               this._method === 'TRACE'
             ) {
-              if (isRelativeURL(url)) {
+              if (isRelativeOrProxyUrl(url)) {
                 return win.CapacitorWebXMLHttpRequest.open.call(
                   this,
                   method,
@@ -639,14 +629,7 @@ const initBridge = (w: any): void => {
                 );
               }
 
-              const modifiedUrl = new URL(this._url);
-              if (platform === 'ios') {
-                modifiedUrl.protocol = win.WEBVIEW_SERVER_URL ?? '';
-              }
-              modifiedUrl.pathname =
-                '/_capacitor_http_interceptor_' + modifiedUrl.pathname;
-
-              this._url = modifiedUrl.toString();
+              this._url = createProxyUrl(this._url, win);
 
               return win.CapacitorWebXMLHttpRequest.open.call(
                 this,
@@ -666,7 +649,7 @@ const initBridge = (w: any): void => {
             header: string,
             value: string,
           ) {
-            if (isRelativeURL(this._url)) {
+            if (isRelativeOrProxyUrl(this._url)) {
               return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(
                 this,
                 header,
@@ -678,7 +661,7 @@ const initBridge = (w: any): void => {
 
           // XHR patch send
           prototype.send = function (body?: Document | XMLHttpRequestBodyInit) {
-            if (isRelativeURL(this._url)) {
+            if (isRelativeOrProxyUrl(this._url)) {
               return win.CapacitorWebXMLHttpRequest.send.call(this, body);
             }
 
@@ -816,7 +799,7 @@ const initBridge = (w: any): void => {
 
           // XHR patch getAllResponseHeaders
           prototype.getAllResponseHeaders = function () {
-            if (isRelativeURL(this._url)) {
+            if (isRelativeOrProxyUrl(this._url)) {
               return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(
                 this,
               );
@@ -833,7 +816,7 @@ const initBridge = (w: any): void => {
 
           // XHR patch getResponseHeader
           prototype.getResponseHeader = function (name: string) {
-            if (isRelativeURL(this._url)) {
+            if (isRelativeOrProxyUrl(this._url)) {
               return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(
                 this,
                 name,
