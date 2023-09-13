@@ -39,6 +39,11 @@ public class CapacitorCookies extends Plugin {
         return pluginConfig.getBoolean("enabled", false);
     }
 
+    private boolean isAllowingInsecureCookies() {
+        PluginConfig pluginConfig = getBridge().getConfig().getPluginConfiguration("CapacitorCookies");
+        return pluginConfig.getBoolean("androidCustomSchemeAllowInsecureAccess", false);
+    }
+
     @JavascriptInterface
     public void setCookie(String domain, String action) {
         cookieManager.setCookie(domain, action);
@@ -46,34 +51,44 @@ public class CapacitorCookies extends Plugin {
 
     @PluginMethod
     public void getCookies(PluginCall call) {
-        this.bridge.eval(
-                "document.cookie",
-                value -> {
-                    String cookies = value.substring(1, value.length() - 1);
-                    String[] cookieArray = cookies.split(";");
+        if (isAllowingInsecureCookies()) {
+            String url = call.getString("url");
+            JSObject cookiesMap = new JSObject();
+            HttpCookie[] cookies = cookieManager.getCookies(url);
+            for (HttpCookie cookie : cookies) {
+                cookiesMap.put(cookie.getName(), cookie.getValue());
+            }
+            call.resolve(cookiesMap);
+        } else {
+            this.bridge.eval(
+                    "document.cookie",
+                    value -> {
+                        String cookies = value.substring(1, value.length() - 1);
+                        String[] cookieArray = cookies.split(";");
 
-                    JSObject cookieMap = new JSObject();
+                        JSObject cookieMap = new JSObject();
 
-                    for (String cookie : cookieArray) {
-                        if (cookie.length() > 0) {
-                            String[] keyValue = cookie.split("=", 2);
+                        for (String cookie : cookieArray) {
+                            if (cookie.length() > 0) {
+                                String[] keyValue = cookie.split("=", 2);
 
-                            if (keyValue.length == 2) {
-                                String key = keyValue[0].trim();
-                                String val = keyValue[1].trim();
-                                try {
-                                    key = URLDecoder.decode(keyValue[0].trim(), StandardCharsets.UTF_8.name());
-                                    val = URLDecoder.decode(keyValue[1].trim(), StandardCharsets.UTF_8.name());
-                                } catch (UnsupportedEncodingException ignored) {}
+                                if (keyValue.length == 2) {
+                                    String key = keyValue[0].trim();
+                                    String val = keyValue[1].trim();
+                                    try {
+                                        key = URLDecoder.decode(keyValue[0].trim(), StandardCharsets.UTF_8.name());
+                                        val = URLDecoder.decode(keyValue[1].trim(), StandardCharsets.UTF_8.name());
+                                    } catch (UnsupportedEncodingException ignored) {}
 
-                                cookieMap.put(key, val);
+                                    cookieMap.put(key, val);
+                                }
                             }
                         }
-                    }
 
-                    call.resolve(cookieMap);
-                }
-            );
+                        call.resolve(cookieMap);
+                    }
+                );
+        }
     }
 
     @PluginMethod
