@@ -3,24 +3,24 @@ import MobileCoreServices
 
 @objc(CAPWebViewAssetHandler)
 // swiftlint:disable type_body_length
-internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
+public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
 
-    init(router: Router) {
+    public init(router: Router) {
         self.router = router
         super.init()
     }
 
-    func setAssetPath(_ assetPath: String) {
+    public func setAssetPath(_ assetPath: String) {
         router.basePath = assetPath
     }
 
-    func setServerUrl(_ serverUrl: URL?) {
+    public func setServerUrl(_ serverUrl: URL?) {
         self.serverUrl = serverUrl
     }
 
-    func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+    public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         let startPath: String
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
@@ -92,7 +92,7 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         urlSchemeTask.didFinish()
     }
 
-    func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
+    public func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
         CAPLog.print("scheme stop")
     }
 
