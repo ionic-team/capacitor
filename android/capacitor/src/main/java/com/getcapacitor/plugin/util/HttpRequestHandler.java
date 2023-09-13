@@ -238,11 +238,14 @@ public class HttpRequestHandler {
             } else {
                 return readStreamAsString(errorStream);
             }
-        } else if (contentType != null && contentType.contains(MimeType.APPLICATION_JSON.getValue())) {
-            // backward compatibility
-            return parseJSON(readStreamAsString(connection.getInputStream()));
         } else {
             InputStream stream = connection.getInputStream();
+
+            if (contentType != null && contentType.contains(MimeType.APPLICATION_JSON.getValue())) {
+                // backward compatibility
+                return parseJSON(readStreamAsString(stream));
+            }
+
             switch (responseType) {
                 case ARRAY_BUFFER:
                 case BLOB:
