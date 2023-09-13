@@ -394,6 +394,7 @@ var nativeBridge = (function (exports) {
                 win.CapacitorWebXMLHttpRequest = {
                     abort: window.XMLHttpRequest.prototype.abort,
                     constructor: window.XMLHttpRequest.prototype.constructor,
+                    fullObject: window.XMLHttpRequest,
                     getAllResponseHeaders: window.XMLHttpRequest.prototype.getAllResponseHeaders,
                     getResponseHeader: window.XMLHttpRequest.prototype.getResponseHeader,
                     open: window.XMLHttpRequest.prototype.open,
@@ -674,6 +675,7 @@ var nativeBridge = (function (exports) {
                         Object.setPrototypeOf(xhr, prototype);
                         return xhr;
                     };
+                    Object.assign(window.XMLHttpRequest, win.CapacitorWebXMLHttpRequest.fullObject);
                 }
             }
             // patch window.console on iOS and store original console fns
