@@ -301,6 +301,8 @@ public class Bridge {
                     return majorVersion >= config.getMinHuaweiWebViewVersion();
                 }
                 return majorVersion >= config.getMinWebViewVersion();
+            } else {
+                return false;
             }
         }
 
