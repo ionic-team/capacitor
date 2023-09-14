@@ -500,7 +500,7 @@ async function determineGemfileOrCocoapodPath(
     if (!gemfileText) {
       return 'pod';
     }
-    const cocoapodsInGemfile = new RegExp(/gem ('|")cocoapods('|")/).test(
+    const cocoapodsInGemfile = new RegExp(/gem\s+['"]cocoapods/).test(
       gemfileText,
     );
 
