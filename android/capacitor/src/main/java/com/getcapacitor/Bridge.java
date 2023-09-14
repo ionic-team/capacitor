@@ -46,6 +46,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaWebView;
@@ -291,17 +294,17 @@ public class Bridge {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             PackageInfo info = WebView.getCurrentWebViewPackage();
             try {
-                if (info.packageName.equals("com.huawei.webview")) {
-                    String majorVersionStr = info.versionName.split("\\.")[0];
+                Pattern pattern = Pattern.compile("(\\d+)");
+                Matcher matcher = pattern.matcher(info.versionName);
+                if (matcher.find()) {
+                    String majorVersionStr = matcher.group(0);
                     int majorVersion = Integer.parseInt(majorVersionStr);
-                    return majorVersion >= config.getMinHuaweiWebViewVersion();
+                    if (info.packageName.equals("com.huawei.webview")) {
+                        return majorVersion >= config.getMinHuaweiWebViewVersion();
                 }
-                String majorVersionStr = info.versionName.split("\\.")[0];
-                int majorVersion = Integer.parseInt(majorVersionStr);
                 return majorVersion >= config.getMinWebViewVersion();
             } catch (Exception ex) {
                 Logger.warn("Unable to get package info for '" + info.packageName + "'" + ex.toString());
-                return false;
             }
         }
 
