@@ -471,10 +471,12 @@ const initBridge = (w: any): void => {
           resource: RequestInfo | URL,
           options?: RequestInit,
         ) => {
+          const request = new Request(resource, options);
+
           if (
             !(
-              resource.toString().startsWith('http:') ||
-              resource.toString().startsWith('https:')
+              request.url.startsWith('http:') ||
+              request.url.startsWith('https:')
             )
           ) {
             return win.CapacitorWebFetch(resource, options);
@@ -484,23 +486,19 @@ const initBridge = (w: any): void => {
           console.time(tag);
           try {
             // intercept request & pass to the bridge
+            const { body, method } = request;
             const {
               data: requestData,
               type,
               headers,
-            } = await convertBody(options?.body || undefined);
-            let optionHeaders = options?.headers;
-            if (options?.headers instanceof Headers) {
-              optionHeaders = Object.fromEntries(
-                (options.headers as any).entries(),
-              );
-            }
+            } = await convertBody(body || undefined);
+            const optionHeaders = Object.fromEntries(request.headers.entries());
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
               'request',
               {
-                url: resource,
-                method: options?.method ? options.method : undefined,
+                url: request.url,
+                method: method,
                 data: requestData,
                 dataType: type,
                 headers: {
