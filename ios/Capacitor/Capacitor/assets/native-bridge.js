@@ -586,12 +586,22 @@ var nativeBridge = (function (exports) {
                                             }
                                             this._headers = nativeResponse.headers;
                                             this.status = nativeResponse.status;
+                                            const responseString = typeof nativeResponse.data !== 'string'
+                                                ? JSON.stringify(nativeResponse.data)
+                                                : nativeResponse.data;
                                             if (this.responseType === '' ||
                                                 this.responseType === 'text') {
-                                                this.response =
-                                                    typeof nativeResponse.data !== 'string'
-                                                        ? JSON.stringify(nativeResponse.data)
-                                                        : nativeResponse.data;
+                                                this.response = responseString;
+                                            }
+                                            else if (this.responseType === 'blob') {
+                                                this.response = new Blob([responseString], {
+                                                    type: "application/json",
+                                                });
+                                            }
+                                            else if (this.responseType === 'arraybuffer') {
+                                                const encoder = new TextEncoder();
+                                                const uint8Array = encoder.encode(responseString);
+                                                this.response = uint8Array.buffer;
                                             }
                                             else {
                                                 this.response = nativeResponse.data;
