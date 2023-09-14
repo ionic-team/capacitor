@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.4.0](https://github.com/ionic-team/capacitor/compare/5.3.0...5.4.0) (2023-09-14)
+
+### Bug Fixes
+
+- **cli:** use helper in Podfile with correct path ([#6888](https://github.com/ionic-team/capacitor/issues/6888)) ([9048432](https://github.com/ionic-team/capacitor/commit/9048432755095ce3dcca9d3bab39894f2b6c3967))
+
+### Features
+
+- add livereload to run command ([#6831](https://github.com/ionic-team/capacitor/issues/6831)) ([54a63ae](https://github.com/ionic-team/capacitor/commit/54a63ae0a5f0845d5ef2c0d10bd0c27682866940))
+
 # [5.3.0](https://github.com/ionic-team/capacitor/compare/5.2.3...5.3.0) (2023-08-23)
 
 ### Features
