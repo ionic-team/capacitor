@@ -15,11 +15,11 @@ internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 // swiftlint:disable lower_acl_than_parent
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
-internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
+public class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // this decision is needed before the bridge is instantiated,
     // so we need a class property to avoid duplication
-    internal static var isDevEnvironment: Bool {
+    public static var isDevEnvironment: Bool {
         #if DEBUG
         return true
         #else
@@ -92,16 +92,16 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let defaultScheme = "capacitor"
 
-    var webViewAssetHandler: WebViewAssetHandler
-    var webViewDelegationHandler: WebViewDelegationHandler
-    weak var bridgeDelegate: CAPBridgeDelegate?
+    public private(set) var webViewAssetHandler: WebViewAssetHandler
+    public private(set) var webViewDelegationHandler: WebViewDelegationHandler
+    public private(set) weak var bridgeDelegate: CAPBridgeDelegate?
     @objc public var viewController: UIViewController? {
         return bridgeDelegate?.bridgedViewController
     }
 
     var lastPlugin: CAPPlugin?
 
-    @objc public internal(set) var config: InstanceConfiguration
+    @objc public var config: InstanceConfiguration
     // Map of all loaded and instantiated plugins by pluginId -> instance
     var plugins =  [String: CapacitorPlugin]()
     // Manager for getting Cordova plugins
@@ -190,7 +190,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - Initialization
 
-    init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler, autoRegisterPlugins: Bool = true) {
+    public init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler, autoRegisterPlugins: Bool = true) {
         self.bridgeDelegate = bridgeDelegate
         self.webViewAssetHandler = assetHandler
         self.webViewDelegationHandler = delegationHandler

@@ -4,9 +4,9 @@ import WebKit
 // adopting a public protocol in an internal class is by design
 // swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
-internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
+public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
     weak var bridge: CapacitorBridge?
-    fileprivate(set) var contentController = WKUserContentController()
+    public fileprivate(set) var contentController = WKUserContentController()
     enum WebViewLoadingState {
         case unloaded
         case initialLoad(isOpaque: Bool)
@@ -16,17 +16,17 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     private let handlerName = "bridge"
 
-    init(bridge: CapacitorBridge? = nil) {
+    public init(bridge: CapacitorBridge? = nil) {
         super.init()
         self.bridge = bridge
         contentController.add(self, name: handlerName)
     }
 
-    func cleanUp() {
+    public func cleanUp() {
         contentController.removeScriptMessageHandler(forName: handlerName)
     }
 
-    func willLoadWebview(_ webView: WKWebView?) {
+    public func willLoadWebview(_ webView: WKWebView?) {
         // Set the webview to be not opaque on the inital load. This prevents
         // the webview from showing a white background, which is its default
         // loading display, as that can appear as a screen flash. The opacity
@@ -48,7 +48,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     }
 
     @available(iOS 15, *)
-    func webView(
+    public func webView(
         _ webView: WKWebView,
         requestMediaCapturePermissionFor origin: WKSecurityOrigin,
         initiatedByFrame frame: WKFrameInfo,
@@ -59,7 +59,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
     }
 
     @available(iOS 15, *)
-    func webView(_ webView: WKWebView,
+    public func webView(_ webView: WKWebView,
                  requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
                  initiatedByFrame frame: WKFrameInfo,
                  decisionHandler: @escaping (WKPermissionDecision) -> Void) {
@@ -163,7 +163,7 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
 
     // MARK: - WKScriptMessageHandler
 
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let bridge = bridge else {
             return
         }
