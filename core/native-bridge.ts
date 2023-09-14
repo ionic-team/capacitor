@@ -434,6 +434,7 @@ const initBridge = (w: any): void => {
       win.CapacitorWebXMLHttpRequest = {
         abort: window.XMLHttpRequest.prototype.abort,
         constructor: window.XMLHttpRequest.prototype.constructor,
+        fullObject: window.XMLHttpRequest,
         getAllResponseHeaders:
           window.XMLHttpRequest.prototype.getAllResponseHeaders,
         getResponseHeader: window.XMLHttpRequest.prototype.getResponseHeader,
@@ -568,6 +569,7 @@ const initBridge = (w: any): void => {
 
         window.XMLHttpRequest = function () {
           const xhr = new win.CapacitorWebXMLHttpRequest.constructor();
+
           Object.defineProperties(xhr, {
             _headers: {
               value: {},
@@ -828,6 +830,11 @@ const initBridge = (w: any): void => {
           Object.setPrototypeOf(xhr, prototype);
           return xhr;
         } as unknown as PatchedXMLHttpRequestConstructor;
+
+        Object.assign(
+          window.XMLHttpRequest,
+          win.CapacitorWebXMLHttpRequest.fullObject,
+        );
       }
     }
 
