@@ -92,7 +92,7 @@ import Cordova
     }
 
     open func router() -> Router {
-        return _Router()
+        return CapacitorRouter()
     }
 
     /**
@@ -359,11 +359,11 @@ extension CAPBridgeViewController {
 }
 
 extension CAPBridgeViewController: CAPBridgeDelegate {
-    internal var bridgedWebView: WKWebView? {
+    public var bridgedWebView: WKWebView? {
         return webView
     }
 
-    internal var bridgedViewController: UIViewController? {
+    public var bridgedViewController: UIViewController? {
         return self
     }
 }
