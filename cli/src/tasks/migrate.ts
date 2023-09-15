@@ -252,7 +252,7 @@ export async function migrateCommand(
               }
             }
             const pluginVariables: { [key: string]: string } = {
-              firebaseMessagingVersion: '23.1.2',
+              firebaseMessagingVersion: '23.2.1',
               playServicesLocationVersion: '21.0.1',
               androidxBrowserVersion: '1.5.0',
               androidxMaterialVersion: '1.8.0',
