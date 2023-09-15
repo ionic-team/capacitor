@@ -263,6 +263,7 @@ export async function migrateCommand(
               googleMapsKtxVersion: '3.4.0',
               googleMapsUtilsKtxVersion: '3.4.0',
               kotlinxCoroutinesVersion: '1.7.3',
+              coreSplashScreenVersion: '1.0.1',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(
