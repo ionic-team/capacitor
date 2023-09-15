@@ -46,6 +46,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaWebView;
@@ -290,14 +292,18 @@ public class Bridge {
         // Check getCurrentWebViewPackage() directly if above Android 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             PackageInfo info = WebView.getCurrentWebViewPackage();
-            if (info.packageName.equals("com.huawei.webview")) {
-                String majorVersionStr = info.versionName.split("\\.")[0];
+            Pattern pattern = Pattern.compile("(\\d+)");
+            Matcher matcher = pattern.matcher(info.versionName);
+            if (matcher.find()) {
+                String majorVersionStr = matcher.group(0);
                 int majorVersion = Integer.parseInt(majorVersionStr);
-                return majorVersion >= config.getMinHuaweiWebViewVersion();
+                if (info.packageName.equals("com.huawei.webview")) {
+                    return majorVersion >= config.getMinHuaweiWebViewVersion();
+                }
+                return majorVersion >= config.getMinWebViewVersion();
+            } else {
+                return false;
             }
-            String majorVersionStr = info.versionName.split("\\.")[0];
-            int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion >= config.getMinWebViewVersion();
         }
 
         // Otherwise manually check WebView versions
