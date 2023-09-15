@@ -9,6 +9,7 @@ SIMULATOR_BUILD_DIR="${BUILD_DIR}/iOS-Simulator"
 DEVICE_BUILD_DIR="${BUILD_DIR}/iOS-Device"
 SIMULATOR_PLATFORM="generic/platform=iOS Simulator"
 DEVICE_PLATFORM="generic/platform=iOS"
+LOG_FILE="capacitor-build.log"
 
 archive_capacitor() {
     PLATFORM=$1
@@ -33,18 +34,18 @@ create_xcframework() {
     -debug-symbols "${PWD}/${SIMULATOR_BUILD_DIR}.xcarchive/dSYMs/${PRODUCT}.framework.dSYM" \
     -framework "${DEVICE_BUILD_DIR}.xcarchive/Products/Library/Frameworks/${PRODUCT}.framework" \
     -debug-symbols "${PWD}/${DEVICE_BUILD_DIR}.xcarchive/dSYMs/${PRODUCT}.framework.dSYM" \
-    -output ${PRODUCT}.xcframework | tee xcframework-build.log | ${XCBEAUTIFY_COMMAND}
+    -output ${PRODUCT}.xcframework | tee -a ${LOG_FILE} | ${XCBEAUTIFY_COMMAND}
 }
 
 build_capacitor() {
   case $1 in
     simulator)
-    echo "Build and Archive for Simulator..."
-    archive_capacitor "${SIMULATOR_PLATFORM}" "${SIMULATOR_BUILD_DIR}" | tee sim-build.log | ${XCBEAUTIFY_COMMAND}
+    echo "Build and Archive for Simulator..." | tee -a ${LOG_FILE}
+    archive_capacitor "${SIMULATOR_PLATFORM}" "${SIMULATOR_BUILD_DIR}" | tee -a ${LOG_FILE} | ${XCBEAUTIFY_COMMAND}
     ;;
     device)
-    echo "Build and Archive for Device..."
-    archive_capacitor "${DEVICE_PLATFORM}" "${DEVICE_BUILD_DIR}" | tee device-build.log | ${XCBEAUTIFY_COMMAND}
+    echo "Build and Archive for Device..." | tee -a ${LOG_FILE}
+    archive_capacitor "${DEVICE_PLATFORM}" "${DEVICE_BUILD_DIR}" | tee -a ${LOG_FILE} | ${XCBEAUTIFY_COMMAND}
     ;;
     *)
     echo -n "Unknown Build Type"
@@ -56,8 +57,9 @@ build_capacitor() {
 build_capacitor "simulator"
 build_capacitor "device"
 
-rm -rf ${SIMULATOR_BUILD_DIR}.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
-rm -rf ${DEVICE_BUILD_DIR}.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+# Do we need these? if so, why?
+# rm -rf ${SIMULATOR_BUILD_DIR}.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+# rm -rf ${DEVICE_BUILD_DIR}.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
 
 create_xcframework "Capacitor"
 create_xcframework "Cordova"
