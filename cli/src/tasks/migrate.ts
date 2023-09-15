@@ -257,12 +257,12 @@ export async function migrateCommand(
               androidxBrowserVersion: '1.5.0',
               androidxMaterialVersion: '1.9.0',
               androidxExifInterfaceVersion: '1.3.6',
-              androidxCoreKTXVersion: '1.10.0',
+              androidxCoreKTXVersion: '1.12.0',
               googleMapsPlayServicesVersion: '18.1.0',
-              googleMapsUtilsVersion: '3.4.0',
+              googleMapsUtilsVersion: '3.5.3',
               googleMapsKtxVersion: '3.4.0',
               googleMapsUtilsKtxVersion: '3.4.0',
-              kotlinxCoroutinesVersion: '1.6.4',
+              kotlinxCoroutinesVersion: '1.7.3',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(
