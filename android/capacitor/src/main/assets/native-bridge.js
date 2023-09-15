@@ -424,22 +424,20 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
-                        if (!(resource.toString().startsWith('http:') ||
-                            resource.toString().startsWith('https:'))) {
+                        const request = new Request(resource, options);
+                        if (!(request.url.startsWith('http:') ||
+                            request.url.startsWith('https:'))) {
                             return win.CapacitorWebFetch(resource, options);
                         }
                         const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
                         console.time(tag);
                         try {
-                            // intercept request & pass to the bridge
-                            const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || undefined);
-                            let optionHeaders = options === null || options === void 0 ? void 0 : options.headers;
-                            if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
-                                optionHeaders = Object.fromEntries(options.headers.entries());
-                            }
+                            const { body, method } = request;
+                            const { data: requestData, type, headers } = await convertBody(body || undefined);
+                            const optionHeaders = Object.fromEntries(request.headers.entries());
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
-                                url: resource,
-                                method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
+                                url: request.url,
+                                method: method,
                                 data: requestData,
                                 dataType: type,
                                 headers: Object.assign(Object.assign({}, headers), optionHeaders),
