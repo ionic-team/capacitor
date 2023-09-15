@@ -55,7 +55,7 @@ const plugins = [
 ];
 const coreVersion = '^6.0.0';
 const pluginVersion = '^6.0.0';
-const gradleVersion = '8.0.2';
+const gradleVersion = '8.1.1';
 let installFailed = false;
 
 export async function migrateCommand(
