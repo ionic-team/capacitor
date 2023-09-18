@@ -40,11 +40,11 @@ create_xcframework() {
 build_capacitor() {
   case $1 in
     simulator)
-    echo "Build and Archive for Simulator..." | tee -a ${LOG_FILE}
+    echo "+++ Build and Archive ${SIMULATOR_PLATFORM}, ${SIMULATOR_BUILD_DIR} +++" | tee -a ${LOG_FILE}
     archive_capacitor "${SIMULATOR_PLATFORM}" "${SIMULATOR_BUILD_DIR}" | tee -a ${LOG_FILE} | ${XCBEAUTIFY_COMMAND}
     ;;
     device)
-    echo "Build and Archive for Device..." | tee -a ${LOG_FILE}
+    echo "+++ Build and Archive ${DEVICE_PLATFORM}, ${DEVICE_BUILD_DIR} +++" | tee -a ${LOG_FILE}
     archive_capacitor "${DEVICE_PLATFORM}" "${DEVICE_BUILD_DIR}" | tee -a ${LOG_FILE} | ${XCBEAUTIFY_COMMAND}
     ;;
     *)
