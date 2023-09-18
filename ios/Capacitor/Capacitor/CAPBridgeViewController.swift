@@ -359,11 +359,21 @@ extension CAPBridgeViewController {
 }
 
 extension CAPBridgeViewController: CAPBridgeDelegate {
-    public var bridgedWebView: WKWebView? {
-        return webView
-    }
+        internal var hasNotch: Bool {
+            let keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
+            return keyWindow?.safeAreaInsets.bottom ?? 0 > 0
+        }
 
-    public var bridgedViewController: UIViewController? {
-        return self
-    }
+        public var bridgedWebView: WKWebView? {
+            // Check if the device has a notch based on the `hasNotch` variable
+            if !(hasNotch) {
+                webView?.frame.origin = CGPoint(x: 0, y: UIApplication.shared.statusBarFrame.size.height)
+                webView?.frame.size.height = UIScreen.main.bounds.size.height - UIApplication.shared.statusBarFrame.size.height
+            }
+            return webView
+        }
+
+        public var bridgedViewController: UIViewController? {
+            return self
+        }
 }
