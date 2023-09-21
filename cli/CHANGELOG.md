@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.1](https://github.com/ionic-team/capacitor/compare/5.4.0...5.4.1) (2023-09-21)
+
+### Bug Fixes
+
+- **cli:** force latest native-run version for iOS 17 support ([#6928](https://github.com/ionic-team/capacitor/issues/6928)) ([f9be9f5](https://github.com/ionic-team/capacitor/commit/f9be9f5791e6f0881be2c73bb8fbe7a8c1b10848))
+- **cookies:** retrieve cookies when using a custom android scheme ([6b5ddad](https://github.com/ionic-team/capacitor/commit/6b5ddad8b36e33ef4171f6da5cc311ed3f634ac6))
+
 # [5.4.0](https://github.com/ionic-team/capacitor/compare/5.3.0...5.4.0) (2023-09-14)
 
 ### Bug Fixes
