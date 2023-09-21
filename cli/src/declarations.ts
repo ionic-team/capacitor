@@ -636,6 +636,14 @@ export interface PluginsConfig {
      * @default false
      */
     enabled?: boolean;
+    /**
+     * Enable `httpOnly` and other insecure cookies to be read and accessed on Android.
+     *
+     * Note: This can potentially be a security risk and is only intended to be used
+     * when your application uses a custom scheme on Android.
+     *
+     */
+    androidCustomSchemeAllowInsecureAccess?: boolean;
   };
 
   /**
