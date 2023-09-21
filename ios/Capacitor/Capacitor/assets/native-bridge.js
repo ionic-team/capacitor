@@ -595,7 +595,7 @@ var nativeBridge = (function (exports) {
                                             }
                                             else if (this.responseType === 'blob') {
                                                 this.response = new Blob([responseString], {
-                                                    type: "application/json",
+                                                    type: 'application/json',
                                                 });
                                             }
                                             else if (this.responseType === 'arraybuffer') {
@@ -668,7 +668,7 @@ var nativeBridge = (function (exports) {
                             }
                             let returnString = '';
                             for (const key in this._headers) {
-                                if (key != 'Set-Cookie') {
+                                if (key.toLowerCase() !== 'set-cookie') {
                                     returnString += key + ': ' + this._headers[key] + '\r\n';
                                 }
                             }
@@ -679,7 +679,12 @@ var nativeBridge = (function (exports) {
                             if (isRelativeURL(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                             }
-                            return this._headers[name];
+                            for (const key in this._headers) {
+                                if (key.toLowerCase() === name.toLowerCase()) {
+                                    return this._headers[key];
+                                }
+                            }
+                            return null;
                         };
                         Object.setPrototypeOf(xhr, prototype);
                         return xhr;
