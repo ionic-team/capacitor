@@ -787,7 +787,7 @@ const initBridge = (w: any): void => {
 
             let returnString = '';
             for (const key in this._headers) {
-              if (key != 'Set-Cookie') {
+              if (key.toLowerCase() !== 'set-cookie') {
                 returnString += key + ': ' + this._headers[key] + '\r\n';
               }
             }
@@ -802,7 +802,12 @@ const initBridge = (w: any): void => {
                 name,
               );
             }
-            return this._headers[name];
+            for (const key in this._headers) {
+              if (key.toLowerCase() === name.toLowerCase()) {
+                return this._headers[key];
+              }
+            }
+            return null;
           };
 
           Object.setPrototypeOf(xhr, prototype);
