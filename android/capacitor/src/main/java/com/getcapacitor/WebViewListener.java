@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebView;
 
 /**
@@ -41,5 +42,14 @@ public abstract class WebViewListener {
      */
     public void onPageStarted(WebView webView) {
         // Override me to add behavior to the page started event
+    }
+
+    /**
+     * Callback for render process gone event.
+     *
+     * @param webView The WebView that loaded
+     */
+    public void onRenderProcessGone(WebView webView, RenderProcessGoneDetail detail) {
+        // Override me to add behavior to the web view render process gone event
     }
 }
