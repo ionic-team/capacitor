@@ -45,11 +45,13 @@ public abstract class WebViewListener {
     }
 
     /**
-     * Callback for render process gone event.
+     * Callback for render process gone event. Return true if the state is handled.
      *
      * @param webView The WebView that loaded
+     * @return returns false by default if the listener is not overridden and used
      */
-    public void onRenderProcessGone(WebView webView, RenderProcessGoneDetail detail) {
+    public boolean onRenderProcessGone(WebView webView, RenderProcessGoneDetail detail) {
         // Override me to add behavior to the web view render process gone event
+        return false;
     }
 }

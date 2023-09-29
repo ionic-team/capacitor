@@ -98,13 +98,12 @@ public class BridgeWebViewClient extends WebViewClient {
     public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
         super.onRenderProcessGone(view, detail);
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
-
         if (webViewListeners != null) {
             for (WebViewListener listener : bridge.getWebViewListeners()) {
-                listener.onRenderProcessGone(view, detail);
+                if (listener.onRenderProcessGone(view, detail)) {
+                    return true;
+                }
             }
-
-            return true;
         }
 
         return false;
