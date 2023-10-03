@@ -297,7 +297,7 @@ public class CapConfig {
     private boolean validateScheme(String scheme) {
         List<String> invalidSchemes = Arrays.asList("file", "ftp", "ftps", "ws", "wss", "about", "blob", "data");
         if (invalidSchemes.contains(scheme)) {
-            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to http.");
+            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to https.");
             return false;
         }
 
