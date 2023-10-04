@@ -1,6 +1,6 @@
 package com.getcapacitor;
 
-import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
+import static com.getcapacitor.Bridge.CAPACITOR_HTTPS_SCHEME;
 import static com.getcapacitor.Bridge.DEFAULT_ANDROID_WEBVIEW_VERSION;
 import static com.getcapacitor.Bridge.DEFAULT_HUAWEI_WEBVIEW_VERSION;
 import static com.getcapacitor.Bridge.MINIMUM_ANDROID_WEBVIEW_VERSION;
@@ -36,7 +36,7 @@ public class CapConfig {
     private boolean html5mode = true;
     private String serverUrl;
     private String hostname = "localhost";
-    private String androidScheme = CAPACITOR_HTTP_SCHEME;
+    private String androidScheme = CAPACITOR_HTTPS_SCHEME;
     private String[] allowNavigation;
 
     // Android Config
@@ -297,7 +297,7 @@ public class CapConfig {
     private boolean validateScheme(String scheme) {
         List<String> invalidSchemes = Arrays.asList("file", "ftp", "ftps", "ws", "wss", "about", "blob", "data");
         if (invalidSchemes.contains(scheme)) {
-            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to http.");
+            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to https.");
             return false;
         }
 
@@ -531,7 +531,7 @@ public class CapConfig {
         private String serverUrl;
         private String errorPath;
         private String hostname = "localhost";
-        private String androidScheme = CAPACITOR_HTTP_SCHEME;
+        private String androidScheme = CAPACITOR_HTTPS_SCHEME;
         private String[] allowNavigation;
 
         // Android Config Values

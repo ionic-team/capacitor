@@ -476,7 +476,7 @@ export interface CapacitorConfig {
      * Configure the local scheme on Android.
      *
      * @since 1.2.0
-     * @default http
+     * @default https
      */
     androidScheme?: string;
 
