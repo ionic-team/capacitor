@@ -102,7 +102,7 @@ public class BridgeWebViewClient extends WebViewClient {
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
         if (webViewListeners != null) {
             for (WebViewListener listener : bridge.getWebViewListeners()) {
-                result = result || listener.onRenderProcessGone(view, detail);
+                result = listener.onRenderProcessGone(view, detail) || result;
             }
         }
 
