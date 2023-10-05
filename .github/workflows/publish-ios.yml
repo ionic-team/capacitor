@@ -9,10 +9,10 @@ on:
 
 jobs:
   publish-ios:
-    runs-on: macos-12
+    runs-on: macos-13
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_14.2.app
+      - run: sudo xcode-select --switch /Applications/Xcode_15.0.app
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
