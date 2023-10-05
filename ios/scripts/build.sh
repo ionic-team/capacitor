@@ -11,6 +11,15 @@ SIMULATOR_PLATFORM="generic/platform=iOS Simulator"
 DEVICE_PLATFORM="generic/platform=iOS"
 LOG_FILE="capacitor-build.log"
 
+date >> "${LOG_FILE}"
+
+if [-x $XCBEAUTIFY_COMMAND]
+  echo "Found xcbeautify at $XCBEAUTIFY_COMMAND"
+else
+  echo "Could not find xcbeautify, using cat..."
+  XCBEAUTIFY_COMMAND='cat'
+fi
+
 archive_capacitor() {
     PLATFORM=$1
     ARCHIVE_PATH=$2
@@ -54,12 +63,16 @@ build_capacitor() {
   esac
 }
 
-build_capacitor "simulator"
-build_capacitor "device"
+case $1 in
+  xcframework)
+  build_capacitor "simulator"
+  build_capacitor "device"
+  create_xcframework "Capacitor"
+  create_xcframework "Cordova"
+  ;;
+  clean)
+  rm -rf ${LOG_FILE}
+  rm -rf ${BUILD_DIR}
+  ;;
+esac
 
-# Do we need these? if so, why?
-# rm -rf ${SIMULATOR_BUILD_DIR}.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
-# rm -rf ${DEVICE_BUILD_DIR}.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
-
-create_xcframework "Capacitor"
-create_xcframework "Cordova"
