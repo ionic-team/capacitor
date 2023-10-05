@@ -74,8 +74,5 @@ case $1 in
   rm -rf ${LOG_FILE}
   rm -rf ${BUILD_DIR}
   ;;
-  *)
-  echo "Usage: $0 <command>"
-  echo "Commands: xcframework, clean"
 esac
 
