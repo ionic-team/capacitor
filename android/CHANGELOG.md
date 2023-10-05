@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.1](https://github.com/ionic-team/capacitor/compare/5.4.0...5.4.1) (2023-09-21)
+
+### Bug Fixes
+
+- **android:** handle webview version for developer builds ([#6911](https://github.com/ionic-team/capacitor/issues/6911)) ([b5b0398](https://github.com/ionic-team/capacitor/commit/b5b0398a7fe117a824f97125f5feabe81073daf3))
+- **android:** Use Logger class instead of Log in CapacitorCookieManager ([#6925](https://github.com/ionic-team/capacitor/issues/6925)) ([b6901e0](https://github.com/ionic-team/capacitor/commit/b6901e01e05cd22a71841d2f5821fbe2a6939ead))
+- **cookies:** retrieve cookies when using a custom android scheme ([6b5ddad](https://github.com/ionic-team/capacitor/commit/6b5ddad8b36e33ef4171f6da5cc311ed3f634ac6))
+- **http:** parse readablestream data on fetch request objects ([3fe0642](https://github.com/ionic-team/capacitor/commit/3fe06426bd20713e2322780b70bc5d97ad371fae))
+- **http:** return xhr response headers case insensitive ([687b6b1](https://github.com/ionic-team/capacitor/commit/687b6b1780506c17fb73ed1d9cbf50c1d1e40ef1))
+
 # [5.4.0](https://github.com/ionic-team/capacitor/compare/5.3.0...5.4.0) (2023-09-14)
 
 ### Bug Fixes
