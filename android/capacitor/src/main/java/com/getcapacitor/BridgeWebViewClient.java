@@ -40,7 +40,7 @@ public class BridgeWebViewClient extends WebViewClient {
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
 
         if (webViewListeners != null && view.getProgress() == 100) {
-            for (WebViewListener listener : bridge.getWebViewListeners()) {
+            for (WebViewListener listener : webViewListeners) {
                 listener.onPageLoaded(view);
             }
         }
@@ -52,7 +52,7 @@ public class BridgeWebViewClient extends WebViewClient {
 
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
         if (webViewListeners != null) {
-            for (WebViewListener listener : bridge.getWebViewListeners()) {
+            for (WebViewListener listener : webViewListeners) {
                 listener.onReceivedError(view);
             }
         }
@@ -70,7 +70,7 @@ public class BridgeWebViewClient extends WebViewClient {
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
 
         if (webViewListeners != null) {
-            for (WebViewListener listener : bridge.getWebViewListeners()) {
+            for (WebViewListener listener : webViewListeners) {
                 listener.onPageStarted(view);
             }
         }
@@ -82,7 +82,7 @@ public class BridgeWebViewClient extends WebViewClient {
 
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
         if (webViewListeners != null) {
-            for (WebViewListener listener : bridge.getWebViewListeners()) {
+            for (WebViewListener listener : webViewListeners) {
                 listener.onReceivedHttpError(view);
             }
         }
@@ -90,6 +90,17 @@ public class BridgeWebViewClient extends WebViewClient {
         String errorPath = bridge.getErrorUrl();
         if (errorPath != null && request.isForMainFrame()) {
             view.loadUrl(errorPath);
+        }
+    }
+
+    @Override
+    public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+        super.doUpdateVisitedHistory(view, url, isReload);
+        List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
+        if (webViewListeners != null) {
+            for (WebViewListener listener : webViewListeners) {
+                listener.onUpdateVisitedHistory(view.canGoBack());
+            }
         }
     }
 }
