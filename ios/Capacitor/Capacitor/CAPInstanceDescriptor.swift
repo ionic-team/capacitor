@@ -1,8 +1,8 @@
 import Foundation
 
 public enum InstanceDescriptorDefaults {
-    static let scheme = "capacitor"
-    static let hostname = "localhost"
+    public static let scheme = "capacitor"
+    public static let hostname = "localhost"
 }
 
 private extension InstanceLoggingBehavior {

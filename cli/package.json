@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "5.2.2",
+  "version": "5.4.2",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -27,7 +27,7 @@
     "cross platform"
   ],
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "main": "dist/index.js",
   "types": "dist/declarations.d.ts",
@@ -52,7 +52,7 @@
     "debug": "^4.3.4",
     "env-paths": "^2.2.0",
     "kleur": "^4.1.4",
-    "native-run": "^1.7.2",
+    "native-run": "^1.7.3",
     "open": "^8.4.0",
     "plist": "^3.0.5",
     "prompts": "^2.4.2",
