@@ -1,6 +1,7 @@
 package android.util;
 
 public class Log {
+
     public static int d(String tag, String msg) {
         System.out.println("DEBUG: " + tag + ": " + msg);
         return 0;
@@ -25,5 +26,4 @@ public class Log {
         System.out.println("VERBOSE: " + tag + ": " + msg);
         return 0;
     }
-    
 }
