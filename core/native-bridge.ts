@@ -683,8 +683,8 @@ const initBridge = (w: any): void => {
                         this.dispatchEvent(
                           new ProgressEvent('progress', {
                             lengthComputable: true,
-                            loaded: nativeResponse.data.length,
-                            total: nativeResponse.data.length,
+                            loaded: nativeResponse.data == null ? 0 : nativeResponse.data.length,
+                            total: nativeResponse.data == null ? 0 : nativeResponse.data.length,
                           }),
                         );
                       }
