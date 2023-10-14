@@ -336,15 +336,15 @@ const initBridge = (w: any): void => {
     };
 
     const serializeConsoleMessage = (msg: any): string => {
-      if (typeof msg === 'object') {
-        try {
-          msg = JSON.stringify(msg);
-        } catch (e) {
-          // ignore
+      try {
+        if (typeof msg === 'object') {
+            msg = JSON.stringify(msg);
         }
+        return String(msg);
       }
-
-      return String(msg);
+      catch (e) {
+        return '??';
+      }
     };
 
     const platform = getPlatformId(win);
