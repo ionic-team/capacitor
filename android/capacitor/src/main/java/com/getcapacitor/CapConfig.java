@@ -52,6 +52,7 @@ public class CapConfig {
     private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
     private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
     private String errorPath;
+    private boolean zoomableWebView = false;
 
     // Embedded
     private String startPath;
@@ -177,6 +178,7 @@ public class CapConfig {
         this.minWebViewVersion = builder.minWebViewVersion;
         this.minHuaweiWebViewVersion = builder.minHuaweiWebViewVersion;
         this.errorPath = builder.errorPath;
+        this.zoomableWebView = builder.zoomableWebView;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -271,6 +273,7 @@ public class CapConfig {
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         useLegacyBridge = JSONUtils.getBoolean(configJSON, "android.useLegacyBridge", useLegacyBridge);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
+        zoomableWebView = JSONUtils.getBoolean(configJSON, "android.zoomableWebView", JSONUtils.getBoolean(configJSON, "zoomableWebView", false));
 
         String logBehavior = JSONUtils.getString(
             configJSON,
@@ -355,6 +358,8 @@ public class CapConfig {
     public boolean isWebContentsDebuggingEnabled() {
         return webContentsDebuggingEnabled;
     }
+
+    public boolean isZoomableWebView() { return zoomableWebView; }
 
     public boolean isLoggingEnabled() {
         return loggingEnabled;
@@ -546,6 +551,7 @@ public class CapConfig {
         private boolean useLegacyBridge = false;
         private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
         private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
+        private boolean zoomableWebView = false;
 
         // Embedded
         private String startPath = null;
@@ -647,6 +653,11 @@ public class CapConfig {
 
         public Builder setWebContentsDebuggingEnabled(boolean webContentsDebuggingEnabled) {
             this.webContentsDebuggingEnabled = webContentsDebuggingEnabled;
+            return this;
+        }
+
+        public Builder setZoomableWebView(boolean zoomableWebView) {
+            this.zoomableWebView = zoomableWebView;
             return this;
         }
 

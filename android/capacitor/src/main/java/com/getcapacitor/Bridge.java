@@ -551,6 +551,9 @@ public class Bridge {
             Logger.debug("WebView background color not applied");
         }
 
+        settings.setDisplayZoomControls(false);
+        settings.setBuiltInZoomControls(this.config.isZoomableWebView());
+
         if (config.isInitialFocus()) {
             webView.requestFocusFromTouch();
         }
