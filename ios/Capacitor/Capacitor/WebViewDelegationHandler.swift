@@ -60,9 +60,9 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
 
     @available(iOS 15, *)
     public func webView(_ webView: WKWebView,
-                 requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
-                 initiatedByFrame frame: WKFrameInfo,
-                 decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+                        requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
+                        initiatedByFrame frame: WKFrameInfo,
+                        decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(.grant)
     }
 
@@ -311,9 +311,9 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
         }
         return nil
     }
-    
+
     // MARK: - UIScrollViewDelegate
-    
+
     // disable zooming in WKWebView ScrollView
     public func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
         scrollView.pinchGestureRecognizer?.isEnabled = false

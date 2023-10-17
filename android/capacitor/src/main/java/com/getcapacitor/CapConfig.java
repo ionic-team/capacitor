@@ -359,7 +359,9 @@ public class CapConfig {
         return webContentsDebuggingEnabled;
     }
 
-    public boolean isZoomableWebView() { return zoomableWebView; }
+    public boolean isZoomableWebView() {
+        return zoomableWebView;
+    }
 
     public boolean isLoggingEnabled() {
         return loggingEnabled;
