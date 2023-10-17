@@ -90,7 +90,7 @@ export interface CapacitorConfig {
    * @default false
    * @since 6.0.0
    */
-  zoomableWebView?: boolean;
+  zoomEnabled?: boolean;
 
   android?: {
     /**
@@ -136,7 +136,7 @@ export interface CapacitorConfig {
      * @default false
      * @since 6.0.0
      */
-    zoomableWebView?: boolean;
+    zoomEnabled?: boolean;
 
     /**
      * Enable mixed content in the Capacitor Web View for Android.
@@ -354,7 +354,7 @@ export interface CapacitorConfig {
      * @default false
      * @since 6.0.0
      */
-    zoomableWebView?: boolean;
+    zoomEnabled?: boolean;
 
     /**
      * Configure the scroll view's content inset adjustment behavior.

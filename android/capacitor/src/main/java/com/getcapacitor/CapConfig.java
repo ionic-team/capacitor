@@ -273,7 +273,7 @@ public class CapConfig {
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         useLegacyBridge = JSONUtils.getBoolean(configJSON, "android.useLegacyBridge", useLegacyBridge);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
-        zoomableWebView = JSONUtils.getBoolean(configJSON, "android.zoomableWebView", JSONUtils.getBoolean(configJSON, "zoomableWebView", false));
+        zoomableWebView = JSONUtils.getBoolean(configJSON, "android.zoomEnabled", JSONUtils.getBoolean(configJSON, "zoomEnabled", false));
 
         String logBehavior = JSONUtils.getString(
             configJSON,
