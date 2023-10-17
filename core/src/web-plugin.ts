@@ -28,7 +28,7 @@ export class WebPlugin implements Plugin {
   addListener(
     eventName: string,
     listenerFunc: ListenerCallback,
-  ): Promise<PluginListenerHandle> & PluginListenerHandle {
+  ): Promise<PluginListenerHandle> {
     const listeners = this.listeners[eventName];
     if (!listeners) {
       this.listeners[eventName] = [];
@@ -46,13 +46,6 @@ export class WebPlugin implements Plugin {
     const remove = async () => this.removeListener(eventName, listenerFunc);
 
     const p: any = Promise.resolve({ remove });
-
-    Object.defineProperty(p, 'remove', {
-      value: async () => {
-        console.warn(`Using addListener() without 'await' is deprecated.`);
-        await remove();
-      },
-    });
 
     return p;
   }
