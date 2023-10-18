@@ -131,7 +131,7 @@ export interface CapacitorConfig {
     backgroundColor?: string;
 
     /**
-     * Enable zooming within the Capacitor Web View for Android
+     * Enable zooming within the Capacitor Web View for Android.
      *
      * @default false
      * @since 6.0.0

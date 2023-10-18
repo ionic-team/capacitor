@@ -85,7 +85,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 @property (nonatomic, assign) BOOL scrollingEnabled;
 /**
  @brief Whether or not the web view can zoom.
- @discussion Set by @c ios.zoomEnabled in the configuration file.
+ @discussion Set by @c zoomEnabled in the configuration file.
  */
 @property (nonatomic, assign) BOOL zoomingEnabled;
 /**
