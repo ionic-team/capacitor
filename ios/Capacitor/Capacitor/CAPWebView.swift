@@ -135,6 +135,11 @@ extension CAPWebView {
         webViewConfiguration.suppressesIncrementalRendering = false
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
         webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
+
+        if #available(iOS 14.0, *) {
+            webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
+        }
+
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
                 webViewConfiguration.applicationNameForUserAgent = "\(appName)  \(appendUserAgent)"
@@ -142,6 +147,17 @@ extension CAPWebView {
                 webViewConfiguration.applicationNameForUserAgent = appendUserAgent
             }
         }
+
+        if let preferredContentMode = instanceConfiguration.preferredContentMode {
+            var mode = WKWebpagePreferences.ContentMode.recommended
+            if preferredContentMode == "mobile" {
+                mode = WKWebpagePreferences.ContentMode.mobile
+            } else if preferredContentMode == "desktop" {
+                mode = WKWebpagePreferences.ContentMode.desktop
+            }
+            webViewConfiguration.defaultWebpagePreferences.preferredContentMode = mode
+        }
+
         return webViewConfiguration
     }
 
