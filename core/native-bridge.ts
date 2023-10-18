@@ -473,13 +473,7 @@ const initBridge = (w: any): void => {
           options?: RequestInit,
         ) => {
           const request = new Request(resource, options);
-
-          if (
-            !(
-              request.url.startsWith('http:') ||
-              request.url.startsWith('https:')
-            )
-          ) {
+          if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
             return win.CapacitorWebFetch(resource, options);
           }
 

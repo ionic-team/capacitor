@@ -2,6 +2,7 @@ package com.getcapacitor;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -91,5 +92,20 @@ public class BridgeWebViewClient extends WebViewClient {
         if (errorPath != null && request.isForMainFrame()) {
             view.loadUrl(errorPath);
         }
+    }
+
+    @Override
+    public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+        super.onRenderProcessGone(view, detail);
+        boolean result = false;
+
+        List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
+        if (webViewListeners != null) {
+            for (WebViewListener listener : bridge.getWebViewListeners()) {
+                result = listener.onRenderProcessGone(view, detail) || result;
+            }
+        }
+
+        return result;
     }
 }
