@@ -137,7 +137,7 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) {
         var urlRequest = urlSchemeTask.request
-        let url = urlRequest.url!
+        guard let url = urlRequest.url else { return }
         var targetUrl = url.absoluteString
             .replacingOccurrences(of: CapacitorBridge.httpInterceptorStartIdentifier, with: "")
             .replacingOccurrences(of: CapacitorBridge.httpsInterceptorStartIdentifier, with: "")
@@ -151,7 +151,6 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
         let urlSession = URLSession.shared
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
-            urlSession.invalidateAndCancel()
             if let error = error {
                 urlSchemeTask.didFailWithError(error)
                 return
@@ -171,14 +170,16 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
                 if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (current, _) in current }) as? [String: String] {
 
-                    let modifiedResponse = HTTPURLResponse(
-                        url: response.url!,
-                        statusCode: response.statusCode,
-                        httpVersion: nil,
-                        headerFields: mergedHeaders
-                    )!
-
-                    urlSchemeTask.didReceive(modifiedResponse)
+                    if let responseUrl = response.url {
+                        if let modifiedResponse = HTTPURLResponse(
+                            url: responseUrl,
+                            statusCode: response.statusCode,
+                            httpVersion: nil,
+                            headerFields: mergedHeaders
+                        ) {
+                            urlSchemeTask.didReceive(modifiedResponse)
+                        }
+                    }
 
                     if let data = data {
                         urlSchemeTask.didReceive(data)

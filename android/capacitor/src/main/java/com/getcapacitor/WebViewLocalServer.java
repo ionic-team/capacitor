@@ -172,21 +172,18 @@ public class WebViewLocalServer {
     public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
         Uri loadingUrl = request.getUrl();
 
-        if (null != loadingUrl.getPath()) {
-            if (loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START)) {
-                Logger.debug("Handling CapacitorHttp request: " + request.getUrl().toString());
-                try {
-                    return handleCapacitorHttpRequest(request, false);
-                } catch (Exception e) {
-                    Logger.error(e.getLocalizedMessage());
-                }
-            } else if (loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START)) {
-                Logger.debug("Handling CapacitorHttp request: " + request.getUrl().toString());
-                try {
-                    return handleCapacitorHttpRequest(request, true);
-                } catch (Exception e) {
-                    Logger.error(e.getLocalizedMessage());
-                }
+        if (
+            null != loadingUrl.getPath() &&
+            (
+                loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START) ||
+                loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START)
+            )
+        ) {
+            Logger.debug("Handling CapacitorHttp request: " + loadingUrl);
+            try {
+                return handleCapacitorHttpRequest(request);
+            } catch (Exception e) {
+                Logger.error(e.getLocalizedMessage());
             }
         }
 
@@ -260,7 +257,7 @@ public class WebViewLocalServer {
         };
     }
 
-    private WebResourceResponse handleCapacitorHttpRequest(WebResourceRequest request, Boolean isHttpsRequest) throws IOException {
+    private WebResourceResponse handleCapacitorHttpRequest(WebResourceRequest request) throws IOException {
         String urlString = request
             .getUrl()
             .toString()
@@ -312,14 +309,16 @@ public class WebViewLocalServer {
             }
         }
 
+        InputStream inputStream = connection.getInputStream();
+
         if (null == mimeType) {
-            mimeType = getMimeType(request.getUrl().getPath(), connection.getInputStream());
+            mimeType = getMimeType(request.getUrl().getPath(), inputStream);
         }
 
         int responseCode = connection.getResponseCode();
         String reasonPhrase = getReasonPhraseFromResponseCode(responseCode);
 
-        return new WebResourceResponse(mimeType, encoding, responseCode, reasonPhrase, responseHeaders, connection.getInputStream());
+        return new WebResourceResponse(mimeType, encoding, responseCode, reasonPhrase, responseHeaders, inputStream);
     }
 
     private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {

@@ -2,7 +2,7 @@
  * Note: When making changes to this file, run `npm run build:nativebridge`
  * afterwards to build the nativebridge.js files to the android and iOS projects.
  */
-import { isRelativeOrProxyUrl, type HttpResponse, createProxyUrl } from './src/core-plugins';
+import type { HttpResponse } from './src/core-plugins';
 import type {
   CallData,
   CapacitorInstance,
@@ -74,6 +74,32 @@ const convertBody = async (
   }
 
   return { data: body, type: 'json' };
+};
+
+const CAPACITOR_HTTP_INTERCEPTOR = '/_capacitor_http_interceptor_';
+const CAPACITOR_HTTPS_INTERCEPTOR = '/_capacitor_https_interceptor_';
+
+// TODO: export as Cap function
+const isRelativeOrProxyUrl = (url: string | undefined): boolean =>
+  !url ||
+  !(url.startsWith('http:') || url.startsWith('https:')) ||
+  url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1 ||
+  url.indexOf(CAPACITOR_HTTPS_INTERCEPTOR) > -1;
+
+// TODO: export as Cap function
+const createProxyUrl = (url: string, win: WindowCapacitor): string => {
+  if (isRelativeOrProxyUrl(url)) return url;
+
+  const proxyUrl = new URL(url);
+  const isHttps = proxyUrl.protocol === 'https:';
+
+  if (win.webkit?.messageHandlers?.bridge) {
+    proxyUrl.protocol = win.WEBVIEW_SERVER_URL ?? 'capacitor:';
+  }
+  proxyUrl.pathname =
+    (isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR) +
+    proxyUrl.pathname;
+  return proxyUrl.toString();
 };
 
 const initBridge = (w: any): void => {
