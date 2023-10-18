@@ -219,8 +219,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             try {
                 JSObject obj = body.toJSObject();
                 this.writeObjectRequestBody(obj);
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 // Body is not a valid JSON, treat it as an already formatted string
                 this.writeRequestBody(body.toString());
             }
