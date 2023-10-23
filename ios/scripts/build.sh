@@ -13,7 +13,7 @@ LOG_FILE="capacitor-build.log"
 
 date >> "${LOG_FILE}"
 
-if [-x $XCBEAUTIFY_COMMAND]
+if [ -x $XCBEAUTIFY_COMMAND ]; then
   echo "Found xcbeautify at $XCBEAUTIFY_COMMAND"
 else
   echo "Could not find xcbeautify, using cat..."
@@ -74,5 +74,8 @@ case $1 in
   rm -rf ${LOG_FILE}
   rm -rf ${BUILD_DIR}
   ;;
+  *)
+  echo "Usage: $0 <command>"
+  echo "Commands: xcframework, clean"
 esac
 
