@@ -11,8 +11,6 @@ SIMULATOR_PLATFORM="generic/platform=iOS Simulator"
 DEVICE_PLATFORM="generic/platform=iOS"
 LOG_FILE="capacitor-build.log"
 
-date >> "${LOG_FILE}"
-
 if [ -x $XCBEAUTIFY_COMMAND ]; then
   echo "Found xcbeautify at $XCBEAUTIFY_COMMAND"
 else
@@ -43,7 +41,7 @@ create_xcframework() {
     -debug-symbols "${PWD}/${SIMULATOR_BUILD_DIR}.xcarchive/dSYMs/${PRODUCT}.framework.dSYM" \
     -framework "${DEVICE_BUILD_DIR}.xcarchive/Products/Library/Frameworks/${PRODUCT}.framework" \
     -debug-symbols "${PWD}/${DEVICE_BUILD_DIR}.xcarchive/dSYMs/${PRODUCT}.framework.dSYM" \
-    -output ${PRODUCT}.xcframework | tee -a ${LOG_FILE} | ${XCBEAUTIFY_COMMAND}
+    -output "../ios/Frameworks/${PRODUCT}.xcframework" | tee -a ${LOG_FILE} | ${XCBEAUTIFY_COMMAND}
 }
 
 build_capacitor() {
@@ -65,12 +63,15 @@ build_capacitor() {
 
 case $1 in
   xcframework)
+  cd "Capacitor"
+  date >> "${LOG_FILE}"
   build_capacitor "simulator"
   build_capacitor "device"
   create_xcframework "Capacitor"
   create_xcframework "Cordova"
   ;;
   clean)
+  cd "Capacitor"
   rm -rf ${LOG_FILE}
   rm -rf ${BUILD_DIR}
   ;;
