@@ -41,7 +41,7 @@ create_xcframework() {
     -debug-symbols "${PWD}/${SIMULATOR_BUILD_DIR}.xcarchive/dSYMs/${PRODUCT}.framework.dSYM" \
     -framework "${DEVICE_BUILD_DIR}.xcarchive/Products/Library/Frameworks/${PRODUCT}.framework" \
     -debug-symbols "${PWD}/${DEVICE_BUILD_DIR}.xcarchive/dSYMs/${PRODUCT}.framework.dSYM" \
-    -output "../ios/Frameworks/${PRODUCT}.xcframework" | tee -a ${LOG_FILE} | ${XCBEAUTIFY_COMMAND}
+    -output "../Frameworks/${PRODUCT}.xcframework" | tee -a ${LOG_FILE} | ${XCBEAUTIFY_COMMAND}
 }
 
 build_capacitor() {
