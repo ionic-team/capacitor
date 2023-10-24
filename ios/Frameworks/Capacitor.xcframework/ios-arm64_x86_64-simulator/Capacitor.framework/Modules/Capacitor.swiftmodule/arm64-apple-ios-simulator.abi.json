@@ -25647,42 +25647,21 @@
     {
       "filePath": "\/Users\/mark\/Developer\/core\/capacitor\/ios\/Capacitor\/Capacitor\/WKWebView+Capacitor.swift",
       "kind": "StringLiteral",
-      "offset": 1453,
+      "offset": 1342,
       "length": 4,
       "value": "\"WK\""
     },
     {
       "filePath": "\/Users\/mark\/Developer\/core\/capacitor\/ios\/Capacitor\/Capacitor\/WKWebView+Capacitor.swift",
       "kind": "StringLiteral",
-      "offset": 1482,
+      "offset": 1371,
       "length": 13,
       "value": "\"ContentView\""
     },
     {
       "filePath": "\/Users\/mark\/Developer\/core\/capacitor\/ios\/Capacitor\/Capacitor\/WKWebView+Capacitor.swift",
       "kind": "StringLiteral",
-      "offset": 3663,
-      "length": 68,
-      "value": "\"_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:\""
-    },
-    {
-      "filePath": "\/Users\/mark\/Developer\/core\/capacitor\/ios\/Capacitor\/Capacitor\/WKWebView+Capacitor.swift",
-      "kind": "StringLiteral",
-      "offset": 3801,
-      "length": 90,
-      "value": "\"_startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:\""
-    },
-    {
-      "filePath": "\/Users\/mark\/Developer\/core\/capacitor\/ios\/Capacitor\/Capacitor\/WKWebView+Capacitor.swift",
-      "kind": "StringLiteral",
-      "offset": 3962,
-      "length": 87,
-      "value": "\"_elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:\""
-    },
-    {
-      "filePath": "\/Users\/mark\/Developer\/core\/capacitor\/ios\/Capacitor\/Capacitor\/WKWebView+Capacitor.swift",
-      "kind": "StringLiteral",
-      "offset": 4117,
+      "offset": 2739,
       "length": 86,
       "value": "\"_elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:\""
     },
