@@ -4,6 +4,6 @@ module.exports = {
   excluded: [
     '${PWD}/ios/Capacitor/CapacitorTests',
     '${PWD}/ios/Capacitor/TestsHostApp',
-    '${PWD}/ios/Frameworks'
+    '${PWD}/ios/Frameworks',
   ],
 };
