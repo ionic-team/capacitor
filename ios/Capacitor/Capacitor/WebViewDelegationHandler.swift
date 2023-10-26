@@ -17,7 +17,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
     private let handlerName = "bridge"
 
-    public override init() {
+    override public init() {
         super.init()
         contentController.add(self, name: handlerName)
     }
@@ -60,9 +60,9 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
     @available(iOS 15, *)
     open func webView(_ webView: WKWebView,
-                 requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
-                 initiatedByFrame frame: WKFrameInfo,
-                 decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+                      requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
+                      initiatedByFrame frame: WKFrameInfo,
+                      decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(.grant)
     }
 
