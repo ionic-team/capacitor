@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -14,11 +14,11 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Capacitor",
-            path: "ios/Frameworks/Capacitor.xcframework"
-        )
+            path: "./Frameworks/Capacitor.xcframework"
+        ),
         .binaryTarget(
             name: "Cordova",
-            path: "ios/Frameworks/Cordova.xcframework"
+            path: "./Frameworks/Cordova.xcframework"
         )
     ]
 )
