@@ -11,12 +11,14 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
+        .package(name: "Capacitor", path: "../../../node_modules/@capacitor/ios")
     ],
     targets: [
         .target(
             name: "CapApp-SPM",
             dependencies: [
-
+                .product(name: "Capacitor", package: "Capacitor"),
+                .product(name: "Cordova", package: "Capacitor")
             ]
         )
     ]
