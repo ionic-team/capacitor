@@ -4,7 +4,7 @@ import WebKit
 // adopting a public protocol in an internal class is by design
 // swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
-open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
+open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIScrollViewDelegate {
     public internal(set) weak var bridge: CapacitorBridge?
     open fileprivate(set) var contentController = WKUserContentController()
     enum WebViewLoadingState {
@@ -310,6 +310,13 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
         return nil
+    }
+
+    // MARK: - UIScrollViewDelegate
+
+    // disable zooming in WKWebView ScrollView
+    open func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
+        scrollView.pinchGestureRecognizer?.isEnabled = false
     }
 
     // MARK: - Private

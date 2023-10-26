@@ -37,6 +37,7 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
     _legacyConfig = @{};
     _loggingBehavior = CAPInstanceLoggingBehaviorDebug;
     _scrollingEnabled = YES;
+    _zoomingEnabled = NO;
     _allowLinkPreviews = YES;
     _handleApplicationNotifications = YES;
     _isWebDebuggable = NO;
