@@ -123,6 +123,7 @@ export interface IOSConfig extends PlatformConfig {
   readonly nativeXcodeProjDirAbs: string;
   readonly nativeXcodeWorkspaceDir: Promise<string>;
   readonly nativeXcodeWorkspaceDirAbs: Promise<string>;
+  readonly packageManager: 'SPM' | 'Cocoapods';
 }
 
 export type WebConfig = PlatformConfig;

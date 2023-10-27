@@ -464,6 +464,16 @@ export interface CapacitorConfig {
      * @default false
      */
     webContentsDebuggingEnabled?: boolean;
+
+    /**
+     * Package manager to use for iOS Projects
+     *
+     * Current options are SPM (Swift Package Manager) and Cocoapods
+     *
+     * @since 6.0.0
+     * @default 'Cocoapods'
+     */
+    packageManager?: 'SPM' | 'Cocoapods';
   };
 
   server?: {
