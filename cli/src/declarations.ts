@@ -84,6 +84,14 @@ export interface CapacitorConfig {
    */
   backgroundColor?: string;
 
+  /**
+   * Enable zooming within the Capacitor Web View.
+   *
+   * @default false
+   * @since 6.0.0
+   */
+  zoomEnabled?: boolean;
+
   android?: {
     /**
      * Specify a custom path to the native Android project.
@@ -121,6 +129,14 @@ export interface CapacitorConfig {
      * @since 1.1.0
      */
     backgroundColor?: string;
+
+    /**
+     * Enable zooming within the Capacitor Web View for Android.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
 
     /**
      * Enable mixed content in the Capacitor Web View for Android.
@@ -331,6 +347,14 @@ export interface CapacitorConfig {
      * @since 1.1.0
      */
     backgroundColor?: string;
+
+    /**
+     * Enable zooming within the Capacitor Web View for iOS.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
 
     /**
      * Configure the scroll view's content inset adjustment behavior.

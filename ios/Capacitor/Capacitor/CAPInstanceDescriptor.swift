@@ -114,6 +114,9 @@ internal extension InstanceDescriptor {
             if let scrollEnabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
                 scrollingEnabled = scrollEnabled
             }
+            if let zoomEnabled = (config[keyPath: "ios.zoomEnabled"] as? Bool) ?? (config[keyPath: "zoomEnabled"] as? Bool) {
+                zoomingEnabled = zoomEnabled
+            }
             if let pluginConfig = config[keyPath: "plugins"] as? JSObject {
                 pluginConfigurations = pluginConfig
             }
