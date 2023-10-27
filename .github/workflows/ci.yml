@@ -20,10 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@ce177499ccf9fd2aded3b0426c97e5434c2e8a73
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Latest
         uses: actions/setup-node@v3
         with:
