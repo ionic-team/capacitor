@@ -28,7 +28,7 @@
   "devDependencies": {
     "@ionic/prettier-config": "~1.0.1",
     "@ionic/swiftlint-config": "^1.1.2",
-    "@types/node": "^18.16.8",
+    "@types/node": "18.18.6",
     "@types/tar": "^6.1.2",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
