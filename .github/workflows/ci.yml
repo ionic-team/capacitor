@@ -108,7 +108,7 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - /Applications/Xcode_15.0.app
+          - /Applications/Xcode_15.0.1.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/setup-node@v3
