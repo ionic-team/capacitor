@@ -4,29 +4,29 @@ import WebKit
 // adopting a public protocol in an internal class is by design
 // swiftlint:disable lower_acl_than_parent
 @objc(CAPWebViewDelegationHandler)
-public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIScrollViewDelegate {
-    weak var bridge: CapacitorBridge?
-    public fileprivate(set) var contentController = WKUserContentController()
+open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIScrollViewDelegate {
+    public internal(set) weak var bridge: CapacitorBridge?
+    open fileprivate(set) var contentController = WKUserContentController()
     enum WebViewLoadingState {
         case unloaded
         case initialLoad(isOpaque: Bool)
         case subsequentLoad
     }
+
     fileprivate(set) var webViewLoadingState = WebViewLoadingState.unloaded
 
     private let handlerName = "bridge"
 
-    public init(bridge: CapacitorBridge? = nil) {
+    override public init() {
         super.init()
-        self.bridge = bridge
         contentController.add(self, name: handlerName)
     }
 
-    public func cleanUp() {
+    open func cleanUp() {
         contentController.removeScriptMessageHandler(forName: handlerName)
     }
 
-    public func willLoadWebview(_ webView: WKWebView?) {
+    open func willLoadWebview(_ webView: WKWebView?) {
         // Set the webview to be not opaque on the inital load. This prevents
         // the webview from showing a white background, which is its default
         // loading display, as that can appear as a screen flash. The opacity
@@ -42,13 +42,13 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
 
     // The force unwrap is part of the protocol declaration, so we should keep it.
     // swiftlint:disable:next implicitly_unwrapped_optional
-    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         // Reset the bridge on each navigation
         bridge?.reset()
     }
 
     @available(iOS 15, *)
-    public func webView(
+    open func webView(
         _ webView: WKWebView,
         requestMediaCapturePermissionFor origin: WKSecurityOrigin,
         initiatedByFrame frame: WKFrameInfo,
@@ -59,14 +59,14 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
     }
 
     @available(iOS 15, *)
-    public func webView(_ webView: WKWebView,
-                        requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
-                        initiatedByFrame frame: WKFrameInfo,
-                        decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+    open func webView(_ webView: WKWebView,
+                      requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
+                      initiatedByFrame frame: WKFrameInfo,
+                      decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(.grant)
     }
 
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         // post a notification for any listeners
         NotificationCenter.default.post(name: .capacitorDecidePolicyForNavigationAction, object: navigationAction)
 
@@ -122,7 +122,7 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
 
     // The force unwrap is part of the protocol declaration, so we should keep it.
     // swiftlint:disable:next implicitly_unwrapped_optional
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         if case .initialLoad(let isOpaque) = webViewLoadingState {
             webView.isOpaque = isOpaque
             webViewLoadingState = .subsequentLoad
@@ -132,7 +132,7 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
 
     // The force unwrap is part of the protocol declaration, so we should keep it.
     // swiftlint:disable:next implicitly_unwrapped_optional
-    public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    open func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         if case .initialLoad(let isOpaque) = webViewLoadingState {
             webView.isOpaque = isOpaque
             webViewLoadingState = .subsequentLoad
@@ -148,7 +148,7 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
 
     // The force unwrap is part of the protocol declaration, so we should keep it.
     // swiftlint:disable:next implicitly_unwrapped_optional
-    public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+    open func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         if let errorURL = bridge?.config.errorPathURL {
             webView.load(URLRequest(url: errorURL))
         }
@@ -157,13 +157,13 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
     }
 
-    public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+    open func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         webView.reload()
     }
 
     // MARK: - WKScriptMessageHandler
 
-    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let bridge = bridge else {
             return
         }
@@ -205,7 +205,7 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
 
     // MARK: - WKUIDelegate
 
-    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+    open func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
         guard var viewController = bridge?.viewController else {
             completionHandler()
             return
@@ -224,7 +224,7 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
         viewController.present(alertController, animated: true, completion: nil)
     }
 
-    public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+    open func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
         guard let viewController = bridge?.viewController else {
             return
         }
@@ -242,7 +242,7 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
         viewController.present(alertController, animated: true, completion: nil)
     }
 
-    public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
+    open func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
 
         // Check if this is synchronous cookie or http call
         do {
@@ -305,7 +305,7 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
         viewController.present(alertController, animated: true, completion: nil)
     }
 
-    public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+    open func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         if let url = navigationAction.request.url {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
@@ -315,7 +315,7 @@ public class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDeleg
     // MARK: - UIScrollViewDelegate
 
     // disable zooming in WKWebView ScrollView
-    public func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
+    open func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
         scrollView.pinchGestureRecognizer?.isEnabled = false
     }
 

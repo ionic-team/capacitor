@@ -15,7 +15,7 @@ internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 // swiftlint:disable lower_acl_than_parent
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
-public class CapacitorBridge: NSObject, CAPBridgeProtocol {
+open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // this decision is needed before the bridge is instantiated,
     // so we need a class property to avoid duplication
@@ -113,7 +113,7 @@ public class CapacitorBridge: NSObject, CAPBridgeProtocol {
     private var cordovaParser: CDVConfigParser?
 
     // Background dispatch queue for plugin calls
-    var dispatchQueue = DispatchQueue(label: "bridge")
+    open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
     // Array of block based observers
     var observers: [NSObjectProtocol] = []
 
@@ -694,13 +694,13 @@ public class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - CAPBridgeProtocol: View Presentation
 
-    @objc public func showAlertWith(title: String, message: String, buttonTitle: String) {
+    @objc open func showAlertWith(title: String, message: String, buttonTitle: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
         self.viewController?.present(alert, animated: true, completion: nil)
     }
 
-    @objc public func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+    @objc open func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         if viewControllerToPresent.modalPresentationStyle == .popover {
             self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         } else {
@@ -711,7 +711,7 @@ public class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
-    @objc public func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
+    @objc open func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
         if self.tmpWindow == nil {
             self.viewController?.dismiss(animated: flag, completion: completion)
         } else {
