@@ -19,7 +19,6 @@ export async function doctorCommand(
     `${_e('💊', '')}   ${c.strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`,
   );
 
-  output.write(await checkPackageManager(config))
   await doctorCore(config);
 
   const platforms = await selectPlatforms(config, selectedPlatformName);
