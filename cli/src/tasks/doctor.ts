@@ -4,7 +4,6 @@ import { doctorAndroid } from '../android/doctor';
 import c from '../colors';
 import { selectPlatforms } from '../common';
 import type { Config } from '../definitions';
-import { checkPackageManager } from '../ios/common';
 import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
