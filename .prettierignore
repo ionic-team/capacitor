@@ -4,3 +4,5 @@ cli/assets
 dist
 android/capacitor/src/main/assets/native-bridge.js
 ios/Capacitor/Capacitor/assets/native-bridge.js
+ios/Frameworks/Capacitor.xcframework/ios-arm64_x86_64-simulator/Capacitor.framework/native-bridge.js
+ios/Frameworks/Capacitor.xcframework/ios-arm64/Capacitor.framework/native-bridge.js
