@@ -4,6 +4,7 @@ import { doctorAndroid } from '../android/doctor';
 import c from '../colors';
 import { selectPlatforms } from '../common';
 import type { Config } from '../definitions';
+import { checkPackageManager } from '../ios/common';
 import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
@@ -18,6 +19,7 @@ export async function doctorCommand(
     `${_e('💊', '')}   ${c.strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`,
   );
 
+  output.write(await checkPackageManager(config))
   await doctorCore(config);
 
   const platforms = await selectPlatforms(config, selectedPlatformName);

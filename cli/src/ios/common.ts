@@ -1,4 +1,4 @@
-import { readFile, writeFile } from '@ionic/utils-fs';
+import { existsSync, readFile, writeFile } from '@ionic/utils-fs';
 import { execSync } from 'child_process';
 import { resolve } from 'path';
 
@@ -55,6 +55,15 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
     );
   }
   return null;
+}
+
+export async function checkPackageManager(config: Config): Promise<string> {
+  const iosDirectory = config.ios.nativeProjectDirAbs
+  if (existsSync(resolve(iosDirectory, 'CapApp-SPM'))) {
+    return 'SPM'
+  }
+
+  return 'Cocoapods'
 }
 
 export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
