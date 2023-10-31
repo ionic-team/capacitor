@@ -8,7 +8,7 @@ import type { Plugin } from '../plugin';
 export async function generatePackageFile(
   config: Config,
   plugins: Plugin[],
-): Promise<string> {
+): Promise<void> {
   const swiftPluginList: string[] = [];
 
   for (const plugin of plugins) {
@@ -47,8 +47,6 @@ export async function generatePackageFile(
       `Unable to read ${packageSwiftFile}. Verify it is not already open. ${err}`,
     );
   }
-
-  return '';
 }
 
 export async function checkPackageManager(config: Config): Promise<string> {
