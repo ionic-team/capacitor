@@ -45,7 +45,7 @@ export async function updateIOS(
   deployment: boolean,
 ): Promise<void> {
   const plugins = await getPluginsTask(config);
-  console.log(plugins);
+
   const capacitorPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Core,
   );
