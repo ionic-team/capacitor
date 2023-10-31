@@ -1,18 +1,13 @@
 import {
   existsSync,
-  readFile,
   readFileSync,
-  readSync,
-  writeFile,
   writeFileSync,
 } from '@ionic/utils-fs';
 import { relative, resolve } from 'path';
 
 import type { Config } from '../definitions';
 import { logger } from '../log';
-import { PluginType, getPluginPlatform } from '../plugin';
 import type { Plugin } from '../plugin';
-import { isInstalled, runCommand } from '../util/subprocess';
 
 export async function generatePackageFile(
   config: Config,
@@ -58,13 +53,6 @@ export async function generatePackageFile(
   }
 
   return '';
-}
-
-async function updatePackageFile(
-  config: Config,
-  plugins: Plugin[],
-): Promise<void> {
-  return;
 }
 
 export async function checkPackageManager(config: Config): Promise<string> {
