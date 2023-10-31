@@ -11,7 +11,9 @@ import { telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
 
-type Writable<T> = T extends object ? { -readonly [K in keyof T]: Writable<T[K]> } : T;
+type Writable<T> = T extends object
+  ? { -readonly [K in keyof T]: Writable<T[K]> }
+  : T;
 
 process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
@@ -278,11 +280,12 @@ export function runProgram(config: Config): void {
 
           const configWritable: Writable<Config> = config as Writable<Config>;
           if (packagemanager === 'SPM') {
-            configWritable.cli.assets.ios.platformTemplateArchive = 'ios-spm-template.tar.gz'
+            configWritable.cli.assets.ios.platformTemplateArchive =
+              'ios-spm-template.tar.gz';
             configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(
               configWritable.cli.assetsDirAbs,
               configWritable.cli.assets.ios.platformTemplateArchive,
-            )
+            );
           }
 
           await addCommand(configWritable as Config, platform);

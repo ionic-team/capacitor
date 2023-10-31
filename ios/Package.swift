@@ -14,7 +14,7 @@ let package = Package(
         .library(
             name: "Cordova",
             targets: ["Cordova"]
-        )        
+        )
     ],
     targets: [
         .binaryTarget(
