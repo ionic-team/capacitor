@@ -16,7 +16,6 @@ import { checkBundler, checkCocoaPods } from '../ios/common';
 import { updateIOS } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
-import { generatePackageFile } from '../util/spm';
 
 export async function updateCommand(
   config: Config,
