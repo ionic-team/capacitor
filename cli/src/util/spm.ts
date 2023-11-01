@@ -4,7 +4,6 @@ import { relative, resolve } from 'path';
 import type { Config } from '../definitions';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
-import { findPackageRelativePathInMonorepo } from './monorepotools';
 
 export interface SwiftPlugin {
   name: string
