@@ -451,7 +451,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
 
         let selector: Selector
-        if call.method == "addListener" || call.method == "removeListener" {
+        if call.method == "addListener" || call.method == "removeListener" || call.method == "removeAllListeners" {
             selector = NSSelectorFromString(call.method + ":")
         } else {
             guard let method = plugin.getMethod(named: call.method) else {
