@@ -13,7 +13,7 @@ export async function generatePackageFile(
 
   for (const plugin of plugins) {
     const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
-    const pluginStatement = `.package(name: "${plugin.ios?.name}", path: "${relPath}")`;
+    const pluginStatement = `.package(name: "${plugin.ios?.name}", path: "${relPath}"),`;
     swiftPluginList.push(pluginStatement);
   }
 
