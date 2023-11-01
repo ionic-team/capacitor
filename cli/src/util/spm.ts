@@ -57,7 +57,7 @@ export async function generatePackageFile(
     for (const lineIndex in packageSwiftTextLines) {
       const line = packageSwiftTextLines
       const index = parseInt(lineIndex)
-      textToWrite += line[index] + '\n';
+
 
       if (line[index].includes('dependencies: [') && line[index+1].includes('.package(name: "Capacitor"')) {
         let tempIndex = index+1
@@ -70,14 +70,16 @@ export async function generatePackageFile(
         }
       }
 
-      if (packageSwiftTextLines[lineIndex].includes('.package(name: "Capacitor"')) {
-        console.log(packages)
+      if (line[index].includes('.package(name: "Capacitor"')) {
+        textToWrite += line[index] + ',\n';
         for (const swiftPlugin of swiftPluginList) {
           const name = readSwiftPackage(swiftPlugin) ?? ""
           if (!packages.includes(name)) {
             textToWrite += '        ' + swiftPlugin + '\n';
           }
         }
+      } else {
+        textToWrite += line[index] + '\n';
       }
     }
 
