@@ -4,6 +4,31 @@ import { relative, resolve } from 'path';
 import type { Config } from '../definitions';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
+import { findPackageRelativePathInMonorepo } from './monorepotools';
+
+export interface SwiftPlugin {
+  name: string
+  path: string
+}
+
+export async function findPackageSwiftFile(config: Config): Promise<string> {
+  const packageDirectory = resolve(
+    config.ios.nativeProjectDirAbs,
+    'CapApp-SPM',
+  );
+  return resolve(packageDirectory, 'Package.swift');
+}
+
+function readSwiftPackage(packageLine: string): string | null {
+  const packageRegex = RegExp(/.package\(\s*name:\s*"([A-Za-z0-9_-]+)"/)
+  const lineMatch = packageLine.match(packageRegex)
+  if (lineMatch === null) {
+    return null
+  }
+
+  return lineMatch[1]
+}
+
 
 export async function generatePackageFile(
   config: Config,
@@ -17,11 +42,8 @@ export async function generatePackageFile(
     swiftPluginList.push(pluginStatement);
   }
 
-  const packageDirectory = resolve(
-    config.ios.nativeProjectDirAbs,
-    'CapApp-SPM',
-  );
-  const packageSwiftFile = resolve(packageDirectory, 'Package.swift');
+  const packageSwiftFile = await findPackageSwiftFile(config)
+
   try {
     if (!existsSync(packageSwiftFile)) {
       logger.error(
@@ -32,11 +54,30 @@ export async function generatePackageFile(
     const packageSwiftTextLines = packageSwiftText.split('\n');
 
     let textToWrite = '';
-    for (const line of packageSwiftTextLines) {
-      textToWrite += line + '\n';
-      if (line.includes('.package(name: "Capacitor"')) {
+    const packages: string[] = []
+    for (const lineIndex in packageSwiftTextLines) {
+      const line = packageSwiftTextLines
+      const index = parseInt(lineIndex)
+      textToWrite += line[index] + '\n';
+
+      if (line[index].includes('dependencies: [') && line[index+1].includes('.package(name: "Capacitor"')) {
+        let tempIndex = index+1
+        while (!line[tempIndex].includes('],')) {
+          const swiftPack = readSwiftPackage(line[tempIndex])
+          if (swiftPack !== null) {
+            packages.push(swiftPack)
+          }
+          tempIndex++
+        }
+      }
+
+      if (packageSwiftTextLines[lineIndex].includes('.package(name: "Capacitor"')) {
+        console.log(packages)
         for (const swiftPlugin of swiftPluginList) {
-          textToWrite += '        ' + swiftPlugin + '\n';
+          const name = readSwiftPackage(swiftPlugin) ?? ""
+          if (!packages.includes(name)) {
+            textToWrite += '        ' + swiftPlugin + '\n';
+          }
         }
       }
     }
@@ -48,6 +89,9 @@ export async function generatePackageFile(
     );
   }
 }
+
+
+
 
 export async function checkPackageManager(config: Config): Promise<string> {
   const iosDirectory = config.ios.nativeProjectDirAbs;
