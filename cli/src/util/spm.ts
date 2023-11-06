@@ -6,8 +6,8 @@ import { logger } from '../log';
 import type { Plugin } from '../plugin';
 
 export interface SwiftPlugin {
-  name: string
-  path: string
+  name: string;
+  path: string;
 }
 
 export async function findPackageSwiftFile(config: Config): Promise<string> {
@@ -19,15 +19,14 @@ export async function findPackageSwiftFile(config: Config): Promise<string> {
 }
 
 function readSwiftPackage(packageLine: string): string | null {
-  const packageRegex = RegExp(/.package\(\s*name:\s*"([A-Za-z0-9_-]+)"/)
-  const lineMatch = packageLine.match(packageRegex)
+  const packageRegex = RegExp(/.package\(\s*name:\s*"([A-Za-z0-9_-]+)"/);
+  const lineMatch = packageLine.match(packageRegex);
   if (lineMatch === null) {
-    return null
+    return null;
   }
 
-  return lineMatch[1]
+  return lineMatch[1];
 }
-
 
 export async function generatePackageFile(
   config: Config,
@@ -41,7 +40,7 @@ export async function generatePackageFile(
     swiftPluginList.push(pluginStatement);
   }
 
-  const packageSwiftFile = await findPackageSwiftFile(config)
+  const packageSwiftFile = await findPackageSwiftFile(config);
 
   try {
     if (!existsSync(packageSwiftFile)) {
@@ -53,27 +52,35 @@ export async function generatePackageFile(
     const packageSwiftTextLines = packageSwiftText.split('\n');
 
     let textToWrite = '';
-    const packages: string[] = []
+    const packages: string[] = [];
     for (const lineIndex in packageSwiftTextLines) {
-      const line = packageSwiftTextLines
-      const index = parseInt(lineIndex)
+      const line = packageSwiftTextLines;
+      const index = parseInt(lineIndex);
 
-
-      if (line[index].includes('dependencies: [') && line[index+1].includes('.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")')) {
-        let tempIndex = index+1
+      if (
+        line[index].includes('dependencies: [') &&
+        line[index + 1].includes(
+          '.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")',
+        )
+      ) {
+        let tempIndex = index + 1;
         while (!line[tempIndex].includes('],')) {
-          const swiftPack = readSwiftPackage(line[tempIndex])
+          const swiftPack = readSwiftPackage(line[tempIndex]);
           if (swiftPack !== null) {
-            packages.push(swiftPack)
+            packages.push(swiftPack);
           }
-          tempIndex++
+          tempIndex++;
         }
       }
 
-      if (line[index].includes('.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")')) {
+      if (
+        line[index].includes(
+          '.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")',
+        )
+      ) {
         textToWrite += line[index] + ',\n';
         for (const swiftPlugin of swiftPluginList) {
-          const name = readSwiftPackage(swiftPlugin) ?? ""
+          const name = readSwiftPackage(swiftPlugin) ?? '';
           if (!packages.includes(name)) {
             textToWrite += '        ' + swiftPlugin + '\n';
           }
@@ -90,9 +97,6 @@ export async function generatePackageFile(
     );
   }
 }
-
-
-
 
 export async function checkPackageManager(config: Config): Promise<string> {
   const iosDirectory = config.ios.nativeProjectDirAbs;
