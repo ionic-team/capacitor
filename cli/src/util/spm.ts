@@ -59,7 +59,7 @@ export async function generatePackageFile(
       const index = parseInt(lineIndex)
 
 
-      if (line[index].includes('dependencies: [') && line[index+1].includes('.package(name: "Capacitor"')) {
+      if (line[index].includes('dependencies: [') && line[index+1].includes('.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")')) {
         let tempIndex = index+1
         while (!line[tempIndex].includes('],')) {
           const swiftPack = readSwiftPackage(line[tempIndex])
@@ -70,7 +70,7 @@ export async function generatePackageFile(
         }
       }
 
-      if (line[index].includes('.package(name: "Capacitor"')) {
+      if (line[index].includes('.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")')) {
         textToWrite += line[index] + ',\n';
         for (const swiftPlugin of swiftPluginList) {
           const name = readSwiftPackage(swiftPlugin) ?? ""
