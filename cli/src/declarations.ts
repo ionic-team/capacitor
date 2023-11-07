@@ -84,6 +84,14 @@ export interface CapacitorConfig {
    */
   backgroundColor?: string;
 
+  /**
+   * Enable zooming within the Capacitor Web View.
+   *
+   * @default false
+   * @since 6.0.0
+   */
+  zoomEnabled?: boolean;
+
   android?: {
     /**
      * Specify a custom path to the native Android project.
@@ -121,6 +129,14 @@ export interface CapacitorConfig {
      * @since 1.1.0
      */
     backgroundColor?: string;
+
+    /**
+     * Enable zooming within the Capacitor Web View for Android.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
 
     /**
      * Enable mixed content in the Capacitor Web View for Android.
@@ -333,6 +349,14 @@ export interface CapacitorConfig {
     backgroundColor?: string;
 
     /**
+     * Enable zooming within the Capacitor Web View for iOS.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
+
+    /**
      * Configure the scroll view's content inset adjustment behavior.
      *
      * This will set the
@@ -476,7 +500,7 @@ export interface CapacitorConfig {
      * Configure the local scheme on Android.
      *
      * @since 1.2.0
-     * @default http
+     * @default https
      */
     androidScheme?: string;
 
@@ -578,22 +602,6 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
-export interface FederatedApp {
-  name: string;
-  webDir: string;
-  liveUpdateConfig?: LiveUpdateConfig;
-}
-
-export interface LiveUpdateConfig {
-  appId: string;
-  channel: string;
-  autoUpdateMethod: AutoUpdateMethod;
-  maxVersions?: number;
-  key?: string;
-}
-
-export type AutoUpdateMethod = 'none' | 'background';
-
 export interface PluginsConfig {
   /**
    * Plugin configuration by class name.
@@ -605,24 +613,6 @@ export interface PluginsConfig {
         [key: string]: any;
       }
     | undefined;
-
-  /**
-   * FederatedCapacitor plugin configuration
-   *
-   * @since 5.0.0
-   */
-  FederatedCapacitor?: {
-    shell: Omit<FederatedApp, 'webDir'>;
-    apps: FederatedApp[];
-    liveUpdatesKey?: string;
-  };
-
-  /**
-   * Capacitor Live Updates plugin configuration
-   *
-   * @since 4.2.0
-   */
-  LiveUpdates?: LiveUpdateConfig;
 
   /**
    * Capacitor Cookies plugin configuration

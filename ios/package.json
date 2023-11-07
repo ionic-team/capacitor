@@ -17,15 +17,17 @@
     "CapacitorCordova/CapacitorCordova/",
     "Capacitor.podspec",
     "CapacitorCordova.podspec",
-    "scripts/pods_helpers.rb"
+    "scripts/pods_helpers.rb",
+    "Frameworks"
   ],
   "scripts": {
     "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova",
     "xc:build:Capacitor": "cd Capacitor && xcodebuild -workspace Capacitor.xcworkspace -scheme Capacitor && cd ..",
-    "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd .."
+    "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd ..",
+    "xc:build:xcframework": "scripts/build.sh xcframework"
   },
   "peerDependencies": {
-    "@capacitor/core": "^5.3.0"
+    "@capacitor/core": "^5.5.0"
   },
   "publishConfig": {
     "access": "public"
