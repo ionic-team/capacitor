@@ -78,7 +78,12 @@ export async function generatePackageFile(
           '.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")',
         )
       ) {
-        textToWrite += line[index] + ',\n';
+        if (line[index].endsWith(',')) {
+          textToWrite += line[index] + '\n';
+        } else {
+          textToWrite += line[index] + ',\n';
+        }
+
         for (const swiftPlugin of swiftPluginList) {
           const name = readSwiftPackage(swiftPlugin) ?? '';
           if (!packages.includes(name)) {
