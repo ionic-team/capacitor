@@ -6,7 +6,6 @@ FOUNDATION_EXPORT double CapacitorCordovaVersionNumber;
 //! Project version string for CapacitorCordova.
 FOUNDATION_EXPORT const unsigned char CapacitorCordovaVersionString[];
 
-#import <Cordova/AppDelegate.h>
 #import <Cordova/CDV.h>
 #import <Cordova/CDVAvailability.h>
 #import <Cordova/CDVCommandDelegate.h>
