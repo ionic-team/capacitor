@@ -190,7 +190,7 @@ async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
 async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
   const assetsDir = 'assets';
   const assetsDirAbs = join(rootDir, assetsDir);
-  const iosPlatformTemplateArchive = 'ios-template.tar.gz';
+  const iosPlatformTemplateArchive = 'ios-pods-template.tar.gz';
   const iosCordovaPluginsTemplateArchive =
     'capacitor-cordova-ios-plugins.tar.gz';
   const androidPlatformTemplateArchive = 'android-template.tar.gz';
