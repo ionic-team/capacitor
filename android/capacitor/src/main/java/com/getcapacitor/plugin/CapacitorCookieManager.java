@@ -1,7 +1,7 @@
 package com.getcapacitor.plugin;
 
-import android.util.Log;
 import com.getcapacitor.Bridge;
+import com.getcapacitor.Logger;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
@@ -64,7 +64,7 @@ public class CapacitorCookieManager extends CookieManager {
             try {
                 new URI(url);
             } catch (Exception error) {
-                Log.e(TAG, "Failed to get sanitized URL.", error);
+                Logger.error(TAG, "Failed to get sanitized URL.", error);
                 throw error;
             }
         }
@@ -85,10 +85,10 @@ public class CapacitorCookieManager extends CookieManager {
     public String getCookieString(String url) {
         try {
             url = getSanitizedDomain(url);
-            Log.i(TAG, "Getting cookies at: '" + url + "'");
+            Logger.info(TAG, "Getting cookies at: '" + url + "'");
             return webkitCookieManager.getCookie(url);
         } catch (Exception error) {
-            Log.e(TAG, "Failed to get cookies at the given URL.", error);
+            Logger.error(TAG, "Failed to get cookies at the given URL.", error);
         }
 
         return null;
@@ -145,11 +145,11 @@ public class CapacitorCookieManager extends CookieManager {
     public void setCookie(String url, String value) {
         try {
             url = getSanitizedDomain(url);
-            Log.i(TAG, "Setting cookie '" + value + "' at: '" + url + "'");
+            Logger.info(TAG, "Setting cookie '" + value + "' at: '" + url + "'");
             webkitCookieManager.setCookie(url, value);
             flush();
         } catch (Exception error) {
-            Log.e(TAG, "Failed to set cookie.", error);
+            Logger.error(TAG, "Failed to set cookie.", error);
         }
     }
 

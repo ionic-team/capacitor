@@ -469,8 +469,7 @@ var nativeBridge = (function (exports) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
                         const request = new Request(resource, options);
-                        if (!(request.url.startsWith('http:') ||
-                            request.url.startsWith('https:'))) {
+                        if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
                             return win.CapacitorWebFetch(resource, options);
                         }
                         const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
