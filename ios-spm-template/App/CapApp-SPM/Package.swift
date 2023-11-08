@@ -11,14 +11,14 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(name: "Capacitor", path: "../../../node_modules/@capacitor/ios")
+        .package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")
     ],
     targets: [
         .target(
             name: "CapApp-SPM",
             dependencies: [
-                .product(name: "Capacitor", package: "Capacitor"),
-                .product(name: "Cordova", package: "Capacitor")
+                .product(name: "Capacitor", package: "capacitor6-spm-test"),
+                .product(name: "Cordova", package: "capacitor6-spm-test")
             ]
         )
     ]

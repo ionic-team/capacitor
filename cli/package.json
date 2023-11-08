@@ -47,7 +47,7 @@
     "@ionic/cli-framework-output": "^2.2.5",
     "@ionic/utils-fs": "^3.1.6",
     "@ionic/utils-process": "^2.1.11",
-    "@ionic/utils-subprocess": "^2.1.11",
+    "@ionic/utils-subprocess": "2.1.11",
     "@ionic/utils-terminal": "^2.3.3",
     "commander": "^9.3.0",
     "debug": "^4.3.4",
