@@ -16,11 +16,7 @@ export async function runCommand(
   } catch (e) {
     if (e instanceof SubprocessError) {
       // old behavior of just throwing the stdout/stderr strings
-      throw e.output
-        ? e.output
-        : e.code
-        ? e.code
-        : 'Unknown error';
+      throw e.output ? e.output : e.code ? e.code : 'Unknown error';
     }
 
     throw e;
