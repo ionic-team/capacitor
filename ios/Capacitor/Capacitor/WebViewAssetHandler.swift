@@ -3,7 +3,7 @@ import MobileCoreServices
 
 @objc(CAPWebViewAssetHandler)
 // swiftlint:disable type_body_length
-public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
+open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
 
@@ -12,15 +12,15 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         super.init()
     }
 
-    public func setAssetPath(_ assetPath: String) {
+    open func setAssetPath(_ assetPath: String) {
         router.basePath = assetPath
     }
 
-    public func setServerUrl(_ serverUrl: URL?) {
+    open func setServerUrl(_ serverUrl: URL?) {
         self.serverUrl = serverUrl
     }
 
-    public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+    open func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         let startPath: String
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
@@ -92,11 +92,11 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         urlSchemeTask.didFinish()
     }
 
-    public func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
+    open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
         CAPLog.print("scheme stop")
     }
 
-    func mimeTypeForExtension(pathExtension: String) -> String {
+    open func mimeTypeForExtension(pathExtension: String) -> String {
         if !pathExtension.isEmpty {
             if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as NSString, nil)?.takeRetainedValue() {
                 if let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() {
@@ -112,7 +112,7 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         return "text/html"
     }
 
-    func isMediaExtension(pathExtension: String) -> Bool {
+    open func isMediaExtension(pathExtension: String) -> Bool {
         let mediaExtensions = ["m4v", "mov", "mp4",
                                "aac", "ac3", "aiff", "au", "flac", "m4a", "mp3", "wav"]
         if mediaExtensions.contains(pathExtension.lowercased()) {
@@ -121,7 +121,7 @@ public class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         return false
     }
 
-    let mimeTypes = [
+    public let mimeTypes = [
         "aaf": "application/octet-stream",
         "aca": "application/octet-stream",
         "accdb": "application/msaccess",
