@@ -20,8 +20,6 @@ export async function runCommand(
         ? e.output
         : e.code
         ? e.code
-        : e.error
-        ? e.error.message
         : 'Unknown error';
     }
 
