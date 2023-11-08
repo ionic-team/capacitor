@@ -11,7 +11,8 @@ execute(async () => {
 
   const templates = [
     'android-template',
-    'ios-template',
+    'ios-pods-template',
+    'ios-spm-template',
     'capacitor-cordova-android-plugins',
     'capacitor-cordova-ios-plugins',
   ];
