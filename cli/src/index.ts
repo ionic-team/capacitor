@@ -1,4 +1,5 @@
 import { Option, program } from 'commander';
+import { resolve } from 'path';
 
 import c from './colors';
 import { checkExternalConfig, loadConfig } from './config';
@@ -9,6 +10,10 @@ import { logger, output } from './log';
 import { telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
+
+type Writable<T> = T extends object
+  ? { -readonly [K in keyof T]: Writable<T[K]> }
+  : T;
 
 process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
@@ -263,12 +268,27 @@ export function runProgram(config: Config): void {
   program
     .command('add [platform]')
     .description('add a native platform project')
+    .option(
+      '--packagemanager <packageManager>',
+      'The package manager to use for dependency installs (SPM, Cocoapods)',
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform, { packagemanager }) => {
           checkExternalConfig(config.app);
           const { addCommand } = await import('./tasks/add');
-          await addCommand(config, platform);
+
+          const configWritable: Writable<Config> = config as Writable<Config>;
+          if (packagemanager === 'SPM') {
+            configWritable.cli.assets.ios.platformTemplateArchive =
+              'ios-spm-template.tar.gz';
+            configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(
+              configWritable.cli.assetsDirAbs,
+              configWritable.cli.assets.ios.platformTemplateArchive,
+            );
+          }
+
+          await addCommand(configWritable as Config, platform);
         }),
       ),
     );
