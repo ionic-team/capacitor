@@ -32,6 +32,7 @@ import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
+import { checkPackageManager, generatePackageFile } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -49,8 +50,20 @@ export async function updateIOS(
     p => getPluginType(p, platform) === PluginType.Core,
   );
 
-  printPlugins(capacitorPlugins, 'ios');
+  if ((await checkPackageManager(config)) === 'SPM') {
+    await generatePackageFile(config, capacitorPlugins);
+  } else {
+    await updateIOSCocoaPods(config, plugins, deployment);
+  }
 
+  printPlugins(capacitorPlugins, 'ios');
+}
+
+async function updateIOSCocoaPods(
+  config: Config,
+  plugins: Plugin[],
+  deployment: boolean,
+) {
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,

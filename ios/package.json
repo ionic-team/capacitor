@@ -17,8 +17,7 @@
     "CapacitorCordova/CapacitorCordova/",
     "Capacitor.podspec",
     "CapacitorCordova.podspec",
-    "scripts/pods_helpers.rb",
-    "Frameworks"
+    "scripts/pods_helpers.rb"
   ],
   "scripts": {
     "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova",
