@@ -49,9 +49,9 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^6.0.0';
-const pluginVersion = '^6.0.0';
-const gradleVersion = '8.1.1';
+const coreVersion = 'next';
+const pluginVersion = 'next';
+const gradleVersion = '8.2.1';
 let installFailed = false;
 
 export async function migrateCommand(
