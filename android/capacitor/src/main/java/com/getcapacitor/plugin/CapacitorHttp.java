@@ -2,7 +2,6 @@ package com.getcapacitor.plugin;
 
 import android.Manifest;
 import android.webkit.JavascriptInterface;
-import com.getcapacitor.CapConfig;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -10,7 +9,12 @@ import com.getcapacitor.PluginConfig;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.plugin.util.CapacitorHttpUrlConnection;
 import com.getcapacitor.plugin.util.HttpRequestHandler;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @CapacitorPlugin(
     permissions = {
@@ -20,26 +24,52 @@ import com.getcapacitor.plugin.util.HttpRequestHandler;
 )
 public class CapacitorHttp extends Plugin {
 
+    private Map<Runnable, PluginCall> activeRequests = new HashMap<>();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
+
     @Override
     public void load() {
         this.bridge.getWebView().addJavascriptInterface(this, "CapacitorHttpAndroidInterface");
         super.load();
     }
 
-    private void http(final PluginCall call, final String httpMethod) {
-        Runnable asyncHttpCall = new Runnable() {
-            @Override
-            public void run() {
+    @Override
+    protected void handleOnDestroy() {
+        super.handleOnDestroy();
+
+        for (Map.Entry<Runnable, PluginCall> entry : activeRequests.entrySet()) {
+            Runnable job = entry.getKey();
+            PluginCall call = entry.getValue();
+
+            if (call.getData().has("activeCapacitorHttpUrlConnection")) {
                 try {
-                    JSObject response = HttpRequestHandler.request(call, httpMethod, getBridge());
-                    call.resolve(response);
-                } catch (Exception e) {
-                    call.reject(e.getLocalizedMessage(), e.getClass().getSimpleName(), e);
-                }
+                    CapacitorHttpUrlConnection connection = (CapacitorHttpUrlConnection) call
+                        .getData()
+                        .get("activeCapacitorHttpUrlConnection");
+                    connection.disconnect();
+                    call.getData().remove("activeCapacitorHttpUrlConnection");
+                } catch (Exception ignored) {}
+            }
+
+            getBridge().releaseCall(call);
+        }
+
+        activeRequests.clear();
+        executor.shutdownNow();
+    }
+
+    private void http(final PluginCall call, final String httpMethod) {
+        Runnable asyncHttpCall = () -> {
+            try {
+                JSObject response = HttpRequestHandler.request(call, httpMethod, getBridge());
+                call.resolve(response);
+            } catch (Exception e) {
+                call.reject(e.getLocalizedMessage(), e.getClass().getSimpleName(), e);
             }
         };
-        Thread httpThread = new Thread(asyncHttpCall);
-        httpThread.start();
+
+        activeRequests.put(asyncHttpCall, call);
+        executor.submit(asyncHttpCall);
     }
 
     @JavascriptInterface

@@ -15,7 +15,6 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import type { FederatedApp } from '../declarations';
 import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { logger } from '../log';
@@ -356,4 +355,26 @@ async function copySSLCert(
       return Promise.all(promises);
     },
   );
+}
+
+interface LiveUpdateConfig {
+  key?: string;
+}
+
+interface FederatedApp {
+  name: string;
+  webDir: string;
+}
+
+interface FederatedCapacitor {
+  shell: Omit<FederatedApp, 'webDir'>;
+  apps: FederatedApp[];
+  liveUpdatesKey?: string;
+}
+
+declare module '../declarations' {
+  interface PluginsConfig {
+    LiveUpdates?: LiveUpdateConfig;
+    FederatedCapacitor?: FederatedCapacitor;
+  }
 }
