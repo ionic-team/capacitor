@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/5.2.3...6.0.0-alpha.1) (2023-11-08)
+
+### Bug Fixes
+
+- allow double quotes in Gemfile ([#6903](https://github.com/ionic-team/capacitor/issues/6903)) ([3abdbed](https://github.com/ionic-team/capacitor/commit/3abdbed38844d5d59d244f6f0dfc2647f29ce446))
+- **android:** handle webview version for developer builds ([#6907](https://github.com/ionic-team/capacitor/issues/6907)) ([88498e6](https://github.com/ionic-team/capacitor/commit/88498e6228492a9ae917d3a7b37c242881f9fe52))
+- **android:** make local urls use unpatched fetch ([#6953](https://github.com/ionic-team/capacitor/issues/6953)) ([e50e56c](https://github.com/ionic-team/capacitor/commit/e50e56c5231f230497d1bd420e02e2e065c38f86))
+- **android:** Use Logger class instead of Log in CapacitorCookieManager ([#6923](https://github.com/ionic-team/capacitor/issues/6923)) ([8aaa356](https://github.com/ionic-team/capacitor/commit/8aaa356ab1f14b56df821e8ac0bb7e43bfa094fa))
+- **cli:** force latest native-run version for iOS 17 support ([#6926](https://github.com/ionic-team/capacitor/issues/6926)) ([7e7c8b9](https://github.com/ionic-team/capacitor/commit/7e7c8b9113f541d530c5883dea1f52b2957c0859))
+- **cli:** Pin @ionic/utils-subprocess version ([#7057](https://github.com/ionic-team/capacitor/issues/7057)) ([0ac019a](https://github.com/ionic-team/capacitor/commit/0ac019a36070b4cb9917a82e406453169c7d5559))
+- **cli:** use helper in Podfile with correct path ([#6878](https://github.com/ionic-team/capacitor/issues/6878)) ([8e95be9](https://github.com/ionic-team/capacitor/commit/8e95be9f91169e258ab5cdd8fd673106392b8429))
+- **cli:** Use latest native-run ([#7023](https://github.com/ionic-team/capacitor/issues/7023)) ([4125160](https://github.com/ionic-team/capacitor/commit/412516069e15fbdbc17ad130c2f3a67891b6bc45))
+- **cookies:** remove session cookies when initializing the cookie manager ([037863b](https://github.com/ionic-team/capacitor/commit/037863bea6f3a00978125dc2f8ecba1e896c0740))
+- **http:** add support for Request objects in fetch ([24b3cc1](https://github.com/ionic-team/capacitor/commit/24b3cc113e3d8aae5d85dbf2d25bec0c35136477))
+- **http:** disconnect active connections if call or bridge is destroyed ([a1ed6cc](https://github.com/ionic-team/capacitor/commit/a1ed6cc6f07465d683b95e3796d944f863a7b857))
+- **http:** inherit object properties on window.XMLHttpRequest ([91c11d0](https://github.com/ionic-team/capacitor/commit/91c11d06f773c45a10f6f2d52f672ae6f189b162))
+- **http:** return numbers and booleans as-is when application/json is the content type ([03dd3f9](https://github.com/ionic-team/capacitor/commit/03dd3f96c7ee75b6fff2b7c40d0c9a58fb04fce5))
+- **ios-template:** added workaround for Cocoapods bug in XC15 ([#6847](https://github.com/ionic-team/capacitor/issues/6847)) ([10ccc76](https://github.com/ionic-team/capacitor/commit/10ccc769b67eda12a2899c447949a4865d3e9954))
+- Update migrate to Capacitor 6 ([#6872](https://github.com/ionic-team/capacitor/issues/6872)) ([98eec8f](https://github.com/ionic-team/capacitor/commit/98eec8fe9fd332d6669965fa5a21412233b3e06e))
+
+### Features
+
+- add livereload to run command ([#6831](https://github.com/ionic-team/capacitor/issues/6831)) ([4099969](https://github.com/ionic-team/capacitor/commit/4099969f70e9b995182bacecc16e160d89bbc746))
+- Add the spm root project to the template ([#6877](https://github.com/ionic-team/capacitor/issues/6877)) ([02c44c2](https://github.com/ionic-team/capacitor/commit/02c44c2d9ed1b76a72b0f8a2c338b556133c9582))
+- Add XCFrameworks ([#7020](https://github.com/ionic-team/capacitor/issues/7020)) ([5306095](https://github.com/ionic-team/capacitor/commit/53060955dc83cdbfda66bed60c2efcba395a9ca8))
+- **android:** allow developers to provide logic for onRenderProcessGone in WebViewListener ([#6966](https://github.com/ionic-team/capacitor/issues/6966)) ([79e17bb](https://github.com/ionic-team/capacitor/commit/79e17bb5e6ccd813bddc626703152d3983f6d93b))
+- better support monorepos ([#6811](https://github.com/ionic-team/capacitor/issues/6811)) ([ae35e29](https://github.com/ionic-team/capacitor/commit/ae35e29fb8c886dea867683a23a558d2d344073b))
+- **ios:** Makes CapacitorBridge, WebViewAssetHandler, and WebViewDelegationHandler open classes, along with several of their methods ([#7009](https://github.com/ionic-team/capacitor/issues/7009)) ([40d62cb](https://github.com/ionic-team/capacitor/commit/40d62cbce950c2f3972764fe134cc37f2343f33d))
+- modify package.swift on update and sync ([#7042](https://github.com/ionic-team/capacitor/issues/7042)) ([24573fb](https://github.com/ionic-team/capacitor/commit/24573fb864c43551e2ce42721b45ff901155627d))
+
 ## [5.5.1](https://github.com/ionic-team/capacitor/compare/5.5.0...5.5.1) (2023-10-25)
 
 ### Bug Fixes

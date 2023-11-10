@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/5.2.3...6.0.0-alpha.1) (2023-11-08)
+
+### Bug Fixes
+
+- allow double quotes in Gemfile ([#6903](https://github.com/ionic-team/capacitor/issues/6903)) ([3abdbed](https://github.com/ionic-team/capacitor/commit/3abdbed38844d5d59d244f6f0dfc2647f29ce446))
+- **cli:** force latest native-run version for iOS 17 support ([#6926](https://github.com/ionic-team/capacitor/issues/6926)) ([7e7c8b9](https://github.com/ionic-team/capacitor/commit/7e7c8b9113f541d530c5883dea1f52b2957c0859))
+- **cli:** Pin @ionic/utils-subprocess version ([#7057](https://github.com/ionic-team/capacitor/issues/7057)) ([0ac019a](https://github.com/ionic-team/capacitor/commit/0ac019a36070b4cb9917a82e406453169c7d5559))
+- **cli:** use helper in Podfile with correct path ([#6878](https://github.com/ionic-team/capacitor/issues/6878)) ([8e95be9](https://github.com/ionic-team/capacitor/commit/8e95be9f91169e258ab5cdd8fd673106392b8429))
+- **cli:** Use latest native-run ([#7023](https://github.com/ionic-team/capacitor/issues/7023)) ([4125160](https://github.com/ionic-team/capacitor/commit/412516069e15fbdbc17ad130c2f3a67891b6bc45))
+- Update migrate to Capacitor 6 ([#6872](https://github.com/ionic-team/capacitor/issues/6872)) ([98eec8f](https://github.com/ionic-team/capacitor/commit/98eec8fe9fd332d6669965fa5a21412233b3e06e))
+
+### Features
+
+- add livereload to run command ([#6831](https://github.com/ionic-team/capacitor/issues/6831)) ([4099969](https://github.com/ionic-team/capacitor/commit/4099969f70e9b995182bacecc16e160d89bbc746))
+- better support monorepos ([#6811](https://github.com/ionic-team/capacitor/issues/6811)) ([ae35e29](https://github.com/ionic-team/capacitor/commit/ae35e29fb8c886dea867683a23a558d2d344073b))
+- modify package.swift on update and sync ([#7042](https://github.com/ionic-team/capacitor/issues/7042)) ([24573fb](https://github.com/ionic-team/capacitor/commit/24573fb864c43551e2ce42721b45ff901155627d))
+
 ## [5.5.1](https://github.com/ionic-team/capacitor/compare/5.5.0...5.5.1) (2023-10-25)
 
 **Note:** Version bump only for package @capacitor/cli
