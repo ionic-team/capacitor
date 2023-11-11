@@ -92,7 +92,7 @@ import Cordova
     }
 
     open func router() -> Router {
-        return _Router()
+        return CapacitorRouter()
     }
 
     /**
@@ -306,6 +306,9 @@ extension CAPBridgeViewController {
         // set our delegates
         aWebView.uiDelegate = delegationHandler
         aWebView.navigationDelegate = delegationHandler
+        if !configuration.zoomingEnabled {
+            aWebView.scrollView.delegate = delegationHandler
+        }
     }
 
     private func updateBinaryVersion() {
@@ -359,11 +362,11 @@ extension CAPBridgeViewController {
 }
 
 extension CAPBridgeViewController: CAPBridgeDelegate {
-    internal var bridgedWebView: WKWebView? {
+    public var bridgedWebView: WKWebView? {
         return webView
     }
 
-    internal var bridgedViewController: UIViewController? {
+    public var bridgedViewController: UIViewController? {
         return self
     }
 }

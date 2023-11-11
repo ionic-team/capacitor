@@ -29,6 +29,7 @@
                 break;
         }
         _scrollingEnabled = descriptor.scrollingEnabled;
+        _zoomingEnabled =  descriptor.zoomingEnabled;
         _allowLinkPreviews = descriptor.allowLinkPreviews;
         _handleApplicationNotifications = descriptor.handleApplicationNotifications;
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
@@ -66,6 +67,7 @@
         _pluginConfigurations = [[configuration pluginConfigurations] copy];
         _loggingEnabled = configuration.loggingEnabled;
         _scrollingEnabled = configuration.scrollingEnabled;
+        _zoomingEnabled = configuration.zoomingEnabled;
         _allowLinkPreviews = configuration.allowLinkPreviews;
         _handleApplicationNotifications = configuration.handleApplicationNotifications;
         _isWebDebuggable = configuration.isWebDebuggable;
