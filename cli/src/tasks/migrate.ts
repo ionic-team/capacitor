@@ -607,8 +607,8 @@ async function updateBuildGradle(
   },
 ) {
   // In build.gradle add dependencies:
-  // classpath 'com.android.tools.build:gradle:8.0.0'
-  // classpath 'com.google.gms:google-services:4.3.15'
+  // classpath 'com.android.tools.build:gradle:8.2.0-rc02'
+  // classpath 'com.google.gms:google-services:4.4.0'
   const txt = readFile(filename);
   if (!txt) {
     return;
