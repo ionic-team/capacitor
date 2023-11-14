@@ -19,13 +19,6 @@ internal struct JSCall {
     let pluginId: String
     let method: String
     let callbackId: String
-
-    init(options: [String: Any], pluginId: String, method: String, callbackId: String) {
-        self.options = options
-        self.pluginId = pluginId
-        self.method = method
-        self.callbackId = callbackId
-    }
 }
 
 internal protocol JSResultProtocol {
@@ -64,11 +57,6 @@ internal struct JSResult: JSResultProtocol {
     let call: JSCall
     let result: PluginCallResult?
 
-    init(call: JSCall, result: PluginCallResult?) {
-        self.call = call
-        self.result = result
-    }
-
     func jsonPayload() -> String {
         guard let result = result else {
             return SerializationResult.undefined.rawValue
@@ -100,14 +88,6 @@ internal struct JSResultError: JSResultProtocol {
     let errorDescription: String
     let errorCode: String?
     let result: PluginCallResult
-
-    init(call: JSCall, errorMessage: String, errorDescription: String, errorCode: String?, result: PluginCallResult) {
-        self.call = call
-        self.errorMessage = errorMessage
-        self.errorDescription = errorDescription
-        self.errorCode = errorCode
-        self.result = result
-    }
 
     func jsonPayload() -> String {
         var errorDictionary: [String: Any] = [

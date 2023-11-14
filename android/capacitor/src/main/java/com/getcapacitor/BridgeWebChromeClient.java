@@ -425,11 +425,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
                 activityResult -> {
                     Uri[] result;
                     Intent resultIntent = activityResult.getData();
-                    if (
-                        activityResult.getResultCode() == Activity.RESULT_OK &&
-                        resultIntent.getClipData() != null &&
-                        resultIntent.getClipData().getItemCount() > 1
-                    ) {
+                    if (activityResult.getResultCode() == Activity.RESULT_OK && resultIntent.getClipData() != null) {
                         final int numFiles = resultIntent.getClipData().getItemCount();
                         result = new Uri[numFiles];
                         for (int i = 0; i < numFiles; i++) {

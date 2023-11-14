@@ -197,6 +197,11 @@ export interface HttpOptions {
    */
   shouldEncodeUrlParams?: boolean;
   /**
+   * This is used if we've had to convert the data from a JS type that needs
+   * special handling in the native layer
+   */
+  dataType?: 'file' | 'formData';
+  /**
    * Use this option if you need a gzip compression of the data payload
    * A compatible consumer interface must be ensured. The default is _false_.
    */

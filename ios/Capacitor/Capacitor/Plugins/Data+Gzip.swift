@@ -29,9 +29,9 @@
 import struct Foundation.Data
 
 #if os(Linux)
-    import zlibLinux
+import zlibLinux
 #else
-    import zlib
+import zlib
 #endif
 
 /// Compression level whose rawValue is based on the zlib's constants.
@@ -46,12 +46,10 @@ public struct CompressionLevel: RawRepresentable {
 
     public static let defaultCompression = CompressionLevel(Z_DEFAULT_COMPRESSION)
 
-
     public init(rawValue: Int32) {
 
         self.rawValue = rawValue
     }
-
 
     public init(_ rawValue: Int32) {
 
@@ -59,7 +57,6 @@ public struct CompressionLevel: RawRepresentable {
     }
 
 }
-
 
 /// Errors on gzipping/gunzipping based on the zlib error codes.
 public struct GzipError: Swift.Error {
@@ -104,7 +101,6 @@ public struct GzipError: Swift.Error {
     /// Returned message by zlib.
     public let message: String
 
-
     internal init(code: Int32, msg: UnsafePointer<CChar>?) {
 
         self.message = {
@@ -132,14 +128,12 @@ public struct GzipError: Swift.Error {
         }()
     }
 
-
     public var localizedDescription: String {
 
         return self.message
     }
 
 }
-
 
 extension Data {
 
@@ -148,7 +142,6 @@ extension Data {
 
         return self.starts(with: [0x1f, 0x8b])  // check magic number
     }
-
 
     /// Create a new `Data` instance by compressing the receiver using zlib.
     /// Throws an error if compression failed.
@@ -211,7 +204,6 @@ extension Data {
 
         return data
     }
-
 
     /// Create a new `Data` instance by decompressing the receiver using zlib.
     /// Throws an error if decompression failed.
@@ -281,7 +273,6 @@ extension Data {
     }
 
 }
-
 
 private enum DataSize {
 

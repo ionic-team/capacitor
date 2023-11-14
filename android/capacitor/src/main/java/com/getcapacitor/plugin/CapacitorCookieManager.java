@@ -1,11 +1,13 @@
 package com.getcapacitor.plugin;
 
 import com.getcapacitor.Bridge;
+import com.getcapacitor.Logger;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,6 +23,8 @@ public class CapacitorCookieManager extends CookieManager {
     private final String localUrl;
 
     private final String serverUrl;
+
+    private final String TAG = "CapacitorCookies";
 
     /**
      * Create a new cookie manager with the default cookie store and policy
@@ -43,21 +47,32 @@ public class CapacitorCookieManager extends CookieManager {
         this.serverUrl = bridge.getServerUrl();
     }
 
-    public String getSanitizedDomain(String url) {
+    public void removeSessionCookies() {
+        this.webkitCookieManager.removeSessionCookies(null);
+    }
+
+    public String getSanitizedDomain(String url) throws URISyntaxException {
         if (url == null || url.isEmpty()) {
-            url = this.localUrl;
+            url = this.serverUrl;
         }
 
         try {
             new URI(url);
-        } catch (Exception ex) {
-            return this.serverUrl;
+        } catch (Exception ignored) {
+            url = this.localUrl;
+
+            try {
+                new URI(url);
+            } catch (Exception error) {
+                Logger.error(TAG, "Failed to get sanitized URL.", error);
+                throw error;
+            }
         }
 
         return url;
     }
 
-    private String getDomainFromCookieString(String cookie) {
+    private String getDomainFromCookieString(String cookie) throws URISyntaxException {
         String[] domain = cookie.toLowerCase(Locale.ROOT).split("domain=");
         return getSanitizedDomain(domain.length <= 1 ? null : domain[1].split(";")[0].trim());
     }
@@ -68,7 +83,15 @@ public class CapacitorCookieManager extends CookieManager {
      * @return value the cookies as a string, using the format of the 'Cookie' HTTP request header
      */
     public String getCookieString(String url) {
-        return webkitCookieManager.getCookie(url);
+        try {
+            url = getSanitizedDomain(url);
+            Logger.info(TAG, "Getting cookies at: '" + url + "'");
+            return webkitCookieManager.getCookie(url);
+        } catch (Exception error) {
+            Logger.error(TAG, "Failed to get cookies at the given URL.", error);
+        }
+
+        return null;
     }
 
     /**
@@ -120,8 +143,14 @@ public class CapacitorCookieManager extends CookieManager {
      * @param value the cookie as a string, using the format of the 'Set-Cookie' HTTP response header
      */
     public void setCookie(String url, String value) {
-        webkitCookieManager.setCookie(url, value);
-        flush();
+        try {
+            url = getSanitizedDomain(url);
+            Logger.info(TAG, "Setting cookie '" + value + "' at: '" + url + "'");
+            webkitCookieManager.setCookie(url, value);
+            flush();
+        } catch (Exception error) {
+            Logger.error(TAG, "Failed to set cookie.", error);
+        }
     }
 
     /**
@@ -169,11 +198,13 @@ public class CapacitorCookieManager extends CookieManager {
 
             // process each of the headers
             for (String headerValue : Objects.requireNonNull(responseHeaders.get(headerKey))) {
-                // Set at server url
-                setCookie(uri.toString(), headerValue);
+                try {
+                    // Set at the requested server url
+                    setCookie(uri.toString(), headerValue);
 
-                // Set at local url or domain
-                setCookie(getDomainFromCookieString(headerValue), headerValue);
+                    // Set at the defined domain in the response or at default capacitor hosted url
+                    setCookie(getDomainFromCookieString(headerValue), headerValue);
+                } catch (Exception ignored) {}
             }
         }
     }

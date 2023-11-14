@@ -151,6 +151,7 @@ open class HttpRequestHandler {
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")
         let readTimeout = call.getDouble("readTimeout")
+        let dataType = call.getString("dataType") ?? "any"
         let gzipCompression = call.getBool("gzipCompression") ?? false
 
         if urlString == urlString.removingPercentEncoding {
@@ -165,7 +166,7 @@ open class HttpRequestHandler {
             .openConnection()
             .build()
 
-        if (gzipCompression) {
+        if gzipCompression {
             headers["Content-Encoding"] = "gzip"
         }
 
@@ -177,7 +178,7 @@ open class HttpRequestHandler {
 
         if let data = call.options["data"] as? JSValue {
             do {
-                try request.setRequestBody(data, gzipCompression)
+                try request.setRequestBody(data, gzipCompression, dataType)
             } catch {
                 // Explicitly reject if the http request body was not set successfully,
                 // so as to not send a known malformed request, and to provide the developer with additional context.

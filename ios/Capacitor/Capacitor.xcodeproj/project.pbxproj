@@ -13,12 +13,10 @@
 		2F81F5CA26FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F81F5C826FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m */; };
 		373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */; };
 		373A69F2255C95D0000A6F44 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69F1255C95D0000A6F44 /* NotificationRouter.swift */; };
-		4D0D590F29E86FAB008A6833 /* WKWebView+Capacitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D0D590D29E86FAB008A6833 /* WKWebView+Capacitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
 		50503EE91FC08595003606DC /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Capacitor.framework */; };
 		50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* CapacitorTests.swift */; };
 		5405D8B329C0949F008F945E /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5405D8B129C0949F008F945E /* Data+Gzip.swift */; };
-		55F6736A26C371E6001E7AB9 /* CAPWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6736826C371E6001E7AB9 /* CAPWebView.swift */; };
 		6214934725509C3F006C36F9 /* CAPInstanceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */; };
 		621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */; };
 		621ECCB82542045900D3D615 /* CAPBridgedJSTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -145,13 +143,11 @@
 		2F81F5C826FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CAPBridgeViewController+CDVScreenOrientationDelegate.m"; sourceTree = "<group>"; };
 		373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerProtocol.swift; sourceTree = "<group>"; };
 		373A69F1255C95D0000A6F44 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
-		4D0D590D29E86FAB008A6833 /* WKWebView+Capacitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WKWebView+Capacitor.h"; sourceTree = "<group>"; };
 		501CBAA61FC0A723009B0D4D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		50503EDF1FC08594003606DC /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE81FC08595003606DC /* CapacitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapacitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EED1FC08595003606DC /* CapacitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorTests.swift; sourceTree = "<group>"; };
 		5405D8B129C0949F008F945E /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Gzip.swift"; sourceTree = "<group>"; };
-		55F6736826C371E6001E7AB9 /* CAPWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPWebView.swift; sourceTree = "<group>"; };
 		6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstanceConfiguration.swift; sourceTree = "<group>"; };
 		621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPBridgedJSTypes.m; sourceTree = "<group>"; };
 		621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPBridgedJSTypes.h; sourceTree = "<group>"; };
@@ -352,7 +348,6 @@
 				623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */,
 				623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */,
 				623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */,
-				55F6736826C371E6001E7AB9 /* CAPWebView.swift */,
 				6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */,
 				62959B082524DA7700A3D7F1 /* CAPLog.swift */,
 				62959AE72524DA7700A3D7F1 /* CAPFile.swift */,
@@ -363,7 +358,6 @@
 				62959B112524DA7700A3D7F1 /* Data+Capacitor.swift */,
 				62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */,
 				62D43AEF2581817500673C24 /* WKWebView+Capacitor.swift */,
-				4D0D590D29E86FAB008A6833 /* WKWebView+Capacitor.h */,
 				62D43B642582A13D00673C24 /* WKWebView+Capacitor.m */,
 				2F81F5C726FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.h */,
 				2F81F5C826FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m */,
@@ -447,7 +441,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				62959B412524DA7800A3D7F1 /* Capacitor.h in Headers */,
-				4D0D590F29E86FAB008A6833 /* WKWebView+Capacitor.h in Headers */,
 				62959B452524DA7800A3D7F1 /* CAPPlugin.h in Headers */,
 				62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */,
 				62959B3B2524DA7800A3D7F1 /* CAPPluginMethod.h in Headers */,
@@ -613,7 +606,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55F6736A26C371E6001E7AB9 /* CAPWebView.swift in Sources */,
 				A38C3D7728484E76004B3680 /* CapacitorCookies.swift in Sources */,
 				A71289E627F380A500DADDF3 /* Router.swift in Sources */,
 				A327E6B828DB8B2900CA8B0A /* CapacitorUrlRequest.swift in Sources */,

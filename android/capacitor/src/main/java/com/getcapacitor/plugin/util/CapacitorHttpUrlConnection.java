@@ -19,6 +19,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownServiceException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +28,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 
@@ -49,6 +51,10 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      */
     public HttpURLConnection getHttpConnection() {
         return connection;
+    }
+
+    public void disconnect() {
+        connection.disconnect();
     }
 
     /**
@@ -175,6 +181,16 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      * @throws IOException
      */
     public void setRequestBody(PluginCall call, JSValue body) throws JSONException, IOException {
+        setRequestBody(call, body, null);
+    }
+
+    /**
+     *
+     * @param call
+     * @throws JSONException
+     * @throws IOException
+     */
+    public void setRequestBody(PluginCall call, JSValue body, String bodyType) throws JSONException, IOException {
         String contentType = connection.getRequestProperty("Content-Type");
         Boolean gzipCompression = call.getBoolean("gzipCompression", false);
         String dataString = "";
@@ -194,6 +210,15 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                 dataString = call.getString("data");
             }
             this.writeRequestBody(dataString != null ? dataString : "", gzipCompression);
+        } else if (bodyType != null && bodyType.equals("file")) {
+            try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    os.write(Base64.getDecoder().decode(body.toString()));
+                }
+                os.flush();
+            }
+        } else if (bodyType != null && bodyType.equals("formData")) {
+            this.writeFormDataRequestBody(contentType, body.toJSArray());
         } else {
             this.writeRequestBody(body.toString(), gzipCompression);
         }
@@ -215,6 +240,47 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                 dos.write(body.getBytes(StandardCharsets.UTF_8));
                 dos.flush();
             }
+        }
+    }
+
+    private void writeFormDataRequestBody(String contentType, JSArray entries) throws IOException, JSONException {
+        try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
+            String boundary = contentType.split(";")[1].split("=")[1];
+            String lineEnd = "\r\n";
+            String twoHyphens = "--";
+
+            for (Object e : entries.toList()) {
+                if (e instanceof JSONObject) {
+                    JSONObject entry = (JSONObject) e;
+                    String type = entry.getString("type");
+                    String key = entry.getString("key");
+                    String value = entry.getString("value");
+                    if (type.equals("string")) {
+                        os.writeBytes(twoHyphens + boundary + lineEnd);
+                        os.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd + lineEnd);
+                        os.writeBytes(value);
+                        os.writeBytes(lineEnd);
+                    } else if (type.equals("base64File")) {
+                        String fileName = entry.getString("fileName");
+                        String fileContentType = entry.getString("contentType");
+
+                        os.writeBytes(twoHyphens + boundary + lineEnd);
+                        os.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"" + lineEnd);
+                        os.writeBytes("Content-Type: " + fileContentType + lineEnd);
+                        os.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
+                        os.writeBytes(lineEnd);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            os.write(Base64.getDecoder().decode(value));
+                        }
+
+                        os.writeBytes(lineEnd);
+                    }
+                }
+            }
+
+            os.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+            os.flush();
         }
     }
 

@@ -1,16 +1,17 @@
 package com.getcapacitor.plugin;
 
 import android.webkit.JavascriptInterface;
-import androidx.annotation.Nullable;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginConfig;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieHandler;
 import java.net.HttpCookie;
-import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @CapacitorPlugin
 public class CapacitorCookies extends Plugin {
@@ -21,8 +22,15 @@ public class CapacitorCookies extends Plugin {
     public void load() {
         this.bridge.getWebView().addJavascriptInterface(this, "CapacitorCookiesAndroidInterface");
         this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL, this.bridge);
+        this.cookieManager.removeSessionCookies();
         CookieHandler.setDefault(this.cookieManager);
         super.load();
+    }
+
+    @Override
+    protected void handleOnDestroy() {
+        super.handleOnDestroy();
+        this.cookieManager.removeSessionCookies();
     }
 
     @JavascriptInterface
@@ -31,115 +39,79 @@ public class CapacitorCookies extends Plugin {
         return pluginConfig.getBoolean("enabled", false);
     }
 
-    /**
-     * Helper function for getting the serverUrl from the Capacitor Config. Returns an empty
-     * string if it is invalid and will auto-reject through {@code call}
-     * @param call the {@code PluginCall} context
-     * @return the string of the server specified in the Capacitor config
-     */
-    private String getServerUrl(@Nullable PluginCall call) {
-        String url = (call == null) ? this.bridge.getServerUrl() : call.getString("url", this.bridge.getServerUrl());
-
-        if (url == null || url.isEmpty()) {
-            url = this.bridge.getLocalUrl();
-        }
-
-        URI uri = getUri(url);
-        if (uri == null) {
-            if (call != null) {
-                call.reject("Invalid URL. Check that \"server\" is passed in correctly");
-            }
-
-            return "";
-        }
-
-        return url;
-    }
-
-    /**
-     * Try to parse a url string and if it can't be parsed, return null
-     * @param url the url string to try to parse
-     * @return a parsed URI
-     */
-    private URI getUri(String url) {
-        try {
-            return new URI(url);
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-    @JavascriptInterface
-    public String getCookies() {
-        try {
-            String url = getServerUrl(null);
-            if (!url.isEmpty()) {
-                String cookieString = cookieManager.getCookieString(url);
-                return (null == cookieString) ? "" : cookieString;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return "";
-    }
-
     @JavascriptInterface
     public void setCookie(String domain, String action) {
-        String url = cookieManager.getSanitizedDomain(domain);
-
-        if (!url.isEmpty()) {
-            cookieManager.setCookie(url, action);
-        }
+        cookieManager.setCookie(domain, action);
     }
 
     @PluginMethod
     public void getCookies(PluginCall call) {
-        String url = getServerUrl(call);
-        if (!url.isEmpty()) {
-            JSObject cookiesMap = new JSObject();
-            HttpCookie[] cookies = cookieManager.getCookies(url);
-            for (HttpCookie cookie : cookies) {
-                cookiesMap.put(cookie.getName(), cookie.getValue());
-            }
-            call.resolve(cookiesMap);
-        }
+        this.bridge.eval(
+                "document.cookie",
+                value -> {
+                    String cookies = value.substring(1, value.length() - 1);
+                    String[] cookieArray = cookies.split(";");
+
+                    JSObject cookieMap = new JSObject();
+
+                    for (String cookie : cookieArray) {
+                        if (cookie.length() > 0) {
+                            String[] keyValue = cookie.split("=", 2);
+
+                            if (keyValue.length == 2) {
+                                String key = keyValue[0].trim();
+                                String val = keyValue[1].trim();
+                                try {
+                                    key = URLDecoder.decode(keyValue[0].trim(), StandardCharsets.UTF_8.name());
+                                    val = URLDecoder.decode(keyValue[1].trim(), StandardCharsets.UTF_8.name());
+                                } catch (UnsupportedEncodingException ignored) {}
+
+                                cookieMap.put(key, val);
+                            }
+                        }
+                    }
+
+                    call.resolve(cookieMap);
+                }
+            );
     }
 
     @PluginMethod
     public void setCookie(PluginCall call) {
         String key = call.getString("key");
+        if (null == key) {
+            call.reject("Must provide key");
+        }
         String value = call.getString("value");
-        String url = getServerUrl(call);
+        if (null == value) {
+            call.reject("Must provide value");
+        }
+        String url = call.getString("url");
         String expires = call.getString("expires", "");
         String path = call.getString("path", "/");
-
-        if (!url.isEmpty()) {
-            cookieManager.setCookie(url, key, value, expires, path);
-            call.resolve();
-        }
+        cookieManager.setCookie(url, key, value, expires, path);
+        call.resolve();
     }
 
     @PluginMethod
     public void deleteCookie(PluginCall call) {
         String key = call.getString("key");
-        String url = getServerUrl(call);
-        if (!url.isEmpty()) {
-            cookieManager.setCookie(url, key + "=; Expires=Wed, 31 Dec 2000 23:59:59 GMT");
-            call.resolve();
+        if (null == key) {
+            call.reject("Must provide key");
         }
+        String url = call.getString("url");
+        cookieManager.setCookie(url, key + "=; Expires=Wed, 31 Dec 2000 23:59:59 GMT");
+        call.resolve();
     }
 
     @PluginMethod
     public void clearCookies(PluginCall call) {
-        String url = getServerUrl(call);
-        if (!url.isEmpty()) {
-            HttpCookie[] cookies = cookieManager.getCookies(url);
-            for (HttpCookie cookie : cookies) {
-                cookieManager.setCookie(url, cookie.getName() + "=; Expires=Wed, 31 Dec 2000 23:59:59 GMT");
-            }
-            call.resolve();
+        String url = call.getString("url");
+        HttpCookie[] cookies = cookieManager.getCookies(url);
+        for (HttpCookie cookie : cookies) {
+            cookieManager.setCookie(url, cookie.getName() + "=; Expires=Wed, 31 Dec 2000 23:59:59 GMT");
         }
+        call.resolve();
     }
 
     @PluginMethod

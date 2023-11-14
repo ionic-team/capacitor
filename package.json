@@ -2,10 +2,10 @@
   "name": "capacitor",
   "private": true,
   "workspaces": [
-    "./android/",
-    "./ios/",
-    "./cli/",
-    "./core/"
+    "android",
+    "ios",
+    "cli",
+    "core"
   ],
   "scripts": {
     "ci:publish:nightly": "lerna version prerelease --conventional-commits --conventional-prerelease --preid nightly-$(date +\"%Y%m%dT%H%M%S\") --force-publish --no-changelog --no-git-tag-version --no-push --yes && lerna exec -- npm publish --tag nightly --provenance",
@@ -14,7 +14,7 @@
     "ci:publish:rc": "lerna version prerelease --conventional-commits --conventional-prerelease --preid rc --force-publish --yes && lerna exec -- npm publish --tag next --provenance",
     "ci:publish:latest": "lerna version --conventional-commits --force-publish --yes && lerna exec -- npm publish --tag latest --provenance",
     "ci:publish:latest-from-pre": "lerna version --conventional-commits --conventional-graduate --force-publish --yes && lerna exec -- npm publish --tag latest --provenance",
-    "ci:publish:dev": "lerna version prerelease --conventional-commits --conventional-prerelease --preid dev-$(date +\"%Y%m%dT%H%M%S\") --force-publish --no-changelog --no-git-tag-version --no-push --yes && lerna exec -- npm publish --tag dev --provenance",
+    "ci:publish:dev": "lerna version prerelease --conventional-commits --conventional-prerelease --force-publish --preid dev-$(date +\"%Y%m%dT%H%M%S\") --no-changelog --no-git-tag-version --no-push --yes && lerna exec -- npm publish --tag dev --provenance",
     "build:nativebridge": "lerna run build:nativebridge",
     "sync-peer-dependencies": "node scripts/sync-peer-dependencies.mjs",
     "lint": "npm run eslint && npm run prettier -- --check && npm run swiftlint -- lint",
@@ -28,17 +28,18 @@
   "devDependencies": {
     "@ionic/prettier-config": "~1.0.1",
     "@ionic/swiftlint-config": "^1.1.2",
-    "@types/node": "^18.16.8",
+    "@types/node": "18.18.6",
     "@types/tar": "^6.1.2",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
     "eslint": "~8.38.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.0",
-    "lerna": "^6.5.1",
+    "lerna": "^7.1.3",
     "prettier": "~2.3.0",
     "prettier-plugin-java": "~1.1.1",
     "rimraf": "^4.4.1",
+    "semver": "^7.3.7",
     "swiftlint": "^1.0.1",
     "tar": "^6.1.11",
     "@types/pako": "^2.0.0"
