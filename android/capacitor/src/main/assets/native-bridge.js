@@ -349,6 +349,7 @@ var nativeBridge = (function (exports) {
                 if (doPatchCookies) {
                     Object.defineProperty(document, 'cookie', {
                         get: function () {
+                            var _a, _b, _c;
                             if (platform === 'ios') {
                                 // Use prompt to synchronously get cookies.
                                 // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
@@ -359,7 +360,8 @@ var nativeBridge = (function (exports) {
                                 return res;
                             }
                             else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
-                                return win.CapacitorCookiesAndroidInterface.getCookies();
+                                // return original document.cookie since Android does not support filtering of `httpOnly` cookies
+                                return (_c = (_b = (_a = win.CapacitorCookiesDescriptor) === null || _a === void 0 ? void 0 : _a.get) === null || _b === void 0 ? void 0 : _b.call(document)) !== null && _c !== void 0 ? _c : '';
                             }
                         },
                         set: function (val) {
@@ -392,6 +394,7 @@ var nativeBridge = (function (exports) {
                 win.CapacitorWebXMLHttpRequest = {
                     abort: window.XMLHttpRequest.prototype.abort,
                     constructor: window.XMLHttpRequest.prototype.constructor,
+                    fullObject: window.XMLHttpRequest,
                     getAllResponseHeaders: window.XMLHttpRequest.prototype.getAllResponseHeaders,
                     getResponseHeader: window.XMLHttpRequest.prototype.getResponseHeader,
                     open: window.XMLHttpRequest.prototype.open,
@@ -421,22 +424,19 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
-                        if (!(resource.toString().startsWith('http:') ||
-                            resource.toString().startsWith('https:'))) {
+                        const request = new Request(resource, options);
+                        if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
                             return win.CapacitorWebFetch(resource, options);
                         }
                         const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
                         console.time(tag);
                         try {
-                            // intercept request & pass to the bridge
-                            const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || undefined);
-                            let optionHeaders = options === null || options === void 0 ? void 0 : options.headers;
-                            if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
-                                optionHeaders = Object.fromEntries(options.headers.entries());
-                            }
+                            const { body, method } = request;
+                            const { data: requestData, type, headers, } = await convertBody(body || undefined);
+                            const optionHeaders = Object.fromEntries(request.headers.entries());
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
-                                url: resource,
-                                method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
+                                url: request.url,
+                                method: method,
                                 data: requestData,
                                 dataType: type,
                                 headers: Object.assign(Object.assign({}, headers), optionHeaders),
@@ -494,29 +494,15 @@ var nativeBridge = (function (exports) {
                                     });
                                 },
                             },
-                            response: {
-                                value: '',
-                                writable: true,
-                            },
-                            responseText: {
-                                value: '',
-                                writable: true,
-                            },
-                            responseURL: {
-                                value: '',
-                                writable: true,
-                            },
-                            status: {
-                                value: 0,
-                                writable: true,
-                            },
                         });
                         xhr.readyState = 0;
                         const prototype = win.CapacitorWebXMLHttpRequest.prototype;
+                        const isRelativeURL = (url) => !url || !(url.startsWith('http:') || url.startsWith('https:'));
+                        const isProgressEventAvailable = () => typeof ProgressEvent !== 'undefined' &&
+                            ProgressEvent.prototype instanceof Event;
                         // XHR patch abort
                         prototype.abort = function () {
-                            if (this._url == null ||
-                                !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                            if (isRelativeURL(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.abort.call(this);
                             }
                             this.readyState = 0;
@@ -529,7 +515,7 @@ var nativeBridge = (function (exports) {
                         prototype.open = function (method, url) {
                             this._url = url;
                             this._method = method;
-                            if (!(url.startsWith('http:') || url.toString().startsWith('https:'))) {
+                            if (isRelativeURL(url)) {
                                 return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
                             }
                             setTimeout(() => {
@@ -539,22 +525,38 @@ var nativeBridge = (function (exports) {
                         };
                         // XHR patch set request header
                         prototype.setRequestHeader = function (header, value) {
-                            if (this._url == null ||
-                                !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                            if (isRelativeURL(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(this, header, value);
                             }
                             this._headers[header] = value;
                         };
                         // XHR patch send
                         prototype.send = function (body) {
-                            if (this._url == null ||
-                                !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                            if (isRelativeURL(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.send.call(this, body);
                             }
                             const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
                             console.time(tag);
                             try {
                                 this.readyState = 2;
+                                Object.defineProperties(this, {
+                                    response: {
+                                        value: '',
+                                        writable: true,
+                                    },
+                                    responseText: {
+                                        value: '',
+                                        writable: true,
+                                    },
+                                    responseURL: {
+                                        value: '',
+                                        writable: true,
+                                    },
+                                    status: {
+                                        value: 0,
+                                        writable: true,
+                                    },
+                                });
                                 convertBody(body).then(({ data, type, headers }) => {
                                     const otherHeaders = this._headers != null && Object.keys(this._headers).length > 0
                                         ? this._headers
@@ -573,11 +575,13 @@ var nativeBridge = (function (exports) {
                                         // intercept & parse response before returning
                                         if (this.readyState == 2) {
                                             //TODO: Add progress event emission on native side
-                                            this.dispatchEvent(new ProgressEvent('progress', {
-                                                lengthComputable: true,
-                                                loaded: nativeResponse.data.length,
-                                                total: nativeResponse.data.length,
-                                            }));
+                                            if (isProgressEventAvailable()) {
+                                                this.dispatchEvent(new ProgressEvent('progress', {
+                                                    lengthComputable: true,
+                                                    loaded: nativeResponse.data.length,
+                                                    total: nativeResponse.data.length,
+                                                }));
+                                            }
                                             this._headers = nativeResponse.headers;
                                             this.status = nativeResponse.status;
                                             if (this.responseType === '' ||
@@ -609,11 +613,13 @@ var nativeBridge = (function (exports) {
                                         this.responseText = JSON.stringify(error.data);
                                         this.responseURL = error.url;
                                         this.readyState = 4;
-                                        this.dispatchEvent(new ProgressEvent('progress', {
-                                            lengthComputable: false,
-                                            loaded: 0,
-                                            total: 0,
-                                        }));
+                                        if (isProgressEventAvailable()) {
+                                            this.dispatchEvent(new ProgressEvent('progress', {
+                                                lengthComputable: false,
+                                                loaded: 0,
+                                                total: 0,
+                                            }));
+                                        }
                                         setTimeout(() => {
                                             this.dispatchEvent(new Event('error'));
                                             this.dispatchEvent(new Event('loadend'));
@@ -629,11 +635,13 @@ var nativeBridge = (function (exports) {
                                 this.responseText = error.toString();
                                 this.responseURL = this._url;
                                 this.readyState = 4;
-                                this.dispatchEvent(new ProgressEvent('progress', {
-                                    lengthComputable: false,
-                                    loaded: 0,
-                                    total: 0,
-                                }));
+                                if (isProgressEventAvailable()) {
+                                    this.dispatchEvent(new ProgressEvent('progress', {
+                                        lengthComputable: false,
+                                        loaded: 0,
+                                        total: 0,
+                                    }));
+                                }
                                 setTimeout(() => {
                                     this.dispatchEvent(new Event('error'));
                                     this.dispatchEvent(new Event('loadend'));
@@ -643,8 +651,7 @@ var nativeBridge = (function (exports) {
                         };
                         // XHR patch getAllResponseHeaders
                         prototype.getAllResponseHeaders = function () {
-                            if (this._url == null ||
-                                !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                            if (isRelativeURL(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(this);
                             }
                             let returnString = '';
@@ -657,8 +664,7 @@ var nativeBridge = (function (exports) {
                         };
                         // XHR patch getResponseHeader
                         prototype.getResponseHeader = function (name) {
-                            if (this._url == null ||
-                                !(this._url.startsWith('http:') || this._url.startsWith('https:'))) {
+                            if (isRelativeURL(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                             }
                             return this._headers[name];
@@ -666,6 +672,7 @@ var nativeBridge = (function (exports) {
                         Object.setPrototypeOf(xhr, prototype);
                         return xhr;
                     };
+                    Object.assign(window.XMLHttpRequest, win.CapacitorWebXMLHttpRequest.fullObject);
                 }
             }
             // patch window.console on iOS and store original console fns
@@ -894,6 +901,7 @@ var nativeBridge = (function (exports) {
                     });
                 });
             };
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             cap.withPlugin = (_pluginId, _fn) => dummy;
             cap.Exception = CapacitorException;
             initEvents(win, cap);

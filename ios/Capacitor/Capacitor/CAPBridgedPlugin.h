@@ -9,8 +9,6 @@
 #define CAPPluginReturnNone @"none"
 #define CAPPluginReturnCallback @"callback"
 #define CAPPluginReturnPromise @"promise"
-#define CAPPluginReturnWatch @"watch"
-#define CAPPluginReturnSync @"sync" // not used
 
 @class CAPPluginCall;
 @class CAPPlugin;

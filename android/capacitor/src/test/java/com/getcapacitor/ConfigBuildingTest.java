@@ -51,6 +51,7 @@ public class ConfigBuildingTest {
                     .setOverriddenUserAgentString("test-user-agent")
                     .setAppendedUserAgentString("test-append")
                     .setWebContentsDebuggingEnabled(true)
+                    .setZoomableWebView(false)
                     .setBackgroundColor("red")
                     .setPluginsConfiguration(pluginConfig)
                     .setServerUrl("http://www.google.com")
