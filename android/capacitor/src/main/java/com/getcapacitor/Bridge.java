@@ -349,6 +349,7 @@ public class Bridge {
         }
         return 0;
     }
+    
     public boolean launchIntent(Uri url) {
         /*
          * Give plugins the chance to handle the url
