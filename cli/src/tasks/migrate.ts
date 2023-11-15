@@ -184,6 +184,41 @@ export async function migrateCommand(
           );
         });
 
+        // Replace deprecated compileSdkVersion
+        await runTask(
+          'Replacing deprecated compileSdkVersion from build.gradle',
+          () => {
+            return (async (): Promise<void> => {
+              const buildGradleFilename = join(
+                config.android.platformDirAbs,
+                'app',
+                'build.gradle',
+              );
+              const buildGradleText = readFile(buildGradleFilename);
+
+              if (!buildGradleText) {
+                logger.error(
+                  `Could not read ${buildGradleFilename}. Check its permissions and if it exists.`,
+                );
+                return;
+              }
+              const compileSdk = `compileSdkVersion rootProject.ext.compileSdkVersion`;
+              if (buildGradleText.includes(compileSdk)) {
+                const buildGradleReplaced = buildGradleText.replace(
+                  compileSdk,
+                  `compileSdk rootProject.ext.compileSdkVersion`,
+                );
+
+                writeFileSync(
+                  buildGradleFilename,
+                  buildGradleReplaced,
+                  'utf-8',
+                );
+              }
+            })();
+          },
+        );
+
         // Update gradle-wrapper.properties
         await runTask(
           `Migrating gradle-wrapper.properties by updating gradle version to ${gradleVersion}.`,
