@@ -98,6 +98,8 @@ public class WebViewLocalServer {
                 tempResponseHeaders = responseHeaders;
             }
             tempResponseHeaders.put("Cache-Control", "no-cache");
+            tempResponseHeaders.put("Access-Control-Allow-Origin", "*");
+            tempResponseHeaders.put("Access-Control-Allow-Methods", "GET, OPTIONS");
             this.responseHeaders = tempResponseHeaders;
         }
 
