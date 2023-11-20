@@ -40,7 +40,7 @@ export async function buildAndroid(
     'build',
     'outputs',
     releaseTypeIsAAB ? 'bundle' : 'apk',
-    buildOptions.flavor ? `${flavor}Release` : 'release',
+    buildOptions.flavor ? `${flavor}/release` : 'release',
   );
 
   const unsignedReleaseName = `app${
