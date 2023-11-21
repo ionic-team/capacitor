@@ -285,7 +285,7 @@ export async function migrateCommand(
             const pluginVariables: { [key: string]: string } = {
               firebaseMessagingVersion: '23.2.1',
               playServicesLocationVersion: '21.0.1',
-              androidxBrowserVersion: '1.5.0',
+              androidxBrowserVersion: '1.7.0',
               androidxMaterialVersion: '1.10.0',
               androidxExifInterfaceVersion: '1.3.6',
               androidxCoreKTXVersion: '1.12.0',
