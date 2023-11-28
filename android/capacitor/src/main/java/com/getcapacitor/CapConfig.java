@@ -304,6 +304,13 @@ public class CapConfig {
             return false;
         }
 
+        // Non-http(s) schemes are not allowed to modify the URL path as of Android Webview 117
+        if (!scheme.equals("http") && !scheme.equals("https")) {
+            Logger.warn(
+                "Using a non-standard scheme: " + scheme + " for Android. This is known to cause issues as of Android Webview 117."
+            );
+        }
+
         return true;
     }
 
