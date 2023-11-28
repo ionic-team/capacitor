@@ -43,9 +43,9 @@ export async function buildAndroid(
     buildOptions.flavor ? `${flavor}/release` : 'release',
   );
 
-  const unsignedReleaseName = `app${
-    flavor !== '' ? `-${flavor}` : ''
-  }-release${releaseTypeIsAAB ? '' : '-unsigned'}.${releaseType.toLowerCase()}`;
+  const unsignedReleaseName = `app${flavor !== '' ? `-${flavor}` : ''}-release${
+    releaseTypeIsAAB ? '' : '-unsigned'
+  }.${releaseType.toLowerCase()}`;
 
   const signedReleaseName = unsignedReleaseName.replace(
     `-release${
