@@ -499,6 +499,11 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on Android.
      *
+     * Custom schemes on Android are unable to change the URL path as of Webview 117. Changing this value from anything other than `http` or `https` can result in your
+     * application unable to resolve routing. If you must change this for some reason, consider using a hash-based url strategy, but there are no guarentees that this
+     * will continue to work long term as allowing non-standard schemes to modify query parameters and url fragments is only allowed for compatibility reasons.
+     * https://ionic.io/blog/capacitor-android-customscheme-issue-with-chrome-117
+     *
      * @since 1.2.0
      * @default https
      */
