@@ -35,12 +35,20 @@ export async function buildAndroid(
     }
   }
 
+  const releaseDir = releaseTypeIsAAB
+    ? flavor !== ''
+      ? `${flavor}Release`
+      : 'Release'
+    : flavor !== ''
+    ? join(flavor, 'release')
+    : 'release';
+
   const releasePath = join(
     config.android.appDirAbs,
     'build',
     'outputs',
     releaseTypeIsAAB ? 'bundle' : 'apk',
-    buildOptions.flavor ? `${flavor}/release` : 'release',
+    releaseDir,
   );
 
   const unsignedReleaseName = `app${flavor !== '' ? `-${flavor}` : ''}-release${
