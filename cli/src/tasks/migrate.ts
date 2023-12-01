@@ -641,7 +641,6 @@ async function updateBuildGradle(
     'com.google.gms:google-services': string;
   },
 ) {
-
   const txt = readFile(filename);
   if (!txt) {
     return;
