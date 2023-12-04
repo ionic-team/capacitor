@@ -33,7 +33,7 @@ internal extension InstanceDescriptor {
         // sanity check that the app directory is valid
         var isDirectory: ObjCBool = ObjCBool(false)
         if warnings.contains(.missingAppDir) == false,
-           (FileManager.default.fileExists(atPath: appLocation.path, isDirectory: &isDirectory) == false || isDirectory.boolValue == false) {
+           FileManager.default.fileExists(atPath: appLocation.path, isDirectory: &isDirectory) == false || isDirectory.boolValue == false {
             warnings.update(with: .missingAppDir)
         }
 
