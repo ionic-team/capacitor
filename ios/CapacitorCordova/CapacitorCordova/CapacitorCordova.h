@@ -20,4 +20,5 @@ FOUNDATION_EXPORT const unsigned char CapacitorCordovaVersionString[];
 #import <Cordova/CDVScreenOrientationDelegate.h>
 #import <Cordova/CDVURLProtocol.h>
 #import <Cordova/CDVViewController.h>
+#import <Cordova/CDVWebViewProcessPoolFactory.h>
 #import <Cordova/NSDictionary+CordovaPreferences.h>

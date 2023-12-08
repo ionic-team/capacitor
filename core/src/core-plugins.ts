@@ -165,6 +165,14 @@ export interface HttpOptions {
   url: string;
   method?: string;
   params?: HttpParams;
+  /**
+   * Note: On Android and iOS, data can only be a string or a JSON.
+   * FormData, Blob, ArrayBuffer, and other complex types are only directly supported on web
+   * or through enabling `CapacitorHttp` in the config and using the patched `window.fetch` or `XMLHttpRequest`.
+   *
+   * If you need to send a complex type, you should serialize the data to base64
+   * and set the `headers["Content-Type"]` and `dataType` attributes accordingly.
+   */
   data?: any;
   headers?: HttpHeaders;
   /**
