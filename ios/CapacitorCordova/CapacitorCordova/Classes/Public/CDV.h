@@ -25,4 +25,4 @@
 #import "CDVViewController.h"
 #import "CDVURLProtocol.h"
 #import "CDVScreenOrientationDelegate.h"
-
+#import "CDVWebViewProcessPoolFactory.h"
