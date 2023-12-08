@@ -77,3 +77,15 @@ extension CAPPluginCall: JSValueContainer {
         errorHandler(CAPPluginCallError(message: message, code: "UNAVAILABLE", error: nil, data: [:]))
     }
 }
+
+//MARK: Codable Support
+public extension CAPPluginCall {
+    func resolve<T: Encodable>(with data: T, encoder: JSValueEncoder = JSValueEncoder()) throws {
+        let encoded = try encoder.encodeJSObject(data)
+        resolve(encoded)
+    }
+
+    func decode<T: Decodable>(_ type: T.Type, decoder: JSValueDecoder = JSValueDecoder()) throws -> T {
+        try decoder.decode(type, from: options as? JSObject ?? [:])
+    }
+}

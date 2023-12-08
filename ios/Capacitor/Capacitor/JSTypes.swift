@@ -173,6 +173,10 @@ extension JSValueContainer {
     public func getObject(_ key: String) -> JSObject? {
         return jsObjectRepresentation[key] as? JSObject
     }
+
+    public func decode<T: Decodable>(_ type: T.Type, for key: String, with decoder: JSValueDecoder = JSValueDecoder()) throws -> T {
+        try decoder.decode(type, from: jsObjectRepresentation[key] ?? [:])
+    }
 }
 
 @objc protocol BridgedJSValueContainer: NSObjectProtocol {

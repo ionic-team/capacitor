@@ -88,6 +88,12 @@
 		A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */; };
 		A71289E627F380A500DADDF3 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289E527F380A500DADDF3 /* Router.swift */; };
 		A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289EA27F380FD00DADDF3 /* RouterTests.swift */; };
+		A7D8B3522B238A840003FAD6 /* JSValueEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D8B3512B238A840003FAD6 /* JSValueEncoder.swift */; };
+		A7D8B3552B239F110003FAD6 /* ClassUnsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D8B3542B239F110003FAD6 /* ClassUnsupported.swift */; };
+		A7D8B3572B23B2110003FAD6 /* JSValueDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D8B3562B23B2110003FAD6 /* JSValueDecoderTest.swift */; };
+		A7D8B3592B23C2E00003FAD6 /* JSValueEncoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D8B3582B23C2E00003FAD6 /* JSValueEncoderTest.swift */; };
+		A7D8B35B2B23C5090003FAD6 /* JSValueCodableTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D8B35A2B23C5090003FAD6 /* JSValueCodableTestData.swift */; };
+		A7D9312F2B23710300FF59A2 /* JSValueDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D9312E2B23710300FF59A2 /* JSValueDecoder.swift */; };
 		A7DB03AC29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */; };
 		A7F7EDCD291EC75C0015B73B /* CAPPlugin+LoadInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */; };
 		A7F7EDD5292BE8520015B73B /* CAPInstancePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDD4292BE8520015B73B /* CAPInstancePlugin.swift */; };
@@ -226,6 +232,12 @@
 		A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookieManager.swift; sourceTree = "<group>"; };
 		A71289E527F380A500DADDF3 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		A71289EA27F380FD00DADDF3 /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
+		A7D8B3512B238A840003FAD6 /* JSValueEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueEncoder.swift; sourceTree = "<group>"; };
+		A7D8B3542B239F110003FAD6 /* ClassUnsupported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassUnsupported.swift; sourceTree = "<group>"; };
+		A7D8B3562B23B2110003FAD6 /* JSValueDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueDecoderTest.swift; sourceTree = "<group>"; };
+		A7D8B3582B23C2E00003FAD6 /* JSValueEncoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueEncoderTest.swift; sourceTree = "<group>"; };
+		A7D8B35A2B23C5090003FAD6 /* JSValueCodableTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueCodableTestData.swift; sourceTree = "<group>"; };
+		A7D9312E2B23710300FF59A2 /* JSValueDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueDecoder.swift; sourceTree = "<group>"; };
 		A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CAPBridgedPlugin+getMethod.swift"; sourceTree = "<group>"; };
 		A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CAPPlugin+LoadInstance.swift"; sourceTree = "<group>"; };
 		A7F7EDD4292BE8520015B73B /* CAPInstancePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstancePlugin.swift; sourceTree = "<group>"; };
@@ -305,6 +317,9 @@
 				62E79C712638B23300414164 /* JSExportTests.swift */,
 				62959BBD2526510200A3D7F1 /* Info.plist */,
 				A71289EA27F380FD00DADDF3 /* RouterTests.swift */,
+				A7D8B3562B23B2110003FAD6 /* JSValueDecoderTest.swift */,
+				A7D8B3582B23C2E00003FAD6 /* JSValueEncoderTest.swift */,
+				A7D8B35A2B23C5090003FAD6 /* JSValueCodableTestData.swift */,
 			);
 			path = CapacitorTests;
 			sourceTree = "<group>";
@@ -312,6 +327,7 @@
 		62959AE12524DA7700A3D7F1 /* Capacitor */ = {
 			isa = PBXGroup;
 			children = (
+				A7D9312C2B2370EF00FF59A2 /* Codable */,
 				0F8F33B127DA980A003F49D6 /* PluginConfig.swift */,
 				62959B0F2524DA7700A3D7F1 /* Capacitor.h */,
 				62959B132524DA7700A3D7F1 /* CAPPlugin.h */,
@@ -428,6 +444,16 @@
 				62E79C572638AF7500414164 /* native-bridge.js */,
 			);
 			path = assets;
+			sourceTree = "<group>";
+		};
+		A7D9312C2B2370EF00FF59A2 /* Codable */ = {
+			isa = PBXGroup;
+			children = (
+				A7D9312E2B23710300FF59A2 /* JSValueDecoder.swift */,
+				A7D8B3512B238A840003FAD6 /* JSValueEncoder.swift */,
+				A7D8B3542B239F110003FAD6 /* ClassUnsupported.swift */,
+			);
+			path = Codable;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -606,6 +632,7 @@
 				A38C3D7728484E76004B3680 /* CapacitorCookies.swift in Sources */,
 				A71289E627F380A500DADDF3 /* Router.swift in Sources */,
 				A327E6B828DB8B2900CA8B0A /* CapacitorUrlRequest.swift in Sources */,
+				A7D9312F2B23710300FF59A2 /* JSValueDecoder.swift in Sources */,
 				62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */,
 				621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */,
 				62959B402524DA7800A3D7F1 /* TmpViewController.swift in Sources */,
@@ -617,6 +644,7 @@
 				621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */,
 				62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */,
 				623D690A254C6FDF002D01D1 /* CAPInstanceDescriptor.m in Sources */,
+				A7D8B3522B238A840003FAD6 /* JSValueEncoder.swift in Sources */,
 				A7F7EDD5292BE8520015B73B /* CAPInstancePlugin.swift in Sources */,
 				A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */,
 				62959B1B2524DA7800A3D7F1 /* CAPFile.swift in Sources */,
@@ -635,6 +663,7 @@
 				62959B392524DA7800A3D7F1 /* CapacitorExtension.swift in Sources */,
 				A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */,
 				62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */,
+				A7D8B3552B239F110003FAD6 /* ClassUnsupported.swift in Sources */,
 				62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */,
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
 				373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */,
@@ -662,12 +691,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				62E79C722638B23300414164 /* JSExportTests.swift in Sources */,
+				A7D8B35B2B23C5090003FAD6 /* JSValueCodableTestData.swift in Sources */,
 				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
 				62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */,
 				621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */,
 				62A91C3425535F5700861508 /* ConfigurationTests.swift in Sources */,
+				A7D8B3572B23B2110003FAD6 /* JSValueDecoderTest.swift in Sources */,
 				62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */,
 				621ECCC3254204B700D3D615 /* BridgedTypesTests.swift in Sources */,
+				A7D8B3592B23C2E00003FAD6 /* JSValueEncoderTest.swift in Sources */,
 				A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */,
 				6263686025F6EC0100576C1C /* PluginCallAccessorTests.m in Sources */,
 			);
@@ -899,6 +931,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
@@ -918,6 +951,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
