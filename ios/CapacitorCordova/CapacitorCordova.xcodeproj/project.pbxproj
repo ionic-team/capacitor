@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B61A7E52B114AA00035F2DB /* CDVWebViewProcessPoolFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B61A7E32B114A9F0035F2DB /* CDVWebViewProcessPoolFactory.m */; };
+		0B61A7E62B114AA00035F2DB /* CDVWebViewProcessPoolFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B61A7E42B114AA00035F2DB /* CDVWebViewProcessPoolFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F4F657C2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4F657A2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.m */; };
 		2F4F657D2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4F657B2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F5C86E11FE94845004B09C7 /* CapacitorCordova.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C86DF1FE94845004B09C7 /* CapacitorCordova.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -37,6 +39,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0B61A7E32B114A9F0035F2DB /* CDVWebViewProcessPoolFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVWebViewProcessPoolFactory.m; sourceTree = "<group>"; };
+		0B61A7E42B114AA00035F2DB /* CDVWebViewProcessPoolFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVWebViewProcessPoolFactory.h; sourceTree = "<group>"; };
 		2F4F657A2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+CordovaPreferences.m"; sourceTree = "<group>"; };
 		2F4F657B2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+CordovaPreferences.h"; sourceTree = "<group>"; };
 		2F5C86DC1FE94845004B09C7 /* Cordova.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Cordova.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -144,6 +148,8 @@
 				2F4F657A2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.m */,
 				2F856BFD203DEB320047344A /* CDVViewController.h */,
 				2F856BFE203DEB320047344A /* CDVViewController.m */,
+				0B61A7E42B114AA00035F2DB /* CDVWebViewProcessPoolFactory.h */,
+				0B61A7E32B114A9F0035F2DB /* CDVWebViewProcessPoolFactory.m */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -169,6 +175,7 @@
 				2F8AC284217F3A20008C2C33 /* CDVURLProtocol.h in Headers */,
 				2F92AB5324D9ABA000954A4A /* CDVPlugin+Resources.h in Headers */,
 				62959B66252524CD00A3D7F1 /* CDVScreenOrientationDelegate.h in Headers */,
+				0B61A7E62B114AA00035F2DB /* CDVWebViewProcessPoolFactory.h in Headers */,
 				62959B6A252524D700A3D7F1 /* CDVPluginManager.h in Headers */,
 				2F5C86E11FE94845004B09C7 /* CapacitorCordova.h in Headers */,
 			);
@@ -247,6 +254,7 @@
 				2F5C871F1FE98418004B09C7 /* CDVCommandDelegateImpl.m in Sources */,
 				2F5C871D1FE98418004B09C7 /* CDVPluginResult.m in Sources */,
 				2F4F657C2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.m in Sources */,
+				0B61A7E52B114AA00035F2DB /* CDVWebViewProcessPoolFactory.m in Sources */,
 				2F5C87211FE98418004B09C7 /* CDVPlugin.m in Sources */,
 				2F92AB5224D9ABA000954A4A /* CDVPlugin+Resources.m in Sources */,
 				2FAD9773203C77B9000D30F8 /* CDVConfigParser.m in Sources */,
