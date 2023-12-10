@@ -34,7 +34,7 @@ public final class JSValueEncoder: TopLevelEncoder {
     /// - Throws: An error if the value could not be encoded as a ``JSValue``
     ///
     /// An error may be thrown if the value is a class type. Classes are currently unsupported.
-    public func encode<T>(_ value: T) throws -> JSValue where T : Encodable {
+    public func encode<T>(_ value: T) throws -> JSValue where T: Encodable {
         if type(of: value) is AnyObject.Type { throw ClassEncodingUnsupported() }
         let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
         try value.encode(to: encoder)
@@ -56,7 +56,7 @@ public final class JSValueEncoder: TopLevelEncoder {
     /// This method is a convenience method for encoding an `Encodable` value to a ``JSObject``.
     /// It is equivalent to calling ``encode(_:)`` and casting the result to a ``JSObject`` and
     /// throwing an error if the cast fails.
-    public func encodeJSObject<T>(_ value: T) throws -> JSObject where T : Encodable {
+    public func encodeJSObject<T>(_ value: T) throws -> JSObject where T: Encodable {
         guard let object = try encode(value) as? JSObject else {
             throw EncodingError.invalidValue(
                 value,
@@ -68,7 +68,7 @@ public final class JSValueEncoder: TopLevelEncoder {
     }
 }
 
-fileprivate protocol JSValueEncodingContainer: AnyObject {
+private protocol JSValueEncodingContainer: AnyObject {
     var data: JSValue? { get }
 }
 
@@ -89,7 +89,7 @@ fileprivate final class _JSValueEncoder {
 }
 
 extension _JSValueEncoder: Encoder {
-    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
+    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey {
         let container = KeyedContainer<Key>(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
         self.container = container
         return KeyedEncodingContainer(container)
@@ -138,8 +138,7 @@ extension _JSValueEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
         insert(NSNull(), for: key)
     }
 
-
-    func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
+    func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
         let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
         try value.encode(to: encoder)
         guard let data = encoder.data else {
@@ -148,7 +147,7 @@ extension _JSValueEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
         insert(data, for: key)
     }
 
-    func _encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T : Encodable {
+    func _encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T: Encodable {
         switch optionalEncodingStrategy {
         case .explicitNulls:
             if let value = value {
@@ -162,7 +161,7 @@ extension _JSValueEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
         }
     }
 
-    func encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T : Encodable {
+    func encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T: Encodable {
         try _encodeIfPresent(value, forKey: key)
     }
 
@@ -222,7 +221,7 @@ extension _JSValueEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
         try _encodeIfPresent(value, forKey: key)
     }
 
-    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
         var newPath = codingPath
         newPath.append(key)
         return KeyedEncodingContainer(_JSValueEncoder.KeyedContainer<NestedKey>.init(codingPath: newPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy))
@@ -279,7 +278,7 @@ extension _JSValueEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
         append(NSNull())
     }
 
-    func encode<T>(_ value: T) throws where T : Encodable {
+    func encode<T>(_ value: T) throws where T: Encodable {
         let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
         try value.encode(to: encoder)
         guard let value = encoder.data else {
@@ -292,7 +291,7 @@ extension _JSValueEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
         _JSValueEncoder.UnkeyedContainer(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
     }
 
-    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
         KeyedEncodingContainer(_JSValueEncoder.KeyedContainer(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy))
     }
 
@@ -385,7 +384,7 @@ extension _JSValueEncoder.SingleValueContainer: SingleValueEncodingContainer {
         data = value as NSNumber
     }
 
-    func encode<T>(_ value: T) throws where T : Encodable {
+    func encode<T>(_ value: T) throws where T: Encodable {
         let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
         try value.encode(to: encoder)
         data = encoder.data

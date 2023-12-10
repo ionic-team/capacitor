@@ -26,7 +26,7 @@ public final class JSValueDecoder: TopLevelDecoder {
     ///
     /// Classes are not currently supported due to the complex
     /// recursive nature involved with inheritance.
-    public func decode<T>(_ type: T.Type, from data: JSValue) throws -> T where T : Decodable {
+    public func decode<T>(_ type: T.Type, from data: JSValue) throws -> T where T: Decodable {
         if type is AnyObject.Type { throw ClassDecodingUnsupported() }
         let decoder = _JSValueDecoder(data: data)
         return try T(from: decoder)
@@ -46,7 +46,7 @@ fileprivate final class _JSValueDecoder {
 }
 
 extension _JSValueDecoder: Decoder {
-    func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
+    func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
         guard let data = data as? JSObject else {
             throw DecodingError.typeMismatch(JSObject.self, .init(codingPath: codingPath, debugDescription: "Unable to decode \(data) as JSObject"))
         }
@@ -92,7 +92,7 @@ extension _JSValueDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
         data[key.stringValue] == nil || data[key.stringValue] is NSNull
     }
 
-    func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
+    func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T: Decodable {
         guard let rawValue = data[key.stringValue] else {
             throw DecodingError.keyNotFound(key, .init(codingPath: codingPath, debugDescription: "Data for key \(key.stringValue) was nil"))
         }
@@ -107,7 +107,7 @@ extension _JSValueDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
         fatalError()
     }
 
-    func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
+    func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
         var newPath = codingPath
         newPath.append(key)
         guard let data = data[key.stringValue] as? JSObject else {
@@ -158,7 +158,7 @@ extension _JSValueDecoder.UnkeyedContainer: UnkeyedDecodingContainer {
         return data[currentIndex] is NSNull
     }
 
-    func decode<T>(_ type: T.Type) throws -> T where T : Decodable {
+    func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
         defer { currentIndex += 1 }
         let decoder = _JSValueDecoder(data: data[currentIndex])
         return try T(from: decoder)
@@ -176,7 +176,7 @@ extension _JSValueDecoder.UnkeyedContainer: UnkeyedDecodingContainer {
         return _JSValueDecoder.UnkeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo)
     }
 
-    func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
+    func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
         defer { currentIndex += 1 }
         guard let data = data[currentIndex] as? JSObject else {
             throw DecodingError.typeMismatch(
@@ -276,7 +276,7 @@ extension _JSValueDecoder.SingleValueContainer: SingleValueDecodingContainer {
         try cast(to: type)
     }
 
-    func decode<T>(_ type: T.Type) throws -> T where T : Decodable {
+    func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
         let decoder = _JSValueDecoder(data: data)
         return try T(from: decoder)
     }
