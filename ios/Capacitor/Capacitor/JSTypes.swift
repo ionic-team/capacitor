@@ -174,6 +174,13 @@ extension JSValueContainer {
         return jsObjectRepresentation[key] as? JSObject
     }
 
+    /// Decodes a value of the given type for the given key.
+    /// - Parameters:
+    ///   - type: The type of the value to decode.
+    ///   - key: The key that the decoded value is associated with.
+    ///   - decoder: The decoder to use to decode the value. Defaults to `JSValueDecoder()`.
+    /// - Returns: A value of the requested type, if present for the given key and convertible to the requested type.
+    /// - Throws: `DecodingError` if the encountered encoded value is corrupted, or if the given type is a class.
     public func decode<T: Decodable>(_ type: T.Type, for key: String, with decoder: JSValueDecoder = JSValueDecoder()) throws -> T {
         try decoder.decode(type, from: jsObjectRepresentation[key] ?? [:])
     }

@@ -9,18 +9,31 @@
 import Foundation
 import Combine
 
+/// An encoder than can encode ``JSValue`` objects from `Encodable` types
 public final class JSValueEncoder: TopLevelEncoder {
+    /// The strategy to use when encoding `nil` values
     public enum OptionalEncodingStrategy {
+        /// Encode `nil` values as `NSNull`
         case explicitNulls
+        /// Excludes the value from the encoded object altogether
         case undefined
     }
 
+    /// The strategy to use when encoding `nil` values
     public var optionalEncodingStrategy: OptionalEncodingStrategy
 
+    /// Creates a new `JSValueEncoder`
+    /// - Parameter optionalEncodingStrategy: The strategy to use when encoding `nil` values
     public init(optionalEncodingStrategy: OptionalEncodingStrategy = .undefined) {
         self.optionalEncodingStrategy = optionalEncodingStrategy
     }
 
+    /// Encodes an `Encodable` value to a ``JSValue``
+    /// - Parameter value: The value to encode to ``JSValue``
+    /// - Returns: The encoded ``JSValue``
+    /// - Throws: An error if the value could not be encoded as a ``JSValue``
+    ///
+    /// An error may be thrown if the value is a class type. Classes are currently unsupported.
     public func encode<T>(_ value: T) throws -> JSValue where T : Encodable {
         if type(of: value) is AnyObject.Type { throw ClassEncodingUnsupported() }
         let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
@@ -35,6 +48,14 @@ public final class JSValueEncoder: TopLevelEncoder {
         return value
     }
 
+    /// Encodes an `Encodable` value to a ``JSObject``
+    /// - Parameter value: The value to encode to a ``JSObject``
+    /// - Returns: The encoded ``JSObject``
+    /// - Throws: An error if the value could not be encoded as a ``JSObject``
+    ///
+    /// This method is a convenience method for encoding an `Encodable` value to a ``JSObject``.
+    /// It is equivalent to calling ``encode(_:)`` and casting the result to a ``JSObject`` and
+    /// throwing an error if the cast fails.
     public func encodeJSObject<T>(_ value: T) throws -> JSObject where T : Encodable {
         guard let object = try encode(value) as? JSObject else {
             throw EncodingError.invalidValue(

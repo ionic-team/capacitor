@@ -9,9 +9,23 @@
 import Foundation
 import Combine
 
+/// A decoder that can decode ``JSValue`` objects into `Decodable` types.
 public final class JSValueDecoder: TopLevelDecoder {
     public init() {}
 
+    /// Decodes a ``JSValue`` into the provided `Decodable` type
+    /// - Parameters:
+    ///   - type: The type of the value to decode from the provided ``JSValue`` object
+    ///   - data: The ``JSValue`` to decode
+    /// - Returns: A value of the specified type.
+    ///
+    /// An error will be thrown from this method for three possible reasons:
+    /// 1. A type mismatch was found.
+    /// 2. A key was not found in the `data` field that is required in the `type` provided.
+    /// 3. The `type` provided is a class.
+    ///
+    /// Classes are not currently supported due to the complex
+    /// recursive nature involved with inheritance.
     public func decode<T>(_ type: T.Type, from data: JSValue) throws -> T where T : Decodable {
         if type is AnyObject.Type { throw ClassDecodingUnsupported() }
         let decoder = _JSValueDecoder(data: data)
@@ -39,7 +53,7 @@ extension _JSValueDecoder: Decoder {
 
         return KeyedDecodingContainer(KeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo))
     }
-    
+
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
         guard let data = data as? JSArray else {
             throw DecodingError.typeMismatch(JSArray.self, .init(codingPath: codingPath, debugDescription: "Unable to decode \(data) as JSArray"))
@@ -47,7 +61,7 @@ extension _JSValueDecoder: Decoder {
 
         return UnkeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo)
     }
-    
+
     func singleValueContainer() throws -> SingleValueDecodingContainer {
         SingleValueContainer(data: data, codingPath: codingPath, userInfo: userInfo)
     }
