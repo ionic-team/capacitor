@@ -147,6 +147,9 @@ extension _JSValueEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
         insert(data, for: key)
     }
 
+    // This is a perectly valid name for this method. The underscore is to avoid a conflict with the
+    // protocol requirement.
+    //swiftlint:disable:next identifier_name
     func _encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T: Encodable {
         switch optionalEncodingStrategy {
         case .explicitNulls:
