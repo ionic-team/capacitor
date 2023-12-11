@@ -32,16 +32,16 @@ public final class JSValueEncoder: TopLevelEncoder {
     /// - Parameter value: The value to encode to ``JSValue``
     /// - Returns: The encoded ``JSValue``
     /// - Throws: An error if the value could not be encoded as a ``JSValue``
-    ///
-    /// An error may be thrown if the value is a class type. Classes are currently unsupported.
     public func encode<T>(_ value: T) throws -> JSValue where T: Encodable {
-        if type(of: value) is AnyObject.Type { throw ClassEncodingUnsupported() }
         let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
         try value.encode(to: encoder)
         guard let value = encoder.data else {
             throw EncodingError.invalidValue(
                 value,
-                .init(codingPath: encoder.codingPath, debugDescription: "\(value) was unable to be encoded as a JSValue")
+                .init(
+                    codingPath: encoder.codingPath,
+                    debugDescription: "\(value) was unable to be encoded as a JSValue"
+                )
             )
         }
 
@@ -60,7 +60,10 @@ public final class JSValueEncoder: TopLevelEncoder {
         guard let object = try encode(value) as? JSObject else {
             throw EncodingError.invalidValue(
                 value,
-                .init(codingPath: [], debugDescription: "\(value) was unable to be encoded as a JSObject")
+                .init(
+                    codingPath: [],
+                    debugDescription: "\(value) was unable to be encoded as a JSObject"
+                )
             )
         }
 
@@ -68,69 +71,159 @@ public final class JSValueEncoder: TopLevelEncoder {
     }
 }
 
-private protocol JSValueEncodingContainer: AnyObject {
+private protocol JSValueEncodingContainer {
     var data: JSValue? { get }
 }
 
-fileprivate final class _JSValueEncoder {
+private enum EncodingContainer: JSValueEncodingContainer {
+    case singleValue(SingleValueContainer)
+    case unkeyed(UnkeyedContainer)
+    case keyed(AnyKeyedContainer)
+
+    var data: JSValue? {
+        switch self {
+        case let .singleValue(container):
+            return container.data
+        case let .unkeyed(container):
+            return container.data
+        case let .keyed(container):
+            return container.data
+        }
+    }
+
+    var type: String {
+        switch self {
+        case .singleValue:
+            "SingleValueContainer"
+        case .unkeyed:
+            "UnkeyedContainer"
+        case .keyed:
+            "KeyedContainer"
+        }
+    }
+}
+
+private final class _JSValueEncoder: JSValueEncodingContainer {
     var codingPath: [CodingKey] = []
     var data: JSValue? {
-        container?.data
+        containers.data
     }
 
     let optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
 
     var userInfo: CodingUserInfo = [:]
-    fileprivate var container: (any JSValueEncodingContainer)?
+    fileprivate var containers: [EncodingContainer] = []
 
     init(optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy) {
         self.optionalEncodingStrategy = optionalEncodingStrategy
     }
 }
 
+extension Array: JSValueEncodingContainer where Element == EncodingContainer {
+    var data: JSValue? {
+        guard count != 0 else { return nil }
+        guard count != 1 else { return self[0].data }
+        var data: (any JSValue)? = nil
+
+        for container in self {
+            if data == nil {
+                data = container.data
+            } else {
+                // The top-level container is
+                switch container {
+                case let .keyed(container):
+                    guard let obj = data as? JSObject else { break }
+                    data = obj.merging(container.object() ?? [:]) { $1 }
+                case let .unkeyed(container):
+                    guard var copy = data as? JSArray else { break }
+                    copy.append(contentsOf: container.array ?? [])
+                    data = copy
+                default:
+                    break
+                }
+            }
+        }
+
+        return data
+    }
+}
+
+private enum EncodedValue {
+    case value(any JSValue)
+    case nestedContainer(any JSValueEncodingContainer)
+}
+
 extension _JSValueEncoder: Encoder {
+    func addContainer(_ container: EncodingContainer) {
+        guard !containers.isEmpty else {
+            containers.append(container)
+            return
+        }
+
+        for existingContainer in containers {
+            switch (existingContainer, container) {
+            case (.unkeyed, .unkeyed), (.keyed, .keyed):
+                containers.append(container)
+            default:
+                preconditionFailure("Sibling top-level containers must be of the same type. Attempted to add a \(container)")
+            }
+        }
+    }
+
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey {
         let container = KeyedContainer<Key>(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
-        self.container = container
+        addContainer(.keyed(.init(container)))
         return KeyedEncodingContainer(container)
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
         let container = UnkeyedContainer(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
-        self.container = container
+        addContainer(.unkeyed(container))
         return container
     }
 
     func singleValueContainer() -> SingleValueEncodingContainer {
         let container = SingleValueContainer(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
-        self.container = container
+        addContainer(.singleValue(container))
         return container
     }
 }
 
-extension _JSValueEncoder {
-    fileprivate final class KeyedContainer<Key> where Key: CodingKey {
-        var object: JSObject?
-        var codingPath: [CodingKey]
-        var userInfo: CodingUserInfo
-        var optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
-
-        init(codingPath: [CodingKey], userInfo: CodingUserInfo, optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy) {
-            self.codingPath = codingPath
-            self.userInfo = userInfo
-            self.optionalEncodingStrategy = optionalEncodingStrategy
+fileprivate final class KeyedContainer<Key> where Key: CodingKey {
+    var object: JSObject? {
+        encodedKeyedValue?.reduce(into: [:]) { obj, next in
+            let (key, value) = next
+            switch value {
+            case .value(let value):
+                obj[key] = value
+            case .nestedContainer(let container):
+                obj[key] = container.data
+            }
         }
     }
 
+    var codingPath: [CodingKey]
+    var userInfo: CodingUserInfo
+    var optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
+    private var encodedKeyedValue: [String: EncodedValue]?
+
+    init(codingPath: [CodingKey], userInfo: CodingUserInfo, optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy) {
+        self.codingPath = codingPath
+        self.userInfo = userInfo
+        self.optionalEncodingStrategy = optionalEncodingStrategy
+    }
 }
 
-extension _JSValueEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
+extension KeyedContainer: KeyedEncodingContainerProtocol {
     func insert(_ value: JSValue, for key: Key) {
-        dump(key)
-        if object == nil {
-            object = [key.stringValue: value]
+        insert(.value(value), for: key)
+    }
+
+    func insert<K: CodingKey>(_ encodedValue: EncodedValue, for key: K) {
+        if encodedKeyedValue == nil {
+            encodedKeyedValue = [key.stringValue: encodedValue]
         } else {
-            object![key.stringValue] = value
+            encodedKeyedValue![key.stringValue] = encodedValue
         }
     }
 
@@ -141,10 +234,7 @@ extension _JSValueEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
     func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
         let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
         try value.encode(to: encoder)
-        guard let data = encoder.data else {
-            throw EncodingError.invalidValue(value, .init(codingPath: codingPath, debugDescription: "\(value) was unable to be encoded as a JSValue"))
-        }
-        insert(data, for: key)
+        insert(.nestedContainer(encoder), for: key)
     }
 
     // This is a perectly valid name for this method. The underscore is to avoid a conflict with the
@@ -227,49 +317,94 @@ extension _JSValueEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
         var newPath = codingPath
         newPath.append(key)
-        return KeyedEncodingContainer(_JSValueEncoder.KeyedContainer<NestedKey>.init(codingPath: newPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy))
+
+        let nestedContainer = KeyedContainer<NestedKey>(
+            codingPath: newPath,
+            userInfo: userInfo,
+            optionalEncodingStrategy: optionalEncodingStrategy
+        )
+
+        insert(.nestedContainer(nestedContainer), for: key)
+        return KeyedEncodingContainer(nestedContainer)
     }
 
     func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
         var newPath = codingPath
         newPath.append(key)
-        return _JSValueEncoder.UnkeyedContainer(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
+        let nestedContainer = UnkeyedContainer(
+            codingPath: codingPath,
+            userInfo: userInfo,
+            optionalEncodingStrategy: optionalEncodingStrategy
+        )
+        insert(.nestedContainer(nestedContainer), for: key)
+        return nestedContainer
+    }
+
+    enum SuperKey: String, CodingKey {
+        case `super`
     }
 
     func superEncoder() -> Encoder {
-        fatalError("Classes are not supported by JSValueEncoder.")
+        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
+        insert(.nestedContainer(encoder), for: SuperKey.super)
+        return encoder
     }
 
     func superEncoder(forKey key: Key) -> Encoder {
-        fatalError("Classes are not supported by JSValueEncoder.")
+        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
+        insert(.nestedContainer(encoder), for: key)
+        return encoder
     }
 }
 
-extension _JSValueEncoder.KeyedContainer: JSValueEncodingContainer {
+private class AnyKeyedContainer: JSValueEncodingContainer {
+    var data: JSValue? { object() }
+    var object: () -> JSObject?
+
+    init<Key>(_ keyedContainer: KeyedContainer<Key>) where Key: CodingKey {
+        object = { keyedContainer.object }
+    }
+}
+
+extension KeyedContainer: JSValueEncodingContainer {
     var data: JSValue? { object }
 }
 
-extension _JSValueEncoder {
-    fileprivate final class UnkeyedContainer {
-        var array: JSArray?
-        var codingPath: [CodingKey]
-        var userInfo: CodingUserInfo
-        var optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
-
-        init(codingPath: [CodingKey], userInfo: CodingUserInfo, optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy) {
-            self.codingPath = codingPath
-            self.userInfo = userInfo
-            self.optionalEncodingStrategy = optionalEncodingStrategy
+private final class UnkeyedContainer {
+    var array: JSArray? {
+        encodedUnkeyedValue?.reduce(into: []) { arr, next in
+            switch next {
+            case .value(let value):
+                arr.append(value)
+            case .nestedContainer(let container):
+                guard let data = container.data else { return }
+                arr.append(data)
+            }
         }
+    }
+
+    var codingPath: [CodingKey]
+    var userInfo: CodingUserInfo
+    var optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
+    private var encodedUnkeyedValue: [EncodedValue]?
+
+    init(codingPath: [CodingKey], userInfo: CodingUserInfo, optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy) {
+        self.codingPath = codingPath
+        self.userInfo = userInfo
+        self.optionalEncodingStrategy = optionalEncodingStrategy
     }
 }
 
-extension _JSValueEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
+extension UnkeyedContainer: UnkeyedEncodingContainer {
     private func append(_ value: any JSValue) {
-        if array == nil {
-            array = [value]
+        append(.value(value))
+    }
+
+    private func append(_ value: EncodedValue) {
+        if encodedUnkeyedValue == nil {
+            encodedUnkeyedValue = [value]
         } else {
-            array!.append(value)
+            encodedUnkeyedValue!.append(value)
         }
     }
 
@@ -284,49 +419,58 @@ extension _JSValueEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
     func encode<T>(_ value: T) throws where T: Encodable {
         let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
         try value.encode(to: encoder)
-        guard let value = encoder.data else {
-            throw EncodingError.jsEncodingFailed(codingPath: codingPath, value: value)
-        }
-        append(value)
+        append(.nestedContainer(encoder))
     }
 
     func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
-        _JSValueEncoder.UnkeyedContainer(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
+        let nestedContainer = UnkeyedContainer(
+            codingPath: codingPath,
+            userInfo: userInfo,
+            optionalEncodingStrategy: optionalEncodingStrategy
+        )
+        append(.nestedContainer(nestedContainer))
+        return nestedContainer
     }
 
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
-        KeyedEncodingContainer(_JSValueEncoder.KeyedContainer(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy))
+        let nestedContainer = KeyedContainer<NestedKey>(
+            codingPath: codingPath,
+            userInfo: userInfo,
+            optionalEncodingStrategy: optionalEncodingStrategy
+        )
+        append(.nestedContainer(nestedContainer))
+        return KeyedEncodingContainer(nestedContainer)
     }
 
     func superEncoder() -> Encoder {
-        fatalError("Classes are not supported by JSValueEncoder.")
+        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
+        append(.nestedContainer(encoder))
+        return encoder
     }
 }
 
-extension _JSValueEncoder.UnkeyedContainer: JSValueEncodingContainer {
+extension UnkeyedContainer: JSValueEncodingContainer {
     var data: JSValue? { array }
 }
 
-extension _JSValueEncoder {
-    fileprivate final class SingleValueContainer {
-        var data: JSValue?
-        var codingPath: [CodingKey]
-        var userInfo: CodingUserInfo
-        var optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
+private final class SingleValueContainer {
+    var data: JSValue?
+    var codingPath: [CodingKey]
+    var userInfo: CodingUserInfo
+    var optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
 
-        init(
-            codingPath: [CodingKey],
-            userInfo: CodingUserInfo,
-            optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
-        ) {
-            self.codingPath = codingPath
-            self.userInfo = userInfo
-            self.optionalEncodingStrategy = optionalEncodingStrategy
-        }
+    init(
+        codingPath: [CodingKey],
+        userInfo: CodingUserInfo,
+        optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
+    ) {
+        self.codingPath = codingPath
+        self.userInfo = userInfo
+        self.optionalEncodingStrategy = optionalEncodingStrategy
     }
 }
 
-extension _JSValueEncoder.SingleValueContainer: SingleValueEncodingContainer {
+extension SingleValueContainer: SingleValueEncodingContainer {
     func encodeNil() throws {
         data = NSNull()
     }
@@ -394,16 +538,4 @@ extension _JSValueEncoder.SingleValueContainer: SingleValueEncodingContainer {
     }
 }
 
-extension _JSValueEncoder.SingleValueContainer: JSValueEncodingContainer {}
-
-extension EncodingError {
-    static func jsEncodingFailed(codingPath: [CodingKey], value: Any) -> EncodingError {
-        EncodingError.invalidValue(
-            value,
-            .init(
-                codingPath: codingPath,
-                debugDescription: "\(value) was unable to be encoded as JSValue"
-            )
-        )
-    }
-}
+extension SingleValueContainer: JSValueEncodingContainer {}

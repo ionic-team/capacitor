@@ -19,15 +19,10 @@ public final class JSValueDecoder: TopLevelDecoder {
     ///   - data: The ``JSValue`` to decode
     /// - Returns: A value of the specified type.
     ///
-    /// An error will be thrown from this method for three possible reasons:
+    /// An error will be thrown from this method for two possible reasons:
     /// 1. A type mismatch was found.
     /// 2. A key was not found in the `data` field that is required in the `type` provided.
-    /// 3. The `type` provided is a class.
-    ///
-    /// Classes are not currently supported due to the complex
-    /// recursive nature involved with inheritance.
     public func decode<T>(_ type: T.Type, from data: JSValue) throws -> T where T: Decodable {
-        if type is AnyObject.Type { throw ClassDecodingUnsupported() }
         let decoder = _JSValueDecoder(data: data)
         return try T(from: decoder)
     }
@@ -35,7 +30,7 @@ public final class JSValueDecoder: TopLevelDecoder {
 
 typealias CodingUserInfo = [CodingUserInfoKey: Any]
 
-fileprivate final class _JSValueDecoder {
+private final class _JSValueDecoder {
     internal var codingPath: [CodingKey] = []
     internal var userInfo: CodingUserInfo = [:]
     fileprivate var data: JSValue
@@ -48,15 +43,21 @@ fileprivate final class _JSValueDecoder {
 extension _JSValueDecoder: Decoder {
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
         guard let data = data as? JSObject else {
-            throw DecodingError.typeMismatch(JSObject.self, .init(codingPath: codingPath, debugDescription: "Unable to decode \(data) as JSObject"))
+            throw DecodingError.typeMismatch(JSObject.self, on: data, codingPath: codingPath)
         }
 
-        return KeyedDecodingContainer(KeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo))
+        return KeyedDecodingContainer(
+            KeyedContainer(
+                data: data,
+                codingPath: codingPath,
+                userInfo: userInfo
+            )
+        )
     }
 
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
         guard let data = data as? JSArray else {
-            throw DecodingError.typeMismatch(JSArray.self, .init(codingPath: codingPath, debugDescription: "Unable to decode \(data) as JSArray"))
+            throw DecodingError.typeMismatch(JSArray.self, on: data, codingPath: codingPath)
         }
 
         return UnkeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo)
@@ -67,23 +68,21 @@ extension _JSValueDecoder: Decoder {
     }
 }
 
-extension _JSValueDecoder {
-    fileprivate final class KeyedContainer<Key> where Key: CodingKey {
-        var data: JSObject
-        var codingPath: [CodingKey]
-        var userInfo: CodingUserInfo
-        var allKeys: [Key]
+private final class KeyedContainer<Key> where Key: CodingKey {
+    var data: JSObject
+    var codingPath: [CodingKey]
+    var userInfo: CodingUserInfo
+    var allKeys: [Key]
 
-        init(data: JSObject, codingPath: [CodingKey], userInfo: CodingUserInfo) {
-            self.data = data
-            self.codingPath = codingPath
-            self.userInfo = userInfo
-            self.allKeys = data.keys.compactMap(Key.init(stringValue:))
-        }
+    init(data: JSObject, codingPath: [CodingKey], userInfo: CodingUserInfo) {
+        self.data = data
+        self.codingPath = codingPath
+        self.userInfo = userInfo
+        self.allKeys = data.keys.compactMap(Key.init(stringValue:))
     }
 }
 
-extension _JSValueDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
+extension KeyedContainer: KeyedDecodingContainerProtocol {
     func contains(_ key: Key) -> Bool {
         allKeys.contains { $0.stringValue == key.stringValue }
     }
@@ -94,7 +93,7 @@ extension _JSValueDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
 
     func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T: Decodable {
         guard let rawValue = data[key.stringValue] else {
-            throw DecodingError.keyNotFound(key, .init(codingPath: codingPath, debugDescription: "Data for key \(key.stringValue) was nil"))
+            throw DecodingError.keyNotFound(key, on: data, codingPath: codingPath)
         }
 
         var newPath = codingPath
@@ -104,7 +103,17 @@ extension _JSValueDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
     }
 
     func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
-        fatalError()
+        var newPath = codingPath
+        newPath.append(key)
+        guard let data = data[key.stringValue] as? JSArray else {
+            throw DecodingError.typeMismatch(
+                JSArray.self,
+                on: data[key.stringValue] ?? "null value",
+                codingPath: newPath
+            )
+        }
+
+        return UnkeyedContainer(data: data, codingPath: newPath, userInfo: userInfo)
     }
 
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
@@ -113,38 +122,51 @@ extension _JSValueDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
         guard let data = data[key.stringValue] as? JSObject else {
             throw DecodingError.typeMismatch(
                 JSObject.self,
-                .init(codingPath: codingPath, debugDescription: "Unable to decode \(String(describing: data[key.stringValue])) as JSObject")
+                on: data[key.stringValue] ?? "null value",
+                codingPath: newPath
             )
         }
 
-        return KeyedDecodingContainer(_JSValueDecoder.KeyedContainer(data: data, codingPath: newPath, userInfo: userInfo))
+        return KeyedDecodingContainer(KeyedContainer<NestedKey>(data: data, codingPath: newPath, userInfo: userInfo))
     }
 
+    enum SuperKey: String, CodingKey { case `super` }
+
     func superDecoder() throws -> Decoder {
-        fatalError("Classes are not supported by JSValueDecoder.")
+        var newPath = codingPath
+        newPath.append(SuperKey.super)
+        guard let data = data[SuperKey.super.stringValue] else {
+            throw DecodingError.keyNotFound(SuperKey.super, on: data, codingPath: newPath)
+        }
+
+        return _JSValueDecoder(data: data)
     }
 
     func superDecoder(forKey key: Key) throws -> Decoder {
-        fatalError("Classes are not supported by JSValueDecoder.")
-    }
-}
-
-extension _JSValueDecoder {
-    fileprivate final class UnkeyedContainer {
-        var data: JSArray
-        var codingPath: [CodingKey]
-        var userInfo: CodingUserInfo
-        private(set) var currentIndex = 0
-
-        init(data: JSArray, codingPath: [CodingKey], userInfo: CodingUserInfo) {
-            self.data = data
-            self.codingPath = codingPath
-            self.userInfo = userInfo
+        var newPath = codingPath
+        newPath.append(key)
+        guard let data = data[key.stringValue] else {
+            throw DecodingError.keyNotFound(key, on: data, codingPath: newPath)
         }
+
+        return _JSValueDecoder(data: data)
     }
 }
 
-extension _JSValueDecoder.UnkeyedContainer: UnkeyedDecodingContainer {
+private final class UnkeyedContainer {
+    var data: JSArray
+    var codingPath: [CodingKey]
+    var userInfo: CodingUserInfo
+    private(set) var currentIndex = 0
+
+    init(data: JSArray, codingPath: [CodingKey], userInfo: CodingUserInfo) {
+        self.data = data
+        self.codingPath = codingPath
+        self.userInfo = userInfo
+    }
+}
+
+extension UnkeyedContainer: UnkeyedDecodingContainer {
     var count: Int? {
         data.count
     }
@@ -167,54 +189,48 @@ extension _JSValueDecoder.UnkeyedContainer: UnkeyedDecodingContainer {
     func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
         defer { currentIndex += 1 }
         guard let data = data[currentIndex] as? JSArray else {
-            throw DecodingError.typeMismatch(
-                JSArray.self,
-                .init(codingPath: codingPath, debugDescription: "Unable to decode \(String(describing: data[currentIndex])) as JSArray")
-            )
+            throw DecodingError.typeMismatch(JSArray.self, on: data[currentIndex], codingPath: codingPath)
         }
 
-        return _JSValueDecoder.UnkeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo)
+        return UnkeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo)
     }
 
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
         defer { currentIndex += 1 }
         guard let data = data[currentIndex] as? JSObject else {
-            throw DecodingError.typeMismatch(
-                JSObject.self,
-                .init(codingPath: codingPath, debugDescription: "Unable to decode \(String(describing: data[currentIndex])) as JSObject")
-            )
+            throw DecodingError.typeMismatch(JSObject.self, on: data[currentIndex], codingPath: codingPath)
         }
 
-        return KeyedDecodingContainer(_JSValueDecoder.KeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo))
+        return KeyedDecodingContainer(KeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo))
     }
 
     func superDecoder() throws -> Decoder {
-        fatalError("Classes are not supported by JSValueDecoder.")
+        defer { currentIndex += 1 }
+        let data = data[currentIndex]
+        return _JSValueDecoder(data: data)
     }
 }
 
-extension _JSValueDecoder {
-    final class SingleValueContainer {
-        var data: JSValue
-        var codingPath: [CodingKey]
-        var userInfo: CodingUserInfo
+private final class SingleValueContainer {
+    var data: JSValue
+    var codingPath: [CodingKey]
+    var userInfo: CodingUserInfo
 
-        init(data: JSValue, codingPath: [CodingKey], userInfo: CodingUserInfo) {
-            self.data = data
-            self.codingPath = codingPath
-            self.userInfo = userInfo
-        }
+    init(data: JSValue, codingPath: [CodingKey], userInfo: CodingUserInfo) {
+        self.data = data
+        self.codingPath = codingPath
+        self.userInfo = userInfo
     }
 }
 
-extension _JSValueDecoder.SingleValueContainer: SingleValueDecodingContainer {
+extension SingleValueContainer: SingleValueDecodingContainer {
     func decodeNil() -> Bool {
         return data is NSNull
     }
 
     private func cast<T>(to type: T.Type) throws -> T {
         guard let data = data as? T else {
-            throw DecodingError.typeMismatch(type, .init(codingPath: codingPath, debugDescription: "\(data) was unable to be cast to \(type)"))
+            throw DecodingError.typeMismatch(type, on: data, codingPath: codingPath)
         }
 
         return data
@@ -279,5 +295,26 @@ extension _JSValueDecoder.SingleValueContainer: SingleValueDecodingContainer {
     func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
         let decoder = _JSValueDecoder(data: data)
         return try T(from: decoder)
+    }
+}
+
+extension DecodingError {
+    static func typeMismatch(_ type: Any.Type, on data: JSValue, codingPath: [CodingKey]) -> DecodingError {
+        return .typeMismatch(
+            type,
+            .init(
+                codingPath: codingPath,
+                debugDescription: "\(data) was unable to be cast to \(type)."
+            )
+        )
+    }
+
+    static func keyNotFound(_ key: any CodingKey, on data: JSValue, codingPath: [CodingKey]) -> DecodingError {
+        return .keyNotFound(
+            key,
+            .init(
+                codingPath: codingPath,
+                debugDescription: "Key \(key.stringValue) not found in \(data)")
+        )
     }
 }
