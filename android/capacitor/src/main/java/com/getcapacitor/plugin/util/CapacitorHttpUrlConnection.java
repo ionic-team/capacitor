@@ -215,6 +215,14 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                 }
                 os.flush();
             }
+        } else if (contentType.contains("application/x-www-form-urlencoded")) {
+            try {
+                JSObject obj = body.toJSObject();
+                this.writeObjectRequestBody(obj);
+            } catch (Exception e) {
+                // Body is not a valid JSON, treat it as an already formatted string
+                this.writeRequestBody(body.toString());
+            }
         } else if (bodyType != null && bodyType.equals("formData")) {
             this.writeFormDataRequestBody(contentType, body.toJSArray());
         } else {
@@ -230,6 +238,24 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
     private void writeRequestBody(String body) throws IOException {
         try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
             os.write(body.getBytes(StandardCharsets.UTF_8));
+            os.flush();
+        }
+    }
+
+    private void writeObjectRequestBody(JSObject object) throws IOException, JSONException {
+        try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
+            Iterator<String> keys = object.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                Object d = object.get(key);
+                os.writeBytes(key);
+                os.writeBytes("=");
+                os.writeBytes(URLEncoder.encode(d.toString(), "UTF-8"));
+
+                if (keys.hasNext()) {
+                    os.writeBytes("&");
+                }
+            }
             os.flush();
         }
     }
