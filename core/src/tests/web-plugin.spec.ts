@@ -18,13 +18,21 @@ class MockPlugin extends WebPlugin {
   }
 
   triggerRetained() {
-    this.notifyListeners('testRetained', {
-      value: 'Test Retained Value 1',
-    }, true,);
+    this.notifyListeners(
+      'testRetained',
+      {
+        value: 'Test Retained Value 1',
+      },
+      true,
+    );
 
-    this.notifyListeners('testRetained', {
-      value: 'Test Retained Value 2',
-    }, true);
+    this.notifyListeners(
+      'testRetained',
+      {
+        value: 'Test Retained Value 2',
+      },
+      true,
+    );
   }
 
   getListeners() {
@@ -115,7 +123,7 @@ describe('Web Plugin', () => {
     const lf = jest.fn();
     plugin.triggerRetained();
 
-    const handle = await plugin.addListener("testRetained", lf);
+    const handle = await plugin.addListener('testRetained', lf);
 
     expect(lf.mock.calls.length).toEqual(2);
     expect(lf.mock.calls[0][0]).toEqual({

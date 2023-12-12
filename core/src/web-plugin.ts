@@ -86,7 +86,7 @@ export class WebPlugin implements Plugin {
 
       return;
     }
-    
+
     listeners.forEach(listener => listener(data));
   }
 
@@ -157,9 +157,9 @@ export class WebPlugin implements Plugin {
 
     delete this.retainedEventArguments[eventName];
 
-    args.forEach((arg) => {
+    args.forEach(arg => {
       this.notifyListeners(eventName, arg);
-    })
+    });
   }
 }
 
