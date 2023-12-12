@@ -184,6 +184,41 @@ export async function migrateCommand(
           );
         });
 
+        // Replace deprecated compileSdkVersion
+        await runTask(
+          'Replacing deprecated compileSdkVersion from build.gradle',
+          () => {
+            return (async (): Promise<void> => {
+              const buildGradleFilename = join(
+                config.android.platformDirAbs,
+                'app',
+                'build.gradle',
+              );
+              const buildGradleText = readFile(buildGradleFilename);
+
+              if (!buildGradleText) {
+                logger.error(
+                  `Could not read ${buildGradleFilename}. Check its permissions and if it exists.`,
+                );
+                return;
+              }
+              const compileSdk = `compileSdkVersion rootProject.ext.compileSdkVersion`;
+              if (buildGradleText.includes(compileSdk)) {
+                const buildGradleReplaced = buildGradleText.replace(
+                  compileSdk,
+                  `compileSdk rootProject.ext.compileSdkVersion`,
+                );
+
+                writeFileSync(
+                  buildGradleFilename,
+                  buildGradleReplaced,
+                  'utf-8',
+                );
+              }
+            })();
+          },
+        );
+
         // Update gradle-wrapper.properties
         await runTask(
           `Migrating gradle-wrapper.properties by updating gradle version to ${gradleVersion}.`,
@@ -251,7 +286,7 @@ export async function migrateCommand(
               firebaseMessagingVersion: '23.2.1',
               playServicesLocationVersion: '21.0.1',
               androidxBrowserVersion: '1.5.0',
-              androidxMaterialVersion: '1.9.0',
+              androidxMaterialVersion: '1.10.0',
               androidxExifInterfaceVersion: '1.3.6',
               androidxCoreKTXVersion: '1.12.0',
               googleMapsPlayServicesVersion: '18.1.0',
@@ -607,8 +642,8 @@ async function updateBuildGradle(
   },
 ) {
   // In build.gradle add dependencies:
-  // classpath 'com.android.tools.build:gradle:8.0.0'
-  // classpath 'com.google.gms:google-services:4.3.15'
+  // classpath 'com.android.tools.build:gradle:8.2.0-rc02'
+  // classpath 'com.google.gms:google-services:4.4.0'
   const txt = readFile(filename);
   if (!txt) {
     return;
