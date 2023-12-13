@@ -144,12 +144,17 @@ var nativeBridge = (function (exports) {
             return url;
         const proxyUrl = new URL(url);
         const isHttps = proxyUrl.protocol === 'https:';
-        if ((_b = (_a = win.webkit) === null || _a === void 0 ? void 0 : _a.messageHandlers) === null || _b === void 0 ? void 0 : _b.bridge) {
-            proxyUrl.protocol = (_c = win.WEBVIEW_SERVER_URL) !== null && _c !== void 0 ? _c : 'capacitor:';
+        const webviewServerUrl = new URL((_a = win.WEBVIEW_SERVER_URL) !== null && _a !== void 0 ? _a : 'capacitor://localhost');
+        const originalHostname = proxyUrl.hostname;
+        const originalPathname = proxyUrl.pathname;
+        if ((_c = (_b = win.webkit) === null || _b === void 0 ? void 0 : _b.messageHandlers) === null || _c === void 0 ? void 0 : _c.bridge) {
+            proxyUrl.protocol = 'capacitor:';
+            if (webviewServerUrl.protocol !== 'capacitor:' && webviewServerUrl.protocol !== 'http:' && webviewServerUrl.protocol !== 'https:') {
+                proxyUrl.protocol = webviewServerUrl.protocol;
+            }
         }
-        proxyUrl.pathname =
-            (isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR) +
-                proxyUrl.pathname;
+        proxyUrl.hostname = webviewServerUrl.hostname;
+        proxyUrl.pathname = `/${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${originalHostname}${originalPathname}`;
         return proxyUrl.toString();
     };
     const initBridge = (w) => {

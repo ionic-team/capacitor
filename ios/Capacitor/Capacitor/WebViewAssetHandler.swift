@@ -143,8 +143,13 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             .replacingOccurrences(of: CapacitorBridge.httpsInterceptorStartIdentifier, with: "")
 
         // Only replace first occurrence of the scheme
-        if let range = targetUrl.range(of: self.serverUrl?.scheme ?? InstanceDescriptorDefaults.scheme) {
+        if let range = targetUrl.range(of: localUrl.scheme ?? InstanceDescriptorDefaults.scheme) {
             targetUrl = targetUrl.replacingCharacters(in: range, with: isHttpsRequest ? "https" : "http")
+        }
+
+        // Only replace first occurrence of the hostname
+        if let range = targetUrl.range(of: (self.serverUrl?.host ?? InstanceDescriptorDefaults.hostname) + "/") {
+            targetUrl = targetUrl.replacingCharacters(in: range, with: "")
         }
 
         urlRequest.url = URL(string: targetUrl)

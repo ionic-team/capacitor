@@ -135,12 +135,27 @@ const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   const proxyUrl = new URL(url);
   const isHttps = proxyUrl.protocol === 'https:';
 
+  const webviewServerUrl = new URL(
+    win.WEBVIEW_SERVER_URL ?? 'capacitor://localhost',
+  );
+  const originalHostname = proxyUrl.hostname;
+  const originalPathname = proxyUrl.pathname;
+
   if (win.webkit?.messageHandlers?.bridge) {
-    proxyUrl.protocol = win.WEBVIEW_SERVER_URL ?? 'capacitor:';
+    proxyUrl.protocol = 'capacitor:';
+    if (
+      webviewServerUrl.protocol !== 'capacitor:' &&
+      webviewServerUrl.protocol !== 'http:' &&
+      webviewServerUrl.protocol !== 'https:'
+    ) {
+      proxyUrl.protocol = webviewServerUrl.protocol;
+    }
   }
-  proxyUrl.pathname =
-    (isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR) +
-    proxyUrl.pathname;
+
+  proxyUrl.hostname = webviewServerUrl.hostname;
+  proxyUrl.pathname = `/${
+    isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
+  }/${originalHostname}${originalPathname}`;
   return proxyUrl.toString();
 };
 
