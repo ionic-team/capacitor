@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.6.0](https://github.com/ionic-team/capacitor/compare/5.5.1...5.6.0) (2023-12-14)
+
+### Bug Fixes
+
+- **cli:** Use latest native-run ([#7030](https://github.com/ionic-team/capacitor/issues/7030)) ([1d948d4](https://github.com/ionic-team/capacitor/commit/1d948d4df6b6b6f8cfdc02e72d84ae8be963f4a0))
+- **http:** properly write form-urlencoded data on android request body ([#7130](https://github.com/ionic-team/capacitor/issues/7130)) ([a745a89](https://github.com/ionic-team/capacitor/commit/a745a89e18a5082ae4e737d78aa20929f6952382))
+- **http:** set formdata boundary and body when content-type not explicitly set ([#7133](https://github.com/ionic-team/capacitor/issues/7133)) ([3862d6e](https://github.com/ionic-team/capacitor/commit/3862d6e6721793d78add9acf5b14fd9a8f7a5b60))
+- **ios:** add some new cordova-ios classes used by Cordova plugins ([#7115](https://github.com/ionic-team/capacitor/issues/7115)) ([5fb902b](https://github.com/ionic-team/capacitor/commit/5fb902b232d9afded2edc865c8d3c0c0e7efe5e7))
+
+### Features
+
+- support for Amazon Fire WebView ([#6603](https://github.com/ionic-team/capacitor/issues/6603)) ([#7129](https://github.com/ionic-team/capacitor/issues/7129)) ([421d2c0](https://github.com/ionic-team/capacitor/commit/421d2c02e4d1954d16d573facae9c235fee60f02))
+
 ## [5.5.1](https://github.com/ionic-team/capacitor/compare/5.5.0...5.5.1) (2023-10-25)
 
 ### Bug Fixes
