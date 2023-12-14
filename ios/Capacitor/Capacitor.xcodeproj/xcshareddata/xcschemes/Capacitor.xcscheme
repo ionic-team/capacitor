@@ -38,6 +38,16 @@
                ReferencedContainer = "container:Capacitor.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A7D8B35F2B263B8D0003FAD6"
+               BuildableName = "CodableTests.xctest"
+               BlueprintName = "CodableTests"
+               ReferencedContainer = "container:Capacitor.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
