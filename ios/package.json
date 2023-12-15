@@ -20,7 +20,7 @@
     "scripts/pods_helpers.rb"
   ],
   "scripts": {
-    "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova",
+    "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova && pod lib lint --allow-warnings Capacitor.podspec && pod lib lint --allow-warnings CapacitorCordova.podspec",
     "xc:build:Capacitor": "cd Capacitor && xcodebuild -workspace Capacitor.xcworkspace -scheme Capacitor && cd ..",
     "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd ..",
     "xc:build:xcframework": "scripts/build.sh xcframework"
