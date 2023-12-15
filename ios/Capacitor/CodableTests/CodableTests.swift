@@ -22,7 +22,6 @@ private struct Person: Codable, Equatable {
     var family: [Person]?
 }
 
-
 private let rawPet: JSObject = [
     "name": "Penny",
     "breed": "Chihuahua",
@@ -58,7 +57,6 @@ private let person = Person(
         Person(name: "Leia", age: 20)
     ]
 )
-
 
 final class JSValueDecoderTest: XCTestCase {
     func testDecode_when_provided_a_valid_keyed_container_for_the_target_type__decoding_is_successful() throws {
@@ -185,7 +183,7 @@ final class JSValueEncoderTest: XCTestCase {
 
     func testEncode__when_nil_is_present_in_value__and_optional_encoding_is_set_to_explicit_nulls__it_is_encoded_as_nsnull() throws {
         struct Test: Encodable {
-            var name: String? = nil
+            var name: String?
         }
 
         let explicitEncoder = JSValueEncoder(optionalEncodingStrategy: .explicitNulls)
