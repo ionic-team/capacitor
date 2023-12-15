@@ -28,7 +28,6 @@ import androidx.core.content.pm.PackageInfoCompat;
 import androidx.fragment.app.Fragment;
 import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewFeature;
-
 import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
