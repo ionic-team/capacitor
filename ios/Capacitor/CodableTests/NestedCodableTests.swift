@@ -113,7 +113,7 @@ extension Flattened: Encodable {
         var infoContainer = userContainer.nestedContainer(keyedBy: RealInfoKeys.self, forKey: .realInfo)
         try infoContainer.encode(fullName, forKey: .fullName)
         var reviewsContainer = topLevelContainer.nestedUnkeyedContainer(forKey: .reviewCount)
-        
+
         try reviewsContainer.encode(["count": reviewCount])
     }
 }
