@@ -123,7 +123,7 @@ extension Array: JSValueEncodingContainer where Element == EncodingContainer {
     var data: JSValue? {
         guard count != 0 else { return nil }
         guard count != 1 else { return self[0].data }
-        var data: (any JSValue)? = nil
+        var data: (any JSValue)?
 
         for container in self {
             if data == nil {
@@ -189,7 +189,7 @@ extension _JSValueEncoder: Encoder {
     }
 }
 
-fileprivate final class KeyedContainer<Key> where Key: CodingKey {
+private final class KeyedContainer<Key> where Key: CodingKey {
     var object: JSObject? {
         encodedKeyedValue?.reduce(into: [:]) { obj, next in
             let (key, value) = next
@@ -239,7 +239,7 @@ extension KeyedContainer: KeyedEncodingContainerProtocol {
 
     // This is a perectly valid name for this method. The underscore is to avoid a conflict with the
     // protocol requirement.
-    //swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     func _encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T: Encodable {
         switch optionalEncodingStrategy {
         case .explicitNulls:

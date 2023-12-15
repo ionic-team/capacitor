@@ -242,7 +242,7 @@ private class UnkeyedSubSuper: UnkeyedBase {
         self.bool = bool
         super.init(number: 0, string: "empty")
     }
-    
+
     required init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
         bool = try container.decode(Bool.self)
