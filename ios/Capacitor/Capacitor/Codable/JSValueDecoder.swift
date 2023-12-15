@@ -31,8 +31,8 @@ public final class JSValueDecoder: TopLevelDecoder {
 typealias CodingUserInfo = [CodingUserInfoKey: Any]
 
 private final class _JSValueDecoder {
-    internal var codingPath: [CodingKey] = []
-    internal var userInfo: CodingUserInfo = [:]
+    var codingPath: [CodingKey] = []
+    var userInfo: CodingUserInfo = [:]
     fileprivate var data: JSValue
 
     init(data: JSValue) {
