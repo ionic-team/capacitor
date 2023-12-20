@@ -59,7 +59,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             // if using live reload, then set CORS headers
             if isUsingLiveReload(localUrl) {
                 headers["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString
-                headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+                headers["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, TRACE"
             }
 
             if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"),

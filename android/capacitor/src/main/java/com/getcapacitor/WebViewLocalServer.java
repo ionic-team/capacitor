@@ -258,9 +258,13 @@ public class WebViewLocalServer {
     }
 
     private WebResourceResponse handleCapacitorHttpRequest(WebResourceRequest request) throws IOException {
+        boolean isHttps =
+            request.getUrl().getPath() != null && request.getUrl().getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START);
+
         String urlString = request
             .getUrl()
             .toString()
+            .replace(bridge.getLocalUrl(), isHttps ? "https:/" : "http:/")
             .replace(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START, "")
             .replace(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START, "");
         URL url = new URL(urlString);
@@ -278,7 +282,7 @@ public class WebViewLocalServer {
 
         CapacitorHttpUrlConnection connection = connectionBuilder.build();
 
-        if (null != bridge && !isDomainExcludedFromSSL(bridge, url)) {
+        if (!isDomainExcludedFromSSL(bridge, url)) {
             connection.setSSLSocketFactory(bridge);
         }
 
@@ -307,6 +311,12 @@ public class WebViewLocalServer {
             } else {
                 responseHeaders.put(entry.getKey(), builder.toString());
             }
+        }
+
+        // Using Live Reload
+        if (bridge.getServerUrl() != null) {
+            responseHeaders.put("Access-Control-Allow-Origin", bridge.getServerUrl());
+            responseHeaders.put("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, TRACE");
         }
 
         InputStream inputStream = connection.getInputStream();

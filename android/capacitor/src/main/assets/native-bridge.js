@@ -149,7 +149,9 @@ var nativeBridge = (function (exports) {
         const originalPathname = proxyUrl.pathname;
         if ((_c = (_b = win.webkit) === null || _b === void 0 ? void 0 : _b.messageHandlers) === null || _c === void 0 ? void 0 : _c.bridge) {
             proxyUrl.protocol = 'capacitor:';
-            if (webviewServerUrl.protocol !== 'capacitor:' && webviewServerUrl.protocol !== 'http:' && webviewServerUrl.protocol !== 'https:') {
+            if (webviewServerUrl.protocol !== 'capacitor:' &&
+                webviewServerUrl.protocol !== 'http:' &&
+                webviewServerUrl.protocol !== 'https:') {
                 proxyUrl.protocol = webviewServerUrl.protocol;
             }
         }
