@@ -283,9 +283,9 @@ export async function migrateCommand(
               }
             }
             const pluginVariables: { [key: string]: string } = {
-              firebaseMessagingVersion: '23.2.1',
+              firebaseMessagingVersion: '23.3.1',
               playServicesLocationVersion: '21.0.1',
-              androidxBrowserVersion: '1.5.0',
+              androidxBrowserVersion: '1.7.0',
               androidxMaterialVersion: '1.10.0',
               androidxExifInterfaceVersion: '1.3.6',
               androidxCoreKTXVersion: '1.12.0',
@@ -641,9 +641,6 @@ async function updateBuildGradle(
     'com.google.gms:google-services': string;
   },
 ) {
-  // In build.gradle add dependencies:
-  // classpath 'com.android.tools.build:gradle:8.2.0-rc02'
-  // classpath 'com.google.gms:google-services:4.4.0'
   const txt = readFile(filename);
   if (!txt) {
     return;

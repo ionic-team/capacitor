@@ -326,7 +326,10 @@ export const buildRequestInit = (
       params.set(key, value as any);
     }
     output.body = params.toString();
-  } else if (type.includes('multipart/form-data')) {
+  } else if (
+    type.includes('multipart/form-data') ||
+    options.data instanceof FormData
+  ) {
     const form = new FormData();
     if (options.data instanceof FormData) {
       options.data.forEach((value, key) => {
