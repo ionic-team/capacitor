@@ -440,9 +440,10 @@ async function installLatestLibs(
 async function writeBreakingChanges() {
   const breaking = [
     '@capacitor/camera',
-    '@capacitor/device',
+    '@capacitor/filesystem',
+    '@capacitor/geolocation',
+    '@capacitor/google-maps',
     '@capacitor/local-notifications',
-    '@capacitor/push-notifications',
   ];
   const broken = [];
   for (const lib of breaking) {
@@ -452,7 +453,7 @@ async function writeBreakingChanges() {
   }
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/6-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
