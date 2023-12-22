@@ -186,6 +186,7 @@ export interface WindowCapacitor {
     WebView?: {
       getServerBasePath?: any;
       setServerBasePath?: any;
+      setServerAssetPath?: any;
       persistServerBasePath?: any;
       convertFileSrc?: any;
     };
