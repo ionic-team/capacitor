@@ -14,6 +14,7 @@ export class WebPlugin implements Plugin {
 
   protected listeners: { [eventName: string]: ListenerCallback[] } = {};
   protected windowListeners: { [eventName: string]: WindowListenerHandle } = {};
+  retainedEvents: any;
 
   constructor(config?: WebPluginConfig) {
     if (config) {
@@ -58,10 +59,14 @@ export class WebPlugin implements Plugin {
     this.windowListeners = {};
   }
 
-  protected notifyListeners(eventName: string, data: any): void {
-    const listeners = this.listeners[eventName];
-    if (listeners) {
-      listeners.forEach(listener => listener(data));
+  protected notifyListeners(eventName: string, data: any, retainUntilConsumed?: boolean): void {
+    if (retainUntilConsumed) {
+      this.retainedEvents.set(eventName, data);
+    } else {
+      const listeners = this.listeners[eventName];
+      if (listeners) {
+        listeners.forEach(listener => listener(data));
+      }
     }
   }
 
