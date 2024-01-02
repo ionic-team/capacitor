@@ -99,11 +99,11 @@ async function signWithApkSigner(
   ];
 
   if (buildOptions.keystorealias) {
-    signingArgs.push('--ks-key-alias', buildOptions.keystorealias)
+    signingArgs.push('--ks-key-alias', buildOptions.keystorealias);
   }
 
   if (buildOptions.keystorealiaspass) {
-    signingArgs.push('--key-pass', buildOptions.keystorealiaspass)
+    signingArgs.push('--key-pass', buildOptions.keystorealiaspass);
   }
 
   await runTask('Signing Release', async () => {
