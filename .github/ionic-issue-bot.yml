@@ -28,7 +28,7 @@ comment:
         Ionitron 💙
   dryRun: false
 
-  closeAndLock:
+closeAndLock:
   labels:
     - label: "support request"
       message: >
