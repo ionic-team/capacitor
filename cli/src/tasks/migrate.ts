@@ -171,6 +171,16 @@ export async function migrateCommand(
         existsSync(config.ios.platformDirAbs)
       ) {
         // ios template changes
+        // Remove NSLocationAlwaysUsageDescription
+        await runTask(
+          `Migrating Info.plist by removing NSLocationAlwaysUsageDescription key.`,
+          () => {
+            return removeKey(
+              join(config.ios.nativeTargetDirAbs, 'Info.plist'),
+              'NSLocationAlwaysUsageDescription',
+            );
+          },
+        );
       }
 
       if (
@@ -791,4 +801,29 @@ export async function patchOldCapacitorPlugins(
       }
     }),
   );
+}
+
+async function removeKey(filename: string, key: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+  let lines = txt.split('\n');
+  let removed = false;
+  let removing = false;
+  lines = lines.filter(line => {
+    if (removing && line.includes('</string>')) {
+      removing = false;
+      return false;
+    }
+    if (line.includes(`<key>${key}</key`)) {
+      removing = true;
+      removed = true;
+    }
+    return !removing;
+  });
+
+  if (removed) {
+    writeFileSync(filename, lines.join('\n'), 'utf-8');
+  }
 }
