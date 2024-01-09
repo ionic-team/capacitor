@@ -171,6 +171,16 @@ export async function migrateCommand(
         existsSync(config.ios.platformDirAbs)
       ) {
         // ios template changes
+        // Remove NSLocationAlwaysUsageDescription
+        await runTask(
+          `Migrating Info.plist by removing NSLocationAlwaysUsageDescription key.`,
+          () => {
+            return removeKey(
+              join(config.ios.nativeTargetDirAbs, 'Info.plist'),
+              'NSLocationAlwaysUsageDescription',
+            );
+          },
+        );
       }
 
       if (
@@ -440,9 +450,10 @@ async function installLatestLibs(
 async function writeBreakingChanges() {
   const breaking = [
     '@capacitor/camera',
-    '@capacitor/device',
+    '@capacitor/filesystem',
+    '@capacitor/geolocation',
+    '@capacitor/google-maps',
     '@capacitor/local-notifications',
-    '@capacitor/push-notifications',
   ];
   const broken = [];
   for (const lib of breaking) {
@@ -452,7 +463,7 @@ async function writeBreakingChanges() {
   }
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/6-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
@@ -790,4 +801,29 @@ export async function patchOldCapacitorPlugins(
       }
     }),
   );
+}
+
+async function removeKey(filename: string, key: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+  let lines = txt.split('\n');
+  let removed = false;
+  let removing = false;
+  lines = lines.filter(line => {
+    if (removing && line.includes('</string>')) {
+      removing = false;
+      return false;
+    }
+    if (line.includes(`<key>${key}</key`)) {
+      removing = true;
+      removed = true;
+    }
+    return !removing;
+  });
+
+  if (removed) {
+    writeFileSync(filename, lines.join('\n'), 'utf-8');
+  }
 }

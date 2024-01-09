@@ -13,6 +13,7 @@ export class WebPlugin implements Plugin {
   config?: WebPluginConfig;
 
   protected listeners: { [eventName: string]: ListenerCallback[] } = {};
+  protected retainedEventArguments: { [eventName: string]: any[] } = {};
   protected windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
   constructor(config?: WebPluginConfig) {
@@ -29,9 +30,12 @@ export class WebPlugin implements Plugin {
     eventName: string,
     listenerFunc: ListenerCallback,
   ): Promise<PluginListenerHandle> {
+    let firstListener = false;
+
     const listeners = this.listeners[eventName];
     if (!listeners) {
       this.listeners[eventName] = [];
+      firstListener = true;
     }
 
     this.listeners[eventName].push(listenerFunc);
@@ -41,6 +45,10 @@ export class WebPlugin implements Plugin {
     const windowListener = this.windowListeners[eventName];
     if (windowListener && !windowListener.registered) {
       this.addWindowListener(windowListener);
+    }
+
+    if (firstListener) {
+      this.sendRetainedArgumentsForEvent(eventName);
     }
 
     const remove = async () => this.removeListener(eventName, listenerFunc);
@@ -58,11 +66,28 @@ export class WebPlugin implements Plugin {
     this.windowListeners = {};
   }
 
-  protected notifyListeners(eventName: string, data: any): void {
+  protected notifyListeners(
+    eventName: string,
+    data: any,
+    retainUntilConsumed?: boolean,
+  ): void {
     const listeners = this.listeners[eventName];
-    if (listeners) {
-      listeners.forEach(listener => listener(data));
+    if (!listeners) {
+      if (retainUntilConsumed) {
+        let args = this.retainedEventArguments[eventName];
+        if (!args) {
+          args = [];
+        }
+
+        args.push(data);
+
+        this.retainedEventArguments[eventName] = args;
+      }
+
+      return;
     }
+
+    listeners.forEach(listener => listener(data));
   }
 
   protected hasListeners(eventName: string): boolean {
@@ -122,6 +147,19 @@ export class WebPlugin implements Plugin {
 
     window.removeEventListener(handle.windowEventName, handle.handler);
     handle.registered = false;
+  }
+
+  private sendRetainedArgumentsForEvent(eventName: string): void {
+    const args = this.retainedEventArguments[eventName];
+    if (!args) {
+      return;
+    }
+
+    delete this.retainedEventArguments[eventName];
+
+    args.forEach(arg => {
+      this.notifyListeners(eventName, arg);
+    });
   }
 }
 
