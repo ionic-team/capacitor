@@ -98,6 +98,14 @@ async function signWithApkSigner(
     `${join(releasePath, signedReleaseName)}`,
   ];
 
+  if (buildOptions.keystorealias) {
+    signingArgs.push('--ks-key-alias', buildOptions.keystorealias);
+  }
+
+  if (buildOptions.keystorealiaspass) {
+    signingArgs.push('--key-pass', buildOptions.keystorealiaspass);
+  }
+
   await runTask('Signing Release', async () => {
     await runCommand('apksigner', signingArgs, {
       cwd: config.android.platformDirAbs,
