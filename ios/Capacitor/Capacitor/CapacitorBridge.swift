@@ -5,6 +5,18 @@ import Cordova
 
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
+#if canImport(RoomPlan)
+
+import RoomPlan
+
+@available(iOS 16, *)
+class Foo: NSObject {
+  var bar: CapturedRoom?
+}
+
+#endif
+
+
 /**
  An internal class adopting a public protocol means that we have a lot of `public` methods
  but that is by design not a mistake. And since the bridge is the center of the whole project
@@ -278,25 +290,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func registerPlugins() {
         if autoRegisterPlugins {
-            let classCount = objc_getClassList(nil, 0)
-            let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
-
-            let releasingClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(classes)
-            let numClasses: Int32 = objc_getClassList(releasingClasses, classCount)
-
-            for classIndex in 0..<Int(numClasses) {
-                if let aClass: AnyClass = classes[classIndex] {
-                    if class_getSuperclass(aClass) == CDVPlugin.self {
-                        injectCordovaFiles = true
-                    }
-                    if class_conformsToProtocol(aClass, CAPBridgedPlugin.self),
-                       let pluginType = aClass as? CapacitorPlugin.Type {
-                        if aClass is CAPInstancePlugin.Type { continue }
-                        registerPlugin(pluginType)
-                    }
-                }
-            }
-            classes.deallocate()
+            oldStyleAutoRegister()
         } else {
             // register core plugins only
             [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
@@ -718,5 +712,32 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self.tmpWindow?.rootViewController?.dismiss(animated: flag, completion: completion)
             self.tmpWindow = nil
         }
+    }
+
+
+
+    // MARK: - Private Methods
+    private func oldStyleAutoRegister() {
+        let classCount = objc_getClassList(nil, 0)
+        let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
+
+        let releasingClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(classes)
+        let numClasses: Int32 = objc_getClassList(releasingClasses, classCount)
+
+        for classIndex in 0..<Int(numClasses) {
+            if let aClass: AnyClass = classes[classIndex] {
+                if class_getSuperclass(aClass) == CDVPlugin.self {
+                    print("Cordova: \(aClass)")
+                    injectCordovaFiles = true
+                }
+                if class_conformsToProtocol(aClass, CAPBridgedPlugin.self),
+                   let pluginType = aClass as? CapacitorPlugin.Type {
+                    if aClass is CAPInstancePlugin.Type { continue }
+                    print("CapPlugin: \(aClass), \(pluginType)")
+                    registerPlugin(pluginType)
+                }
+            }
+        }
+        classes.deallocate()
     }
 }
