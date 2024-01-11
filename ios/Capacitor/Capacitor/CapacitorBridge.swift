@@ -5,6 +5,7 @@ import Cordova
 
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
+#warning("remove this before merging! To test for crash")
 #if canImport(RoomPlan)
 
 import RoomPlan
@@ -16,6 +17,9 @@ class Foo: NSObject {
 
 #endif
 
+struct RegistrationList: Codable {
+    let pluginList: [String]
+}
 
 /**
  An internal class adopting a public protocol means that we have a lot of `public` methods
@@ -289,12 +293,28 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      Register all plugins that have been declared
      */
     func registerPlugins() {
+        var pluginList: [AnyClass] = [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
+
         if autoRegisterPlugins {
-            oldStyleAutoRegister()
-        } else {
-            // register core plugins only
-            [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
-                .forEach { registerPluginType($0) }
+            do {
+                if let pluginJSON = Bundle.main.url(forResource: "package.ios", withExtension: "json") {
+                    let pluginData = try Data(contentsOf: pluginJSON)
+                    let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
+                    for plugin in registrationList.pluginList {
+                        if let pluginClass = NSClassFromString(plugin) {
+                            pluginList.append(pluginClass)
+                        }
+                    }
+                }
+            } catch {
+                print(error)
+            }
+        }
+
+        for plugin in pluginList {
+            if let capPlugin = plugin as? CapacitorPlugin.Type {
+                registerPlugin(capPlugin)
+            }
         }
     }
 
