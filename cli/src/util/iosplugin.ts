@@ -1,5 +1,10 @@
 import type { ReaddirPOptions } from '@ionic/utils-fs';
-import { readFileSync, readdirp, readJSONSync, writeJSONSync } from '@ionic/utils-fs';
+import {
+  readFileSync,
+  readdirp,
+  readJSONSync,
+  writeJSONSync,
+} from '@ionic/utils-fs';
 import { resolve } from 'path';
 
 import type { Config } from '../definitions';
@@ -55,8 +60,11 @@ export async function writePluginJSON(
   config: Config,
   classList: string[],
 ): Promise<void> {
-  const capJSONFile = resolve(config.ios.nativeTargetDirAbs, 'capacitor.config.json')
-  const capJSON = readJSONSync(capJSONFile)
-  capJSON["packageClassList"] = classList
-  writeJSONSync(capJSONFile, capJSON, { spaces: '\t' })
+  const capJSONFile = resolve(
+    config.ios.nativeTargetDirAbs,
+    'capacitor.config.json',
+  );
+  const capJSON = readJSONSync(capJSONFile);
+  capJSON['packageClassList'] = classList;
+  writeJSONSync(capJSONFile, capJSON, { spaces: '\t' });
 }
