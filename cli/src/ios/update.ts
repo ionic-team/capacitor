@@ -31,7 +31,11 @@ import {
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
-import { getPluginFiles, findPluginClasses, writePluginJSON } from '../util/iosplugin'
+import {
+  getPluginFiles,
+  findPluginClasses,
+  writePluginJSON,
+} from '../util/iosplugin';
 import { resolveNode } from '../util/node';
 import { checkPackageManager, generatePackageFile } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
@@ -57,7 +61,7 @@ export async function updateIOS(
     await updateIOSCocoaPods(config, plugins, deployment);
   }
 
-  generateIOSPackageJSON(config, plugins)
+  generateIOSPackageJSON(config, plugins);
 
   printPlugins(capacitorPlugins, 'ios');
 }
@@ -176,13 +180,16 @@ end`,
   }
 }
 
-async function generateIOSPackageJSON(config: Config, plugins: Plugin[]): Promise<void> {
-  const outputDir = config.ios.nativeTargetDirAbs
-  const outputFile = join(outputDir, 'package.ios.json')
+async function generateIOSPackageJSON(
+  config: Config,
+  plugins: Plugin[],
+): Promise<void> {
+  const outputDir = config.ios.nativeTargetDirAbs;
+  const outputFile = join(outputDir, 'package.ios.json');
 
-  const fileList = await getPluginFiles(plugins)
-  const classList = await findPluginClasses(fileList)
-  writePluginJSON(outputFile, classList)
+  const fileList = await getPluginFiles(plugins);
+  const classList = await findPluginClasses(fileList);
+  writePluginJSON(outputFile, classList);
 }
 
 async function getRelativeCapacitoriOSPath(config: Config) {
