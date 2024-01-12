@@ -12,7 +12,7 @@ import RoomPlan
 
 @available(iOS 16, *)
 class Foo: NSObject {
-  var bar: CapturedRoom?
+    var bar: CapturedRoom?
 }
 
 #endif
@@ -733,8 +733,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self.tmpWindow = nil
         }
     }
-
-
 
     // MARK: - Private Methods
     private func oldStyleAutoRegister() {
