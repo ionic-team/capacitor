@@ -6,7 +6,7 @@ import Cordova
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
 struct RegistrationList: Codable {
-    let pluginList: [String]
+    let packageClassList: [String]
 }
 
 /**
@@ -285,17 +285,17 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         if autoRegisterPlugins {
             do {
-                if let pluginJSON = Bundle.main.url(forResource: "package.ios", withExtension: "json") {
+                if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
                     let pluginData = try Data(contentsOf: pluginJSON)
                     let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
-                    for plugin in registrationList.pluginList {
+                    for plugin in registrationList.packageClassList {
                         if let pluginClass = NSClassFromString(plugin) {
                             pluginList.append(pluginClass)
                         }
                     }
                 }
             } catch {
-                print(error)
+                CAPLog.print("Error registering plugins: \(error)")
             }
         }
 
