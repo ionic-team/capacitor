@@ -5,18 +5,6 @@ import Cordova
 
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
-#warning("remove this before merging! To test for crash")
-#if canImport(RoomPlan)
-
-import RoomPlan
-
-@available(iOS 16, *)
-class Foo: NSObject {
-    var bar: CapturedRoom?
-}
-
-#endif
-
 struct RegistrationList: Codable {
     let pluginList: [String]
 }
@@ -732,30 +720,5 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self.tmpWindow?.rootViewController?.dismiss(animated: flag, completion: completion)
             self.tmpWindow = nil
         }
-    }
-
-    // MARK: - Private Methods
-    private func oldStyleAutoRegister() {
-        let classCount = objc_getClassList(nil, 0)
-        let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
-
-        let releasingClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(classes)
-        let numClasses: Int32 = objc_getClassList(releasingClasses, classCount)
-
-        for classIndex in 0..<Int(numClasses) {
-            if let aClass: AnyClass = classes[classIndex] {
-                if class_getSuperclass(aClass) == CDVPlugin.self {
-                    print("Cordova: \(aClass)")
-                    injectCordovaFiles = true
-                }
-                if class_conformsToProtocol(aClass, CAPBridgedPlugin.self),
-                   let pluginType = aClass as? CapacitorPlugin.Type {
-                    if aClass is CAPInstancePlugin.Type { continue }
-                    print("CapPlugin: \(aClass), \(pluginType)")
-                    registerPlugin(pluginType)
-                }
-            }
-        }
-        classes.deallocate()
     }
 }
