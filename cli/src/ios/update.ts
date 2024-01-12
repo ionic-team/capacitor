@@ -6,7 +6,7 @@ import {
   realpath,
   writeFile,
 } from '@ionic/utils-fs';
-import { basename, dirname, join, relative } from 'path';
+import { basename, dirname, join, relative, resolve } from 'path';
 
 import c from '../colors';
 import { checkPlatformVersions, runTask } from '../common';
@@ -184,12 +184,9 @@ async function generateIOSPackageJSON(
   config: Config,
   plugins: Plugin[],
 ): Promise<void> {
-  const outputDir = config.ios.nativeTargetDirAbs;
-  const outputFile = join(outputDir, 'package.ios.json');
-
   const fileList = await getPluginFiles(plugins);
   const classList = await findPluginClasses(fileList);
-  writePluginJSON(outputFile, classList);
+  writePluginJSON(config, classList);
 }
 
 async function getRelativeCapacitoriOSPath(config: Config) {
