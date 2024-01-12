@@ -300,6 +300,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
 
         for plugin in pluginList {
+            if plugin is CAPInstancePlugin.Type { continue }
             if let capPlugin = plugin as? CapacitorPlugin.Type {
                 registerPlugin(capPlugin)
             }
