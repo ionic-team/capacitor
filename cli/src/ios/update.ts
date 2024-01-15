@@ -6,7 +6,7 @@ import {
   realpath,
   writeFile,
 } from '@ionic/utils-fs';
-import { basename, dirname, join, relative, resolve } from 'path';
+import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
 import { checkPlatformVersions, runTask } from '../common';
