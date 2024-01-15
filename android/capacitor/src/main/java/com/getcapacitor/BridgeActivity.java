@@ -24,7 +24,13 @@ public class BridgeActivity extends AppCompatActivity {
         bridgeBuilder.setInstanceState(savedInstanceState);
         getApplication().setTheme(R.style.AppTheme_NoActionBar);
         setTheme(R.style.AppTheme_NoActionBar);
-        setContentView(R.layout.bridge_layout_main);
+        try {
+            setContentView(R.layout.bridge_layout_main);
+        } catch (Exception ex) {
+            setContentView(R.layout.no_webview);
+            return;
+        }
+
         PluginManager loader = new PluginManager(getAssets());
 
         try {
@@ -67,8 +73,10 @@ public class BridgeActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         activityDepth++;
-        this.bridge.onStart();
-        Logger.debug("App started");
+        if (this.bridge != null) {
+            this.bridge.onStart();
+            Logger.debug("App started");
+        }
     }
 
     @Override
@@ -81,36 +89,43 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        bridge.getApp().fireStatusChange(true);
-        this.bridge.onResume();
-        Logger.debug("App resumed");
+        if (bridge != null) {
+            bridge.getApp().fireStatusChange(true);
+            this.bridge.onResume();
+            Logger.debug("App resumed");
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        this.bridge.onPause();
-        Logger.debug("App paused");
+        if (bridge != null) {
+            this.bridge.onPause();
+            Logger.debug("App paused");
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        if (bridge != null) {
+            activityDepth = Math.max(0, activityDepth - 1);
+            if (activityDepth == 0) {
+                bridge.getApp().fireStatusChange(false);
+            }
 
-        activityDepth = Math.max(0, activityDepth - 1);
-        if (activityDepth == 0) {
-            bridge.getApp().fireStatusChange(false);
+            this.bridge.onStop();
+            Logger.debug("App stopped");
         }
-
-        this.bridge.onStop();
-        Logger.debug("App stopped");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.bridge.onDestroy();
-        Logger.debug("App destroyed");
+        if (this.bridge != null) {
+            this.bridge.onDestroy();
+            Logger.debug("App destroyed");
+        }
     }
 
     @Override
