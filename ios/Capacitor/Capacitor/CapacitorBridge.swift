@@ -6,7 +6,7 @@ import Cordova
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
 struct RegistrationList: Codable {
-    let packageClassList: [String]
+    let packageClassList: Set<String>
 }
 
 /**
@@ -288,6 +288,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
                     let pluginData = try Data(contentsOf: pluginJSON)
                     let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
+                    
                     for plugin in registrationList.packageClassList {
                         if let pluginClass = NSClassFromString(plugin) {
                             if class_getSuperclass(pluginClass) == CDVPlugin.self {
