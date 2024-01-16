@@ -43,6 +43,16 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 - **android:** allow developers to provide logic for onRenderProcessGone in WebViewListener ([#6966](https://github.com/ionic-team/capacitor/issues/6966)) ([79e17bb](https://github.com/ionic-team/capacitor/commit/79e17bb5e6ccd813bddc626703152d3983f6d93b))
 
+# [5.6.0](https://github.com/ionic-team/capacitor/compare/5.5.1...5.6.0) (2023-12-14)
+
+### Bug Fixes
+
+- **http:** properly write form-urlencoded data on android request body ([#7130](https://github.com/ionic-team/capacitor/issues/7130)) ([a745a89](https://github.com/ionic-team/capacitor/commit/a745a89e18a5082ae4e737d78aa20929f6952382))
+
+### Features
+
+- support for Amazon Fire WebView ([#6603](https://github.com/ionic-team/capacitor/issues/6603)) ([#7129](https://github.com/ionic-team/capacitor/issues/7129)) ([421d2c0](https://github.com/ionic-team/capacitor/commit/421d2c02e4d1954d16d573facae9c235fee60f02))
+
 ## [5.5.1](https://github.com/ionic-team/capacitor/compare/5.5.0...5.5.1) (2023-10-25)
 
 **Note:** Version bump only for package @capacitor/android

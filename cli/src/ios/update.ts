@@ -31,6 +31,11 @@ import {
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
+import {
+  getPluginFiles,
+  findPluginClasses,
+  writePluginJSON,
+} from '../util/iosplugin';
 import { resolveNode } from '../util/node';
 import { checkPackageManager, generatePackageFile } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
@@ -55,6 +60,8 @@ export async function updateIOS(
   } else {
     await updateIOSCocoaPods(config, plugins, deployment);
   }
+
+  generateIOSPackageJSON(config, plugins);
 
   printPlugins(capacitorPlugins, 'ios');
 }
@@ -171,6 +178,15 @@ end`,
       'Unable to find "xcodebuild". Skipping xcodebuild clean step...',
     );
   }
+}
+
+async function generateIOSPackageJSON(
+  config: Config,
+  plugins: Plugin[],
+): Promise<void> {
+  const fileList = await getPluginFiles(plugins);
+  const classList = await findPluginClasses(fileList);
+  writePluginJSON(config, classList);
 }
 
 async function getRelativeCapacitoriOSPath(config: Config) {
