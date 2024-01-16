@@ -288,7 +288,13 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
                     let pluginData = try Data(contentsOf: pluginJSON)
                     let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
-                    for plugin in registrationList.packageClassList {
+
+                    var uniquePluginClasses = Set<String>()
+                    for listedClass in registrationList.packageClassList {
+                        uniquePluginClasses.insert(listedClass)
+                    }
+
+                    for plugin in uniquePluginClasses {
                         if let pluginClass = NSClassFromString(plugin) {
                             if class_getSuperclass(pluginClass) == CDVPlugin.self {
                                 injectCordovaFiles = true
