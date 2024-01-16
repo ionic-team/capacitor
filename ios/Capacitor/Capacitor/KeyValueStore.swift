@@ -258,7 +258,8 @@ private class FileStore: KeyValueStoreBackend {
     // so we don't have a scenario where two separate instances may be writing to
     // the same files.
     static func with(name: String) -> FileStore {
-        let library = try! FileManager
+        if let existing = instances[name] { return existing }
+        guard let library = try? FileManager
             .default
             .url(
                 for: .libraryDirectory,
@@ -266,15 +267,15 @@ private class FileStore: KeyValueStoreBackend {
                 appropriateFor: nil,
                 create: true
             )
+        else { fatalError("⚡️ ❌ Library URL unable to be accessed or created by the current application. This is an impossible state.") }
 
         let url = library.appendingPathComponent("kvstore").appendingPathComponent(name)
-        if let existing = instances[url.absoluteString] { return existing }
 
-        // Create the folder if it doesn't exist
+        // Create the folder if it doesn't exist. This should never throw for the current base directory, so we ignore the exception.
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
 
         let new = FileStore(baseUrl: url)
-        instances[url.absoluteString] = new
+        instances[name] = new
         return new
     }
 }
