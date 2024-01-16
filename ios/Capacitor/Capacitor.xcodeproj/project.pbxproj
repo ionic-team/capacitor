@@ -88,6 +88,7 @@
 		A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */; };
 		A71289E627F380A500DADDF3 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289E527F380A500DADDF3 /* Router.swift */; };
 		A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289EA27F380FD00DADDF3 /* RouterTests.swift */; };
+		A7BE62CC2B486A5400165ACB /* KeyValueStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BE62CB2B486A5400165ACB /* KeyValueStore.swift */; };
 		A7D8B3522B238A840003FAD6 /* JSValueEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D8B3512B238A840003FAD6 /* JSValueEncoder.swift */; };
 		A7D8B3632B263B8D0003FAD6 /* NestedCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D8B3622B263B8D0003FAD6 /* NestedCodableTests.swift */; };
 		A7D8B3642B263B8D0003FAD6 /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Capacitor.framework */; };
@@ -239,6 +240,7 @@
 		A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookieManager.swift; sourceTree = "<group>"; };
 		A71289E527F380A500DADDF3 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		A71289EA27F380FD00DADDF3 /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
+		A7BE62CB2B486A5400165ACB /* KeyValueStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueStore.swift; sourceTree = "<group>"; };
 		A7D8B3512B238A840003FAD6 /* JSValueEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueEncoder.swift; sourceTree = "<group>"; };
 		A7D8B3562B23B2110003FAD6 /* CodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableTests.swift; sourceTree = "<group>"; };
 		A7D8B3602B263B8D0003FAD6 /* CodableTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodableTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -397,6 +399,7 @@
 				373A69F1255C95D0000A6F44 /* NotificationRouter.swift */,
 				62E79C562638AF7500414164 /* assets */,
 				A71289E527F380A500DADDF3 /* Router.swift */,
+				A7BE62CB2B486A5400165ACB /* KeyValueStore.swift */,
 				0F83E884285A332D006C43CB /* AppUUID.swift */,
 			);
 			path = Capacitor;
@@ -717,6 +720,7 @@
 				A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */,
 				62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */,
 				62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */,
+				A7BE62CC2B486A5400165ACB /* KeyValueStore.swift in Sources */,
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
 				373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */,
 				0F83E885285A332E006C43CB /* AppUUID.swift in Sources */,
