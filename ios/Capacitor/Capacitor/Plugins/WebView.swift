@@ -22,8 +22,7 @@ public class CAPWebViewPlugin: CAPPlugin {
     @objc func persistServerBasePath(_ call: CAPPluginCall) {
         if let viewController = bridge?.viewController as? CAPBridgeViewController {
             let path = viewController.getServerBasePath()
-            let defaults = UserDefaults.standard
-            defaults.set(path, forKey: "serverBasePath")
+            KeyValueStore.standard["serverBasePath"] = path
             call.resolve()
         }
     }
