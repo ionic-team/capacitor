@@ -747,7 +747,8 @@ const initBridge = (w: any): void => {
                         this.response = nativeResponse.data;
                       }
                       this.responseText = (
-                        nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type']
+                        nativeResponse.headers['Content-Type'] ||
+                        nativeResponse.headers['content-type']
                       )?.startsWith('application/json')
                         ? JSON.stringify(nativeResponse.data)
                         : nativeResponse.data;
