@@ -18,9 +18,9 @@ import Cordova
     public lazy final var isNewBinary: Bool = {
         if let curVersionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
            let curVersionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-            if let lastVersionCode = UserDefaults.standard.string(forKey: "lastBinaryVersionCode"),
-               let lastVersionName = UserDefaults.standard.string(forKey: "lastBinaryVersionName") {
-                return (curVersionCode.isEqual(lastVersionCode) == false || curVersionName.isEqual(lastVersionName) == false)
+            if let lastVersionCode = KeyValueStore.standard["lastBinaryVersionCode", as: String.self],
+               let lastVersionName = KeyValueStore.standard["lastBinaryVersionName", as: String.self] {
+                return curVersionCode != lastVersionCode || curVersionName != lastVersionName
             }
             return true
         }
@@ -79,7 +79,7 @@ import Cordova
     open func instanceDescriptor() -> InstanceDescriptor {
         let descriptor = InstanceDescriptor.init()
         if !isNewBinary && !descriptor.cordovaDeployDisabled {
-            if let persistedPath = UserDefaults.standard.string(forKey: "serverBasePath"), !persistedPath.isEmpty {
+            if let persistedPath = KeyValueStore.standard["serverBasePath", as: String.self], !persistedPath.isEmpty {
                 if let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first {
                     descriptor.appLocation = URL(fileURLWithPath: libPath, isDirectory: true)
                         .appendingPathComponent("NoCloud")
@@ -319,11 +319,10 @@ extension CAPBridgeViewController {
               let versionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             return
         }
-        let prefs = UserDefaults.standard
-        prefs.set(versionCode, forKey: "lastBinaryVersionCode")
-        prefs.set(versionName, forKey: "lastBinaryVersionName")
-        prefs.set("", forKey: "serverBasePath")
-        prefs.synchronize()
+        let store = KeyValueStore.standard
+        store["lastBinaryVersionCode"] = versionCode
+        store["lastBinaryVersionName"] = versionName
+        store["serverBasePath"] = nil as String?
     }
 
     private func logWarnings(for descriptor: InstanceDescriptor) {
