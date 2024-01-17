@@ -1,2 +1,3 @@
 <resources>
+    <string name="no_webview_text">This app requires a WebView to work</string>
 </resources>
