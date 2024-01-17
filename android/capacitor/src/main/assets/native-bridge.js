@@ -139,24 +139,15 @@ var nativeBridge = (function (exports) {
         url.indexOf(CAPACITOR_HTTPS_INTERCEPTOR) > -1;
     // TODO: export as Cap function
     const createProxyUrl = (url, win) => {
-        var _a, _b, _c;
+        var _a, _b;
         if (isRelativeOrProxyUrl(url))
             return url;
-        const proxyUrl = new URL(url);
+        let proxyUrl = new URL(url);
         const isHttps = proxyUrl.protocol === 'https:';
-        const webviewServerUrl = new URL((_a = win.WEBVIEW_SERVER_URL) !== null && _a !== void 0 ? _a : 'capacitor://localhost');
         const originalHostname = proxyUrl.hostname;
         const originalPathname = proxyUrl.pathname;
-        if ((_c = (_b = win.webkit) === null || _b === void 0 ? void 0 : _b.messageHandlers) === null || _c === void 0 ? void 0 : _c.bridge) {
-            proxyUrl.protocol = 'capacitor:';
-            if (webviewServerUrl.protocol !== 'capacitor:' &&
-                webviewServerUrl.protocol !== 'http:' &&
-                webviewServerUrl.protocol !== 'https:') {
-                proxyUrl.protocol = webviewServerUrl.protocol;
-            }
-        }
-        proxyUrl.hostname = webviewServerUrl.hostname;
-        proxyUrl.pathname = `/${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${originalHostname}${originalPathname}`;
+        proxyUrl = new URL((_b = (_a = win.Capacitor) === null || _a === void 0 ? void 0 : _a.getServerUrl()) !== null && _b !== void 0 ? _b : '');
+        proxyUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${originalHostname}${originalPathname}`;
         return proxyUrl.toString();
     };
     const initBridge = (w) => {

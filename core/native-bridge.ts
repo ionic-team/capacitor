@@ -132,28 +132,13 @@ const isRelativeOrProxyUrl = (url: string | undefined): boolean =>
 const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   if (isRelativeOrProxyUrl(url)) return url;
 
-  const proxyUrl = new URL(url);
+  let proxyUrl = new URL(url);
   const isHttps = proxyUrl.protocol === 'https:';
-
-  const webviewServerUrl = new URL(
-    win.WEBVIEW_SERVER_URL ?? 'capacitor://localhost',
-  );
   const originalHostname = proxyUrl.hostname;
   const originalPathname = proxyUrl.pathname;
+  proxyUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
 
-  if (win.webkit?.messageHandlers?.bridge) {
-    proxyUrl.protocol = 'capacitor:';
-    if (
-      webviewServerUrl.protocol !== 'capacitor:' &&
-      webviewServerUrl.protocol !== 'http:' &&
-      webviewServerUrl.protocol !== 'https:'
-    ) {
-      proxyUrl.protocol = webviewServerUrl.protocol;
-    }
-  }
-
-  proxyUrl.hostname = webviewServerUrl.hostname;
-  proxyUrl.pathname = `/${
+  proxyUrl.pathname = `${
     isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
   }/${originalHostname}${originalPathname}`;
   return proxyUrl.toString();
