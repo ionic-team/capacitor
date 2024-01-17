@@ -148,7 +148,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         }
 
         // Only replace first occurrence of the hostname
-        if let range = targetUrl.range(of: (self.serverUrl?.host ?? InstanceDescriptorDefaults.hostname) + "/") {
+        if let range = targetUrl.range(of: (localUrl.host ?? InstanceDescriptorDefaults.hostname) + "/") {
             targetUrl = targetUrl.replacingCharacters(in: range, with: "")
         }
 
