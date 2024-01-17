@@ -5,6 +5,10 @@ import Cordova
 
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
+struct RegistrationList: Codable {
+    let packageClassList: Set<String>
+}
+
 /**
  An internal class adopting a public protocol means that we have a lot of `public` methods
  but that is by design not a mistake. And since the bridge is the center of the whole project
@@ -15,7 +19,7 @@ internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 // swiftlint:disable lower_acl_than_parent
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
-public class CapacitorBridge: NSObject, CAPBridgeProtocol {
+open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // this decision is needed before the bridge is instantiated,
     // so we need a class property to avoid duplication
@@ -113,7 +117,7 @@ public class CapacitorBridge: NSObject, CAPBridgeProtocol {
     private var cordovaParser: CDVConfigParser?
 
     // Background dispatch queue for plugin calls
-    var dispatchQueue = DispatchQueue(label: "bridge")
+    open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
     // Array of block based observers
     var observers: [NSObjectProtocol] = []
 
@@ -277,30 +281,33 @@ public class CapacitorBridge: NSObject, CAPBridgeProtocol {
      Register all plugins that have been declared
      */
     func registerPlugins() {
+        var pluginList: [AnyClass] = [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
+
         if autoRegisterPlugins {
-            let classCount = objc_getClassList(nil, 0)
-            let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
-
-            let releasingClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(classes)
-            let numClasses: Int32 = objc_getClassList(releasingClasses, classCount)
-
-            for classIndex in 0..<Int(numClasses) {
-                if let aClass: AnyClass = classes[classIndex] {
-                    if class_getSuperclass(aClass) == CDVPlugin.self {
-                        injectCordovaFiles = true
-                    }
-                    if class_conformsToProtocol(aClass, CAPBridgedPlugin.self),
-                       let pluginType = aClass as? CapacitorPlugin.Type {
-                        if aClass is CAPInstancePlugin.Type { continue }
-                        registerPlugin(pluginType)
+            do {
+                if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
+                    let pluginData = try Data(contentsOf: pluginJSON)
+                    let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
+                    
+                    for plugin in registrationList.packageClassList {
+                        if let pluginClass = NSClassFromString(plugin) {
+                            if class_getSuperclass(pluginClass) == CDVPlugin.self {
+                                injectCordovaFiles = true
+                            }
+                            pluginList.append(pluginClass)
+                        }
                     }
                 }
+            } catch {
+                CAPLog.print("Error registering plugins: \(error)")
             }
-            classes.deallocate()
-        } else {
-            // register core plugins only
-            [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
-                .forEach { registerPluginType($0) }
+        }
+
+        for plugin in pluginList {
+            if plugin is CAPInstancePlugin.Type { continue }
+            if let capPlugin = plugin as? CapacitorPlugin.Type {
+                registerPlugin(capPlugin)
+            }
         }
     }
 
@@ -451,7 +458,7 @@ public class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
 
         let selector: Selector
-        if call.method == "addListener" || call.method == "removeListener" {
+        if call.method == "addListener" || call.method == "removeListener" || call.method == "removeAllListeners" {
             selector = NSSelectorFromString(call.method + ":")
         } else {
             guard let method = plugin.getMethod(named: call.method) else {
@@ -694,13 +701,13 @@ public class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - CAPBridgeProtocol: View Presentation
 
-    @objc public func showAlertWith(title: String, message: String, buttonTitle: String) {
+    @objc open func showAlertWith(title: String, message: String, buttonTitle: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
         self.viewController?.present(alert, animated: true, completion: nil)
     }
 
-    @objc public func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+    @objc open func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         if viewControllerToPresent.modalPresentationStyle == .popover {
             self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         } else {
@@ -711,7 +718,7 @@ public class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
-    @objc public func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
+    @objc open func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
         if self.tmpWindow == nil {
             self.viewController?.dismiss(animated: flag, completion: completion)
         } else {
