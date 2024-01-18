@@ -62,12 +62,12 @@ import Foundation
 /// ### Throwing vs Non-throwing
 ///
 /// Of the built-in backends, both ``Backend/ephemeral`` and ``Backend/persistent(suiteName:)`` will throw in the following cases:
-/// * The data read from the file retrieved during ``get(_:)`` or ``get(_:as:)`` is unable to be decoded as the type provided.
+/// * The data read from the file retrieved during ``get(_:as:)`` is unable to be decoded as the type provided.
 /// * The value provided to ``set(_:value:)`` encounters an error during encoding.
 ///     * This is more likely to happen with types that have custom `Encodable` implementations
 ///
 /// ``Backend/persistent(suiteName:)`` will throw for the following additional cases:
-/// * A file is unable to be read from disk during ``get(_:)`` or ``get(_:as:)``
+/// * A file is unable to be read from disk during ``get(_:as:)``
 ///     * The existence of the file on disk is checked before attempting to read the file, so out of the
 ///       [possible file reading errors](https://developer.apple.com/documentation/foundation/1448136-nserror_codes#file-reading-errors),
 ///       the only likely candidate would be
@@ -124,15 +124,8 @@ public class KeyValueStore {
     ///   - key: The unique identifier for the value
     ///   - type: The expected type of the value being retried
     /// - Returns: A decoded value of the given type or `nil` if there is no such value
-    public func `get`<T>(_ key: String, as type: T.Type) throws -> T? where T: Decodable {
+    public func `get`<T>(_ key: String, as type: T.Type = T.self) throws -> T? where T: Decodable {
         try backend.get(key, as: type)
-    }
-
-    /// Retrieves a value of the specified type and key
-    /// - Parameter key: The unique identifier for the value
-    /// - Returns: A decoded value of the given type or `nil` if there is no such value
-    public func `get`<T>(_ key: String) throws -> T? where T: Decodable {
-        try backend.get(key, as: T.self)
     }
 
     /// Stores the value under the specified key
@@ -148,33 +141,6 @@ public class KeyValueStore {
         try backend.delete(key)
     }
 
-    /// Convenience for acessing and modifying values in the store without calling ``get(_:)``, ``set(_:value:)``, or ``delete(_:)``
-    /// - Parameter key: The unique identifier for the value to access or modify
-    ///
-    /// If the generic parameter is unable to be inferred, use ``subscript(_:as:)`` or cast to the appropriate type
-    /// ```swift
-    /// let store = KeyValueStore.standard
-    ///
-    /// // Get
-    /// let value = store["key"] as String?
-    ///
-    /// // Set - The value is inferrable at the callsite
-    /// store["key"] = "value"
-    ///
-    /// // Delete
-    /// store["key"] = nil as String?
-    /// ```
-    public subscript<T> (_ key: String) -> T? where T: Codable {
-        get { try? self.get(key) }
-        set {
-            if let newValue {
-                try? self.set(key, value: newValue)
-            } else {
-                try? self.delete(key)
-            }
-        }
-    }
-
     /// Convenience for accessing and modifying values in the store without calling ``get(_:as:)``, ``set(_:value:)``, or ``delete(_:)``
     /// - Parameters:
     ///     - key: The unique identifier for the value to access or modify
@@ -187,10 +153,16 @@ public class KeyValueStore {
     /// // Get
     /// let value = store["key", as: String.self]
     ///
+    /// // If the type can be inferred then it may be omitted
+    /// let value: String? = store["key"]
+    /// let value = store["key"] as String?
+    /// let value = store["key"] ?? "default"
+    ///
     /// // Delete
     /// store["key", as: String.self] = nil
+    /// store["key"] = nil as String?
     /// ```
-    public subscript<T> (_ key: String, as type: T.Type) -> T? where T: Codable {
+    public subscript<T> (_ key: String, as type: T.Type = T.self) -> T? where T: Codable {
         get { try? self.get(key) }
         set {
             if let newValue {
