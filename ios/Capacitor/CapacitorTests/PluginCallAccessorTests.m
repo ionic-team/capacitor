@@ -1,14 +1,6 @@
 #import <XCTest/XCTest.h>
 #import <Capacitor/Capacitor.h>
 #import <Capacitor/CAPBridgedJSTypes.h>
-// forward declaration of internal capacitor classes that are exposed in the swift header via the @testable import.
-@interface CAPWebViewAssetHandler: NSObject
-@end
-@interface CapacitorBridge: NSObject
-@end
-@interface CAPWebViewDelegationHandler: NSObject
-@end
-// import that will fail without the declarations
 #import "CapacitorTests-Swift.h"
 
 // interface for this class

@@ -64,8 +64,52 @@ var nativeBridge = (function (exports) {
         }
         return newFormData;
     };
-    const convertBody = async (body) => {
-        if (body instanceof FormData) {
+    const convertBody = async (body, contentType) => {
+        if (body instanceof ReadableStream) {
+            const reader = body.getReader();
+            const chunks = [];
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done)
+                    break;
+                chunks.push(value);
+            }
+            const concatenated = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+            let position = 0;
+            for (const chunk of chunks) {
+                concatenated.set(chunk, position);
+                position += chunk.length;
+            }
+            let data = new TextDecoder().decode(concatenated);
+            let type;
+            if (contentType === 'application/json') {
+                try {
+                    data = JSON.parse(data);
+                }
+                catch (ignored) {
+                    // ignore
+                }
+                type = 'json';
+            }
+            else if (contentType === 'multipart/form-data') {
+                type = 'formData';
+            }
+            else if (contentType === null || contentType === void 0 ? void 0 : contentType.startsWith('image')) {
+                type = 'image';
+            }
+            else if (contentType === 'application/octet-stream') {
+                type = 'binary';
+            }
+            else {
+                type = 'text';
+            }
+            return {
+                data,
+                type,
+                headers: { 'Content-Type': contentType || 'application/octet-stream' },
+            };
+        }
+        else if (body instanceof FormData) {
             const formData = await convertFormData(body);
             const boundary = `${Date.now()}`;
             return {
@@ -432,8 +476,8 @@ var nativeBridge = (function (exports) {
                         console.time(tag);
                         try {
                             const { body, method } = request;
-                            const { data: requestData, type, headers, } = await convertBody(body || undefined);
                             const optionHeaders = Object.fromEntries(request.headers.entries());
+                            const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || body || undefined, optionHeaders['Content-Type'] || optionHeaders['content-type']);
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
                                 url: request.url,
                                 method: method,

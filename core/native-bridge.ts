@@ -53,8 +53,50 @@ const convertFormData = async (formData: FormData): Promise<any> => {
 
 const convertBody = async (
   body: Document | XMLHttpRequestBodyInit | ReadableStream<any> | undefined,
+  contentType?: string,
 ): Promise<any> => {
-  if (body instanceof FormData) {
+  if (body instanceof ReadableStream) {
+    const reader = body.getReader();
+    const chunks: any[] = [];
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+    const concatenated = new Uint8Array(
+      chunks.reduce((acc, chunk) => acc + chunk.length, 0),
+    );
+    let position = 0;
+    for (const chunk of chunks) {
+      concatenated.set(chunk, position);
+      position += chunk.length;
+    }
+
+    let data = new TextDecoder().decode(concatenated);
+    let type;
+    if (contentType === 'application/json') {
+      try {
+        data = JSON.parse(data);
+      } catch (ignored) {
+        // ignore
+      }
+      type = 'json';
+    } else if (contentType === 'multipart/form-data') {
+      type = 'formData';
+    } else if (contentType?.startsWith('image')) {
+      type = 'image';
+    } else if (contentType === 'application/octet-stream') {
+      type = 'binary';
+    } else {
+      type = 'text';
+    }
+
+    return {
+      data,
+      type,
+      headers: { 'Content-Type': contentType || 'application/octet-stream' },
+    };
+  } else if (body instanceof FormData) {
     const formData = await convertFormData(body);
     const boundary = `${Date.now()}`;
     return {
@@ -482,13 +524,16 @@ const initBridge = (w: any): void => {
 
           try {
             const { body, method } = request;
+            const optionHeaders = Object.fromEntries(request.headers.entries());
             const {
               data: requestData,
               type,
               headers,
-            } = await convertBody(body || undefined);
+            } = await convertBody(
+              options?.body || body || undefined,
+              optionHeaders['Content-Type'] || optionHeaders['content-type'],
+            );
 
-            const optionHeaders = Object.fromEntries(request.headers.entries());
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
               'request',
