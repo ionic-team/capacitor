@@ -430,7 +430,7 @@ public class HttpRequestHandler {
         try {
             Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
             Method method = sslPinningImpl.getDeclaredMethod("isDomainExcluded", Bridge.class, URL.class);
-            return (Boolean) method.invoke(sslPinningImpl.newInstance(), bridge, url);
+            return (Boolean) method.invoke(sslPinningImpl.getDeclaredConstructor().newInstance(), bridge, url);
         } catch (Exception ignored) {
             return false;
         }

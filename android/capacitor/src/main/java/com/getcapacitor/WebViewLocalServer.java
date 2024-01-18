@@ -408,7 +408,9 @@ public class WebViewLocalServer {
                 return null;
             }
 
-            responseStream = jsInjector.getInjectedStream(responseStream);
+            if (jsInjector != null) {
+                responseStream = jsInjector.getInjectedStream(responseStream);
+            }
 
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
             return new WebResourceResponse(
@@ -436,7 +438,7 @@ public class WebViewLocalServer {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
 
             // TODO: Conjure up a bit more subtlety than this
-            if (ext.equals(".html")) {
+            if (ext.equals(".html") && jsInjector != null) {
                 responseStream = jsInjector.getInjectedStream(responseStream);
             }
 
@@ -500,7 +502,9 @@ public class WebViewLocalServer {
                         }
                     }
                     InputStream responseStream = conn.getInputStream();
-                    responseStream = jsInjector.getInjectedStream(responseStream);
+                    if (jsInjector != null) {
+                        responseStream = jsInjector.getInjectedStream(responseStream);
+                    }
                     return new WebResourceResponse(
                         "text/html",
                         handler.getEncoding(),
