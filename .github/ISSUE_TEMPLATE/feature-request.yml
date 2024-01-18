@@ -1,0 +1,50 @@
+name: Feature Request
+description: Request a new feature
+title: "[Feature]: "
+labels: ["type: feature request", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thanks for your input on enhancements to Capacitor!
+  - type: input
+    id: Description
+    attributes:
+      label: Description
+      description: "A short description of your requested feature"
+    validations:
+      required: true
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platforms
+      description: "Check the platforms that will need this feature"
+      options:
+        - label: iOS
+          required: false
+        - label: Android
+          required: false
+        - label: Web
+          required: false
+  - type: textarea
+    id: requested-feature
+    attributes:
+      label: Request or proposed solution
+      description: "Describe the feature you are looking for in detail and any Preferred Solution you have"
+      placeholder: "This new thing would be great!"
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: "Describe some alternatives, if any"
+      placeholder: "Some other ideas!"
+    validations:
+      required: false
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: "Anything else we need to know to help? Include it here."
+      placeholder: "Tell us anything!"
