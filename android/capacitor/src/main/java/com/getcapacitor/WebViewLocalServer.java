@@ -123,8 +123,8 @@ public class WebViewLocalServer {
             return reasonPhrase;
         }
 
-        public Map<String, String> getResponseHeaders() {
-            return responseHeaders;
+        public Map<String, String> buildDefaultResponseHeaders() {
+            return new HashMap(responseHeaders);
         }
     }
 
@@ -205,7 +205,7 @@ public class WebViewLocalServer {
         if (request.getRequestHeaders().get("Range") != null) {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
             String mimeType = getMimeType(path, responseStream);
-            Map<String, String> tempResponseHeaders = handler.getResponseHeaders();
+            Map<String, String> tempResponseHeaders = handler.buildDefaultResponseHeaders();
             int statusCode = 206;
             try {
                 int totalRange = responseStream.available();
@@ -213,6 +213,10 @@ public class WebViewLocalServer {
                 String[] parts = rangeString.split("=");
                 String[] streamParts = parts[1].split("-");
                 String fromRange = streamParts[0];
+                int bytesToSkip = Integer.parseInt(fromRange);
+                if (bytesToSkip > 0) {
+                    responseStream.skip(bytesToSkip);
+                }
                 int range = totalRange - 1;
                 if (streamParts.length > 1) {
                     range = Integer.parseInt(streamParts[1]);
@@ -241,7 +245,7 @@ public class WebViewLocalServer {
                 handler.getEncoding(),
                 statusCode,
                 handler.getReasonPhrase(),
-                handler.getResponseHeaders(),
+                handler.buildDefaultResponseHeaders(),
                 responseStream
             );
         }
@@ -252,7 +256,7 @@ public class WebViewLocalServer {
                 handler.getEncoding(),
                 handler.getStatusCode(),
                 handler.getReasonPhrase(),
-                handler.getResponseHeaders(),
+                handler.buildDefaultResponseHeaders(),
                 null
             );
         }
@@ -287,7 +291,7 @@ public class WebViewLocalServer {
                 handler.getEncoding(),
                 statusCode,
                 handler.getReasonPhrase(),
-                handler.getResponseHeaders(),
+                handler.buildDefaultResponseHeaders(),
                 responseStream
             );
         }
@@ -318,7 +322,7 @@ public class WebViewLocalServer {
                 handler.getEncoding(),
                 statusCode,
                 handler.getReasonPhrase(),
-                handler.getResponseHeaders(),
+                handler.buildDefaultResponseHeaders(),
                 responseStream
             );
         }
@@ -379,7 +383,7 @@ public class WebViewLocalServer {
                         handler.getEncoding(),
                         handler.getStatusCode(),
                         handler.getReasonPhrase(),
-                        handler.getResponseHeaders(),
+                        handler.buildDefaultResponseHeaders(),
                         responseStream
                     );
                 }
