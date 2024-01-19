@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.EditText;
 import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.FileProvider;
@@ -53,30 +55,27 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
-        permissionLauncher =
-            bridge
-                .getActivity()
-                .registerForActivityResult(
-                    new ActivityResultContracts.RequestMultiplePermissions(),
-                    (Map<String, Boolean> isGranted) -> {
-                        if (permissionListener != null) {
-                            boolean granted = true;
-                            for (Map.Entry<String, Boolean> permission : isGranted.entrySet()) {
-                                if (!permission.getValue()) granted = false;
-                            }
-                            permissionListener.onPermissionSelect(granted);
-                        }
-                    }
-                );
+
+        ActivityResultCallback<Map<String, Boolean>> permissionCallback = (Map<String, Boolean> isGranted) -> {
+            if (permissionListener != null) {
+                boolean granted = true;
+                for (Map.Entry<String, Boolean> permission : isGranted.entrySet()) {
+                    if (!permission.getValue()) granted = false;
+                }
+                permissionListener.onPermissionSelect(granted);
+            }
+        };
+
+        permissionLauncher = bridge.registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissionCallback);
         activityLauncher =
-            bridge
-                .getActivity()
-                .registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
+            bridge.registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (activityListener != null) {
                         activityListener.onActivityResult(result);
                     }
-                );
+                }
+            );
     }
 
     /**
@@ -148,7 +147,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
         builder
             .setMessage(message)
-            .setTitle("Alert")
             .setPositiveButton(
                 "OK",
                 (dialog, buttonIndex) -> {
@@ -188,7 +186,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         builder
             .setMessage(message)
-            .setTitle("Confirm")
             .setPositiveButton(
                 "OK",
                 (dialog, buttonIndex) -> {
@@ -237,7 +234,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         builder
             .setMessage(message)
-            .setTitle("Prompt")
             .setView(input)
             .setPositiveButton(
                 "OK",
@@ -286,7 +282,15 @@ public class BridgeWebChromeClient extends WebChromeClient {
                     if (isGranted) {
                         callback.invoke(origin, true, false);
                     } else {
-                        callback.invoke(origin, false, false);
+                        final String[] coarsePermission = { Manifest.permission.ACCESS_COARSE_LOCATION };
+                        if (
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                            PermissionHelper.hasPermissions(bridge.getContext(), coarsePermission)
+                        ) {
+                            callback.invoke(origin, true, false);
+                        } else {
+                            callback.invoke(origin, false, false);
+                        }
                     }
                 };
             permissionLauncher.launch(geoPermissions);
@@ -409,20 +413,19 @@ public class BridgeWebChromeClient extends WebChromeClient {
         if (fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) {
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
-        if (fileChooserParams.getAcceptTypes().length > 1) {
+        if (fileChooserParams.getAcceptTypes().length > 1 || intent.getType().startsWith(".")) {
             String[] validTypes = getValidTypes(fileChooserParams.getAcceptTypes());
             intent.putExtra(Intent.EXTRA_MIME_TYPES, validTypes);
+            if (intent.getType().startsWith(".")) {
+                intent.setType(validTypes[0]);
+            }
         }
         try {
             activityListener =
                 activityResult -> {
                     Uri[] result;
                     Intent resultIntent = activityResult.getData();
-                    if (
-                        activityResult.getResultCode() == Activity.RESULT_OK &&
-                        resultIntent.getClipData() != null &&
-                        resultIntent.getClipData().getItemCount() > 1
-                    ) {
+                    if (activityResult.getResultCode() == Activity.RESULT_OK && resultIntent.getClipData() != null) {
                         final int numFiles = resultIntent.getClipData().getItemCount();
                         result = new Uri[numFiles];
                         for (int i = 0; i < numFiles; i++) {

@@ -3,7 +3,7 @@ import { initCapacitorGlobal } from './runtime';
 import type { WebPlugin } from './web-plugin';
 
 export const Capacitor = /*#__PURE__*/ initCapacitorGlobal(
-  (typeof globalThis !== 'undefined'
+  typeof globalThis !== 'undefined'
     ? globalThis
     : typeof self !== 'undefined'
     ? self
@@ -11,7 +11,7 @@ export const Capacitor = /*#__PURE__*/ initCapacitorGlobal(
     ? window
     : typeof global !== 'undefined'
     ? global
-    : {}) as any,
+    : {},
 );
 
 export const registerPlugin = Capacitor.registerPlugin;

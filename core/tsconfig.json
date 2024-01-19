@@ -3,7 +3,7 @@
     "declaration": true,
     "esModuleInterop": true,
     "importHelpers": true,
-    "lib": ["dom"],
+    "lib": ["dom", "dom.iterable"],
     "module": "es2015",
     "moduleResolution": "node",
     "noEmitHelpers": true,

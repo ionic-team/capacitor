@@ -10,6 +10,9 @@ export type {
   PluginResultError,
 } from './definitions';
 
+// Platforms Map
+export { CapacitorPlatforms, addPlatform, setPlatform } from './platforms';
+
 // Global APIs
 export { Capacitor, registerPlugin } from './global';
 
@@ -17,10 +20,26 @@ export { Capacitor, registerPlugin } from './global';
 export { WebPlugin, WebPluginConfig, ListenerCallback } from './web-plugin';
 
 // Core Plugins APIs
-export { WebView } from './core-plugins';
+export {
+  CapacitorCookies,
+  CapacitorHttp,
+  WebView,
+  buildRequestInit,
+} from './core-plugins';
 
 // Core Plugin definitions
-export type { WebViewPath, WebViewPlugin } from './core-plugins';
+export type {
+  ClearCookieOptions,
+  DeleteCookieOptions,
+  SetCookieOptions,
+  HttpHeaders,
+  HttpOptions,
+  HttpParams,
+  HttpResponse,
+  HttpResponseType,
+  WebViewPath,
+  WebViewPlugin,
+} from './core-plugins';
 
 // Constants
 export { CapacitorException, ExceptionCode } from './util';

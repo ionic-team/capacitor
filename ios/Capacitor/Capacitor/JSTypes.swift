@@ -125,6 +125,15 @@ public protocol JSValueContainer: JSStringContainer, JSBoolContainer, JSIntConta
 }
 
 extension JSValueContainer {
+    public func getValue(_ key: String) -> JSValue? {
+        return jsObjectRepresentation[key]
+    }
+
+    @available(*, message: "All values returned conform to JSValue, use getValue(_:) instead.", renamed: "getValue(_:)")
+    public func getAny(_ key: String) -> Any? {
+        return getValue(key)
+    }
+
     public func getString(_ key: String) -> String? {
         return jsObjectRepresentation[key] as? String
     }
@@ -163,6 +172,17 @@ extension JSValueContainer {
 
     public func getObject(_ key: String) -> JSObject? {
         return jsObjectRepresentation[key] as? JSObject
+    }
+
+    /// Decodes a value of the given type for the given key.
+    /// - Parameters:
+    ///   - type: The type of the value to decode.
+    ///   - key: The key that the decoded value is associated with.
+    ///   - decoder: The decoder to use to decode the value. Defaults to `JSValueDecoder()`.
+    /// - Returns: A value of the requested type, if present for the given key and convertible to the requested type.
+    /// - Throws: `DecodingError` if the encountered encoded value is corrupted.
+    public func decode<T: Decodable>(_ type: T.Type, for key: String, with decoder: JSValueDecoder = JSValueDecoder()) throws -> T {
+        try decoder.decode(type, from: jsObjectRepresentation[key] ?? [:])
     }
 }
 

@@ -36,18 +36,30 @@ export interface CapacitorConfig {
    * will create a `capacitor.js` file that you'll need to add as a script in
    * your `index.html` file.
    *
+   * It's deprecated and will be removed in Capacitor 6
+   *
    * @since 1.0.0
+   * @deprecated 5.0.0
    * @default false
    */
   bundledWebRuntime?: boolean;
 
   /**
-   * Hide or show the native logs for iOS and Android.
+   * The build configuration (as defined by the native app) under which Capacitor
+   * will send statements to the log system. This applies to log statements in
+   * native code as well as statements redirected from JavaScript (`console.debug`,
+   * `console.error`, etc.). Enabling logging will let statements render in the
+   * Xcode and Android Studio windows but can leak information on device if enabled
+   * in released builds.
    *
-   * @since 2.1.0
-   * @default false
+   * 'none' = logs are never produced
+   * 'debug' = logs are produced in debug builds but not production builds
+   * 'production' = logs are always produced
+   *
+   * @since 3.0.0
+   * @default debug
    */
-  hideLogs?: boolean;
+  loggingBehavior?: 'none' | 'debug' | 'production';
 
   /**
    * User agent of Capacitor Web View.
@@ -71,6 +83,14 @@ export interface CapacitorConfig {
    * @since 1.1.0
    */
   backgroundColor?: string;
+
+  /**
+   * Enable zooming within the Capacitor Web View.
+   *
+   * @default false
+   * @since 6.0.0
+   */
+  zoomEnabled?: boolean;
 
   android?: {
     /**
@@ -111,6 +131,14 @@ export interface CapacitorConfig {
     backgroundColor?: string;
 
     /**
+     * Enable zooming within the Capacitor Web View for Android.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
+
+    /**
      * Enable mixed content in the Capacitor Web View for Android.
      *
      * [Mixed
@@ -147,14 +175,14 @@ export interface CapacitorConfig {
     webContentsDebuggingEnabled?: boolean;
 
     /**
-     * Hide or show the native logs for Android.
+     * The build configuration under which Capacitor will generate logs on Android.
      *
-     * Overrides global `hideLogs` option.
+     * Overrides global `loggingBehavior` option.
      *
-     * @since 2.1.0
-     * @default false
+     * @since 3.0.0
+     * @default debug
      */
-    hideLogs?: boolean;
+    loggingBehavior?: 'none' | 'debug' | 'production';
 
     /**
      * Allowlist of plugins to include during `npx cap sync` for Android.
@@ -164,6 +192,107 @@ export interface CapacitorConfig {
      * @since 3.0.0
      */
     includePlugins?: string[];
+
+    /**
+     * Android flavor to use.
+     *
+     * If the app has flavors declared in the `build.gradle`
+     * configure the flavor you want to run with `npx cap run` command.
+     *
+     * @since 3.1.0
+     */
+    flavor?: string;
+
+    /**
+     * Whether to give the webview initial focus.
+     *
+     * @since 3.5.1
+     * @default true
+     */
+    initialFocus?: boolean;
+
+    /**
+     * The minimum supported webview version on Android supported by your app.
+     *
+     * The minimum supported cannot be lower than version `55`, which is required for Capacitor.
+     *
+     * If the device uses a lower WebView version, an error message will be shown on Logcat.
+     * If `server.errorPath` is configured, the WebView will redirect to that file, so can be
+     * used to show a custom error.
+     *
+     * @since 4.0.0
+     * @default 60
+     */
+    minWebViewVersion?: number;
+
+    /**
+     * The minimum supported Huawei webview version on Android supported by your app.
+     *
+     * The minimum supported cannot be lower than version `10`, which is required for Capacitor.
+     *
+     * If the device uses a lower WebView version, an error message will be shown on Logcat.
+     * If `server.errorPath` is configured, the WebView will redirect to that file, so can be
+     * used to show a custom error.
+     *
+     * @since 4.6.4
+     * @default 10
+     */
+    minHuaweiWebViewVersion?: number;
+
+    buildOptions?: {
+      /**
+       * Path to your keystore
+       *
+       * @since 4.4.0
+       */
+      keystorePath?: string;
+
+      /**
+       * Password to your keystore
+       *
+       * @since 4.4.0
+       */
+      keystorePassword?: string;
+
+      /**
+       * Alias in the keystore to use
+       *
+       * @since 4.4.0
+       */
+      keystoreAlias?: string;
+
+      /**
+       * Password for the alias in the keystore to use
+       *
+       * @since 4.4.0
+       */
+      keystoreAliasPassword?: string;
+
+      /**
+       * Bundle type for your release build
+       *
+       * @since 4.4.0
+       * @default "AAB"
+       */
+      releaseType?: 'AAB' | 'APK';
+
+      /**
+       * Program to sign your build with
+       *
+       * @since 5.1.0
+       * @default "jarsigner"
+       */
+      signingType?: 'apksigner' | 'jarsigner';
+    };
+
+    /**
+     * Use legacy [addJavascriptInterface](https://developer.android.com/reference/android/webkit/WebView#addJavascriptInterface(java.lang.Object,%20java.lang.String))
+     * instead of the new and more secure [addWebMessageListener](https://developer.android.com/reference/androidx/webkit/WebViewCompat#addWebMessageListener(android.webkit.WebView,java.lang.String,java.util.Set%3Cjava.lang.String%3E,androidx.webkit.WebViewCompat.WebMessageListener))
+     *
+     * @since 4.5.0
+     * @default false
+     */
+    useLegacyBridge?: boolean;
   };
 
   ios?: {
@@ -220,6 +349,14 @@ export interface CapacitorConfig {
     backgroundColor?: string;
 
     /**
+     * Enable zooming within the Capacitor Web View for iOS.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
+
+    /**
      * Configure the scroll view's content inset adjustment behavior.
      *
      * This will set the
@@ -264,14 +401,14 @@ export interface CapacitorConfig {
     allowsLinkPreview?: boolean;
 
     /**
-     * Hide or show the native logs for iOS.
+     * The build configuration under which Capacitor will generate logs on iOS.
      *
-     * Overrides global `hideLogs` option.
+     * Overrides global `loggingBehavior` option.
      *
-     * @since 1.1.0
-     * @default false
+     * @since 3.0.0
+     * @default debug
      */
-    hideLogs?: boolean;
+    loggingBehavior?: 'none' | 'debug' | 'production';
 
     /**
      * Allowlist of plugins to include during `npx cap sync` for iOS.
@@ -281,6 +418,52 @@ export interface CapacitorConfig {
      * @since 3.0.0
      */
     includePlugins?: string[];
+
+    /**
+     * Sets WKWebView configuration for limitsNavigationsToAppBoundDomains.
+     *
+     * If the Info.plist file includes `WKAppBoundDomains` key, it's recommended to
+     * set this option to true, otherwise some features won't work.
+     * But as side effect, it blocks navigation outside the domains in the
+     * `WKAppBoundDomains` list.
+     * `localhost` (or the value configured as `server.hostname`) also needs to be
+     * added to the `WKAppBoundDomains` list.
+     *
+     * @since 3.1.0
+     * @default false
+     */
+    limitsNavigationsToAppBoundDomains?: boolean;
+
+    /**
+     * The content mode for the web view to use when it loads and renders web content.
+     *
+     * - 'recommended': The content mode that is appropriate for the current device.
+     * - 'desktop': The content mode that represents a desktop experience.
+     * - 'mobile': The content mode that represents a mobile experience.
+     *
+     * @since 4.0.0
+     * @default recommended
+     */
+    preferredContentMode?: 'recommended' | 'desktop' | 'mobile';
+
+    /**
+     * Configure if Capacitor will handle local/push notifications.
+     * Set to false if you want to use your own UNUserNotificationCenter to handle notifications.
+     *
+     * @since 4.5.0
+     * @default true
+     */
+    handleApplicationNotifications?: boolean;
+
+    /**
+     * Using Xcode 14.3, on iOS 16.4 and greater, enable debuggable web content for release builds.
+     *
+     * If not set, it's `true` for development builds.
+     *
+     * @since 4.8.0
+     * @default false
+     */
+    webContentsDebuggingEnabled?: boolean;
   };
 
   server?: {
@@ -303,6 +486,7 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on iOS.
      *
+     * [Can't be set to schemes that the WKWebView already handles, such as http or https](https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/2875766-seturlschemehandler)
      * This can be useful when migrating from
      * [`cordova-plugin-ionic-webview`](https://github.com/ionic-team/cordova-plugin-ionic-webview),
      * where the default scheme on iOS is `ionic`.
@@ -315,8 +499,13 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on Android.
      *
+     * Custom schemes on Android are unable to change the URL path as of Webview 117. Changing this value from anything other than `http` or `https` can result in your
+     * application unable to resolve routing. If you must change this for some reason, consider using a hash-based url strategy, but there are no guarentees that this
+     * will continue to work long term as allowing non-standard schemes to modify query parameters and url fragments is only allowed for compatibility reasons.
+     * https://ionic.io/blog/capacitor-android-customscheme-issue-with-chrome-117
+     *
      * @since 1.2.0
-     * @default http
+     * @default https
      */
     androidScheme?: string;
 
@@ -358,15 +547,42 @@ export interface CapacitorConfig {
      * @default []
      */
     allowNavigation?: string[];
+
+    /**
+     * Specify path to a local html page to display in case of errors.
+     * On Android the html file won't have access to Capacitor plugins.
+     *
+     * @since 4.0.0
+     * @default null
+     */
+    errorPath?: string;
   };
 
   cordova?: {
+    /**
+     * Populates <access> tags in the config.xml with the origin set to
+     * the values entered here.
+     * If not provided, a single <access origin="*" /> tag gets included.
+     * It only has effect on a few Cordova plugins that respect the whitelist.
+     *
+     * @since 3.3.0
+     */
+    accessOrigins?: string[];
+
     /**
      * Configure Cordova preferences.
      *
      * @since 1.3.0
      */
     preferences?: { [key: string]: string | undefined };
+
+    /**
+     * List of Cordova plugins that need to be static but are not
+     * already in the static plugin list.
+     *
+     * @since 3.3.0
+     */
+    staticPlugins?: string[];
   };
 
   /**
@@ -402,4 +618,32 @@ export interface PluginsConfig {
         [key: string]: any;
       }
     | undefined;
+
+  /**
+   * Capacitor Cookies plugin configuration
+   *
+   * @since 4.3.0
+   */
+  CapacitorCookies?: {
+    /**
+     * Enable CapacitorCookies to override the global `document.cookie` on native.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+  };
+
+  /**
+   * Capacitor Http plugin configuration
+   *
+   * @since 4.3.0
+   */
+  CapacitorHttp?: {
+    /**
+     * Enable CapacitorHttp to override the global `fetch` and `XMLHttpRequest` on native.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+  };
 }

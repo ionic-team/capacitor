@@ -6,7 +6,9 @@ import c from './colors';
 import type { Config, PackageJson } from './definitions';
 import { fatal } from './errors';
 import { output, logger } from './log';
+import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools';
 import { resolveNode } from './util/node';
+import { runCommand } from './util/subprocess';
 
 export type CheckFunction = () => Promise<string | null>;
 
@@ -42,7 +44,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
       )} option). You may need to compile the web assets for your app (typically ${c.input(
         'npm run build',
       )}). More info: ${c.strong(
-        'https://capacitorjs.com/docs/v3/basics/workflow#sync-your-project',
+        'https://capacitorjs.com/docs/basics/workflow#sync-your-project',
       )}`
     );
   }
@@ -60,11 +62,15 @@ export async function checkWebDir(config: Config): Promise<string | null> {
 
 export async function checkPackage(): Promise<string | null> {
   if (!(await pathExists('package.json'))) {
-    return (
-      `The Capacitor CLI needs to run at the root of an npm package.\n` +
-      `Make sure you have a package.json file in the directory where you run the Capacitor CLI.\n` +
-      `More info: ${c.strong('https://docs.npmjs.com/cli/init')}`
-    );
+    if (await pathExists('project.json')) {
+      return null;
+    } else {
+      return (
+        `The Capacitor CLI needs to run at the root of an npm package or in a valid NX monorepo.\n` +
+        `Make sure you have a package.json or project.json file in the directory where you run the Capacitor CLI.\n` +
+        `More info: ${c.strong('https://docs.npmjs.com/cli/init')}`
+      );
+    }
   }
   return null;
 }
@@ -146,7 +152,7 @@ export async function checkAppName(
   name: string,
 ): Promise<string | null> {
   // We allow pretty much anything right now, have fun
-  if (!name || !name.length) {
+  if (!name?.length) {
     return `Must provide an app name. For example: 'Spacebook'`;
   }
   return null;
@@ -158,12 +164,18 @@ export async function wait(time: number): Promise<void> {
 
 export async function runPlatformHook(
   config: Config,
+  platformName: string,
   platformDir: string,
   hook: string,
 ): Promise<void> {
   const { spawn } = await import('child_process');
-  const pkg = await readJSON(join(platformDir, 'package.json'));
-  const cmd = pkg.scripts[hook];
+  let pkg;
+  if (isNXMonorepo(platformDir)) {
+    pkg = await readJSON(join(findNXMonorepoRoot(platformDir), 'package.json'));
+  } else {
+    pkg = await readJSON(join(platformDir, 'package.json'));
+  }
+  const cmd = pkg.scripts?.[hook];
 
   if (!cmd) {
     return;
@@ -179,6 +191,7 @@ export async function runPlatformHook(
         CAPACITOR_ROOT_DIR: config.app.rootDir,
         CAPACITOR_WEB_DIR: config.app.webDirAbs,
         CAPACITOR_CONFIG: JSON.stringify(config.app.extConfig),
+        CAPACITOR_PLATFORM_NAME: platformName,
         ...process.env,
       },
     });
@@ -307,7 +320,7 @@ export async function selectPlatforms(
           `See the docs for adding the ${c.strong(
             platformName,
           )} platform: ${c.strong(
-            `https://capacitorjs.com/docs/v3/${platformName}#adding-the-${platformName}-platform`,
+            `https://capacitorjs.com/docs/${platformName}#adding-the-${platformName}-platform`,
           )}`,
       );
     }
@@ -337,6 +350,16 @@ export async function isValidCommunityPlatform(
   platform: string,
 ): Promise<boolean> {
   return (await getKnownCommunityPlatforms()).includes(platform);
+}
+
+export async function getKnownEnterprisePlatforms(): Promise<string[]> {
+  return ['windows'];
+}
+
+export async function isValidEnterprisePlatform(
+  platform: string,
+): Promise<boolean> {
+  return (await getKnownEnterprisePlatforms()).includes(platform);
 }
 
 export async function promptForPlatform(
@@ -390,10 +413,10 @@ export async function promptForPlatformTarget(
   selectedTarget?: string,
 ): Promise<PlatformTarget> {
   const { prompt } = await import('prompts');
-
+  const validTargets = targets.filter(t => t.id !== undefined);
   if (!selectedTarget) {
-    if (targets.length === 1) {
-      return targets[0];
+    if (validTargets.length === 1) {
+      return validTargets[0];
     } else {
       const answers = await prompt(
         [
@@ -401,7 +424,7 @@ export async function promptForPlatformTarget(
             type: 'select',
             name: 'target',
             message: 'Please choose a target device:',
-            choices: targets.map(t => ({
+            choices: validTargets.map(t => ({
               title: `${getPlatformTargetName(t)} (${t.id})`,
               value: t,
             })),
@@ -500,6 +523,16 @@ export function resolvePlatform(
     if (community) {
       return dirname(community);
     }
+
+    const enterprise = resolveNode(
+      config.app.rootDir,
+      `@ionic-enterprise/capacitor-${platform}`,
+      'package.json',
+    );
+
+    if (enterprise) {
+      return dirname(enterprise);
+    }
   }
 
   // third-party
@@ -510,4 +543,33 @@ export function resolvePlatform(
   }
 
   return null;
+}
+
+export async function checkJDKMajorVersion(): Promise<number> {
+  try {
+    const string = await runCommand('java', ['--version']);
+    const versionRegex = RegExp(/([0-9]+)\.?([0-9]*)\.?([0-9]*)/);
+    const versionMatch = versionRegex.exec(string);
+
+    if (versionMatch === null) {
+      return -1;
+    }
+
+    const firstVersionNumber = parseInt(versionMatch[1]);
+    const secondVersionNumber = parseInt(versionMatch[2]);
+
+    if (typeof firstVersionNumber === 'number' && firstVersionNumber != 1) {
+      return firstVersionNumber;
+    } else if (
+      typeof secondVersionNumber === 'number' &&
+      firstVersionNumber == 1 &&
+      secondVersionNumber < 9
+    ) {
+      return secondVersionNumber;
+    } else {
+      return -1;
+    }
+  } catch (e) {
+    return -1;
+  }
 }

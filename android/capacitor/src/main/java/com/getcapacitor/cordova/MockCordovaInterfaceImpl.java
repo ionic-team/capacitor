@@ -1,7 +1,7 @@
 package com.getcapacitor.cordova;
 
-import android.app.Activity;
 import android.util.Pair;
+import androidx.appcompat.app.AppCompatActivity;
 import java.util.concurrent.Executors;
 import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.CordovaPlugin;
@@ -9,7 +9,7 @@ import org.json.JSONException;
 
 public class MockCordovaInterfaceImpl extends CordovaInterfaceImpl {
 
-    public MockCordovaInterfaceImpl(Activity activity) {
+    public MockCordovaInterfaceImpl(AppCompatActivity activity) {
         super(activity, Executors.newCachedThreadPool());
     }
 
@@ -26,6 +26,7 @@ public class MockCordovaInterfaceImpl extends CordovaInterfaceImpl {
      * @param grantResults
      * @return true if Cordova handled the permission request, false if not
      */
+    @SuppressWarnings("deprecation")
     public boolean handlePermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
         Pair<CordovaPlugin, Integer> callback = permissionResultCallbacks.getAndRemoveCallback(requestCode);
         if (callback != null) {

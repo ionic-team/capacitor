@@ -5,8 +5,8 @@ import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { getIOSPlugins } from '../ios/common';
 import { logger } from '../log';
-import type { Plugin } from '../plugin';
 import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
+import type { Plugin } from '../plugin';
 import { allSerial } from '../util/promise';
 
 export async function listCommand(
@@ -18,7 +18,7 @@ export async function listCommand(
     await allSerial(
       platforms.map(platformName => () => list(config, platformName)),
     );
-  } catch (e) {
+  } catch (e: any) {
     if (isFatal(e)) {
       throw e;
     }

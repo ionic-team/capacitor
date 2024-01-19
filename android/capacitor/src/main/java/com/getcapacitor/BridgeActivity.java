@@ -12,62 +12,37 @@ public class BridgeActivity extends AppCompatActivity {
 
     protected Bridge bridge;
     protected boolean keepRunning = true;
-    private CapConfig config;
+    protected CapConfig config;
 
-    private int activityDepth = 0;
-    private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-    private final Bridge.Builder bridgeBuilder = new Bridge.Builder(this);
+    protected int activityDepth = 0;
+    protected List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
+    protected final Bridge.Builder bridgeBuilder = new Bridge.Builder(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bridgeBuilder.setInstanceState(savedInstanceState);
-    }
-
-    /**
-     * Initializes the Capacitor Bridge with the Activity.
-     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
-     * initialized automatically. If you need to add additional plugins during initialization,
-     * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
-     *
-     * @param plugins A list of plugins to initialize with Capacitor
-     */
-    @Deprecated
-    protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
-        this.init(savedInstanceState, plugins, null);
-    }
-
-    /**
-     * Initializes the Capacitor Bridge with the Activity.
-     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
-     * initialized automatically. If you need to add additional plugins during initialization,
-     * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
-     *
-     * @param plugins A list of plugins to initialize with Capacitor
-     * @param config An instance of a Capacitor Configuration to use. If null, will load from file
-     */
-    @Deprecated
-    protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, CapConfig config) {
-        this.initialPlugins = plugins;
-        this.config = config;
-
-        this.load();
-    }
-
-    /**
-     * @deprecated This method should not be called manually.
-     */
-    @Deprecated
-    protected void load(Bundle savedInstanceState) {
-        this.load();
-    }
-
-    private void load() {
-        getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
-        setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
+        getApplication().setTheme(R.style.AppTheme_NoActionBar);
         setTheme(R.style.AppTheme_NoActionBar);
-        setContentView(R.layout.bridge_layout_main);
+        try {
+            setContentView(R.layout.bridge_layout_main);
+        } catch (Exception ex) {
+            setContentView(R.layout.no_webview);
+            return;
+        }
 
+        PluginManager loader = new PluginManager(getAssets());
+
+        try {
+            bridgeBuilder.addPlugins(loader.loadPluginClasses());
+        } catch (PluginLoadException ex) {
+            Logger.error("Error loading plugins.", ex);
+        }
+
+        this.load();
+    }
+
+    protected void load() {
         Logger.debug("Starting BridgeActivity");
 
         bridge = bridgeBuilder.addPlugins(initialPlugins).setConfig(config).create();
@@ -97,23 +72,11 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
-        // Preferred behavior: init() was not called, so we construct the bridge with auto-loaded plugins.
-        if (bridge == null) {
-            PluginManager loader = new PluginManager(getAssets());
-
-            try {
-                bridgeBuilder.addPlugins(loader.loadPluginClasses());
-            } catch (PluginLoadException ex) {
-                Logger.error("Error loading plugins.", ex);
-            }
-
-            this.load();
-        }
-
         activityDepth++;
-        this.bridge.onStart();
-        Logger.debug("App started");
+        if (this.bridge != null) {
+            this.bridge.onStart();
+            Logger.debug("App started");
+        }
     }
 
     @Override
@@ -126,36 +89,43 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        bridge.getApp().fireStatusChange(true);
-        this.bridge.onResume();
-        Logger.debug("App resumed");
+        if (bridge != null) {
+            bridge.getApp().fireStatusChange(true);
+            this.bridge.onResume();
+            Logger.debug("App resumed");
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        this.bridge.onPause();
-        Logger.debug("App paused");
+        if (bridge != null) {
+            this.bridge.onPause();
+            Logger.debug("App paused");
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        if (bridge != null) {
+            activityDepth = Math.max(0, activityDepth - 1);
+            if (activityDepth == 0) {
+                bridge.getApp().fireStatusChange(false);
+            }
 
-        activityDepth = Math.max(0, activityDepth - 1);
-        if (activityDepth == 0) {
-            bridge.getApp().fireStatusChange(false);
+            this.bridge.onStop();
+            Logger.debug("App stopped");
         }
-
-        this.bridge.onStop();
-        Logger.debug("App stopped");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.bridge.onDestroy();
-        Logger.debug("App destroyed");
+        if (this.bridge != null) {
+            this.bridge.onDestroy();
+            Logger.debug("App destroyed");
+        }
     }
 
     @Override

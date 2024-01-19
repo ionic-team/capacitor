@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/ios",
-  "version": "3.0.0-beta.6",
+  "version": "6.0.0-beta.2",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -16,17 +16,17 @@
     "Capacitor/Capacitor/",
     "CapacitorCordova/CapacitorCordova/",
     "Capacitor.podspec",
-    "CapacitorCordova.podspec"
+    "CapacitorCordova.podspec",
+    "scripts/pods_helpers.rb"
   ],
   "scripts": {
-    "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova && npm run pod:lint:Capacitor && npm run pod:lint:CapacitorCordova",
+    "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova && pod lib lint --allow-warnings Capacitor.podspec && pod lib lint --allow-warnings CapacitorCordova.podspec",
     "xc:build:Capacitor": "cd Capacitor && xcodebuild -workspace Capacitor.xcworkspace -scheme Capacitor && cd ..",
     "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd ..",
-    "pod:lint:Capacitor": "pod lib lint --allow-warnings Capacitor.podspec",
-    "pod:lint:CapacitorCordova": "pod lib lint --allow-warnings CapacitorCordova.podspec"
+    "xc:build:xcframework": "scripts/build.sh xcframework"
   },
   "peerDependencies": {
-    "@capacitor/core": "~3.0.0-beta.6"
+    "@capacitor/core": "^6.0.0-beta.2"
   },
   "publishConfig": {
     "access": "public"

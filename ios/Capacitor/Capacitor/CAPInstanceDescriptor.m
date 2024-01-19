@@ -35,12 +35,15 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
     _urlHostname = CAPInstanceDescriptorDefaultHostname;
     _pluginConfigurations = @{};
     _legacyConfig = @{};
-    _enableLogging = YES;
-    _enableScrolling = YES;
+    _loggingBehavior = CAPInstanceLoggingBehaviorDebug;
+    _scrollingEnabled = YES;
+    _zoomingEnabled = NO;
     _allowLinkPreviews = YES;
     _handleApplicationNotifications = YES;
+    _isWebDebuggable = NO;
     _contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     _appLocation = location;
+    _limitsNavigationsToAppBoundDomains = FALSE;
     _cordovaConfiguration = [[CDVConfigParser alloc] init];
     _warnings = 0;
     if (location == nil) {

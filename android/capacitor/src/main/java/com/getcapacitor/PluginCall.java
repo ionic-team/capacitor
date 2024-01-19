@@ -96,7 +96,7 @@ public class PluginCall {
      */
     @Deprecated
     public void error(String msg, Exception ex) {
-        reject(msg, null, ex);
+        reject(msg, ex);
     }
 
     /**
@@ -114,10 +114,10 @@ public class PluginCall {
      */
     @Deprecated
     public void error(String msg) {
-        reject(msg, null, null);
+        reject(msg);
     }
 
-    public void reject(String msg, String code, Exception ex) {
+    public void reject(String msg, String code, Exception ex, JSObject data) {
         PluginResult errorResult = new PluginResult();
 
         if (ex != null) {
@@ -127,23 +127,42 @@ public class PluginCall {
         try {
             errorResult.put("message", msg);
             errorResult.put("code", code);
+            if (null != data) {
+                errorResult.put("data", data);
+            }
         } catch (Exception jsonEx) {
-            Logger.error(Logger.tags("Plugin"), jsonEx.getMessage(), null);
+            Logger.error(Logger.tags("Plugin"), jsonEx.getMessage(), jsonEx);
         }
 
         this.msgHandler.sendResponseMessage(this, null, errorResult);
     }
 
+    public void reject(String msg, Exception ex, JSObject data) {
+        reject(msg, null, ex, data);
+    }
+
+    public void reject(String msg, String code, JSObject data) {
+        reject(msg, code, null, data);
+    }
+
+    public void reject(String msg, String code, Exception ex) {
+        reject(msg, code, ex, null);
+    }
+
+    public void reject(String msg, JSObject data) {
+        reject(msg, null, null, data);
+    }
+
     public void reject(String msg, Exception ex) {
-        reject(msg, null, ex);
+        reject(msg, null, ex, null);
     }
 
     public void reject(String msg, String code) {
-        reject(msg, code, null);
+        reject(msg, code, null, null);
     }
 
     public void reject(String msg) {
-        reject(msg, null, null);
+        reject(msg, null, null, null);
     }
 
     public void unimplemented() {
@@ -151,7 +170,7 @@ public class PluginCall {
     }
 
     public void unimplemented(String msg) {
-        reject(msg, "UNIMPLEMENTED", null);
+        reject(msg, "UNIMPLEMENTED", null, null);
     }
 
     public void unavailable() {
@@ -159,7 +178,7 @@ public class PluginCall {
     }
 
     public void unavailable(String msg) {
-        reject(msg, "UNAVAILABLE", null);
+        reject(msg, "UNAVAILABLE", null, null);
     }
 
     public String getPluginId() {
@@ -210,6 +229,24 @@ public class PluginCall {
 
         if (value instanceof Integer) {
             return (Integer) value;
+        }
+        return defaultValue;
+    }
+
+    @Nullable
+    public Long getLong(String name) {
+        return this.getLong(name, null);
+    }
+
+    @Nullable
+    public Long getLong(String name, @Nullable Long defaultValue) {
+        Object value = this.data.opt(name);
+        if (value == null) {
+            return defaultValue;
+        }
+
+        if (value instanceof Long) {
+            return (Long) value;
         }
         return defaultValue;
     }
@@ -281,7 +318,7 @@ public class PluginCall {
     }
 
     public JSObject getObject(String name) {
-        return this.getObject(name, new JSObject());
+        return this.getObject(name, null);
     }
 
     @Nullable
@@ -302,7 +339,7 @@ public class PluginCall {
     }
 
     public JSArray getArray(String name) {
-        return this.getArray(name, new JSArray());
+        return this.getArray(name, null);
     }
 
     /**
@@ -333,6 +370,13 @@ public class PluginCall {
         return defaultValue;
     }
 
+    /**
+     * @param name of the option to check
+     * @return boolean indicating if the plugin call has an option for the provided name.
+     * @deprecated Presence of a key should not be considered significant.
+     * Use typed accessors to check the value instead.
+     */
+    @Deprecated
     public boolean hasOption(String name) {
         return this.data.has(name);
     }

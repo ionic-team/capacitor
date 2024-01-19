@@ -98,7 +98,7 @@ public enum PluginCallResult {
         self.code = code
         self.error = error
         if let data = data {
-            resultData = .dictionary(data)
+            resultData = .dictionary(["data": data])
         } else {
             resultData = nil
         }

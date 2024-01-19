@@ -1,24 +1,4 @@
-export const convertFileSrcServerUrl = (
-  webviewServerUrl: string,
-  filePath: string,
-): string => {
-  if (typeof filePath === 'string') {
-    if (filePath.startsWith('/')) {
-      return webviewServerUrl + '/_capacitor_file_' + filePath;
-    }
-    if (filePath.startsWith('file://')) {
-      return (
-        webviewServerUrl + filePath.replace('file://', '/_capacitor_file_')
-      );
-    }
-    if (filePath.startsWith('content://')) {
-      return (
-        webviewServerUrl + filePath.replace('content:/', '/_capacitor_content_')
-      );
-    }
-  }
-  return filePath;
-};
+import type { WindowCapacitor } from './definitions-internal';
 
 export enum ExceptionCode {
   /**
@@ -39,8 +19,28 @@ export enum ExceptionCode {
   Unavailable = 'UNAVAILABLE',
 }
 
+export interface ExceptionData {
+  [key: string]: any;
+}
+
 export class CapacitorException extends Error {
-  constructor(readonly message: string, readonly code?: ExceptionCode) {
+  constructor(
+    readonly message: string,
+    readonly code?: ExceptionCode,
+    readonly data?: ExceptionData,
+  ) {
     super(message);
   }
 }
+
+export const getPlatformId = (
+  win: WindowCapacitor,
+): 'android' | 'ios' | 'web' => {
+  if (win?.androidBridge) {
+    return 'android';
+  } else if (win?.webkit?.messageHandlers?.bridge) {
+    return 'ios';
+  } else {
+    return 'web';
+  }
+};

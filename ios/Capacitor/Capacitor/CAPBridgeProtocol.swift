@@ -9,8 +9,8 @@ import WebKit
     var notificationRouter: NotificationRouter { get }
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
-    @available(iOS 12.0, *)
     var userInterfaceStyle: UIUserInterfaceStyle { get }
+    var autoRegisterPlugins: Bool { get }
     var statusBarVisible: Bool { get set }
     var statusBarStyle: UIStatusBarStyle { get set }
     var statusBarAnimation: UIStatusBarAnimation { get set }
@@ -31,7 +31,6 @@ import WebKit
     @available(*, deprecated, renamed: "statusBarStyle")
     func getStatusBarStyle() -> UIStatusBarStyle
 
-    @available(iOS 12.0, *)
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
 
@@ -72,6 +71,11 @@ import WebKit
     // MARK: - Paths, Files, Assets
     func localURL(fromWebURL webURL: URL?) -> URL?
     func portablePath(fromLocalURL localURL: URL?) -> URL?
+    func setServerBasePath(_ path: String)
+
+    // MARK: - Plugins
+    func registerPluginType(_ pluginType: CAPPlugin.Type)
+    func registerPluginInstance(_ pluginInstance: CAPPlugin)
 
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)

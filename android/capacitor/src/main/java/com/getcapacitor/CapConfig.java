@@ -1,16 +1,24 @@
 package com.getcapacitor;
 
-import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
-import static com.getcapacitor.FileUtils.readFile;
+import static com.getcapacitor.Bridge.CAPACITOR_HTTPS_SCHEME;
+import static com.getcapacitor.Bridge.DEFAULT_ANDROID_WEBVIEW_VERSION;
+import static com.getcapacitor.Bridge.DEFAULT_HUAWEI_WEBVIEW_VERSION;
+import static com.getcapacitor.Bridge.MINIMUM_ANDROID_WEBVIEW_VERSION;
+import static com.getcapacitor.Bridge.MINIMUM_HUAWEI_WEBVIEW_VERSION;
+import static com.getcapacitor.FileUtils.readFileFromAssets;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import androidx.annotation.Nullable;
 import com.getcapacitor.util.JSONUtils;
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,11 +28,15 @@ import org.json.JSONObject;
  */
 public class CapConfig {
 
+    private static final String LOG_BEHAVIOR_NONE = "none";
+    private static final String LOG_BEHAVIOR_DEBUG = "debug";
+    private static final String LOG_BEHAVIOR_PRODUCTION = "production";
+
     // Server Config
     private boolean html5mode = true;
     private String serverUrl;
     private String hostname = "localhost";
-    private String androidScheme = CAPACITOR_HTTP_SCHEME;
+    private String androidScheme = CAPACITOR_HTTPS_SCHEME;
     private String[] allowNavigation;
 
     // Android Config
@@ -34,7 +46,13 @@ public class CapConfig {
     private boolean allowMixedContent = false;
     private boolean captureInput = false;
     private boolean webContentsDebuggingEnabled = false;
-    private boolean hideLogs = false;
+    private boolean loggingEnabled = true;
+    private boolean initialFocus = true;
+    private boolean useLegacyBridge = false;
+    private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
+    private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
+    private String errorPath;
+    private boolean zoomableWebView = false;
 
     // Embedded
     private String startPath;
@@ -65,7 +83,7 @@ public class CapConfig {
             this.configJSON = config;
         } else {
             // Load the capacitor.config.json
-            loadConfig(assetManager);
+            loadConfigFromAssets(assetManager, null);
         }
 
         deserializeConfig(null);
@@ -85,7 +103,47 @@ public class CapConfig {
             return config;
         }
 
-        config.loadConfig(context.getAssets());
+        config.loadConfigFromAssets(context.getAssets(), null);
+        config.deserializeConfig(context);
+        return config;
+    }
+
+    /**
+     * Constructs a Capacitor Configuration from config.json file within the app assets.
+     *
+     * @param context The context.
+     * @param path A path relative to the root assets directory.
+     * @return A loaded config file, if successful.
+     */
+    public static CapConfig loadFromAssets(Context context, String path) {
+        CapConfig config = new CapConfig();
+
+        if (context == null) {
+            Logger.error("Capacitor Config could not be created from file. Context must not be null.");
+            return config;
+        }
+
+        config.loadConfigFromAssets(context.getAssets(), path);
+        config.deserializeConfig(context);
+        return config;
+    }
+
+    /**
+     * Constructs a Capacitor Configuration from config.json file within the app file-space.
+     *
+     * @param context The context.
+     * @param path A path relative to the root of the app file-space.
+     * @return A loaded config file, if successful.
+     */
+    public static CapConfig loadFromFile(Context context, String path) {
+        CapConfig config = new CapConfig();
+
+        if (context == null) {
+            Logger.error("Capacitor Config could not be created from file. Context must not be null.");
+            return config;
+        }
+
+        config.loadConfigFromFile(path);
         config.deserializeConfig(context);
         return config;
     }
@@ -100,7 +158,11 @@ public class CapConfig {
         this.html5mode = builder.html5mode;
         this.serverUrl = builder.serverUrl;
         this.hostname = builder.hostname;
-        this.androidScheme = builder.androidScheme;
+
+        if (this.validateScheme(builder.androidScheme)) {
+            this.androidScheme = builder.androidScheme;
+        }
+
         this.allowNavigation = builder.allowNavigation;
 
         // Android Config
@@ -110,7 +172,13 @@ public class CapConfig {
         this.allowMixedContent = builder.allowMixedContent;
         this.captureInput = builder.captureInput;
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
-        this.hideLogs = builder.hideLogs;
+        this.loggingEnabled = builder.loggingEnabled;
+        this.initialFocus = builder.initialFocus;
+        this.useLegacyBridge = builder.useLegacyBridge;
+        this.minWebViewVersion = builder.minWebViewVersion;
+        this.minHuaweiWebViewVersion = builder.minHuaweiWebViewVersion;
+        this.errorPath = builder.errorPath;
+        this.zoomableWebView = builder.zoomableWebView;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -121,10 +189,20 @@ public class CapConfig {
 
     /**
      * Loads a Capacitor Configuration JSON file into a Capacitor Configuration object.
+     * An optional path string can be provided to look for the config in a subdirectory path.
      */
-    private void loadConfig(AssetManager assetManager) {
+    private void loadConfigFromAssets(AssetManager assetManager, String path) {
+        if (path == null) {
+            path = "";
+        } else {
+            // Add slash at the end to form a proper file path if going deeper in assets dir
+            if (path.charAt(path.length() - 1) != '/') {
+                path = path + "/";
+            }
+        }
+
         try {
-            String jsonString = readFile(assetManager, "capacitor.config.json");
+            String jsonString = readFileFromAssets(assetManager, path + "capacitor.config.json");
             configJSON = new JSONObject(jsonString);
         } catch (IOException ex) {
             Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
@@ -134,14 +212,47 @@ public class CapConfig {
     }
 
     /**
+     * Loads a Capacitor Configuration JSON file into a Capacitor Configuration object.
+     * An optional path string can be provided to look for the config in a subdirectory path.
+     */
+    private void loadConfigFromFile(String path) {
+        if (path == null) {
+            path = "";
+        } else {
+            // Add slash at the end to form a proper file path if going deeper in assets dir
+            if (path.charAt(path.length() - 1) != '/') {
+                path = path + "/";
+            }
+        }
+
+        try {
+            File configFile = new File(path + "capacitor.config.json");
+            String jsonString = FileUtils.readFileFromDisk(configFile);
+            configJSON = new JSONObject(jsonString);
+        } catch (JSONException ex) {
+            Logger.error("Unable to parse capacitor.config.json. Make sure it's valid json", ex);
+        } catch (IOException ex) {
+            Logger.error("Unable to load capacitor.config.json.", ex);
+        }
+    }
+
+    /**
      * Deserializes the config from JSON into a Capacitor Configuration object.
      */
     private void deserializeConfig(@Nullable Context context) {
+        boolean isDebug = context != null && (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+
         // Server
         html5mode = JSONUtils.getBoolean(configJSON, "server.html5mode", html5mode);
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
-        androidScheme = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
+        errorPath = JSONUtils.getString(configJSON, "server.errorPath", null);
+
+        String configSchema = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
+        if (this.validateScheme(configSchema)) {
+            androidScheme = configSchema;
+        }
+
         allowNavigation = JSONUtils.getArray(configJSON, "server.allowNavigation", null);
 
         // Android
@@ -157,13 +268,50 @@ public class CapConfig {
                 "android.allowMixedContent",
                 JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
             );
+        minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", DEFAULT_ANDROID_WEBVIEW_VERSION);
+        minHuaweiWebViewVersion = JSONUtils.getInt(configJSON, "android.minHuaweiWebViewVersion", DEFAULT_HUAWEI_WEBVIEW_VERSION);
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
-        hideLogs = JSONUtils.getBoolean(configJSON, "android.hideLogs", JSONUtils.getBoolean(configJSON, "hideLogs", hideLogs));
-        webContentsDebuggingEnabled = context != null && (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
-        webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
+        useLegacyBridge = JSONUtils.getBoolean(configJSON, "android.useLegacyBridge", useLegacyBridge);
+        webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
+        zoomableWebView = JSONUtils.getBoolean(configJSON, "android.zoomEnabled", JSONUtils.getBoolean(configJSON, "zoomEnabled", false));
+
+        String logBehavior = JSONUtils.getString(
+            configJSON,
+            "android.loggingBehavior",
+            JSONUtils.getString(configJSON, "loggingBehavior", LOG_BEHAVIOR_DEBUG)
+        );
+        switch (logBehavior.toLowerCase(Locale.ROOT)) {
+            case LOG_BEHAVIOR_PRODUCTION:
+                loggingEnabled = true;
+                break;
+            case LOG_BEHAVIOR_NONE:
+                loggingEnabled = false;
+                break;
+            default: // LOG_BEHAVIOR_DEBUG
+                loggingEnabled = isDebug;
+        }
+
+        initialFocus = JSONUtils.getBoolean(configJSON, "android.initialFocus", initialFocus);
 
         // Plugins
         pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
+    }
+
+    private boolean validateScheme(String scheme) {
+        List<String> invalidSchemes = Arrays.asList("file", "ftp", "ftps", "ws", "wss", "about", "blob", "data");
+        if (invalidSchemes.contains(scheme)) {
+            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to https.");
+            return false;
+        }
+
+        // Non-http(s) schemes are not allowed to modify the URL path as of Android Webview 117
+        if (!scheme.equals("http") && !scheme.equals("https")) {
+            Logger.warn(
+                "Using a non-standard scheme: " + scheme + " for Android. This is known to cause issues as of Android Webview 117."
+            );
+        }
+
+        return true;
     }
 
     public boolean isHTML5Mode() {
@@ -172,6 +320,10 @@ public class CapConfig {
 
     public String getServerUrl() {
         return serverUrl;
+    }
+
+    public String getErrorPath() {
+        return errorPath;
     }
 
     public String getHostname() {
@@ -214,8 +366,38 @@ public class CapConfig {
         return webContentsDebuggingEnabled;
     }
 
-    public boolean isLogsHidden() {
-        return hideLogs;
+    public boolean isZoomableWebView() {
+        return zoomableWebView;
+    }
+
+    public boolean isLoggingEnabled() {
+        return loggingEnabled;
+    }
+
+    public boolean isInitialFocus() {
+        return initialFocus;
+    }
+
+    public boolean isUsingLegacyBridge() {
+        return useLegacyBridge;
+    }
+
+    public int getMinWebViewVersion() {
+        if (minWebViewVersion < MINIMUM_ANDROID_WEBVIEW_VERSION) {
+            Logger.warn("Specified minimum webview version is too low, defaulting to " + MINIMUM_ANDROID_WEBVIEW_VERSION);
+            return MINIMUM_ANDROID_WEBVIEW_VERSION;
+        }
+
+        return minWebViewVersion;
+    }
+
+    public int getMinHuaweiWebViewVersion() {
+        if (minHuaweiWebViewVersion < MINIMUM_HUAWEI_WEBVIEW_VERSION) {
+            Logger.warn("Specified minimum Huawei webview version is too low, defaulting to " + MINIMUM_HUAWEI_WEBVIEW_VERSION);
+            return MINIMUM_HUAWEI_WEBVIEW_VERSION;
+        }
+
+        return minHuaweiWebViewVersion;
     }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
@@ -361,8 +543,9 @@ public class CapConfig {
         // Server Config Values
         private boolean html5mode = true;
         private String serverUrl;
+        private String errorPath;
         private String hostname = "localhost";
-        private String androidScheme = CAPACITOR_HTTP_SCHEME;
+        private String androidScheme = CAPACITOR_HTTPS_SCHEME;
         private String[] allowNavigation;
 
         // Android Config Values
@@ -372,7 +555,12 @@ public class CapConfig {
         private boolean allowMixedContent = false;
         private boolean captureInput = false;
         private Boolean webContentsDebuggingEnabled = null;
-        private boolean hideLogs = false;
+        private boolean loggingEnabled = true;
+        private boolean initialFocus = false;
+        private boolean useLegacyBridge = false;
+        private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
+        private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
+        private boolean zoomableWebView = false;
 
         // Embedded
         private String startPath = null;
@@ -414,6 +602,11 @@ public class CapConfig {
 
         public Builder setServerUrl(String serverUrl) {
             this.serverUrl = serverUrl;
+            return this;
+        }
+
+        public Builder setErrorPath(String errorPath) {
+            this.errorPath = errorPath;
             return this;
         }
 
@@ -462,13 +655,28 @@ public class CapConfig {
             return this;
         }
 
+        public Builder setUseLegacyBridge(boolean useLegacyBridge) {
+            this.useLegacyBridge = useLegacyBridge;
+            return this;
+        }
+
         public Builder setWebContentsDebuggingEnabled(boolean webContentsDebuggingEnabled) {
             this.webContentsDebuggingEnabled = webContentsDebuggingEnabled;
             return this;
         }
 
-        public Builder setLogsHidden(boolean hideLogs) {
-            this.hideLogs = hideLogs;
+        public Builder setZoomableWebView(boolean zoomableWebView) {
+            this.zoomableWebView = zoomableWebView;
+            return this;
+        }
+
+        public Builder setLoggingEnabled(boolean enabled) {
+            this.loggingEnabled = enabled;
+            return this;
+        }
+
+        public Builder setInitialFocus(boolean focus) {
+            this.initialFocus = focus;
             return this;
         }
     }

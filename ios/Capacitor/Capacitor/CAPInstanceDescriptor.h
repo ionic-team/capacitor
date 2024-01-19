@@ -17,6 +17,12 @@ typedef NS_OPTIONS(NSUInteger, CAPInstanceWarning) {
     CAPInstanceWarningInvalidCordovaFile  NS_SWIFT_NAME(invalidCordovaFile) = 1 << 4
 } NS_SWIFT_NAME(InstanceWarning);
 
+typedef NS_OPTIONS(NSUInteger, CAPInstanceLoggingBehavior) {
+    CAPInstanceLoggingBehaviorNone          NS_SWIFT_NAME(none)         = 1 << 0,
+    CAPInstanceLoggingBehaviorDebug         NS_SWIFT_NAME(debug)        = 1 << 1,
+    CAPInstanceLoggingBehaviorProduction    NS_SWIFT_NAME(production)   = 1 << 2,
+} NS_SWIFT_NAME(InstanceLoggingBehavior);
+
 extern NSString * _Nonnull const CAPInstanceDescriptorDefaultScheme NS_SWIFT_UNAVAILABLE("Use InstanceDescriptorDefaults");
 extern NSString * _Nonnull const CAPInstanceDescriptorDefaultHostname NS_SWIFT_UNAVAILABLE("Use InstanceDescriptorDefaults");
 
@@ -48,6 +54,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *urlScheme;
 /**
+ @brief The path to a local html page to display in case of errors.
+ @discussion Defaults to nil.
+ */
+@property (nonatomic, copy, nullable) NSString *errorPath;
+/**
  @brief The hostname that will be used for the server URL.
  @discussion Defaults to @c localhost. Set by @c server.hostname in the configuration file.
  */
@@ -63,15 +74,20 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, retain, nonnull) NSDictionary *pluginConfigurations;
 /**
- @brief Whether or not logging is turned on.
- @discussion Set by @c hideLogs in the configuration file.
+ @brief The build configurations under which logging should be enabled.
+ @discussion Defaults to @c debug. Set by @c loggingBehavior in the configuration file.
  */
-@property (nonatomic, assign) BOOL enableLogging;
+@property (nonatomic, assign) CAPInstanceLoggingBehavior loggingBehavior;
 /**
  @brief Whether or not the web view can scroll.
  @discussion Set by @c ios.scrollEnabled in the configuration file. Corresponds to @c isScrollEnabled on WKWebView.
  */
-@property (nonatomic, assign) BOOL enableScrolling;
+@property (nonatomic, assign) BOOL scrollingEnabled;
+/**
+ @brief Whether or not the web view can zoom.
+ @discussion Set by @c zoomEnabled in the configuration file.
+ */
+@property (nonatomic, assign) BOOL zoomingEnabled;
 /**
  @brief Whether or not the web view will preview links.
  @discussion Set by @c ios.allowsLinkPreview in the configuration file. Corresponds to @c allowsLinkPreview on WKWebView.
@@ -82,6 +98,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @discussion Defaults to @c true. Required to be @c true for notification plugins to work correctly. Set to @c false if your application will handle notifications independently.
  */
 @property (nonatomic, assign) BOOL handleApplicationNotifications;
+/**
+ @brief Enables web debugging by setting isInspectable of  @c WKWebView to @c true on iOS 16.4 and greater
+ @discussion Defaults to true in debug mode and false in production
+ */
+@property (nonatomic, assign) BOOL isWebDebuggable;
 /**
  @brief How the web view will inset its content
  @discussion Set by @c ios.contentInset in the configuration file. Corresponds to @c contentInsetAdjustmentBehavior on WKWebView.
@@ -97,6 +118,16 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @discussion Defaults to nil, in which case Capacitor will attempt to load @c index.html.
  */
 @property (nonatomic, copy, nullable) NSString *appStartPath;
+/**
+ @brief Whether or not the Capacitor WebView will limit the navigation to @c WKAppBoundDomains listed in the Info.plist.
+ @discussion Defaults to @c false. Set by @c ios.limitsNavigationsToAppBoundDomains in the configuration file.  Required to be @c true for plugins to work if the app includes @c WKAppBoundDomains in the Info.plist.
+ */
+@property (nonatomic, assign) BOOL limitsNavigationsToAppBoundDomains;
+/**
+ @brief The content mode for the web view to use when it loads and renders web content.
+ @discussion Defaults to  @c recommended. Set by @c ios.preferredContentMode in the configuration file.
+ */
+@property (nonatomic, copy, nullable) NSString *preferredContentMode;
 /**
  @brief The parser used to load the cofiguration for Cordova plugins.
  */

@@ -4,6 +4,7 @@ import {
   checkWebDir,
   selectPlatforms,
   isValidPlatform,
+  runPlatformHook,
 } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
@@ -20,11 +21,12 @@ export async function syncCommand(
   config: Config,
   selectedPlatformName: string,
   deployment: boolean,
+  inline = false,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     try {
-      await copyCommand(config, selectedPlatformName);
-    } catch (e) {
+      await copyCommand(config, selectedPlatformName, inline);
+    } catch (e: any) {
       logger.error(e.stack ?? e);
     }
     await updateCommand(config, selectedPlatformName, deployment);
@@ -38,14 +40,14 @@ export async function syncCommand(
         ...updateChecks(config, platforms),
       ]);
       await allSerial(
-        platforms.map(platformName => () =>
-          sync(config, platformName, deployment),
+        platforms.map(
+          platformName => () => sync(config, platformName, deployment, inline),
         ),
       );
       const now = +new Date();
       const diff = (now - then) / 1000;
       logger.info(`Sync finished in ${diff}s`);
-    } catch (e) {
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }
@@ -59,11 +61,26 @@ export async function sync(
   config: Config,
   platformName: string,
   deployment: boolean,
+  inline = false,
 ): Promise<void> {
+  await runPlatformHook(
+    config,
+    platformName,
+    config.app.rootDir,
+    'capacitor:sync:before',
+  );
+
   try {
-    await copy(config, platformName);
-  } catch (e) {
+    await copy(config, platformName, inline);
+  } catch (e: any) {
     logger.error(e.stack ?? e);
   }
   await update(config, platformName, deployment);
+
+  await runPlatformHook(
+    config,
+    platformName,
+    config.app.rootDir,
+    'capacitor:sync:after',
+  );
 }

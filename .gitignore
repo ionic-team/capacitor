@@ -22,3 +22,9 @@ android-template/app/app.iml
 .gradle/
 .settings/
 .project
+.env
+capacitor-build.log
+
+# Carthage and Carthage-built binaries
+Carthage
+*.xcframework.zip

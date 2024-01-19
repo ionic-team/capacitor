@@ -1,3 +1,4 @@
+import { sleepForever } from '@ionic/utils-process';
 import { columnar } from '@ionic/utils-terminal';
 
 import { runAndroid } from '../android/run';
@@ -10,18 +11,25 @@ import {
   promptForPlatform,
   getPlatformTargetName,
 } from '../common';
-import type { Config } from '../definitions';
+import type { AppConfig, Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { runIOS } from '../ios/run';
 import { logger, output } from '../log';
+import { CapLiveReloadHelper } from '../util/livereload';
 import { getPlatformTargets } from '../util/native-run';
 
 import { sync } from './sync';
 
 export interface RunCommandOptions {
+  scheme?: string;
+  flavor?: string;
   list?: boolean;
   target?: string;
   sync?: boolean;
+  forwardPorts?: string;
+  liveReload?: boolean;
+  host?: string;
+  port?: string;
 }
 
 export async function runCommand(
@@ -29,10 +37,18 @@ export async function runCommand(
   selectedPlatformName: string,
   options: RunCommandOptions,
 ): Promise<void> {
+  options.host =
+    options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
+  options.port = options.port ?? '3000';
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(config, platformDir, 'capacitor:run');
+      await runPlatformHook(
+        config,
+        selectedPlatformName,
+        platformDir,
+        'capacitor:run',
+      );
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
@@ -75,11 +91,48 @@ export async function runCommand(
 
     try {
       if (options.sync) {
-        await sync(config, platformName, false);
+        if (options.liveReload) {
+          const newExtConfig =
+            await CapLiveReloadHelper.editExtConfigForLiveReload(
+              config,
+              platformName,
+              options,
+            );
+          const cfg: {
+            -readonly [K in keyof Config]: Config[K];
+          } = config;
+          const cfgapp: {
+            -readonly [K in keyof AppConfig]: AppConfig[K];
+          } = config.app;
+          cfgapp.extConfig = newExtConfig;
+          cfg.app = cfgapp;
+          await sync(cfg, platformName, false, true);
+        } else {
+          await sync(config, platformName, false, true);
+        }
+      } else {
+        if (options.liveReload) {
+          await CapLiveReloadHelper.editCapConfigForLiveReload(
+            config,
+            platformName,
+            options,
+          );
+        }
       }
-
       await run(config, platformName, options);
-    } catch (e) {
+      if (options.liveReload) {
+        process.on('SIGINT', async () => {
+          if (options.liveReload) {
+            await CapLiveReloadHelper.revertCapConfigForLiveReload();
+          }
+          process.exit();
+        });
+        console.log(
+          `\nApp running with live reload listing for: http://${options.host}:${options.port}. Press Ctrl+C to quit.`,
+        );
+        await sleepForever();
+      }
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }

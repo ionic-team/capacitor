@@ -7,27 +7,23 @@
 </div>
 <br />
 <p align="center">
-  <a href="https://github.com/ionic-team/capacitor/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/workflow/status/ionic-team/capacitor/CI?style=flat-square" /></a>
+  <a href="https://github.com/ionic-team/capacitor/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/actions/workflow/status/ionic-team/capacitor/ci.yml?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/dw/@capacitor/core?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/v/@capacitor/core?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/l/@capacitor/core?style=flat-square" /></a>
 </p>
 <p align="center">
-  <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=getcapacitor.com&color=blue&style=flat-square" /></a>
+  <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=capacitorjs.com&color=blue&style=flat-square" /></a>
   <a href="https://twitter.com/capacitorjs"><img src="https://img.shields.io/twitter/follow/capacitorjs" /></a>
 </p>
 
 ---
 
-Capacitor is a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom native plugins that your app may need. Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores _and_ the mobile web.
+Capacitor lets you run web apps natively on iOS, Android, Web, and more with a single codebase and cross-platform APIs.
+
+Capacitor provides a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom native plugins that your app may need. Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores _and_ the mobile web.
 
 Capacitor comes with a Plugin API for building native plugins. Plugins can be written inside Capacitor apps or packaged into an npm dependency for community use. Plugin authors are encouraged to use Swift to develop plugins in iOS and Kotlin (or Java) in Android.
-
-> ### Capacitor 3.0 development has begun! :sparkles: :rocket: :star:
->
-> Interested in following Capacitor 3 development? We'd love your feedback! Use the [Capacitor 3 planning issue](https://github.com/ionic-team/capacitor/issues/3133) as a starting point. [Open a discussion](https://github.com/ionic-team/capacitor/discussions) if you have questions or suggestions.
->
-> We'd love to hear from you. :blue_heart:
 
 ## Getting Started
 
@@ -86,6 +82,46 @@ Made possible by the Capacitor community. 💖
 <!-- CONTRIBUTORS:START -->
 
 <p align="center">
+  <a href="https://github.com/bentleyo"><img src="https://github.com/bentleyo.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/bosh-code"><img src="https://github.com/bosh-code.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/arcadius"><img src="https://github.com/arcadius.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/Andy3189"><img src="https://github.com/Andy3189.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/liuwin7"><img src="https://github.com/liuwin7.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/5uper"><img src="https://github.com/5uper.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/petermakeswebsites"><img src="https://github.com/petermakeswebsites.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/kjr-lh"><img src="https://github.com/kjr-lh.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/yooouuri"><img src="https://github.com/yooouuri.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/davidnussio"><img src="https://github.com/davidnussio.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/ltm"><img src="https://github.com/ltm.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/stewones"><img src="https://github.com/stewones.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/wilgert"><img src="https://github.com/wilgert.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/saschpe"><img src="https://github.com/saschpe.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/zakuru"><img src="https://github.com/zakuru.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/JanMisker"><img src="https://github.com/JanMisker.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/piotr-zurek"><img src="https://github.com/piotr-zurek.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/crhayes"><img src="https://github.com/crhayes.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/markemer"><img src="https://github.com/markemer.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/junxiong96"><img src="https://github.com/junxiong96.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/dtarnawsky"><img src="https://github.com/dtarnawsky.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/dallastjames"><img src="https://github.com/dallastjames.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/arnold-plakolli"><img src="https://github.com/arnold-plakolli.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/zookatron"><img src="https://github.com/zookatron.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/giralte-ionic"><img src="https://github.com/giralte-ionic.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/Steven0351"><img src="https://github.com/Steven0351.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/samydoesit"><img src="https://github.com/samydoesit.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/hermitdemschoenenleben"><img src="https://github.com/hermitdemschoenenleben.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/carldea"><img src="https://github.com/carldea.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/sandor-biro"><img src="https://github.com/sandor-biro.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/sla100"><img src="https://github.com/sla100.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/Dante1349"><img src="https://github.com/Dante1349.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/larrydiamond"><img src="https://github.com/larrydiamond.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/sosoba"><img src="https://github.com/sosoba.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/ItsChaceD"><img src="https://github.com/ItsChaceD.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/Zapominacz"><img src="https://github.com/Zapominacz.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/EinfachHans"><img src="https://github.com/EinfachHans.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/MortenGregersen"><img src="https://github.com/MortenGregersen.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/bazuka5801"><img src="https://github.com/bazuka5801.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/XiaNi"><img src="https://github.com/XiaNi.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/timbru31"><img src="https://github.com/timbru31.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/theproducer"><img src="https://github.com/theproducer.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/thomasvidas"><img src="https://github.com/thomasvidas.png?size=100" width="50" height="50" /></a>

@@ -8,7 +8,7 @@
 
 @implementation CAPInstanceConfiguration
 
-- (instancetype)initWithDescriptor:(CAPInstanceDescriptor *)descriptor {
+- (instancetype)initWithDescriptor:(CAPInstanceDescriptor *)descriptor isDebug:(BOOL)debug {
     if (self = [super init]) {
         // first, give the descriptor a chance to make itself internally consistent
         [descriptor normalize];
@@ -17,14 +17,28 @@
         _overridenUserAgentString = descriptor.overridenUserAgentString;
         _backgroundColor = descriptor.backgroundColor;
         _allowedNavigationHostnames = descriptor.allowedNavigationHostnames;
-        _enableLogging = descriptor.enableLogging;
-        _enableScrolling = descriptor.enableScrolling;
+        switch (descriptor.loggingBehavior) {
+            case CAPInstanceLoggingBehaviorProduction:
+                _loggingEnabled = true;
+                break;
+            case CAPInstanceLoggingBehaviorDebug:
+                _loggingEnabled = debug;
+                break;
+            default:
+                _loggingEnabled = false;
+                break;
+        }
+        _scrollingEnabled = descriptor.scrollingEnabled;
+        _zoomingEnabled =  descriptor.zoomingEnabled;
         _allowLinkPreviews = descriptor.allowLinkPreviews;
         _handleApplicationNotifications = descriptor.handleApplicationNotifications;
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
         _appLocation = descriptor.appLocation;
         _appStartPath = descriptor.appStartPath;
+        _limitsNavigationsToAppBoundDomains = descriptor.limitsNavigationsToAppBoundDomains;
+        _preferredContentMode = descriptor.preferredContentMode;
         _pluginConfigurations = descriptor.pluginConfigurations;
+        _isWebDebuggable = descriptor.isWebDebuggable;
         _legacyConfig = descriptor.legacyConfig;
         // construct the necessary URLs
         _localURL = [[NSURL alloc] initWithString:[NSString stringWithFormat:@"%@://%@", descriptor.urlScheme, descriptor.urlHostname]];
@@ -34,6 +48,7 @@
         else {
             _serverURL = _localURL;
         }
+        _errorPath = descriptor.errorPath;
         // extract the one value we care about from the cordova configuration
         _cordovaDeployDisabled = [descriptor cordovaDeployDisabled];
     }
@@ -48,11 +63,14 @@
         _allowedNavigationHostnames = [[configuration allowedNavigationHostnames] copy];
         _localURL = [[configuration localURL] copy];
         _serverURL = [[configuration serverURL] copy];
+        _errorPath = [[configuration errorPath] copy];
         _pluginConfigurations = [[configuration pluginConfigurations] copy];
-        _enableLogging = configuration.enableLogging;
-        _enableScrolling = configuration.enableScrolling;
+        _loggingEnabled = configuration.loggingEnabled;
+        _scrollingEnabled = configuration.scrollingEnabled;
+        _zoomingEnabled = configuration.zoomingEnabled;
         _allowLinkPreviews = configuration.allowLinkPreviews;
         _handleApplicationNotifications = configuration.handleApplicationNotifications;
+        _isWebDebuggable = configuration.isWebDebuggable;
         _cordovaDeployDisabled = configuration.cordovaDeployDisabled;
         _contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior;
         // we don't care about internal usage of deprecated APIs and the framework should build cleanly

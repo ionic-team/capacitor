@@ -17,17 +17,19 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Base64;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -171,7 +173,7 @@ public class WebViewLocalServer {
             return null;
         }
 
-        if (isLocalFile(loadingUrl) || isMainUrl(loadingUrl) || !isAllowedUrl(loadingUrl)) {
+        if (isLocalFile(loadingUrl) || isMainUrl(loadingUrl) || !isAllowedUrl(loadingUrl) || isErrorUrl(loadingUrl)) {
             Logger.debug("Handling local request: " + request.getUrl().toString());
             return handleLocalRequest(request, handler);
         } else {
@@ -182,6 +184,11 @@ public class WebViewLocalServer {
     private boolean isLocalFile(Uri uri) {
         String path = uri.getPath();
         return path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart);
+    }
+
+    private boolean isErrorUrl(Uri uri) {
+        String url = uri.toString();
+        return url.equals(bridge.getErrorUrl());
     }
 
     private boolean isMainUrl(Uri loadingUrl) {
@@ -225,7 +232,7 @@ public class WebViewLocalServer {
             );
         }
 
-        if (isLocalFile(request.getUrl())) {
+        if (isLocalFile(request.getUrl()) || isErrorUrl(request.getUrl())) {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
             String mimeType = getMimeType(request.getUrl().getPath(), responseStream);
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
@@ -254,6 +261,12 @@ public class WebViewLocalServer {
             InputStream responseStream;
             try {
                 String startPath = this.basePath + "/index.html";
+                if (bridge.getRouteProcessor() != null) {
+                    ProcessedRoute processedRoute = bridge.getRouteProcessor().process(this.basePath, "/index.html");
+                    startPath = processedRoute.getPath();
+                    isAsset = processedRoute.isAsset();
+                }
+
                 if (isAsset) {
                     responseStream = protocolHandler.openAsset(startPath);
                 } else {
@@ -264,9 +277,10 @@ public class WebViewLocalServer {
                 return null;
             }
 
-            responseStream = jsInjector.getInjectedStream(responseStream);
+            if (jsInjector != null) {
+                responseStream = jsInjector.getInjectedStream(responseStream);
+            }
 
-            bridge.reset();
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
             return new WebResourceResponse(
                 "text/html",
@@ -293,9 +307,8 @@ public class WebViewLocalServer {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
 
             // TODO: Conjure up a bit more subtlety than this
-            if (ext.equals(".html")) {
+            if (ext.equals(".html") && jsInjector != null) {
                 responseStream = jsInjector.getInjectedStream(responseStream);
-                bridge.reset();
             }
 
             String mimeType = getMimeType(path, responseStream);
@@ -345,13 +358,22 @@ public class WebViewLocalServer {
                     conn.setRequestMethod(method);
                     conn.setReadTimeout(30 * 1000);
                     conn.setConnectTimeout(30 * 1000);
-                    String cookie = conn.getHeaderField("Set-Cookie");
-                    if (cookie != null) {
-                        CookieManager.getInstance().setCookie(url, cookie);
+                    if (request.getUrl().getUserInfo() != null) {
+                        byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
+                        String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
+                        conn.setRequestProperty("Authorization", "Basic " + base64);
+                    }
+
+                    List<String> cookies = conn.getHeaderFields().get("Set-Cookie");
+                    if (cookies != null) {
+                        for (String cookie : cookies) {
+                            CookieManager.getInstance().setCookie(url, cookie);
+                        }
                     }
                     InputStream responseStream = conn.getInputStream();
-                    responseStream = jsInjector.getInjectedStream(responseStream);
-                    bridge.reset();
+                    if (jsInjector != null) {
+                        responseStream = jsInjector.getInjectedStream(responseStream);
+                    }
                     return new WebResourceResponse(
                         "text/html",
                         handler.getEncoding(),
@@ -463,14 +485,30 @@ public class WebViewLocalServer {
             public InputStream handle(Uri url) {
                 InputStream stream = null;
                 String path = url.getPath();
+
+                // Pass path to routeProcessor if present
+                RouteProcessor routeProcessor = bridge.getRouteProcessor();
+                boolean ignoreAssetPath = false;
+                if (routeProcessor != null) {
+                    ProcessedRoute processedRoute = bridge.getRouteProcessor().process("", path);
+                    path = processedRoute.getPath();
+                    isAsset = processedRoute.isAsset();
+                    ignoreAssetPath = processedRoute.isIgnoreAssetPath();
+                }
+
                 try {
                     if (path.startsWith(capacitorContentStart)) {
                         stream = protocolHandler.openContentUrl(url);
-                    } else if (path.startsWith(capacitorFileStart) || !isAsset) {
-                        if (!path.startsWith(capacitorFileStart)) {
+                    } else if (path.startsWith(capacitorFileStart)) {
+                        stream = protocolHandler.openFile(path);
+                    } else if (!isAsset) {
+                        if (routeProcessor == null) {
                             path = basePath + url.getPath();
                         }
+
                         stream = protocolHandler.openFile(path);
+                    } else if (ignoreAssetPath) {
+                        stream = protocolHandler.openAsset(path);
                     } else {
                         stream = protocolHandler.openAsset(assetPath + path);
                     }

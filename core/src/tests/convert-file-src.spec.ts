@@ -1,3 +1,4 @@
+import { initBridge } from '../../native-bridge';
 import type {
   CapacitorInstance,
   WindowCapacitor,
@@ -5,12 +6,14 @@ import type {
 import { createCapacitor } from '../runtime';
 
 describe('convertFileSrc', () => {
-  const win: WindowCapacitor = {
-    WEBVIEW_SERVER_URL: 'webviewSeverUrl',
-  };
+  let win: WindowCapacitor;
   let cap: CapacitorInstance;
 
   beforeEach(() => {
+    win = {
+      WEBVIEW_SERVER_URL: 'webviewSeverUrl',
+    };
+    initBridge(win);
     cap = createCapacitor(win);
   });
 

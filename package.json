@@ -1,36 +1,46 @@
 {
   "name": "capacitor",
   "private": true,
+  "workspaces": [
+    "android",
+    "ios",
+    "cli",
+    "core"
+  ],
   "scripts": {
+    "ci:publish:nightly": "lerna version prerelease --conventional-commits --conventional-prerelease --preid nightly-$(date +\"%Y%m%dT%H%M%S\") --force-publish --no-changelog --no-git-tag-version --no-push --yes && lerna exec -- npm publish --tag nightly --provenance",
+    "ci:publish:alpha": "lerna version prerelease --conventional-commits --conventional-prerelease --preid alpha --force-publish --yes && lerna exec -- npm publish --tag next --provenance",
+    "ci:publish:beta": "lerna version prerelease --conventional-commits --conventional-prerelease --preid beta --force-publish --yes && lerna exec -- npm publish --tag next --provenance",
+    "ci:publish:rc": "lerna version prerelease --conventional-commits --conventional-prerelease --preid rc --force-publish --yes && lerna exec -- npm publish --tag next --provenance",
+    "ci:publish:latest": "lerna version --conventional-commits --force-publish --yes && lerna exec -- npm publish --tag latest-6 --provenance",
+    "ci:publish:latest-from-pre": "lerna version --conventional-commits --conventional-graduate --force-publish --yes && lerna exec -- npm publish --tag latest-6 --provenance",
+    "ci:publish:dev": "lerna version prerelease --conventional-commits --conventional-prerelease --force-publish --preid dev-$(date +\"%Y%m%dT%H%M%S\") --no-changelog --no-git-tag-version --no-push --yes && lerna exec -- npm publish --tag dev --provenance",
+    "build:nativebridge": "lerna run build:nativebridge",
     "sync-peer-dependencies": "node scripts/sync-peer-dependencies.mjs",
-    "lerna:version:rc": "lerna version prerelease --force-publish --preid rc",
-    "lerna:version:latest": "lerna version --force-publish",
-    "lerna:publish:next": "lerna publish from-git --force-publish --dist-tag next --yes",
-    "lerna:publish:latest": "lerna publish from-git --force-publish --dist-tag latest --yes",
     "lint": "npm run eslint && npm run prettier -- --check && npm run swiftlint -- lint",
-    "fmt": "npm run eslint -- --fix && npm run prettier -- --write && npm run swiftlint -- autocorrect --format",
+    "fmt": "npm run eslint -- --fix && npm run prettier -- --write && npm run swiftlint -- --fix --format",
     "prettier": "prettier \"**/*.{css,html,java,js,mjs,ts}\"",
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
-    "postinstall": "lerna bootstrap",
-    "version": "npm run sync-peer-dependencies",
-    "release:rc": "npm run lerna:version:rc",
-    "release:latest": "npm run lerna:version:latest"
+    "version": "npm run sync-peer-dependencies"
   },
   "prettier": "@ionic/prettier-config",
-  "eslintConfig": {
-    "extends": "@ionic/eslint-config/recommended"
-  },
   "devDependencies": {
-    "@ionic/eslint-config": "^0.3.0",
     "@ionic/prettier-config": "~1.0.1",
     "@ionic/swiftlint-config": "^1.1.2",
-    "@types/tar": "^4.0.4",
-    "eslint": "^7.11.0",
-    "lerna": "^3.22.1",
-    "prettier": "~2.2.0",
-    "prettier-plugin-java": "~1.0.0",
+    "@types/node": "18.18.6",
+    "@types/tar": "^6.1.2",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "eslint": "~8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.0",
+    "lerna": "^7.1.3",
+    "prettier": "~2.3.0",
+    "prettier-plugin-java": "~1.1.1",
+    "rimraf": "^4.4.1",
+    "semver": "^7.3.7",
     "swiftlint": "^1.0.1",
-    "tar": "^6.0.5"
+    "tar": "^6.1.11"
   }
 }

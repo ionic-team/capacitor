@@ -1,0 +1,43 @@
+triage:
+  label: triage
+  dryRun: false
+
+lockClosed:
+  days: 30
+  maxIssuesPerRun: 100
+  message: >
+    Thanks for the issue! This issue is being locked to prevent comments that are not relevant to the original issue.
+    If this is still an issue with the latest version of Capacitor, please create a new issue and ensure the template is fully filled out.
+  dryRun: false
+
+comment:
+  labels:
+    - label: "type: bug"
+      message: >
+        This issue has been labeled as `type: bug`. This label is added to issues
+        that that have been reproduced and are being tracked in our internal issue tracker.
+    - label: "needs reproduction"
+      message: >
+        This issue needs more information before it can be addressed.
+        In particular, the reporter needs to provide a minimal sample app that demonstrates the issue.
+        If no sample app is provided within 15 days, the issue will be closed.
+
+        Please see the Contributing Guide for [how to create a Sample App](https://github.com/ionic-team/capacitor/blob/HEAD/CONTRIBUTING.md#creating-a-code-reproduction).
+
+        Thanks!
+        Ionitron 💙
+  dryRun: false
+
+closeAndLock:
+  labels:
+    - label: "support request"
+      message: >
+        Thanks for the issue! This issue appears to be a support request. We use this issue tracker exclusively for
+        bug reports and feature requests. Please use our [forum](https://forum.ionicframework.com) or our community [Discord](https://discord.gg/PvAF4Kv86P) for questions about Capacitor.
+
+
+        Thank you for using Capacitor!
+  close: true
+  lock: true
+  dryRun: false
+

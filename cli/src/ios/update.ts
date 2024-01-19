@@ -14,10 +14,11 @@ import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   logCordovaManualSteps,
+  needsStaticPod,
 } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
-import type { Plugin } from '../plugin';
+import { logger } from '../log';
 import {
   PluginType,
   getAllElements,
@@ -27,10 +28,17 @@ import {
   getPlugins,
   printPlugins,
 } from '../plugin';
+import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
+import {
+  getPluginFiles,
+  findPluginClasses,
+  writePluginJSON,
+} from '../util/iosplugin';
 import { resolveNode } from '../util/node';
-import { runCommand } from '../util/subprocess';
+import { checkPackageManager, generatePackageFile } from '../util/spm';
+import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
 import { getIOSPlugins } from './common';
@@ -47,8 +55,22 @@ export async function updateIOS(
     p => getPluginType(p, platform) === PluginType.Core,
   );
 
-  printPlugins(capacitorPlugins, 'ios');
+  if ((await checkPackageManager(config)) === 'SPM') {
+    await generatePackageFile(config, capacitorPlugins);
+  } else {
+    await updateIOSCocoaPods(config, plugins, deployment);
+  }
 
+  generateIOSPackageJSON(config, plugins);
+
+  printPlugins(capacitorPlugins, 'ios');
+}
+
+async function updateIOSCocoaPods(
+  config: Config,
+  plugins: Plugin[],
+  deployment: boolean,
+) {
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
@@ -79,7 +101,7 @@ export async function installCocoaPodsPlugins(
 ): Promise<void> {
   await runTask(
     `Updating iOS native dependencies with ${c.input(
-      `${config.ios.podPath} install`,
+      `${await config.ios.podPath} install`,
     )}`,
     () => {
       return updatePodfile(config, plugins, deployment);
@@ -93,42 +115,87 @@ async function updatePodfile(
   deployment: boolean,
 ): Promise<void> {
   const dependenciesContent = await generatePodFile(config, plugins);
+  const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
   const podfilePath = join(config.ios.nativeProjectDirAbs, 'Podfile');
-  const podfileLockPath = join(config.ios.nativeProjectDirAbs, 'Podfile.lock');
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
   podfileContent = podfileContent.replace(
     /(def capacitor_pods)[\s\S]+?(\nend)/,
     `$1${dependenciesContent}$2`,
   );
+  podfileContent = podfileContent.replace(
+    /(require_relative)[\s\S]+?(@capacitor\/ios\/scripts\/pods_helpers')/,
+    `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`,
+  );
+  podfileContent = podfileContent.replace(
+    `def assertDeploymentTarget(installer)
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # ensure IPHONEOS_DEPLOYMENT_TARGET is at least 13.0
+      deployment_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f
+      should_upgrade = deployment_target < 13.0 && deployment_target != 0.0
+      if should_upgrade
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      end
+    end
+  end
+end`,
+    `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`,
+  );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
-  if (!deployment) {
-    await remove(podfileLockPath);
+
+  const podPath = await config.ios.podPath;
+  const useBundler = podPath.startsWith('bundle');
+  const podCommandExists = await isInstalled('pod');
+  if (useBundler || podCommandExists) {
+    if (useBundler) {
+      await runCommand(
+        'bundle',
+        ['exec', 'pod', 'install', ...(deployment ? ['--deployment'] : [])],
+        { cwd: config.ios.nativeProjectDirAbs },
+      );
+    } else {
+      await runCommand(
+        podPath,
+        ['install', ...(deployment ? ['--deployment'] : [])],
+        { cwd: config.ios.nativeProjectDirAbs },
+      );
+    }
+  } else {
+    logger.warn('Skipping pod install because CocoaPods is not installed');
   }
 
-  await runCommand(
-    config.ios.podPath,
-    ['install', ...(deployment ? ['--deployment'] : [])],
-    { cwd: config.ios.nativeProjectDirAbs },
-  );
-
-  await runCommand(
-    'xcodebuild',
-    ['-project', basename(`${config.ios.nativeXcodeProjDirAbs}`), 'clean'],
-    {
-      cwd: config.ios.nativeProjectDirAbs,
-    },
-  );
+  const isXcodebuildAvailable = await isInstalled('xcodebuild');
+  if (isXcodebuildAvailable) {
+    await runCommand(
+      'xcodebuild',
+      ['-project', basename(`${config.ios.nativeXcodeProjDirAbs}`), 'clean'],
+      {
+        cwd: config.ios.nativeProjectDirAbs,
+      },
+    );
+  } else {
+    logger.warn(
+      'Unable to find "xcodebuild". Skipping xcodebuild clean step...',
+    );
+  }
 }
 
-async function generatePodFile(
+async function generateIOSPackageJSON(
   config: Config,
   plugins: Plugin[],
-): Promise<string> {
+): Promise<void> {
+  const fileList = await getPluginFiles(plugins);
+  const classList = await findPluginClasses(fileList);
+  writePluginJSON(config, classList);
+}
+
+async function getRelativeCapacitoriOSPath(config: Config) {
   const capacitoriOSPath = resolveNode(
     config.app.rootDir,
     '@capacitor/ios',
     'package.json',
   );
+
   if (!capacitoriOSPath) {
     fatal(
       `Unable to find ${c.strong('node_modules/@capacitor/ios')}.\n` +
@@ -136,10 +203,19 @@ async function generatePodFile(
     );
   }
 
-  const podfilePath = config.ios.nativeProjectDirAbs;
-  const relativeCapacitoriOSPath = convertToUnixPath(
-    relative(podfilePath, await realpath(dirname(capacitoriOSPath))),
+  return convertToUnixPath(
+    relative(
+      config.ios.nativeProjectDirAbs,
+      await realpath(dirname(capacitoriOSPath)),
+    ),
   );
+}
+
+async function generatePodFile(
+  config: Config,
+  plugins: Plugin[],
+): Promise<string> {
+  const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
 
   const capacitorPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Core,
@@ -150,23 +226,46 @@ async function generatePodFile(
         return '';
       }
 
-      return `  pod '${p.ios.name}', :path => '${relative(
-        podfilePath,
-        await realpath(p.rootPath),
+      return `  pod '${p.ios.name}', :path => '${convertToUnixPath(
+        relative(config.ios.nativeProjectDirAbs, await realpath(p.rootPath)),
       )}'\n`;
     }),
   );
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
   );
-  const noPodPlugins = cordovaPlugins.filter(filterNoPods);
-  if (noPodPlugins.length > 0) {
+  cordovaPlugins.map(async p => {
+    const podspecs = getPlatformElement(p, platform, 'podspec');
+    podspecs.map((podspec: any) => {
+      podspec.pods.map((pPods: any) => {
+        pPods.pod.map((pod: any) => {
+          if (pod.$.git) {
+            let gitRef = '';
+            if (pod.$.tag) {
+              gitRef = `, :tag => '${pod.$.tag}'`;
+            } else if (pod.$.branch) {
+              gitRef = `, :branch => '${pod.$.branch}'`;
+            } else if (pod.$.commit) {
+              gitRef = `, :commit => '${pod.$.commit}'`;
+            }
+            pods.push(
+              `  pod '${pod.$.name}', :git => '${pod.$.git}'${gitRef}\n`,
+            );
+          }
+        });
+      });
+    });
+  });
+  const staticPlugins = cordovaPlugins.filter(p => needsStaticPod(p, config));
+  const noStaticPlugins = cordovaPlugins.filter(
+    el => !staticPlugins.includes(el),
+  );
+  if (noStaticPlugins.length > 0) {
     pods.push(
       `  pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
-  const podPlugins = cordovaPlugins.filter(el => !noPodPlugins.includes(el));
-  if (podPlugins.length > 0) {
+  if (staticPlugins.length > 0) {
     pods.push(
       `  pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
@@ -203,10 +302,12 @@ async function generateCordovaPodspecs(
   cordovaPlugins: Plugin[],
   config: Config,
 ) {
-  const noPodPlugins = cordovaPlugins.filter(filterNoPods);
-  const podPlugins = cordovaPlugins.filter(el => !noPodPlugins.includes(el));
-  generateCordovaPodspec(noPodPlugins, config, false);
-  generateCordovaPodspec(podPlugins, config, true);
+  const staticPlugins = cordovaPlugins.filter(p => needsStaticPod(p, config));
+  const noStaticPlugins = cordovaPlugins.filter(
+    el => !staticPlugins.includes(el),
+  );
+  generateCordovaPodspec(noStaticPlugins, config, false);
+  generateCordovaPodspec(staticPlugins, config, true);
 }
 
 async function generateCordovaPodspec(
@@ -317,7 +418,7 @@ async function generateCordovaPodspec(
       `s.vendored_frameworks = '${customFrameworks.join(`', '`)}'`,
     );
     frameworkDeps.push(
-      `s.exclude_files = 'sources/**/*.framework/Headers/*.h'`,
+      `s.exclude_files = 'sources/**/*.framework/Headers/*.h', 'sources/**/*.framework/PrivateHeaders/*.h'`,
     );
   }
   if (sourceFrameworks.length > 0) {
@@ -383,12 +484,8 @@ async function copyPluginsNativeFiles(
     const headerFiles = getPlatformElement(p, platform, 'header-file');
     const codeFiles = sourceFiles.concat(headerFiles);
     const frameworks = getPlatformElement(p, platform, 'framework');
-    const podFrameworks = frameworks.filter(
-      (framework: any) => framework.$.type && framework.$.type === 'podspec',
-    );
-    const podspecs = getPlatformElement(p, platform, 'podspec');
     let sourcesFolderName = 'sources';
-    if (podFrameworks.length > 0 || podspecs.length > 0) {
+    if (needsStaticPod(p, config)) {
       sourcesFolderName += 'static';
     }
     const sourcesFolder = join(
@@ -486,15 +583,6 @@ async function removePluginsNativeFiles(config: Config) {
     config.cli.assets.ios.cordovaPluginsTemplateArchiveAbs,
     config.ios.cordovaPluginsDirAbs,
   );
-}
-
-function filterNoPods(plugin: Plugin) {
-  const frameworks = getPlatformElement(plugin, platform, 'framework');
-  const podFrameworks = frameworks.filter(
-    (framework: any) => framework.$.type && framework.$.type === 'podspec',
-  );
-  const podspecs = getPlatformElement(plugin, platform, 'podspec');
-  return podFrameworks.length === 0 && podspecs.length === 0;
 }
 
 function filterResources(plugin: Plugin) {

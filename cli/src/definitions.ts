@@ -1,4 +1,4 @@
-import type { CapacitorConfig } from './declarations';
+import type { CapacitorConfig, PluginsConfig } from './declarations';
 
 type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
 
@@ -67,7 +67,7 @@ export interface AppConfig {
    * loader. If you're not using something like rollup or webpack or dynamic ES
    * module imports, set this to "true" and import "capacitor.js" manually.
    */
-  readonly bundledWebRuntime: boolean;
+  readonly bundledWebRuntime?: boolean;
 }
 
 export interface AndroidConfig extends PlatformConfig {
@@ -88,14 +88,30 @@ export interface AndroidConfig extends PlatformConfig {
   readonly resDir: string;
   readonly resDirAbs: string;
   readonly buildOutputDir: string;
+  /**
+   * @deprecated Will be removed in Cap. 5 as the `--flavor` option modifies this value.
+   */
   readonly buildOutputDirAbs: string;
+  /**
+   * @deprecated Will be removed in Cap. 5 as the `--flavor` option modifies this value.
+   */
+  readonly apkName: string;
+  readonly flavor: string;
+  readonly buildOptions: {
+    keystorePath?: string;
+    keystorePassword?: string;
+    keystoreAlias?: string;
+    keystoreAliasPassword?: string;
+    releaseType?: 'AAB' | 'APK';
+    signingType?: 'apksigner' | 'jarsigner';
+  };
 }
 
 export interface IOSConfig extends PlatformConfig {
   readonly cordovaPluginsDir: string;
   readonly cordovaPluginsDirAbs: string;
   readonly minVersion: string;
-  readonly podPath: string;
+  readonly podPath: Promise<string>;
   readonly scheme: string;
   readonly webDir: Promise<string>;
   readonly webDirAbs: Promise<string>;
@@ -117,4 +133,19 @@ export interface Config {
   readonly web: WebConfig;
   readonly cli: CLIConfig;
   readonly app: AppConfig;
+  readonly plugins?: PluginsConfig;
+}
+
+export interface FrameworkConfig {
+  name: string;
+  isMatch: (config: Config) => boolean;
+  webDir: string;
+  /**
+   * Specific UI libraries (Ionic) and higher-level frameworks (NextJs/Gatsby)
+   * should be prioritorized over a more generic framework like React/Angular/Vue.
+   * Lower the priorty number the more important it is (1 has more priority over 2).
+   * This helps to make sure a specific framework like "NextJs" is chosen before
+   * the more generic "React".
+   */
+  priority: number;
 }

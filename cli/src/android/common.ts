@@ -11,8 +11,8 @@ import { join, resolve } from 'path';
 import { checkCapacitorPlatform } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
-import type { Plugin } from '../plugin';
 import { PluginType, getPluginPlatform } from '../plugin';
+import type { Plugin } from '../plugin';
 import { convertToUnixPath } from '../util/fs';
 
 export async function checkAndroidPackage(
@@ -71,21 +71,13 @@ export async function editProjectSettingsAndroid(
   config: Config,
 ): Promise<void> {
   const appId = config.app.appId;
-  const appName = config.app.appName;
+  const appName = config.app.appName
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '\\"')
+    .replace(/'/g, "\\'");
 
-  const manifestPath = resolve(
-    config.android.srcMainDirAbs,
-    'AndroidManifest.xml',
-  );
   const buildGradlePath = resolve(config.android.appDirAbs, 'build.gradle');
-
-  let manifestContent = await readFile(manifestPath, { encoding: 'utf-8' });
-
-  manifestContent = manifestContent.replace(
-    /com.getcapacitor.myapp/g,
-    `${appId}`,
-  );
-  await writeFile(manifestPath, manifestContent, { encoding: 'utf-8' });
 
   const domainPath = appId.split('.').join('/');
   // Make the package source path to the new plugin Java file
@@ -133,6 +125,11 @@ export async function editProjectSettingsAndroid(
     /applicationId "[^"]+"/,
     `applicationId "${appId}"`,
   );
+  // Update the namespace in build.gradle
+  gradleContent = gradleContent.replace(
+    /namespace "[^"]+"/,
+    `namespace "${appId}"`,
+  );
 
   await writeFile(buildGradlePath, gradleContent, { encoding: 'utf-8' });
 
@@ -140,10 +137,7 @@ export async function editProjectSettingsAndroid(
   const stringsPath = resolve(config.android.resDirAbs, 'values/strings.xml');
   let stringsContent = await readFile(stringsPath, { encoding: 'utf-8' });
   stringsContent = stringsContent.replace(/com.getcapacitor.myapp/g, appId);
-  stringsContent = stringsContent.replace(
-    /My App/g,
-    appName.replace(/'/g, `\\'`),
-  );
+  stringsContent = stringsContent.replace(/My App/g, appName);
 
   await writeFile(stringsPath, stringsContent);
 }

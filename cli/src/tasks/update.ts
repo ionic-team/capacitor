@@ -1,6 +1,5 @@
 import { updateAndroid } from '../android/update';
 import c from '../colors';
-import type { CheckFunction } from '../common';
 import {
   check,
   checkPackage,
@@ -10,9 +9,10 @@ import {
   selectPlatforms,
   isValidPlatform,
 } from '../common';
+import type { CheckFunction } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
-import { checkCocoaPods } from '../ios/common';
+import { checkBundler, checkCocoaPods } from '../ios/common';
 import { updateIOS } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
@@ -25,7 +25,12 @@ export async function updateCommand(
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(config, platformDir, 'capacitor:update');
+      await runPlatformHook(
+        config,
+        selectedPlatformName,
+        platformDir,
+        'capacitor:update',
+      );
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
@@ -36,14 +41,15 @@ export async function updateCommand(
       await check([() => checkPackage(), ...updateChecks(config, platforms)]);
 
       await allSerial(
-        platforms.map(platformName => async () =>
-          await update(config, platformName, deployment),
+        platforms.map(
+          platformName => async () =>
+            await update(config, platformName, deployment),
         ),
       );
       const now = +new Date();
       const diff = (now - then) / 1000;
       logger.info(`Update finished in ${diff}s`);
-    } catch (e) {
+    } catch (e: any) {
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }
@@ -60,7 +66,7 @@ export function updateChecks(
   const checks: CheckFunction[] = [];
   for (const platformName of platforms) {
     if (platformName === config.ios.name) {
-      checks.push(() => checkCocoaPods(config));
+      checks.push(() => checkBundler(config) || checkCocoaPods(config));
     } else if (platformName === config.android.name) {
       continue;
     } else if (platformName === config.web.name) {
@@ -78,10 +84,24 @@ export async function update(
   deployment: boolean,
 ): Promise<void> {
   await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
+    await runPlatformHook(
+      config,
+      platformName,
+      config.app.rootDir,
+      'capacitor:update:before',
+    );
+
     if (platformName === config.ios.name) {
       await updateIOS(config, deployment);
     } else if (platformName === config.android.name) {
       await updateAndroid(config);
     }
+
+    await runPlatformHook(
+      config,
+      platformName,
+      config.app.rootDir,
+      'capacitor:update:after',
+    );
   });
 }

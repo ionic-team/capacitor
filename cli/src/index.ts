@@ -1,7 +1,8 @@
-import program from 'commander';
+import { Option, program } from 'commander';
+import { resolve } from 'path';
 
 import c from './colors';
-import { loadConfig } from './config';
+import { checkExternalConfig, loadConfig } from './config';
 import type { Config } from './definitions';
 import { fatal, isFatal } from './errors';
 import { receive } from './ipc';
@@ -9,6 +10,10 @@ import { logger, output } from './log';
 import { telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
+
+type Writable<T> = T extends object
+  ? { -readonly [K in keyof T]: Writable<T[K]> }
+  : T;
 
 process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
@@ -20,7 +25,7 @@ export async function run(): Promise<void> {
   try {
     const config = await loadConfig();
     runProgram(config);
-  } catch (e) {
+  } catch (e: any) {
     process.exitCode = isFatal(e) ? e.exitCode : 1;
     logger.error(e.message ? e.message : String(e));
   }
@@ -81,13 +86,19 @@ export function runProgram(config: Config): void {
     .description(`${c.input('copy')} + ${c.input('update')}`)
     .option(
       '--deployment',
-      "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
+      'Optional: if provided, pod install will use --deployment option',
+    )
+    .option(
+      '--inline',
+      'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
+      false,
     )
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { deployment }) => {
+        telemetryAction(config, async (platform, { deployment, inline }) => {
+          checkExternalConfig(config.app);
           const { syncCommand } = await import('./tasks/sync');
-          await syncCommand(config, platform, deployment);
+          await syncCommand(config, platform, deployment, inline);
         }),
       ),
     );
@@ -101,11 +112,12 @@ export function runProgram(config: Config): void {
     )
     .option(
       '--deployment',
-      "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
+      'Optional: if provided, pod install will use --deployment option',
     )
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { deployment }) => {
+          checkExternalConfig(config.app);
           const { updateCommand } = await import('./tasks/update');
           await updateCommand(config, platform, deployment);
         }),
@@ -115,31 +127,131 @@ export function runProgram(config: Config): void {
   program
     .command('copy [platform]')
     .description('copies the web app build into the native app')
+    .option(
+      '--inline',
+      'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
+      false,
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform, { inline }) => {
+          checkExternalConfig(config.app);
           const { copyCommand } = await import('./tasks/copy');
-          await copyCommand(config, platform);
+          await copyCommand(config, platform, inline);
         }),
       ),
     );
 
   program
+    .command('build <platform>')
+    .description('builds the release version of the selected platform')
+    .option('--scheme <schemeToBuild>', 'iOS Scheme to build')
+    .option('--flavor <flavorToBuild>', 'Android Flavor to build')
+    .option('--keystorepath <keystorePath>', 'Path to the keystore')
+    .option('--keystorepass <keystorePass>', 'Password to the keystore')
+    .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
+    .option(
+      '--keystorealiaspass <keystoreAliasPass>',
+      'Password for the Key Alias',
+    )
+    .addOption(
+      new Option(
+        '--androidreleasetype <androidreleasetype>',
+        'Android release type; APK or AAB',
+      ).choices(['AAB', 'APK']),
+    )
+    .addOption(
+      new Option(
+        '--signing-type <signingtype>',
+        'Program used to sign apps (default: jarsigner)',
+      ).choices(['apksigner', 'jarsigner']),
+    )
+    .action(
+      wrapAction(
+        telemetryAction(
+          config,
+          async (
+            platform,
+            {
+              scheme,
+              flavor,
+              keystorepath,
+              keystorepass,
+              keystorealias,
+              keystorealiaspass,
+              androidreleasetype,
+              signingType,
+            },
+          ) => {
+            const { buildCommand } = await import('./tasks/build');
+            await buildCommand(config, platform, {
+              scheme,
+              flavor,
+              keystorepath,
+              keystorepass,
+              keystorealias,
+              keystorealiaspass,
+              androidreleasetype,
+              signingtype: signingType,
+            });
+          },
+        ),
+      ),
+    );
+  program
     .command(`run [platform]`)
     .description(
       `runs ${c.input('sync')}, then builds and deploys the native app`,
+    )
+    .option('--scheme <schemeName>', 'set the scheme of the iOS project')
+    .option(
+      '--flavor <flavorName>',
+      'set the flavor of the Android project (flavor dimensions not yet supported)',
     )
     .option('--list', 'list targets, then quit')
     // TODO: remove once --json is a hidden option (https://github.com/tj/commander.js/issues/1106)
     .allowUnknownOption(true)
     .option('--target <id>', 'use a specific target')
     .option('--no-sync', `do not run ${c.input('sync')}`)
+    .option(
+      '--forwardPorts <port:port>',
+      'Automatically run "adb reverse" for better live-reloading support',
+    )
+    .option('-l, --live-reload', 'Enable Live Reload')
+    .option('--host <host>', 'Host used for live reload')
+    .option('--port <port>', 'Port used for live reload')
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { list, target, sync }) => {
-          const { runCommand } = await import('./tasks/run');
-          await runCommand(config, platform, { list, target, sync });
-        }),
+        telemetryAction(
+          config,
+          async (
+            platform,
+            {
+              scheme,
+              flavor,
+              list,
+              target,
+              sync,
+              forwardPorts,
+              liveReload,
+              host,
+              port,
+            },
+          ) => {
+            const { runCommand } = await import('./tasks/run');
+            await runCommand(config, platform, {
+              scheme,
+              flavor,
+              list,
+              target,
+              sync,
+              forwardPorts,
+              liveReload,
+              host,
+              port,
+            });
+          },
+        ),
       ),
     );
 
@@ -158,11 +270,27 @@ export function runProgram(config: Config): void {
   program
     .command('add [platform]')
     .description('add a native platform project')
+    .option(
+      '--packagemanager <packageManager>',
+      'The package manager to use for dependency installs (SPM, Cocoapods)',
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform, { packagemanager }) => {
+          checkExternalConfig(config.app);
           const { addCommand } = await import('./tasks/add');
-          await addCommand(config, platform);
+
+          const configWritable: Writable<Config> = config as Writable<Config>;
+          if (packagemanager === 'SPM') {
+            configWritable.cli.assets.ios.platformTemplateArchive =
+              'ios-spm-template.tar.gz';
+            configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(
+              configWritable.cli.assetsDirAbs,
+              configWritable.cli.assets.ios.platformTemplateArchive,
+            );
+          }
+
+          await addCommand(configWritable as Config, platform);
         }),
       ),
     );
@@ -173,6 +301,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async platform => {
+          checkExternalConfig(config.app);
           const { listCommand } = await import('./tasks/list');
           await listCommand(config, platform);
         }),
@@ -185,6 +314,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async platform => {
+          checkExternalConfig(config.app);
           const { doctorCommand } = await import('./tasks/doctor');
           await doctorCommand(config, platform);
         }),
@@ -215,6 +345,23 @@ export function runProgram(config: Config): void {
       wrapAction(async () => {
         const { newPluginCommand } = await import('./tasks/new-plugin');
         await newPluginCommand();
+      }),
+    );
+
+  program
+    .command('migrate')
+    .option('--noprompt', 'do not prompt for confirmation')
+    .option(
+      '--packagemanager <packageManager>',
+      'The package manager to use for dependency installs (npm, pnpm, yarn)',
+    )
+    .description(
+      'Migrate your current Capacitor app to the latest major version of Capacitor.',
+    )
+    .action(
+      wrapAction(async ({ noprompt, packagemanager }) => {
+        const { migrateCommand } = await import('./tasks/migrate');
+        await migrateCommand(config, noprompt, packagemanager);
       }),
     );
 

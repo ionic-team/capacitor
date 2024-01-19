@@ -3,51 +3,70 @@ name: CI
 on:
   push:
     branches:
-      - '**'
-  pull_request_target:
+      - main
+  pull_request:
+    types:
+      - 'synchronize'
+      - 'opened'
     branches:
       - '**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   setup:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@ce177499ccf9fd2aded3b0426c97e5434c2e8a73
+      - name: Get Latest
+        uses: actions/setup-node@v3
         with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-  lint:
-    runs-on: macos-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
+          node-version: 18.x
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+      - uses: actions/checkout@v3
       - name: Restore Dependency Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
+  lint:
+    runs-on: macos-13
+    timeout-minutes: 30
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+      - uses: actions/checkout@v3
+      - name: Restore Dependency Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run lint
   test-cli:
-    runs-on: macos-latest
+    runs-on: macos-13
     timeout-minutes: 30
     needs:
       - setup
       - lint
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
+          node-version: 18.x
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+      - uses: actions/checkout@v3
       - name: Restore Dependency Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
         working-directory: ./cli
@@ -60,22 +79,24 @@ jobs:
       - setup
       - lint
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
+          node-version: 18.x
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+      - uses: actions/checkout@v3
       - name: Restore Dependency Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
         working-directory: ./core
       - run: npm test
         working-directory: ./core
   test-ios:
-    runs-on: macos-latest
+    runs-on: macos-13
     timeout-minutes: 30
     needs:
       - setup
@@ -83,21 +104,25 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - /Applications/Xcode_12.4.app
+          - /Applications/Xcode_15.0.1.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
+          node-version: 18.x
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+      - uses: actions/checkout@v3
       - name: Restore Dependency Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run verify
         working-directory: ./ios
+      - name: Validate native podspec
+        run: sh ./scripts/native-podspec.sh lint
   test-android:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -105,68 +130,22 @@ jobs:
       - setup
       - lint
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
+          node-version: 18.x
+      - name: set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+      - uses: actions/checkout@v3
       - name: Restore Dependency Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run verify
         working-directory: ./android
-  deploy-next:
-    runs-on: macos-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Release') && (contains(github.event.head_commit.message, 'rc') || contains(github.event.head_commit.message, 'beta') || contains(github.event.head_commit.message, 'alpha'))
-    timeout-minutes: 30
-    needs:
-      - setup
-      - lint
-      - test-cli
-      - test-core
-      - test-ios
-      - test-android
-    steps:
-      - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Restore Dependency Cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
-      - run: npm install
-      - run: npm run lerna:publish:next || true
-  deploy-latest:
-    runs-on: macos-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Release') && (!contains(github.event.head_commit.message, 'rc') && !contains(github.event.head_commit.message, 'beta') && !contains(github.event.head_commit.message, 'alpha'))
-    timeout-minutes: 30
-    needs:
-      - setup
-      - lint
-      - test-cli
-      - test-core
-      - test-ios
-      - test-android
-    steps:
-      - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Restore Dependency Cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
-      - run: npm install
-      - run: npm run lerna:publish:latest || true
-

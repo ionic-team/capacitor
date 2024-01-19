@@ -7,8 +7,8 @@ import {
 } from '@ionic/utils-fs';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
-import type { DirCallback } from 'tmp';
 import tmp from 'tmp';
+import type { DirCallback } from 'tmp';
 
 import { loadConfig } from '../src/config';
 import type { Config } from '../src/definitions';
@@ -76,15 +76,6 @@ const APP_INDEX = `
 </html>
 `;
 
-const APP_PACKAGE_JSON = `
-{
-  "name": "test-app",
-  "dependencies": {
-    "${CORDOVA_PLUGIN_ID}": "latest"
-  }
-}
-`;
-
 export async function installPlatform(
   appDir: string,
   platform: string,
@@ -102,6 +93,15 @@ export async function makeAppDir(monoRepoLike = false): Promise<void> {
   if (monoRepoLike) {
     await mkdir(rootDir);
   }
+  const cordovaPluginPath = join(tmpDir, CORDOVA_PLUGIN_ID);
+  const APP_PACKAGE_JSON = `
+{
+  "name": "test-app",
+  "dependencies": {
+    "${CORDOVA_PLUGIN_ID}": "file:${cordovaPluginPath}"
+  }
+}
+`;
   const appDir = monoRepoLike ? join(rootDir, 'test-app') : rootDir;
   await mkdir(appDir);
   // Make the web dir
@@ -120,7 +120,6 @@ export async function makeAppDir(monoRepoLike = false): Promise<void> {
   });
 
   // Make a fake cordova plugin
-  const cordovaPluginPath = join(tmpDir, CORDOVA_PLUGIN_ID);
   await makeCordovaPlugin(cordovaPluginPath);
 
   await runCommand('npm', ['install', '--save', cordovaPluginPath], {
@@ -206,7 +205,10 @@ async function makeCordovaPlugin(cordovaPluginPath: string) {
 }
 
 class MappedFS {
-  constructor(private rootDir: string) {}
+  private rootDir: string;
+  constructor(rootDir: string) {
+    this.rootDir = rootDir;
+  }
   async read(path: string): Promise<string> {
     return await readFile(resolve(this.rootDir, path), { encoding: 'utf-8' });
   }

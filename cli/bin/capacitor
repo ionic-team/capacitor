@@ -5,7 +5,7 @@ var satisfies = require('semver/functions/satisfies');
 var packageJson = require('../package.json');
 var requiresNodeVersion = packageJson.engines.node;
 
-if (!satisfies(process.version, requiresNodeVersion)) {
+if (!satisfies(process.version, requiresNodeVersion, { includePrerelease: true})) {
   process.stdout.write(
     '\x1b[31m[fatal]\x1b[39m The Capacitor CLI requires NodeJS ' + requiresNodeVersion + '\n' +
     '        Please install the latest LTS version.\n'

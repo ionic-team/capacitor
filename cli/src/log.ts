@@ -1,10 +1,10 @@
-import type { LoggerLevelWeight } from '@ionic/cli-framework-output';
 import {
   LOGGER_LEVELS,
   StreamOutputStrategy,
   TTYOutputStrategy,
   createDefaultLogger,
 } from '@ionic/cli-framework-output';
+import type { LoggerLevelWeight } from '@ionic/cli-framework-output';
 import type { Answers, PromptObject } from 'prompts';
 
 import c from './colors';

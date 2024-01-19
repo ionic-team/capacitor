@@ -1,0 +1,53 @@
+name: Publish Native Android Library
+
+on: 
+  workflow_call:
+    secrets:
+      ANDROID_OSSRH_USERNAME:
+        required: true
+      ANDROID_OSSRH_PASSWORD:
+        required: true
+      ANDROID_SIGNING_KEY_ID:
+        required: true
+      ANDROID_SIGNING_PASSWORD:
+        required: true
+      ANDROID_SIGNING_KEY:
+        required: true
+      ANDROID_SONATYPE_STAGING_PROFILE_ID:
+        required: true
+      CAP_GH_RELEASE_TOKEN:
+        required: true
+  workflow_dispatch:
+
+jobs:
+  publish-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: 'main'
+          token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
+      - name: set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./android/gradlew
+      - name: Grant execute permission for publishing script
+        run: chmod +x ./scripts/publish-android.sh
+      - name: Run publish script
+        working-directory: ./scripts
+        env:
+          ANDROID_OSSRH_USERNAME: ${{ secrets.ANDROID_OSSRH_USERNAME }}
+          ANDROID_OSSRH_PASSWORD: ${{ secrets.ANDROID_OSSRH_PASSWORD }}
+          ANDROID_SIGNING_KEY_ID: ${{ secrets.ANDROID_SIGNING_KEY_ID }}
+          ANDROID_SIGNING_PASSWORD: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
+          ANDROID_SIGNING_KEY: ${{ secrets.ANDROID_SIGNING_KEY }}
+          ANDROID_SONATYPE_STAGING_PROFILE_ID: ${{ secrets.ANDROID_SONATYPE_STAGING_PROFILE_ID }}
+        run: ./publish-android.sh

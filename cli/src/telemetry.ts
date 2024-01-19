@@ -5,8 +5,8 @@ import c from './colors';
 import type { Config } from './definitions';
 import { send } from './ipc';
 import { logPrompt, output } from './log';
-import type { SystemConfig } from './sysconfig';
 import { readConfig, writeConfig } from './sysconfig';
+import type { SystemConfig } from './sysconfig';
 import { getCommandOutput } from './util/subprocess';
 import { isInteractive } from './util/term';
 
