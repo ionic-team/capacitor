@@ -375,12 +375,12 @@ public class WebViewLocalServer {
                         responseStream = jsInjector.getInjectedStream(responseStream);
 
                         return new WebResourceResponse(
-                                "text/html",
-                                handler.getEncoding(),
-                                handler.getStatusCode(),
-                                handler.getReasonPhrase(),
-                                handler.getResponseHeaders(),
-                                responseStream
+                            "text/html",
+                            handler.getEncoding(),
+                            handler.getStatusCode(),
+                            handler.getReasonPhrase(),
+                            handler.getResponseHeaders(),
+                            responseStream
                         );
                     }
                 } catch (Exception ex) {
