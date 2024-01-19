@@ -101,9 +101,9 @@ public class PluginHandle {
         }
 
         try {
-            this.instance = this.pluginClass.newInstance();
+            this.instance = this.pluginClass.getDeclaredConstructor().newInstance();
             return this.loadInstance(instance);
-        } catch (InstantiationException | IllegalAccessException ex) {
+        } catch (Exception ex) {
             throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");
         }
     }

@@ -174,6 +174,7 @@ export function runProgram(config: Config): void {
             platform,
             {
               scheme,
+              flavor,
               keystorepath,
               keystorepass,
               keystorealias,
@@ -185,6 +186,7 @@ export function runProgram(config: Config): void {
             const { buildCommand } = await import('./tasks/build');
             await buildCommand(config, platform, {
               scheme,
+              flavor,
               keystorepath,
               keystorepass,
               keystorealias,
