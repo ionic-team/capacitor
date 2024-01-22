@@ -24,6 +24,7 @@ android-template/app/app.iml
 .project
 .env
 capacitor-build.log
+yarn.lock
 
 # Carthage and Carthage-built binaries
 Carthage
