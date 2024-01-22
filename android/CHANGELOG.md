@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-beta.2](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.1...6.0.0-beta.2) (2023-12-14)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [6.0.0-beta.1](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.0...6.0.0-beta.1) (2023-12-14)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [6.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/6.0.0-alpha.2...6.0.0-beta.0) (2023-12-13)
+
+### Bug Fixes
+
+- **http:** parse readablestream data on fetch request objects ([#6919](https://github.com/ionic-team/capacitor/issues/6919)) ([80ec3b7](https://github.com/ionic-team/capacitor/commit/80ec3b73db18b7b6841bf90ed50a67389946ab87))
+- **http:** properly write form-urlencoded data on android request body ([#7001](https://github.com/ionic-team/capacitor/issues/7001)) ([a986ee5](https://github.com/ionic-team/capacitor/commit/a986ee541f54a1d3ac637b514fe547b224b36903))
+
+### Features
+
+- support for Amazon Fire WebView ([#6603](https://github.com/ionic-team/capacitor/issues/6603)) ([3cb4eb8](https://github.com/ionic-team/capacitor/commit/3cb4eb89632bce8dc872418fdb130bfd4de40b68))
+
+# [6.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/6.0.0-alpha.1...6.0.0-alpha.2) (2023-11-15)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [6.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/5.2.3...6.0.0-alpha.1) (2023-11-08)
+
+### Bug Fixes
+
+- **android:** handle webview version for developer builds ([#6907](https://github.com/ionic-team/capacitor/issues/6907)) ([88498e6](https://github.com/ionic-team/capacitor/commit/88498e6228492a9ae917d3a7b37c242881f9fe52))
+- **android:** make local urls use unpatched fetch ([#6953](https://github.com/ionic-team/capacitor/issues/6953)) ([e50e56c](https://github.com/ionic-team/capacitor/commit/e50e56c5231f230497d1bd420e02e2e065c38f86))
+- **android:** Use Logger class instead of Log in CapacitorCookieManager ([#6923](https://github.com/ionic-team/capacitor/issues/6923)) ([8aaa356](https://github.com/ionic-team/capacitor/commit/8aaa356ab1f14b56df821e8ac0bb7e43bfa094fa))
+- **cookies:** remove session cookies when initializing the cookie manager ([037863b](https://github.com/ionic-team/capacitor/commit/037863bea6f3a00978125dc2f8ecba1e896c0740))
+- **http:** add support for Request objects in fetch ([24b3cc1](https://github.com/ionic-team/capacitor/commit/24b3cc113e3d8aae5d85dbf2d25bec0c35136477))
+- **http:** disconnect active connections if call or bridge is destroyed ([a1ed6cc](https://github.com/ionic-team/capacitor/commit/a1ed6cc6f07465d683b95e3796d944f863a7b857))
+- **http:** inherit object properties on window.XMLHttpRequest ([91c11d0](https://github.com/ionic-team/capacitor/commit/91c11d06f773c45a10f6f2d52f672ae6f189b162))
+- **http:** return numbers and booleans as-is when application/json is the content type ([03dd3f9](https://github.com/ionic-team/capacitor/commit/03dd3f96c7ee75b6fff2b7c40d0c9a58fb04fce5))
+
+### Features
+
+- **android:** allow developers to provide logic for onRenderProcessGone in WebViewListener ([#6966](https://github.com/ionic-team/capacitor/issues/6966)) ([79e17bb](https://github.com/ionic-team/capacitor/commit/79e17bb5e6ccd813bddc626703152d3983f6d93b))
+
+# [5.6.0](https://github.com/ionic-team/capacitor/compare/5.5.1...5.6.0) (2023-12-14)
+
+### Bug Fixes
+
+- **http:** properly write form-urlencoded data on android request body ([#7130](https://github.com/ionic-team/capacitor/issues/7130)) ([a745a89](https://github.com/ionic-team/capacitor/commit/a745a89e18a5082ae4e737d78aa20929f6952382))
+
+### Features
+
+- support for Amazon Fire WebView ([#6603](https://github.com/ionic-team/capacitor/issues/6603)) ([#7129](https://github.com/ionic-team/capacitor/issues/7129)) ([421d2c0](https://github.com/ionic-team/capacitor/commit/421d2c02e4d1954d16d573facae9c235fee60f02))
+
 ## [5.5.1](https://github.com/ionic-team/capacitor/compare/5.5.0...5.5.1) (2023-10-25)
 
 **Note:** Version bump only for package @capacitor/android
