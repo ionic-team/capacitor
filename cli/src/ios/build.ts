@@ -64,7 +64,7 @@ export async function buildiOS(
         'output',
         '-allowProvisioningUpdates',
         '-configuration',
-        buildOptions.configuration
+        buildOptions.configuration,
       ],
       {
         cwd: config.ios.nativeProjectDirAbs,

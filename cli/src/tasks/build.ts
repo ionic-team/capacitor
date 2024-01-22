@@ -52,7 +52,7 @@ export async function buildCommand(
       buildOptions.signingtype ||
       config.android.buildOptions.signingType ||
       'jarsigner',
-    configuration: buildOptions.configuration || 'Release'
+    configuration: buildOptions.configuration || 'Release',
   };
 
   try {

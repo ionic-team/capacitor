@@ -182,7 +182,7 @@ export function runProgram(config: Config): void {
               keystorealiaspass,
               androidreleasetype,
               signingType,
-              configuration
+              configuration,
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
@@ -195,7 +195,7 @@ export function runProgram(config: Config): void {
               keystorealiaspass,
               androidreleasetype,
               signingtype: signingType,
-              configuration
+              configuration,
             });
           },
         ),
@@ -240,7 +240,7 @@ export function runProgram(config: Config): void {
               liveReload,
               host,
               port,
-              configuration
+              configuration,
             },
           ) => {
             const { runCommand } = await import('./tasks/run');
@@ -254,7 +254,7 @@ export function runProgram(config: Config): void {
               liveReload,
               host,
               port,
-              configuration
+              configuration,
             });
           },
         ),
