@@ -312,11 +312,6 @@ public class WebViewLocalServer {
             }
         }
 
-        // Using Live Reload
-        if (bridge.getServerUrl() != null) {
-            responseHeaders.put("Access-Control-Allow-Origin", bridge.getServerUrl());
-            responseHeaders.put("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, TRACE");
-        }
 
         InputStream inputStream = connection.getInputStream();
 
