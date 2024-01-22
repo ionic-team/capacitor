@@ -150,6 +150,7 @@ export function runProgram(config: Config): void {
     .option('--keystorepath <keystorePath>', 'Path to the keystore')
     .option('--keystorepass <keystorePass>', 'Password to the keystore')
     .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
+    .option('--configuration <name>', 'Configuration name of the iOS Scheme')
     .option(
       '--keystorealiaspass <keystoreAliasPass>',
       'Password for the Key Alias',
@@ -181,6 +182,7 @@ export function runProgram(config: Config): void {
               keystorealiaspass,
               androidreleasetype,
               signingType,
+              configuration
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
@@ -193,6 +195,7 @@ export function runProgram(config: Config): void {
               keystorealiaspass,
               androidreleasetype,
               signingtype: signingType,
+              configuration
             });
           },
         ),
