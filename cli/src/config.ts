@@ -516,7 +516,7 @@ async function determineGemfileOrCocoapodPath(
 
 function formatConfigTS(extConfig: ExternalConfig): string {
   // TODO: <reference> tags
-  return `import { CapacitorConfig } from '@capacitor/cli';
+  return `import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = ${formatJSObject(extConfig)};
 
