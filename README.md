@@ -82,6 +82,7 @@ Made possible by the Capacitor community. 💖
 <!-- CONTRIBUTORS:START -->
 
 <p align="center">
+  <a href="https://github.com/seo-rii"><img src="https://github.com/seo-rii.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/bentleyo"><img src="https://github.com/bentleyo.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/bosh-code"><img src="https://github.com/bosh-code.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/arcadius"><img src="https://github.com/arcadius.png?size=100" width="50" height="50" /></a>
