@@ -1,10 +1,4 @@
-import {
-  writeFileSync,
-  readFileSync,
-  readdirSync,
-  existsSync,
-  removeSync,
-} from '@ionic/utils-fs';
+import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
 
@@ -55,9 +49,9 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^5.0.0';
-const pluginVersion = '^5.0.0';
-const gradleVersion = '8.0.2';
+const coreVersion = 'next';
+const pluginVersion = 'next';
+const gradleVersion = '8.2.1';
 let installFailed = false;
 
 export async function migrateCommand(
@@ -70,16 +64,16 @@ export async function migrateCommand(
   }
 
   const capMajor = await checkCapacitorMajorVersion(config);
-  if (capMajor < 4) {
+  if (capMajor < 5) {
     fatal(
-      'Migrate can only be used on capacitor 4 and above, please use the CLI in Capacitor 4 to upgrade to 4 first',
+      'Migrate can only be used on capacitor 5 and above, please use the CLI in Capacitor 5 to upgrade to 5 first',
     );
   }
 
   const jdkMajor = await checkJDKMajorVersion();
 
   if (jdkMajor < 17) {
-    logger.warn('Capacitor 5 requires JDK 17 or higher. Some steps may fail.');
+    logger.warn('Capacitor 6 requires JDK 17 or higher. Some steps may fail.');
   }
 
   const variablesAndClasspaths:
@@ -107,7 +101,7 @@ export async function migrateCommand(
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
     : await logPrompt(
-        `Capacitor 5 sets a deployment target of iOS 13 and Android 13 (SDK 33). \n`,
+        `Capacitor 6 sets a deployment target of iOS 13 and Android 14 (SDK 34). \n`,
         {
           type: 'text',
           name: 'migrateconfirm',
@@ -176,17 +170,17 @@ export async function migrateCommand(
         allDependencies['@capacitor/ios'] &&
         existsSync(config.ios.platformDirAbs)
       ) {
-        //Update icon to single 1024 x 1024 icon
-        await runTask('Update App Icon to only 1024 x 1024', () => {
-          return updateAppIcons(config);
-        });
-
-        //Remove Podfile.lock from .gitignore
-        await runTask('Remove Podfile.lock from iOS .gitignore', () => {
-          return updateIosGitIgnore(
-            join(config.ios.platformDirAbs, '.gitignore'),
-          );
-        });
+        // ios template changes
+        // Remove NSLocationAlwaysUsageDescription
+        await runTask(
+          `Migrating Info.plist by removing NSLocationAlwaysUsageDescription key.`,
+          () => {
+            return removeKey(
+              join(config.ios.nativeTargetDirAbs, 'Info.plist'),
+              'NSLocationAlwaysUsageDescription',
+            );
+          },
+        );
       }
 
       if (
@@ -200,29 +194,40 @@ export async function migrateCommand(
           );
         });
 
-        // Remove enableJetifier
+        // Replace deprecated compileSdkVersion
         await runTask(
-          'Remove android.enableJetifier=true from gradle.properties',
+          'Replacing deprecated compileSdkVersion from build.gradle',
           () => {
-            return updateGradleProperties(
-              join(config.android.platformDirAbs, 'gradle.properties'),
-            );
+            return (async (): Promise<void> => {
+              const buildGradleFilename = join(
+                config.android.platformDirAbs,
+                'app',
+                'build.gradle',
+              );
+              const buildGradleText = readFile(buildGradleFilename);
+
+              if (!buildGradleText) {
+                logger.error(
+                  `Could not read ${buildGradleFilename}. Check its permissions and if it exists.`,
+                );
+                return;
+              }
+              const compileSdk = `compileSdkVersion rootProject.ext.compileSdkVersion`;
+              if (buildGradleText.includes(compileSdk)) {
+                const buildGradleReplaced = buildGradleText.replace(
+                  compileSdk,
+                  `compileSdk rootProject.ext.compileSdkVersion`,
+                );
+
+                writeFileSync(
+                  buildGradleFilename,
+                  buildGradleReplaced,
+                  'utf-8',
+                );
+              }
+            })();
           },
         );
-
-        // Move package from android manifest
-        await runTask('Migrating package from Manifest to build.gradle', () => {
-          return movePackageFromManifestToBuildGradle(
-            join(
-              config.android.platformDirAbs,
-              'app',
-              'src',
-              'main',
-              'AndroidManifest.xml',
-            ),
-            join(config.android.platformDirAbs, 'app', 'build.gradle'),
-          );
-        });
 
         // Update gradle-wrapper.properties
         await runTask(
@@ -288,17 +293,18 @@ export async function migrateCommand(
               }
             }
             const pluginVariables: { [key: string]: string } = {
-              firebaseMessagingVersion: '23.1.2',
+              firebaseMessagingVersion: '23.3.1',
               playServicesLocationVersion: '21.0.1',
-              androidxBrowserVersion: '1.5.0',
-              androidxMaterialVersion: '1.8.0',
+              androidxBrowserVersion: '1.7.0',
+              androidxMaterialVersion: '1.10.0',
               androidxExifInterfaceVersion: '1.3.6',
-              androidxCoreKTXVersion: '1.10.0',
+              androidxCoreKTXVersion: '1.12.0',
               googleMapsPlayServicesVersion: '18.1.0',
-              googleMapsUtilsVersion: '3.4.0',
+              googleMapsUtilsVersion: '3.5.3',
               googleMapsKtxVersion: '3.4.0',
               googleMapsUtilsKtxVersion: '3.4.0',
-              kotlinxCoroutinesVersion: '1.6.4',
+              kotlinxCoroutinesVersion: '1.7.3',
+              coreSplashScreenVersion: '1.0.1',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(
@@ -444,9 +450,10 @@ async function installLatestLibs(
 async function writeBreakingChanges() {
   const breaking = [
     '@capacitor/camera',
-    '@capacitor/device',
+    '@capacitor/filesystem',
+    '@capacitor/geolocation',
+    '@capacitor/google-maps',
     '@capacitor/local-notifications',
-    '@capacitor/push-notifications',
   ];
   const broken = [];
   for (const lib of breaking) {
@@ -456,7 +463,7 @@ async function writeBreakingChanges() {
   }
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/updating/5-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/6-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
@@ -568,100 +575,6 @@ async function updateGradleWrapperFiles(platformDir: string) {
   );
 }
 
-async function updateIosGitIgnore(filename: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  const lines = txt.split('\n');
-  let linesToKeep = '';
-  for (const line of lines) {
-    // check for enableJetifier
-    const podfileMatch = line.match(/.+Podfile\.lock/) || [];
-
-    if (podfileMatch.length == 0) {
-      linesToKeep += line + '\n';
-    }
-  }
-  writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
-}
-
-async function updateAppIcons(config: Config) {
-  const iconToKeep = 'AppIcon-512@2x.png';
-  const contentsFile = 'Contents.json';
-
-  const newContentsFileContents = `{
-    "images" : [
-      {
-        "filename" : "${iconToKeep}",
-        "idiom" : "universal",
-        "platform" : "ios",
-        "size" : "1024x1024"
-      }
-    ],
-    "info" : {
-      "author" : "xcode",
-      "version" : 1
-    }
-}`;
-
-  const path = join(
-    config.ios.platformDirAbs,
-    'App',
-    'App',
-    'Assets.xcassets',
-    'AppIcon.appiconset',
-  );
-
-  if (!existsSync(path)) {
-    logger.error(`Unable to find ${path}. Try updating it manually`);
-    return;
-  }
-
-  if (!existsSync(join(path, iconToKeep))) {
-    logger.error(`Unable to find ${iconToKeep}. Try updating it manually`);
-    return;
-  }
-
-  if (!existsSync(join(path, contentsFile))) {
-    logger.error(`Unable to find ${path}. Try updating it manually`);
-    return;
-  }
-
-  const filenames = readdirSync(path);
-
-  for (const filename of filenames) {
-    if (filename != iconToKeep && filename != contentsFile) {
-      removeSync(join(path, filename));
-    }
-  }
-
-  writeFileSync(join(path, contentsFile), newContentsFileContents);
-}
-
-async function updateGradleProperties(filename: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  const lines = txt.split('\n');
-  let linesToKeep = '';
-  for (const line of lines) {
-    // check for enableJetifier
-    const jetifierMatch =
-      line.match(/android\.enableJetifier\s*=\s*true/) || [];
-    const commentMatch =
-      line.match(
-        /# Automatically convert third-party libraries to use AndroidX/,
-      ) || [];
-
-    if (jetifierMatch.length == 0 && commentMatch.length == 0) {
-      linesToKeep += line + '\n';
-    }
-  }
-  writeFileSync(filename, linesToKeep, { encoding: 'utf-8' });
-}
-
 async function movePackageFromManifestToBuildGradle(
   manifestFilename: string,
   buildGradleFilename: string,
@@ -739,9 +652,6 @@ async function updateBuildGradle(
     'com.google.gms:google-services': string;
   },
 ) {
-  // In build.gradle add dependencies:
-  // classpath 'com.android.tools.build:gradle:8.0.0'
-  // classpath 'com.google.gms:google-services:4.3.15'
   const txt = readFile(filename);
   if (!txt) {
     return;
@@ -891,4 +801,29 @@ export async function patchOldCapacitorPlugins(
       }
     }),
   );
+}
+
+async function removeKey(filename: string, key: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+  let lines = txt.split('\n');
+  let removed = false;
+  let removing = false;
+  lines = lines.filter(line => {
+    if (removing && line.includes('</string>')) {
+      removing = false;
+      return false;
+    }
+    if (line.includes(`<key>${key}</key`)) {
+      removing = true;
+      removed = true;
+    }
+    return !removing;
+  });
+
+  if (removed) {
+    writeFileSync(filename, lines.join('\n'), 'utf-8');
+  }
 }

@@ -84,6 +84,14 @@ export interface CapacitorConfig {
    */
   backgroundColor?: string;
 
+  /**
+   * Enable zooming within the Capacitor Web View.
+   *
+   * @default false
+   * @since 6.0.0
+   */
+  zoomEnabled?: boolean;
+
   android?: {
     /**
      * Specify a custom path to the native Android project.
@@ -121,6 +129,14 @@ export interface CapacitorConfig {
      * @since 1.1.0
      */
     backgroundColor?: string;
+
+    /**
+     * Enable zooming within the Capacitor Web View for Android.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
 
     /**
      * Enable mixed content in the Capacitor Web View for Android.
@@ -333,6 +349,14 @@ export interface CapacitorConfig {
     backgroundColor?: string;
 
     /**
+     * Enable zooming within the Capacitor Web View for iOS.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
+
+    /**
      * Configure the scroll view's content inset adjustment behavior.
      *
      * This will set the
@@ -475,8 +499,13 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on Android.
      *
+     * Custom schemes on Android are unable to change the URL path as of Webview 117. Changing this value from anything other than `http` or `https` can result in your
+     * application unable to resolve routing. If you must change this for some reason, consider using a hash-based url strategy, but there are no guarentees that this
+     * will continue to work long term as allowing non-standard schemes to modify query parameters and url fragments is only allowed for compatibility reasons.
+     * https://ionic.io/blog/capacitor-android-customscheme-issue-with-chrome-117
+     *
      * @since 1.2.0
-     * @default http
+     * @default https
      */
     androidScheme?: string;
 

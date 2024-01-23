@@ -277,7 +277,9 @@ public class WebViewLocalServer {
                 return null;
             }
 
-            responseStream = jsInjector.getInjectedStream(responseStream);
+            if (jsInjector != null) {
+                responseStream = jsInjector.getInjectedStream(responseStream);
+            }
 
             int statusCode = getStatusCode(responseStream, handler.getStatusCode());
             return new WebResourceResponse(
@@ -305,7 +307,7 @@ public class WebViewLocalServer {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
 
             // TODO: Conjure up a bit more subtlety than this
-            if (ext.equals(".html")) {
+            if (ext.equals(".html") && jsInjector != null) {
                 responseStream = jsInjector.getInjectedStream(responseStream);
             }
 
@@ -332,55 +334,58 @@ public class WebViewLocalServer {
      * @return
      */
     private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
-        final String method = request.getMethod();
-        if (method.equals("GET")) {
-            try {
-                String url = request.getUrl().toString();
-                Map<String, String> headers = request.getRequestHeaders();
-                boolean isHtmlText = false;
-                for (Map.Entry<String, String> header : headers.entrySet()) {
-                    if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
-                        isHtmlText = true;
-                        break;
-                    }
-                }
-                if (isHtmlText) {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        if (jsInjector != null) {
+            final String method = request.getMethod();
+            if (method.equals("GET")) {
+                try {
+                    String url = request.getUrl().toString();
+                    Map<String, String> headers = request.getRequestHeaders();
+                    boolean isHtmlText = false;
                     for (Map.Entry<String, String> header : headers.entrySet()) {
-                        conn.setRequestProperty(header.getKey(), header.getValue());
-                    }
-                    String getCookie = CookieManager.getInstance().getCookie(url);
-                    if (getCookie != null) {
-                        conn.setRequestProperty("Cookie", getCookie);
-                    }
-                    conn.setRequestMethod(method);
-                    conn.setReadTimeout(30 * 1000);
-                    conn.setConnectTimeout(30 * 1000);
-                    if (request.getUrl().getUserInfo() != null) {
-                        byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
-                        String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
-                        conn.setRequestProperty("Authorization", "Basic " + base64);
-                    }
-
-                    List<String> cookies = conn.getHeaderFields().get("Set-Cookie");
-                    if (cookies != null) {
-                        for (String cookie : cookies) {
-                            CookieManager.getInstance().setCookie(url, cookie);
+                        if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
+                            isHtmlText = true;
+                            break;
                         }
                     }
-                    InputStream responseStream = conn.getInputStream();
-                    responseStream = jsInjector.getInjectedStream(responseStream);
-                    return new WebResourceResponse(
-                        "text/html",
-                        handler.getEncoding(),
-                        handler.getStatusCode(),
-                        handler.getReasonPhrase(),
-                        handler.getResponseHeaders(),
-                        responseStream
-                    );
+                    if (isHtmlText) {
+                        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+                        for (Map.Entry<String, String> header : headers.entrySet()) {
+                            conn.setRequestProperty(header.getKey(), header.getValue());
+                        }
+                        String getCookie = CookieManager.getInstance().getCookie(url);
+                        if (getCookie != null) {
+                            conn.setRequestProperty("Cookie", getCookie);
+                        }
+                        conn.setRequestMethod(method);
+                        conn.setReadTimeout(30 * 1000);
+                        conn.setConnectTimeout(30 * 1000);
+                        if (request.getUrl().getUserInfo() != null) {
+                            byte[] userInfoBytes = request.getUrl().getUserInfo().getBytes(StandardCharsets.UTF_8);
+                            String base64 = Base64.encodeToString(userInfoBytes, Base64.NO_WRAP);
+                            conn.setRequestProperty("Authorization", "Basic " + base64);
+                        }
+
+                        List<String> cookies = conn.getHeaderFields().get("Set-Cookie");
+                        if (cookies != null) {
+                            for (String cookie : cookies) {
+                                CookieManager.getInstance().setCookie(url, cookie);
+                            }
+                        }
+                        InputStream responseStream = conn.getInputStream();
+                        responseStream = jsInjector.getInjectedStream(responseStream);
+
+                        return new WebResourceResponse(
+                            "text/html",
+                            handler.getEncoding(),
+                            handler.getStatusCode(),
+                            handler.getReasonPhrase(),
+                            handler.getResponseHeaders(),
+                            responseStream
+                        );
+                    }
+                } catch (Exception ex) {
+                    bridge.handleAppUrlLoadError(ex);
                 }
-            } catch (Exception ex) {
-                bridge.handleAppUrlLoadError(ex);
             }
         }
         return null;

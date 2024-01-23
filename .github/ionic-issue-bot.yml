@@ -27,3 +27,17 @@ comment:
         Thanks!
         Ionitron 💙
   dryRun: false
+
+closeAndLock:
+  labels:
+    - label: "support request"
+      message: >
+        Thanks for the issue! This issue appears to be a support request. We use this issue tracker exclusively for
+        bug reports and feature requests. Please use our [forum](https://forum.ionicframework.com) or our community [Discord](https://discord.gg/PvAF4Kv86P) for questions about Capacitor.
+
+
+        Thank you for using Capacitor!
+  close: true
+  lock: true
+  dryRun: false
+

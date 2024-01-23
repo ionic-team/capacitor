@@ -370,6 +370,13 @@ public class PluginCall {
         return defaultValue;
     }
 
+    /**
+     * @param name of the option to check
+     * @return boolean indicating if the plugin call has an option for the provided name.
+     * @deprecated Presence of a key should not be considered significant.
+     * Use typed accessors to check the value instead.
+     */
+    @Deprecated
     public boolean hasOption(String name) {
         return this.data.has(name);
     }

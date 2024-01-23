@@ -53,8 +53,50 @@ const convertFormData = async (formData: FormData): Promise<any> => {
 
 const convertBody = async (
   body: Document | XMLHttpRequestBodyInit | ReadableStream<any> | undefined,
+  contentType?: string,
 ): Promise<any> => {
-  if (body instanceof FormData) {
+  if (body instanceof ReadableStream) {
+    const reader = body.getReader();
+    const chunks: any[] = [];
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+    const concatenated = new Uint8Array(
+      chunks.reduce((acc, chunk) => acc + chunk.length, 0),
+    );
+    let position = 0;
+    for (const chunk of chunks) {
+      concatenated.set(chunk, position);
+      position += chunk.length;
+    }
+
+    let data = new TextDecoder().decode(concatenated);
+    let type;
+    if (contentType === 'application/json') {
+      try {
+        data = JSON.parse(data);
+      } catch (ignored) {
+        // ignore
+      }
+      type = 'json';
+    } else if (contentType === 'multipart/form-data') {
+      type = 'formData';
+    } else if (contentType?.startsWith('image')) {
+      type = 'image';
+    } else if (contentType === 'application/octet-stream') {
+      type = 'binary';
+    } else {
+      type = 'text';
+    }
+
+    return {
+      data,
+      type,
+      headers: { 'Content-Type': contentType || 'application/octet-stream' },
+    };
+  } else if (body instanceof FormData) {
     const formData = await convertFormData(body);
     const boundary = `${Date.now()}`;
     return {
@@ -434,6 +476,7 @@ const initBridge = (w: any): void => {
       win.CapacitorWebXMLHttpRequest = {
         abort: window.XMLHttpRequest.prototype.abort,
         constructor: window.XMLHttpRequest.prototype.constructor,
+        fullObject: window.XMLHttpRequest,
         getAllResponseHeaders:
           window.XMLHttpRequest.prototype.getAllResponseHeaders,
         getResponseHeader: window.XMLHttpRequest.prototype.getResponseHeader,
@@ -471,36 +514,32 @@ const initBridge = (w: any): void => {
           resource: RequestInfo | URL,
           options?: RequestInit,
         ) => {
-          if (
-            !(
-              resource.toString().startsWith('http:') ||
-              resource.toString().startsWith('https:')
-            )
-          ) {
+          const request = new Request(resource, options);
+          if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
             return win.CapacitorWebFetch(resource, options);
           }
 
           const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
           console.time(tag);
+
           try {
-            // intercept request & pass to the bridge
+            const { body, method } = request;
+            const optionHeaders = Object.fromEntries(request.headers.entries());
             const {
               data: requestData,
               type,
               headers,
-            } = await convertBody(options?.body || undefined);
-            let optionHeaders = options?.headers;
-            if (options?.headers instanceof Headers) {
-              optionHeaders = Object.fromEntries(
-                (options.headers as any).entries(),
-              );
-            }
+            } = await convertBody(
+              options?.body || body || undefined,
+              optionHeaders['Content-Type'] || optionHeaders['content-type'],
+            );
+
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
               'request',
               {
-                url: resource,
-                method: options?.method ? options.method : undefined,
+                url: request.url,
+                method: method,
                 data: requestData,
                 dataType: type,
                 headers: {
@@ -552,6 +591,7 @@ const initBridge = (w: any): void => {
 
         window.XMLHttpRequest = function () {
           const xhr = new win.CapacitorWebXMLHttpRequest.constructor();
+
           Object.defineProperties(xhr, {
             _headers: {
               value: {},
@@ -798,6 +838,11 @@ const initBridge = (w: any): void => {
           Object.setPrototypeOf(xhr, prototype);
           return xhr;
         } as unknown as PatchedXMLHttpRequestConstructor;
+
+        Object.assign(
+          window.XMLHttpRequest,
+          win.CapacitorWebXMLHttpRequest.fullObject,
+        );
       }
     }
 

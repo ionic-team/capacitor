@@ -1,6 +1,6 @@
 package com.getcapacitor;
 
-import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
+import static com.getcapacitor.Bridge.CAPACITOR_HTTPS_SCHEME;
 import static com.getcapacitor.Bridge.DEFAULT_ANDROID_WEBVIEW_VERSION;
 import static com.getcapacitor.Bridge.DEFAULT_HUAWEI_WEBVIEW_VERSION;
 import static com.getcapacitor.Bridge.MINIMUM_ANDROID_WEBVIEW_VERSION;
@@ -36,7 +36,7 @@ public class CapConfig {
     private boolean html5mode = true;
     private String serverUrl;
     private String hostname = "localhost";
-    private String androidScheme = CAPACITOR_HTTP_SCHEME;
+    private String androidScheme = CAPACITOR_HTTPS_SCHEME;
     private String[] allowNavigation;
 
     // Android Config
@@ -52,6 +52,7 @@ public class CapConfig {
     private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
     private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
     private String errorPath;
+    private boolean zoomableWebView = false;
 
     // Embedded
     private String startPath;
@@ -177,6 +178,7 @@ public class CapConfig {
         this.minWebViewVersion = builder.minWebViewVersion;
         this.minHuaweiWebViewVersion = builder.minHuaweiWebViewVersion;
         this.errorPath = builder.errorPath;
+        this.zoomableWebView = builder.zoomableWebView;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -271,6 +273,7 @@ public class CapConfig {
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         useLegacyBridge = JSONUtils.getBoolean(configJSON, "android.useLegacyBridge", useLegacyBridge);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
+        zoomableWebView = JSONUtils.getBoolean(configJSON, "android.zoomEnabled", JSONUtils.getBoolean(configJSON, "zoomEnabled", false));
 
         String logBehavior = JSONUtils.getString(
             configJSON,
@@ -297,8 +300,15 @@ public class CapConfig {
     private boolean validateScheme(String scheme) {
         List<String> invalidSchemes = Arrays.asList("file", "ftp", "ftps", "ws", "wss", "about", "blob", "data");
         if (invalidSchemes.contains(scheme)) {
-            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to http.");
+            Logger.warn(scheme + " is not an allowed scheme.  Defaulting to https.");
             return false;
+        }
+
+        // Non-http(s) schemes are not allowed to modify the URL path as of Android Webview 117
+        if (!scheme.equals("http") && !scheme.equals("https")) {
+            Logger.warn(
+                "Using a non-standard scheme: " + scheme + " for Android. This is known to cause issues as of Android Webview 117."
+            );
         }
 
         return true;
@@ -354,6 +364,10 @@ public class CapConfig {
 
     public boolean isWebContentsDebuggingEnabled() {
         return webContentsDebuggingEnabled;
+    }
+
+    public boolean isZoomableWebView() {
+        return zoomableWebView;
     }
 
     public boolean isLoggingEnabled() {
@@ -531,7 +545,7 @@ public class CapConfig {
         private String serverUrl;
         private String errorPath;
         private String hostname = "localhost";
-        private String androidScheme = CAPACITOR_HTTP_SCHEME;
+        private String androidScheme = CAPACITOR_HTTPS_SCHEME;
         private String[] allowNavigation;
 
         // Android Config Values
@@ -546,6 +560,7 @@ public class CapConfig {
         private boolean useLegacyBridge = false;
         private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
         private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
+        private boolean zoomableWebView = false;
 
         // Embedded
         private String startPath = null;
@@ -647,6 +662,11 @@ public class CapConfig {
 
         public Builder setWebContentsDebuggingEnabled(boolean webContentsDebuggingEnabled) {
             this.webContentsDebuggingEnabled = webContentsDebuggingEnabled;
+            return this;
+        }
+
+        public Builder setZoomableWebView(boolean zoomableWebView) {
+            this.zoomableWebView = zoomableWebView;
             return this;
         }
 

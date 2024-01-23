@@ -64,8 +64,52 @@ var nativeBridge = (function (exports) {
         }
         return newFormData;
     };
-    const convertBody = async (body) => {
-        if (body instanceof FormData) {
+    const convertBody = async (body, contentType) => {
+        if (body instanceof ReadableStream) {
+            const reader = body.getReader();
+            const chunks = [];
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done)
+                    break;
+                chunks.push(value);
+            }
+            const concatenated = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+            let position = 0;
+            for (const chunk of chunks) {
+                concatenated.set(chunk, position);
+                position += chunk.length;
+            }
+            let data = new TextDecoder().decode(concatenated);
+            let type;
+            if (contentType === 'application/json') {
+                try {
+                    data = JSON.parse(data);
+                }
+                catch (ignored) {
+                    // ignore
+                }
+                type = 'json';
+            }
+            else if (contentType === 'multipart/form-data') {
+                type = 'formData';
+            }
+            else if (contentType === null || contentType === void 0 ? void 0 : contentType.startsWith('image')) {
+                type = 'image';
+            }
+            else if (contentType === 'application/octet-stream') {
+                type = 'binary';
+            }
+            else {
+                type = 'text';
+            }
+            return {
+                data,
+                type,
+                headers: { 'Content-Type': contentType || 'application/octet-stream' },
+            };
+        }
+        else if (body instanceof FormData) {
             const formData = await convertFormData(body);
             const boundary = `${Date.now()}`;
             return {
@@ -394,6 +438,7 @@ var nativeBridge = (function (exports) {
                 win.CapacitorWebXMLHttpRequest = {
                     abort: window.XMLHttpRequest.prototype.abort,
                     constructor: window.XMLHttpRequest.prototype.constructor,
+                    fullObject: window.XMLHttpRequest,
                     getAllResponseHeaders: window.XMLHttpRequest.prototype.getAllResponseHeaders,
                     getResponseHeader: window.XMLHttpRequest.prototype.getResponseHeader,
                     open: window.XMLHttpRequest.prototype.open,
@@ -423,22 +468,19 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
-                        if (!(resource.toString().startsWith('http:') ||
-                            resource.toString().startsWith('https:'))) {
+                        const request = new Request(resource, options);
+                        if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
                             return win.CapacitorWebFetch(resource, options);
                         }
                         const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
                         console.time(tag);
                         try {
-                            // intercept request & pass to the bridge
-                            const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || undefined);
-                            let optionHeaders = options === null || options === void 0 ? void 0 : options.headers;
-                            if ((options === null || options === void 0 ? void 0 : options.headers) instanceof Headers) {
-                                optionHeaders = Object.fromEntries(options.headers.entries());
-                            }
+                            const { body, method } = request;
+                            const optionHeaders = Object.fromEntries(request.headers.entries());
+                            const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || body || undefined, optionHeaders['Content-Type'] || optionHeaders['content-type']);
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
-                                url: resource,
-                                method: (options === null || options === void 0 ? void 0 : options.method) ? options.method : undefined,
+                                url: request.url,
+                                method: method,
                                 data: requestData,
                                 dataType: type,
                                 headers: Object.assign(Object.assign({}, headers), optionHeaders),
@@ -674,6 +716,7 @@ var nativeBridge = (function (exports) {
                         Object.setPrototypeOf(xhr, prototype);
                         return xhr;
                     };
+                    Object.assign(window.XMLHttpRequest, win.CapacitorWebXMLHttpRequest.fullObject);
                 }
             }
             // patch window.console on iOS and store original console fns
