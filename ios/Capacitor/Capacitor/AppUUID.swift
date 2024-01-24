@@ -41,13 +41,11 @@ public class AppUUID {
     }
 
     private static func readUUID() -> String {
-        let defaults = UserDefaults.standard
-        return defaults.string(forKey: key) ?? ""
+        KeyValueStore.standard[key] ?? ""
     }
 
     private static func writeUUID(_ uuid: String) {
-        let defaults = UserDefaults.standard
-        defaults.set(uuid, forKey: key)
+        KeyValueStore.standard[key] = uuid
     }
 
 }

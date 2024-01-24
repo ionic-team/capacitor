@@ -53,8 +53,50 @@ const convertFormData = async (formData: FormData): Promise<any> => {
 
 const convertBody = async (
   body: Document | XMLHttpRequestBodyInit | ReadableStream<any> | undefined,
+  contentType?: string,
 ): Promise<any> => {
-  if (body instanceof FormData) {
+  if (body instanceof ReadableStream) {
+    const reader = body.getReader();
+    const chunks: any[] = [];
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+    const concatenated = new Uint8Array(
+      chunks.reduce((acc, chunk) => acc + chunk.length, 0),
+    );
+    let position = 0;
+    for (const chunk of chunks) {
+      concatenated.set(chunk, position);
+      position += chunk.length;
+    }
+
+    let data = new TextDecoder().decode(concatenated);
+    let type;
+    if (contentType === 'application/json') {
+      try {
+        data = JSON.parse(data);
+      } catch (ignored) {
+        // ignore
+      }
+      type = 'json';
+    } else if (contentType === 'multipart/form-data') {
+      type = 'formData';
+    } else if (contentType?.startsWith('image')) {
+      type = 'image';
+    } else if (contentType === 'application/octet-stream') {
+      type = 'binary';
+    } else {
+      type = 'text';
+    }
+
+    return {
+      data,
+      type,
+      headers: { 'Content-Type': contentType || 'application/octet-stream' },
+    };
+  } else if (body instanceof FormData) {
     const formData = await convertFormData(body);
     const boundary = `${Date.now()}`;
     return {
@@ -394,7 +436,8 @@ const initBridge = (w: any): void => {
             } else if (
               typeof win.CapacitorCookiesAndroidInterface !== 'undefined'
             ) {
-              return win.CapacitorCookiesAndroidInterface.getCookies();
+              // return original document.cookie since Android does not support filtering of `httpOnly` cookies
+              return win.CapacitorCookiesDescriptor?.get?.call(document) ?? '';
             }
           },
           set: function (val) {
@@ -433,6 +476,7 @@ const initBridge = (w: any): void => {
       win.CapacitorWebXMLHttpRequest = {
         abort: window.XMLHttpRequest.prototype.abort,
         constructor: window.XMLHttpRequest.prototype.constructor,
+        fullObject: window.XMLHttpRequest,
         getAllResponseHeaders:
           window.XMLHttpRequest.prototype.getAllResponseHeaders,
         getResponseHeader: window.XMLHttpRequest.prototype.getResponseHeader,
@@ -470,36 +514,32 @@ const initBridge = (w: any): void => {
           resource: RequestInfo | URL,
           options?: RequestInit,
         ) => {
-          if (
-            !(
-              resource.toString().startsWith('http:') ||
-              resource.toString().startsWith('https:')
-            )
-          ) {
+          const request = new Request(resource, options);
+          if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
             return win.CapacitorWebFetch(resource, options);
           }
 
           const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
           console.time(tag);
+
           try {
-            // intercept request & pass to the bridge
+            const { body, method } = request;
+            const optionHeaders = Object.fromEntries(request.headers.entries());
             const {
               data: requestData,
               type,
               headers,
-            } = await convertBody(options?.body || undefined);
-            let optionHeaders = options?.headers;
-            if (options?.headers instanceof Headers) {
-              optionHeaders = Object.fromEntries(
-                (options.headers as any).entries(),
-              );
-            }
+            } = await convertBody(
+              options?.body || body || undefined,
+              optionHeaders['Content-Type'] || optionHeaders['content-type'],
+            );
+
             const nativeResponse: HttpResponse = await cap.nativePromise(
               'CapacitorHttp',
               'request',
               {
-                url: resource,
-                method: options?.method ? options.method : undefined,
+                url: request.url,
+                method: method,
                 data: requestData,
                 dataType: type,
                 headers: {
@@ -551,6 +591,7 @@ const initBridge = (w: any): void => {
 
         window.XMLHttpRequest = function () {
           const xhr = new win.CapacitorWebXMLHttpRequest.constructor();
+
           Object.defineProperties(xhr, {
             _headers: {
               value: {},
@@ -571,33 +612,20 @@ const initBridge = (w: any): void => {
                 });
               },
             },
-            response: {
-              value: '',
-              writable: true,
-            },
-            responseText: {
-              value: '',
-              writable: true,
-            },
-            responseURL: {
-              value: '',
-              writable: true,
-            },
-            status: {
-              value: 0,
-              writable: true,
-            },
           });
 
           xhr.readyState = 0;
           const prototype = win.CapacitorWebXMLHttpRequest.prototype;
 
+          const isRelativeURL = (url: string | undefined) =>
+            !url || !(url.startsWith('http:') || url.startsWith('https:'));
+          const isProgressEventAvailable = () =>
+            typeof ProgressEvent !== 'undefined' &&
+            ProgressEvent.prototype instanceof Event;
+
           // XHR patch abort
           prototype.abort = function () {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.abort.call(this);
             }
             this.readyState = 0;
@@ -612,9 +640,7 @@ const initBridge = (w: any): void => {
             this._url = url;
             this._method = method;
 
-            if (
-              !(url.startsWith('http:') || url.toString().startsWith('https:'))
-            ) {
+            if (isRelativeURL(url)) {
               return win.CapacitorWebXMLHttpRequest.open.call(
                 this,
                 method,
@@ -633,10 +659,7 @@ const initBridge = (w: any): void => {
             header: string,
             value: string,
           ) {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(
                 this,
                 header,
@@ -648,10 +671,7 @@ const initBridge = (w: any): void => {
 
           // XHR patch send
           prototype.send = function (body?: Document | XMLHttpRequestBodyInit) {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.send.call(this, body);
             }
 
@@ -662,6 +682,26 @@ const initBridge = (w: any): void => {
 
             try {
               this.readyState = 2;
+
+              Object.defineProperties(this, {
+                response: {
+                  value: '',
+                  writable: true,
+                },
+                responseText: {
+                  value: '',
+                  writable: true,
+                },
+                responseURL: {
+                  value: '',
+                  writable: true,
+                },
+                status: {
+                  value: 0,
+                  writable: true,
+                },
+              });
+
               convertBody(body).then(({ data, type, headers }) => {
                 const otherHeaders =
                   this._headers != null && Object.keys(this._headers).length > 0
@@ -684,13 +724,15 @@ const initBridge = (w: any): void => {
                     // intercept & parse response before returning
                     if (this.readyState == 2) {
                       //TODO: Add progress event emission on native side
-                      this.dispatchEvent(
-                        new ProgressEvent('progress', {
-                          lengthComputable: true,
-                          loaded: nativeResponse.data.length,
-                          total: nativeResponse.data.length,
-                        }),
-                      );
+                      if (isProgressEventAvailable()) {
+                        this.dispatchEvent(
+                          new ProgressEvent('progress', {
+                            lengthComputable: true,
+                            loaded: nativeResponse.data.length,
+                            total: nativeResponse.data.length,
+                          }),
+                        );
+                      }
                       this._headers = nativeResponse.headers;
                       this.status = nativeResponse.status;
                       if (
@@ -725,13 +767,15 @@ const initBridge = (w: any): void => {
                     this.responseText = JSON.stringify(error.data);
                     this.responseURL = error.url;
                     this.readyState = 4;
-                    this.dispatchEvent(
-                      new ProgressEvent('progress', {
-                        lengthComputable: false,
-                        loaded: 0,
-                        total: 0,
-                      }),
-                    );
+                    if (isProgressEventAvailable()) {
+                      this.dispatchEvent(
+                        new ProgressEvent('progress', {
+                          lengthComputable: false,
+                          loaded: 0,
+                          total: 0,
+                        }),
+                      );
+                    }
                     setTimeout(() => {
                       this.dispatchEvent(new Event('error'));
                       this.dispatchEvent(new Event('loadend'));
@@ -746,13 +790,15 @@ const initBridge = (w: any): void => {
               this.responseText = error.toString();
               this.responseURL = this._url;
               this.readyState = 4;
-              this.dispatchEvent(
-                new ProgressEvent('progress', {
-                  lengthComputable: false,
-                  loaded: 0,
-                  total: 0,
-                }),
-              );
+              if (isProgressEventAvailable()) {
+                this.dispatchEvent(
+                  new ProgressEvent('progress', {
+                    lengthComputable: false,
+                    loaded: 0,
+                    total: 0,
+                  }),
+                );
+              }
               setTimeout(() => {
                 this.dispatchEvent(new Event('error'));
                 this.dispatchEvent(new Event('loadend'));
@@ -763,10 +809,7 @@ const initBridge = (w: any): void => {
 
           // XHR patch getAllResponseHeaders
           prototype.getAllResponseHeaders = function () {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(
                 this,
               );
@@ -783,10 +826,7 @@ const initBridge = (w: any): void => {
 
           // XHR patch getResponseHeader
           prototype.getResponseHeader = function (name: string) {
-            if (
-              this._url == null ||
-              !(this._url.startsWith('http:') || this._url.startsWith('https:'))
-            ) {
+            if (isRelativeURL(this._url)) {
               return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(
                 this,
                 name,
@@ -798,6 +838,11 @@ const initBridge = (w: any): void => {
           Object.setPrototypeOf(xhr, prototype);
           return xhr;
         } as unknown as PatchedXMLHttpRequestConstructor;
+
+        Object.assign(
+          window.XMLHttpRequest,
+          win.CapacitorWebXMLHttpRequest.fullObject,
+        );
       }
     }
 
@@ -1065,6 +1110,7 @@ const initBridge = (w: any): void => {
       });
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cap.withPlugin = (_pluginId, _fn) => dummy;
 
     cap.Exception = CapacitorException;

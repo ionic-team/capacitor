@@ -59,7 +59,7 @@ On web, this means do not add any third party libraries such as Firebase or Loda
 ### Local Setup
 
 1. Fork and clone the repo.
-1. Install the monorepo dependencies.
+1. Install the dependencies.
 
     ```shell
     npm install
@@ -71,17 +71,12 @@ On web, this means do not add any third party libraries such as Firebase or Loda
     brew install swiftlint
     ```
 
-1. Install package dependencies. [Lerna](https://github.com/lerna/lerna) can automatically install each package's dependencies.
-
-    ```shell
-    npx lerna bootstrap
-    ```
-
 ### Branches
 
 * [`main`](https://github.com/ionic-team/capacitor/tree/main): Latest Capacitor development branch
-* [`4.x`](https://github.com/ionic-team/capacitor/tree/4.x): Capacitor 4
-* [`3.x`](https://github.com/ionic-team/capacitor/tree/3.x): Capacitor 3 (security fixes only)
+* [`5.x`](https://github.com/ionic-team/capacitor/tree/5.x): Capacitor 5
+* [`4.x`](https://github.com/ionic-team/capacitor/tree/4.x): Capacitor 4 (security fixes only)
+* [`3.x`](https://github.com/ionic-team/capacitor/tree/3.x): Capacitor 3 (not maintained)
 * [`2.x`](https://github.com/ionic-team/capacitor/tree/2.x): Capacitor 2 (not maintained)
 * [`1.x`](https://github.com/ionic-team/capacitor/tree/1.x): Capacitor 1 (not maintained)
 

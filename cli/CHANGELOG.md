@@ -3,6 +3,101 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.2...6.0.0-rc.0) (2024-01-23)
+
+### Bug Fixes
+
+- **cli:** correctly build and sign Android apps using Flavors ([#7082](https://github.com/ionic-team/capacitor/issues/7082)) ([7d3a99d](https://github.com/ionic-team/capacitor/commit/7d3a99d15ba024b4bde9e698e57937002da38bd4))
+- **cli:** Specify keystore alias and alias password build options for apksigner ([#7073](https://github.com/ionic-team/capacitor/issues/7073)) ([6612c49](https://github.com/ionic-team/capacitor/commit/6612c49f5fde5ef2fee555206018391fc00e2be0))
+- **cli:** type only import in config ([#6765](https://github.com/ionic-team/capacitor/issues/6765)) ([2b493ae](https://github.com/ionic-team/capacitor/commit/2b493ae77b9ee6e5fbcb2fafb27bc04693d7e02b))
+- **cli:** Update plugins with breaking changes ([#7148](https://github.com/ionic-team/capacitor/issues/7148)) ([b8c2a92](https://github.com/ionic-team/capacitor/commit/b8c2a92390f21fe653563d7bad73a3f2b5628acb))
+- stop crashing from `objc_getClassList` ([#7187](https://github.com/ionic-team/capacitor/issues/7187)) ([e148db7](https://github.com/ionic-team/capacitor/commit/e148db7758e4186ad45fd74185a10fb757ff9b29))
+
+### Features
+
+- **cli:** allow async in capacitor config file ([#4299](https://github.com/ionic-team/capacitor/issues/4299)) ([5cecc3e](https://github.com/ionic-team/capacitor/commit/5cecc3ee22868f9397792ec80a4b753a07b68f30))
+
+# [6.0.0-beta.2](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.1...6.0.0-beta.2) (2023-12-14)
+
+**Note:** Version bump only for package @capacitor/cli
+
+# [6.0.0-beta.1](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.0...6.0.0-beta.1) (2023-12-14)
+
+**Note:** Version bump only for package @capacitor/cli
+
+# [6.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/6.0.0-alpha.2...6.0.0-beta.0) (2023-12-13)
+
+**Note:** Version bump only for package @capacitor/cli
+
+# [6.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/6.0.0-alpha.1...6.0.0-alpha.2) (2023-11-15)
+
+**Note:** Version bump only for package @capacitor/cli
+
+# [6.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/5.2.3...6.0.0-alpha.1) (2023-11-08)
+
+### Bug Fixes
+
+- allow double quotes in Gemfile ([#6903](https://github.com/ionic-team/capacitor/issues/6903)) ([3abdbed](https://github.com/ionic-team/capacitor/commit/3abdbed38844d5d59d244f6f0dfc2647f29ce446))
+- **cli:** force latest native-run version for iOS 17 support ([#6926](https://github.com/ionic-team/capacitor/issues/6926)) ([7e7c8b9](https://github.com/ionic-team/capacitor/commit/7e7c8b9113f541d530c5883dea1f52b2957c0859))
+- **cli:** Pin @ionic/utils-subprocess version ([#7057](https://github.com/ionic-team/capacitor/issues/7057)) ([0ac019a](https://github.com/ionic-team/capacitor/commit/0ac019a36070b4cb9917a82e406453169c7d5559))
+- **cli:** use helper in Podfile with correct path ([#6878](https://github.com/ionic-team/capacitor/issues/6878)) ([8e95be9](https://github.com/ionic-team/capacitor/commit/8e95be9f91169e258ab5cdd8fd673106392b8429))
+- **cli:** Use latest native-run ([#7023](https://github.com/ionic-team/capacitor/issues/7023)) ([4125160](https://github.com/ionic-team/capacitor/commit/412516069e15fbdbc17ad130c2f3a67891b6bc45))
+- Update migrate to Capacitor 6 ([#6872](https://github.com/ionic-team/capacitor/issues/6872)) ([98eec8f](https://github.com/ionic-team/capacitor/commit/98eec8fe9fd332d6669965fa5a21412233b3e06e))
+
+### Features
+
+- add livereload to run command ([#6831](https://github.com/ionic-team/capacitor/issues/6831)) ([4099969](https://github.com/ionic-team/capacitor/commit/4099969f70e9b995182bacecc16e160d89bbc746))
+- better support monorepos ([#6811](https://github.com/ionic-team/capacitor/issues/6811)) ([ae35e29](https://github.com/ionic-team/capacitor/commit/ae35e29fb8c886dea867683a23a558d2d344073b))
+- modify package.swift on update and sync ([#7042](https://github.com/ionic-team/capacitor/issues/7042)) ([24573fb](https://github.com/ionic-team/capacitor/commit/24573fb864c43551e2ce42721b45ff901155627d))
+
+# [5.6.0](https://github.com/ionic-team/capacitor/compare/5.5.1...5.6.0) (2023-12-14)
+
+### Bug Fixes
+
+- **cli:** Use latest native-run ([#7030](https://github.com/ionic-team/capacitor/issues/7030)) ([1d948d4](https://github.com/ionic-team/capacitor/commit/1d948d4df6b6b6f8cfdc02e72d84ae8be963f4a0))
+
+## [5.5.1](https://github.com/ionic-team/capacitor/compare/5.5.0...5.5.1) (2023-10-25)
+
+**Note:** Version bump only for package @capacitor/cli
+
+# [5.5.0](https://github.com/ionic-team/capacitor/compare/5.4.2...5.5.0) (2023-10-11)
+
+**Note:** Version bump only for package @capacitor/cli
+
+## [5.4.2](https://github.com/ionic-team/capacitor/compare/5.4.1...5.4.2) (2023-10-04)
+
+**Note:** Version bump only for package @capacitor/cli
+
+## [5.4.1](https://github.com/ionic-team/capacitor/compare/5.4.0...5.4.1) (2023-09-21)
+
+### Bug Fixes
+
+- **cli:** force latest native-run version for iOS 17 support ([#6928](https://github.com/ionic-team/capacitor/issues/6928)) ([f9be9f5](https://github.com/ionic-team/capacitor/commit/f9be9f5791e6f0881be2c73bb8fbe7a8c1b10848))
+- **cookies:** retrieve cookies when using a custom android scheme ([6b5ddad](https://github.com/ionic-team/capacitor/commit/6b5ddad8b36e33ef4171f6da5cc311ed3f634ac6))
+
+# [5.4.0](https://github.com/ionic-team/capacitor/compare/5.3.0...5.4.0) (2023-09-14)
+
+### Bug Fixes
+
+- **cli:** use helper in Podfile with correct path ([#6888](https://github.com/ionic-team/capacitor/issues/6888)) ([9048432](https://github.com/ionic-team/capacitor/commit/9048432755095ce3dcca9d3bab39894f2b6c3967))
+
+### Features
+
+- add livereload to run command ([#6831](https://github.com/ionic-team/capacitor/issues/6831)) ([54a63ae](https://github.com/ionic-team/capacitor/commit/54a63ae0a5f0845d5ef2c0d10bd0c27682866940))
+
+# [5.3.0](https://github.com/ionic-team/capacitor/compare/5.2.3...5.3.0) (2023-08-23)
+
+### Features
+
+- better support monorepos ([#6811](https://github.com/ionic-team/capacitor/issues/6811)) ([ae35e29](https://github.com/ionic-team/capacitor/commit/ae35e29fb8c886dea867683a23a558d2d344073b))
+
+## [5.2.3](https://github.com/ionic-team/capacitor/compare/5.2.2...5.2.3) (2023-08-10)
+
+### Bug Fixes
+
+- **cli:** remove package related checks on doctor command ([#6773](https://github.com/ionic-team/capacitor/issues/6773)) ([4499b6b](https://github.com/ionic-team/capacitor/commit/4499b6bb6c52e9bc7fdfdb35ee2519881996eedf))
+- **cli:** signing type option issue ([#6716](https://github.com/ionic-team/capacitor/issues/6716)) ([ee0f745](https://github.com/ionic-team/capacitor/commit/ee0f7457e458ca4bb4eb74f67552ac2ace76016b))
+
 ## [5.2.2](https://github.com/ionic-team/capacitor/compare/5.2.1...5.2.2) (2023-07-19)
 
 **Note:** Version bump only for package @capacitor/cli
