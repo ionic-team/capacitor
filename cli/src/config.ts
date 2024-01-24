@@ -130,7 +130,9 @@ async function loadExtConfigTS(
 
     const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
     const extConfigObject = requireTS(ts, extConfigFilePath) as any;
-    const extConfig = extConfigObject.default ?? extConfigObject;
+    const extConfig = extConfigObject.default
+      ? await extConfigObject.default
+      : extConfigObject;
 
     return {
       extConfigType: 'ts',
@@ -157,7 +159,7 @@ async function loadExtConfigJS(
       extConfigType: 'js',
       extConfigName,
       extConfigFilePath: extConfigFilePath,
-      extConfig: require(extConfigFilePath),
+      extConfig: await require(extConfigFilePath),
     };
   } catch (e: any) {
     fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
@@ -516,7 +518,7 @@ async function determineGemfileOrCocoapodPath(
 
 function formatConfigTS(extConfig: ExternalConfig): string {
   // TODO: <reference> tags
-  return `import { CapacitorConfig } from '@capacitor/cli';
+  return `import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = ${formatJSObject(extConfig)};
 
