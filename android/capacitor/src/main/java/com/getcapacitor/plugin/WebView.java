@@ -15,6 +15,13 @@ public class WebView extends Plugin {
     public static final String CAP_SERVER_PATH = "serverBasePath";
 
     @PluginMethod
+    public void setServerAssetPath(PluginCall call) {
+        String path = call.getString("path");
+        bridge.setServerAssetPath(path);
+        call.resolve();
+    }
+
+    @PluginMethod
     public void setServerBasePath(PluginCall call) {
         String path = call.getString("path");
         bridge.setServerBasePath(path);
