@@ -6,6 +6,7 @@ import { WebPlugin } from './web-plugin';
 
 /******** WEB VIEW PLUGIN ********/
 export interface WebViewPlugin extends Plugin {
+  setServerAssetPath(options: WebViewPath): Promise<void>;
   setServerBasePath(options: WebViewPath): Promise<void>;
   getServerBasePath(): Promise<WebViewPath>;
   persistServerBasePath(): Promise<void>;

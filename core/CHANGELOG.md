@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.2...6.0.0-rc.0) (2024-01-23)
+
+### Bug Fixes
+
+- **web:** Implement `retainUntilConsumed` on notifyListeners ([#7127](https://github.com/ionic-team/capacitor/issues/7127)) ([526292e](https://github.com/ionic-team/capacitor/commit/526292eb273ee7d8fa9a9912ce3b59e9a104c19e))
+
 # [6.0.0-beta.2](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.1...6.0.0-beta.2) (2023-12-14)
 
 **Note:** Version bump only for package @capacitor/core

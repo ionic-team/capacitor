@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.2...6.0.0-rc.0) (2024-01-23)
+
+### Bug Fixes
+
+- **android:** don't proxy requests if no jsInjector ([#7199](https://github.com/ionic-team/capacitor/issues/7199)) ([7dc5585](https://github.com/ionic-team/capacitor/commit/7dc5585996c17eedd154b5d9118eb880fef616fe))
+- **android:** handle deprecation warnings ([#7190](https://github.com/ionic-team/capacitor/issues/7190)) ([06636d7](https://github.com/ionic-team/capacitor/commit/06636d73a1b12c8f932642ee7caf91432690fea5))
+
+### Features
+
+- **android:** Load alternative layout when no WebView ([#7141](https://github.com/ionic-team/capacitor/issues/7141)) ([87c399a](https://github.com/ionic-team/capacitor/commit/87c399ab6b41f217b4d8a58bfb916a5d78641fd0))
+
 # [6.0.0-beta.2](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.1...6.0.0-beta.2) (2023-12-14)
 
 **Note:** Version bump only for package @capacitor/android
