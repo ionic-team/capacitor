@@ -311,6 +311,10 @@ const initBridge = (w: any): void => {
       });
     };
 
+    IonicWebView.setServerAssetPath = (path: any) => {
+      Plugins?.WebView?.setServerAssetPath({ path });
+    };
+
     IonicWebView.setServerBasePath = (path: any) => {
       Plugins?.WebView?.setServerBasePath({ path });
     };
