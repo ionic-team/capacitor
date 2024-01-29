@@ -279,6 +279,10 @@ var nativeBridge = (function (exports) {
                     callback(result.path);
                 });
             };
+            IonicWebView.setServerAssetPath = (path) => {
+                var _a;
+                (_a = Plugins === null || Plugins === void 0 ? void 0 : Plugins.WebView) === null || _a === void 0 ? void 0 : _a.setServerAssetPath({ path });
+            };
             IonicWebView.setServerBasePath = (path) => {
                 var _a;
                 (_a = Plugins === null || Plugins === void 0 ? void 0 : Plugins.WebView) === null || _a === void 0 ? void 0 : _a.setServerBasePath({ path });
