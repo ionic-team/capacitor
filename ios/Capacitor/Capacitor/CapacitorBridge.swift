@@ -94,6 +94,8 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
+    public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
+    public static let httpsInterceptorStartIdentifier = "/_capacitor_https_interceptor_"
     public static let defaultScheme = "capacitor"
 
     public private(set) var webViewAssetHandler: WebViewAssetHandler
@@ -288,7 +290,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
                     let pluginData = try Data(contentsOf: pluginJSON)
                     let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
-                    
+
                     for plugin in registrationList.packageClassList {
                         if let pluginClass = NSClassFromString(plugin) {
                             if class_getSuperclass(pluginClass) == CDVPlugin.self {
