@@ -130,6 +130,26 @@ var nativeBridge = (function (exports) {
         }
         return { data: body, type: 'json' };
     };
+    const CAPACITOR_HTTP_INTERCEPTOR = '/_capacitor_http_interceptor_';
+    const CAPACITOR_HTTPS_INTERCEPTOR = '/_capacitor_https_interceptor_';
+    // TODO: export as Cap function
+    const isRelativeOrProxyUrl = (url) => !url ||
+        !(url.startsWith('http:') || url.startsWith('https:')) ||
+        url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1 ||
+        url.indexOf(CAPACITOR_HTTPS_INTERCEPTOR) > -1;
+    // TODO: export as Cap function
+    const createProxyUrl = (url, win) => {
+        var _a, _b;
+        if (isRelativeOrProxyUrl(url))
+            return url;
+        let proxyUrl = new URL(url);
+        const isHttps = proxyUrl.protocol === 'https:';
+        const originalHostname = proxyUrl.hostname;
+        const originalPathname = proxyUrl.pathname;
+        proxyUrl = new URL((_b = (_a = win.Capacitor) === null || _a === void 0 ? void 0 : _a.getServerUrl()) !== null && _b !== void 0 ? _b : '');
+        proxyUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${originalHostname}${originalPathname}`;
+        return proxyUrl.toString();
+    };
     const initBridge = (w) => {
         const getPlatformId = (win) => {
             var _a, _b;
@@ -476,6 +496,15 @@ var nativeBridge = (function (exports) {
                         if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
                             return win.CapacitorWebFetch(resource, options);
                         }
+                        if (!(options === null || options === void 0 ? void 0 : options.method) ||
+                            options.method.toLocaleUpperCase() === 'GET' ||
+                            options.method.toLocaleUpperCase() === 'HEAD' ||
+                            options.method.toLocaleUpperCase() === 'OPTIONS' ||
+                            options.method.toLocaleUpperCase() === 'TRACE') {
+                            const modifiedResource = createProxyUrl(resource.toString(), win);
+                            const response = await win.CapacitorWebFetch(modifiedResource, options);
+                            return response;
+                        }
                         const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
                         console.time(tag);
                         try {
@@ -545,12 +574,11 @@ var nativeBridge = (function (exports) {
                         });
                         xhr.readyState = 0;
                         const prototype = win.CapacitorWebXMLHttpRequest.prototype;
-                        const isRelativeURL = (url) => !url || !(url.startsWith('http:') || url.startsWith('https:'));
                         const isProgressEventAvailable = () => typeof ProgressEvent !== 'undefined' &&
                             ProgressEvent.prototype instanceof Event;
                         // XHR patch abort
                         prototype.abort = function () {
-                            if (isRelativeURL(this._url)) {
+                            if (isRelativeOrProxyUrl(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.abort.call(this);
                             }
                             this.readyState = 0;
@@ -561,10 +589,18 @@ var nativeBridge = (function (exports) {
                         };
                         // XHR patch open
                         prototype.open = function (method, url) {
+                            this._method = method.toLocaleUpperCase();
                             this._url = url;
-                            this._method = method;
-                            if (isRelativeURL(url)) {
-                                return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
+                            if (!this._method ||
+                                this._method === 'GET' ||
+                                this._method === 'HEAD' ||
+                                this._method === 'OPTIONS' ||
+                                this._method === 'TRACE') {
+                                if (isRelativeOrProxyUrl(url)) {
+                                    return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
+                                }
+                                this._url = createProxyUrl(this._url, win);
+                                return win.CapacitorWebXMLHttpRequest.open.call(this, method, this._url);
                             }
                             setTimeout(() => {
                                 this.dispatchEvent(new Event('loadstart'));
@@ -573,14 +609,14 @@ var nativeBridge = (function (exports) {
                         };
                         // XHR patch set request header
                         prototype.setRequestHeader = function (header, value) {
-                            if (isRelativeURL(this._url)) {
+                            if (isRelativeOrProxyUrl(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(this, header, value);
                             }
                             this._headers[header] = value;
                         };
                         // XHR patch send
                         prototype.send = function (body) {
-                            if (isRelativeURL(this._url)) {
+                            if (isRelativeOrProxyUrl(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.send.call(this, body);
                             }
                             const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
@@ -699,7 +735,7 @@ var nativeBridge = (function (exports) {
                         };
                         // XHR patch getAllResponseHeaders
                         prototype.getAllResponseHeaders = function () {
-                            if (isRelativeURL(this._url)) {
+                            if (isRelativeOrProxyUrl(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(this);
                             }
                             let returnString = '';
@@ -712,7 +748,7 @@ var nativeBridge = (function (exports) {
                         };
                         // XHR patch getResponseHeader
                         prototype.getResponseHeader = function (name) {
-                            if (isRelativeURL(this._url)) {
+                            if (isRelativeOrProxyUrl(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                             }
                             return this._headers[name];
