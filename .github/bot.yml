@@ -13,10 +13,6 @@ tasks:
     config:
       label: 'needs reply'
       exclude-labeler: true
-  - name: add-platform-labels
-    on:
-      issues:
-        types: [opened, edited]
   - name: add-contributors
     on:
       push:
