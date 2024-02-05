@@ -5,6 +5,10 @@ import Cordova
 
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
+struct RegistrationList: Codable {
+    let packageClassList: Set<String>
+}
+
 /**
  An internal class adopting a public protocol means that we have a lot of `public` methods
  but that is by design not a mistake. And since the bridge is the center of the whole project
@@ -90,6 +94,8 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
+    public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
+    public static let httpsInterceptorStartIdentifier = "/_capacitor_https_interceptor_"
     public static let defaultScheme = "capacitor"
 
     public private(set) var webViewAssetHandler: WebViewAssetHandler
@@ -277,30 +283,33 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      Register all plugins that have been declared
      */
     func registerPlugins() {
+        var pluginList: [AnyClass] = [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
+
         if autoRegisterPlugins {
-            let classCount = objc_getClassList(nil, 0)
-            let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
+            do {
+                if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
+                    let pluginData = try Data(contentsOf: pluginJSON)
+                    let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
 
-            let releasingClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(classes)
-            let numClasses: Int32 = objc_getClassList(releasingClasses, classCount)
-
-            for classIndex in 0..<Int(numClasses) {
-                if let aClass: AnyClass = classes[classIndex] {
-                    if class_getSuperclass(aClass) == CDVPlugin.self {
-                        injectCordovaFiles = true
-                    }
-                    if class_conformsToProtocol(aClass, CAPBridgedPlugin.self),
-                       let pluginType = aClass as? CapacitorPlugin.Type {
-                        if aClass is CAPInstancePlugin.Type { continue }
-                        registerPlugin(pluginType)
+                    for plugin in registrationList.packageClassList {
+                        if let pluginClass = NSClassFromString(plugin) {
+                            if class_getSuperclass(pluginClass) == CDVPlugin.self {
+                                injectCordovaFiles = true
+                            }
+                            pluginList.append(pluginClass)
+                        }
                     }
                 }
+            } catch {
+                CAPLog.print("Error registering plugins: \(error)")
             }
-            classes.deallocate()
-        } else {
-            // register core plugins only
-            [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
-                .forEach { registerPluginType($0) }
+        }
+
+        for plugin in pluginList {
+            if plugin is CAPInstancePlugin.Type { continue }
+            if let capPlugin = plugin as? CapacitorPlugin.Type {
+                registerPlugin(capPlugin)
+            }
         }
     }
 

@@ -426,11 +426,11 @@ public class HttpRequestHandler {
         return response;
     }
 
-    private static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
+    public static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
         try {
             Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
             Method method = sslPinningImpl.getDeclaredMethod("isDomainExcluded", Bridge.class, URL.class);
-            return (Boolean) method.invoke(sslPinningImpl.newInstance(), bridge, url);
+            return (Boolean) method.invoke(sslPinningImpl.getDeclaredConstructor().newInstance(), bridge, url);
         } catch (Exception ignored) {
             return false;
         }
