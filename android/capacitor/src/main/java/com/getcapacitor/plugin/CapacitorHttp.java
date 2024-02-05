@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 )
 public class CapacitorHttp extends Plugin {
 
-    private Map<Runnable, PluginCall> activeRequests = new HashMap<>();
+    private final Map<Runnable, PluginCall> activeRequests = new HashMap<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     @Override
@@ -59,17 +59,26 @@ public class CapacitorHttp extends Plugin {
     }
 
     private void http(final PluginCall call, final String httpMethod) {
-        Runnable asyncHttpCall = () -> {
-            try {
-                JSObject response = HttpRequestHandler.request(call, httpMethod, getBridge());
-                call.resolve(response);
-            } catch (Exception e) {
-                call.reject(e.getLocalizedMessage(), e.getClass().getSimpleName(), e);
+        Runnable asyncHttpCall = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSObject response = HttpRequestHandler.request(call, httpMethod, getBridge());
+                    call.resolve(response);
+                } catch (Exception e) {
+                    call.reject(e.getLocalizedMessage(), e.getClass().getSimpleName(), e);
+                } finally {
+                    activeRequests.remove(this);
+                }
             }
         };
 
-        activeRequests.put(asyncHttpCall, call);
-        executor.submit(asyncHttpCall);
+        if (!executor.isShutdown()) {
+            activeRequests.put(asyncHttpCall, call);
+            executor.submit(asyncHttpCall);
+        } else {
+            call.reject("Failed to execute request - Http Plugin was shutdown");
+        }
     }
 
     @JavascriptInterface

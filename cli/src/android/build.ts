@@ -35,17 +35,25 @@ export async function buildAndroid(
     }
   }
 
+  const releaseDir = releaseTypeIsAAB
+    ? flavor !== ''
+      ? `${flavor}Release`
+      : 'Release'
+    : flavor !== ''
+    ? join(flavor, 'release')
+    : 'release';
+
   const releasePath = join(
     config.android.appDirAbs,
     'build',
     'outputs',
     releaseTypeIsAAB ? 'bundle' : 'apk',
-    buildOptions.flavor ? `${flavor}Release` : 'release',
+    releaseDir,
   );
 
-  const unsignedReleaseName = `app${
-    config.android.flavor ? `-${config.android.flavor}` : ''
-  }-release${releaseTypeIsAAB ? '' : '-unsigned'}.${releaseType.toLowerCase()}`;
+  const unsignedReleaseName = `app${flavor !== '' ? `-${flavor}` : ''}-release${
+    releaseTypeIsAAB ? '' : '-unsigned'
+  }.${releaseType.toLowerCase()}`;
 
   const signedReleaseName = unsignedReleaseName.replace(
     `-release${
