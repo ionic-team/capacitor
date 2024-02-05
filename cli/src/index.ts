@@ -274,24 +274,45 @@ export function runProgram(config: Config): void {
       '--packagemanager <packageManager>',
       'The package manager to use for dependency installs (SPM, Cocoapods)',
     )
+    .option(
+      '--template <>',
+      'An external template package to use for the specified platform',
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { packagemanager }) => {
-          checkExternalConfig(config.app);
-          const { addCommand } = await import('./tasks/add');
+        telemetryAction(
+          config,
+          async (platform, { packagemanager, template }) => {
+            checkExternalConfig(config.app);
+            const { addCommand, prepareTemplate } = await import('./tasks/add');
 
-          const configWritable: Writable<Config> = config as Writable<Config>;
-          if (packagemanager === 'SPM') {
-            configWritable.cli.assets.ios.platformTemplateArchive =
-              'ios-spm-template.tar.gz';
-            configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(
-              configWritable.cli.assetsDirAbs,
-              configWritable.cli.assets.ios.platformTemplateArchive,
-            );
-          }
+            const configWritable: Writable<Config> = config as Writable<Config>;
 
-          await addCommand(configWritable as Config, platform);
-        }),
+            if (!template) {
+              // TODO: handle SPM with custom templates?
+              if (packagemanager === 'SPM') {
+                configWritable.cli.assets.ios.platformTemplateArchive =
+                  'ios-spm-template.tar.gz';
+                configWritable.cli.assets.ios.platformTemplateArchiveAbs =
+                  resolve(
+                    configWritable.cli.assetsDirAbs,
+                    configWritable.cli.assets.ios.platformTemplateArchive,
+                  );
+              }
+            } else {
+              if (platform === configWritable.ios.name) {
+                configWritable.cli.assets.ios.platformTemplateArchiveAbs =
+                  await prepareTemplate(template);
+                  
+              } else if (platform === configWritable.android.name) {
+                configWritable.cli.assets.android.platformTemplateArchiveAbs =
+                  await prepareTemplate(template);
+              }              
+            }
+
+            await addCommand(configWritable as Config, platform);
+          },
+        ),
       ),
     );
 

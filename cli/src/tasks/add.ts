@@ -1,4 +1,4 @@
-import { pathExists } from '@ionic/utils-fs';
+import { existsSync, pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
 
 import { addAndroid, createLocalProperties } from '../android/add';
@@ -34,10 +34,33 @@ import {
 import { logger, logSuccess, output } from '../log';
 
 import { sync } from './sync';
+import { resolve } from 'path';
+import { extractTemplate } from '../util/template';
+
+export async function prepareTemplate(  
+  template: string,
+): Promise<string> {
+  // a local template file
+  if (template.startsWith('file://')) {
+    const templatePath = resolve(template.replace('file://', ''));
+    if (!existsSync(templatePath)) {
+      fatal(`Template file not found at path: ${templatePath}`);
+    }
+
+    if (!templatePath.endsWith('.tar.gz') && !templatePath.endsWith('.tgz')) {
+      fatal("Template file must be .tar.gz or .tgz")
+    }   
+    
+    logger.info(`Using local template at ${templatePath}`)
+    return templatePath
+  }
+
+  return "";
+}
 
 export async function addCommand(
   config: Config,
-  selectedPlatformName: string,
+  selectedPlatformName: string
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
@@ -101,6 +124,7 @@ export async function addCommand(
         () => checkAppConfig(config),
         ...addChecks(config, platformName),
       ]);
+
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
