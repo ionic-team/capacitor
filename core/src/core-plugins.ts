@@ -177,7 +177,7 @@ export interface HttpOptions {
   data?: any;
   headers?: HttpHeaders;
   /**
-   * How long to wait to read additional data in milliseconds. 
+   * How long to wait to read additional data in milliseconds.
    * Resets each time new data is received.
    */
   readTimeout?: number;
