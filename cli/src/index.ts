@@ -289,7 +289,7 @@ export function runProgram(config: Config): void {
             const configWritable: Writable<Config> = config as Writable<Config>;
 
             if (!template) {
-              // TODO: handle SPM with custom templates?
+              // TODO: how handle SPM with custom templates?
               if (packagemanager === 'SPM') {
                 configWritable.cli.assets.ios.platformTemplateArchive =
                   'ios-spm-template.tar.gz';
@@ -303,12 +303,13 @@ export function runProgram(config: Config): void {
               if (platform === configWritable.ios.name) {
                 configWritable.cli.assets.ios.platformTemplateArchiveAbs =
                   await prepareTemplate(configWritable as Config, template);
-                  
               } else if (platform === configWritable.android.name) {
                 configWritable.cli.assets.android.platformTemplateArchiveAbs =
                   await prepareTemplate(configWritable as Config, template);
-              }              
+              }
             }
+
+            // TODO: should we validate custom templates?
 
             await addCommand(configWritable as Config, platform);
           },

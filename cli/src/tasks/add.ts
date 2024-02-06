@@ -1,5 +1,6 @@
 import { existsSync, pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
+import { join, resolve } from 'node:path';
 
 import { addAndroid, createLocalProperties } from '../android/add';
 import {
@@ -32,10 +33,9 @@ import {
   checkIOSPackage,
 } from '../ios/common';
 import { logger, logSuccess, output } from '../log';
+import { runCommand } from '../util/subprocess';
 
 import { sync } from './sync';
-import { join, resolve } from 'node:path';
-import { runCommand } from '../util/subprocess';
 
 export async function prepareTemplate(
   config: Config,
