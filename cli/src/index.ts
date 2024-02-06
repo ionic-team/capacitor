@@ -302,11 +302,11 @@ export function runProgram(config: Config): void {
             } else {
               if (platform === configWritable.ios.name) {
                 configWritable.cli.assets.ios.platformTemplateArchiveAbs =
-                  await prepareTemplate(template);
+                  await prepareTemplate(configWritable as Config, template);
                   
               } else if (platform === configWritable.android.name) {
                 configWritable.cli.assets.android.platformTemplateArchiveAbs =
-                  await prepareTemplate(template);
+                  await prepareTemplate(configWritable as Config, template);
               }              
             }
 

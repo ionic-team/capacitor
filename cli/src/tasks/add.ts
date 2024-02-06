@@ -34,11 +34,12 @@ import {
 import { logger, logSuccess, output } from '../log';
 
 import { sync } from './sync';
-import { resolve } from 'path';
-import { extractTemplate } from '../util/template';
+import { join, resolve } from 'node:path';
+import { runCommand } from '../util/subprocess';
 
 export async function prepareTemplate(  
-  template: string,
+  config: Config,
+  template: string
 ): Promise<string> {
   // a local template file
   if (template.startsWith('file://')) {
@@ -55,7 +56,13 @@ export async function prepareTemplate(
     return templatePath
   }
 
-  return "";
+  logger.info(`Installing template from npm: ${template}`)
+  try {    
+    await runCommand("npm", ['install', '--save-dev', template]);    
+    return join(config.app.rootDir, "node_modules", template);    
+  } catch (err) {
+    fatal(`Could not install template package ${template}:\n ${err}`)
+  }  
 }
 
 export async function addCommand(
