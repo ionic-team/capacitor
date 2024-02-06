@@ -37,9 +37,9 @@ import { sync } from './sync';
 import { join, resolve } from 'node:path';
 import { runCommand } from '../util/subprocess';
 
-export async function prepareTemplate(  
+export async function prepareTemplate(
   config: Config,
-  template: string
+  template: string,
 ): Promise<string> {
   // a local template file
   if (template.startsWith('file://')) {
@@ -49,25 +49,30 @@ export async function prepareTemplate(
     }
 
     if (!templatePath.endsWith('.tar.gz') && !templatePath.endsWith('.tgz')) {
-      fatal("Template file must be .tar.gz or .tgz")
-    }   
-    
-    logger.info(`Using local template at ${templatePath}`)
-    return templatePath
+      fatal('Template file must be .tar.gz or .tgz');
+    }
+
+    logger.info(`Using local template at ${templatePath}`);
+    return templatePath;
   }
 
-  logger.info(`Installing template from npm: ${template}`)
-  try {    
-    await runCommand("npm", ['install', '--save-dev', template]);    
-    return join(config.app.rootDir, "node_modules", template);    
+  try {
+    const packageComponents = template.split(
+      /@[~^]?([\dvx*]+(?:[-.](?:[\dx*]+|alpha|beta|rc))*)/gm,
+    );
+    const packageName = packageComponents[0];
+
+    logger.info(`Installing template from npm: ${template}`);
+    await runCommand('npm', ['install', '--save-dev', template]);
+    return join(config.app.rootDir, 'node_modules', packageName);
   } catch (err) {
-    fatal(`Could not install template package ${template}:\n ${err}`)
-  }  
+    fatal(`Could not install template package ${template}:\n ${err}`);
+  }
 }
 
 export async function addCommand(
   config: Config,
-  selectedPlatformName: string
+  selectedPlatformName: string,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
