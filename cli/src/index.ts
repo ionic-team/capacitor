@@ -1,10 +1,15 @@
 import { Option, program } from 'commander';
 import { resolve } from 'path';
 
+import { defaultAndroidTemplatePackage } from './android/add';
 import c from './colors';
 import { checkExternalConfig, loadConfig } from './config';
 import type { Config } from './definitions';
 import { fatal, isFatal } from './errors';
+import {
+  defaultIOSTemplatePackageCocoapods,
+  defaultIOSTemplatePackageSPM,
+} from './ios/add';
 import { receive } from './ipc';
 import { logger, output } from './log';
 import { telemetryAction } from './telemetry';
@@ -289,24 +294,26 @@ export function runProgram(config: Config): void {
             const configWritable: Writable<Config> = config as Writable<Config>;
 
             if (!template) {
-              // TODO: how handle SPM with custom templates?
-              if (packagemanager === 'SPM') {
-                configWritable.cli.assets.ios.platformTemplateArchive =
-                  'ios-spm-template.tar.gz';
-                configWritable.cli.assets.ios.platformTemplateArchiveAbs =
-                  resolve(
-                    configWritable.cli.assetsDirAbs,
-                    configWritable.cli.assets.ios.platformTemplateArchive,
-                  );
-              }
-            } else {
+              // TODO: do we need to be able to specify a particular version?
               if (platform === configWritable.ios.name) {
-                configWritable.cli.assets.ios.platformTemplateArchiveAbs =
-                  await prepareTemplate(configWritable as Config, template);
+                if (packagemanager === 'SPM') {
+                  template = defaultIOSTemplatePackageSPM;
+                } else {
+                  template = defaultIOSTemplatePackageCocoapods;
+                }
               } else if (platform === configWritable.android.name) {
-                configWritable.cli.assets.android.platformTemplateArchiveAbs =
-                  await prepareTemplate(configWritable as Config, template);
+                template = defaultAndroidTemplatePackage;
               }
+            }
+
+            // TODO: how handle SPM with custom templates?
+
+            if (platform === configWritable.ios.name) {
+              configWritable.cli.assets.ios.platformTemplateArchiveAbs =
+                await prepareTemplate(configWritable as Config, template);
+            } else if (platform === configWritable.android.name) {
+              configWritable.cli.assets.android.platformTemplateArchiveAbs =
+                await prepareTemplate(configWritable as Config, template);
             }
 
             // TODO: should we validate custom templates?
