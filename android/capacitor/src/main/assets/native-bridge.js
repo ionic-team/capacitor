@@ -678,7 +678,7 @@ var nativeBridge = (function (exports) {
                                             else {
                                                 this.response = nativeResponse.data;
                                             }
-                                            this.responseText = ((_a = nativeResponse.headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                            this.responseText = ((_a = (nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'])) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
                                                 ? JSON.stringify(nativeResponse.data)
                                                 : nativeResponse.data;
                                             this.responseURL = nativeResponse.url;

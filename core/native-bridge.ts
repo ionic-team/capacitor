@@ -806,9 +806,10 @@ const initBridge = (w: any): void => {
                       } else {
                         this.response = nativeResponse.data;
                       }
-                      this.responseText = nativeResponse.headers[
-                        'Content-Type'
-                      ]?.startsWith('application/json')
+                      this.responseText = (
+                        nativeResponse.headers['Content-Type'] ||
+                        nativeResponse.headers['content-type']
+                      )?.startsWith('application/json')
                         ? JSON.stringify(nativeResponse.data)
                         : nativeResponse.data;
                       this.responseURL = nativeResponse.url;
