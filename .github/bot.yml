@@ -13,13 +13,3 @@ tasks:
     config:
       label: 'needs reply'
       exclude-labeler: true
-  - name: add-contributors
-    on:
-      push:
-        branches: [main]
-    config:
-      base: main
-      commit-message: 'chore(readme): add new contributor'
-      exclude-patterns:
-        - '^Ionitron$'
-        - '\[bot\]$'

@@ -150,6 +150,7 @@ export function runProgram(config: Config): void {
     .option('--keystorepath <keystorePath>', 'Path to the keystore')
     .option('--keystorepass <keystorePass>', 'Password to the keystore')
     .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
+    .option('--configuration <name>', 'Configuration name of the iOS Scheme')
     .option(
       '--keystorealiaspass <keystoreAliasPass>',
       'Password for the Key Alias',
@@ -181,6 +182,7 @@ export function runProgram(config: Config): void {
               keystorealiaspass,
               androidreleasetype,
               signingType,
+              configuration,
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
@@ -193,6 +195,7 @@ export function runProgram(config: Config): void {
               keystorealiaspass,
               androidreleasetype,
               signingtype: signingType,
+              configuration,
             });
           },
         ),
@@ -220,6 +223,7 @@ export function runProgram(config: Config): void {
     .option('-l, --live-reload', 'Enable Live Reload')
     .option('--host <host>', 'Host used for live reload')
     .option('--port <port>', 'Port used for live reload')
+    .option('--configuration <name>', 'Configuration name of the iOS Scheme')
     .action(
       wrapAction(
         telemetryAction(
@@ -236,6 +240,7 @@ export function runProgram(config: Config): void {
               liveReload,
               host,
               port,
+              configuration,
             },
           ) => {
             const { runCommand } = await import('./tasks/run');
@@ -249,6 +254,7 @@ export function runProgram(config: Config): void {
               liveReload,
               host,
               port,
+              configuration,
             });
           },
         ),
