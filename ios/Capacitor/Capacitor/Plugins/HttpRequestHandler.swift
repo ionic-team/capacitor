@@ -43,7 +43,7 @@ func tryParseJson(_ data: Data) -> Any {
 ///     - headers: The headers as dictionary. The type is unspecific because the incoming headers are coming from the
 ///       allHeaderFields property of the HttpResponse.
 /// - Returns: The modified headers dictionary with lowercase keys
-func lowerCaseHeaderDictionary(_ headers: [AnyHashable: Any]) -> [String: Any] {
+private func lowerCaseHeaderDictionary(_ headers: [AnyHashable: Any]) -> [String: Any] {
     // Lowercases the key of the headers dictionary.
     return Dictionary(uniqueKeysWithValues: headers.map({ (key: AnyHashable, value: Any) in
         return (String(describing: key).lowercased(), value)
