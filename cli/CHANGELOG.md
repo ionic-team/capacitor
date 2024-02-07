@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.7.0](https://github.com/ionic-team/capacitor/compare/5.6.0...5.7.0) (2024-02-07)
+
+### Bug Fixes
+
+- **cli:** correctly build and sign Android apps using Flavors ([#7211](https://github.com/ionic-team/capacitor/issues/7211)) ([af97904](https://github.com/ionic-team/capacitor/commit/af97904d05d5a735a341110816b1845bdd90de0a))
+
 # [5.6.0](https://github.com/ionic-team/capacitor/compare/5.5.1...5.6.0) (2023-12-14)
 
 ### Bug Fixes

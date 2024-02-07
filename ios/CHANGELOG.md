@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.7.0](https://github.com/ionic-team/capacitor/compare/5.6.0...5.7.0) (2024-02-07)
+
+### Features
+
+- **webview:** add setServerAssetPath method ([4e8449c](https://github.com/ionic-team/capacitor/commit/4e8449c1b570ceb65a4ec2967a7db5dbda9a5688))
+
 # [5.6.0](https://github.com/ionic-team/capacitor/compare/5.5.1...5.6.0) (2023-12-14)
 
 ### Bug Fixes

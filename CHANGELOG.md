@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.7.0](https://github.com/ionic-team/capacitor/compare/5.6.0...5.7.0) (2024-02-07)
+
+### Bug Fixes
+
+- **cli:** correctly build and sign Android apps using Flavors ([#7211](https://github.com/ionic-team/capacitor/issues/7211)) ([af97904](https://github.com/ionic-team/capacitor/commit/af97904d05d5a735a341110816b1845bdd90de0a))
+- **http:** better handling of active requests and shutting down gracefully ([a56e845](https://github.com/ionic-team/capacitor/commit/a56e84546d1a05ef5f2c346b6110372abf19637e))
+
+### Features
+
+- **webview:** add setServerAssetPath method ([4e8449c](https://github.com/ionic-team/capacitor/commit/4e8449c1b570ceb65a4ec2967a7db5dbda9a5688))
+
 # [5.6.0](https://github.com/ionic-team/capacitor/compare/5.5.1...5.6.0) (2023-12-14)
 
 ### Bug Fixes
