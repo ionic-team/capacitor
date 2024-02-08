@@ -1,5 +1,4 @@
 import { Option, program } from 'commander';
-import { resolve } from 'path';
 
 import { defaultAndroidTemplatePackage } from './android/add';
 import c from './colors';
@@ -283,11 +282,15 @@ export function runProgram(config: Config): void {
       '--template <>',
       'An external template package to use for the specified platform',
     )
+    .option(
+      '--packageName <>',
+      `A package name to use when installing a local template tgz.  Defaults to the package file name`
+    )
     .action(
       wrapAction(
         telemetryAction(
           config,
-          async (platform, { packagemanager, template }) => {
+          async (platform, { packagemanager, template, packageName }) => {
             checkExternalConfig(config.app);
             const { addCommand, prepareTemplate } = await import('./tasks/add');
 
@@ -310,10 +313,10 @@ export function runProgram(config: Config): void {
 
             if (platform === configWritable.ios.name) {
               configWritable.cli.assets.ios.platformTemplateArchiveAbs =
-                await prepareTemplate(configWritable as Config, template);
+                await prepareTemplate(configWritable as Config, template, packageName);
             } else if (platform === configWritable.android.name) {
               configWritable.cli.assets.android.platformTemplateArchiveAbs =
-                await prepareTemplate(configWritable as Config, template);
+                await prepareTemplate(configWritable as Config, template, packageName);
             }
 
             // TODO: should we validate custom templates?

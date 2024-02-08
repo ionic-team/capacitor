@@ -1,6 +1,6 @@
 import { existsSync, pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
-import { join, resolve } from 'node:path';
+import { join, resolve, basename } from 'node:path';
 
 import { addAndroid, createLocalProperties } from '../android/add';
 import {
@@ -40,7 +40,9 @@ import { sync } from './sync';
 export async function prepareTemplate(
   config: Config,
   template: string,
+  packageName: string
 ): Promise<string> {
+
   // a local template file
   if (template.startsWith('file://')) {
     const templatePath = resolve(template.replace('file://', ''));
@@ -52,17 +54,23 @@ export async function prepareTemplate(
       fatal('Template file must be .tar.gz or .tgz');
     }
 
-    logger.info(`Using local template at ${templatePath}`);
-    return templatePath;
-  }
-
-  try {
+    logger.info(`Using local template at ${templatePath}`);  
+    
+    if (!packageName) {
+      packageName = basename(templatePath).
+      replace(".tar.gz", "").
+      replace(".tgz", "")    
+    }
+  } else {
     const packageComponents = template.split(
       /@[~^]?([\dvx*]+(?:[-.](?:[\dx*]+|alpha|beta|rc))*)/gm,
     );
-    const packageName = packageComponents[0];
 
-    logger.info(`Installing template from npm: ${template}`);
+    packageName = packageComponents[0];
+  }
+
+  try {
+    logger.info(`Installing template package: ${template}`);
     await runCommand('npm', ['install', '--save-dev', template]);
     return join(config.app.rootDir, 'node_modules', packageName);
   } catch (err) {
