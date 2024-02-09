@@ -40,9 +40,8 @@ import { sync } from './sync';
 export async function prepareTemplate(
   config: Config,
   template: string,
-  packageName: string
+  packageName: string,
 ): Promise<string> {
-
   // a local template file
   if (template.startsWith('file://')) {
     const templatePath = resolve(template.replace('file://', ''));
@@ -54,12 +53,12 @@ export async function prepareTemplate(
       fatal('Template file must be .tar.gz or .tgz');
     }
 
-    logger.info(`Using local template at ${templatePath}`);  
-    
+    logger.info(`Using local template at ${templatePath}`);
+
     if (!packageName) {
-      packageName = basename(templatePath).
-      replace(".tar.gz", "").
-      replace(".tgz", "")    
+      packageName = basename(templatePath)
+        .replace('.tar.gz', '')
+        .replace('.tgz', '');
     }
   } else {
     const packageComponents = template.split(
@@ -146,7 +145,7 @@ export async function addCommand(
       ]);
 
       await doAdd(config, platformName);
-      await editPlatforms(config, platformName);
+      await runTemplateHooks(config, platformName);
 
       if (await pathExists(config.app.webDirAbs)) {
         await sync(config, platformName, false, false);
@@ -208,11 +207,31 @@ async function doAdd(config: Config, platformName: string): Promise<void> {
   });
 }
 
+// TODO: Remove
 async function editPlatforms(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
     await editProjectSettingsIOS(config);
   } else if (platformName === config.android.name) {
     await editProjectSettingsAndroid(config);
+  }
+}
+
+async function runTemplateHooks(config: Config, platformName: string) {
+  let templateDir: string | undefined = undefined;
+
+  if (platformName === config.ios.name) {
+    templateDir = config.cli.assets.ios.platformTemplateArchiveAbs;
+  } else if (platformName === config.android.name) {
+    templateDir = config.cli.assets.android.platformTemplateArchiveAbs;
+  }
+
+  if (templateDir) {    
+    await runPlatformHook(
+      config,
+      platformName,
+      templateDir,
+      'capacitor:add:after',
+    );
   }
 }
 

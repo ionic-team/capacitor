@@ -67,6 +67,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin | null> {
  * This is a little trickier for Android because the appId becomes
  * the package name.
  */
+// TODO: Remove
 export async function editProjectSettingsAndroid(
   config: Config,
 ): Promise<void> {

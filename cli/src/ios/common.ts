@@ -93,6 +93,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin | null> {
 /**
  * Update the native project files with the desired app id and app name
  */
+// TODO: Remove
 export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName
