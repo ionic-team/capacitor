@@ -127,14 +127,12 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
                 data.append("\r\n".data(using: .utf8)!)
 
                 data.append(Data(base64Encoded: value)!)
-
-                data.append("\r\n".data(using: .utf8)!)
             } else if type == "string" {
                 data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
                 data.append("Content-Disposition: form-data; name=\"\(key!)\"\r\n".data(using: .utf8)!)
                 data.append("\r\n".data(using: .utf8)!)
+
                 data.append(value.data(using: .utf8)!)
-                data.append("\r\n".data(using: .utf8)!)
             }
 
         }
