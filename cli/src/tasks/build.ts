@@ -13,6 +13,7 @@ export interface BuildCommandOptions {
   keystorealiaspass?: string;
   androidreleasetype?: 'AAB' | 'APK';
   signingtype?: 'apksigner' | 'jarsigner';
+  configuration: string;
 }
 
 export async function buildCommand(
@@ -51,6 +52,7 @@ export async function buildCommand(
       buildOptions.signingtype ||
       config.android.buildOptions.signingType ||
       'jarsigner',
+    configuration: buildOptions.configuration || 'Release',
   };
 
   try {

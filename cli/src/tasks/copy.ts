@@ -323,14 +323,6 @@ async function copySSLCert(
   const validCertPaths: string[] = [];
   for (const sslCertPath of sslCertPaths) {
     const certAbsFromPath = join(rootDir, sslCertPath);
-    if (!/^.+\.(cer)$/.test(certAbsFromPath)) {
-      logger.warn(
-        `Cannot copy file from ${c.strong(certAbsFromPath)}\n` +
-          `The file is not a .cer SSL Certificate file.`,
-      );
-
-      return;
-    }
     if (!(await pathExists(certAbsFromPath))) {
       logger.warn(
         `Cannot copy SSL Certificate file from ${c.strong(certAbsFromPath)}\n` +

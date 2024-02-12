@@ -15,12 +15,16 @@ limitations under the License.
  */
 package com.getcapacitor;
 
+import static com.getcapacitor.plugin.util.HttpRequestHandler.isDomainExcludedFromSSL;
+
 import android.content.Context;
 import android.net.Uri;
 import android.util.Base64;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import com.getcapacitor.plugin.util.CapacitorHttpUrlConnection;
+import com.getcapacitor.plugin.util.HttpRequestHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -29,6 +33,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -165,6 +170,22 @@ public class WebViewLocalServer {
      */
     public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
         Uri loadingUrl = request.getUrl();
+
+        if (
+            null != loadingUrl.getPath() &&
+            (
+                loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START) ||
+                loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START)
+            )
+        ) {
+            Logger.debug("Handling CapacitorHttp request: " + loadingUrl);
+            try {
+                return handleCapacitorHttpRequest(request);
+            } catch (Exception e) {
+                Logger.error(e.getLocalizedMessage());
+            }
+        }
+
         PathHandler handler;
         synchronized (uriMatcher) {
             handler = (PathHandler) uriMatcher.match(request.getUrl());
@@ -197,6 +218,110 @@ public class WebViewLocalServer {
 
     private boolean isAllowedUrl(Uri loadingUrl) {
         return !(bridge.getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()));
+    }
+
+    private String getReasonPhraseFromResponseCode(int code) {
+        return switch (code) {
+            case 100 -> "Continue";
+            case 101 -> "Switching Protocols";
+            case 200 -> "OK";
+            case 201 -> "Created";
+            case 202 -> "Accepted";
+            case 203 -> "Non-Authoritative Information";
+            case 204 -> "No Content";
+            case 205 -> "Reset Content";
+            case 206 -> "Partial Content";
+            case 300 -> "Multiple Choices";
+            case 301 -> "Moved Permanently";
+            case 302 -> "Found";
+            case 303 -> "See Other";
+            case 304 -> "Not Modified";
+            case 400 -> "Bad Request";
+            case 401 -> "Unauthorized";
+            case 403 -> "Forbidden";
+            case 404 -> "Not Found";
+            case 405 -> "Method Not Allowed";
+            case 406 -> "Not Acceptable";
+            case 407 -> "Proxy Authentication Required";
+            case 408 -> "Request Timeout";
+            case 409 -> "Conflict";
+            case 410 -> "Gone";
+            case 500 -> "Internal Server Error";
+            case 501 -> "Not Implemented";
+            case 502 -> "Bad Gateway";
+            case 503 -> "Service Unavailable";
+            case 504 -> "Gateway Timeout";
+            case 505 -> "HTTP Version Not Supported";
+            default -> "Unknown";
+        };
+    }
+
+    private WebResourceResponse handleCapacitorHttpRequest(WebResourceRequest request) throws IOException {
+        boolean isHttps =
+            request.getUrl().getPath() != null && request.getUrl().getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START);
+
+        String urlString = request
+            .getUrl()
+            .toString()
+            .replace(bridge.getLocalUrl(), isHttps ? "https:/" : "http:/")
+            .replace(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START, "")
+            .replace(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START, "");
+        URL url = new URL(urlString);
+        JSObject headers = new JSObject();
+
+        for (Map.Entry<String, String> header : request.getRequestHeaders().entrySet()) {
+            headers.put(header.getKey(), header.getValue());
+        }
+
+        HttpRequestHandler.HttpURLConnectionBuilder connectionBuilder = new HttpRequestHandler.HttpURLConnectionBuilder()
+            .setUrl(url)
+            .setMethod(request.getMethod())
+            .setHeaders(headers)
+            .openConnection();
+
+        CapacitorHttpUrlConnection connection = connectionBuilder.build();
+
+        if (!isDomainExcludedFromSSL(bridge, url)) {
+            connection.setSSLSocketFactory(bridge);
+        }
+
+        connection.connect();
+
+        String mimeType = null;
+        String encoding = null;
+        Map<String, String> responseHeaders = new LinkedHashMap<>();
+        for (Map.Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
+            StringBuilder builder = new StringBuilder();
+            for (String value : entry.getValue()) {
+                builder.append(value);
+                builder.append(", ");
+            }
+            builder.setLength(builder.length() - 2);
+
+            if ("Content-Type".equalsIgnoreCase(entry.getKey())) {
+                String[] contentTypeParts = builder.toString().split(";");
+                mimeType = contentTypeParts[0].trim();
+                if (contentTypeParts.length > 1) {
+                    String[] encodingParts = contentTypeParts[1].split("=");
+                    if (encodingParts.length > 1) {
+                        encoding = encodingParts[1].trim();
+                    }
+                }
+            } else {
+                responseHeaders.put(entry.getKey(), builder.toString());
+            }
+        }
+
+        InputStream inputStream = connection.getInputStream();
+
+        if (null == mimeType) {
+            mimeType = getMimeType(request.getUrl().getPath(), inputStream);
+        }
+
+        int responseCode = connection.getResponseCode();
+        String reasonPhrase = getReasonPhraseFromResponseCode(responseCode);
+
+        return new WebResourceResponse(mimeType, encoding, responseCode, reasonPhrase, responseHeaders, inputStream);
     }
 
     private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
