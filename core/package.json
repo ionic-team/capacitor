@@ -25,6 +25,7 @@
     "build": "npm run clean && npm run transpile && npm run rollup",
     "build:nativebridge": "tsc native-bridge.ts --target es2017 --moduleResolution node --outDir build && rollup --config rollup.bridge.config.js",
     "clean": "rimraf dist",
+    "docgen": "docgen --api CapacitorCookiesPlugin --output-readme cookies.md && docgen --api CapacitorHttpPlugin --output-readme http.md",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
     "transpile": "tsc",
@@ -33,6 +34,7 @@
     "test.treeshaking": "node src/tests/build-treeshaking.js"
   },
   "dependencies": {
+    "@capacitor/docgen": "^0.2.2",
     "tslib": "^2.1.0"
   },
   "devDependencies": {
