@@ -63,9 +63,11 @@ import Cordova
         loadWebView()
     }
 
+    #if ios
     override open func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
         return false
     }
+    #endif
 
     // MARK: - Initialization
 
@@ -222,17 +224,21 @@ import Cordova
     }
 
     open func setStatusBarVisible(_ isStatusBarVisible: Bool) {
+        #if iOS
         self.isStatusBarVisible = isStatusBarVisible
         UIView.animate(withDuration: 0.2, animations: {
             self.setNeedsStatusBarAppearanceUpdate()
         })
+        #endif
     }
 
     open func setStatusBarStyle(_ statusBarStyle: UIStatusBarStyle) {
+        #if iOS
         self.statusBarStyle = statusBarStyle
         UIView.animate(withDuration: 0.2, animations: {
             self.setNeedsStatusBarAppearanceUpdate()
         })
+        #endif
     }
 
     open func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {

@@ -713,10 +713,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if viewControllerToPresent.modalPresentationStyle == .popover {
             self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         } else {
+            #if iOS
             self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
             self.tmpWindow?.rootViewController = TmpViewController.init()
             self.tmpWindow?.makeKeyAndVisible()
             self.tmpWindow?.rootViewController?.present(viewControllerToPresent, animated: flag, completion: completion)
+            #endif
         }
     }
 
