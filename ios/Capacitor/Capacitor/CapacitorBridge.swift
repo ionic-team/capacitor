@@ -59,7 +59,11 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     public var statusBarVisible: Bool {
         get {
+            #if iOS
             return !(viewController?.prefersStatusBarHidden ?? true)
+            #endif
+            
+            return true
         }
         set {
             DispatchQueue.main.async { [weak self] in
@@ -70,7 +74,11 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     public var statusBarStyle: UIStatusBarStyle {
         get {
+            #if iOS
             return viewController?.preferredStatusBarStyle ?? .default
+            #endif
+            
+            return .default
         }
         set {
             DispatchQueue.main.async { [weak self] in
