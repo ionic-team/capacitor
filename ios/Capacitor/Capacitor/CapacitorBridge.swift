@@ -59,11 +59,11 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     public var statusBarVisible: Bool {
         get {
-            #if iOS
+            #if os(iOS)
             return !(viewController?.prefersStatusBarHidden ?? true)
-            #endif
-            
+            #else
             return true
+            #endif
         }
         set {
             DispatchQueue.main.async { [weak self] in
@@ -74,11 +74,11 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     public var statusBarStyle: UIStatusBarStyle {
         get {
-            #if iOS
+            #if os(iOS)
             return viewController?.preferredStatusBarStyle ?? .default
-            #endif
-            
+            #else
             return .default
+            #endif
         }
         set {
             DispatchQueue.main.async { [weak self] in
@@ -721,7 +721,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if viewControllerToPresent.modalPresentationStyle == .popover {
             self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         } else {
-            #if iOS
+            #if os(iOS)
             self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
             self.tmpWindow?.rootViewController = TmpViewController.init()
             self.tmpWindow?.makeKeyAndVisible()

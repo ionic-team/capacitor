@@ -13,7 +13,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         request.httpMethod = method
         headers = [:]
         
-        #if iOS
+        #if os(iOS)
         if let lang = Locale.autoupdatingCurrent.languageCode {
             if let country = Locale.autoupdatingCurrent.regionCode {
                 headers["Accept-Language"] = "\(lang)-\(country),\(lang);q=0.5"
@@ -24,6 +24,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
         #endif
         
+        #if os(visonOS)
         if let lang = Locale.autoupdatingCurrent.language.languageCode?.identifier {
             if let country = Locale.autoupdatingCurrent.region?.identifier {
                 headers["Accept-Language"] = "\(lang)-\(country),\(lang);q=0.5"
@@ -32,6 +33,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
             }
             request.addValue(headers["Accept-Language"]!, forHTTPHeaderField: "Accept-Language")
         }
+        #endif
     }
 
     public func getRequestDataAsJson(_ data: JSValue) throws -> Data? {
