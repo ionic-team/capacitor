@@ -22,9 +22,10 @@
   "types": "types/index.d.ts",
   "unpkg": "dist/capacitor.js",
   "scripts": {
-    "build": "npm run clean && npm run transpile && npm run rollup",
+    "build": "npm run clean && npm run docgen && npm run transpile && npm run rollup",
     "build:nativebridge": "tsc native-bridge.ts --target es2017 --moduleResolution node --outDir build && rollup --config rollup.bridge.config.js",
     "clean": "rimraf dist",
+    "docgen": "docgen --api CapacitorCookiesPlugin --output-readme cookies.md && docgen --api CapacitorHttpPlugin --output-readme http.md",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
     "transpile": "tsc",
@@ -36,6 +37,7 @@
     "tslib": "^2.1.0"
   },
   "devDependencies": {
+    "@capacitor/docgen": "^0.2.2",
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@rollup/plugin-replace": "^2.4.2",
     "@types/jest": "^29.5.0",
