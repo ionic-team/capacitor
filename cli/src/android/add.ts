@@ -6,7 +6,7 @@ import c from '../colors';
 import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { runCommand } from '../util/subprocess';
-import { extractTemplate } from '../util/template';
+import { extractTemplatePackage } from '../util/template';
 
 export const defaultAndroidTemplatePackage = '@capacitor/android-template';
 
@@ -14,7 +14,7 @@ export async function addAndroid(config: Config): Promise<void> {
   await runTask(
     `Adding native android project in ${c.strong(config.android.platformDir)}`,
     async () => {
-      return extractTemplate(
+      return extractTemplatePackage(
         config.cli.assets.android.platformTemplateArchiveAbs,
         config.android.platformDirAbs,
       );

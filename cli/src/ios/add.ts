@@ -1,7 +1,7 @@
 import c from '../colors';
 import { runTask } from '../common';
 import type { Config } from '../definitions';
-import { extractTemplate } from '../util/template';
+import { extractTemplatePackage } from '../util/template';
 
 export const defaultIOSTemplatePackageSPM = '@capacitor/ios-spm-template';
 export const defaultIOSTemplatePackageCocoapods =
@@ -11,7 +11,7 @@ export async function addIOS(config: Config): Promise<void> {
   await runTask(
     `Adding native Xcode project in ${c.strong(config.ios.platformDir)}`,
     () => {
-      return extractTemplate(
+      return extractTemplatePackage(
         config.cli.assets.ios.platformTemplateArchiveAbs,
         config.ios.platformDirAbs,
       );
