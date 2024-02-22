@@ -10,6 +10,15 @@ export interface SwiftPlugin {
   path: string;
 }
 
+export async function checkPackageManager(config: Config): Promise<string> {
+  const iosDirectory = config.ios.nativeProjectDirAbs;
+  if (existsSync(resolve(iosDirectory, 'CapApp-SPM'))) {
+    return 'SPM';
+  }
+
+  return 'Cocoapods';
+}
+
 export async function findPackageSwiftFile(config: Config): Promise<string> {
   const packageDirectory = resolve(
     config.ios.nativeProjectDirAbs,
@@ -28,16 +37,29 @@ function readSwiftPackage(packageLine: string): string | null {
   return lineMatch[1];
 }
 
+function readSwiftProduct(productLine: string): string | null {
+  const packageRegex = RegExp(/.product\(\s*name:\s*"([A-Za-z0-9_-]+)"/);
+  const lineMatch = productLine.match(packageRegex);
+  if (lineMatch === null) {
+    return null;
+  }
+
+  return lineMatch[1];
+}
+
 export async function generatePackageFile(
   config: Config,
   plugins: Plugin[],
 ): Promise<void> {
   const swiftPluginList: string[] = [];
+  const swiftPluginProductList: string[] = [];
 
   for (const plugin of plugins) {
     const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
     const pluginStatement = `.package(name: "${plugin.ios?.name}", path: "${relPath}"),`;
+    const pluginProduct = `.product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}"),`
     swiftPluginList.push(pluginStatement);
+    swiftPluginProductList.push(pluginProduct);
   }
 
   const packageSwiftFile = await findPackageSwiftFile(config);
@@ -53,6 +75,7 @@ export async function generatePackageFile(
 
     let textToWrite = '';
     const packages: string[] = [];
+    const products: string[] = [];
     for (const lineIndex in packageSwiftTextLines) {
       const line = packageSwiftTextLines;
       const index = parseInt(lineIndex);
@@ -60,7 +83,7 @@ export async function generatePackageFile(
       if (
         line[index].includes('dependencies: [') &&
         line[index + 1].includes(
-          '.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")',
+          '.package(url: "https://github.com/ionic-team/capacitor-spm.git", branch: "main")',
         )
       ) {
         let tempIndex = index + 1;
@@ -73,9 +96,29 @@ export async function generatePackageFile(
         }
       }
 
+      if(
+        line[index].includes('dependencies: [') &&
+        line[index + 1].includes(
+          '.product(name: "Capacitor", package: "capacitor-spm")',
+        ) &&
+        line[index + 2].includes(
+          '.product(name: "Cordova", package: "capacitor-spm")',
+        )
+      ) {
+        let tempIndex = index + 1;
+        while (!line[tempIndex].includes(']')) {
+          const swiftPack = readSwiftProduct(line[tempIndex]);
+          if (swiftPack !== null) {
+            console.log(swiftPack)
+            products.push(swiftPack);
+          }
+          tempIndex++;
+        }
+      }
+
       if (
         line[index].includes(
-          '.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")',
+          '.package(url: "https://github.com/ionic-team/capacitor-spm.git", branch: "main")',
         )
       ) {
         if (line[index].endsWith(',')) {
@@ -90,6 +133,22 @@ export async function generatePackageFile(
             textToWrite += '        ' + swiftPlugin + '\n';
           }
         }
+      } else if (
+        line[index].includes(
+          '.product(name: "Cordova", package: "capacitor-spm")',
+        )
+      ) {
+          if (line[index].endsWith(',')) {
+            textToWrite += line[index] + '\n';
+          } else {
+            textToWrite += line[index] + ',\n';
+          }
+          for (const swiftProduct of swiftPluginProductList) {
+            const name = readSwiftProduct(swiftProduct) ?? ''
+            if (!products.includes(name)) {
+              textToWrite += '                ' + swiftProduct + '\n';
+            }
+          }
       } else {
         textToWrite += line[index] + '\n';
       }
@@ -101,13 +160,4 @@ export async function generatePackageFile(
       `Unable to read ${packageSwiftFile}. Verify it is not already open. ${err}`,
     );
   }
-}
-
-export async function checkPackageManager(config: Config): Promise<string> {
-  const iosDirectory = config.ios.nativeProjectDirAbs;
-  if (existsSync(resolve(iosDirectory, 'CapApp-SPM'))) {
-    return 'SPM';
-  }
-
-  return 'Cocoapods';
 }
