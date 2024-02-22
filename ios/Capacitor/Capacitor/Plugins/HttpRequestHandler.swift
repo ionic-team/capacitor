@@ -37,7 +37,6 @@ func tryParseJson(_ data: Data) -> Any {
     }
 }
 
-
 /// Helper to convert the headers dictionary to lower case keys. This allows case-insensitive querying in the bridge javascript.
 /// - Parameters:
 ///     - headers: The headers as dictionary. The type is unspecific because the incoming headers are coming from the
