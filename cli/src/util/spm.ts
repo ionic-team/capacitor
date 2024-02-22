@@ -57,7 +57,7 @@ export async function generatePackageFile(
   for (const plugin of plugins) {
     const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
     const pluginStatement = `.package(name: "${plugin.ios?.name}", path: "${relPath}"),`;
-    const pluginProduct = `.product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}"),`
+    const pluginProduct = `.product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}"),`;
     swiftPluginList.push(pluginStatement);
     swiftPluginProductList.push(pluginProduct);
   }
@@ -96,7 +96,7 @@ export async function generatePackageFile(
         }
       }
 
-      if(
+      if (
         line[index].includes('dependencies: [') &&
         line[index + 1].includes(
           '.product(name: "Capacitor", package: "capacitor-spm")',
@@ -109,7 +109,7 @@ export async function generatePackageFile(
         while (!line[tempIndex].includes(']')) {
           const swiftPack = readSwiftProduct(line[tempIndex]);
           if (swiftPack !== null) {
-            console.log(swiftPack)
+            console.log(swiftPack);
             products.push(swiftPack);
           }
           tempIndex++;
@@ -138,17 +138,17 @@ export async function generatePackageFile(
           '.product(name: "Cordova", package: "capacitor-spm")',
         )
       ) {
-          if (line[index].endsWith(',')) {
-            textToWrite += line[index] + '\n';
-          } else {
-            textToWrite += line[index] + ',\n';
+        if (line[index].endsWith(',')) {
+          textToWrite += line[index] + '\n';
+        } else {
+          textToWrite += line[index] + ',\n';
+        }
+        for (const swiftProduct of swiftPluginProductList) {
+          const name = readSwiftProduct(swiftProduct) ?? '';
+          if (!products.includes(name)) {
+            textToWrite += '                ' + swiftProduct + '\n';
           }
-          for (const swiftProduct of swiftPluginProductList) {
-            const name = readSwiftProduct(swiftProduct) ?? ''
-            if (!products.includes(name)) {
-              textToWrite += '                ' + swiftProduct + '\n';
-            }
-          }
+        }
       } else {
         textToWrite += line[index] + '\n';
       }
