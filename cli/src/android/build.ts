@@ -1,12 +1,10 @@
-import { join } from 'path';
-
 import c from '../colors';
 import { runTask } from '../common';
+import type { Config } from '../definitions';
 import { logSuccess } from '../log';
+import type { BuildCommandOptions } from '../tasks/build';
 import { runCommand } from '../util/subprocess';
 
-import type { Config } from '../definitions';
-import type { BuildCommandOptions } from '../tasks/build';
 export async function buildAndroid(
   config: Config,
   buildOptions: BuildCommandOptions,
