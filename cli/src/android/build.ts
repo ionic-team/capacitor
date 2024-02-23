@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import c from '../colors';
 import { runTask } from '../common';
 import type { Config } from '../definitions';
