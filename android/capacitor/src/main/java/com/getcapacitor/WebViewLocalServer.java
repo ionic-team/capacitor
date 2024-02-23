@@ -312,7 +312,10 @@ public class WebViewLocalServer {
             }
         }
 
-        InputStream inputStream = connection.getInputStream();
+        InputStream inputStream = connection.getErrorStream();
+        if (inputStream == null) {
+            inputStream = connection.getInputStream();
+        }
 
         if (null == mimeType) {
             mimeType = getMimeType(request.getUrl().getPath(), inputStream);
