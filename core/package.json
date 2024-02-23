@@ -15,7 +15,9 @@
   "files": [
     "dist/",
     "types/",
-    "cordova.js"
+    "cookies.md",
+    "cordova.js",
+    "http.md"
   ],
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
