@@ -38,7 +38,7 @@ export async function buildAndroid(
   const releaseDir = releaseTypeIsAAB
     ? flavor !== ''
       ? `${flavor}Release`
-      : 'Release'
+      : 'release'
     : flavor !== ''
     ? join(flavor, 'release')
     : 'release';
