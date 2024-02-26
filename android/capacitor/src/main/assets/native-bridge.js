@@ -379,15 +379,15 @@ var nativeBridge = (function (exports) {
                     typeof c.dir === 'function');
             };
             const serializeConsoleMessage = (msg) => {
-                if (typeof msg === 'object') {
-                    try {
+                try {
+                    if (typeof msg === 'object') {
                         msg = JSON.stringify(msg);
                     }
-                    catch (e) {
-                        // ignore
-                    }
+                    return String(msg);
                 }
-                return String(msg);
+                catch (e) {
+                    return '';
+                }
             };
             const platform = getPlatformId(win);
             if (platform == 'android' || platform == 'ios') {
