@@ -8,6 +8,7 @@ import java.net.URL;
 import org.junit.Test;
 
 public class HttpRequestHandlerTest {
+
     static final String BASE_URL = "https://httpbin.org/get";
     static final String PARAMS_JSON = """
             {"k": "a&b"}
@@ -18,9 +19,9 @@ public class HttpRequestHandlerTest {
         String expectedQuery = "k=a%26b";
         String expectedUrl = BASE_URL + "?" + expectedQuery;
         String actualUrl = new HttpURLConnectionBuilder()
-                .setUrl(new URL(BASE_URL))
-                .setUrlParams(new JSObject(PARAMS_JSON), true)
-                .url.toString();
+            .setUrl(new URL(BASE_URL))
+            .setUrlParams(new JSObject(PARAMS_JSON), true)
+            .url.toString();
         assertEquals(expectedUrl, actualUrl);
     }
 
@@ -29,9 +30,9 @@ public class HttpRequestHandlerTest {
         String expectedQuery = "k=a&b";
         String expectedUrl = BASE_URL + "?" + expectedQuery;
         String actualUrl = new HttpURLConnectionBuilder()
-                .setUrl(new URL(BASE_URL))
-                .setUrlParams(new JSObject(PARAMS_JSON), false)
-                .url.toString();
+            .setUrl(new URL(BASE_URL))
+            .setUrlParams(new JSObject(PARAMS_JSON), false)
+            .url.toString();
         assertEquals(expectedUrl, actualUrl);
     }
 }

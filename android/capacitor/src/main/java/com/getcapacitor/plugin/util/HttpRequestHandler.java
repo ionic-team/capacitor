@@ -18,8 +18,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -164,12 +164,12 @@ public class HttpRequestHandler {
 
             URI uri = url.toURI();
             String unEncodedUrlString =
-                    uri.getScheme() +
-                            "://" +
-                            uri.getAuthority() +
-                            uri.getPath() +
-                            ((!urlQuery.equals("")) ? "?" + urlQuery : "") +
-                            ((uri.getFragment() != null) ? uri.getFragment() : "");
+                uri.getScheme() +
+                "://" +
+                uri.getAuthority() +
+                uri.getPath() +
+                ((!urlQuery.equals("")) ? "?" + urlQuery : "") +
+                ((uri.getFragment() != null) ? uri.getFragment() : "");
             this.url = new URL(unEncodedUrlString);
 
             return this;
