@@ -13,6 +13,7 @@ export class WebPlugin implements Plugin {
   config?: WebPluginConfig;
 
   protected listeners: { [eventName: string]: ListenerCallback[] } = {};
+  protected retainedEventArguments: { [eventName: string]: any[] } = {};
   protected windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
   constructor(config?: WebPluginConfig) {
@@ -28,10 +29,13 @@ export class WebPlugin implements Plugin {
   addListener(
     eventName: string,
     listenerFunc: ListenerCallback,
-  ): Promise<PluginListenerHandle> & PluginListenerHandle {
+  ): Promise<PluginListenerHandle> {
+    let firstListener = false;
+
     const listeners = this.listeners[eventName];
     if (!listeners) {
       this.listeners[eventName] = [];
+      firstListener = true;
     }
 
     this.listeners[eventName].push(listenerFunc);
@@ -43,16 +47,13 @@ export class WebPlugin implements Plugin {
       this.addWindowListener(windowListener);
     }
 
+    if (firstListener) {
+      this.sendRetainedArgumentsForEvent(eventName);
+    }
+
     const remove = async () => this.removeListener(eventName, listenerFunc);
 
     const p: any = Promise.resolve({ remove });
-
-    Object.defineProperty(p, 'remove', {
-      value: async () => {
-        console.warn(`Using addListener() without 'await' is deprecated.`);
-        await remove();
-      },
-    });
 
     return p;
   }
@@ -65,11 +66,28 @@ export class WebPlugin implements Plugin {
     this.windowListeners = {};
   }
 
-  protected notifyListeners(eventName: string, data: any): void {
+  protected notifyListeners(
+    eventName: string,
+    data: any,
+    retainUntilConsumed?: boolean,
+  ): void {
     const listeners = this.listeners[eventName];
-    if (listeners) {
-      listeners.forEach(listener => listener(data));
+    if (!listeners) {
+      if (retainUntilConsumed) {
+        let args = this.retainedEventArguments[eventName];
+        if (!args) {
+          args = [];
+        }
+
+        args.push(data);
+
+        this.retainedEventArguments[eventName] = args;
+      }
+
+      return;
     }
+
+    listeners.forEach(listener => listener(data));
   }
 
   protected hasListeners(eventName: string): boolean {
@@ -129,6 +147,19 @@ export class WebPlugin implements Plugin {
 
     window.removeEventListener(handle.windowEventName, handle.handler);
     handle.registered = false;
+  }
+
+  private sendRetainedArgumentsForEvent(eventName: string): void {
+    const args = this.retainedEventArguments[eventName];
+    if (!args) {
+      return;
+    }
+
+    delete this.retainedEventArguments[eventName];
+
+    args.forEach(arg => {
+      this.notifyListeners(eventName, arg);
+    });
   }
 }
 

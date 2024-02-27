@@ -4,6 +4,7 @@ import { WebPlugin } from './web-plugin';
 
 /******** WEB VIEW PLUGIN ********/
 export interface WebViewPlugin extends Plugin {
+  setServerAssetPath(options: WebViewPath): Promise<void>;
   setServerBasePath(options: WebViewPath): Promise<void>;
   getServerBasePath(): Promise<WebViewPath>;
   persistServerBasePath(): Promise<void>;
@@ -165,15 +166,23 @@ export interface HttpOptions {
   url: string;
   method?: string;
   params?: HttpParams;
+  /**
+   * Note: On Android and iOS, data can only be a string or a JSON.
+   * FormData, Blob, ArrayBuffer, and other complex types are only directly supported on web
+   * or through enabling `CapacitorHttp` in the config and using the patched `window.fetch` or `XMLHttpRequest`.
+   *
+   * If you need to send a complex type, you should serialize the data to base64
+   * and set the `headers["Content-Type"]` and `dataType` attributes accordingly.
+   */
   data?: any;
   headers?: HttpHeaders;
   /**
-   * How long to wait to read additional data. Resets each time new
-   * data is received
+   * How long to wait to read additional data in milliseconds.
+   * Resets each time new data is received.
    */
   readTimeout?: number;
   /**
-   * How long to wait for the initial connection.
+   * How long to wait for the initial connection in milliseconds.
    */
   connectTimeout?: number;
   /**
@@ -194,6 +203,11 @@ export interface HttpOptions {
    * (already encoded, azure/firebase testing, etc.). The default is _true_.
    */
   shouldEncodeUrlParams?: boolean;
+  /**
+   * This is used if we've had to convert the data from a JS type that needs
+   * special handling in the native layer
+   */
+  dataType?: 'file' | 'formData';
 }
 
 export interface HttpParams {
@@ -313,7 +327,10 @@ export const buildRequestInit = (
       params.set(key, value as any);
     }
     output.body = params.toString();
-  } else if (type.includes('multipart/form-data')) {
+  } else if (
+    type.includes('multipart/form-data') ||
+    options.data instanceof FormData
+  ) {
     const form = new FormData();
     if (options.data instanceof FormData) {
       options.data.forEach((value, key) => {

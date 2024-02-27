@@ -15,7 +15,6 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import type { FederatedApp } from '../declarations';
 import type { Config } from '../definitions';
 import { isFatal } from '../errors';
 import { logger } from '../log';
@@ -324,14 +323,6 @@ async function copySSLCert(
   const validCertPaths: string[] = [];
   for (const sslCertPath of sslCertPaths) {
     const certAbsFromPath = join(rootDir, sslCertPath);
-    if (!/^.+\.(cer)$/.test(certAbsFromPath)) {
-      logger.warn(
-        `Cannot copy file from ${c.strong(certAbsFromPath)}\n` +
-          `The file is not a .cer SSL Certificate file.`,
-      );
-
-      return;
-    }
     if (!(await pathExists(certAbsFromPath))) {
       logger.warn(
         `Cannot copy SSL Certificate file from ${c.strong(certAbsFromPath)}\n` +
@@ -356,4 +347,26 @@ async function copySSLCert(
       return Promise.all(promises);
     },
   );
+}
+
+interface LiveUpdateConfig {
+  key?: string;
+}
+
+interface FederatedApp {
+  name: string;
+  webDir: string;
+}
+
+interface FederatedCapacitor {
+  shell: Omit<FederatedApp, 'webDir'>;
+  apps: FederatedApp[];
+  liveUpdatesKey?: string;
+}
+
+declare module '../declarations' {
+  interface PluginsConfig {
+    LiveUpdates?: LiveUpdateConfig;
+    FederatedCapacitor?: FederatedCapacitor;
+  }
 }

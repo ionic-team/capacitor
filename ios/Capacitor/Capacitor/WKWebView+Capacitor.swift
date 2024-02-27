@@ -26,7 +26,6 @@ internal extension WKWebView {
         _ = oneTimeOnlySwizzle
     }
 
-    typealias FourArgClosureType =  @convention(c) (Any, Selector, UnsafeRawPointer, Bool, Bool, Any?) -> Void
     typealias FiveArgClosureType =  @convention(c) (Any, Selector, UnsafeRawPointer, Bool, Bool, Bool, Any?) -> Void
 
     // dispatch_once isn't available in Swift, but lazy properties use the same mechanism under the hood so
@@ -49,20 +48,6 @@ internal extension WKWebView {
             return nil
         }
 
-        let swizzleFourArgClosure = { (method: Method, selector: Selector) in
-            let originalImp: IMP = method_getImplementation(method)
-            let original: FourArgClosureType = unsafeBitCast(originalImp, to: FourArgClosureType.self)
-            let block: @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Any?) -> Void = { (me, arg0, arg1, arg2, arg3) in
-                if let webview = containingWebView(me), let flag = webview.capacitor.keyboardShouldRequireUserInteraction {
-                    original(me, selector, arg0, !flag, arg2, arg3)
-                } else {
-                    original(me, selector, arg0, arg1, arg2, arg3)
-                }
-            }
-            let imp: IMP = imp_implementationWithBlock(block)
-            method_setImplementation(method, imp)
-        }
-
         let swizzleFiveArgClosure = { (method: Method, selector: Selector) in
             let originalImp: IMP = method_getImplementation(method)
             let original: FiveArgClosureType = unsafeBitCast(originalImp, to: FiveArgClosureType.self)
@@ -77,26 +62,8 @@ internal extension WKWebView {
             method_setImplementation(method, imp)
         }
 
-        // older
-        let selectorMkI: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:")
-        // iOS 11.3
-        let selectorMkII: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
-        // iOS 12.2
-        let selectorMkIII: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
-        // iOS 13
+        // iOS 13+
         let selectorMkIV: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:")
-
-        if let method = class_getInstanceMethod(targetClass, selectorMkI) {
-            swizzleFourArgClosure(method, selectorMkI)
-        }
-
-        if let method = class_getInstanceMethod(targetClass, selectorMkII) {
-            swizzleFiveArgClosure(method, selectorMkII)
-        }
-
-        if let method = class_getInstanceMethod(targetClass, selectorMkIII) {
-            swizzleFiveArgClosure(method, selectorMkIII)
-        }
 
         if let method = class_getInstanceMethod(targetClass, selectorMkIV) {
             swizzleFiveArgClosure(method, selectorMkIV)

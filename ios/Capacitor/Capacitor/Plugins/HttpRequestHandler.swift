@@ -37,6 +37,19 @@ func tryParseJson(_ data: Data) -> Any {
     }
 }
 
+
+/// Helper to convert the headers dictionary to lower case keys. This allows case-insensitive querying in the bridge javascript.
+/// - Parameters:
+///     - headers: The headers as dictionary. The type is unspecific because the incoming headers are coming from the
+///       allHeaderFields property of the HttpResponse.
+/// - Returns: The modified headers dictionary with lowercase keys
+private func lowerCaseHeaderDictionary(_ headers: [AnyHashable: Any]) -> [String: Any] {
+    // Lowercases the key of the headers dictionary.
+    return Dictionary(uniqueKeysWithValues: headers.map({ (key: AnyHashable, value: Any) in
+        return (String(describing: key).lowercased(), value)
+    }))
+}
+
 open class HttpRequestHandler {
     open class CapacitorHttpRequestBuilder {
         public var url: URL?
@@ -121,7 +134,14 @@ open class HttpRequestHandler {
         var output = [:] as [String: Any]
 
         output["status"] = response.statusCode
-        output["headers"] = response.allHeaderFields
+
+        // HTTP Headers are case insensitive. The allHeaderFields dictionary returned by Apple Foundation Code has its keys capitalized.
+        // According to the documentation at https://developer.apple.com/documentation/foundation/httpurlresponse/1417930-allheaderfields
+        // "HTTP headers are case insensitive. To simplify your code, URL Loading System canonicalizes certain header field names into
+        // their standard form. For example, if the server sends a content-length header, it’s automatically adjusted to be Content-Length."
+        // To handle the case insevitivy, we are converting the header keys to lower case here. When querying for headers in the native bridge,
+        // we are lowercasing the key as well.
+        output["headers"] = lowerCaseHeaderDictionary(response.allHeaderFields)
         output["url"] = response.url?.absoluteString
 
         guard let data = data else {
@@ -151,6 +171,7 @@ open class HttpRequestHandler {
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")
         let readTimeout = call.getDouble("readTimeout")
+        let dataType = call.getString("dataType") ?? "any"
 
         if urlString == urlString.removingPercentEncoding {
             guard let encodedUrlString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)  else { throw URLError(.badURL) }
@@ -172,7 +193,7 @@ open class HttpRequestHandler {
 
         if let data = call.options["data"] as? JSValue {
             do {
-                try request.setRequestBody(data)
+                try request.setRequestBody(data, dataType)
             } catch {
                 // Explicitly reject if the http request body was not set successfully,
                 // so as to not send a known malformed request, and to provide the developer with additional context.

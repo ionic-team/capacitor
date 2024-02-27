@@ -26,6 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.pm.PackageInfoCompat;
 import androidx.fragment.app.Fragment;
+import androidx.webkit.WebViewCompat;
+import androidx.webkit.WebViewFeature;
 import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
@@ -40,12 +42,15 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaWebView;
@@ -86,6 +91,9 @@ public class Bridge {
     public static final String CAPACITOR_HTTPS_SCHEME = "https";
     public static final String CAPACITOR_FILE_START = "/_capacitor_file_";
     public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
+    public static final String CAPACITOR_HTTP_INTERCEPTOR_START = "/_capacitor_http_interceptor_";
+    public static final String CAPACITOR_HTTPS_INTERCEPTOR_START = "/_capacitor_https_interceptor_";
+
     public static final int DEFAULT_ANDROID_WEBVIEW_VERSION = 60;
     public static final int MINIMUM_ANDROID_WEBVIEW_VERSION = 55;
     public static final int DEFAULT_HUAWEI_WEBVIEW_VERSION = 10;
@@ -104,6 +112,7 @@ public class Bridge {
     private String appUrlConfig;
     private HostMask appAllowNavigationMask;
     private Set<String> allowedOriginRules = new HashSet<String>();
+    private ArrayList<String> authorities = new ArrayList<>();
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
@@ -208,7 +217,6 @@ public class Bridge {
         // Grab any intent info that our app was launched with
         Intent intent = context.getIntent();
         this.intentUri = intent.getData();
-
         // Register our core plugins
         this.registerAllPlugins();
 
@@ -231,7 +239,9 @@ public class Bridge {
                     allowedOriginRules.add(allowNavigation);
                 }
             }
+            authorities.addAll(Arrays.asList(appAllowNavigationConfig));
         }
+        this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
     }
 
     public App getApp() {
@@ -239,47 +249,15 @@ public class Bridge {
     }
 
     private void loadWebView() {
-        appUrlConfig = this.getServerUrl();
-        String[] appAllowNavigationConfig = this.config.getAllowNavigation();
-
-        ArrayList<String> authorities = new ArrayList<>();
-
-        if (appAllowNavigationConfig != null) {
-            authorities.addAll(Arrays.asList(appAllowNavigationConfig));
-        }
-        this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
-        String authority = this.getHost();
-        authorities.add(authority);
-        String scheme = this.getScheme();
-
-        localUrl = scheme + "://" + authority;
-
-        if (appUrlConfig != null) {
-            try {
-                URL appUrlObject = new URL(appUrlConfig);
-                authorities.add(appUrlObject.getAuthority());
-            } catch (Exception ex) {
-                Logger.error("Provided server url is invalid: " + ex.getMessage());
-                return;
-            }
-            localUrl = appUrlConfig;
-            appUrl = appUrlConfig;
-        } else {
-            appUrl = localUrl;
-            // custom URL schemes requires path ending with /
-            if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
-                appUrl += "/";
-            }
-        }
-
-        String appUrlPath = this.config.getStartPath();
-        if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
-            appUrl += appUrlPath;
-        }
         final boolean html5mode = this.config.isHTML5Mode();
 
         // Start the local web server
-        localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
+        JSInjector injector = getJSInjector();
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
+            WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), Collections.singleton(appUrl));
+            injector = null;
+        }
+        localServer = new WebViewLocalServer(context, this, injector, authorities, html5mode);
         localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
         Logger.debug("Loading app at " + appUrl);
@@ -295,7 +273,6 @@ public class Bridge {
                 setServerBasePath(path);
             }
         }
-
         if (!this.isMinimumWebViewInstalled()) {
             String errorUrl = this.getErrorUrl();
             if (errorUrl != null) {
@@ -326,14 +303,18 @@ public class Bridge {
         // Check getCurrentWebViewPackage() directly if above Android 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             PackageInfo info = WebView.getCurrentWebViewPackage();
-            if (info.packageName.equals("com.huawei.webview")) {
-                String majorVersionStr = info.versionName.split("\\.")[0];
+            Pattern pattern = Pattern.compile("(\\d+)");
+            Matcher matcher = pattern.matcher(info.versionName);
+            if (matcher.find()) {
+                String majorVersionStr = matcher.group(0);
                 int majorVersion = Integer.parseInt(majorVersionStr);
-                return majorVersion >= config.getMinHuaweiWebViewVersion();
+                if (info.packageName.equals("com.huawei.webview")) {
+                    return majorVersion >= config.getMinHuaweiWebViewVersion();
+                }
+                return majorVersion >= config.getMinWebViewVersion();
+            } else {
+                return false;
             }
-            String majorVersionStr = info.versionName.split("\\.")[0];
-            int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion >= config.getMinWebViewVersion();
         }
 
         // Otherwise manually check WebView versions
@@ -359,8 +340,25 @@ public class Bridge {
             Logger.warn("Unable to get package info for 'com.android.webview'" + ex.toString());
         }
 
+        final int amazonFireMajorWebViewVersion = extractWebViewMajorVersion(pm, "com.amazon.webview.chromium");
+        if (amazonFireMajorWebViewVersion >= config.getMinWebViewVersion()) {
+            return true;
+        }
+
         // Could not detect any webview, return false
         return false;
+    }
+
+    private int extractWebViewMajorVersion(final PackageManager pm, final String webViewPackageName) {
+        try {
+            final PackageInfo info = InternalUtils.getPackageInfo(pm, webViewPackageName);
+            final String majorVersionStr = info.versionName.split("\\.")[0];
+            final int majorVersion = Integer.parseInt(majorVersionStr);
+            return majorVersion;
+        } catch (Exception ex) {
+            Logger.warn(String.format("Unable to get package info for '%s' with err '%s'", webViewPackageName, ex));
+        }
+        return 0;
     }
 
     public boolean launchIntent(Uri url) {
@@ -581,11 +579,44 @@ public class Bridge {
             Logger.debug("WebView background color not applied");
         }
 
+        settings.setDisplayZoomControls(false);
+        settings.setBuiltInZoomControls(this.config.isZoomableWebView());
+
         if (config.isInitialFocus()) {
             webView.requestFocusFromTouch();
         }
 
         WebView.setWebContentsDebuggingEnabled(this.config.isWebContentsDebuggingEnabled());
+
+        appUrlConfig = this.getServerUrl();
+        String authority = this.getHost();
+        authorities.add(authority);
+        String scheme = this.getScheme();
+
+        localUrl = scheme + "://" + authority;
+
+        if (appUrlConfig != null) {
+            try {
+                URL appUrlObject = new URL(appUrlConfig);
+                authorities.add(appUrlObject.getAuthority());
+            } catch (Exception ex) {
+                Logger.error("Provided server url is invalid: " + ex.getMessage());
+                return;
+            }
+            localUrl = appUrlConfig;
+            appUrl = appUrlConfig;
+        } else {
+            appUrl = localUrl;
+            // custom URL schemes requires path ending with /
+            if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
+                appUrl += "/";
+            }
+        }
+
+        String appUrlPath = this.config.getStartPath();
+        if (appUrlPath != null && !appUrlPath.trim().isEmpty()) {
+            appUrl += appUrlPath;
+        }
     }
 
     /**

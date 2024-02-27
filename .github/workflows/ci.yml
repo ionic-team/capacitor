@@ -20,54 +20,50 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@ce177499ccf9fd2aded3b0426c97e5434c2e8a73
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Latest
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: NPM ^9.5.0
         run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Restore Dependency Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
   lint:
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 30
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: NPM ^9.5.0
         run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Restore Dependency Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run lint
   test-cli:
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 30
     needs:
       - setup
       - lint
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: NPM ^9.5.0
         run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Restore Dependency Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
@@ -83,14 +79,14 @@ jobs:
       - setup
       - lint
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: NPM ^9.5.0
         run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Restore Dependency Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
@@ -100,7 +96,7 @@ jobs:
       - run: npm test
         working-directory: ./core
   test-ios:
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 30
     needs:
       - setup
@@ -108,17 +104,17 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - /Applications/Xcode_14.2.app
+          - /Applications/Xcode_15.0.1.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: NPM ^9.5.0
         run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Restore Dependency Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
@@ -134,19 +130,19 @@ jobs:
       - setup
       - lint
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'zulu'
       - name: NPM ^9.5.0
         run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Restore Dependency Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}

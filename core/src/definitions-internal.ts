@@ -186,6 +186,7 @@ export interface WindowCapacitor {
     WebView?: {
       getServerBasePath?: any;
       setServerBasePath?: any;
+      setServerAssetPath?: any;
       persistServerBasePath?: any;
       convertFileSrc?: any;
     };
@@ -213,4 +214,12 @@ export interface WindowCapacitor {
       exitApp?: () => void;
     };
   };
+}
+
+export interface CapFormDataEntry {
+  key: string;
+  value: string;
+  type: 'base64File' | 'string';
+  contentType?: string;
+  fileName?: string;
 }

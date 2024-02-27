@@ -1,4 +1,5 @@
 import { Option, program } from 'commander';
+import { resolve } from 'path';
 
 import c from './colors';
 import { checkExternalConfig, loadConfig } from './config';
@@ -9,6 +10,10 @@ import { logger, output } from './log';
 import { telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
+
+type Writable<T> = T extends object
+  ? { -readonly [K in keyof T]: Writable<T[K]> }
+  : T;
 
 process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
@@ -145,6 +150,7 @@ export function runProgram(config: Config): void {
     .option('--keystorepath <keystorePath>', 'Path to the keystore')
     .option('--keystorepass <keystorePass>', 'Password to the keystore')
     .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
+    .option('--configuration <name>', 'Configuration name of the iOS Scheme')
     .option(
       '--keystorealiaspass <keystoreAliasPass>',
       'Password for the Key Alias',
@@ -155,6 +161,12 @@ export function runProgram(config: Config): void {
         'Android release type; APK or AAB',
       ).choices(['AAB', 'APK']),
     )
+    .addOption(
+      new Option(
+        '--signing-type <signingtype>',
+        'Program used to sign apps (default: jarsigner)',
+      ).choices(['apksigner', 'jarsigner']),
+    )
     .action(
       wrapAction(
         telemetryAction(
@@ -163,21 +175,27 @@ export function runProgram(config: Config): void {
             platform,
             {
               scheme,
+              flavor,
               keystorepath,
               keystorepass,
               keystorealias,
               keystorealiaspass,
               androidreleasetype,
+              signingType,
+              configuration,
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
             await buildCommand(config, platform, {
               scheme,
+              flavor,
               keystorepath,
               keystorepass,
               keystorealias,
               keystorealiaspass,
               androidreleasetype,
+              signingtype: signingType,
+              configuration,
             });
           },
         ),
@@ -189,7 +207,10 @@ export function runProgram(config: Config): void {
       `runs ${c.input('sync')}, then builds and deploys the native app`,
     )
     .option('--scheme <schemeName>', 'set the scheme of the iOS project')
-    .option('--flavor <flavorName>', 'set the flavor of the Android project')
+    .option(
+      '--flavor <flavorName>',
+      'set the flavor of the Android project (flavor dimensions not yet supported)',
+    )
     .option('--list', 'list targets, then quit')
     // TODO: remove once --json is a hidden option (https://github.com/tj/commander.js/issues/1106)
     .allowUnknownOption(true)
@@ -199,13 +220,28 @@ export function runProgram(config: Config): void {
       '--forwardPorts <port:port>',
       'Automatically run "adb reverse" for better live-reloading support',
     )
+    .option('-l, --live-reload', 'Enable Live Reload')
+    .option('--host <host>', 'Host used for live reload')
+    .option('--port <port>', 'Port used for live reload')
+    .option('--configuration <name>', 'Configuration name of the iOS Scheme')
     .action(
       wrapAction(
         telemetryAction(
           config,
           async (
             platform,
-            { scheme, flavor, list, target, sync, forwardPorts },
+            {
+              scheme,
+              flavor,
+              list,
+              target,
+              sync,
+              forwardPorts,
+              liveReload,
+              host,
+              port,
+              configuration,
+            },
           ) => {
             const { runCommand } = await import('./tasks/run');
             await runCommand(config, platform, {
@@ -215,6 +251,10 @@ export function runProgram(config: Config): void {
               target,
               sync,
               forwardPorts,
+              liveReload,
+              host,
+              port,
+              configuration,
             });
           },
         ),
@@ -236,12 +276,27 @@ export function runProgram(config: Config): void {
   program
     .command('add [platform]')
     .description('add a native platform project')
+    .option(
+      '--packagemanager <packageManager>',
+      'The package manager to use for dependency installs (SPM, Cocoapods)',
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform, { packagemanager }) => {
           checkExternalConfig(config.app);
           const { addCommand } = await import('./tasks/add');
-          await addCommand(config, platform);
+
+          const configWritable: Writable<Config> = config as Writable<Config>;
+          if (packagemanager === 'SPM') {
+            configWritable.cli.assets.ios.platformTemplateArchive =
+              'ios-spm-template.tar.gz';
+            configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(
+              configWritable.cli.assetsDirAbs,
+              configWritable.cli.assets.ios.platformTemplateArchive,
+            );
+          }
+
+          await addCommand(configWritable as Config, platform);
         }),
       ),
     );

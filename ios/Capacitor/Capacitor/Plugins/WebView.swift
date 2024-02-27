@@ -3,6 +3,13 @@ import Foundation
 @objc(CAPWebViewPlugin)
 public class CAPWebViewPlugin: CAPPlugin {
 
+    @objc func setServerAssetPath(_ call: CAPPluginCall) {
+        if let path = call.getString("path"), let viewController = bridge?.viewController as? CAPBridgeViewController {
+            viewController.setServerBasePath(path: Bundle.main.url(forResource: path, withExtension: nil)?.path ?? path)
+            call.resolve()
+        }
+    }
+
     @objc func setServerBasePath(_ call: CAPPluginCall) {
         if let path = call.getString("path"), let viewController = bridge?.viewController as? CAPBridgeViewController {
             viewController.setServerBasePath(path: path)
@@ -22,8 +29,7 @@ public class CAPWebViewPlugin: CAPPlugin {
     @objc func persistServerBasePath(_ call: CAPPluginCall) {
         if let viewController = bridge?.viewController as? CAPBridgeViewController {
             let path = viewController.getServerBasePath()
-            let defaults = UserDefaults.standard
-            defaults.set(path, forKey: "serverBasePath")
+            KeyValueStore.standard["serverBasePath"] = path
             call.resolve()
         }
     }
