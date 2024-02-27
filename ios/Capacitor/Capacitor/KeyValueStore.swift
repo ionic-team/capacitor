@@ -232,13 +232,13 @@ private class FileStore: KeyValueStoreBackend {
     static func with(name: String) -> FileStore {
         if let existing = instances[name] { return existing }
         guard let library = try? FileManager
-                .default
-                .url(
-                    for: .libraryDirectory,
-                    in: .userDomainMask,
-                    appropriateFor: nil,
-                    create: true
-                )
+            .default
+            .url(
+                for: .libraryDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: true
+            )
         else { fatalError("⚡️ ❌ Library URL unable to be accessed or created by the current application. This is an impossible state.") }
 
         let url = library.appendingPathComponent("kvstore").appendingPathComponent(name)
@@ -257,12 +257,12 @@ private class InMemoryStore: KeyValueStoreBackend {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
-    func get<T>(_ key: String, as type: T.Type) throws -> T? where T: Decodable {
+    func get<T>(_ key: String, as type: T.Type) throws -> T? where T : Decodable {
         guard let data = storage[key] else { return nil }
         return try decoder.decode(type, from: data)
     }
 
-    func set<T>(_ key: String, value: T) throws where T: Encodable {
+    func set<T>(_ key: String, value: T) throws where T : Encodable {
         let data = try encoder.encode(value)
         storage[key] = data
     }
