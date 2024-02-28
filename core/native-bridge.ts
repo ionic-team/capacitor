@@ -134,13 +134,13 @@ const createProxyUrl = (url: string, win: WindowCapacitor): string => {
 
   let proxyUrl = new URL(url);
   const isHttps = proxyUrl.protocol === 'https:';
-  const originalHostname = proxyUrl.hostname;
+  const originalHost = encodeURIComponent(proxyUrl.host);
   const originalPathname = proxyUrl.pathname;
   proxyUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
 
   proxyUrl.pathname = `${
     isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
-  }/${originalHostname}${originalPathname}`;
+  }/${originalHost}${originalPathname}`;
   return proxyUrl.toString();
 };
 
