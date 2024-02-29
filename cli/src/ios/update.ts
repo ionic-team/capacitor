@@ -37,7 +37,11 @@ import {
   writePluginJSON,
 } from '../util/iosplugin';
 import { resolveNode } from '../util/node';
-import { checkPackageManager, generatePackageFile } from '../util/spm';
+import {
+  checkPackageManager,
+  generatePackageFile,
+  generatePackageText,
+} from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
