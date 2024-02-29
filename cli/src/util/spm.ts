@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from '@ionic/utils-fs';
+import { existsSync, writeFileSync } from '@ionic/utils-fs';
 import { relative, resolve } from 'path';
 
 import type { Config } from '../definitions';
