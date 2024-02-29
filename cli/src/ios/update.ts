@@ -39,8 +39,7 @@ import {
 import { resolveNode } from '../util/node';
 import {
   checkPackageManager,
-  generatePackageFile,
-  generatePackageText,
+  generatePackageFile
 } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
