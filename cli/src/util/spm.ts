@@ -10,7 +10,7 @@ export interface SwiftPlugin {
   path: string;
 }
 
-export async function checkPackageManager(config: Config): Promise<string> {
+export async function checkPackageManager(config: Config): Promise<'Cocoapods' | 'SPM'> {
   const iosDirectory = config.ios.nativeProjectDirAbs;
   if (existsSync(resolve(iosDirectory, 'CapApp-SPM'))) {
     return 'SPM';
