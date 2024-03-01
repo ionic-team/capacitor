@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.1](https://github.com/ionic-team/capacitor/compare/5.7.0...5.7.1) (2024-03-01)
+
+### Bug Fixes
+
+- **http:** handle proxy urls with port ([#7298](https://github.com/ionic-team/capacitor/issues/7298)) ([00b7abf](https://github.com/ionic-team/capacitor/commit/00b7abffdb8d5c2994ca59a45335f68ad6a662cf))
+- **http:** route get requests through custom handler ([#7295](https://github.com/ionic-team/capacitor/issues/7295)) ([30eb6f7](https://github.com/ionic-team/capacitor/commit/30eb6f7c01f91adfc9eeffdaabf587e6b8eb0cdb))
+
 # [5.7.0](https://github.com/ionic-team/capacitor/compare/5.6.0...5.7.0) (2024-02-07)
 
 ### Features

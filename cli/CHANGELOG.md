@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.1](https://github.com/ionic-team/capacitor/compare/5.7.0...5.7.1) (2024-03-01)
+
+### Bug Fixes
+
+- **cli:** correct build path for non flavor builds ([#7281](https://github.com/ionic-team/capacitor/issues/7281)) ([#7290](https://github.com/ionic-team/capacitor/issues/7290)) ([9b71399](https://github.com/ionic-team/capacitor/commit/9b7139921e3acb472dd0eeb5ad29ccdb08bf6766))
+- **cli:** remove certificate file extension check on copy ([#7240](https://github.com/ionic-team/capacitor/issues/7240)) ([#7243](https://github.com/ionic-team/capacitor/issues/7243)) ([4650b4f](https://github.com/ionic-team/capacitor/commit/4650b4fb25975a6b3bf15abe56636e2a581a0fd2))
+
 # [5.7.0](https://github.com/ionic-team/capacitor/compare/5.6.0...5.7.0) (2024-02-07)
 
 ### Bug Fixes

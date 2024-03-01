@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.1](https://github.com/ionic-team/capacitor/compare/5.7.0...5.7.1) (2024-03-01)
+
+### Bug Fixes
+
+- **android:** handle http errors on the proxy ([#7297](https://github.com/ionic-team/capacitor/issues/7297)) ([279f198](https://github.com/ionic-team/capacitor/commit/279f1987e2b0ef23a5b33fe09b4a96a33f528892))
+- **android:** incorrect http url params encoding ([#7303](https://github.com/ionic-team/capacitor/issues/7303)) ([3857dad](https://github.com/ionic-team/capacitor/commit/3857dadaba81bc1a356b218203fbbb22e30ab7cb))
+- **android:** let WebView handle errors ([#7304](https://github.com/ionic-team/capacitor/issues/7304)) ([b71635c](https://github.com/ionic-team/capacitor/commit/b71635c32d1465d3434db3c94d0c52002a765016))
+- **android:** make JSInjector replace first <head> only ([#7249](https://github.com/ionic-team/capacitor/issues/7249)) ([1c45b81](https://github.com/ionic-team/capacitor/commit/1c45b8107b3fb254bd9b3608b2cd61fff14f36b0))
+- **cli:** correct build path for non flavor builds ([#7281](https://github.com/ionic-team/capacitor/issues/7281)) ([#7290](https://github.com/ionic-team/capacitor/issues/7290)) ([9b71399](https://github.com/ionic-team/capacitor/commit/9b7139921e3acb472dd0eeb5ad29ccdb08bf6766))
+- **cli:** remove certificate file extension check on copy ([#7240](https://github.com/ionic-team/capacitor/issues/7240)) ([#7243](https://github.com/ionic-team/capacitor/issues/7243)) ([4650b4f](https://github.com/ionic-team/capacitor/commit/4650b4fb25975a6b3bf15abe56636e2a581a0fd2))
+- **http:** handle proxy urls with port ([#7298](https://github.com/ionic-team/capacitor/issues/7298)) ([00b7abf](https://github.com/ionic-team/capacitor/commit/00b7abffdb8d5c2994ca59a45335f68ad6a662cf))
+- **http:** route get requests through custom handler ([#7295](https://github.com/ionic-team/capacitor/issues/7295)) ([30eb6f7](https://github.com/ionic-team/capacitor/commit/30eb6f7c01f91adfc9eeffdaabf587e6b8eb0cdb))
+
 # [5.7.0](https://github.com/ionic-team/capacitor/compare/5.6.0...5.7.0) (2024-02-07)
 
 ### Bug Fixes
