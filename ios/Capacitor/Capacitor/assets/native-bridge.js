@@ -144,10 +144,10 @@ var nativeBridge = (function (exports) {
             return url;
         let proxyUrl = new URL(url);
         const isHttps = proxyUrl.protocol === 'https:';
-        const originalHostname = proxyUrl.hostname;
+        const originalHost = encodeURIComponent(proxyUrl.host);
         const originalPathname = proxyUrl.pathname;
         proxyUrl = new URL((_b = (_a = win.Capacitor) === null || _a === void 0 ? void 0 : _a.getServerUrl()) !== null && _b !== void 0 ? _b : '');
-        proxyUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${originalHostname}${originalPathname}`;
+        proxyUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${originalHost}${originalPathname}`;
         return proxyUrl.toString();
     };
     const initBridge = (w) => {
@@ -678,7 +678,8 @@ var nativeBridge = (function (exports) {
                                             else {
                                                 this.response = nativeResponse.data;
                                             }
-                                            this.responseText = ((_a = (nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'])) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                            this.responseText = ((_a = (nativeResponse.headers['Content-Type'] ||
+                                                nativeResponse.headers['content-type'])) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
                                                 ? JSON.stringify(nativeResponse.data)
                                                 : nativeResponse.data;
                                             this.responseURL = nativeResponse.url;
@@ -751,9 +752,7 @@ var nativeBridge = (function (exports) {
                             if (isRelativeOrProxyUrl(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                             }
-                            // The search for the name is case insenstive. The Swift Code makes sure that the keys
-                            // in the headers dictionary are already lowercased.
-                            return this._headers[name.toLowerCase()];
+                            return this._headers[name];
                         };
                         Object.setPrototypeOf(xhr, prototype);
                         return xhr;

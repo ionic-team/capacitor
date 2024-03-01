@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -183,6 +184,7 @@ public class WebViewLocalServer {
                 return handleCapacitorHttpRequest(request);
             } catch (Exception e) {
                 Logger.error(e.getLocalizedMessage());
+                return null;
             }
         }
 
@@ -266,6 +268,7 @@ public class WebViewLocalServer {
             .replace(bridge.getLocalUrl(), isHttps ? "https:/" : "http:/")
             .replace(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START, "")
             .replace(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START, "");
+        urlString = URLDecoder.decode(urlString, "UTF-8");
         URL url = new URL(urlString);
         JSObject headers = new JSObject();
 
@@ -312,7 +315,10 @@ public class WebViewLocalServer {
             }
         }
 
-        InputStream inputStream = connection.getInputStream();
+        InputStream inputStream = connection.getErrorStream();
+        if (inputStream == null) {
+            inputStream = connection.getInputStream();
+        }
 
         if (null == mimeType) {
             mimeType = getMimeType(request.getUrl().getPath(), inputStream);
