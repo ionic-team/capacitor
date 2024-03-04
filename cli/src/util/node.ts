@@ -56,6 +56,10 @@ export function resolveNode(
   try {
     return require.resolve(pathSegments.join('/'), { paths: [root] });
   } catch (e) {
+    const path = [root, 'node_modules', ...pathSegments].join('/');
+    if (require('fs').existsSync(path)) {
+      return path;
+    }
     return null;
   }
 }
