@@ -62,27 +62,27 @@ let package = Package(
 
   for (const plugin of plugins) {
     const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
-    packageSwiftText += `,\n            .package(name: "${plugin.ios?.name}", path: "${relPath}")`;
+    packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}")`;
   }
 
   packageSwiftText += `
-       ],
-       targets: [
-          .target(
-                name: "CapApp-SPM",
-                dependencies: [
-                    .product(name: "Capacitor", package: "capacitor-spm"),
-                    .product(name: "Cordova", package: "capacitor-spm")`;
+    ],
+    targets: [
+        .target(
+            name: "CapApp-SPM",
+            dependencies: [
+                .product(name: "Capacitor", package: "capacitor-spm"),
+                .product(name: "Cordova", package: "capacitor-spm")`;
 
   for (const plugin of plugins) {
-    packageSwiftText += `,\n                    .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+    packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
   }
 
   packageSwiftText += `
-                ]
-            )
-        ]
-      )
+            ]
+        )
+    ]
+)
 `;
 
   return packageSwiftText;
