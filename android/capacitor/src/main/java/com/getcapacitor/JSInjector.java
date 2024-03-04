@@ -69,12 +69,12 @@ class JSInjector {
      * @return
      */
     public InputStream getInjectedStream(InputStream responseStream) {
-        String js = "<script type=\"text/javascript\">" + getScriptString().replace("${", "\\${") + "</script>";
+        String js = "<script type=\"text/javascript\">" + getScriptString().replace("${", "\\${").replaceAll("(\\$\\d)", "\\\\$1") + "</script>";
         String html = this.readAssetStream(responseStream);
         if (html.contains("<head>")) {
-            html = html.replaceFirst("<head>", "<head>\n" + js + "\n");
+            html = html.replaceFirst("<head>", Matcher.quoteReplacement("<head>\n" + js + "\n"));
         } else if (html.contains("</head>")) {
-            html = html.replaceFirst("</head>", js + "\n" + "</head>");
+            html = html.replaceFirst("</head>", Matcher.quoteReplacement(js + "\n" + "</head>"));
         } else {
             Logger.error("Unable to inject Capacitor, Plugins won't work");
         }
