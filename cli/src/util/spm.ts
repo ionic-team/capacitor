@@ -45,21 +45,20 @@ export async function generatePackageFile(
 }
 
 function generatePackageText(config: Config, plugins: Plugin[]): string {
-  let packageSwiftText = `
-    // swift-tools-version: 5.9
-    import PackageDescription
+  let packageSwiftText = `// swift-tools-version: 5.9
+import PackageDescription
 
-    // DO NOT MODIFY THIS FILE - managed by Capacitor CLI commands
-    let package = Package(
-        name: "CapApp-SPM",
-        platforms: [.iOS(.v13)],
-        products: [
-            .library(
-                name: "CapApp-SPM",
-                targets: ["CapApp-SPM"])
-        ],
-        dependencies: [
-            .package(url: "https://github.com/ionic-team/capacitor-spm.git", branch: "main")`;
+// DO NOT MODIFY THIS FILE - managed by Capacitor CLI commands
+let package = Package(
+    name: "CapApp-SPM",
+    platforms: [.iOS(.v13)],
+    products: [
+        .library(
+            name: "CapApp-SPM",
+            targets: ["CapApp-SPM"])
+    ],
+    dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-spm.git", branch: "main")`;
 
   for (const plugin of plugins) {
     const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
