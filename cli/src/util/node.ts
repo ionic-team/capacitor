@@ -1,4 +1,5 @@
 import { readFileSync } from '@ionic/utils-fs';
+import { existsSync } from 'fs';
 import { resolve } from 'path';
 import type typescript from 'typescript';
 
@@ -57,7 +58,7 @@ export function resolveNode(
     return require.resolve(pathSegments.join('/'), { paths: [root] });
   } catch (e) {
     const path = [root, 'node_modules', ...pathSegments].join('/');
-    if (require('fs').existsSync(path)) {
+    if (existsSync(path)) {
       return path;
     }
     return null;
