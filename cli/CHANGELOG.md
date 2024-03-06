@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.2](https://github.com/ionic-team/capacitor/compare/5.7.1...5.7.2) (2024-03-06)
+
+### Bug Fixes
+
+- **cli:** Attempt to verify non-cjs modules exist if cjs resolution fails ([#7310](https://github.com/ionic-team/capacitor/issues/7310)) ([#7313](https://github.com/ionic-team/capacitor/issues/7313)) ([28e7f08](https://github.com/ionic-team/capacitor/commit/28e7f08dd7a78a61a40f7c9f90ed30a94b167a35))
+
 ## [5.7.1](https://github.com/ionic-team/capacitor/compare/5.7.0...5.7.1) (2024-03-01)
 
 ### Bug Fixes

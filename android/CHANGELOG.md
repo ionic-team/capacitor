@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.2](https://github.com/ionic-team/capacitor/compare/5.7.1...5.7.2) (2024-03-06)
+
+### Bug Fixes
+
+- **android:** prevent crash on script injection if the script is too long ([#7316](https://github.com/ionic-team/capacitor/issues/7316)) ([67c00e2](https://github.com/ionic-team/capacitor/commit/67c00e2b18994c78433b4b35b7c9e69fa24277b0))
+
 ## [5.7.1](https://github.com/ionic-team/capacitor/compare/5.7.0...5.7.1) (2024-03-01)
 
 ### Bug Fixes
