@@ -69,7 +69,7 @@ class JSInjector {
      * @return
      */
     public InputStream getInjectedStream(InputStream responseStream) {
-        String js = "<script type=\"text/javascript\">" + getScriptString().replace("${", "\\${") + "</script>";
+        String js = "<script type=\"text/javascript\">" + getScriptString() + "</script>";
         String html = this.readAssetStream(responseStream);
 
         // Insert the js string at the position after <head> or before </head> using StringBuilder
