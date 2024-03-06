@@ -36,6 +36,7 @@
 		62959B66252524CD00A3D7F1 /* CDVScreenOrientationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959B65252524CD00A3D7F1 /* CDVScreenOrientationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B6A252524D700A3D7F1 /* CDVPluginManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959B68252524D700A3D7F1 /* CDVPluginManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B6B252524D700A3D7F1 /* CDVPluginManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959B69252524D700A3D7F1 /* CDVPluginManager.m */; };
+		A76739702B98CBE700795F7B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A767396F2B98CBE700795F7B /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		62959B65252524CD00A3D7F1 /* CDVScreenOrientationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVScreenOrientationDelegate.h; sourceTree = "<group>"; };
 		62959B68252524D700A3D7F1 /* CDVPluginManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVPluginManager.h; sourceTree = "<group>"; };
 		62959B69252524D700A3D7F1 /* CDVPluginManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVPluginManager.m; sourceTree = "<group>"; };
+		A767396F2B98CBE700795F7B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 				2F5C86DF1FE94845004B09C7 /* CapacitorCordova.h */,
 				62959B5F252522CB00A3D7F1 /* CapacitorCordova.modulemap */,
 				2F5C86E01FE94845004B09C7 /* Info.plist */,
+				A767396F2B98CBE700795F7B /* PrivacyInfo.xcprivacy */,
 			);
 			path = CapacitorCordova;
 			sourceTree = "<group>";
@@ -240,6 +243,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A76739702B98CBE700795F7B /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
