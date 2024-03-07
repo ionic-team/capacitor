@@ -410,11 +410,10 @@ const initBridge = (w: any): void => {
     const serializeConsoleMessage = (msg: any): string => {
       try {
         if (typeof msg === 'object') {
-            msg = JSON.stringify(msg);
+          msg = JSON.stringify(msg);
         }
         return String(msg);
-      }
-      catch (e) {
+      } catch (e) {
         return '??';
       }
     };
