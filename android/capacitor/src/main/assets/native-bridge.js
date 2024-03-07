@@ -386,7 +386,7 @@ var nativeBridge = (function (exports) {
                     return String(msg);
                 }
                 catch (e) {
-                    return '??';
+                    return '';
                 }
             };
             const platform = getPlatformId(win);

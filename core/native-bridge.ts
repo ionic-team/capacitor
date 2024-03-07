@@ -414,7 +414,7 @@ const initBridge = (w: any): void => {
         }
         return String(msg);
       } catch (e) {
-        return '??';
+        return '';
       }
     };
 
