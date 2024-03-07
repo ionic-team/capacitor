@@ -177,12 +177,12 @@ export interface HttpOptions {
   data?: any;
   headers?: HttpHeaders;
   /**
-   * How long to wait to read additional data. Resets each time new
-   * data is received
+   * How long to wait to read additional data in milliseconds.
+   * Resets each time new data is received.
    */
   readTimeout?: number;
   /**
-   * How long to wait for the initial connection.
+   * How long to wait for the initial connection in milliseconds.
    */
   connectTimeout?: number;
   /**

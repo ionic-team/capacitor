@@ -294,15 +294,15 @@ export async function migrateCommand(
             }
             const pluginVariables: { [key: string]: string } = {
               firebaseMessagingVersion: '23.3.1',
-              playServicesLocationVersion: '21.0.1',
+              playServicesLocationVersion: '21.1.0',
               androidxBrowserVersion: '1.7.0',
               androidxMaterialVersion: '1.10.0',
               androidxExifInterfaceVersion: '1.3.6',
               androidxCoreKTXVersion: '1.12.0',
-              googleMapsPlayServicesVersion: '18.1.0',
-              googleMapsUtilsVersion: '3.5.3',
-              googleMapsKtxVersion: '3.4.0',
-              googleMapsUtilsKtxVersion: '3.4.0',
+              googleMapsPlayServicesVersion: '18.2.0',
+              googleMapsUtilsVersion: '3.8.2',
+              googleMapsKtxVersion: '5.0.0',
+              googleMapsUtilsKtxVersion: '5.0.0',
               kotlinxCoroutinesVersion: '1.7.3',
               coreSplashScreenVersion: '1.0.1',
             };

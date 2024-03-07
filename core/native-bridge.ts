@@ -134,13 +134,13 @@ const createProxyUrl = (url: string, win: WindowCapacitor): string => {
 
   let proxyUrl = new URL(url);
   const isHttps = proxyUrl.protocol === 'https:';
-  const originalHostname = proxyUrl.hostname;
+  const originalHost = encodeURIComponent(proxyUrl.host);
   const originalPathname = proxyUrl.pathname;
   proxyUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
 
   proxyUrl.pathname = `${
     isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
-  }/${originalHostname}${originalPathname}`;
+  }/${originalHost}${originalPathname}`;
   return proxyUrl.toString();
 };
 
@@ -806,9 +806,10 @@ const initBridge = (w: any): void => {
                       } else {
                         this.response = nativeResponse.data;
                       }
-                      this.responseText = nativeResponse.headers[
-                        'Content-Type'
-                      ]?.startsWith('application/json')
+                      this.responseText = (
+                        nativeResponse.headers['Content-Type'] ||
+                        nativeResponse.headers['content-type']
+                      )?.startsWith('application/json')
                         ? JSON.stringify(nativeResponse.data)
                         : nativeResponse.data;
                       this.responseURL = nativeResponse.url;

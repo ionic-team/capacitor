@@ -141,7 +141,6 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         var targetUrl = url.absoluteString
             .replacingOccurrences(of: CapacitorBridge.httpInterceptorStartIdentifier, with: "")
             .replacingOccurrences(of: CapacitorBridge.httpsInterceptorStartIdentifier, with: "")
-
         // Only replace first occurrence of the scheme
         if let range = targetUrl.range(of: localUrl.scheme ?? InstanceDescriptorDefaults.scheme) {
             targetUrl = targetUrl.replacingCharacters(in: range, with: isHttpsRequest ? "https" : "http")
@@ -152,7 +151,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             targetUrl = targetUrl.replacingCharacters(in: range, with: "")
         }
 
-        urlRequest.url = URL(string: targetUrl)
+        urlRequest.url = URL(string: targetUrl.removingPercentEncoding ?? targetUrl)
 
         let urlSession = URLSession.shared
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in

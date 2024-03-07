@@ -30,6 +30,7 @@ export interface RunCommandOptions {
   liveReload?: boolean;
   host?: string;
   port?: string;
+  configuration?: string;
 }
 
 export async function runCommand(
