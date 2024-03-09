@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from '@ionic/utils-fs';
+import { existsSync, writeFileSync } from '@ionic/utils-fs';
 import { relative, resolve } from 'path';
 
 import type { Config } from '../definitions';
@@ -10,6 +10,17 @@ export interface SwiftPlugin {
   path: string;
 }
 
+export async function checkPackageManager(
+  config: Config,
+): Promise<'Cocoapods' | 'SPM'> {
+  const iosDirectory = config.ios.nativeProjectDirAbs;
+  if (existsSync(resolve(iosDirectory, 'CapApp-SPM'))) {
+    return 'SPM';
+  }
+
+  return 'Cocoapods';
+}
+
 export async function findPackageSwiftFile(config: Config): Promise<string> {
   const packageDirectory = resolve(
     config.ios.nativeProjectDirAbs,
@@ -18,96 +29,61 @@ export async function findPackageSwiftFile(config: Config): Promise<string> {
   return resolve(packageDirectory, 'Package.swift');
 }
 
-function readSwiftPackage(packageLine: string): string | null {
-  const packageRegex = RegExp(/.package\(\s*name:\s*"([A-Za-z0-9_-]+)"/);
-  const lineMatch = packageLine.match(packageRegex);
-  if (lineMatch === null) {
-    return null;
-  }
-
-  return lineMatch[1];
-}
-
 export async function generatePackageFile(
   config: Config,
   plugins: Plugin[],
 ): Promise<void> {
-  const swiftPluginList: string[] = [];
-
-  for (const plugin of plugins) {
-    const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
-    const pluginStatement = `.package(name: "${plugin.ios?.name}", path: "${relPath}"),`;
-    swiftPluginList.push(pluginStatement);
-  }
-
   const packageSwiftFile = await findPackageSwiftFile(config);
-
   try {
-    if (!existsSync(packageSwiftFile)) {
-      logger.error(
-        `Unable to find ${packageSwiftFile}. Try updating it manually`,
-      );
-    }
-    const packageSwiftText = readFileSync(packageSwiftFile, 'utf-8');
-    const packageSwiftTextLines = packageSwiftText.split('\n');
-
-    let textToWrite = '';
-    const packages: string[] = [];
-    for (const lineIndex in packageSwiftTextLines) {
-      const line = packageSwiftTextLines;
-      const index = parseInt(lineIndex);
-
-      if (
-        line[index].includes('dependencies: [') &&
-        line[index + 1].includes(
-          '.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")',
-        )
-      ) {
-        let tempIndex = index + 1;
-        while (!line[tempIndex].includes('],')) {
-          const swiftPack = readSwiftPackage(line[tempIndex]);
-          if (swiftPack !== null) {
-            packages.push(swiftPack);
-          }
-          tempIndex++;
-        }
-      }
-
-      if (
-        line[index].includes(
-          '.package(url: "https://github.com/ionic-team/capacitor6-spm-test.git", branch: "main")',
-        )
-      ) {
-        if (line[index].endsWith(',')) {
-          textToWrite += line[index] + '\n';
-        } else {
-          textToWrite += line[index] + ',\n';
-        }
-
-        for (const swiftPlugin of swiftPluginList) {
-          const name = readSwiftPackage(swiftPlugin) ?? '';
-          if (!packages.includes(name)) {
-            textToWrite += '        ' + swiftPlugin + '\n';
-          }
-        }
-      } else {
-        textToWrite += line[index] + '\n';
-      }
-    }
-
+    const textToWrite = generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
     logger.error(
-      `Unable to read ${packageSwiftFile}. Verify it is not already open. ${err}`,
+      `Unable to write to ${packageSwiftFile}. Verify it is not already open. \n Error: ${err}`,
     );
   }
 }
 
-export async function checkPackageManager(config: Config): Promise<string> {
-  const iosDirectory = config.ios.nativeProjectDirAbs;
-  if (existsSync(resolve(iosDirectory, 'CapApp-SPM'))) {
-    return 'SPM';
+function generatePackageText(config: Config, plugins: Plugin[]): string {
+  let packageSwiftText = `// swift-tools-version: 5.9
+import PackageDescription
+
+// DO NOT MODIFY THIS FILE - managed by Capacitor CLI commands
+let package = Package(
+    name: "CapApp-SPM",
+    platforms: [.iOS(.v13)],
+    products: [
+        .library(
+            name: "CapApp-SPM",
+            targets: ["CapApp-SPM"])
+    ],
+    dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-spm.git", branch: "main")`;
+
+  for (const plugin of plugins) {
+    const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+    packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}")`;
   }
 
-  return 'Cocoapods';
+  packageSwiftText += `
+    ],
+    targets: [
+        .target(
+            name: "CapApp-SPM",
+            dependencies: [
+                .product(name: "Capacitor", package: "capacitor-spm"),
+                .product(name: "Cordova", package: "capacitor-spm")`;
+
+  for (const plugin of plugins) {
+    packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+  }
+
+  packageSwiftText += `
+            ]
+        )
+    ]
+)
+`;
+
+  return packageSwiftText;
 }
