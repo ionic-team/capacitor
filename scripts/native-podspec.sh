@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
-set -eo pipefail
-
-export NATIVE_PUBLISH=true
+-set -eo pipefail
 
 case $1 in
      lint) 
@@ -9,6 +7,7 @@ case $1 in
        pod lib lint ios/Capacitor.podspec --allow-warnings;;
 
      publish) 
+       export NATIVE_PUBLISH=true
        pod trunk push ios/CapacitorCordova.podspec --allow-warnings
        pod trunk push ios/Capacitor.podspec --allow-warnings;;
 
