@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.source_files = "#{prefix}Capacitor/Capacitor/*.{swift,h,m}", "#{prefix}Capacitor/Capacitor/Plugins/*.{swift,h,m}",
                    "#{prefix}Capacitor/Capacitor/Plugins/**/*.{swift,h,m}"
   s.module_map = "#{prefix}Capacitor/Capacitor/Capacitor.modulemap"
-  s.resources = ["#{prefix}Capacitor/Capacitor/assets/native-bridge.js"]
+  s.resources = ["#{prefix}Capacitor/Capacitor/assets/native-bridge.js", "#{prefix}Capacitor/Capacitor/PrivacyInfo.xcprivacy"]
   s.dependency 'CapacitorCordova'
   s.swift_version = '5.1'
 end
