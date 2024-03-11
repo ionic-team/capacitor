@@ -63,6 +63,7 @@
 		2FAD9771203C77B9000D30F8 /* CDVConfigParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVConfigParser.m; sourceTree = "<group>"; };
 		2FE19E2820473160002A4E89 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		2FE19E2920473160002A4E89 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		4B3B7B2C2B9F775F00F8C9A1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		62959B5F252522CB00A3D7F1 /* CapacitorCordova.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = CapacitorCordova.modulemap; sourceTree = "<group>"; };
 		62959B65252524CD00A3D7F1 /* CDVScreenOrientationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVScreenOrientationDelegate.h; sourceTree = "<group>"; };
 		62959B68252524D700A3D7F1 /* CDVPluginManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVPluginManager.h; sourceTree = "<group>"; };
@@ -102,6 +103,7 @@
 				2F5C86E71FE94859004B09C7 /* Classes */,
 				2F5C86DF1FE94845004B09C7 /* CapacitorCordova.h */,
 				62959B5F252522CB00A3D7F1 /* CapacitorCordova.modulemap */,
+				4B3B7B2C2B9F775F00F8C9A1 /* PrivacyInfo.xcprivacy */,
 				2F5C86E01FE94845004B09C7 /* Info.plist */,
 			);
 			path = CapacitorCordova;
