@@ -6,6 +6,7 @@ import { promptForPlatformTarget, runTask } from '../common';
 import type { Config } from '../definitions';
 import type { RunCommandOptions } from '../tasks/run';
 import { runNativeRun, getPlatformTargets } from '../util/native-run';
+import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
 const debug = Debug('capacitor:ios:run');
@@ -32,18 +33,36 @@ export async function runIOS(
     target.id,
   );
 
-  const xcodebuildArgs = [
-    '-workspace',
-    basename(await config.ios.nativeXcodeWorkspaceDirAbs),
-    '-scheme',
-    runScheme,
-    '-configuration',
-    configuration,
-    '-destination',
-    `id=${target.id}`,
-    '-derivedDataPath',
-    derivedDataPath,
-  ];
+  const packageManager = await checkPackageManager(config)
+  let xcodebuildArgs: string[]
+
+  if (packageManager == "Cocoapods") {
+    xcodebuildArgs = [
+      '-workspace',
+      basename(await config.ios.nativeXcodeWorkspaceDirAbs),
+      '-scheme',
+      runScheme,
+      '-configuration',
+      configuration,
+      '-destination',
+      `id=${target.id}`,
+      '-derivedDataPath',
+      derivedDataPath,
+    ];
+  } else {
+    xcodebuildArgs = [
+      '-project',
+      basename(await config.ios.nativeXcodeProjDirAbs),
+      '-scheme',
+      runScheme,
+      '-configuration',
+      configuration,
+      '-destination',
+      `id=${target.id}`,
+      '-derivedDataPath',
+      derivedDataPath,
+    ];
+  }
 
   debug('Invoking xcodebuild with args: %O', xcodebuildArgs);
 

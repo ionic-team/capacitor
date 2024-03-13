@@ -6,6 +6,7 @@ import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { logSuccess } from '../log';
 import type { BuildCommandOptions } from '../tasks/build';
+import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
 export async function buildiOS(
@@ -14,12 +15,35 @@ export async function buildiOS(
 ): Promise<void> {
   const theScheme = buildOptions.scheme ?? 'App';
 
-  await runTask('Building xArchive', async () =>
+  const packageManager = await checkPackageManager(config)
+
+  if (packageManager == "Cocoapods") {
+    await runTask('Building xArchive', async () =>
+      runCommand(
+        'xcodebuild',
+        [
+          '-workspace',
+          basename(await config.ios.nativeXcodeWorkspaceDirAbs),
+          '-scheme',
+          `${theScheme}`,
+          '-destination',
+          `generic/platform=iOS`,
+          '-archivePath',
+          `${theScheme}.xcarchive`,
+          'archive',
+        ],
+        {
+          cwd: config.ios.nativeProjectDirAbs,
+        },
+      ),
+    );
+  } else {
+    await runTask('Building XCArchive - SPM', async () =>
     runCommand(
       'xcodebuild',
       [
-        '-workspace',
-        basename(await config.ios.nativeXcodeWorkspaceDirAbs),
+        '-project',
+        basename(await config.ios.nativeXcodeProjDirAbs),
         '-scheme',
         `${theScheme}`,
         '-destination',
@@ -33,6 +57,7 @@ export async function buildiOS(
       },
     ),
   );
+  }
 
   const archivePlistContents = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
