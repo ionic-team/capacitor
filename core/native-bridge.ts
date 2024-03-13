@@ -128,12 +128,13 @@ const isRelativeOrProxyUrl = (url: string | undefined): boolean =>
 const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   if (isRelativeOrProxyUrl(url)) return url;
 
-  let proxyUrl = new URL(url);
+  const proxyUrl = new URL(url);
+  const bridgeUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
   const isHttps = proxyUrl.protocol === 'https:';
   const originalHost = encodeURIComponent(proxyUrl.host);
   const originalPathname = proxyUrl.pathname;
-  proxyUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
-
+  proxyUrl.protocol = bridgeUrl.protocol;
+  proxyUrl.host = bridgeUrl.host;
   proxyUrl.pathname = `${
     isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
   }/${originalHost}${originalPathname}`;
