@@ -254,7 +254,12 @@ public class Bridge {
         // Start the local web server
         JSInjector injector = getJSInjector();
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
-            WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), Collections.singleton(appUrl));
+            String allowedOrigin = appUrl;
+            Uri appUri = Uri.parse(appUrl);
+            if (appUri.getPath() != null) {
+                allowedOrigin = appUri.toString().replace(appUri.getPath(), "");
+            }
+            WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), Collections.singleton(allowedOrigin));
             injector = null;
         }
         localServer = new WebViewLocalServer(context, this, injector, authorities, html5mode);
