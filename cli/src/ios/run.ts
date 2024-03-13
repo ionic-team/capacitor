@@ -33,10 +33,10 @@ export async function runIOS(
     target.id,
   );
 
-  const packageManager = await checkPackageManager(config)
-  let xcodebuildArgs: string[]
+  const packageManager = await checkPackageManager(config);
+  let xcodebuildArgs: string[];
 
-  if (packageManager == "Cocoapods") {
+  if (packageManager == 'Cocoapods') {
     xcodebuildArgs = [
       '-workspace',
       basename(await config.ios.nativeXcodeWorkspaceDirAbs),

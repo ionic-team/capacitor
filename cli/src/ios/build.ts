@@ -15,9 +15,9 @@ export async function buildiOS(
 ): Promise<void> {
   const theScheme = buildOptions.scheme ?? 'App';
 
-  const packageManager = await checkPackageManager(config)
+  const packageManager = await checkPackageManager(config);
 
-  if (packageManager == "Cocoapods") {
+  if (packageManager == 'Cocoapods') {
     await runTask('Building xArchive', async () =>
       runCommand(
         'xcodebuild',
@@ -39,24 +39,24 @@ export async function buildiOS(
     );
   } else {
     await runTask('Building XCArchive - SPM', async () =>
-    runCommand(
-      'xcodebuild',
-      [
-        '-project',
-        basename(await config.ios.nativeXcodeProjDirAbs),
-        '-scheme',
-        `${theScheme}`,
-        '-destination',
-        `generic/platform=iOS`,
-        '-archivePath',
-        `${theScheme}.xcarchive`,
-        'archive',
-      ],
-      {
-        cwd: config.ios.nativeProjectDirAbs,
-      },
-    ),
-  );
+      runCommand(
+        'xcodebuild',
+        [
+          '-project',
+          basename(await config.ios.nativeXcodeProjDirAbs),
+          '-scheme',
+          `${theScheme}`,
+          '-destination',
+          `generic/platform=iOS`,
+          '-archivePath',
+          `${theScheme}.xcarchive`,
+          'archive',
+        ],
+        {
+          cwd: config.ios.nativeProjectDirAbs,
+        },
+      ),
+    );
   }
 
   const archivePlistContents = `<?xml version="1.0" encoding="UTF-8"?>
