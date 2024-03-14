@@ -111,13 +111,9 @@ var nativeBridge = (function (exports) {
         }
         else if (body instanceof FormData) {
             const formData = await convertFormData(body);
-            const boundary = `${Date.now()}`;
             return {
                 data: formData,
                 type: 'formData',
-                headers: {
-                    'Content-Type': `multipart/form-data; boundary=--${boundary}`,
-                },
             };
         }
         else if (body instanceof File) {
