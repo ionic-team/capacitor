@@ -172,7 +172,7 @@ internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     ]
                 }
 
-                if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (current, _) in current }) as? [String: String] {
+                if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (_, newHeaders) in newHeaders }) as? [String: String] {
 
                     if let responseUrl = response.url {
                         if let modifiedResponse = HTTPURLResponse(
