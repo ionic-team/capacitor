@@ -91,6 +91,9 @@ public class Bridge {
     public static final String CAPACITOR_HTTPS_SCHEME = "https";
     public static final String CAPACITOR_FILE_START = "/_capacitor_file_";
     public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
+    public static final String CAPACITOR_HTTP_INTERCEPTOR_START = "/_capacitor_http_interceptor_";
+    public static final String CAPACITOR_HTTPS_INTERCEPTOR_START = "/_capacitor_https_interceptor_";
+
     public static final int DEFAULT_ANDROID_WEBVIEW_VERSION = 60;
     public static final int MINIMUM_ANDROID_WEBVIEW_VERSION = 55;
     public static final int DEFAULT_HUAWEI_WEBVIEW_VERSION = 10;
@@ -251,7 +254,12 @@ public class Bridge {
         // Start the local web server
         JSInjector injector = getJSInjector();
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
-            WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), Collections.singleton(appUrl));
+            String allowedOrigin = appUrl;
+            Uri appUri = Uri.parse(appUrl);
+            if (appUri.getPath() != null) {
+                allowedOrigin = appUri.toString().replace(appUri.getPath(), "");
+            }
+            WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), Collections.singleton(allowedOrigin));
             injector = null;
         }
         localServer = new WebViewLocalServer(context, this, injector, authorities, html5mode);

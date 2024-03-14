@@ -13,29 +13,3 @@ tasks:
     config:
       label: 'needs reply'
       exclude-labeler: true
-  - name: add-platform-labels
-    on:
-      issues:
-        types: [opened, edited]
-  - name: add-contributors
-    on:
-      push:
-        branches: [main]
-    config:
-      base: main
-      commit-message: 'chore(readme): add new contributor'
-      exclude-patterns:
-        - '^Ionitron$'
-        - '\[bot\]$'
-  - name: assign-to-project
-    on:
-      issues:
-        types: [opened]
-      pull_request:
-        types: [opened]
-    condition: (await getTeamMembers('capacitor')).includes(payload.sender.login)
-    config:
-      columns:
-        issue: 10495656
-        pr: 10495659
-        draft-pr: 10495658

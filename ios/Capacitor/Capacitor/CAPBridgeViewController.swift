@@ -34,10 +34,6 @@ import Cordova
         CAPLog.enableLogging = configuration.loggingEnabled
         logWarnings(for: configDescriptor)
 
-        if configDescriptor.instanceType == .fixed {
-            updateBinaryVersion()
-        }
-
         setStatusBarDefaults()
         setScreenOrientationDefaults()
 
@@ -55,6 +51,10 @@ import Cordova
                                           assetHandler: assetHandler,
                                           delegationHandler: delegationHandler)
         capacitorDidLoad()
+
+        if configDescriptor.instanceType == .fixed {
+            updateBinaryVersion()
+        }
     }
 
     override open func viewDidLoad() {

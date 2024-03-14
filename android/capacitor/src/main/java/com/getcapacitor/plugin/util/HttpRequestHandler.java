@@ -12,12 +12,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -141,7 +143,7 @@ public class HttpRequestHandler {
                     StringBuilder value = new StringBuilder();
                     JSONArray arr = params.getJSONArray(key);
                     for (int x = 0; x < arr.length(); x++) {
-                        value.append(key).append("=").append(arr.getString(x));
+                        this.addUrlParam(value, key, arr.getString(x), shouldEncode);
                         if (x != arr.length() - 1) {
                             value.append("&");
                         }
@@ -154,28 +156,35 @@ public class HttpRequestHandler {
                     if (urlQueryBuilder.length() > 0) {
                         urlQueryBuilder.append("&");
                     }
-                    urlQueryBuilder.append(key).append("=").append(params.getString(key));
+                    this.addUrlParam(urlQueryBuilder, key, params.getString(key), shouldEncode);
                 }
             }
 
             String urlQuery = urlQueryBuilder.toString();
 
             URI uri = url.toURI();
-            if (shouldEncode) {
-                URI encodedUri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), urlQuery, uri.getFragment());
-                this.url = encodedUri.toURL();
-            } else {
-                String unEncodedUrlString =
-                    uri.getScheme() +
-                    "://" +
-                    uri.getAuthority() +
-                    uri.getPath() +
-                    ((!urlQuery.equals("")) ? "?" + urlQuery : "") +
-                    ((uri.getFragment() != null) ? uri.getFragment() : "");
-                this.url = new URL(unEncodedUrlString);
-            }
+            String unEncodedUrlString =
+                uri.getScheme() +
+                "://" +
+                uri.getAuthority() +
+                uri.getPath() +
+                ((!urlQuery.equals("")) ? "?" + urlQuery : "") +
+                ((uri.getFragment() != null) ? uri.getFragment() : "");
+            this.url = new URL(unEncodedUrlString);
 
             return this;
+        }
+
+        private static void addUrlParam(StringBuilder sb, String key, String value, boolean shouldEncode) {
+            if (shouldEncode) {
+                try {
+                    key = URLEncoder.encode(key, "UTF-8");
+                    value = URLEncoder.encode(value, "UTF-8");
+                } catch (UnsupportedEncodingException ex) {
+                    throw new RuntimeException(ex.getCause());
+                }
+            }
+            sb.append(key).append("=").append(value);
         }
 
         public CapacitorHttpUrlConnection build() {
@@ -426,7 +435,7 @@ public class HttpRequestHandler {
         return response;
     }
 
-    private static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
+    public static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
         try {
             Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
             Method method = sslPinningImpl.getDeclaredMethod("isDomainExcluded", Bridge.class, URL.class);
