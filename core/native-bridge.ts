@@ -98,13 +98,9 @@ const convertBody = async (
     };
   } else if (body instanceof FormData) {
     const formData = await convertFormData(body);
-    const boundary = `${Date.now()}`;
     return {
       data: formData,
       type: 'formData',
-      headers: {
-        'Content-Type': `multipart/form-data; boundary=--${boundary}`,
-      },
     };
   } else if (body instanceof File) {
     const fileData = await readFileAsBase64(body);
