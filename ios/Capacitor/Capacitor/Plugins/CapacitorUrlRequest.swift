@@ -51,7 +51,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return nil
     }
 
-    public func getRequestDataAsMultipartFormData(_ data: JSValue, _ boundary: String) throws -> Data {
+    public func getRequestDataAsMultipartFormData(_ data: JSValue, _ contentType: String) throws -> Data {
         guard let obj = data as? JSObject else {
             // Throw, other data types explicitly not supported.
             throw CapacitorUrlRequestError.serializationError("[ data ] argument for request with content-type [ application/x-www-form-urlencoded ] may only be a plain javascript object")
@@ -62,7 +62,12 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
 
         var data = Data()
-
+        var boundary = UUID().uuidString
+        if contentType.contains("="), let contentBoundary = contentType.components(separatedBy: "=").last {
+            boundary = contentBoundary
+        } else {
+            overrideContentType(boundary)
+        }
         strings.forEach { key, value in
             data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
             data.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!)
@@ -71,6 +76,12 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
 
         return data
+    }
+
+    private func overrideContentType(_ boundary: String) {
+        let contentType = "multipart/form-data; boundary=\(boundary)"
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+        headers["Content-Type"] = contentType
     }
 
     public func getRequestDataAsString(_ data: JSValue) throws -> Data {
@@ -89,12 +100,18 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return normalized[index.lowercased()]
     }
 
-    public func getRequestDataFromFormData(_ data: JSValue, _ boundary: String) throws -> Data? {
+    public func getRequestDataFromFormData(_ data: JSValue, _ contentType: String) throws -> Data? {
         guard let list = data as? JSArray else {
             // Throw, other data types explicitly not supported.
             throw CapacitorUrlRequestError.serializationError("Data must be an array for FormData")
         }
         var data = Data()
+        var boundary = UUID().uuidString
+        if contentType.contains("="), let contentBoundary = contentType.components(separatedBy: "=").last {
+            boundary = contentBoundary
+        } else {
+            overrideContentType(boundary)
+        }
         for entry in list {
             guard let item = entry as? [String: String] else {
                 throw CapacitorUrlRequestError.serializationError("Data must be an array for FormData")
@@ -131,14 +148,13 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
     }
 
     public func getRequestData(_ body: JSValue, _ contentType: String, _ dataType: String? = nil) throws -> Data? {
-        let boundary = contentType.components(separatedBy: "=").last
         if dataType == "file" {
             guard let stringData = body as? String else {
                 throw CapacitorUrlRequestError.serializationError("[ data ] argument could not be parsed as string")
             }
             return Data(base64Encoded: stringData)
         } else if dataType == "formData" {
-            return try getRequestDataFromFormData(body, boundary!)
+            return try getRequestDataFromFormData(body, contentType)
         }
 
         // If data can be parsed directly as a string, return that without processing.
@@ -149,7 +165,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         } else if contentType.contains("application/x-www-form-urlencoded") {
             return try getRequestDataAsFormUrlEncoded(body)
         } else if contentType.contains("multipart/form-data") {
-            return try getRequestDataAsMultipartFormData(body, boundary!)
+            return try getRequestDataAsMultipartFormData(body, contentType)
         } else {
             throw CapacitorUrlRequestError.serializationError("[ data ] argument could not be parsed for content type [ \(contentType) ]")
         }
