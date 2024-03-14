@@ -2,7 +2,11 @@ import Debug from 'debug';
 import { resolve } from 'path';
 
 import c from '../colors';
-import { promptForPlatformTarget, runTask } from '../common';
+import {
+  parseApkNameFromFlavor,
+  promptForPlatformTarget,
+  runTask,
+} from '../common';
 import type { Config } from '../definitions';
 import type { RunCommandOptions } from '../tasks/run';
 import { runNativeRun, getPlatformTargets } from '../util/native-run';
@@ -50,8 +54,7 @@ export async function runAndroid(
     config.android.appDir
   }/build/outputs/apk${runFlavor !== '' ? '/' + runFlavor : ''}/debug`;
 
-  const apkName = `app${runFlavor !== '' ? '-' + runFlavor : ''}-debug.apk`;
-
+  const apkName = parseApkNameFromFlavor(runFlavor);
   const apkPath = resolve(pathToApk, apkName);
 
   const nativeRunArgs = ['android', '--app', apkPath, '--target', target.id];
