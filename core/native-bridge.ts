@@ -138,7 +138,8 @@ const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   const originalHost = encodeURIComponent(proxyUrl.host);
   const originalPathname = proxyUrl.pathname;
   proxyUrl.protocol = bridgeUrl.protocol;
-  proxyUrl.host = bridgeUrl.host;
+  proxyUrl.hostname = bridgeUrl.hostname;
+  proxyUrl.port = bridgeUrl.port;
   proxyUrl.pathname = `${
     isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
   }/${originalHost}${originalPathname}`;
