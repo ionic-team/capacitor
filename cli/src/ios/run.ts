@@ -35,15 +35,15 @@ export async function runIOS(
 
   const packageManager = await checkPackageManager(config);
 
-  let typeOfBuild: string
-  let projectName: string
+  let typeOfBuild: string;
+  let projectName: string;
 
   if (packageManager == 'Cocoapods') {
-    typeOfBuild = '-workspace'
-    projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs)
+    typeOfBuild = '-workspace';
+    projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs);
   } else {
-    typeOfBuild = 'project'
-    projectName = basename(await config.ios.nativeXcodeProjDirAbs)
+    typeOfBuild = 'project';
+    projectName = basename(await config.ios.nativeXcodeProjDirAbs);
   }
 
   const xcodebuildArgs = [

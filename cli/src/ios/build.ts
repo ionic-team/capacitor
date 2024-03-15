@@ -17,15 +17,15 @@ export async function buildiOS(
 
   const packageManager = await checkPackageManager(config);
 
-  let typeOfBuild: string
-  let projectName: string
+  let typeOfBuild: string;
+  let projectName: string;
 
   if (packageManager == 'Cocoapods') {
-    typeOfBuild = '-workspace'
-    projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs)
+    typeOfBuild = '-workspace';
+    projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs);
   } else {
-    typeOfBuild = 'project'
-    projectName = basename(await config.ios.nativeXcodeProjDirAbs)
+    typeOfBuild = 'project';
+    projectName = basename(await config.ios.nativeXcodeProjDirAbs);
   }
 
   await runTask('Building xArchive', async () =>
@@ -47,7 +47,6 @@ export async function buildiOS(
       },
     ),
   );
-  }
 
   const archivePlistContents = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
