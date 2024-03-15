@@ -42,7 +42,7 @@ export async function runIOS(
     typeOfBuild = '-workspace';
     projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs);
   } else {
-    typeOfBuild = 'project';
+    typeOfBuild = '-project';
     projectName = basename(await config.ios.nativeXcodeProjDirAbs);
   }
 
