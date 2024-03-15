@@ -98,13 +98,9 @@ const convertBody = async (
     };
   } else if (body instanceof FormData) {
     const formData = await convertFormData(body);
-    const boundary = `${Date.now()}`;
     return {
       data: formData,
       type: 'formData',
-      headers: {
-        'Content-Type': `multipart/form-data; boundary=--${boundary}`,
-      },
     };
   } else if (body instanceof File) {
     const fileData = await readFileAsBase64(body);
@@ -558,13 +554,18 @@ const initBridge = (w: any): void => {
             options.method.toLocaleUpperCase() === 'OPTIONS' ||
             options.method.toLocaleUpperCase() === 'TRACE'
           ) {
-            const modifiedResource = createProxyUrl(resource.toString(), win);
-            const response = await win.CapacitorWebFetch(
-              modifiedResource,
-              options,
-            );
-
-            return response;
+            if (typeof resource === 'string') {
+              return await win.CapacitorWebFetch(
+                createProxyUrl(resource, win),
+                options,
+              );
+            } else if (resource instanceof Request) {
+              const modifiedRequest = new Request(
+                createProxyUrl(resource.url, win),
+                resource,
+              );
+              return await win.CapacitorWebFetch(modifiedRequest, options);
+            }
           }
 
           const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
