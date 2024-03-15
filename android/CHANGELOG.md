@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.3](https://github.com/ionic-team/capacitor/compare/5.7.2...5.7.3) (2024-03-15)
+
+### Bug Fixes
+
+- **http:** keep original URL properties on proxy ([#7338](https://github.com/ionic-team/capacitor/issues/7338)) ([9ef8b1d](https://github.com/ionic-team/capacitor/commit/9ef8b1d5bc9ef596d5a3742dc34f053c47a3fc74))
+- **http:** Make proxy work with Request objects ([#7348](https://github.com/ionic-team/capacitor/issues/7348)) ([#7351](https://github.com/ionic-team/capacitor/issues/7351)) ([0139aa8](https://github.com/ionic-team/capacitor/commit/0139aa8cf3ad86f688b5af29172287c57df01b2e))
+- **http:** set port for proxy url ([#7346](https://github.com/ionic-team/capacitor/issues/7346)) ([5bd33c4](https://github.com/ionic-team/capacitor/commit/5bd33c4080be4f9cd7ba4c27a0036d7004bea291))
+
 ## [5.7.2](https://github.com/ionic-team/capacitor/compare/5.7.1...5.7.2) (2024-03-06)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.3](https://github.com/ionic-team/capacitor/compare/5.7.2...5.7.3) (2024-03-15)
+
+### Bug Fixes
+
+- **cli:** apkName for multi-dimensional flavors ([#7347](https://github.com/ionic-team/capacitor/issues/7347)) ([771d678](https://github.com/ionic-team/capacitor/commit/771d67820e604e1c2a41ec5e966c58eab26a3e50))
+
 ## [5.7.2](https://github.com/ionic-team/capacitor/compare/5.7.1...5.7.2) (2024-03-06)
 
 ### Bug Fixes
