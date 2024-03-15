@@ -644,7 +644,9 @@ This Fetch API interface allows you to perform various actions on HTTP request a
 
 Construct a type with a set of properties K of type T
 
-<code>{ [P in K]: T; }</code>
+<code>{
+ [P in K]: T;
+ }</code>
 
 
 #### RequestMode
