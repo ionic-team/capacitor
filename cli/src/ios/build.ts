@@ -17,46 +17,36 @@ export async function buildiOS(
 
   const packageManager = await checkPackageManager(config);
 
+  let typeOfBuild: string
+  let projectName: string
+
   if (packageManager == 'Cocoapods') {
-    await runTask('Building xArchive', async () =>
-      runCommand(
-        'xcodebuild',
-        [
-          '-workspace',
-          basename(await config.ios.nativeXcodeWorkspaceDirAbs),
-          '-scheme',
-          `${theScheme}`,
-          '-destination',
-          `generic/platform=iOS`,
-          '-archivePath',
-          `${theScheme}.xcarchive`,
-          'archive',
-        ],
-        {
-          cwd: config.ios.nativeProjectDirAbs,
-        },
-      ),
-    );
+    typeOfBuild = '-workspace'
+    projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs)
   } else {
-    await runTask('Building XCArchive - SPM', async () =>
-      runCommand(
-        'xcodebuild',
-        [
-          '-project',
-          basename(await config.ios.nativeXcodeProjDirAbs),
-          '-scheme',
-          `${theScheme}`,
-          '-destination',
-          `generic/platform=iOS`,
-          '-archivePath',
-          `${theScheme}.xcarchive`,
-          'archive',
-        ],
-        {
-          cwd: config.ios.nativeProjectDirAbs,
-        },
-      ),
-    );
+    typeOfBuild = 'project'
+    projectName = basename(await config.ios.nativeXcodeProjDirAbs)
+  }
+
+  await runTask('Building xArchive', async () =>
+    runCommand(
+      'xcodebuild',
+      [
+        typeOfBuild,
+        projectName,
+        '-scheme',
+        `${theScheme}`,
+        '-destination',
+        `generic/platform=iOS`,
+        '-archivePath',
+        `${theScheme}.xcarchive`,
+        'archive',
+      ],
+      {
+        cwd: config.ios.nativeProjectDirAbs,
+      },
+    ),
+  );
   }
 
   const archivePlistContents = `<?xml version="1.0" encoding="UTF-8"?>

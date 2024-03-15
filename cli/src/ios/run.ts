@@ -34,35 +34,30 @@ export async function runIOS(
   );
 
   const packageManager = await checkPackageManager(config);
-  let xcodebuildArgs: string[];
+
+  let typeOfBuild: string
+  let projectName: string
 
   if (packageManager == 'Cocoapods') {
-    xcodebuildArgs = [
-      '-workspace',
-      basename(await config.ios.nativeXcodeWorkspaceDirAbs),
-      '-scheme',
-      runScheme,
-      '-configuration',
-      configuration,
-      '-destination',
-      `id=${target.id}`,
-      '-derivedDataPath',
-      derivedDataPath,
-    ];
+    typeOfBuild = '-workspace'
+    projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs)
   } else {
-    xcodebuildArgs = [
-      '-project',
-      basename(await config.ios.nativeXcodeProjDirAbs),
-      '-scheme',
-      runScheme,
-      '-configuration',
-      configuration,
-      '-destination',
-      `id=${target.id}`,
-      '-derivedDataPath',
-      derivedDataPath,
-    ];
+    typeOfBuild = 'project'
+    projectName = basename(await config.ios.nativeXcodeProjDirAbs)
   }
+
+  const xcodebuildArgs = [
+    typeOfBuild,
+    projectName,
+    '-scheme',
+    runScheme,
+    '-configuration',
+    configuration,
+    '-destination',
+    `id=${target.id}`,
+    '-derivedDataPath',
+    derivedDataPath,
+  ];
 
   debug('Invoking xcodebuild with args: %O', xcodebuildArgs);
 
