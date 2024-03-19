@@ -36,15 +36,36 @@ const decode = (str: string): string =>
 
 export interface CapacitorCookiesPlugin {
   getCookies(options?: GetCookieOptions): Promise<HttpCookieMap>;
+  /**
+   * Write a cookie to the device.
+   */
   setCookie(options: SetCookieOptions): Promise<void>;
+  /**
+   * Delete a cookie from the device.
+   */
   deleteCookie(options: DeleteCookieOptions): Promise<void>;
+  /**
+   * Clear cookies from the device at a given URL.
+   */
   clearCookies(options: ClearCookieOptions): Promise<void>;
+  /**
+   * Clear all cookies on the device.
+   */
   clearAllCookies(): Promise<void>;
 }
 
 interface HttpCookie {
+  /**
+   * The URL of the cookie.
+   */
   url?: string;
+  /**
+   * The key of the cookie.
+   */
   key: string;
+  /**
+   * The value of the cookie.
+   */
   value: string;
 }
 
@@ -53,7 +74,13 @@ interface HttpCookieMap {
 }
 
 interface HttpCookieExtras {
+  /**
+   * The path to write the cookie to.
+   */
   path?: string;
+  /**
+   * The date to expire the cookie.
+   */
   expires?: string;
 }
 
@@ -147,14 +174,35 @@ export const CapacitorCookies = registerPlugin<CapacitorCookiesPlugin>(
 
 /******** HTTP PLUGIN ********/
 export interface CapacitorHttpPlugin {
+  /**
+   * Make a Http Request to a server using native libraries.
+   */
   request(options: HttpOptions): Promise<HttpResponse>;
+  /**
+   * Make a Http GET Request to a server using native libraries.
+   */
   get(options: HttpOptions): Promise<HttpResponse>;
+  /**
+   * Make a Http POST Request to a server using native libraries.
+   */
   post(options: HttpOptions): Promise<HttpResponse>;
+  /**
+   * Make a Http PUT Request to a server using native libraries.
+   */
   put(options: HttpOptions): Promise<HttpResponse>;
+  /**
+   * Make a Http PATCH Request to a server using native libraries.
+   */
   patch(options: HttpOptions): Promise<HttpResponse>;
+  /**
+   * Make a Http DELETE Request to a server using native libraries.
+   */
   delete(options: HttpOptions): Promise<HttpResponse>;
 }
 
+/**
+ * How to parse the Http response before returning it to the client.
+ */
 export type HttpResponseType =
   | 'arraybuffer'
   | 'blob'
@@ -163,8 +211,17 @@ export type HttpResponseType =
   | 'document';
 
 export interface HttpOptions {
+  /**
+   * The URL to send the request to.
+   */
   url: string;
+  /**
+   * The Http Request method to run. (Default is GET)
+   */
   method?: string;
+  /**
+   * URL parameters to append to the request.
+   */
   params?: HttpParams;
   /**
    * Note: On Android and iOS, data can only be a string or a JSON.
@@ -175,6 +232,9 @@ export interface HttpOptions {
    * and set the `headers["Content-Type"]` and `dataType` attributes accordingly.
    */
   data?: any;
+  /**
+   * Http Request headers to send with the request.
+   */
   headers?: HttpHeaders;
   /**
    * How long to wait to read additional data in milliseconds.
@@ -211,17 +271,35 @@ export interface HttpOptions {
 }
 
 export interface HttpParams {
+  /**
+   * A key/value dictionary of URL parameters to set.
+   */
   [key: string]: string | string[];
 }
 
 export interface HttpHeaders {
+  /**
+   * A key/value dictionary of Http headers.
+   */
   [key: string]: string;
 }
 
 export interface HttpResponse {
+  /**
+   * Additional data received with the Http response.
+   */
   data: any;
+  /**
+   * The status code received from the Http response.
+   */
   status: number;
+  /**
+   * The headers received from the Http response.
+   */
   headers: HttpHeaders;
+  /**
+   * The response URL recieved from the Http response.
+   */
   url: string;
 }
 
