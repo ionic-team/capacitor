@@ -68,3 +68,12 @@ export async function writePluginJSON(
   capJSON['packageClassList'] = classList;
   writeJSONSync(capJSONFile, capJSON, { spaces: '\t' });
 }
+
+export async function generateIOSPackageJSON(
+  config: Config,
+  plugins: Plugin[],
+): Promise<void> {
+  const fileList = await getPluginFiles(plugins);
+  const classList = await findPluginClasses(fileList);
+  writePluginJSON(config, classList);
+}
