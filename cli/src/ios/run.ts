@@ -6,6 +6,7 @@ import { promptForPlatformTarget, runTask } from '../common';
 import type { Config } from '../definitions';
 import type { RunCommandOptions } from '../tasks/run';
 import { runNativeRun, getPlatformTargets } from '../util/native-run';
+import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
 const debug = Debug('capacitor:ios:run');
@@ -32,9 +33,22 @@ export async function runIOS(
     target.id,
   );
 
+  const packageManager = await checkPackageManager(config);
+
+  let typeOfBuild: string;
+  let projectName: string;
+
+  if (packageManager == 'Cocoapods') {
+    typeOfBuild = '-workspace';
+    projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs);
+  } else {
+    typeOfBuild = '-project';
+    projectName = basename(await config.ios.nativeXcodeProjDirAbs);
+  }
+
   const xcodebuildArgs = [
-    '-workspace',
-    basename(await config.ios.nativeXcodeWorkspaceDirAbs),
+    typeOfBuild,
+    projectName,
     '-scheme',
     runScheme,
     '-configuration',

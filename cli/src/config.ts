@@ -9,6 +9,7 @@ import Debug from 'debug';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
+import { parseApkNameFromFlavor } from './common';
 import type {
   AndroidConfig,
   AppConfig,
@@ -249,13 +250,11 @@ async function loadAndroidConfig(
   const webDir = `${assetsDir}/public`;
   const resDir = `${srcMainDir}/res`;
   let apkPath = `${appDir}/build/outputs/apk/`;
-  let flavorPrefix = '';
   const flavor = extConfig.android?.flavor || '';
   if (extConfig.android?.flavor) {
     apkPath = `${apkPath}/${extConfig.android?.flavor}`;
-    flavorPrefix = `-${extConfig.android?.flavor}`;
   }
-  const apkName = `app${flavorPrefix}-debug.apk`;
+  const apkName = parseApkNameFromFlavor(flavor);
   const buildOutputDir = `${apkPath}/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
   const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
