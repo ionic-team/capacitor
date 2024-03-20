@@ -141,13 +141,10 @@ var nativeBridge = (function (exports) {
         const proxyUrl = new URL(url);
         const bridgeUrl = new URL((_b = (_a = win.Capacitor) === null || _a === void 0 ? void 0 : _a.getServerUrl()) !== null && _b !== void 0 ? _b : '');
         const isHttps = proxyUrl.protocol === 'https:';
-        const originalHost = encodeURIComponent(proxyUrl.host);
-        const originalPathname = proxyUrl.pathname;
-        proxyUrl.protocol = bridgeUrl.protocol;
-        proxyUrl.hostname = bridgeUrl.hostname;
-        proxyUrl.port = bridgeUrl.port;
-        proxyUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${originalHost}${originalPathname}`;
-        return proxyUrl.toString();
+        bridgeUrl.search = proxyUrl.search;
+        bridgeUrl.hash = proxyUrl.hash;
+        bridgeUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${encodeURIComponent(proxyUrl.host)}${proxyUrl.pathname}`;
+        return bridgeUrl.toString();
     };
     const initBridge = (w) => {
         const getPlatformId = (win) => {
