@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.4](https://github.com/ionic-team/capacitor/compare/5.7.3...5.7.4) (2024-03-20)
+
+### Bug Fixes
+
+- **http:** change proxy url generation ([30a32f4](https://github.com/ionic-team/capacitor/commit/30a32f467fb4c5cc6c4e1b98e55f97a8c14befa5))
+
 ## [5.7.3](https://github.com/ionic-team/capacitor/compare/5.7.2...5.7.3) (2024-03-15)
 
 ### Bug Fixes
