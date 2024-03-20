@@ -131,15 +131,12 @@ const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   const proxyUrl = new URL(url);
   const bridgeUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
   const isHttps = proxyUrl.protocol === 'https:';
-  const originalHost = encodeURIComponent(proxyUrl.host);
-  const originalPathname = proxyUrl.pathname;
-  proxyUrl.protocol = bridgeUrl.protocol;
-  proxyUrl.hostname = bridgeUrl.hostname;
-  proxyUrl.port = bridgeUrl.port;
-  proxyUrl.pathname = `${
+  bridgeUrl.search = proxyUrl.search;
+  bridgeUrl.hash = proxyUrl.hash;
+  bridgeUrl.pathname = `${
     isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
-  }/${originalHost}${originalPathname}`;
-  return proxyUrl.toString();
+  }/${encodeURIComponent(proxyUrl.host)}${proxyUrl.pathname}`;
+  return bridgeUrl.toString();
 };
 
 const initBridge = (w: any): void => {

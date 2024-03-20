@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.0...6.0.0-rc.1) (2024-03-15)
+
+### Bug Fixes
+
+- **cli:** adjust SPM parameters for build and run commands ([#7342](https://github.com/ionic-team/capacitor/issues/7342)) ([02f8983](https://github.com/ionic-team/capacitor/commit/02f8983300c102125db6b41b0bb174fe41e1785b))
+- **cli:** apkName for multi-dimensional flavors ([#6704](https://github.com/ionic-team/capacitor/issues/6704)) ([d7b23f2](https://github.com/ionic-team/capacitor/commit/d7b23f21c554c94029b24d6e0c9ad4635f055759))
+- **cli:** Attempt to verify non-cjs modules exist if cjs resolution fails ([#7310](https://github.com/ionic-team/capacitor/issues/7310)) ([663e7b3](https://github.com/ionic-team/capacitor/commit/663e7b383be0ceee1d23b929ceb6374d00faf011))
+- **cli:** correct build path for non flavor builds ([#7281](https://github.com/ionic-team/capacitor/issues/7281)) ([0f9651d](https://github.com/ionic-team/capacitor/commit/0f9651d99cdd9cb463e494ed016838cd6d4a34c4))
+- **cli:** Migrate variables to newer dependency versions ([#7235](https://github.com/ionic-team/capacitor/issues/7235)) ([aaf01ab](https://github.com/ionic-team/capacitor/commit/aaf01ab938e02220d7e6b5cd9329baa3edd02b68))
+- **cli:** remove certificate file extension check on copy ([#7240](https://github.com/ionic-team/capacitor/issues/7240)) ([93a0044](https://github.com/ionic-team/capacitor/commit/93a004473d7c4008bf02e8077460dfbdc3042312))
+- **spm:** add product lines to Package.swift ([#7278](https://github.com/ionic-team/capacitor/issues/7278)) ([e45d60d](https://github.com/ionic-team/capacitor/commit/e45d60d15445fa55320eb6274de67d4b4191f30a))
+
 # [6.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.2...6.0.0-rc.0) (2024-01-23)
 
 ### Bug Fixes

@@ -106,6 +106,8 @@ Due to the nature of the bridge, parsing and transferring large amount of data f
 request(options: HttpOptions) => Promise<HttpResponse>
 ```
 
+Make a Http Request to a server using native libraries.
+
 | Param         | Type                                                |
 | ------------- | --------------------------------------------------- |
 | **`options`** | <code><a href="#httpoptions">HttpOptions</a></code> |
@@ -120,6 +122,8 @@ request(options: HttpOptions) => Promise<HttpResponse>
 ```typescript
 get(options: HttpOptions) => Promise<HttpResponse>
 ```
+
+Make a Http GET Request to a server using native libraries.
 
 | Param         | Type                                                |
 | ------------- | --------------------------------------------------- |
@@ -136,6 +140,8 @@ get(options: HttpOptions) => Promise<HttpResponse>
 post(options: HttpOptions) => Promise<HttpResponse>
 ```
 
+Make a Http POST Request to a server using native libraries.
+
 | Param         | Type                                                |
 | ------------- | --------------------------------------------------- |
 | **`options`** | <code><a href="#httpoptions">HttpOptions</a></code> |
@@ -150,6 +156,8 @@ post(options: HttpOptions) => Promise<HttpResponse>
 ```typescript
 put(options: HttpOptions) => Promise<HttpResponse>
 ```
+
+Make a Http PUT Request to a server using native libraries.
 
 | Param         | Type                                                |
 | ------------- | --------------------------------------------------- |
@@ -166,6 +174,8 @@ put(options: HttpOptions) => Promise<HttpResponse>
 patch(options: HttpOptions) => Promise<HttpResponse>
 ```
 
+Make a Http PATCH Request to a server using native libraries.
+
 | Param         | Type                                                |
 | ------------- | --------------------------------------------------- |
 | **`options`** | <code><a href="#httpoptions">HttpOptions</a></code> |
@@ -181,6 +191,8 @@ patch(options: HttpOptions) => Promise<HttpResponse>
 delete(options: HttpOptions) => Promise<HttpResponse>
 ```
 
+Make a Http DELETE Request to a server using native libraries.
+
 | Param         | Type                                                |
 | ------------- | --------------------------------------------------- |
 | **`options`** | <code><a href="#httpoptions">HttpOptions</a></code> |
@@ -195,12 +207,12 @@ delete(options: HttpOptions) => Promise<HttpResponse>
 
 #### HttpResponse
 
-| Prop          | Type                                                |
-| ------------- | --------------------------------------------------- |
-| **`data`**    | <code>any</code>                                    |
-| **`status`**  | <code>number</code>                                 |
-| **`headers`** | <code><a href="#httpheaders">HttpHeaders</a></code> |
-| **`url`**     | <code>string</code>                                 |
+| Prop          | Type                                                | Description                                       |
+| ------------- | --------------------------------------------------- | ------------------------------------------------- |
+| **`data`**    | <code>any</code>                                    | Additional data received with the Http response.  |
+| **`status`**  | <code>number</code>                                 | The status code received from the Http response.  |
+| **`headers`** | <code><a href="#httpheaders">HttpHeaders</a></code> | The headers received from the Http response.      |
+| **`url`**     | <code>string</code>                                 | The response URL recieved from the Http response. |
 
 
 #### HttpHeaders
@@ -210,11 +222,11 @@ delete(options: HttpOptions) => Promise<HttpResponse>
 
 | Prop                        | Type                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | --------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`url`**                   | <code>string</code>                                           |                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| **`method`**                | <code>string</code>                                           |                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| **`params`**                | <code><a href="#httpparams">HttpParams</a></code>             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **`url`**                   | <code>string</code>                                           | The URL to send the request to.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **`method`**                | <code>string</code>                                           | The Http Request method to run. (Default is GET)                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **`params`**                | <code><a href="#httpparams">HttpParams</a></code>             | URL parameters to append to the request.                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | **`data`**                  | <code>any</code>                                              | Note: On Android and iOS, data can only be a string or a JSON. FormData, <a href="#blob">Blob</a>, <a href="#arraybuffer">ArrayBuffer</a>, and other complex types are only directly supported on web or through enabling `CapacitorHttp` in the config and using the patched `window.fetch` or `XMLHttpRequest`. If you need to send a complex type, you should serialize the data to base64 and set the `headers["Content-Type"]` and `dataType` attributes accordingly. |
-| **`headers`**               | <code><a href="#httpheaders">HttpHeaders</a></code>           |                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **`headers`**               | <code><a href="#httpheaders">HttpHeaders</a></code>           | Http Request headers to send with the request.                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | **`readTimeout`**           | <code>number</code>                                           | How long to wait to read additional data in milliseconds. Resets each time new data is received.                                                                                                                                                                                                                                                                                                                                                                           |
 | **`connectTimeout`**        | <code>number</code>                                           | How long to wait for the initial connection in milliseconds.                                                                                                                                                                                                                                                                                                                                                                                                               |
 | **`disableRedirects`**      | <code>boolean</code>                                          | Sets whether automatic HTTP redirects should be disabled                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -644,9 +656,7 @@ This Fetch API interface allows you to perform various actions on HTTP request a
 
 Construct a type with a set of properties K of type T
 
-<code>{
- [P in K]: T;
- }</code>
+<code>{ [P in K]: T; }</code>
 
 
 #### RequestMode
@@ -665,6 +675,8 @@ Construct a type with a set of properties K of type T
 
 
 #### HttpResponseType
+
+How to parse the Http response before returning it to the client.
 
 <code>'arraybuffer' | 'blob' | 'json' | 'text' | 'document'</code>
 
