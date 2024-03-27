@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   CapacitorGlobal,
   PluginCallback,
   PluginResultData,
@@ -74,6 +74,7 @@ export interface CapacitorInstance extends CapacitorGlobal {
     pluginName: string,
     methodName: string,
     options?: O,
+    callback?: PluginCallback,
   ) => Promise<R>;
 
   /**
