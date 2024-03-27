@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-rc.2](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.1...6.0.0-rc.2) (2024-03-25)
+
+### Bug Fixes
+
+- **http:** change proxy url generation ([#7354](https://github.com/ionic-team/capacitor/issues/7354)) ([318c316](https://github.com/ionic-team/capacitor/commit/318c316847c5b059fb88b46d4acd31e1ced477e5))
+- vue 3 log warning causes error on iOS ([#6993](https://github.com/ionic-team/capacitor/issues/6993)) ([87271e2](https://github.com/ionic-team/capacitor/commit/87271e2671013ad35d13b22f2e96d4fe8f4eeaf0))
+
+# [6.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.0...6.0.0-rc.1) (2024-03-15)
+
+### Bug Fixes
+
+- **core:** make 'content-type' header count for XMLHttpRequest patch ([#7161](https://github.com/ionic-team/capacitor/issues/7161)) ([26d7f68](https://github.com/ionic-team/capacitor/commit/26d7f688284914c6ef795564ba424119efc32a1c))
+- **http:** handle proxy urls with port ([#7273](https://github.com/ionic-team/capacitor/issues/7273)) ([514409a](https://github.com/ionic-team/capacitor/commit/514409aeb93ad65be105bbe2da8d2cd86ff159b0))
+- **http:** keep original URL properties on proxy ([#7329](https://github.com/ionic-team/capacitor/issues/7329)) ([cbb6407](https://github.com/ionic-team/capacitor/commit/cbb6407225b42a0d9db4f335a9766f119501021d))
+- **http:** Make proxy work with Request objects ([#7348](https://github.com/ionic-team/capacitor/issues/7348)) ([7e68725](https://github.com/ionic-team/capacitor/commit/7e6872573df03ab5cdc10a1a27db3e9fe81a141d))
+- **http:** route get requests through custom handler ([#6818](https://github.com/ionic-team/capacitor/issues/6818)) ([b853d06](https://github.com/ionic-team/capacitor/commit/b853d065055b5a819949551be58b62d40b52e37c))
+- **http:** set port for proxy url ([#7341](https://github.com/ionic-team/capacitor/issues/7341)) ([a3059dc](https://github.com/ionic-team/capacitor/commit/a3059dca4a7746d9fb7102a7d41f4da80e2f48b4))
+
+### Features
+
+- **webview:** add setServerAssetPath method ([881235b](https://github.com/ionic-team/capacitor/commit/881235b14de23ef988746bfb89a5a0fc3c8d8466))
+
 # [6.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/6.0.0-beta.2...6.0.0-rc.0) (2024-01-23)
 
 ### Bug Fixes

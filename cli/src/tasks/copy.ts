@@ -17,8 +17,10 @@ import {
 } from '../cordova';
 import type { Config } from '../definitions';
 import { isFatal } from '../errors';
+import { getIOSPlugins } from '../ios/common';
 import { logger } from '../log';
 import { getPlugins } from '../plugin';
+import { generateIOSPackageJSON } from '../util/iosplugin';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
 
@@ -135,6 +137,8 @@ export async function copy(
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
+      const iosPlugins = await getIOSPlugins(allPlugins);
+      await generateIOSPackageJSON(config, iosPlugins);
     } else if (platformName === config.android.name) {
       if (usesFederatedCapacitor) {
         await copyFederatedWebDirs(config, config.android.webDirAbs);
@@ -323,14 +327,6 @@ async function copySSLCert(
   const validCertPaths: string[] = [];
   for (const sslCertPath of sslCertPaths) {
     const certAbsFromPath = join(rootDir, sslCertPath);
-    if (!/^.+\.(cer)$/.test(certAbsFromPath)) {
-      logger.warn(
-        `Cannot copy file from ${c.strong(certAbsFromPath)}\n` +
-          `The file is not a .cer SSL Certificate file.`,
-      );
-
-      return;
-    }
     if (!(await pathExists(certAbsFromPath))) {
       logger.warn(
         `Cannot copy SSL Certificate file from ${c.strong(certAbsFromPath)}\n` +

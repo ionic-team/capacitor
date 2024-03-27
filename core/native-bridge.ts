@@ -98,13 +98,9 @@ const convertBody = async (
     };
   } else if (body instanceof FormData) {
     const formData = await convertFormData(body);
-    const boundary = `${Date.now()}`;
     return {
       data: formData,
       type: 'formData',
-      headers: {
-        'Content-Type': `multipart/form-data; boundary=--${boundary}`,
-      },
     };
   } else if (body instanceof File) {
     const fileData = await readFileAsBase64(body);
@@ -132,16 +128,15 @@ const isRelativeOrProxyUrl = (url: string | undefined): boolean =>
 const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   if (isRelativeOrProxyUrl(url)) return url;
 
-  let proxyUrl = new URL(url);
+  const proxyUrl = new URL(url);
+  const bridgeUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
   const isHttps = proxyUrl.protocol === 'https:';
-  const originalHostname = proxyUrl.hostname;
-  const originalPathname = proxyUrl.pathname;
-  proxyUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
-
-  proxyUrl.pathname = `${
+  bridgeUrl.search = proxyUrl.search;
+  bridgeUrl.hash = proxyUrl.hash;
+  bridgeUrl.pathname = `${
     isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
-  }/${originalHostname}${originalPathname}`;
-  return proxyUrl.toString();
+  }/${encodeURIComponent(proxyUrl.host)}${proxyUrl.pathname}`;
+  return bridgeUrl.toString();
 };
 
 const initBridge = (w: any): void => {
@@ -408,15 +403,14 @@ const initBridge = (w: any): void => {
     };
 
     const serializeConsoleMessage = (msg: any): string => {
-      if (typeof msg === 'object') {
-        try {
+      try {
+        if (typeof msg === 'object') {
           msg = JSON.stringify(msg);
-        } catch (e) {
-          // ignore
         }
+        return String(msg);
+      } catch (e) {
+        return '';
       }
-
-      return String(msg);
     };
 
     const platform = getPlatformId(win);
@@ -556,13 +550,18 @@ const initBridge = (w: any): void => {
             options.method.toLocaleUpperCase() === 'OPTIONS' ||
             options.method.toLocaleUpperCase() === 'TRACE'
           ) {
-            const modifiedResource = createProxyUrl(resource.toString(), win);
-            const response = await win.CapacitorWebFetch(
-              modifiedResource,
-              options,
-            );
-
-            return response;
+            if (typeof resource === 'string') {
+              return await win.CapacitorWebFetch(
+                createProxyUrl(resource, win),
+                options,
+              );
+            } else if (resource instanceof Request) {
+              const modifiedRequest = new Request(
+                createProxyUrl(resource.url, win),
+                resource,
+              );
+              return await win.CapacitorWebFetch(modifiedRequest, options);
+            }
           }
 
           const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
