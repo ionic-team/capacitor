@@ -109,6 +109,12 @@ var nativeBridge = (function (exports) {
                 headers: { 'Content-Type': contentType || 'application/octet-stream' },
             };
         }
+        else if (body instanceof URLSearchParams) {
+            return {
+                data: body.toString(),
+                type: 'text',
+            };
+        }
         else if (body instanceof FormData) {
             const formData = await convertFormData(body);
             const boundary = `${Date.now()}`;
