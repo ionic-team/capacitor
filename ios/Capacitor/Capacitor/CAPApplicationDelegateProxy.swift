@@ -5,6 +5,7 @@ public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
     public static let shared = ApplicationDelegateProxy()
 
     public private(set) var lastURL: URL?
+    public private(set) var referrerUrl: URL?
 
     public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         NotificationCenter.default.post(name: .capacitorOpenURL, object: [
@@ -24,8 +25,10 @@ public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
 
         let url = userActivity.webpageURL
         lastURL = url
+        referrerUrl = userActivity.referrerURL
         NotificationCenter.default.post(name: .capacitorOpenUniversalLink, object: [
-            "url": url
+            "url": url,
+            "referrerUrl": referrerUrl
         ])
         return true
     }
