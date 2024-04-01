@@ -1,6 +1,6 @@
 name: Publish Native iOS Library
 
-on: 
+on:
   workflow_call:
     secrets:
       COCOAPODS_TRUNK_TOKEN:
@@ -9,13 +9,15 @@ on:
 
 jobs:
   publish-ios:
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_13.3.1.app
+      - run: sudo xcode-select --switch /Applications/Xcode_15.0.1.app
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 18.x
+      - name: NPM ^9.5.0
+        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0

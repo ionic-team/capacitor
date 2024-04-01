@@ -31,6 +31,7 @@ import {
 } from '../plugin';
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
+import { patchOldCapacitorPlugins } from '../tasks/migrate';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
@@ -54,6 +55,7 @@ export async function updateAndroid(config: Config): Promise<void> {
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
   );
+  await patchOldCapacitorPlugins(config);
   if (cordovaPlugins.length > 0) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
@@ -258,8 +260,8 @@ project(':${getGradlePackageName(
 
 android {
   compileOptions {
-      sourceCompatibility JavaVersion.VERSION_11
-      targetCompatibility JavaVersion.VERSION_11
+      sourceCompatibility JavaVersion.VERSION_17
+      targetCompatibility JavaVersion.VERSION_17
   }
 }
 
@@ -300,7 +302,7 @@ export async function handleCordovaPluginsGradle(
   const kotlinNeeded = await kotlinNeededCheck(config, cordovaPlugins);
   const kotlinVersionString =
     config.app.extConfig.cordova?.preferences?.GradlePluginKotlinVersion ??
-    '1.7.0';
+    '1.8.20';
   const frameworksArray: any[] = [];
   let prefsArray: any[] = [];
   const applyArray: any[] = [];

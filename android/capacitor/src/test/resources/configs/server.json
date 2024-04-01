@@ -1,13 +1,11 @@
 {
   "appId": "com.capacitorjs.testshostapp",
   "appName": "testshostapp",
-  "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",
   "overrideUserAgent": "level 1 override",
   "appendUserAgent": "level 1 append",
   "backgroundColor": "#ffffff",
-  "hideLogs": true,
   "server": {
     "androidScheme": "override",
     "allowNavigation": ["capacitorjs.com", "ionic.io", "192.168.0.1"],

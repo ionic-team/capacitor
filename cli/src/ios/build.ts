@@ -1,11 +1,12 @@
 import { writeFileSync, unlinkSync } from '@ionic/utils-fs';
-import { join } from 'path';
+import { basename, join } from 'path';
 import rimraf from 'rimraf';
 
 import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { logSuccess } from '../log';
 import type { BuildCommandOptions } from '../tasks/build';
+import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
 export async function buildiOS(
@@ -14,12 +15,25 @@ export async function buildiOS(
 ): Promise<void> {
   const theScheme = buildOptions.scheme ?? 'App';
 
+  const packageManager = await checkPackageManager(config);
+
+  let typeOfBuild: string;
+  let projectName: string;
+
+  if (packageManager == 'Cocoapods') {
+    typeOfBuild = '-workspace';
+    projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs);
+  } else {
+    typeOfBuild = '-project';
+    projectName = basename(await config.ios.nativeXcodeProjDirAbs);
+  }
+
   await runTask('Building xArchive', async () =>
     runCommand(
       'xcodebuild',
       [
-        '-workspace',
-        `${theScheme}.xcworkspace`,
+        typeOfBuild,
+        projectName,
         '-scheme',
         `${theScheme}`,
         '-destination',
@@ -63,6 +77,8 @@ export async function buildiOS(
         '-exportPath',
         'output',
         '-allowProvisioningUpdates',
+        '-configuration',
+        buildOptions.configuration,
       ],
       {
         cwd: config.ios.nativeProjectDirAbs,

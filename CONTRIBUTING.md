@@ -59,7 +59,7 @@ On web, this means do not add any third party libraries such as Firebase or Loda
 ### Local Setup
 
 1. Fork and clone the repo.
-1. Install the monorepo dependencies.
+1. Install the dependencies.
 
     ```shell
     npm install
@@ -71,16 +71,13 @@ On web, this means do not add any third party libraries such as Firebase or Loda
     brew install swiftlint
     ```
 
-1. Install package dependencies. [Lerna](https://github.com/lerna/lerna) can automatically install each package's dependencies.
-
-    ```shell
-    npx lerna bootstrap
-    ```
-
 ### Branches
 
 * [`main`](https://github.com/ionic-team/capacitor/tree/main): Latest Capacitor development branch
-* [`2.x`](https://github.com/ionic-team/capacitor/tree/2.x): Capacitor 2 (bug and security fixes only)
+* [`5.x`](https://github.com/ionic-team/capacitor/tree/5.x): Capacitor 5
+* [`4.x`](https://github.com/ionic-team/capacitor/tree/4.x): Capacitor 4 (security fixes only)
+* [`3.x`](https://github.com/ionic-team/capacitor/tree/3.x): Capacitor 3 (not maintained)
+* [`2.x`](https://github.com/ionic-team/capacitor/tree/2.x): Capacitor 2 (not maintained)
 * [`1.x`](https://github.com/ionic-team/capacitor/tree/1.x): Capacitor 1 (not maintained)
 
 ### Directory Structure
@@ -93,23 +90,3 @@ This monorepo contains core Capacitor components. The current directory structur
 * `ios-template`: Default iOS App installed by the CLI
 * `android`: Capacitor Android Runtime
 * `android-template`: Default Android App installed by the CLI
-
-## Publishing Capacitor
-
-Capacitor packages are published using [Lerna](https://github.com/lerna/lerna) with fixed versioning.
-
-During Capacitor 3 development, the following workflow is used to create dev releases:
-
-1. Create the next development version. The following command will:
-    * Create a release commit with a generated changelog
-    * Create a git tag
-    * Push to the `main` branch
-    * Create a GitHub release
-
-    <br>
-
-    ```
-    npx lerna version prerelease --force-publish
-    ```
-
-1. Wait for CI to publish the new tagged version.

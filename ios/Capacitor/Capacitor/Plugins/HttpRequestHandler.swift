@@ -1,16 +1,16 @@
 import Foundation
 
 /// See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
-private enum ResponseType: String {
+public enum ResponseType: String {
     case arrayBuffer = "arraybuffer"
     case blob = "blob"
     case document = "document"
     case json = "json"
     case text = "text"
 
-    static let `default`: ResponseType = .text
+    public static let `default`: ResponseType = .text
 
-    init(string: String?) {
+    public init(string: String?) {
         guard let string = string else {
             self = .default
             return
@@ -31,18 +31,32 @@ private enum ResponseType: String {
 /// - Returns: The parsed value or an error
 func tryParseJson(_ data: Data) -> Any {
     do {
-        return try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
+        return try JSONSerialization.jsonObject(with: data, options: [.mutableContainers, .fragmentsAllowed])
     } catch {
         return error.localizedDescription
     }
 }
 
-class HttpRequestHandler {
-    private class CapacitorHttpRequestBuilder {
-        private var url: URL?
-        private var method: String?
-        private var params: [String: String]?
-        private var request: CapacitorUrlRequest?
+/// Helper to convert the headers dictionary to lower case keys. This allows case-insensitive querying in the bridge javascript.
+/// - Parameters:
+///     - headers: The headers as dictionary. The type is unspecific because the incoming headers are coming from the
+///       allHeaderFields property of the HttpResponse.
+/// - Returns: The modified headers dictionary with lowercase keys
+private func lowerCaseHeaderDictionary(_ headers: [AnyHashable: Any]) -> [String: Any] {
+    // Lowercases the key of the headers dictionary.
+    return Dictionary(uniqueKeysWithValues: headers.map({ (key: AnyHashable, value: Any) in
+        return (String(describing: key).lowercased(), value)
+    }))
+}
+
+open class HttpRequestHandler {
+    open class CapacitorHttpRequestBuilder {
+        public var url: URL?
+        public var method: String?
+        public var params: [String: String]?
+        open var request: CapacitorUrlRequest?
+
+        public init() { }
 
         /// Set the URL of the HttpRequest
         /// - Throws: an error of URLError if the urlString cannot be parsed
@@ -87,7 +101,7 @@ class HttpRequestHandler {
             return self
         }
 
-        public func openConnection() -> CapacitorHttpRequestBuilder {
+        open func openConnection() -> CapacitorHttpRequestBuilder {
             request = CapacitorUrlRequest(url!, method: method!)
             return self
         }
@@ -97,7 +111,7 @@ class HttpRequestHandler {
         }
     }
 
-    private static func setCookiesFromResponse(_ response: HTTPURLResponse, _ config: InstanceConfiguration?) {
+    public static func setCookiesFromResponse(_ response: HTTPURLResponse, _ config: InstanceConfiguration?) {
         let headers = response.allHeaderFields
         if let cookies = headers["Set-Cookie"] as? String {
             for cookie in cookies.components(separatedBy: ",") {
@@ -115,11 +129,18 @@ class HttpRequestHandler {
         CapacitorCookieManager(config).syncCookiesToWebView()
     }
 
-    private static func buildResponse(_ data: Data?, _ response: HTTPURLResponse, responseType: ResponseType = .default) -> [String: Any] {
+    public static func buildResponse(_ data: Data?, _ response: HTTPURLResponse, responseType: ResponseType = .default) -> [String: Any] {
         var output = [:] as [String: Any]
 
         output["status"] = response.statusCode
-        output["headers"] = response.allHeaderFields
+
+        // HTTP Headers are case insensitive. The allHeaderFields dictionary returned by Apple Foundation Code has its keys capitalized.
+        // According to the documentation at https://developer.apple.com/documentation/foundation/httpurlresponse/1417930-allheaderfields
+        // "HTTP headers are case insensitive. To simplify your code, URL Loading System canonicalizes certain header field names into
+        // their standard form. For example, if the server sends a content-length header, it’s automatically adjusted to be Content-Length."
+        // To handle the case insevitivy, we are converting the header keys to lower case here. When querying for headers in the native bridge,
+        // we are lowercasing the key as well.
+        output["headers"] = lowerCaseHeaderDictionary(response.allHeaderFields)
         output["url"] = response.url?.absoluteString
 
         guard let data = data else {
@@ -141,15 +162,20 @@ class HttpRequestHandler {
     }
 
     public static func request(_ call: CAPPluginCall, _ httpMethod: String?, _ config: InstanceConfiguration?) throws {
-        guard let urlString = call.getString("url")?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { throw URLError(.badURL) }
+        guard var urlString = call.getString("url") else { throw URLError(.badURL) }
         let method = httpMethod ?? call.getString("method", "GET")
 
-        // swiftlint:disable force_cast
-        let headers = (call.getObject("headers") ?? [:]) as! [String: String]
+        let headers = (call.getObject("headers") ?? [:]) as [String: Any]
         let params = (call.getObject("params") ?? [:]) as [String: Any]
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")
         let readTimeout = call.getDouble("readTimeout")
+        let dataType = call.getString("dataType") ?? "any"
+
+        if urlString == urlString.removingPercentEncoding {
+            guard let encodedUrlString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)  else { throw URLError(.badURL) }
+            urlString = encodedUrlString
+        }
 
         let request = try CapacitorHttpRequestBuilder()
             .setUrl(urlString)
@@ -166,7 +192,7 @@ class HttpRequestHandler {
 
         if let data = call.options["data"] as? JSValue {
             do {
-                try request.setRequestBody(data)
+                try request.setRequestBody(data, dataType)
             } catch {
                 // Explicitly reject if the http request body was not set successfully,
                 // so as to not send a known malformed request, and to provide the developer with additional context.

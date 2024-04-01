@@ -23,6 +23,7 @@ android-template/app/app.iml
 .settings/
 .project
 .env
+capacitor-build.log
 
 # Carthage and Carthage-built binaries
 Carthage

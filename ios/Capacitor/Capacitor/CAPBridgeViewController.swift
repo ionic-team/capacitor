@@ -12,15 +12,15 @@ import Cordova
 
     public var isStatusBarVisible = true
     public var statusBarStyle: UIStatusBarStyle = .default
-    public var statusBarAnimation: UIStatusBarAnimation = .slide
+    public var statusBarAnimation: UIStatusBarAnimation = .fade
     @objc public var supportedOrientations: [Int] = []
 
     public lazy final var isNewBinary: Bool = {
         if let curVersionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
            let curVersionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-            if let lastVersionCode = UserDefaults.standard.string(forKey: "lastBinaryVersionCode"),
-               let lastVersionName = UserDefaults.standard.string(forKey: "lastBinaryVersionName") {
-                return (curVersionCode.isEqual(lastVersionCode) == false || curVersionName.isEqual(lastVersionName) == false)
+            if let lastVersionCode = KeyValueStore.standard["lastBinaryVersionCode", as: String.self],
+               let lastVersionName = KeyValueStore.standard["lastBinaryVersionName", as: String.self] {
+                return curVersionCode != lastVersionCode || curVersionName != lastVersionName
             }
             return true
         }
@@ -34,16 +34,13 @@ import Cordova
         CAPLog.enableLogging = configuration.loggingEnabled
         logWarnings(for: configDescriptor)
 
-        if configDescriptor.instanceType == .fixed {
-            updateBinaryVersion()
-        }
-
         setStatusBarDefaults()
         setScreenOrientationDefaults()
 
         // get the web view
         let assetHandler = WebViewAssetHandler(router: router())
         assetHandler.setAssetPath(configuration.appLocation.path)
+        assetHandler.setServerUrl(configuration.serverURL)
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView
@@ -54,6 +51,10 @@ import Cordova
                                           assetHandler: assetHandler,
                                           delegationHandler: delegationHandler)
         capacitorDidLoad()
+
+        if configDescriptor.instanceType == .fixed {
+            updateBinaryVersion()
+        }
     }
 
     override open func viewDidLoad() {
@@ -78,7 +79,7 @@ import Cordova
     open func instanceDescriptor() -> InstanceDescriptor {
         let descriptor = InstanceDescriptor.init()
         if !isNewBinary && !descriptor.cordovaDeployDisabled {
-            if let persistedPath = UserDefaults.standard.string(forKey: "serverBasePath"), !persistedPath.isEmpty {
+            if let persistedPath = KeyValueStore.standard["serverBasePath", as: String.self], !persistedPath.isEmpty {
                 if let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first {
                     descriptor.appLocation = URL(fileURLWithPath: libPath, isDirectory: true)
                         .appendingPathComponent("NoCloud")
@@ -91,7 +92,7 @@ import Cordova
     }
 
     open func router() -> Router {
-        return _Router()
+        return CapacitorRouter()
     }
 
     /**
@@ -287,7 +288,6 @@ extension CAPBridgeViewController {
         aWebView.scrollView.bounces = false
         aWebView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
         aWebView.allowsLinkPreview = configuration.allowLinkPreviews
-        aWebView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
         aWebView.scrollView.isScrollEnabled = configuration.scrollingEnabled
         if let overrideUserAgent = configuration.overridenUserAgentString {
             aWebView.customUserAgent = overrideUserAgent
@@ -306,6 +306,9 @@ extension CAPBridgeViewController {
         // set our delegates
         aWebView.uiDelegate = delegationHandler
         aWebView.navigationDelegate = delegationHandler
+        if !configuration.zoomingEnabled {
+            aWebView.scrollView.delegate = delegationHandler
+        }
     }
 
     private func updateBinaryVersion() {
@@ -316,11 +319,10 @@ extension CAPBridgeViewController {
               let versionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             return
         }
-        let prefs = UserDefaults.standard
-        prefs.set(versionCode, forKey: "lastBinaryVersionCode")
-        prefs.set(versionName, forKey: "lastBinaryVersionName")
-        prefs.set("", forKey: "serverBasePath")
-        prefs.synchronize()
+        let store = KeyValueStore.standard
+        store["lastBinaryVersionCode"] = versionCode
+        store["lastBinaryVersionName"] = versionName
+        store["serverBasePath"] = nil as String?
     }
 
     private func logWarnings(for descriptor: InstanceDescriptor) {
@@ -359,11 +361,11 @@ extension CAPBridgeViewController {
 }
 
 extension CAPBridgeViewController: CAPBridgeDelegate {
-    internal var bridgedWebView: WKWebView? {
+    public var bridgedWebView: WKWebView? {
         return webView
     }
 
-    internal var bridgedViewController: UIViewController? {
+    public var bridgedViewController: UIViewController? {
         return self
     }
 }

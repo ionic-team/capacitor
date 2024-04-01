@@ -3,6 +3,7 @@ package com.getcapacitor.plugin.util;
 import android.os.Build;
 import android.os.LocaleList;
 import android.text.TextUtils;
+import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
@@ -10,6 +11,7 @@ import com.getcapacitor.PluginCall;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
@@ -17,11 +19,15 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownServiceException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 
@@ -44,6 +50,10 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      */
     public HttpURLConnection getHttpConnection() {
         return connection;
+    }
+
+    public void disconnect() {
+        connection.disconnect();
     }
 
     /**
@@ -170,6 +180,16 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      * @throws IOException
      */
     public void setRequestBody(PluginCall call, JSValue body) throws JSONException, IOException {
+        setRequestBody(call, body, null);
+    }
+
+    /**
+     *
+     * @param call
+     * @throws JSONException
+     * @throws IOException
+     */
+    public void setRequestBody(PluginCall call, JSValue body, String bodyType) throws JSONException, IOException {
         String contentType = connection.getRequestProperty("Content-Type");
         String dataString = "";
 
@@ -188,6 +208,23 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                 dataString = call.getString("data");
             }
             this.writeRequestBody(dataString != null ? dataString : "");
+        } else if (bodyType != null && bodyType.equals("file")) {
+            try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    os.write(Base64.getDecoder().decode(body.toString()));
+                }
+                os.flush();
+            }
+        } else if (contentType.contains("application/x-www-form-urlencoded")) {
+            try {
+                JSObject obj = body.toJSObject();
+                this.writeObjectRequestBody(obj);
+            } catch (Exception e) {
+                // Body is not a valid JSON, treat it as an already formatted string
+                this.writeRequestBody(body.toString());
+            }
+        } else if (bodyType != null && bodyType.equals("formData")) {
+            this.writeFormDataRequestBody(contentType, body.toJSArray());
         } else {
             this.writeRequestBody(body.toString());
         }
@@ -201,6 +238,65 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
     private void writeRequestBody(String body) throws IOException {
         try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
             os.write(body.getBytes(StandardCharsets.UTF_8));
+            os.flush();
+        }
+    }
+
+    private void writeObjectRequestBody(JSObject object) throws IOException, JSONException {
+        try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
+            Iterator<String> keys = object.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                Object d = object.get(key);
+                os.writeBytes(key);
+                os.writeBytes("=");
+                os.writeBytes(URLEncoder.encode(d.toString(), "UTF-8"));
+
+                if (keys.hasNext()) {
+                    os.writeBytes("&");
+                }
+            }
+            os.flush();
+        }
+    }
+
+    private void writeFormDataRequestBody(String contentType, JSArray entries) throws IOException, JSONException {
+        try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
+            String boundary = contentType.split(";")[1].split("=")[1];
+            String lineEnd = "\r\n";
+            String twoHyphens = "--";
+
+            for (Object e : entries.toList()) {
+                if (e instanceof JSONObject) {
+                    JSONObject entry = (JSONObject) e;
+                    String type = entry.getString("type");
+                    String key = entry.getString("key");
+                    String value = entry.getString("value");
+                    if (type.equals("string")) {
+                        os.writeBytes(twoHyphens + boundary + lineEnd);
+                        os.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd + lineEnd);
+                        os.writeBytes(value);
+                        os.writeBytes(lineEnd);
+                    } else if (type.equals("base64File")) {
+                        String fileName = entry.getString("fileName");
+                        String fileContentType = entry.getString("contentType");
+
+                        os.writeBytes(twoHyphens + boundary + lineEnd);
+                        os.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"" + lineEnd);
+                        os.writeBytes("Content-Type: " + fileContentType + lineEnd);
+                        os.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
+                        os.writeBytes(lineEnd);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            os.write(Base64.getDecoder().decode(value));
+                        }
+
+                        os.writeBytes(lineEnd);
+                    }
+                }
+            }
+
+            os.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
             os.flush();
         }
     }
@@ -334,7 +430,6 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      * This is called as early as possible to allow overrides by user-provided values.
      */
     private void setDefaultRequestProperties() {
-        connection.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.name());
         String acceptLanguage = buildDefaultAcceptLanguageProperty();
         if (!TextUtils.isEmpty(acceptLanguage)) {
             connection.setRequestProperty("Accept-Language", acceptLanguage);
@@ -362,5 +457,20 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             }
         }
         return result;
+    }
+
+    public void setSSLSocketFactory(Bridge bridge) {
+        // Attach SSL Certificates if Enterprise Plugin is available
+        try {
+            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
+            Method method = sslPinningImpl.getDeclaredMethod("getSSLSocketFactory", Bridge.class);
+            SSLSocketFactory sslSocketFactory = (SSLSocketFactory) method.invoke(
+                sslPinningImpl.getDeclaredConstructor().newInstance(),
+                bridge
+            );
+            if (sslSocketFactory != null) {
+                ((HttpsURLConnection) this.connection).setSSLSocketFactory(sslSocketFactory);
+            }
+        } catch (Exception ignored) {}
     }
 }

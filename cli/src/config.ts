@@ -9,7 +9,7 @@ import Debug from 'debug';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
-import { OS } from './definitions';
+import { parseApkNameFromFlavor } from './common';
 import type {
   AndroidConfig,
   AppConfig,
@@ -19,12 +19,15 @@ import type {
   IOSConfig,
   WebConfig,
 } from './definitions';
+import { OS } from './definitions';
 import { fatal, isFatal } from './errors';
 import { logger } from './log';
 import { tryFn } from './util/fn';
 import { formatJSObject } from './util/js';
-import { resolveNode, requireTS } from './util/node';
+import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools';
+import { requireTS, resolveNode } from './util/node';
 import { lazy } from './util/promise';
+import { getCommandOutput } from './util/subprocess';
 
 const debug = Debug('capacitor:config');
 
@@ -36,6 +39,25 @@ export async function loadConfig(): Promise<Config> {
   const appRootDir = process.cwd();
   const cliRootDir = dirname(__dirname);
   const conf = await loadExtConfig(appRootDir);
+
+  const depsForNx = await (async (): Promise<
+    { devDependencies: any; dependencies: any } | object
+  > => {
+    if (isNXMonorepo(appRootDir)) {
+      const rootOfNXMonorepo = findNXMonorepoRoot(appRootDir);
+      const pkgJSONOfMonorepoRoot: any = await tryFn(
+        readJSON,
+        resolve(rootOfNXMonorepo, 'package.json'),
+      );
+      const devDependencies = pkgJSONOfMonorepoRoot?.devDependencies ?? {};
+      const dependencies = pkgJSONOfMonorepoRoot?.dependencies ?? {};
+      return {
+        devDependencies,
+        dependencies,
+      };
+    }
+    return {};
+  })();
 
   const appId = conf.extConfig.appId ?? '';
   const appName = conf.extConfig.appName ?? '';
@@ -56,9 +78,9 @@ export async function loadConfig(): Promise<Config> {
       package: (await tryFn(readJSON, resolve(appRootDir, 'package.json'))) ?? {
         name: appName,
         version: '1.0.0',
+        ...depsForNx,
       },
       ...conf,
-      bundledWebRuntime: conf.extConfig.bundledWebRuntime ?? false,
     },
   };
 
@@ -109,7 +131,9 @@ async function loadExtConfigTS(
 
     const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
     const extConfigObject = requireTS(ts, extConfigFilePath) as any;
-    const extConfig = extConfigObject.default ?? extConfigObject;
+    const extConfig = extConfigObject.default
+      ? await extConfigObject.default
+      : extConfigObject;
 
     return {
       extConfigType: 'ts',
@@ -117,7 +141,7 @@ async function loadExtConfigTS(
       extConfigFilePath: extConfigFilePath,
       extConfig,
     };
-  } catch (e) {
+  } catch (e: any) {
     if (!isFatal(e)) {
       fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
     }
@@ -136,9 +160,9 @@ async function loadExtConfigJS(
       extConfigType: 'js',
       extConfigName,
       extConfigFilePath: extConfigFilePath,
-      extConfig: require(extConfigFilePath),
+      extConfig: await require(extConfigFilePath),
     };
-  } catch (e) {
+  } catch (e: any) {
     fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
   }
 }
@@ -169,7 +193,7 @@ async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
 async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
   const assetsDir = 'assets';
   const assetsDirAbs = join(rootDir, assetsDir);
-  const iosPlatformTemplateArchive = 'ios-template.tar.gz';
+  const iosPlatformTemplateArchive = 'ios-pods-template.tar.gz';
   const iosCordovaPluginsTemplateArchive =
     'capacitor-cordova-ios-plugins.tar.gz';
   const androidPlatformTemplateArchive = 'android-template.tar.gz';
@@ -226,13 +250,11 @@ async function loadAndroidConfig(
   const webDir = `${assetsDir}/public`;
   const resDir = `${srcMainDir}/res`;
   let apkPath = `${appDir}/build/outputs/apk/`;
-  let flavorPrefix = '';
   const flavor = extConfig.android?.flavor || '';
   if (extConfig.android?.flavor) {
     apkPath = `${apkPath}/${extConfig.android?.flavor}`;
-    flavorPrefix = `-${extConfig.android?.flavor}`;
   }
-  const apkName = `app${flavorPrefix}-debug.apk`;
+  const apkName = parseApkNameFromFlavor(flavor);
   const buildOutputDir = `${apkPath}/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
   const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
@@ -242,6 +264,7 @@ async function loadAndroidConfig(
     keystoreAlias: extConfig.android?.buildOptions?.keystoreAlias,
     keystoreAliasPassword:
       extConfig.android?.buildOptions?.keystoreAliasPassword,
+    signingType: extConfig.android?.buildOptions?.signingType,
     releaseType: extConfig.android?.buildOptions?.releaseType,
   };
 
@@ -278,7 +301,6 @@ async function loadIOSConfig(
   extConfig: ExternalConfig,
 ): Promise<IOSConfig> {
   const name = 'ios';
-  const podPath = determineCocoapodPath();
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
   const scheme = extConfig.ios?.scheme ?? 'App';
@@ -290,6 +312,13 @@ async function loadIOSConfig(
   const nativeXcodeProjDirAbs = resolve(platformDirAbs, nativeXcodeProjDir);
   const nativeXcodeWorkspaceDirAbs = lazy(() =>
     determineXcodeWorkspaceDirAbs(nativeProjectDirAbs),
+  );
+  const podPath = lazy(() =>
+    determineGemfileOrCocoapodPath(
+      rootDir,
+      platformDirAbs,
+      nativeProjectDirAbs,
+    ),
   );
   const webDirAbs = lazy(() =>
     determineIOSWebDirAbs(
@@ -431,17 +460,64 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
   return '';
 }
 
-function determineCocoapodPath(): string {
+async function determineGemfileOrCocoapodPath(
+  rootDir: string,
+  platformDir: any,
+  nativeProjectDirAbs: string,
+): Promise<string> {
   if (process.env.CAPACITOR_COCOAPODS_PATH) {
     return process.env.CAPACITOR_COCOAPODS_PATH;
   }
 
-  return 'pod';
+  let gemfilePath = '';
+  if (await pathExists(resolve(rootDir, 'Gemfile'))) {
+    gemfilePath = resolve(rootDir, 'Gemfile');
+  } else if (await pathExists(resolve(platformDir, 'Gemfile'))) {
+    gemfilePath = resolve(platformDir, 'Gemfile');
+  } else if (await pathExists(resolve(nativeProjectDirAbs, 'Gemfile'))) {
+    gemfilePath = resolve(nativeProjectDirAbs, 'Gemfile');
+  }
+
+  const appSpecificGemfileExists = gemfilePath != '';
+
+  // Multi-app projects might share a single global 'Gemfile' at the Git repository root directory.
+  if (!appSpecificGemfileExists) {
+    try {
+      const output = await getCommandOutput(
+        'git',
+        ['rev-parse', '--show-toplevel'],
+        { cwd: rootDir },
+      );
+      if (output != null) {
+        gemfilePath = resolve(output, 'Gemfile');
+      }
+    } catch (e: any) {
+      // Nothing
+    }
+  }
+
+  try {
+    const gemfileText = (await readFile(gemfilePath)).toString();
+    if (!gemfileText) {
+      return 'pod';
+    }
+    const cocoapodsInGemfile = new RegExp(/gem\s+['"]cocoapods/).test(
+      gemfileText,
+    );
+
+    if (cocoapodsInGemfile) {
+      return 'bundle exec pod';
+    } else {
+      return 'pod';
+    }
+  } catch {
+    return 'pod';
+  }
 }
 
 function formatConfigTS(extConfig: ExternalConfig): string {
   // TODO: <reference> tags
-  return `import { CapacitorConfig } from '@capacitor/cli';
+  return `import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = ${formatJSObject(extConfig)};
 
@@ -449,14 +525,15 @@ export default config;\n`;
 }
 
 export function checkExternalConfig(config: ExtConfigPairs): void {
-  if (
-    typeof config.extConfig.hideLogs !== 'undefined' ||
-    typeof config.extConfig.android?.hideLogs !== 'undefined' ||
-    typeof config.extConfig.ios?.hideLogs !== 'undefined'
-  ) {
+  if (typeof config.extConfig.bundledWebRuntime !== 'undefined') {
+    let actionMessage = `Can be safely deleted.`;
+    if (config.extConfig.bundledWebRuntime === true) {
+      actionMessage = `Please, use a bundler to bundle Capacitor and its plugins.`;
+    }
     logger.warn(
-      `The ${c.strong('hideLogs')} configuration option has been deprecated. ` +
-        `Please update to use ${c.strong('loggingBehavior')} instead.`,
+      `The ${c.strong(
+        'bundledWebRuntime',
+      )} configuration option has been deprecated. ${actionMessage}`,
     );
   }
 }

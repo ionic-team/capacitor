@@ -1,0 +1,68 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: capacitor-version
+    attributes:
+      label: Capacitor Version
+      description: "Paste the output from the `npx cap doctor` command into the box below"
+      placeholder: "Paste the output from the `npx cap doctor` here"
+    validations:
+      required: true
+  - type: textarea
+    id: other-tech-details
+    attributes:
+      label: Other API Details
+      description: "Please provide the following information with your request and any other relevant technical details (versions of IDEs, local environment info, plugin information or links, etc)."
+      placeholder: |
+          npm --version output:
+          node --version output:
+          pod --version output (iOS Cocoapods issues only):
+      render: Shell
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platforms Affected
+      description: "Check the platforms that this bug affects."
+      options:
+        - label: iOS
+          required: false
+        - label: Android
+          required: false
+        - label: Web
+          required: false
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current Behavior
+      description: "Describe the bug in detail. The more detail the better."
+      placeholder: "Tell us what you see!"
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: "Describe what you expect to happen"
+      placeholder: "Tell us what you expect!"
+    validations:
+      required: true
+  - type: input
+    id: reproduction
+    attributes:
+      label: Project Reproduction
+      description: "Include a link to a repository we can access that reproduces the problem. Try to make it as simple as possible."
+    validations:
+      required: true
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: "Anything else we need to know to help? Include it here."
+      placeholder: "Tell us anything!"

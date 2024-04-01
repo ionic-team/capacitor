@@ -1,8 +1,8 @@
 import Foundation
 
 public enum InstanceDescriptorDefaults {
-    static let scheme = "capacitor"
-    static let hostname = "localhost"
+    public static let scheme = "capacitor"
+    public static let hostname = "localhost"
 }
 
 private extension InstanceLoggingBehavior {
@@ -33,7 +33,7 @@ internal extension InstanceDescriptor {
         // sanity check that the app directory is valid
         var isDirectory: ObjCBool = ObjCBool(false)
         if warnings.contains(.missingAppDir) == false,
-           (FileManager.default.fileExists(atPath: appLocation.path, isDirectory: &isDirectory) == false || isDirectory.boolValue == false) {
+           FileManager.default.fileExists(atPath: appLocation.path, isDirectory: &isDirectory) == false || isDirectory.boolValue == false {
             warnings.update(with: .missingAppDir)
         }
 
@@ -114,16 +114,16 @@ internal extension InstanceDescriptor {
             if let scrollEnabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
                 scrollingEnabled = scrollEnabled
             }
+            if let zoomEnabled = (config[keyPath: "ios.zoomEnabled"] as? Bool) ?? (config[keyPath: "zoomEnabled"] as? Bool) {
+                zoomingEnabled = zoomEnabled
+            }
             if let pluginConfig = config[keyPath: "plugins"] as? JSObject {
                 pluginConfigurations = pluginConfig
             }
-            // `hideLogs` is deprecated so it's used as a fallback option
             if let value = (config[keyPath: "ios.loggingBehavior"] as? String) ?? (config[keyPath: "loggingBehavior"] as? String) {
                 if let behavior = InstanceLoggingBehavior.behavior(from: value) {
                     loggingBehavior = behavior
                 }
-            } else if let hideLogs = (config[keyPath: "ios.hideLogs"] as? Bool) ?? (config[keyPath: "hideLogs"] as? Bool), hideLogs {
-                loggingBehavior = .none
             }
             if let limitsNavigations = config[keyPath: "ios.limitsNavigationsToAppBoundDomains"] as? Bool {
                 limitsNavigationsToAppBoundDomains = limitsNavigations
@@ -133,6 +133,13 @@ internal extension InstanceDescriptor {
             }
             if let handleNotifications = config[keyPath: "ios.handleApplicationNotifications"] as? Bool {
                 handleApplicationNotifications = handleNotifications
+            }
+            if let webContentsDebuggingEnabled = config[keyPath: "ios.webContentsDebuggingEnabled"] as? Bool {
+                isWebDebuggable = webContentsDebuggingEnabled
+            } else {
+                #if DEBUG
+                isWebDebuggable = true
+                #endif
             }
         }
     }

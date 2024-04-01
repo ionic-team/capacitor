@@ -31,7 +31,9 @@ import {
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
+import { generateIOSPackageJSON } from '../util/iosplugin';
 import { resolveNode } from '../util/node';
+import { checkPackageManager, generatePackageFile } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -49,8 +51,22 @@ export async function updateIOS(
     p => getPluginType(p, platform) === PluginType.Core,
   );
 
-  printPlugins(capacitorPlugins, 'ios');
+  if ((await checkPackageManager(config)) === 'SPM') {
+    await generatePackageFile(config, capacitorPlugins);
+  } else {
+    await updateIOSCocoaPods(config, plugins, deployment);
+  }
 
+  generateIOSPackageJSON(config, plugins);
+
+  printPlugins(capacitorPlugins, 'ios');
+}
+
+async function updateIOSCocoaPods(
+  config: Config,
+  plugins: Plugin[],
+  deployment: boolean,
+) {
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
@@ -81,7 +97,7 @@ export async function installCocoaPodsPlugins(
 ): Promise<void> {
   await runTask(
     `Updating iOS native dependencies with ${c.input(
-      `${config.ios.podPath} install`,
+      `${await config.ios.podPath} install`,
     )}`,
     () => {
       return updatePodfile(config, plugins, deployment);
@@ -95,25 +111,51 @@ async function updatePodfile(
   deployment: boolean,
 ): Promise<void> {
   const dependenciesContent = await generatePodFile(config, plugins);
+  const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
   const podfilePath = join(config.ios.nativeProjectDirAbs, 'Podfile');
-  const podfileLockPath = join(config.ios.nativeProjectDirAbs, 'Podfile.lock');
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
   podfileContent = podfileContent.replace(
     /(def capacitor_pods)[\s\S]+?(\nend)/,
     `$1${dependenciesContent}$2`,
   );
+  podfileContent = podfileContent.replace(
+    /(require_relative)[\s\S]+?(@capacitor\/ios\/scripts\/pods_helpers')/,
+    `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`,
+  );
+  podfileContent = podfileContent.replace(
+    `def assertDeploymentTarget(installer)
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # ensure IPHONEOS_DEPLOYMENT_TARGET is at least 13.0
+      deployment_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f
+      should_upgrade = deployment_target < 13.0 && deployment_target != 0.0
+      if should_upgrade
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      end
+    end
+  end
+end`,
+    `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`,
+  );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
+  const podPath = await config.ios.podPath;
+  const useBundler = podPath.startsWith('bundle');
   const podCommandExists = await isInstalled('pod');
-  if (podCommandExists) {
-    if (!deployment) {
-      await remove(podfileLockPath);
+  if (useBundler || podCommandExists) {
+    if (useBundler) {
+      await runCommand(
+        'bundle',
+        ['exec', 'pod', 'install', ...(deployment ? ['--deployment'] : [])],
+        { cwd: config.ios.nativeProjectDirAbs },
+      );
+    } else {
+      await runCommand(
+        podPath,
+        ['install', ...(deployment ? ['--deployment'] : [])],
+        { cwd: config.ios.nativeProjectDirAbs },
+      );
     }
-    await runCommand(
-      config.ios.podPath,
-      ['install', ...(deployment ? ['--deployment'] : [])],
-      { cwd: config.ios.nativeProjectDirAbs },
-    );
   } else {
     logger.warn('Skipping pod install because CocoaPods is not installed');
   }
@@ -134,15 +176,13 @@ async function updatePodfile(
   }
 }
 
-async function generatePodFile(
-  config: Config,
-  plugins: Plugin[],
-): Promise<string> {
+async function getRelativeCapacitoriOSPath(config: Config) {
   const capacitoriOSPath = resolveNode(
     config.app.rootDir,
     '@capacitor/ios',
     'package.json',
   );
+
   if (!capacitoriOSPath) {
     fatal(
       `Unable to find ${c.strong('node_modules/@capacitor/ios')}.\n` +
@@ -150,10 +190,19 @@ async function generatePodFile(
     );
   }
 
-  const podfilePath = config.ios.nativeProjectDirAbs;
-  const relativeCapacitoriOSPath = convertToUnixPath(
-    relative(podfilePath, await realpath(dirname(capacitoriOSPath))),
+  return convertToUnixPath(
+    relative(
+      config.ios.nativeProjectDirAbs,
+      await realpath(dirname(capacitoriOSPath)),
+    ),
   );
+}
+
+async function generatePodFile(
+  config: Config,
+  plugins: Plugin[],
+): Promise<string> {
+  const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
 
   const capacitorPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Core,
@@ -165,7 +214,7 @@ async function generatePodFile(
       }
 
       return `  pod '${p.ios.name}', :path => '${convertToUnixPath(
-        relative(podfilePath, await realpath(p.rootPath)),
+        relative(config.ios.nativeProjectDirAbs, await realpath(p.rootPath)),
       )}'\n`;
     }),
   );

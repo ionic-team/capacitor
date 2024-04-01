@@ -2,6 +2,7 @@ package com.getcapacitor.plugin.util;
 
 import android.text.TextUtils;
 import android.util.Base64;
+import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
@@ -11,11 +12,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -45,7 +49,7 @@ public class HttpRequestHandler {
 
         static final ResponseType DEFAULT = TEXT;
 
-        static ResponseType parse(String value) {
+        public static ResponseType parse(String value) {
             for (ResponseType responseType : values()) {
                 if (responseType.name.equalsIgnoreCase(value)) {
                     return responseType;
@@ -58,16 +62,16 @@ public class HttpRequestHandler {
     /**
      * Internal builder class for building a CapacitorHttpUrlConnection
      */
-    private static class HttpURLConnectionBuilder {
+    public static class HttpURLConnectionBuilder {
 
-        private Integer connectTimeout;
-        private Integer readTimeout;
-        private Boolean disableRedirects;
-        private JSObject headers;
-        private String method;
-        private URL url;
+        public Integer connectTimeout;
+        public Integer readTimeout;
+        public Boolean disableRedirects;
+        public JSObject headers;
+        public String method;
+        public URL url;
 
-        private CapacitorHttpUrlConnection connection;
+        public CapacitorHttpUrlConnection connection;
 
         public HttpURLConnectionBuilder setConnectTimeout(Integer connectTimeout) {
             this.connectTimeout = connectTimeout;
@@ -139,7 +143,7 @@ public class HttpRequestHandler {
                     StringBuilder value = new StringBuilder();
                     JSONArray arr = params.getJSONArray(key);
                     for (int x = 0; x < arr.length(); x++) {
-                        value.append(key).append("=").append(arr.getString(x));
+                        this.addUrlParam(value, key, arr.getString(x), shouldEncode);
                         if (x != arr.length() - 1) {
                             value.append("&");
                         }
@@ -152,28 +156,35 @@ public class HttpRequestHandler {
                     if (urlQueryBuilder.length() > 0) {
                         urlQueryBuilder.append("&");
                     }
-                    urlQueryBuilder.append(key).append("=").append(params.getString(key));
+                    this.addUrlParam(urlQueryBuilder, key, params.getString(key), shouldEncode);
                 }
             }
 
             String urlQuery = urlQueryBuilder.toString();
 
             URI uri = url.toURI();
-            if (shouldEncode) {
-                URI encodedUri = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), urlQuery, uri.getFragment());
-                this.url = encodedUri.toURL();
-            } else {
-                String unEncodedUrlString =
-                    uri.getScheme() +
-                    "://" +
-                    uri.getAuthority() +
-                    uri.getPath() +
-                    ((!urlQuery.equals("")) ? "?" + urlQuery : "") +
-                    ((uri.getFragment() != null) ? uri.getFragment() : "");
-                this.url = new URL(unEncodedUrlString);
-            }
+            String unEncodedUrlString =
+                uri.getScheme() +
+                "://" +
+                uri.getAuthority() +
+                uri.getPath() +
+                ((!urlQuery.equals("")) ? "?" + urlQuery : "") +
+                ((uri.getFragment() != null) ? uri.getFragment() : "");
+            this.url = new URL(unEncodedUrlString);
 
             return this;
+        }
+
+        private static void addUrlParam(StringBuilder sb, String key, String value, boolean shouldEncode) {
+            if (shouldEncode) {
+                try {
+                    key = URLEncoder.encode(key, "UTF-8");
+                    value = URLEncoder.encode(value, "UTF-8");
+                } catch (UnsupportedEncodingException ex) {
+                    throw new RuntimeException(ex.getCause());
+                }
+            }
+            sb.append(key).append("=").append(value);
         }
 
         public CapacitorHttpUrlConnection build() {
@@ -188,7 +199,7 @@ public class HttpRequestHandler {
      * @throws IOException Thrown if the InputStream is unable to be parsed correctly
      * @throws JSONException Thrown if the JSON is unable to be parsed
      */
-    private static JSObject buildResponse(CapacitorHttpUrlConnection connection) throws IOException, JSONException {
+    public static JSObject buildResponse(CapacitorHttpUrlConnection connection) throws IOException, JSONException {
         return buildResponse(connection, ResponseType.DEFAULT);
     }
 
@@ -200,7 +211,7 @@ public class HttpRequestHandler {
      * @throws IOException Thrown if the InputStream is unable to be parsed correctly
      * @throws JSONException Thrown if the JSON is unable to be parsed
      */
-    private static JSObject buildResponse(CapacitorHttpUrlConnection connection, ResponseType responseType)
+    public static JSObject buildResponse(CapacitorHttpUrlConnection connection, ResponseType responseType)
         throws IOException, JSONException {
         int statusCode = connection.getResponseCode();
 
@@ -226,7 +237,7 @@ public class HttpRequestHandler {
      * @throws IOException Thrown if the InputStreams cannot be properly parsed
      * @throws JSONException Thrown if the JSON is malformed when parsing as JSON
      */
-    static Object readData(ICapacitorHttpUrlConnection connection, ResponseType responseType) throws IOException, JSONException {
+    public static Object readData(ICapacitorHttpUrlConnection connection, ResponseType responseType) throws IOException, JSONException {
         InputStream errorStream = connection.getErrorStream();
         String contentType = connection.getHeaderField("Content-Type");
 
@@ -261,7 +272,7 @@ public class HttpRequestHandler {
      * @param mimeTypes The Mime-Type values to check against
      * @return
      */
-    private static boolean isOneOf(String contentType, MimeType... mimeTypes) {
+    public static boolean isOneOf(String contentType, MimeType... mimeTypes) {
         if (contentType != null) {
             for (MimeType mimeType : mimeTypes) {
                 if (contentType.contains(mimeType.getValue())) {
@@ -277,7 +288,7 @@ public class HttpRequestHandler {
      * @param connection The CapacitorHttpUrlConnection connection
      * @return A JSObject of the header values from the CapacitorHttpUrlConnection
      */
-    private static JSObject buildResponseHeaders(CapacitorHttpUrlConnection connection) {
+    public static JSObject buildResponseHeaders(CapacitorHttpUrlConnection connection) {
         JSObject output = new JSObject();
 
         for (Map.Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
@@ -294,17 +305,24 @@ public class HttpRequestHandler {
      * @return A JSObject or JSArray
      * @throws JSONException thrown if the JSON is malformed
      */
-    private static Object parseJSON(String input) throws JSONException {
+    public static Object parseJSON(String input) throws JSONException {
         JSONObject json = new JSONObject();
         try {
             if ("null".equals(input.trim())) {
                 return JSONObject.NULL;
             } else if ("true".equals(input.trim())) {
-                return new JSONObject().put("flag", "true");
+                return true;
             } else if ("false".equals(input.trim())) {
-                return new JSONObject().put("flag", "false");
+                return false;
             } else if (input.trim().length() <= 0) {
                 return "";
+            } else if (input.trim().matches("^\".*\"$")) {
+                // a string enclosed in " " is a json value, return the string without the quotes
+                return input.trim().substring(1, input.trim().length() - 1);
+            } else if (input.trim().matches("^-?\\d+$")) {
+                return Integer.parseInt(input.trim());
+            } else if (input.trim().matches("^-?\\d+(\\.\\d+)?$")) {
+                return Double.parseDouble(input.trim());
             } else {
                 try {
                     return new JSObject(input);
@@ -313,7 +331,7 @@ public class HttpRequestHandler {
                 }
             }
         } catch (JSONException e) {
-            return new JSArray(input);
+            return input;
         }
     }
 
@@ -323,7 +341,7 @@ public class HttpRequestHandler {
      * @return String value of InputStream
      * @throws IOException thrown if the InputStream is unable to be read as base64
      */
-    private static String readStreamAsBase64(InputStream in) throws IOException {
+    public static String readStreamAsBase64(InputStream in) throws IOException {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[1024];
             int readBytes;
@@ -341,7 +359,7 @@ public class HttpRequestHandler {
      * @return String value of InputStream
      * @throws IOException thrown if the InputStream is unable to be read
      */
-    private static String readStreamAsString(InputStream in) throws IOException {
+    public static String readStreamAsString(InputStream in) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             StringBuilder builder = new StringBuilder();
             String line = reader.readLine();
@@ -364,15 +382,17 @@ public class HttpRequestHandler {
      * @throws URISyntaxException thrown when the URI is malformed
      * @throws JSONException thrown when the incoming JSON is malformed
      */
-    public static JSObject request(PluginCall call, String httpMethod) throws IOException, URISyntaxException, JSONException {
+    public static JSObject request(PluginCall call, String httpMethod, Bridge bridge)
+        throws IOException, URISyntaxException, JSONException {
         String urlString = call.getString("url", "");
-        JSObject headers = call.getObject("headers");
-        JSObject params = call.getObject("params");
+        JSObject headers = call.getObject("headers", new JSObject());
+        JSObject params = call.getObject("params", new JSObject());
         Integer connectTimeout = call.getInt("connectTimeout");
         Integer readTimeout = call.getInt("readTimeout");
         Boolean disableRedirects = call.getBoolean("disableRedirects");
         Boolean shouldEncode = call.getBoolean("shouldEncodeUrlParams", true);
         ResponseType responseType = ResponseType.parse(call.getString("responseType"));
+        String dataType = call.getString("dataType");
 
         String method = httpMethod != null ? httpMethod.toUpperCase(Locale.ROOT) : call.getString("method", "GET").toUpperCase(Locale.ROOT);
 
@@ -391,18 +411,38 @@ public class HttpRequestHandler {
 
         CapacitorHttpUrlConnection connection = connectionBuilder.build();
 
+        if (null != bridge && !isDomainExcludedFromSSL(bridge, url)) {
+            connection.setSSLSocketFactory(bridge);
+        }
+
         // Set HTTP body on a non GET or HEAD request
         if (isHttpMutate) {
             JSValue data = new JSValue(call, "data");
             if (data.getValue() != null) {
                 connection.setDoOutput(true);
-                connection.setRequestBody(call, data);
+                connection.setRequestBody(call, data, dataType);
             }
         }
 
+        call.getData().put("activeCapacitorHttpUrlConnection", connection);
         connection.connect();
 
-        return buildResponse(connection, responseType);
+        JSObject response = buildResponse(connection, responseType);
+
+        connection.disconnect();
+        call.getData().remove("activeCapacitorHttpUrlConnection");
+
+        return response;
+    }
+
+    public static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
+        try {
+            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
+            Method method = sslPinningImpl.getDeclaredMethod("isDomainExcluded", Bridge.class, URL.class);
+            return (Boolean) method.invoke(sslPinningImpl.getDeclaredConstructor().newInstance(), bridge, url);
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     @FunctionalInterface

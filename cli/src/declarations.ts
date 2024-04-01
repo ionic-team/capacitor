@@ -36,19 +36,13 @@ export interface CapacitorConfig {
    * will create a `capacitor.js` file that you'll need to add as a script in
    * your `index.html` file.
    *
+   * It's deprecated and will be removed in Capacitor 6
+   *
    * @since 1.0.0
+   * @deprecated 5.0.0
    * @default false
    */
   bundledWebRuntime?: boolean;
-
-  /**
-   * Hide or show the native logs for iOS and Android.
-   *
-   * @since 2.1.0
-   * @deprecated 3.0.0
-   * @default false
-   */
-  hideLogs?: boolean;
 
   /**
    * The build configuration (as defined by the native app) under which Capacitor
@@ -90,6 +84,14 @@ export interface CapacitorConfig {
    */
   backgroundColor?: string;
 
+  /**
+   * Enable zooming within the Capacitor Web View.
+   *
+   * @default false
+   * @since 6.0.0
+   */
+  zoomEnabled?: boolean;
+
   android?: {
     /**
      * Specify a custom path to the native Android project.
@@ -129,6 +131,14 @@ export interface CapacitorConfig {
     backgroundColor?: string;
 
     /**
+     * Enable zooming within the Capacitor Web View for Android.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
+
+    /**
      * Enable mixed content in the Capacitor Web View for Android.
      *
      * [Mixed
@@ -163,17 +173,6 @@ export interface CapacitorConfig {
      * @default false
      */
     webContentsDebuggingEnabled?: boolean;
-
-    /**
-     * Hide or show the native logs for Android.
-     *
-     * Overrides global `hideLogs` option.
-     *
-     * @since 2.1.0
-     * @deprecated 3.0.0
-     * @default false
-     */
-    hideLogs?: boolean;
 
     /**
      * The build configuration under which Capacitor will generate logs on Android.
@@ -226,6 +225,20 @@ export interface CapacitorConfig {
      */
     minWebViewVersion?: number;
 
+    /**
+     * The minimum supported Huawei webview version on Android supported by your app.
+     *
+     * The minimum supported cannot be lower than version `10`, which is required for Capacitor.
+     *
+     * If the device uses a lower WebView version, an error message will be shown on Logcat.
+     * If `server.errorPath` is configured, the WebView will redirect to that file, so can be
+     * used to show a custom error.
+     *
+     * @since 4.6.4
+     * @default 10
+     */
+    minHuaweiWebViewVersion?: number;
+
     buildOptions?: {
       /**
        * Path to your keystore
@@ -262,6 +275,14 @@ export interface CapacitorConfig {
        * @default "AAB"
        */
       releaseType?: 'AAB' | 'APK';
+
+      /**
+       * Program to sign your build with
+       *
+       * @since 5.1.0
+       * @default "jarsigner"
+       */
+      signingType?: 'apksigner' | 'jarsigner';
     };
 
     /**
@@ -328,6 +349,14 @@ export interface CapacitorConfig {
     backgroundColor?: string;
 
     /**
+     * Enable zooming within the Capacitor Web View for iOS.
+     *
+     * @default false
+     * @since 6.0.0
+     */
+    zoomEnabled?: boolean;
+
+    /**
      * Configure the scroll view's content inset adjustment behavior.
      *
      * This will set the
@@ -370,17 +399,6 @@ export interface CapacitorConfig {
      * @since 2.0.0
      */
     allowsLinkPreview?: boolean;
-
-    /**
-     * Hide or show the native logs for iOS.
-     *
-     * Overrides global `hideLogs` option.
-     *
-     * @since 1.1.0
-     * @deprecated 3.0.0
-     * @default false
-     */
-    hideLogs?: boolean;
 
     /**
      * The build configuration under which Capacitor will generate logs on iOS.
@@ -436,6 +454,16 @@ export interface CapacitorConfig {
      * @default true
      */
     handleApplicationNotifications?: boolean;
+
+    /**
+     * Using Xcode 14.3, on iOS 16.4 and greater, enable debuggable web content for release builds.
+     *
+     * If not set, it's `true` for development builds.
+     *
+     * @since 4.8.0
+     * @default false
+     */
+    webContentsDebuggingEnabled?: boolean;
   };
 
   server?: {
@@ -471,8 +499,13 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on Android.
      *
+     * Custom schemes on Android are unable to change the URL path as of Webview 117. Changing this value from anything other than `http` or `https` can result in your
+     * application unable to resolve routing. If you must change this for some reason, consider using a hash-based url strategy, but there are no guarentees that this
+     * will continue to work long term as allowing non-standard schemes to modify query parameters and url fragments is only allowed for compatibility reasons.
+     * https://ionic.io/blog/capacitor-android-customscheme-issue-with-chrome-117
+     *
      * @since 1.2.0
-     * @default http
+     * @default https
      */
     androidScheme?: string;
 
@@ -574,22 +607,6 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
-export interface Portal {
-  name: string;
-  webDir: string;
-  liveUpdateConfig?: LiveUpdateConfig;
-}
-
-export interface LiveUpdateConfig {
-  appId: string;
-  channel: string;
-  autoUpdateMethod: AutoUpdateMethod;
-  maxVersions?: number;
-  key?: string;
-}
-
-export type AutoUpdateMethod = 'none' | 'background';
-
 export interface PluginsConfig {
   /**
    * Plugin configuration by class name.
@@ -601,24 +618,6 @@ export interface PluginsConfig {
         [key: string]: any;
       }
     | undefined;
-
-  /**
-   * Capacitor Portals plugin configuration
-   *
-   * @since 3.5.0
-   */
-  Portals?: {
-    shell: Portal;
-    apps: Portal[];
-    liveUpdatesKey?: string;
-  };
-
-  /**
-   * Capacitor Live Updates plugin configuration
-   *
-   * @since 4.2.0
-   */
-  LiveUpdates?: LiveUpdateConfig;
 
   /**
    * Capacitor Cookies plugin configuration

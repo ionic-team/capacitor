@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    namespace "com.getcapacitor.myapp"
+    compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.getcapacitor.app"
         minSdkVersion rootProject.ext.minSdkVersion

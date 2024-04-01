@@ -75,7 +75,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 @property (nonatomic, retain, nonnull) NSDictionary *pluginConfigurations;
 /**
  @brief The build configurations under which logging should be enabled.
- @discussion Defaults to @c debug. Set by @c loggingBehavior in the configuration file but will inherit the deprecated @c hideLogs flag if @c loggingBehavior is absent.
+ @discussion Defaults to @c debug. Set by @c loggingBehavior in the configuration file.
  */
 @property (nonatomic, assign) CAPInstanceLoggingBehavior loggingBehavior;
 /**
@@ -83,6 +83,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @discussion Set by @c ios.scrollEnabled in the configuration file. Corresponds to @c isScrollEnabled on WKWebView.
  */
 @property (nonatomic, assign) BOOL scrollingEnabled;
+/**
+ @brief Whether or not the web view can zoom.
+ @discussion Set by @c zoomEnabled in the configuration file.
+ */
+@property (nonatomic, assign) BOOL zoomingEnabled;
 /**
  @brief Whether or not the web view will preview links.
  @discussion Set by @c ios.allowsLinkPreview in the configuration file. Corresponds to @c allowsLinkPreview on WKWebView.
@@ -93,6 +98,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @discussion Defaults to @c true. Required to be @c true for notification plugins to work correctly. Set to @c false if your application will handle notifications independently.
  */
 @property (nonatomic, assign) BOOL handleApplicationNotifications;
+/**
+ @brief Enables web debugging by setting isInspectable of  @c WKWebView to @c true on iOS 16.4 and greater
+ @discussion Defaults to true in debug mode and false in production
+ */
+@property (nonatomic, assign) BOOL isWebDebuggable;
 /**
  @brief How the web view will inset its content
  @discussion Set by @c ios.contentInset in the configuration file. Corresponds to @c contentInsetAdjustmentBehavior on WKWebView.

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { initBridge } from '../../native-bridge';
 import type { WindowCapacitor } from '../definitions-internal';
 import { createCapacitor } from '../runtime';
@@ -11,6 +15,24 @@ class MockPlugin extends WebPlugin {
     this.notifyListeners('test', {
       value: 'Capacitors on top of toast!',
     });
+  }
+
+  triggerRetained() {
+    this.notifyListeners(
+      'testRetained',
+      {
+        value: 'Test Retained Value 1',
+      },
+      true,
+    );
+
+    this.notifyListeners(
+      'testRetained',
+      {
+        value: 'Test Retained Value 2',
+      },
+      true,
+    );
   }
 
   getListeners() {
@@ -94,6 +116,23 @@ describe('Web Plugin', () => {
     expect(lf.mock.calls[0][0]).toEqual({
       value: 'Capacitors on top of toast!',
     });
+    handle.remove();
+  });
+
+  it('Should submit retained events on event registration', async () => {
+    const lf = jest.fn();
+    plugin.triggerRetained();
+
+    const handle = await plugin.addListener('testRetained', lf);
+
+    expect(lf.mock.calls.length).toEqual(2);
+    expect(lf.mock.calls[0][0]).toEqual({
+      value: 'Test Retained Value 1',
+    });
+    expect(lf.mock.calls[1][0]).toEqual({
+      value: 'Test Retained Value 2',
+    });
+
     handle.remove();
   });
 

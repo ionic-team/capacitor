@@ -29,6 +29,7 @@
                 break;
         }
         _scrollingEnabled = descriptor.scrollingEnabled;
+        _zoomingEnabled =  descriptor.zoomingEnabled;
         _allowLinkPreviews = descriptor.allowLinkPreviews;
         _handleApplicationNotifications = descriptor.handleApplicationNotifications;
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
@@ -37,6 +38,7 @@
         _limitsNavigationsToAppBoundDomains = descriptor.limitsNavigationsToAppBoundDomains;
         _preferredContentMode = descriptor.preferredContentMode;
         _pluginConfigurations = descriptor.pluginConfigurations;
+        _isWebDebuggable = descriptor.isWebDebuggable;
         _legacyConfig = descriptor.legacyConfig;
         // construct the necessary URLs
         _localURL = [[NSURL alloc] initWithString:[NSString stringWithFormat:@"%@://%@", descriptor.urlScheme, descriptor.urlHostname]];
@@ -65,8 +67,10 @@
         _pluginConfigurations = [[configuration pluginConfigurations] copy];
         _loggingEnabled = configuration.loggingEnabled;
         _scrollingEnabled = configuration.scrollingEnabled;
+        _zoomingEnabled = configuration.zoomingEnabled;
         _allowLinkPreviews = configuration.allowLinkPreviews;
         _handleApplicationNotifications = configuration.handleApplicationNotifications;
+        _isWebDebuggable = configuration.isWebDebuggable;
         _cordovaDeployDisabled = configuration.cordovaDeployDisabled;
         _contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior;
         // we don't care about internal usage of deprecated APIs and the framework should build cleanly
