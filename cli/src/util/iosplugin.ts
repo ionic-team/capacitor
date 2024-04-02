@@ -10,6 +10,7 @@ import { resolve } from 'path';
 import { getCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
 import type { Plugin } from '../plugin';
+import { getPluginType, PluginType } from '../plugin';
 
 export async function getPluginFiles(plugins: Plugin[]): Promise<string[]> {
   let filenameList: string[] = [];
@@ -25,7 +26,7 @@ export async function getPluginFiles(plugins: Plugin[]): Promise<string[]> {
   };
 
   for (const plugin of plugins) {
-    if (typeof plugin.ios?.name !== 'undefined') {
+    if (plugin.ios && getPluginType(plugin, 'ios') === PluginType.Core) {
       const pluginPath = resolve(plugin.rootPath, plugin.ios?.path);
       const filenames = await readdirp(pluginPath, options);
       filenameList = filenameList.concat(filenames);
