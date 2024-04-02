@@ -65,7 +65,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return nil
     }
 
-    public func getRequestDataAsMultipartFormData(_ data: JSValue) throws -> Data {
+    public func getRequestDataAsMultipartFormData(_ data: JSValue, _ contentType: String) throws -> Data {
         guard let obj = data as? JSObject else {
             // Throw, other data types explicitly not supported.
             throw CapacitorUrlRequestError.serializationError("[ data ] argument for request with content-type [ application/x-www-form-urlencoded ] may only be a plain javascript object")
@@ -76,11 +76,12 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
 
         var data = Data()
-        let boundary = UUID().uuidString
-        let contentType = "multipart/form-data; boundary=\(boundary)"
-        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
-        headers["Content-Type"] = contentType
-
+        var boundary = UUID().uuidString
+        if contentType.contains("="), let contentBoundary = contentType.components(separatedBy: "=").last {
+            boundary = contentBoundary
+        } else {
+            overrideContentType(boundary)
+        }
         strings.forEach { key, value in
             data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
             data.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!)
@@ -89,6 +90,12 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
 
         return data
+    }
+
+    private func overrideContentType(_ boundary: String) {
+        let contentType = "multipart/form-data; boundary=\(boundary)"
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+        headers["Content-Type"] = contentType
     }
 
     public func getRequestDataAsString(_ data: JSValue) throws -> Data {
@@ -107,20 +114,18 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         return normalized[index.lowercased()]
     }
 
-    func getRequestDataFromFormData(_ data: JSValue) throws -> Data? {
+    public func getRequestDataFromFormData(_ data: JSValue, _ contentType: String) throws -> Data? {
         guard let list = data as? JSArray else {
             // Throw, other data types explicitly not supported.
             throw CapacitorUrlRequestError.serializationError("Data must be an array for FormData")
         }
-
         var data = Data()
-
-        // Update the contentType with the new boundary
-        let boundary = UUID().uuidString
-        let contentType = "multipart/form-data; boundary=\(boundary)"
-        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
-        headers["Content-Type"] = contentType
-
+        var boundary = UUID().uuidString
+        if contentType.contains("="), let contentBoundary = contentType.components(separatedBy: "=").last {
+            boundary = contentBoundary
+        } else {
+            overrideContentType(boundary)
+        }
         for entry in list {
             guard let item = entry as? [String: String] else {
                 throw CapacitorUrlRequestError.serializationError("Data must be an array for FormData")
@@ -134,7 +139,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
                 let fileName = item["fileName"]
                 let fileContentType = item["contentType"]
 
-                data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+                data.append("--\(boundary)\r\n".data(using: .utf8)!)
                 data.append("Content-Disposition: form-data; name=\"\(key!)\"; filename=\"\(fileName!)\"\r\n".data(using: .utf8)!)
                 data.append("Content-Type: \(fileContentType!)\r\n".data(using: .utf8)!)
                 data.append("Content-Transfer-Encoding: binary\r\n".data(using: .utf8)!)
@@ -144,16 +149,14 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
 
                 data.append("\r\n".data(using: .utf8)!)
             } else if type == "string" {
-                data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+                data.append("--\(boundary)\r\n".data(using: .utf8)!)
                 data.append("Content-Disposition: form-data; name=\"\(key!)\"\r\n".data(using: .utf8)!)
                 data.append("\r\n".data(using: .utf8)!)
                 data.append(value.data(using: .utf8)!)
                 data.append("\r\n".data(using: .utf8)!)
             }
-
         }
-
-        data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        data.append("--\(boundary)--\r\n".data(using: .utf8)!)
 
         return data
     }
@@ -165,7 +168,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
             }
             return Data(base64Encoded: stringData)
         } else if dataType == "formData" {
-            return try getRequestDataFromFormData(body)
+            return try getRequestDataFromFormData(body, contentType)
         }
 
         // If data can be parsed directly as a string, return that without processing.
@@ -176,7 +179,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         } else if contentType.contains("application/x-www-form-urlencoded") {
             return try getRequestDataAsFormUrlEncoded(body)
         } else if contentType.contains("multipart/form-data") {
-            return try getRequestDataAsMultipartFormData(body)
+            return try getRequestDataAsMultipartFormData(body, contentType)
         } else {
             throw CapacitorUrlRequestError.serializationError("[ data ] argument could not be parsed for content type [ \(contentType) ]")
         }

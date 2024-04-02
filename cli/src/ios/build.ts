@@ -6,6 +6,7 @@ import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { logSuccess } from '../log';
 import type { BuildCommandOptions } from '../tasks/build';
+import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
 export async function buildiOS(
@@ -14,12 +15,25 @@ export async function buildiOS(
 ): Promise<void> {
   const theScheme = buildOptions.scheme ?? 'App';
 
+  const packageManager = await checkPackageManager(config);
+
+  let typeOfBuild: string;
+  let projectName: string;
+
+  if (packageManager == 'Cocoapods') {
+    typeOfBuild = '-workspace';
+    projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs);
+  } else {
+    typeOfBuild = '-project';
+    projectName = basename(await config.ios.nativeXcodeProjDirAbs);
+  }
+
   await runTask('Building xArchive', async () =>
     runCommand(
       'xcodebuild',
       [
-        '-workspace',
-        basename(await config.ios.nativeXcodeWorkspaceDirAbs),
+        typeOfBuild,
+        projectName,
         '-scheme',
         `${theScheme}`,
         '-destination',

@@ -301,10 +301,11 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
                     for plugin in registrationList.packageClassList {
                         if let pluginClass = NSClassFromString(plugin) {
-                            if class_getSuperclass(pluginClass) == CDVPlugin.self {
+                            if pluginClass == CDVPlugin.self {
                                 injectCordovaFiles = true
+                            } else {
+                                pluginList.append(pluginClass)
                             }
-                            pluginList.append(pluginClass)
                         }
                     }
                 }
