@@ -457,6 +457,15 @@ public class WebViewLocalServer {
         return null;
     }
 
+    public WebResourceResponse inject(WebResourceResponse original) {
+
+        if (jsInjector != null) {
+            original.setData(jsInjector.getInjectedStream(original.getData()));
+        }
+
+        return original;
+    }
+
     /**
      * Instead of reading files from the filesystem/assets, proxy through to the URL
      * and let an external server handle it.
