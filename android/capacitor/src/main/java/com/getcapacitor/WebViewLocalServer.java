@@ -457,12 +457,17 @@ public class WebViewLocalServer {
         return null;
     }
 
-    public WebResourceResponse inject(WebResourceResponse original) {
-
+    /**
+     * Prepends an {@code InputStream} with the JavaScript required by Capacitor.
+     * This method only changes the original {@code InputStream} if {@code WebView} does not
+     * support the {@code DOCUMENT_START_SCRIPT} feature.
+     * @param original the original {@code InputStream}
+     * @return the modified {@code InputStream}
+     */
+    public InputStream getJavaScriptInjectedStream(InputStream original) {
         if (jsInjector != null) {
-            original.setData(jsInjector.getInjectedStream(original.getData()));
+            return jsInjector.getInjectedStream(original);
         }
-
         return original;
     }
 
