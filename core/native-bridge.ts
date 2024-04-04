@@ -96,6 +96,11 @@ const convertBody = async (
       type,
       headers: { 'Content-Type': contentType || 'application/octet-stream' },
     };
+  } else if (body instanceof URLSearchParams) {
+    return {
+      data: body.toString(),
+      type: 'text',
+    };
   } else if (body instanceof FormData) {
     const formData = await convertFormData(body);
     return {
@@ -131,15 +136,12 @@ const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   const proxyUrl = new URL(url);
   const bridgeUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
   const isHttps = proxyUrl.protocol === 'https:';
-  const originalHost = encodeURIComponent(proxyUrl.host);
-  const originalPathname = proxyUrl.pathname;
-  proxyUrl.protocol = bridgeUrl.protocol;
-  proxyUrl.hostname = bridgeUrl.hostname;
-  proxyUrl.port = bridgeUrl.port;
-  proxyUrl.pathname = `${
+  bridgeUrl.search = proxyUrl.search;
+  bridgeUrl.hash = proxyUrl.hash;
+  bridgeUrl.pathname = `${
     isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
-  }/${originalHost}${originalPathname}`;
-  return proxyUrl.toString();
+  }/${encodeURIComponent(proxyUrl.host)}${proxyUrl.pathname}`;
+  return bridgeUrl.toString();
 };
 
 const initBridge = (w: any): void => {
@@ -406,15 +408,14 @@ const initBridge = (w: any): void => {
     };
 
     const serializeConsoleMessage = (msg: any): string => {
-      if (typeof msg === 'object') {
-        try {
+      try {
+        if (typeof msg === 'object') {
           msg = JSON.stringify(msg);
-        } catch (e) {
-          // ignore
         }
+        return String(msg);
+      } catch (e) {
+        return '';
       }
-
-      return String(msg);
     };
 
     const platform = getPlatformId(win);

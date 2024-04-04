@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-rc.2](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.1...6.0.0-rc.2) (2024-03-25)
+
+### Bug Fixes
+
+- **cli:** also generate packageClassList on copy ([#7358](https://github.com/ionic-team/capacitor/issues/7358)) ([865cceb](https://github.com/ionic-team/capacitor/commit/865cceb1bf7e1b973e8f83f3c77040add71b403c))
+- **cli:** use correct pass signature for apksigner signing ([#7365](https://github.com/ionic-team/capacitor/issues/7365)) ([e4f8610](https://github.com/ionic-team/capacitor/commit/e4f86103c2806df4ca2729600361e6338c30f083))
+- **http:** change proxy url generation ([#7354](https://github.com/ionic-team/capacitor/issues/7354)) ([318c316](https://github.com/ionic-team/capacitor/commit/318c316847c5b059fb88b46d4acd31e1ced477e5))
+- inject cordova files if a cordova plugin is present ([#7363](https://github.com/ionic-team/capacitor/issues/7363)) ([ce9d505](https://github.com/ionic-team/capacitor/commit/ce9d50585b1cab183245197878bf625cf0289275))
+- vue 3 log warning causes error on iOS ([#6993](https://github.com/ionic-team/capacitor/issues/6993)) ([87271e2](https://github.com/ionic-team/capacitor/commit/87271e2671013ad35d13b22f2e96d4fe8f4eeaf0))
+
 # [6.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.0...6.0.0-rc.1) (2024-03-15)
 
 ### Bug Fixes

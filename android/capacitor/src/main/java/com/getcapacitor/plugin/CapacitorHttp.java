@@ -11,8 +11,8 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.plugin.util.CapacitorHttpUrlConnection;
 import com.getcapacitor.plugin.util.HttpRequestHandler;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 )
 public class CapacitorHttp extends Plugin {
 
-    private final Map<Runnable, PluginCall> activeRequests = new HashMap<>();
+    private final Map<Runnable, PluginCall> activeRequests = new ConcurrentHashMap<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     @Override

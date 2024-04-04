@@ -109,6 +109,12 @@ var nativeBridge = (function (exports) {
                 headers: { 'Content-Type': contentType || 'application/octet-stream' },
             };
         }
+        else if (body instanceof URLSearchParams) {
+            return {
+                data: body.toString(),
+                type: 'text',
+            };
+        }
         else if (body instanceof FormData) {
             const formData = await convertFormData(body);
             return {
@@ -141,13 +147,10 @@ var nativeBridge = (function (exports) {
         const proxyUrl = new URL(url);
         const bridgeUrl = new URL((_b = (_a = win.Capacitor) === null || _a === void 0 ? void 0 : _a.getServerUrl()) !== null && _b !== void 0 ? _b : '');
         const isHttps = proxyUrl.protocol === 'https:';
-        const originalHost = encodeURIComponent(proxyUrl.host);
-        const originalPathname = proxyUrl.pathname;
-        proxyUrl.protocol = bridgeUrl.protocol;
-        proxyUrl.hostname = bridgeUrl.hostname;
-        proxyUrl.port = bridgeUrl.port;
-        proxyUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${originalHost}${originalPathname}`;
-        return proxyUrl.toString();
+        bridgeUrl.search = proxyUrl.search;
+        bridgeUrl.hash = proxyUrl.hash;
+        bridgeUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${encodeURIComponent(proxyUrl.host)}${proxyUrl.pathname}`;
+        return bridgeUrl.toString();
     };
     const initBridge = (w) => {
         const getPlatformId = (win) => {
@@ -378,15 +381,15 @@ var nativeBridge = (function (exports) {
                     typeof c.dir === 'function');
             };
             const serializeConsoleMessage = (msg) => {
-                if (typeof msg === 'object') {
-                    try {
+                try {
+                    if (typeof msg === 'object') {
                         msg = JSON.stringify(msg);
                     }
-                    catch (e) {
-                        // ignore
-                    }
+                    return String(msg);
                 }
-                return String(msg);
+                catch (e) {
+                    return '';
+                }
             };
             const platform = getPlatformId(win);
             if (platform == 'android' || platform == 'ios') {
