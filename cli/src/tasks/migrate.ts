@@ -1,6 +1,7 @@
 import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
+import { coerce, gt, gte } from 'semver';
 
 import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
@@ -187,6 +188,36 @@ export async function migrateCommand(
         allDependencies['@capacitor/android'] &&
         existsSync(config.android.platformDirAbs)
       ) {
+        const gradleWrapperVersion = getGradleWrapperVersion(
+          join(
+            config.android.platformDirAbs,
+            'gradle',
+            'wrapper',
+            'gradle-wrapper.properties',
+          ),
+        );
+
+        if (!installFailed && gt(gradleVersion, gradleWrapperVersion)) {
+          try {
+            await runTask(`Upgrading gradle wrapper files`, () => {
+              return updateGradleWrapperFiles(config.android.platformDirAbs);
+            });
+          } catch (e: any) {
+            if (e.includes('EACCES')) {
+              logger.error(
+                `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
+                  `chmod +x ./${config.android.platformDir}/gradlew`,
+                )} and ${c.input(
+                  `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version ${gradleVersion} --warning-mode all`,
+                )} to update the files manually`,
+              );
+            } else {
+              logger.error(`gradle wrapper files were not updated`);
+            }
+          }
+        } else {
+          logger.warn('Skipped upgrading gradle wrapper files');
+        }
         await runTask(`Migrating build.gradle file.`, () => {
           return updateBuildGradle(
             join(config.android.platformDirAbs, 'build.gradle'),
@@ -226,21 +257,6 @@ export async function migrateCommand(
                 );
               }
             })();
-          },
-        );
-
-        // Update gradle-wrapper.properties
-        await runTask(
-          `Migrating gradle-wrapper.properties by updating gradle version to ${gradleVersion}.`,
-          () => {
-            return updateGradleWrapper(
-              join(
-                config.android.platformDirAbs,
-                'gradle',
-                'wrapper',
-                'gradle-wrapper.properties',
-              ),
-            );
           },
         );
 
@@ -342,33 +358,6 @@ export async function migrateCommand(
         });
       } else {
         logger.warn('Skipped Running cap sync.');
-      }
-
-      if (
-        allDependencies['@capacitor/android'] &&
-        existsSync(config.android.platformDirAbs)
-      ) {
-        if (!installFailed) {
-          try {
-            await runTask(`Upgrading gradle wrapper files`, () => {
-              return updateGradleWrapperFiles(config.android.platformDirAbs);
-            });
-          } catch (e: any) {
-            if (e.includes('EACCES')) {
-              logger.error(
-                `gradlew file does not have executable permissions. This can happen if the Android platform was added on a Windows machine. Please run ${c.input(
-                  `chmod +x ./${config.android.platformDir}/gradlew`,
-                )} and ${c.input(
-                  `cd ${config.android.platformDir} && ./gradlew wrapper --distribution-type all --gradle-version ${gradleVersion} --warning-mode all`,
-                )} to update the files manually`,
-              );
-            } else {
-              logger.error(`gradle wrapper files were not updated`);
-            }
-          }
-        } else {
-          logger.warn('Skipped upgrading gradle wrapper files');
-        }
       }
 
       // Write all breaking changes
@@ -542,19 +531,17 @@ function readFile(filename: string): string | undefined {
   }
 }
 
-async function updateGradleWrapper(filename: string) {
+function getGradleWrapperVersion(filename: string): string {
   const txt = readFile(filename);
   if (!txt) {
-    return;
+    return '0.0.0';
   }
-  const replaced = setAllStringIn(
-    txt,
-    'distributionUrl=',
-    '\n',
-    // eslint-disable-next-line no-useless-escape
-    `https\\://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip`,
+  const version = txt.substring(
+    txt.indexOf('gradle-') + 7,
+    txt.indexOf('-all.zip'),
   );
-  writeFileSync(filename, replaced, 'utf-8');
+  const semverVersion = coerce(version)?.version;
+  return semverVersion ? semverVersion : '0.0.0';
 }
 
 async function updateGradleWrapperFiles(platformDir: string) {
@@ -666,11 +653,10 @@ async function updateBuildGradle(
 
   for (const dep of Object.keys(neededDeps)) {
     if (replaced.includes(`classpath '${dep}`)) {
-      const semver = await import('semver');
       const firstIndex = replaced.indexOf(dep) + dep.length + 1;
       const existingVersion =
         '' + replaced.substring(firstIndex, replaced.indexOf("'", firstIndex));
-      if (semver.gte(neededDeps[dep], existingVersion)) {
+      if (gte(neededDeps[dep], existingVersion)) {
         replaced = setAllStringIn(
           replaced,
           `classpath '${dep}:`,
