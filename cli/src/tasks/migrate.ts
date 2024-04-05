@@ -79,10 +79,10 @@ export async function migrateCommand(
 
   const variablesAndClasspaths:
     | {
-        'variables': any;
-        'com.android.tools.build:gradle': string;
-        'com.google.gms:google-services': string;
-      }
+      'variables': any;
+      'com.android.tools.build:gradle': string;
+      'com.google.gms:google-services': string;
+    }
     | undefined = await getAndroidVariablesAndClasspaths(config);
 
   if (!variablesAndClasspaths) {
@@ -95,21 +95,21 @@ export async function migrateCommand(
   };
 
   const monorepoWarning =
-    'Please note this tool is not intended for use in a mono-repo enviroment, please check out the Ionic vscode extension for this functionality.';
+    'Please note this tool is not intended for use in a mono-repo environment, please check out the Ionic vscode extension for this functionality.';
 
   logger.info(monorepoWarning);
 
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
     : await logPrompt(
-        `Capacitor 6 sets a deployment target of iOS 13 and Android 14 (SDK 34). \n`,
-        {
-          type: 'text',
-          name: 'migrateconfirm',
-          message: `Are you sure you want to migrate? (Y/n)`,
-          initial: 'y',
-        },
-      );
+      `Capacitor 6 sets a deployment target of iOS 13 and Android 14 (SDK 34). \n`,
+      {
+        type: 'text',
+        name: 'migrateconfirm',
+        message: `Are you sure you want to migrate? (Y/n)`,
+        initial: 'y',
+      },
+    );
 
   if (
     typeof migrateconfirm === 'string' &&
@@ -119,14 +119,14 @@ export async function migrateCommand(
       const { depInstallConfirm } = noprompt
         ? { depInstallConfirm: 'y' }
         : await logPrompt(
-            `Would you like the migrator to run npm, yarn, or pnpm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
-            {
-              type: 'text',
-              name: 'depInstallConfirm',
-              message: `Run Dependency Install? (Y/n)`,
-              initial: 'y',
-            },
-          );
+          `Would you like the migrator to run npm, yarn, bun, or pnpm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
+          {
+            type: 'text',
+            name: 'depInstallConfirm',
+            message: `Run Dependency Install? (Y/n)`,
+            initial: 'y',
+          },
+        );
 
       const runNpmInstall =
         typeof depInstallConfirm === 'string' &&
@@ -137,16 +137,17 @@ export async function migrateCommand(
         const { manager } = packagemanager
           ? { manager: packagemanager }
           : await logPrompt('What dependency manager do you use?', {
-              type: 'select',
-              name: 'manager',
-              message: `Dependency Management Tool`,
-              choices: [
-                { title: 'NPM', value: 'npm' },
-                { title: 'Yarn', value: 'yarn' },
-                { title: 'PNPM', value: 'pnpm' },
-              ],
-              initial: 0,
-            });
+            type: 'select',
+            name: 'manager',
+            message: `Dependency Management Tool`,
+            choices: [
+              { title: 'NPM', value: 'npm' },
+              { title: 'Yarn', value: 'yarn' },
+              { title: 'PNPM', value: 'pnpm' },
+              { title: 'Bun', value: 'bun' },
+            ],
+            initial: 0,
+          });
         installerType = manager;
       }
 
@@ -354,7 +355,8 @@ export async function migrateCommand(
       if (!installFailed) {
         // Run Cap Sync
         await runTask(`Running cap sync.`, () => {
-          return getCommandOutput('npx', ['cap', 'sync']);
+          const runCommand = installerType == 'bun' ? 'bunx' : 'npx';
+          return getCommandOutput(runCommand, ['cap', 'sync']);
         });
       } else {
         logger.warn('Skipped Running cap sync.');
