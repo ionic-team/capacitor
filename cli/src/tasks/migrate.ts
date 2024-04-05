@@ -212,7 +212,7 @@ export async function migrateCommand(
                 )} to update the files manually`,
               );
             } else {
-              logger.error(`gradle wrapper files were not updated ${e}`);
+              logger.error(`gradle wrapper files were not updated`);
             }
           }
         } else {
