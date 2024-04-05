@@ -52,23 +52,26 @@ public class CapacitorCookieManager extends CookieManager {
     }
 
     public String getSanitizedDomain(String url) throws URISyntaxException {
-        if (url == null || url.isEmpty()) {
+        if (this.serverUrl != null && !this.serverUrl.isEmpty() && (url == null || url.isEmpty() || this.serverUrl.contains(url))) {
             url = this.serverUrl;
+        } else if (this.localUrl != null && !this.localUrl.isEmpty() && (url == null || url.isEmpty() || this.localUrl.contains(url))) {
+            url = this.localUrl;
+        } else try {
+            URI uri = new URI(url);
+            String scheme = uri.getScheme();
+            if (scheme == null || scheme.isEmpty()) {
+                url = "https://" + url;
+            }
+        } catch (URISyntaxException e) {
+            Logger.error(TAG, "Failed to get scheme from URL.", e);
         }
 
         try {
             new URI(url);
-        } catch (Exception ignored) {
-            url = this.localUrl;
-
-            try {
-                new URI(url);
-            } catch (Exception error) {
-                Logger.error(TAG, "Failed to get sanitized URL.", error);
-                throw error;
-            }
+        } catch (Exception error) {
+            Logger.error(TAG, "Failed to get sanitized URL.", error);
+            throw error;
         }
-
         return url;
     }
 
