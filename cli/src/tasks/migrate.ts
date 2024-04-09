@@ -119,7 +119,7 @@ export async function migrateCommand(
       const { depInstallConfirm } = noprompt
         ? { depInstallConfirm: 'y' }
         : await logPrompt(
-            `Would you like the migrator to run npm, yarn, bun, or pnpm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
+            `Would you like the migrator to run npm, yarn, pnpm, or bun install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
             {
               type: 'text',
               name: 'depInstallConfirm',
@@ -355,8 +355,7 @@ export async function migrateCommand(
       if (!installFailed) {
         // Run Cap Sync
         await runTask(`Running cap sync.`, () => {
-          const runCommand = installerType == 'bun' ? 'bunx' : 'npx';
-          return getCommandOutput(runCommand, ['cap', 'sync']);
+          return getCommandOutput('npx', ['cap', 'sync']);
         });
       } else {
         logger.warn('Skipped Running cap sync.');
