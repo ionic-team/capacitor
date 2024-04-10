@@ -95,7 +95,7 @@ export async function migrateCommand(
   };
 
   const monorepoWarning =
-    'Please note this tool is not intended for use in a mono-repo enviroment, please check out the Ionic vscode extension for this functionality.';
+    'Please note this tool is not intended for use in a mono-repo environment, please check out the Ionic vscode extension for this functionality.';
 
   logger.info(monorepoWarning);
 
@@ -119,7 +119,7 @@ export async function migrateCommand(
       const { depInstallConfirm } = noprompt
         ? { depInstallConfirm: 'y' }
         : await logPrompt(
-            `Would you like the migrator to run npm, yarn, or pnpm install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
+            `Would you like the migrator to run npm, yarn, pnpm, or bun install to install the latest versions of capacitor packages? (Those using other package managers should answer N)`,
             {
               type: 'text',
               name: 'depInstallConfirm',
@@ -144,6 +144,7 @@ export async function migrateCommand(
                 { title: 'NPM', value: 'npm' },
                 { title: 'Yarn', value: 'yarn' },
                 { title: 'PNPM', value: 'pnpm' },
+                { title: 'Bun', value: 'bun' },
               ],
               initial: 0,
             });
