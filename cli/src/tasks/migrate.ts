@@ -49,8 +49,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = 'latest';
-const pluginVersion = 'latest';
+const coreVersion = '^6.0.0';
+const pluginVersion = '^6.0.0';
 const gradleVersion = '8.2.1';
 let installFailed = false;
 
