@@ -34,7 +34,6 @@ const plugins = [
   '@capacitor/dialog',
   '@capacitor/filesystem',
   '@capacitor/geolocation',
-  '@capacitor/google-maps',
   '@capacitor/haptics',
   '@capacitor/keyboard',
   '@capacitor/local-notifications',
@@ -50,8 +49,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = 'next';
-const pluginVersion = 'next';
+const coreVersion = 'latest';
+const pluginVersion = 'latest';
 const gradleVersion = '8.2.1';
 let installFailed = false;
 
