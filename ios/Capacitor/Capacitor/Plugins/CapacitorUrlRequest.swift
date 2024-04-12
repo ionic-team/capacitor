@@ -24,7 +24,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
         #endif
         
-        #if os(visonOS)
+        #if os(visionOS)
         if let lang = Locale.autoupdatingCurrent.language.languageCode?.identifier {
             if let country = Locale.autoupdatingCurrent.region?.identifier {
                 headers["Accept-Language"] = "\(lang)-\(country),\(lang);q=0.5"
