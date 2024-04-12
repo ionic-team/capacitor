@@ -35,7 +35,7 @@ export async function generatePackageFile(
 ): Promise<void> {
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
-    logger.warn("SPM Support is still experimental")
+    logger.warn('SPM Support is still experimental');
     const textToWrite = generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
