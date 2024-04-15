@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.5](https://github.com/ionic-team/capacitor/compare/5.7.4...5.7.5) (2024-04-15)
+
+### Bug Fixes
+
+- **http:** Add URLSearchParams support ([#7376](https://github.com/ionic-team/capacitor/issues/7376)) ([080be74](https://github.com/ionic-team/capacitor/commit/080be74fa8ebb58d1f30a272c35f854506573620))
+- **http:** prevent POST request from being proxied ([#7402](https://github.com/ionic-team/capacitor/issues/7402)) ([6a96ce7](https://github.com/ionic-team/capacitor/commit/6a96ce727668fd03501382fad4e350775f2e1ac9))
+- vue 3 log warning causes error on iOS ([#7364](https://github.com/ionic-team/capacitor/issues/7364)) ([bc39b6b](https://github.com/ionic-team/capacitor/commit/bc39b6b8cfc59bcba934a181f71df9d9e756ea42))
+
 ## [5.7.4](https://github.com/ionic-team/capacitor/compare/5.7.3...5.7.4) (2024-03-20)
 
 ### Bug Fixes

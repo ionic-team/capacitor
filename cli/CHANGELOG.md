@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.5](https://github.com/ionic-team/capacitor/compare/5.7.4...5.7.5) (2024-04-15)
+
+### Bug Fixes
+
+- **cli:** Removing extra dash in android apk name flavor parsing ([#7383](https://github.com/ionic-team/capacitor/issues/7383)) ([aed075f](https://github.com/ionic-team/capacitor/commit/aed075ffcfd04003876f5eb90581d46298a69d66))
+
 ## [5.7.4](https://github.com/ionic-team/capacitor/compare/5.7.3...5.7.4) (2024-03-20)
 
 **Note:** Version bump only for package @capacitor/cli
