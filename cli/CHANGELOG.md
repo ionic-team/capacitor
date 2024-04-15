@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.2...6.0.0) (2024-04-15)
+
+### Bug Fixes
+
+- **cli:** Change Capacitor plugin files check ([#7375](https://github.com/ionic-team/capacitor/issues/7375)) ([fbfb778](https://github.com/ionic-team/capacitor/commit/fbfb77825fdd3343e85868ea28b8e14a482dcf4a))
+- **cli:** Don't downgrade gradle version on migrate ([#7385](https://github.com/ionic-team/capacitor/issues/7385)) ([c79211e](https://github.com/ionic-team/capacitor/commit/c79211ec9dde81a57aca5cee8ab09cdef0c9ad86))
+- **cli:** Removing extra dash in android apk name flavor parsing ([#7382](https://github.com/ionic-team/capacitor/issues/7382)) ([3c411fd](https://github.com/ionic-team/capacitor/commit/3c411fd0a400b18c2d032e3b8be3fc4b5449bcbd))
+
+### Features
+
+- **cli:** Support bun when running cap migrate ([#7386](https://github.com/ionic-team/capacitor/issues/7386)) ([3f96ff9](https://github.com/ionic-team/capacitor/commit/3f96ff911588c517dc2d924f55ef28a25c30bd33))
+
 # [6.0.0-rc.2](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.1...6.0.0-rc.2) (2024-03-25)
 
 ### Bug Fixes
