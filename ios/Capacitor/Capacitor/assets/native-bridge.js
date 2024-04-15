@@ -502,11 +502,11 @@ var nativeBridge = (function (exports) {
                         if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
                             return win.CapacitorWebFetch(resource, options);
                         }
-                        if (!(options === null || options === void 0 ? void 0 : options.method) ||
-                            options.method.toLocaleUpperCase() === 'GET' ||
-                            options.method.toLocaleUpperCase() === 'HEAD' ||
-                            options.method.toLocaleUpperCase() === 'OPTIONS' ||
-                            options.method.toLocaleUpperCase() === 'TRACE') {
+                        const { method } = request;
+                        if (method.toLocaleUpperCase() === 'GET' ||
+                            method.toLocaleUpperCase() === 'HEAD' ||
+                            method.toLocaleUpperCase() === 'OPTIONS' ||
+                            method.toLocaleUpperCase() === 'TRACE') {
                             if (typeof resource === 'string') {
                                 return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
                             }
@@ -518,8 +518,7 @@ var nativeBridge = (function (exports) {
                         const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
                         console.time(tag);
                         try {
-                            // intercept request & pass to the bridge
-                            const { body, method } = request;
+                            const { body } = request;
                             const optionHeaders = Object.fromEntries(request.headers.entries());
                             const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || body || undefined, optionHeaders['Content-Type'] || optionHeaders['content-type']);
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
