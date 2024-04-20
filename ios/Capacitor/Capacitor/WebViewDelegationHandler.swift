@@ -193,7 +193,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                 let method = dict["action"] as? String ?? ""
                 let callbackId = dict["callbackId"] as? String ?? ""
 
-                let args = dict["actionArgs"] as? Array ?? []
+                let args = dict["actionArgs"] as? Array ?? [] as [String]
                 let options = ["options": args]
 
                 CAPLog.print("To Native Cordova -> ", pluginId, method, callbackId, options)
