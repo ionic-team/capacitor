@@ -6,7 +6,7 @@ import MobileCoreServices
 open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
-    private var pendingTasks: Set<Int> = []
+    private var pendingTasks = ConcurrentTasks()
 
     public init(router: Router) {
         self.router = router
@@ -553,4 +553,27 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         "z": "application/x-compress",
         "zip": "application/x-zip-compressed"
     ]
+}
+
+private class ConcurrentTasks {
+    private var tasks: Set<Int>
+    private let lock = NSLock()
+
+    init() {
+        tasks = []
+    }
+
+    func contains(_ value: Int) -> Bool {
+        lock.withLock { tasks.contains(value) }
+    }
+
+    @discardableResult
+    func remove(_ value: Int) -> Int? {
+        lock.withLock { tasks.remove(value) }
+    }
+
+    @discardableResult
+    func insert(_ value: Int) -> (inserted: Bool, memberAfterInsert: Int) {
+        lock.withLock { tasks.insert(value) }
+    }
 }
