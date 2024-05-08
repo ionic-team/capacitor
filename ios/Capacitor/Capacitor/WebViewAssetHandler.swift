@@ -6,7 +6,7 @@ import MobileCoreServices
 open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
-    private var pendingTasks: [Int] = []
+    private var pendingTasks: Set<Int> = []
 
     public init(router: Router) {
         self.router = router
@@ -26,7 +26,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     }
 
     open func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        pendingTasks.append(urlSchemeTask.hash)
+        pendingTasks.insert(urlSchemeTask.hash)
         let startPath: String
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
@@ -103,17 +103,16 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 urlSchemeTask.didReceive(data)
             } catch let error as NSError {
                 urlSchemeTask.didFailWithError(error)
-                self.pendingTasks.removeAll(where: { $0 == urlSchemeTask.hash })
+                self.pendingTasks.remove(urlSchemeTask.hash)
                 return
             }
             urlSchemeTask.didFinish()
-            self.pendingTasks.removeAll(where: { $0 == urlSchemeTask.hash })
+            self.pendingTasks.remove(urlSchemeTask.hash)
         }
     }
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-
-        pendingTasks.removeAll(where: { $0 == urlSchemeTask.hash })
+        pendingTasks.remove(urlSchemeTask.hash)
     }
 
     open func mimeTypeForExtension(pathExtension: String) -> String {
@@ -198,7 +197,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     }
                 }
                 urlSchemeTask.didFinish()
-                self.pendingTasks.removeAll(where: { $0 == urlSchemeTask.hash })
+                self.pendingTasks.remove(urlSchemeTask.hash)
                 return
             }
         }
