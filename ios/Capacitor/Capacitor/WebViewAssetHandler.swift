@@ -204,7 +204,6 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         }
 
         task.resume()
-        task.cancel()
     }
 
     public let mimeTypes = [
