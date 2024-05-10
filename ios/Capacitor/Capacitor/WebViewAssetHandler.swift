@@ -6,7 +6,7 @@ import MobileCoreServices
 open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
-    private var stoppedTasks = ConcurrentTasks()
+    private var tasks = ConcurrentDictionary<Task<Void, any Error>>()
 
     public init(router: Router) {
         self.router = router
@@ -26,90 +26,99 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     }
 
     open func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        let startPath: String
-        let url = urlSchemeTask.request.url!
-        let stringToLoad = url.path
-        let localUrl = URL.init(string: url.absoluteString)!
+        tasks[String(urlSchemeTask.hash)] = Task(priority: .high) {
+            let startPath: String
+            let url = urlSchemeTask.request.url!
+            let stringToLoad = url.path
+            let localUrl = URL.init(string: url.absoluteString)!
 
-        if url.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
-            handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
-            return
-        }
-
-        if url.path.starts(with: CapacitorBridge.httpsInterceptorStartIdentifier) {
-            handleCapacitorHttpRequest(urlSchemeTask, localUrl, true)
-            return
-        }
-
-        if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
-            startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
-        } else {
-            startPath = router.route(for: stringToLoad)
-        }
-
-        let fileUrl = URL.init(fileURLWithPath: startPath)
-
-        do {
-            var data = Data()
-            let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
-            var headers =  [
-                "Content-Type": mimeType,
-                "Cache-Control": "no-cache"
-            ]
-
-            // if using live reload, then set CORS headers
-            if isUsingLiveReload(localUrl) {
-                headers["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString
-                headers["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, TRACE"
+            if url.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
+                try await handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
+                return
             }
 
-            if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"),
-               let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize,
-               isMediaExtension(pathExtension: url.pathExtension) {
-                let fileHandle = try FileHandle(forReadingFrom: fileUrl)
-                let parts = rangeString.components(separatedBy: "=")
-                let streamParts = parts[1].components(separatedBy: "-")
-                let fromRange = Int(streamParts[0]) ?? 0
-                var toRange = totalSize - 1
-                if streamParts.count > 1 {
-                    toRange = Int(streamParts[1]) ?? toRange
-                }
-                let rangeLength = toRange - fromRange + 1
-                try fileHandle.seek(toOffset: UInt64(fromRange))
-                data = fileHandle.readData(ofLength: rangeLength)
-                headers["Accept-Ranges"] = "bytes"
-                headers["Content-Range"] = "bytes \(fromRange)-\(toRange)/\(totalSize)"
-                headers["Content-Length"] = String(data.count)
-                let response = HTTPURLResponse(url: localUrl, statusCode: 206, httpVersion: nil, headerFields: headers)
-                stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(response!) })
-                try fileHandle.close()
+            if url.path.starts(with: CapacitorBridge.httpsInterceptorStartIdentifier) {
+                try await handleCapacitorHttpRequest(urlSchemeTask, localUrl, true)
+                return
+            }
+
+            if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
+                startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
             } else {
-                if !stringToLoad.contains("cordova.js") {
+                startPath = router.route(for: stringToLoad)
+            }
+
+            let fileUrl = URL.init(fileURLWithPath: startPath)
+            
+            do {
+                var data = Data()
+                let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
+                var headers =  [
+                    "Content-Type": mimeType,
+                    "Cache-Control": "no-cache"
+                ]
+
+                // if using live reload, then set CORS headers
+                if isUsingLiveReload(localUrl) {
+                    headers["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString
+                    headers["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, TRACE"
+                }
+
+                if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"),
+                   let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize,
+                   isMediaExtension(pathExtension: url.pathExtension) {
+                    let fileHandle = try FileHandle(forReadingFrom: fileUrl)
+                    let parts = rangeString.components(separatedBy: "=")
+                    let streamParts = parts[1].components(separatedBy: "-")
+                    let fromRange = Int(streamParts[0]) ?? 0
+                    var toRange = totalSize - 1
+                    if streamParts.count > 1 {
+                        toRange = Int(streamParts[1]) ?? toRange
+                    }
+                    let rangeLength = toRange - fromRange + 1
+                    try fileHandle.seek(toOffset: UInt64(fromRange))
+                    data = fileHandle.readData(ofLength: rangeLength)
+                    headers["Accept-Ranges"] = "bytes"
+                    headers["Content-Range"] = "bytes \(fromRange)-\(toRange)/\(totalSize)"
+                    headers["Content-Length"] = String(data.count)
+                    let response = HTTPURLResponse(url: localUrl, statusCode: 206, httpVersion: nil, headerFields: headers)
+                    try Task.checkCancellation()
+                    urlSchemeTask.didReceive(response!)
+                    try fileHandle.close()
+                } else {
+                    if !stringToLoad.contains("cordova.js") {
+                        if isMediaExtension(pathExtension: url.pathExtension) {
+                            data = try Data(contentsOf: fileUrl, options: Data.ReadingOptions.mappedIfSafe)
+                        } else {
+                            data = try Data(contentsOf: fileUrl)
+                        }
+                    }
+                    let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
+                    let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
                     if isMediaExtension(pathExtension: url.pathExtension) {
-                        data = try Data(contentsOf: fileUrl, options: Data.ReadingOptions.mappedIfSafe)
+                        try Task.checkCancellation()
+                        urlSchemeTask.didReceive(urlResponse)
                     } else {
-                        data = try Data(contentsOf: fileUrl)
+                        try Task.checkCancellation()
+                        urlSchemeTask.didReceive(httpResponse!)
                     }
                 }
-                let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
-                let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
-                if isMediaExtension(pathExtension: url.pathExtension) {
-                    stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(urlResponse)})
-                } else {
-                    stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(httpResponse!)})
-                }
+                try Task.checkCancellation()
+                urlSchemeTask.didReceive(data)
+            } catch let error as NSError {
+                try Task.checkCancellation()
+                urlSchemeTask.didFailWithError(error)
+                return
             }
-            stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(data)})
-        } catch {
-            stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFailWithError(error)})
-            self.stoppedTasks.remove(urlSchemeTask.hash)
-            return
+            try Task.checkCancellation()
+            urlSchemeTask.didFinish()
+            tasks[String(urlSchemeTask.hash)] = nil
         }
-        stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFinish()})
     }
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-        self.stoppedTasks.insert(urlSchemeTask.hash)
+        tasks[String(urlSchemeTask.hash)]?.cancel()
+        tasks[String(urlSchemeTask.hash)] = nil
     }
 
     open func mimeTypeForExtension(pathExtension: String) -> String {
@@ -137,12 +146,9 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         return false
     }
 
-    func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) {
+    func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) async throws {
         var urlRequest = urlSchemeTask.request
-        guard let url = urlRequest.url else {
-            self.stoppedTasks.remove(urlSchemeTask.hash)
-            return
-        }
+        guard let url = urlRequest.url else { return }
         var targetUrl = url.absoluteString
             .replacingOccurrences(of: CapacitorBridge.httpInterceptorStartIdentifier, with: "")
             .replacingOccurrences(of: CapacitorBridge.httpsInterceptorStartIdentifier, with: "")
@@ -159,49 +165,38 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         urlRequest.url = URL(string: targetUrl.removingPercentEncoding ?? targetUrl)
 
         let urlSession = URLSession.shared
-        let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
-            if let error = error {
-                self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFailWithError(error)})
-                self.stoppedTasks.remove(urlSchemeTask.hash)
-                return
+        let (data, response) = try await urlSession.data(for: urlRequest)
+        if let response = response as? HTTPURLResponse {
+            let existingHeaders = response.allHeaderFields
+            var newHeaders: [AnyHashable: Any] = [:]
+
+            // if using live reload, then set CORS headers
+            if self.isUsingLiveReload(url) {
+                newHeaders = [
+                    "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
+                    "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"
+                ]
             }
 
-            if let response = response as? HTTPURLResponse {
-                let existingHeaders = response.allHeaderFields
-                var newHeaders: [AnyHashable: Any] = [:]
+            if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (_, newHeaders) in newHeaders }) as? [String: String] {
 
-                // if using live reload, then set CORS headers
-                if self.isUsingLiveReload(url) {
-                    newHeaders = [
-                        "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
-                        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"
-                    ]
+                if let responseUrl = response.url,
+                   let modifiedResponse = HTTPURLResponse(
+                        url: responseUrl,
+                        statusCode: response.statusCode,
+                        httpVersion: nil,
+                        headerFields: mergedHeaders
+                   ) {
+                    try Task.checkCancellation()
+                    urlSchemeTask.didReceive(modifiedResponse)
                 }
 
-                if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (_, newHeaders) in newHeaders }) as? [String: String] {
-
-                    if let responseUrl = response.url {
-                        if let modifiedResponse = HTTPURLResponse(
-                            url: responseUrl,
-                            statusCode: response.statusCode,
-                            httpVersion: nil,
-                            headerFields: mergedHeaders
-                        ) {
-                            self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(modifiedResponse)})
-                        }
-                    }
-
-                    if let data = data {
-                        self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(data)})
-                    }
-                }
+                try Task.checkCancellation()
+                urlSchemeTask.didReceive(data)
+                try Task.checkCancellation()
+                urlSchemeTask.didFinish()
             }
-            self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFinish() })
-            self.stoppedTasks.remove(urlSchemeTask.hash)
-            return
         }
-
-        task.resume()
     }
 
     public let mimeTypes = [
@@ -552,35 +547,4 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         "z": "application/x-compress",
         "zip": "application/x-zip-compressed"
     ]
-}
-
-private class ConcurrentTasks {
-    private var tasks: Set<Int>
-    private let lock = NSLock()
-
-    init() {
-        tasks = []
-    }
-
-    func contains(_ value: Int) -> Bool {
-        lock.withLock { tasks.contains(value) }
-    }
-
-    @discardableResult
-    func remove(_ value: Int) -> Int? {
-        lock.withLock { tasks.remove(value) }
-    }
-
-    @discardableResult
-    func insert(_ value: Int) -> (inserted: Bool, memberAfterInsert: Int) {
-        lock.withLock { tasks.insert(value) }
-    }
-
-    func withTask(_ task: WKURLSchemeTask, _ action: () -> Void) {
-        lock.withLock {
-            if !tasks.contains(task.hash) {
-                action()
-            }
-        }
-    }
 }
