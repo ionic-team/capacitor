@@ -26,7 +26,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     }
 
     open func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        tasks[String(urlSchemeTask.hash)] = Task(priority: .high) {
+        tasks[urlSchemeTask.hashString] = Task(priority: .high) {
             let startPath: String
             let url = urlSchemeTask.request.url!
             let stringToLoad = url.path
@@ -112,13 +112,13 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             }
             try Task.checkCancellation()
             urlSchemeTask.didFinish()
-            tasks[String(urlSchemeTask.hash)] = nil
+            tasks[urlSchemeTask.hashString] = nil
         }
     }
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-        tasks[String(urlSchemeTask.hash)]?.cancel()
-        tasks[String(urlSchemeTask.hash)] = nil
+        tasks[urlSchemeTask.hashString]?.cancel()
+        tasks[urlSchemeTask.hashString] = nil
     }
 
     open func mimeTypeForExtension(pathExtension: String) -> String {
@@ -547,4 +547,8 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         "z": "application/x-compress",
         "zip": "application/x-zip-compressed"
     ]
+}
+
+private extension WKURLSchemeTask {
+    var hashString: String { String(hash) }
 }
