@@ -81,7 +81,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 headers["Content-Range"] = "bytes \(fromRange)-\(toRange)/\(totalSize)"
                 headers["Content-Length"] = String(data.count)
                 let response = HTTPURLResponse(url: localUrl, statusCode: 206, httpVersion: nil, headerFields: headers)
-                lock(urlSchemeTask, { urlSchemeTask.didReceive(response!) })
+                stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(response!) })
                 try fileHandle.close()
             } else {
                 if !stringToLoad.contains("cordova.js") {
@@ -94,18 +94,18 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
                 let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
                 if isMediaExtension(pathExtension: url.pathExtension) {
-                    lock(urlSchemeTask, { urlSchemeTask.didReceive(urlResponse)})
+                    stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(urlResponse)})
                 } else {
-                    lock(urlSchemeTask, { urlSchemeTask.didReceive(httpResponse!)})
+                    stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(httpResponse!)})
                 }
             }
-            lock(urlSchemeTask, { urlSchemeTask.didReceive(data)})
+            stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(data)})
         } catch {
-            lock(urlSchemeTask, { urlSchemeTask.didFailWithError(error)})
+            stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFailWithError(error)})
             self.stoppedTasks.remove(urlSchemeTask.hash)
             return
         }
-        lock(urlSchemeTask, { urlSchemeTask.didFinish()})
+        stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFinish()})
     }
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
@@ -161,7 +161,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let urlSession = URLSession.shared
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             if let error = error {
-                self.lock(urlSchemeTask, { urlSchemeTask.didFailWithError(error)})
+                self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFailWithError(error)})
                 self.stoppedTasks.remove(urlSchemeTask.hash)
                 return
             }
@@ -187,30 +187,21 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                             httpVersion: nil,
                             headerFields: mergedHeaders
                         ) {
-                            self.lock(urlSchemeTask, { urlSchemeTask.didReceive(modifiedResponse)})
+                            self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(modifiedResponse)})
                         }
                     }
 
                     if let data = data {
-                        self.lock(urlSchemeTask, { urlSchemeTask.didReceive(data)})
+                        self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(data)})
                     }
                 }
             }
-            self.lock(urlSchemeTask, { urlSchemeTask.didFinish() })
+            self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFinish() })
             self.stoppedTasks.remove(urlSchemeTask.hash)
             return
         }
 
         task.resume()
-    }
-
-    private func lock(_ urlSchemeTask: WKURLSchemeTask, _ action: @escaping () -> Void) {
-        let group = DispatchGroup()
-        group.enter()
-        if !self.stoppedTasks.contains(urlSchemeTask.hash) {
-            action()
-        }
-        group.leave()
     }
 
     public let mimeTypes = [
@@ -583,5 +574,13 @@ private class ConcurrentTasks {
     @discardableResult
     func insert(_ value: Int) -> (inserted: Bool, memberAfterInsert: Int) {
         lock.withLock { tasks.insert(value) }
+    }
+
+    func withTask(_ task: WKURLSchemeTask, _ action: () -> Void) {
+        lock.withLock {
+            if !tasks.contains(task.hash) {
+                action()
+            }
+        }
     }
 }
