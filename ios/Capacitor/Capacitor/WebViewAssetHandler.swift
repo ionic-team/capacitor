@@ -165,7 +165,18 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         urlRequest.url = URL(string: targetUrl.removingPercentEncoding ?? targetUrl)
 
         let urlSession = URLSession.shared
-        let (data, response) = try await urlSession.data(for: urlRequest)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await urlSession.data(for: urlRequest)
+        } catch let error as CancellationError {
+            throw error
+        } catch {
+            try Task.checkCancellation()
+            urlSchemeTask.didFailWithError(error)
+            return
+        }
+
         if let response = response as? HTTPURLResponse {
             let existingHeaders = response.allHeaderFields
             var newHeaders: [AnyHashable: Any] = [:]
