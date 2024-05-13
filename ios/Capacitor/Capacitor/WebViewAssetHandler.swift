@@ -26,6 +26,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     }
 
     open func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+        defer { self.stoppedTasks.remove(urlSchemeTask.hash) }
         let startPath: String
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
@@ -102,7 +103,6 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didReceive(data)})
         } catch {
             stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFailWithError(error)})
-            self.stoppedTasks.remove(urlSchemeTask.hash)
             return
         }
         stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFinish()})
@@ -140,7 +140,6 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) {
         var urlRequest = urlSchemeTask.request
         guard let url = urlRequest.url else {
-            self.stoppedTasks.remove(urlSchemeTask.hash)
             return
         }
         var targetUrl = url.absoluteString
@@ -162,7 +161,6 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             if let error = error {
                 self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFailWithError(error)})
-                self.stoppedTasks.remove(urlSchemeTask.hash)
                 return
             }
 
@@ -197,7 +195,6 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 }
             }
             self.stoppedTasks.withTask(urlSchemeTask, { urlSchemeTask.didFinish() })
-            self.stoppedTasks.remove(urlSchemeTask.hash)
             return
         }
 
