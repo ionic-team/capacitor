@@ -54,7 +54,6 @@ import Cordova
                                           assetHandler: assetHandler,
                                           delegationHandler: delegationHandler)
         #else
-        print("not using cordova")
         capacitorBridge = CapacitorBridge(with: configuration,
                                           delegate: self,
                                           assetHandler: assetHandler,
