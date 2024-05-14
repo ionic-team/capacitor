@@ -82,7 +82,9 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     headers["Content-Range"] = "bytes \(fromRange)-\(toRange)/\(totalSize)"
                     headers["Content-Length"] = String(data.count)
                     let response = HTTPURLResponse(url: localUrl, statusCode: 206, httpVersion: nil, headerFields: headers)
-                    urlSchemeTask.didReceive(response!)
+                    pendingTasks.withTask(urlSchemeTask) {
+                        urlSchemeTask.didReceive(response!)
+                    }
                     try fileHandle.close()
                 } else {
                     if !stringToLoad.contains("cordova.js") {
@@ -95,18 +97,28 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
                     let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
                     if isMediaExtension(pathExtension: url.pathExtension) {
-                        urlSchemeTask.didReceive(urlResponse)
+                        pendingTasks.withTask(urlSchemeTask) {
+                            urlSchemeTask.didReceive(urlResponse)
+                        }
                     } else {
-                        urlSchemeTask.didReceive(httpResponse!)
+                        pendingTasks.withTask(urlSchemeTask) {
+                            urlSchemeTask.didReceive(httpResponse!)
+                        }
                     }
                 }
-                urlSchemeTask.didReceive(data)
+                pendingTasks.withTask(urlSchemeTask) {
+                    urlSchemeTask.didReceive(data)
+                }
             } catch let error as NSError {
-                urlSchemeTask.didFailWithError(error)
+                pendingTasks.withTask(urlSchemeTask) {
+                    urlSchemeTask.didFailWithError(error)
+                }
                 self.pendingTasks.remove(urlSchemeTask.hash)
                 return
             }
-            urlSchemeTask.didFinish()
+            pendingTasks.withTask(urlSchemeTask) {
+                urlSchemeTask.didFinish()
+            }
             self.pendingTasks.remove(urlSchemeTask.hash)
         }
     }
@@ -142,7 +154,10 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) {
         var urlRequest = urlSchemeTask.request
-        guard let url = urlRequest.url else { return }
+        guard let url = urlRequest.url else {
+            pendingTasks.remove(urlSchemeTask.hash)
+            return
+        }
         var targetUrl = url.absoluteString
             .replacingOccurrences(of: CapacitorBridge.httpInterceptorStartIdentifier, with: "")
             .replacingOccurrences(of: CapacitorBridge.httpsInterceptorStartIdentifier, with: "")
@@ -161,45 +176,52 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let urlSession = URLSession.shared
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             if let error = error {
-                urlSchemeTask.didFailWithError(error)
+                self.pendingTasks.withTask(urlSchemeTask) {
+                    urlSchemeTask.didFailWithError(error)
+                }
+                self.pendingTasks.remove(urlSchemeTask.hash)
                 return
             }
 
-            if self.pendingTasks.contains(urlSchemeTask.hash) {
-                if let response = response as? HTTPURLResponse {
-                    let existingHeaders = response.allHeaderFields
-                    var newHeaders: [AnyHashable: Any] = [:]
+            if let response = response as? HTTPURLResponse {
+                let existingHeaders = response.allHeaderFields
+                var newHeaders: [AnyHashable: Any] = [:]
 
-                    // if using live reload, then set CORS headers
-                    if self.isUsingLiveReload(url) {
-                        newHeaders = [
-                            "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
-                            "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"
-                        ]
-                    }
+                // if using live reload, then set CORS headers
+                if self.isUsingLiveReload(url) {
+                    newHeaders = [
+                        "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
+                        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"
+                    ]
+                }
 
-                    if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (_, newHeaders) in newHeaders }) as? [String: String] {
+                if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (_, newHeaders) in newHeaders }) as? [String: String] {
 
-                        if let responseUrl = response.url {
-                            if let modifiedResponse = HTTPURLResponse(
-                                url: responseUrl,
-                                statusCode: response.statusCode,
-                                httpVersion: nil,
-                                headerFields: mergedHeaders
-                            ) {
+                    if let responseUrl = response.url {
+                        if let modifiedResponse = HTTPURLResponse(
+                            url: responseUrl,
+                            statusCode: response.statusCode,
+                            httpVersion: nil,
+                            headerFields: mergedHeaders
+                        ) {
+                            self.pendingTasks.withTask(urlSchemeTask) {
                                 urlSchemeTask.didReceive(modifiedResponse)
                             }
                         }
+                    }
 
-                        if let data = data {
+                    if let data = data {
+                        self.pendingTasks.withTask(urlSchemeTask) {
                             urlSchemeTask.didReceive(data)
                         }
                     }
                 }
-                urlSchemeTask.didFinish()
-                self.pendingTasks.remove(urlSchemeTask.hash)
-                return
             }
+            self.pendingTasks.withTask(urlSchemeTask) {
+                urlSchemeTask.didFinish()
+            }
+            self.pendingTasks.remove(urlSchemeTask.hash)
+            return
         }
 
         task.resume()
@@ -575,5 +597,13 @@ private class ConcurrentTasks {
     @discardableResult
     func insert(_ value: Int) -> (inserted: Bool, memberAfterInsert: Int) {
         lock.withLock { tasks.insert(value) }
+    }
+
+    func withTask(_ schemeTask: WKURLSchemeTask, action: () -> Void) {
+        lock.withLock {
+            if tasks.contains(schemeTask.hash) {
+                action()
+            }
+        }
     }
 }
