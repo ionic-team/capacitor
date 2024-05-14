@@ -1,12 +1,13 @@
 import Foundation
 import MobileCoreServices
+import Combine
 
 @objc(CAPWebViewAssetHandler)
 // swiftlint:disable type_body_length
 open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
-    private var tasks = ConcurrentDictionary<Task<Void, any Error>>()
+    private let tasks = ConcurrentDictionary<Task<Void, any Error>>()
 
     public init(router: Router) {
         self.router = router
@@ -26,19 +27,20 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     }
 
     open func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        tasks[urlSchemeTask.hashString] = Task(priority: .high) {
+        tasks[urlSchemeTask.hashString] = Task(priority: .userInitiated) {
+            defer { tasks[urlSchemeTask.hashString] = nil }
             let startPath: String
             let url = urlSchemeTask.request.url!
             let stringToLoad = url.path
             let localUrl = URL.init(string: url.absoluteString)!
 
             if url.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
-                try await handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
+                await handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
                 return
             }
 
             if url.path.starts(with: CapacitorBridge.httpsInterceptorStartIdentifier) {
-                try await handleCapacitorHttpRequest(urlSchemeTask, localUrl, true)
+                await handleCapacitorHttpRequest(urlSchemeTask, localUrl, true)
                 return
             }
 
@@ -49,7 +51,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             }
 
             let fileUrl = URL.init(fileURLWithPath: startPath)
-            
+
             do {
                 var data = Data()
                 let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
@@ -82,8 +84,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     headers["Content-Range"] = "bytes \(fromRange)-\(toRange)/\(totalSize)"
                     headers["Content-Length"] = String(data.count)
                     let response = HTTPURLResponse(url: localUrl, statusCode: 206, httpVersion: nil, headerFields: headers)
-                    try Task.checkCancellation()
-                    urlSchemeTask.didReceive(response!)
+                    tasks.with(urlSchemeTask) { $0.didReceive(response!) }
                     try fileHandle.close()
                 } else {
                     if !stringToLoad.contains("cordova.js") {
@@ -95,28 +96,26 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     }
                     let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
                     let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
-                    if isMediaExtension(pathExtension: url.pathExtension) {
-                        try Task.checkCancellation()
-                        urlSchemeTask.didReceive(urlResponse)
-                    } else {
-                        try Task.checkCancellation()
-                        urlSchemeTask.didReceive(httpResponse!)
+                    tasks.with(urlSchemeTask) {
+                        if isMediaExtension(pathExtension: url.pathExtension) {
+                            $0.didReceive(urlResponse)
+                        } else {
+                            $0.didReceive(httpResponse!)
+                        }
+                        $0.didReceive(data)
                     }
                 }
-                try Task.checkCancellation()
-                urlSchemeTask.didReceive(data)
+
             } catch let error as NSError {
-                try Task.checkCancellation()
-                urlSchemeTask.didFailWithError(error)
+                tasks.with(urlSchemeTask) { $0.didFailWithError(error) }
                 return
             }
-            try Task.checkCancellation()
-            urlSchemeTask.didFinish()
-            tasks[urlSchemeTask.hashString] = nil
+            tasks.with(urlSchemeTask) { $0.didFinish() }
         }
     }
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
+        print("cancelling task \(urlSchemeTask.hashString)")
         tasks[urlSchemeTask.hashString]?.cancel()
         tasks[urlSchemeTask.hashString] = nil
     }
@@ -146,7 +145,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         return false
     }
 
-    func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) async throws {
+    func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) async {
         var urlRequest = urlSchemeTask.request
         guard let url = urlRequest.url else { return }
         var targetUrl = url.absoluteString
@@ -169,11 +168,8 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let response: URLResponse
         do {
             (data, response) = try await urlSession.data(for: urlRequest)
-        } catch let error as CancellationError {
-            throw error
         } catch {
-            try Task.checkCancellation()
-            urlSchemeTask.didFailWithError(error)
+            tasks.with(urlSchemeTask) { $0.didFailWithError(error) }
             return
         }
 
@@ -193,19 +189,18 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
                 if let responseUrl = response.url,
                    let modifiedResponse = HTTPURLResponse(
-                        url: responseUrl,
-                        statusCode: response.statusCode,
-                        httpVersion: nil,
-                        headerFields: mergedHeaders
+                    url: responseUrl,
+                    statusCode: response.statusCode,
+                    httpVersion: nil,
+                    headerFields: mergedHeaders
                    ) {
-                    try Task.checkCancellation()
-                    urlSchemeTask.didReceive(modifiedResponse)
+                    tasks.with(urlSchemeTask) { $0.didReceive(modifiedResponse) }
                 }
 
-                try Task.checkCancellation()
-                urlSchemeTask.didReceive(data)
-                try Task.checkCancellation()
-                urlSchemeTask.didFinish()
+                tasks.with(urlSchemeTask) {
+                    $0.didReceive(data)
+                    $0.didFinish()
+                }
             }
         }
     }
@@ -562,4 +557,12 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
 private extension WKURLSchemeTask {
     var hashString: String { String(hash) }
+}
+
+private extension ConcurrentDictionary {
+    func with(_ schemeTask: WKURLSchemeTask, action: (WKURLSchemeTask) -> Void) {
+        with(schemeTask.hashString) { _ in
+            action(schemeTask)
+        }
+    }
 }

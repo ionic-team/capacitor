@@ -276,6 +276,12 @@ internal class ConcurrentDictionary<Value> {
     private var storage: [String: Value]
     private let lock = NSLock()
 
+    internal var keys: [String: Value].Keys {
+        lock.withLock {
+            storage.keys
+        }
+    }
+
     init(_ initial: [String: Value] = [:]) {
         storage = initial
     }
@@ -290,6 +296,15 @@ internal class ConcurrentDictionary<Value> {
         set {
             lock.withLock {
                 storage[key] = newValue
+            }
+        }
+    }
+
+    /// Only runs ``action`` if ``key`` is present
+    func with(_ key: String, action: (Value) -> Void) {
+        lock.withLock {
+            if let value = storage[key] {
+                action(value)
             }
         }
     }
