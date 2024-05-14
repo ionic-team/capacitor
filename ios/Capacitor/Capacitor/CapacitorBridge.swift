@@ -1,7 +1,9 @@
 import Foundation
 import Dispatch
 import WebKit
+#if USE_CORDOVA
 import Cordova
+#endif
 
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
@@ -111,12 +113,14 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // Map of all loaded and instantiated plugins by pluginId -> instance
     var plugins =  [String: CapacitorPlugin]()
     // Manager for getting Cordova plugins
+    #if USE_CORDOVA
     var cordovaPluginManager: CDVPluginManager?
+    private var cordovaParser: CDVConfigParser?
+    #endif
     // Calls we are storing to resolve later
     var storedCalls = [String: CAPPluginCall]()
     // Whether to inject the Cordova files
     private var injectCordovaFiles = false
-    private var cordovaParser: CDVConfigParser?
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
@@ -195,7 +199,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     // MARK: - Initialization
-
+    #if USE_CORDOVA
     public init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler, autoRegisterPlugins: Bool = true) {
         self.bridgeDelegate = bridgeDelegate
         self.webViewAssetHandler = assetHandler
@@ -212,6 +216,28 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
         setupCordovaCompatibility()
+        observers.append(NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
+            self?.tmpWindow = nil
+        })
+
+        self.setupWebDebugging(configuration: configuration)
+    }
+    #endif
+
+    public init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler, autoRegisterPlugins: Bool = true) {
+        self.bridgeDelegate = bridgeDelegate
+        self.webViewAssetHandler = assetHandler
+        self.webViewDelegationHandler = delegationHandler
+        self.config = configuration
+        self.notificationRouter = NotificationRouter()
+        self.notificationRouter.handleApplicationNotifications = configuration.handleApplicationNotifications
+        self.autoRegisterPlugins = autoRegisterPlugins
+        super.init()
+
+        self.webViewDelegationHandler.bridge = self
+
+        exportCoreJS(localUrl: configuration.localURL.absoluteString)
+        registerPlugins()
         observers.append(NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
             self?.tmpWindow = nil
         })
@@ -242,7 +268,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             type(of: self).fatalError(error, error)
         }
     }
-
+    #if USE_CORDOVA
     /**
      Set up our Cordova compat by loading all known Cordova plugins and injecting their JS.
      */
@@ -259,7 +285,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             })
         }
     }
-
+    #endif
     /**
      Export the core Cordova JS runtime
      */
@@ -293,11 +319,15 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
                     for plugin in registrationList.packageClassList {
                         if let pluginClass = NSClassFromString(plugin) {
+                            #if USE_CORDOVA
                             if pluginClass == CDVPlugin.self {
                                 injectCordovaFiles = true
                             } else {
                                 pluginList.append(pluginClass)
                             }
+                            #else
+                            pluginList.append(pluginClass)
+                            #endif
                         }
                     }
                 }
@@ -404,7 +434,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     func getDispatchQueue() -> DispatchQueue {
         return self.dispatchQueue
     }
-
+    #if USE_CORDOVA
     func registerCordovaPlugins() {
         guard let cordovaParser = cordovaParser else {
             return
@@ -421,7 +451,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             type(of: self).fatalError(error, error)
         }
     }
-
+    #endif
     func reload() {
         self.getWebView()?.reload()
     }
@@ -519,7 +549,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             // CAPLog.print("Native call took", timeElapsed)
         }
     }
-
+    #if USE_CORDOVA
     /**
      Handle a Cordova call from JavaScript. First, find the corresponding plugin,
      construct a selector, and perform that selector on the plugin instance.
@@ -547,7 +577,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             return
         }
     }
-
+    #endif
     /**
      Send a successful result to the JavaScript layer.
      */

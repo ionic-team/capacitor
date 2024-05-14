@@ -51,7 +51,7 @@ internal extension InstanceDescriptor {
         } else {
             warnings.update(with: .missingFile)
         }
-
+        #if USE_CORDOVA
         // parse the cordova configuration
         var configParser: XMLParser?
         if let cordovaURL = cordovaURL,
@@ -68,7 +68,7 @@ internal extension InstanceDescriptor {
         }
         configParser?.delegate = cordovaConfiguration
         configParser?.parse()
-
+        #endif
         // extract our configuration values
         if let config = config {
             // to be removed
@@ -149,7 +149,11 @@ internal extension InstanceDescriptor {
 
 extension InstanceDescriptor {
     @objc public var cordovaDeployDisabled: Bool {
+        #if USE_CORDOVA
         return (cordovaConfiguration.settings?["DisableDeploy".lowercased()] as? NSString)?.boolValue ?? false
+        #else
+        return false
+        #endif
     }
 
     @objc public func normalize() {

@@ -44,7 +44,9 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
     _contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     _appLocation = location;
     _limitsNavigationsToAppBoundDomains = FALSE;
+#if USE_CORDOVA
     _cordovaConfiguration = [[CDVConfigParser alloc] init];
+#endif
     _warnings = 0;
     if (location == nil) {
         _warnings |= CAPInstanceWarningMissingAppDir;

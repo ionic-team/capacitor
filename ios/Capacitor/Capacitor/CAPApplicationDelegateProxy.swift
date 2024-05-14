@@ -11,7 +11,9 @@ public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
             "url": url,
             "options": options
         ])
+        #if USE_CORDOVA
         NotificationCenter.default.post(name: NSNotification.Name.CDVPluginHandleOpenURL, object: url)
+        #endif
         lastURL = url
         return true
     }

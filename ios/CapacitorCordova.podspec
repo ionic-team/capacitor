@@ -21,6 +21,7 @@ Pod::Spec.new do |s|
                           "#{prefix}CapacitorCordova/CapacitorCordova/CapacitorCordova.h"
   s.module_map = "#{prefix}CapacitorCordova/CapacitorCordova/CapacitorCordova.modulemap"
   s.resources = ["#{prefix}CapacitorCordova/CapacitorCordova/PrivacyInfo.xcprivacy"]
+  s.xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => 'USE_CORDOVA=1', 'SWIFT_ACTIVE_COMPILATION_CONDITIONS'  => 'USE_CORDOVA'}
   s.requires_arc = true
   s.framework    = 'WebKit'
 end

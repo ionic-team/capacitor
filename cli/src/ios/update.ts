@@ -73,6 +73,9 @@ async function updateIOSCocoaPods(
   );
   if (cordovaPlugins.length > 0) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
+    await updateCapacitorPodspec(config, true);
+  } else {
+    await updateCapacitorPodspec(config, false);
   }
   if (!(await pathExists(await config.ios.webDirAbs))) {
     await copyTask(config, platform);
@@ -88,6 +91,25 @@ async function updateIOSCocoaPods(
   );
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
   await checkPlatformVersions(config, platform);
+}
+
+async function updateCapacitorPodspec(config: Config, useCordova: boolean) {
+  const cordovaString = `  s.dependency 'CapacitorCordova'
+  s.xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => 'USE_CORDOVA=1', 'SWIFT_ACTIVE_COMPILATION_CONDITIONS'  => 'USE_CORDOVA'}`;
+  const capacitoriOSPath = resolveNode(config.app.rootDir, '@capacitor/ios');
+  const podpecPath = join(capacitoriOSPath!, 'Capacitor.podspec');
+  let podspecContent = await readFile(podpecPath, { encoding: 'utf-8' });
+  if (useCordova) {
+    if (!podspecContent.includes(cordovaString)) {
+      podspecContent = podspecContent.replace(
+        `s.swift_version = '5.1'`,
+        `s.swift_version = '5.1'\n${cordovaString}`,
+      );
+    }
+  } else {
+    podspecContent = podspecContent.replace(`\n${cordovaString}`, '');
+  }
+  return await writeFile(podpecPath, podspecContent);
 }
 
 export async function installCocoaPodsPlugins(
@@ -221,6 +243,11 @@ async function generatePodFile(
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
   );
+  if (cordovaPlugins.length > 0) {
+    pods.push(
+      `  pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'\n`,
+    );
+  }
   cordovaPlugins.map(async p => {
     const podspecs = getPlatformElement(p, platform, 'podspec');
     podspecs.map((podspec: any) => {
@@ -265,7 +292,6 @@ async function generatePodFile(
   }
   return `
   pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
-  pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'
 ${pods.join('').trimRight()}`;
 }
 

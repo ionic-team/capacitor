@@ -1,6 +1,8 @@
 import UIKit
 import WebKit
+#if USE_CORDOVA
 import Cordova
+#endif
 
 @objc open class CAPBridgeViewController: UIViewController {
     private var capacitorBridge: CapacitorBridge?
@@ -45,11 +47,19 @@ import Cordova
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView
         // create the bridge
+        #if USE_CORDOVA
         capacitorBridge = CapacitorBridge(with: configuration,
                                           delegate: self,
                                           cordovaConfiguration: configDescriptor.cordovaConfiguration,
                                           assetHandler: assetHandler,
                                           delegationHandler: delegationHandler)
+        #else
+        print("not using cordova")
+        capacitorBridge = CapacitorBridge(with: configuration,
+                                          delegate: self,
+                                          assetHandler: assetHandler,
+                                          delegationHandler: delegationHandler)
+        #endif
         capacitorDidLoad()
 
         if configDescriptor.instanceType == .fixed {
