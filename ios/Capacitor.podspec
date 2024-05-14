@@ -20,6 +20,4 @@ Pod::Spec.new do |s|
   s.module_map = "#{prefix}Capacitor/Capacitor/Capacitor.modulemap"
   s.resources = ["#{prefix}Capacitor/Capacitor/assets/native-bridge.js", "#{prefix}Capacitor/Capacitor/PrivacyInfo.xcprivacy"]
   s.swift_version = '5.1'
-  s.dependency 'CapacitorCordova'
-  s.xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => 'USE_CORDOVA=1', 'SWIFT_ACTIVE_COMPILATION_CONDITIONS'  => 'USE_CORDOVA'}
 end
