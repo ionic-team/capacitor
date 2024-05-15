@@ -2,7 +2,6 @@
 #define CAPInstanceDescriptor_h
 
 @import UIKit;
-@import Cordova;
 
 typedef NS_ENUM(NSInteger, CAPInstanceType) {
     CAPInstanceTypeFixed NS_SWIFT_NAME(fixed),
@@ -12,9 +11,7 @@ typedef NS_ENUM(NSInteger, CAPInstanceType) {
 typedef NS_OPTIONS(NSUInteger, CAPInstanceWarning) {
     CAPInstanceWarningMissingAppDir       NS_SWIFT_NAME(missingAppDir)      = 1 << 0,
     CAPInstanceWarningMissingFile         NS_SWIFT_NAME(missingFile)        = 1 << 1,
-    CAPInstanceWarningInvalidFile         NS_SWIFT_NAME(invalidFile)        = 1 << 2,
-    CAPInstanceWarningMissingCordovaFile  NS_SWIFT_NAME(missingCordovaFile) = 1 << 3,
-    CAPInstanceWarningInvalidCordovaFile  NS_SWIFT_NAME(invalidCordovaFile) = 1 << 4
+    CAPInstanceWarningInvalidFile         NS_SWIFT_NAME(invalidFile)        = 1 << 2
 } NS_SWIFT_NAME(InstanceWarning);
 
 typedef NS_OPTIONS(NSUInteger, CAPInstanceLoggingBehavior) {
@@ -129,10 +126,6 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *preferredContentMode;
 /**
- @brief The parser used to load the cofiguration for Cordova plugins.
- */
-@property (nonatomic, copy, nonnull) CDVConfigParser *cordovaConfiguration;
-/**
  @brief Warnings generated during initialization.
  */
 @property (nonatomic, assign) CAPInstanceWarning warnings;
@@ -155,7 +148,8 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @param configURL The location of the Capacitor configuration file.
  @param cordovaURL The location of the Cordova configuration file.
  */
-- (instancetype _Nonnull)initAtLocation:(NSURL* _Nonnull)appURL configuration:(NSURL* _Nullable)configURL cordovaConfiguration:(NSURL* _Nullable)cordovaURL NS_SWIFT_NAME(init(at:configuration:cordovaConfiguration:));
+- (instancetype _Nonnull)initAtLocation:(NSURL* _Nonnull)appURL configuration:(NSURL* _Nullable)configURL cordovaConfiguration:(NSURL* _Nullable)cordovaURL NS_SWIFT_NAME(init(at:configuration:cordovaConfiguration:)) __deprecated;
+- (instancetype _Nonnull)initAtLocation:(NSURL* _Nonnull)appURL configuration:(NSURL* _Nullable)configURL NS_SWIFT_NAME(init(at:configuration:));
 @end
 
 #endif /* CAPInstanceDescriptor_h */

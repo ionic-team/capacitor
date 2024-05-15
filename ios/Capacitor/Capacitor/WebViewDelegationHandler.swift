@@ -188,17 +188,6 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                 }
 
                 bridge.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
-            } else if type == "cordova" {
-                let pluginId = dict["service"] as? String ?? ""
-                let method = dict["action"] as? String ?? ""
-                let callbackId = dict["callbackId"] as? String ?? ""
-
-                let args = dict["actionArgs"] as? Array ?? []
-                let options = ["options": args]
-
-                CAPLog.print("To Native Cordova -> ", pluginId, method, callbackId, options)
-
-                bridge.handleCordovaJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
             }
         }
     }

@@ -4,7 +4,8 @@
 // Swift extensions marked as @objc and internal are available to the Obj-C runtime but are not available at compile time.
 // so we need this declaration to avoid compiler complaints
 @interface CAPInstanceDescriptor (InternalSwiftExtension)
-- (void)_parseConfigurationAt:(NSURL *)configURL cordovaConfiguration:(NSURL *)cordovaURL;
+- (void)_parseConfigurationAt:(NSURL *)configURL cordovaConfiguration:(NSURL *)cordovaURL __deprecated;
+- (void)_parseConfigurationAt:(NSURL *)configURL;
 @end
 
 NSString* const CAPInstanceDescriptorDefaultScheme = @"capacitor";
@@ -15,16 +16,20 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
     if (self = [super init]) {
         _instanceType = CAPInstanceTypeFixed;
         [self _setDefaultsWithAppLocation:[[NSBundle mainBundle] URLForResource:@"public" withExtension:nil]];
-        [self _parseConfigurationAt:[[NSBundle mainBundle] URLForResource:@"capacitor.config" withExtension:@"json"] cordovaConfiguration:[[NSBundle mainBundle] URLForResource:@"config" withExtension:@"xml"]];
+        [self _parseConfigurationAt:[[NSBundle mainBundle] URLForResource:@"capacitor.config" withExtension:@"json"]];
     }
     return self;
 }
 
 - (instancetype)initAtLocation:(NSURL*)appURL configuration:(NSURL*)configURL cordovaConfiguration:(NSURL*)cordovaURL {
+    return [self initAtLocation:appURL configuration:configURL];
+}
+
+- (instancetype)initAtLocation:(NSURL*)appURL configuration:(NSURL*)configURL {
     if (self = [super init]) {
         _instanceType = CAPInstanceTypeVariable;
         [self _setDefaultsWithAppLocation:appURL];
-        [self _parseConfigurationAt:configURL cordovaConfiguration:cordovaURL];
+        [self _parseConfigurationAt:configURL];
     }
     return self;
 }
@@ -44,7 +49,6 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
     _contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     _appLocation = location;
     _limitsNavigationsToAppBoundDomains = FALSE;
-    _cordovaConfiguration = [[CDVConfigParser alloc] init];
     _warnings = 0;
     if (location == nil) {
         _warnings |= CAPInstanceWarningMissingAppDir;
