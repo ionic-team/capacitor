@@ -45,12 +45,12 @@ export async function findPluginClasses(files: string[]): Promise<string[]> {
     const objcPluginRegex = RegExp(/CAP_PLUGIN\(([A-Za-z0-9_-]+)/);
 
     const swiftMatches = swiftPluginRegex.exec(fileData);
-    if (swiftMatches?.[1] != null) {
+    if (swiftMatches?.[1] && !classList.includes(swiftMatches[1])) {
       classList.push(swiftMatches[1]);
     }
 
     const objcMatches = objcPluginRegex.exec(fileData);
-    if (objcMatches?.[1] != null) {
+    if (objcMatches?.[1] && !classList.includes(objcMatches[1])) {
       classList.push(objcMatches[1]);
     }
   }
