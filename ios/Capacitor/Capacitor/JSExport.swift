@@ -35,23 +35,23 @@ internal class JSExport {
         }
     }
 
-    static func exportCordovaJS(userContentController: WKUserContentController) throws {
-        guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
-            CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
-            throw CapacitorBridgeError.errorExportingCoreJS
-        }
-        guard let cordovaPluginsUrl = Bundle.main.url(forResource: "public/cordova_plugins", withExtension: "js") else {
-            CAPLog.print("ERROR: Required cordova_plugins.js file not found. Cordova plugins  will not function!")
-            throw CapacitorBridgeError.errorExportingCoreJS
-        }
-        do {
-            try self.injectFile(fileURL: cordovaUrl, userContentController: userContentController)
-            try self.injectFile(fileURL: cordovaPluginsUrl, userContentController: userContentController)
-        } catch {
-            CAPLog.print("ERROR: Unable to read required cordova files. Cordova plugins will not function!")
-            throw CapacitorBridgeError.errorExportingCoreJS
-        }
-    }
+//    static func exportCordovaJS(userContentController: WKUserContentController) throws {
+//        guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
+//            CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
+//            throw CapacitorBridgeError.errorExportingCoreJS
+//        }
+//        guard let cordovaPluginsUrl = Bundle.main.url(forResource: "public/cordova_plugins", withExtension: "js") else {
+//            CAPLog.print("ERROR: Required cordova_plugins.js file not found. Cordova plugins  will not function!")
+//            throw CapacitorBridgeError.errorExportingCoreJS
+//        }
+//        do {
+//            try self.injectFile(fileURL: cordovaUrl, userContentController: userContentController)
+//            try self.injectFile(fileURL: cordovaPluginsUrl, userContentController: userContentController)
+//        } catch {
+//            CAPLog.print("ERROR: Unable to read required cordova files. Cordova plugins will not function!")
+//            throw CapacitorBridgeError.errorExportingCoreJS
+//        }
+//    }
 
     static func exportMiscFileJS(paths: [String], userContentController: WKUserContentController) {
         for path in paths {
@@ -184,27 +184,27 @@ internal class JSExport {
         return lines.joined(separator: "\n")
     }
 
-    static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
-        if let pluginsJSFolder = Bundle.main.url(forResource: "public/plugins", withExtension: nil) {
-            self.injectFilesForFolder(folder: pluginsJSFolder, userContentController: userContentController)
-        }
-    }
+//    static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
+//        if let pluginsJSFolder = Bundle.main.url(forResource: "public/plugins", withExtension: nil) {
+//            self.injectFilesForFolder(folder: pluginsJSFolder, userContentController: userContentController)
+//        }
+//    }
 
-    static func injectFilesForFolder(folder: URL, userContentController: WKUserContentController) {
-        let fileManager = FileManager.default
-        do {
-            let fileURLs = try fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil, options: [])
-            for fileURL in fileURLs {
-                if fileURL.hasDirectoryPath {
-                    injectFilesForFolder(folder: fileURL, userContentController: userContentController)
-                } else {
-                    try self.injectFile(fileURL: fileURL, userContentController: userContentController)
-                }
-            }
-        } catch {
-            CAPLog.print("Error while enumerating files")
-        }
-    }
+//    static func injectFilesForFolder(folder: URL, userContentController: WKUserContentController) {
+//        let fileManager = FileManager.default
+//        do {
+//            let fileURLs = try fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil, options: [])
+//            for fileURL in fileURLs {
+//                if fileURL.hasDirectoryPath {
+//                    injectFilesForFolder(folder: fileURL, userContentController: userContentController)
+//                } else {
+//                    try self.injectFile(fileURL: fileURL, userContentController: userContentController)
+//                }
+//            }
+//        } catch {
+//            CAPLog.print("Error while enumerating files")
+//        }
+//    }
 
     static func injectFile(fileURL: URL, userContentController: WKUserContentController) throws {
         do {
