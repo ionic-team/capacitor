@@ -188,6 +188,8 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                 }
                 
                 bridge.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
+            } else if let handler = bridge.callInterceptors[type] {
+                handler(dict)
             }
 //            } else if type == "cordova" {
 //                let pluginId = dict["service"] as? String ?? ""
