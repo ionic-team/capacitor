@@ -116,11 +116,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // Calls we are storing to resolve later
     var storedCalls = ConcurrentDictionary<CAPPluginCall>()
     // Whether to inject the Cordova files
-    private var injectCordovaFiles = false
+    private var cordovaIsPresent = false
     //private var cordovaParser: CDVConfigParser?
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
+    internal private(set) var callInterceptors: [String: ([String: Any]) -> Void] = [:]
     // Array of block based observers
     var observers: [NSObjectProtocol] = []
 
@@ -219,7 +220,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
-       // setupCordovaCompatibility()
+        setupListeners()
         observers.append(NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
             self?.tmpWindow = nil
         })
@@ -251,31 +252,29 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
-    /**
-     Set up our Cordova compat by loading all known Cordova plugins and injecting their JS.
-     */
-//    func setupCordovaCompatibility() {
-//        if injectCordovaFiles {
-//            exportCordovaJS()
-//          //  registerCordovaPlugins()
-//        } else {
-//            observers.append(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
-//                self?.triggerDocumentJSEvent(eventName: "resume")
-//            })
-//            observers.append(NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
-//                self?.triggerDocumentJSEvent(eventName: "pause")
-//            })
-//        }
-//    }
+    // TODO: Change this description
+    /// Setup listeners if Cordova is not present
+    func setupListeners() {
+        if !cordovaIsPresent {
+            observers.append(
+                NotificationCenter.default.addObserver(
+                    forName: UIApplication.willEnterForegroundNotification,
+                    object: nil,
+                    queue: .main
+                ) { [weak self] _ in
+                    self?.triggerDocumentJSEvent(eventName: "resume")
+                }
+            )
 
-    /**
-     Export the core Cordova JS runtime
-     */
-    func exportCordovaJS() {
-        do {
-            try JSExport.exportCordovaJS(userContentController: webViewDelegationHandler.contentController)
-        } catch {
-            type(of: self).fatalError(error, error)
+            observers.append(
+                NotificationCenter.default.addObserver(
+                    forName: UIApplication.didEnterBackgroundNotification,
+                    object: nil,
+                    queue: .main
+                ) { [weak self] _ in
+                    self?.triggerDocumentJSEvent(eventName: "pause")
+                }
+            )
         }
     }
 
@@ -300,12 +299,11 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                     let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
 
                     for plugin in registrationList.packageClassList {
-                        if let pluginClass = NSClassFromString(plugin) {
-//                            if pluginClass == CDVPlugin.self {
-//                                injectCordovaFiles = true
-//                            } else {
-                                pluginList.append(pluginClass)
-//                            }
+                        if let pluginClass = NSClassFromString(plugin), pluginClass == CAPPlugin.self {
+                            pluginList.append(pluginClass)
+                            if plugin == "CordovaPlugin" {
+                                cordovaIsPresent = true
+                            }
                         }
                     }
                 }
@@ -380,6 +378,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     // MARK: - CAPBridgeProtocol: Call Management
+
+    public func registerCallInterceptor(_ name: String, handler: @escaping ([String: Any]) -> Void) {
+        callInterceptors[name] = handler
+    }
 
     @objc public func saveCall(_ call: CAPPluginCall) {
         storedCalls[call.callbackId] = call
