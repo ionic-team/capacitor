@@ -22,5 +22,6 @@ Pod::Spec.new do |s|
   s.module_map = "#{prefix}CapacitorCordova/CapacitorCordova/CapacitorCordova.modulemap"
   s.resources = ["#{prefix}CapacitorCordova/CapacitorCordova/PrivacyInfo.xcprivacy"]
   s.requires_arc = true
+  s.dependency 'Capacitor', s.version.to_s
   s.framework    = 'WebKit'
 end
