@@ -35,6 +35,7 @@ export async function generatePackageFile(
 ): Promise<void> {
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
+    logger.warn('SPM Support is still experimental');
     const textToWrite = generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
@@ -58,7 +59,7 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-spm.git", branch: "main")`;
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", branch: "main")`;
 
   for (const plugin of plugins) {
     const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
@@ -71,8 +72,8 @@ let package = Package(
         .target(
             name: "CapApp-SPM",
             dependencies: [
-                .product(name: "Capacitor", package: "capacitor-spm"),
-                .product(name: "Cordova", package: "capacitor-spm")`;
+                .product(name: "Capacitor", package: "capacitor-swift-pm"),
+                .product(name: "Cordova", package: "capacitor-swift-pm")`;
 
   for (const plugin of plugins) {
     packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
