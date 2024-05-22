@@ -443,23 +443,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return self.dispatchQueue
     }
 
-//    func registerCordovaPlugins() {
-//        guard let cordovaParser = cordovaParser else {
-//            return
-//        }
-//        cordovaPluginManager = CDVPluginManager.init(parser: cordovaParser, viewController: self.viewController, webView: self.getWebView())
-//        if cordovaParser.startupPluginNames.count > 0 {
-//            for pluginName in cordovaParser.startupPluginNames {
-//                _ = cordovaPluginManager?.getCommandInstance(pluginName as? String)
-//            }
-//        }
-//        do {
-//            try JSExport.exportCordovaPluginsJS(userContentController: webViewDelegationHandler.contentController)
-//        } catch {
-//            type(of: self).fatalError(error, error)
-//        }
-//    }
-
     func reload() {
         self.getWebView()?.reload()
     }
