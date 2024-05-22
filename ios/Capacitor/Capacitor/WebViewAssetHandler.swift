@@ -80,7 +80,9 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 headers["Content-Range"] = "bytes \(fromRange)-\(toRange)/\(totalSize)"
                 headers["Content-Length"] = String(data.count)
                 let response = HTTPURLResponse(url: localUrl, statusCode: 206, httpVersion: nil, headerFields: headers)
-                urlSchemeTask.didReceive(response!)
+                tryBlock {
+                    urlSchemeTask.didReceive(response!)
+                }
                 try fileHandle.close()
             } else {
                 if !stringToLoad.contains("cordova.js") {
@@ -93,17 +95,28 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
                 let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
                 if isMediaExtension(pathExtension: url.pathExtension) {
-                    urlSchemeTask.didReceive(urlResponse)
+                    tryBlock {
+                        urlSchemeTask.didReceive(urlResponse)
+                    }
                 } else {
-                    urlSchemeTask.didReceive(httpResponse!)
+                    tryBlock {
+                        urlSchemeTask.didReceive(httpResponse!)
+                    }
                 }
             }
-            urlSchemeTask.didReceive(data)
+            tryBlock {
+                urlSchemeTask.didReceive(data)
+            }
         } catch let error as NSError {
-            urlSchemeTask.didFailWithError(error)
+            tryBlock {
+                urlSchemeTask.didFailWithError(error)
+            }
             return
         }
-        urlSchemeTask.didFinish()
+        tryBlock {
+            urlSchemeTask.didFinish()
+        }
+            
     }
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
@@ -156,7 +169,9 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let urlSession = URLSession.shared
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             if let error = error {
-                urlSchemeTask.didFailWithError(error)
+                tryBlock {
+                    urlSchemeTask.didFailWithError(error)
+                }
                 return
             }
 
@@ -181,16 +196,22 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                             httpVersion: nil,
                             headerFields: mergedHeaders
                         ) {
-                            urlSchemeTask.didReceive(modifiedResponse)
+                            tryBlock {
+                                urlSchemeTask.didReceive(modifiedResponse)
+                            }
                         }
                     }
 
                     if let data = data {
-                        urlSchemeTask.didReceive(data)
+                        tryBlock {
+                            urlSchemeTask.didReceive(data)
+                        }
                     }
                 }
             }
-            urlSchemeTask.didFinish()
+            tryBlock {
+                urlSchemeTask.didFinish()
+            }
             return
         }
 

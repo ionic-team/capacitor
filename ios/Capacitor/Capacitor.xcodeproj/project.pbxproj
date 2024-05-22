@@ -13,6 +13,7 @@
 		2F81F5CA26FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F81F5C826FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m */; };
 		373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */; };
 		373A69F2255C95D0000A6F44 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69F1255C95D0000A6F44 /* NotificationRouter.swift */; };
+		4B6B16812BFE479F00BBDC2F /* CAPExceptionCatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B16802BFE479F00BBDC2F /* CAPExceptionCatcher.h */; };
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
 		50503EE91FC08595003606DC /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Capacitor.framework */; };
 		50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* CapacitorTests.swift */; };
@@ -157,6 +158,7 @@
 		2F81F5C826FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CAPBridgeViewController+CDVScreenOrientationDelegate.m"; sourceTree = "<group>"; };
 		373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerProtocol.swift; sourceTree = "<group>"; };
 		373A69F1255C95D0000A6F44 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
+		4B6B16802BFE479F00BBDC2F /* CAPExceptionCatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPExceptionCatcher.h; sourceTree = "<group>"; };
 		501CBAA61FC0A723009B0D4D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		50503EDF1FC08594003606DC /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE81FC08595003606DC /* CapacitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapacitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -404,6 +406,7 @@
 				A71289E527F380A500DADDF3 /* Router.swift */,
 				A7BE62CB2B486A5400165ACB /* KeyValueStore.swift */,
 				0F83E884285A332D006C43CB /* AppUUID.swift */,
+				4B6B16802BFE479F00BBDC2F /* CAPExceptionCatcher.h */,
 			);
 			path = Capacitor;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 			files = (
 				62959B412524DA7800A3D7F1 /* Capacitor.h in Headers */,
 				62959B452524DA7800A3D7F1 /* CAPPlugin.h in Headers */,
+				4B6B16812BFE479F00BBDC2F /* CAPExceptionCatcher.h in Headers */,
 				62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */,
 				62959B3B2524DA7800A3D7F1 /* CAPPluginMethod.h in Headers */,
 				623D691D254C7462002D01D1 /* CAPInstanceConfiguration.h in Headers */,
