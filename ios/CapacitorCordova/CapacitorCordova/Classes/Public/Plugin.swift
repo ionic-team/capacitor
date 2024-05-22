@@ -12,19 +12,24 @@ public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     func configureRuntime() {
-        let parser = CDVConfigParser()
+        guard let configURL = Bundle.main.url(forResource: "config", withExtension: "xml") else { fatalError() }
+        guard let bridge, let webView = bridge.webView else { return }
+
+        let cordovaConfigParser = CDVConfigParser()
+
+        let xmlParser = XMLParser(contentsOf: configURL)
+        xmlParser?.delegate = cordovaConfigParser
+        xmlParser?.parse()
+
         guard let pluginManager = CDVPluginManager(
-            parser: parser,
-            viewController: bridge?.viewController,
-            webView: bridge?.webView
+            parser: cordovaConfigParser,
+            viewController: bridge.viewController,
+            webView: bridge.webView
         ) else { return }
 
-
-        for plugin in parser.startupPluginNames.compactMap({ $0 as? String }) {
+        for plugin in cordovaConfigParser.startupPluginNames.compactMap({ $0 as? String }) {
             _ = pluginManager.getCommandInstance(plugin)
         }
-
-        guard let bridge, let webView = bridge.webView else { return }
 
         exportCordovaPluginsJS(userContentController: webView.configuration.userContentController)
 
@@ -62,7 +67,7 @@ public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
             }
         }
         
-        if (parser.settings?["DisableDeploy".lowercased()] as? NSString)?.boolValue ?? false {
+        if (cordovaConfigParser.settings?["DisableDeploy".lowercased()] as? NSString)?.boolValue ?? false {
             // TODO: Ensure that the previously persisted base path will be loaded
 //            bridge.usePersistedBasePath()
         }
