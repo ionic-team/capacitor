@@ -6,6 +6,8 @@ public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = []
     public var identifier: String { jsName }
 
+    private var _cordovaDeployDisabled = false
+
     public override func load() {
         injectJavascript()
         configureRuntime()
@@ -67,12 +69,13 @@ public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
             }
         }
         
-        if (cordovaConfigParser.settings?["DisableDeploy".lowercased()] as? NSString)?.boolValue ?? false {
-            // TODO: Ensure that the previously persisted base path will be loaded
-//            bridge.usePersistedBasePath()
-        }
+        _cordovaDeployDisabled = (cordovaConfigParser.settings?["DisableDeploy".lowercased()] as? NSString)?.boolValue ?? false
     }
 
+    @objc
+    func cordovaDeployDisabled() -> Bool {
+        return _cordovaDeployDisabled
+    }
 
     func injectJavascript() {
         guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
