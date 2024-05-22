@@ -73,8 +73,8 @@ public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @objc
-    func cordovaDeployDisabled() -> Bool {
-        return _cordovaDeployDisabled
+    func cordovaDeployDisabled() -> NSNumber {
+        return _cordovaDeployDisabled as NSNumber
     }
 
     func injectJavascript() {
