@@ -52,23 +52,6 @@ internal extension InstanceDescriptor {
             warnings.update(with: .missingFile)
         }
 
-        // parse the cordova configuration
-//        var configParser: XMLParser?
-//        if let cordovaURL = cordovaURL,
-//           FileManager.default.fileExists(atPath: cordovaURL.path, isDirectory: &isDirectory),
-//           isDirectory.boolValue == false {
-//            configParser = XMLParser(contentsOf: cordovaURL)
-//        } else {
-//            warnings.update(with: .missingCordovaFile)
-//            // we don't want to break up string literals
-//            // swiftlint:disable:next line_length
-//            if let cordovaXML = "<?xml version='1.0' encoding='utf-8'?><widget version=\"1.0.0\" xmlns=\"http://www.w3.org/ns/widgets\" xmlns:cdv=\"http://cordova.apache.org/ns/1.0\"><access origin=\"*\" /></widget>".data(using: .utf8) {
-//                configParser = XMLParser(data: cordovaXML)
-//            }
-//        }
-//        configParser?.delegate = cordovaConfiguration
-//        configParser?.parse()
-
         // extract our configuration values
         if let config = config {
             // to be removed
