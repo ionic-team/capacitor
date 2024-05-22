@@ -86,9 +86,10 @@ import WebKit
         return InstanceDescriptor()
     }
 
-    func updateAppLocationIfNeeded() {
-        let cordovaPlugin = bridge?.plugin(withName: "CordovaPlugin")
-        let cordovaDeployDisabled = cordovaPlugin?.perform(Selector(("cordovaDeployDisabled:"))) as? Bool ?? false
+    /// This function must be called after plugins are loaded or it will have no effect.
+    open func updateAppLocationIfNeeded() {
+        let cordovaPlugin = bridge?.plugin(withName: "__CordovaPlugin")
+        let cordovaDeployDisabled = cordovaPlugin?.perform(Selector(("cordovaDeployDisabled"))).takeUnretainedValue() as? Bool ?? false
 
         if !isNewBinary && !cordovaDeployDisabled {
             if let persistedPath = KeyValueStore.standard["serverBasePath", as: String.self], !persistedPath.isEmpty {
