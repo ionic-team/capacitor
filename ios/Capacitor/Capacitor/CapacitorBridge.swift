@@ -5,7 +5,7 @@ import WebKit
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
 struct RegistrationList: Codable {
-    let packageClassList: Set<String>
+    var packageClassList: Set<String>
 }
 
 /**
@@ -294,7 +294,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             do {
                 if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
                     let pluginData = try Data(contentsOf: pluginJSON)
-                    let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
+                    var registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
+                    #warning("Don't hardcode this")
+                    registrationList.packageClassList.insert("CordovaPlugin")
 
                     for plugin in registrationList.packageClassList {
                         if let pluginClass = NSClassFromString(plugin), pluginClass is CAPPlugin.Type {
