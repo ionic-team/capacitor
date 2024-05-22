@@ -116,7 +116,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         tryBlock {
             urlSchemeTask.didFinish()
         }
-            
+
     }
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
