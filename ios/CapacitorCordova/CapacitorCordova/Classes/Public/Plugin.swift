@@ -1,5 +1,6 @@
 import Capacitor
 
+@objc(CordovaPlugin)
 public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
     public let jsName = "__CordovaPlugin"
     public let pluginMethods: [CAPPluginMethod] = []
@@ -85,7 +86,7 @@ public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
 
     func exportCordovaPluginsJS(userContentController: WKUserContentController) {
         if let pluginsJSFolder = Bundle.main.url(forResource: "public/plugins", withExtension: nil) {
-            self.injectFilesForFolder(folder: pluginsJSFolder, userContentController: userContentController)
+            injectFilesForFolder(folder: pluginsJSFolder, userContentController: userContentController)
         }
     }
 
