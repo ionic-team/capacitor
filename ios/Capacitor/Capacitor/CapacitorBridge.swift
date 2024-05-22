@@ -295,7 +295,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
                     let pluginData = try Data(contentsOf: pluginJSON)
                     var registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
-                    #warning("Don't hardcode this")
+                    #warning("Don't hardcode this, CLI will handle this eventually")
                     registrationList.packageClassList.insert("CordovaPlugin")
 
                     for plugin in registrationList.packageClassList {
