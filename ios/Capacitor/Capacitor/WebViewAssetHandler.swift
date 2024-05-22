@@ -599,10 +599,12 @@ private class ConcurrentTasks {
         lock.withLock { tasks.insert(value) }
     }
 
-    func withTask(_ schemeTask: WKURLSchemeTask, action: () -> Void) {
+    func withTask(_ schemeTask: WKURLSchemeTask, action: @escaping () -> Void) {
         lock.withLock {
             if tasks.contains(schemeTask.hash) {
-                action()
+                DispatchQueue.main.async {
+                    action()
+                }
             }
         }
     }
