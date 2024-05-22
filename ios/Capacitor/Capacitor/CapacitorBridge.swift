@@ -123,6 +123,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // Array of block based observers
     var observers: [NSObjectProtocol] = []
 
+    // Serial Queue for stored calls. The quality-of-service is "userInitiated"
+    // because calls mostly triggered by users, and we don't want to users to wait.
+    let storeCallDispatchQueue = DispatchQueue(label: "storedCalls", qos: .userInitiated)
+
     // MARK: - CAPBridgeProtocol: Deprecated
 
     public func getWebView() -> WKWebView? {
@@ -276,7 +280,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      sending data back to the page from a previous page.
      */
     func reset() {
-        storedCalls = [String: CAPPluginCall]()
+        storeCallDispatchQueue.sync {
+            storedCalls.removeAll()
+        }
     }
 
     /**
@@ -374,11 +380,15 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // MARK: - CAPBridgeProtocol: Call Management
 
     @objc public func saveCall(_ call: CAPPluginCall) {
-        storedCalls[call.callbackId] = call
+        storeCallDispatchQueue.sync {
+            storedCalls[call.callbackId] = call
+        }
     }
 
     @objc public func savedCall(withID: String) -> CAPPluginCall? {
-        return storedCalls[withID]
+        return storeCallDispatchQueue.sync {
+            return storedCalls[withID]
+        }
     }
 
     @objc public func releaseCall(_ call: CAPPluginCall) {
@@ -386,7 +396,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     @objc public func releaseCall(withID: String) {
-        storedCalls.removeValue(forKey: withID)
+        storeCallDispatchQueue.sync {
+            let _ = storedCalls.removeValue(forKey: withID)
+        }
     }
 
     // MARK: - Deprecated Versions
