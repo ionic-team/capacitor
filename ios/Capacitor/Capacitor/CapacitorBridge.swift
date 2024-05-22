@@ -297,7 +297,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                     let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
 
                     for plugin in registrationList.packageClassList {
-                        if let pluginClass = NSClassFromString(plugin), pluginClass == CAPPlugin.self {
+                        if let pluginClass = NSClassFromString(plugin), pluginClass is CAPPlugin.Type {
                             pluginList.append(pluginClass)
                             if plugin == "CordovaPlugin" {
                                 cordovaIsPresent = true
