@@ -7,7 +7,7 @@ import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONException;
 
-public class MockCordovaInterfaceImpl extends CordovaInterfaceImpl {
+class MockCordovaInterfaceImpl extends CordovaInterfaceImpl {
 
     public MockCordovaInterfaceImpl(AppCompatActivity activity) {
         super(activity, Executors.newCachedThreadPool());
