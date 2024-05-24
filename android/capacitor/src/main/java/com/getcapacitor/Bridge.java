@@ -53,13 +53,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.cordova.ConfigXmlParser;
-import org.apache.cordova.CordovaPreferences;
-import org.apache.cordova.CordovaWebView;
-import org.apache.cordova.PluginEntry;
-import org.apache.cordova.PluginManager;
+//import org.apache.cordova.ConfigXmlParser;
+//import org.apache.cordova.CordovaPreferences;
+//import org.apache.cordova.CordovaWebView;
+//import org.apache.cordova.PluginEntry;
+//import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 
 /**
@@ -125,9 +126,9 @@ public class Bridge {
     private Boolean canInjectJS = true;
     // A reference to the main WebView for the app
     private final WebView webView;
-    public final MockCordovaInterfaceImpl cordovaInterface;
-    private CordovaWebView cordovaWebView;
-    private CordovaPreferences preferences;
+//    public final MockCordovaInterfaceImpl cordovaInterface;
+//    private CordovaWebView cordovaWebView;
+//    private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
     private App app;
 
@@ -146,6 +147,8 @@ public class Bridge {
 
     // A map of Plugin Id's to PluginHandle's
     private Map<String, PluginHandle> plugins = new HashMap<>();
+
+    private Map<String, MessageHandler.Interceptor> interceptors = new HashMap<>();
 
     // Stored plugin calls that we're keeping around to call again someday
     private Map<String, PluginCall> savedCalls = new HashMap<>();
@@ -181,12 +184,12 @@ public class Bridge {
         AppCompatActivity context,
         WebView webView,
         List<Class<? extends Plugin>> initialPlugins,
-        MockCordovaInterfaceImpl cordovaInterface,
-        PluginManager pluginManager,
-        CordovaPreferences preferences,
+        Object cordovaInterface,
+        Object pluginManager,
+        Object preferences,
         CapConfig config
     ) {
-        this(context, null, null, webView, initialPlugins, new ArrayList<>(), cordovaInterface, pluginManager, preferences, config);
+        this(context, (ServerPath) null, (Fragment) null, webView, initialPlugins, new ArrayList<>(), config);
     }
 
     private Bridge(
@@ -196,9 +199,6 @@ public class Bridge {
         WebView webView,
         List<Class<? extends Plugin>> initialPlugins,
         List<Plugin> pluginInstances,
-        MockCordovaInterfaceImpl cordovaInterface,
-        PluginManager pluginManager,
-        CordovaPreferences preferences,
         CapConfig config
     ) {
         this.app = new App();
@@ -209,8 +209,6 @@ public class Bridge {
         this.webViewClient = new BridgeWebViewClient(this);
         this.initialPlugins = initialPlugins;
         this.pluginInstances = pluginInstances;
-        this.cordovaInterface = cordovaInterface;
-        this.preferences = preferences;
 
         // Start our plugin execution threads and handlers
         handlerThread.start();
@@ -218,11 +216,10 @@ public class Bridge {
 
         this.config = config != null ? config : CapConfig.loadDefault(getActivity());
         Logger.init(this.config);
-
         // Initialize web view and message handler for it
         this.initWebView();
         this.setAllowedOriginRules();
-        this.msgHandler = new MessageHandler(this, webView, pluginManager);
+        this.msgHandler = new MessageHandler(this, webView);
 
         // Grab any intent info that our app was launched with
         Intent intent = context.getIntent();
@@ -565,6 +562,14 @@ public class Bridge {
 
     public CapConfig getConfig() {
         return this.config;
+    }
+
+    public MessageHandler.Interceptor getCallInterceptor(String type) {
+        return this.interceptors.get(type);
+    }
+
+    public void registerInterceptor(String type, MessageHandler.Interceptor interceptor) {
+        this.interceptors.put(type, interceptor);
     }
 
     public void reset() {
