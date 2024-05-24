@@ -272,7 +272,7 @@ private class InMemoryStore: KeyValueStoreBackend {
     }
 }
 
-private class ConcurrentDictionary<Value> {
+class ConcurrentDictionary<Value> {
     private var storage: [String: Value]
     private let lock = NSLock()
 
