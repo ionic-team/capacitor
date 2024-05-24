@@ -273,10 +273,11 @@ private class InMemoryStore: KeyValueStoreBackend {
 }
 
 class ConcurrentDictionary<Value> {
-    private var storage: [String: Value]
+    typealias StorageType = [String: Value]
+    private var storage: StorageType
     private let lock = NSLock()
 
-    init(_ initial: [String: Value] = [:]) {
+    init(_ initial: StorageType = [:]) {
         storage = initial
     }
 
@@ -291,6 +292,12 @@ class ConcurrentDictionary<Value> {
             lock.withLock {
                 storage[key] = newValue
             }
+        }
+    }
+
+    func withLock<T>(_ body: (_ storage: inout StorageType) -> T) -> T {
+        lock.withLock {
+            body(&storage)
         }
     }
 }
