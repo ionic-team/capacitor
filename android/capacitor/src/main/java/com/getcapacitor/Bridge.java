@@ -257,7 +257,11 @@ public class Bridge {
             String allowedOrigin = appUrl;
             Uri appUri = Uri.parse(appUrl);
             if (appUri.getPath() != null) {
-                allowedOrigin = appUri.toString().replace(appUri.getPath(), "");
+                if (appUri.getPath().equals("/")) {
+                    allowedOrigin = appUrl.substring(0, appUrl.length() - 1);
+                } else {
+                    allowedOrigin = appUri.toString().replace(appUri.getPath(), "");
+                }
             }
             WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), Collections.singleton(allowedOrigin));
             injector = null;
