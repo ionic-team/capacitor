@@ -458,6 +458,20 @@ public class WebViewLocalServer {
     }
 
     /**
+     * Prepends an {@code InputStream} with the JavaScript required by Capacitor.
+     * This method only changes the original {@code InputStream} if {@code WebView} does not
+     * support the {@code DOCUMENT_START_SCRIPT} feature.
+     * @param original the original {@code InputStream}
+     * @return the modified {@code InputStream}
+     */
+    public InputStream getJavaScriptInjectedStream(InputStream original) {
+        if (jsInjector != null) {
+            return jsInjector.getInjectedStream(original);
+        }
+        return original;
+    }
+
+    /**
      * Instead of reading files from the filesystem/assets, proxy through to the URL
      * and let an external server handle it.
      * @param request
