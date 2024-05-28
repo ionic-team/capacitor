@@ -428,12 +428,30 @@ public class Bridge {
         return false;
     }
 
+    private Plugin cordova() {
+        PluginHandle handle = getPlugin("__CordovaHandle");
+        if (handle != null) {
+            return handle.getInstance();
+        }
+        return null;
+    }
+
     public boolean isDeployDisabled() {
-        return preferences.getBoolean("DisableDeploy", false);
+        Plugin cordova = this.cordova();
+        if (cordova != null) {
+            return cordova.hasPermission("DisableDeploy");
+        } else {
+            return false;
+        }
     }
 
     public boolean shouldKeepRunning() {
-        return preferences.getBoolean("KeepRunning", true);
+        Plugin cordova = this.cordova();
+        if (cordova != null) {
+            return cordova.hasPermission("KeepRunning");
+        } else {
+            return false;
+        }
     }
 
     public void handleAppUrlLoadError(Exception ex) {
