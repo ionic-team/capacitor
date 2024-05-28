@@ -91,6 +91,19 @@ public class CordovaPlugin extends Plugin {
     }
 
     @Override
+    public boolean hasPermission(String permission) {
+        if (permission.equals("DisableDeploy")) {
+            return preferences.getBoolean(permission, false);
+        }
+
+        if (permission.equals("KeepRunning")) {
+            return preferences.getBoolean(permission, true);
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean hasDefinedRequiredPermissions() {
         boolean currentPermissionResult = pluginHadPermissionResult;
         pluginHadPermissionResult = false;
