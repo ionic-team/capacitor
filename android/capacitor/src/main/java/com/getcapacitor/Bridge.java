@@ -124,6 +124,7 @@ public class Bridge {
     private Boolean canInjectJS = true;
     // A reference to the main WebView for the app
     private final WebView webView;
+    /// RUH ROH
 //    public final MockCordovaInterfaceImpl cordovaInterface;
 //    private CordovaWebView cordovaWebView;
 //    private CordovaPreferences preferences;
@@ -469,9 +470,9 @@ public class Bridge {
         return (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
 
-    protected void setCordovaWebView(CordovaWebView cordovaWebView) {
-        this.cordovaWebView = cordovaWebView;
-    }
+//    protected void setCordovaWebView(CordovaWebView cordovaWebView) {
+//        this.cordovaWebView = cordovaWebView;
+//    }
 
     /**
      * Get the Context for the App
@@ -1134,11 +1135,14 @@ public class Bridge {
         if (plugin == null) {
             boolean permissionHandled = false;
             Logger.debug("Unable to find a Capacitor plugin to handle permission requestCode, trying Cordova plugins " + requestCode);
-            try {
-                permissionHandled = cordovaInterface.handlePermissionResult(requestCode, permissions, grantResults);
-            } catch (JSONException e) {
-                Logger.debug("Error on Cordova plugin permissions request " + e.getMessage());
+            PluginHandle cordovaHandle = getPlugin("__CordovaPlugin");
+
+            if (cordovaHandle != null) {
+                Plugin cordovaPlugin = cordovaHandle.getInstance();
+                cordovaPlugin.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+                permissionHandled = cordovaPlugin.hasDefinedRequiredPermissions();
             }
+
             return permissionHandled;
         }
 
@@ -1273,7 +1277,14 @@ public class Bridge {
 
         if (plugin == null || plugin.getInstance() == null) {
             Logger.debug("Unable to find a Capacitor plugin to handle requestCode, trying Cordova plugins " + requestCode);
-            return cordovaInterface.onActivityResult(requestCode, resultCode, data);
+            PluginHandle cordovaHandle = getPlugin("__CordovaPlugin");
+            if (cordovaHandle != null) {
+                Plugin cordovaPlugin = cordovaHandle.getInstance();
+                cordovaPlugin.handleOnActivityResult(requestCode, resultCode, data);
+                // This is our disgusting way of returning the boolean out of the cordova interface
+                return cordovaPlugin.hasRequiredPermissions();
+            }
+//            return cordovaInterface.onActivityResult(requestCode, resultCode, data);
         }
 
         // deprecated, to be removed
@@ -1303,10 +1314,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnNewIntent(intent);
         }
-
-        if (cordovaWebView != null) {
-            cordovaWebView.onNewIntent(intent);
-        }
+//
+//        if (cordovaWebView != null) {
+//            cordovaWebView.onNewIntent(intent);
+//        }
     }
 
     /**
@@ -1336,9 +1347,9 @@ public class Bridge {
             plugin.getInstance().handleOnStart();
         }
 
-        if (cordovaWebView != null) {
-            cordovaWebView.handleStart();
-        }
+//        if (cordovaWebView != null) {
+//            cordovaWebView.handleStart();
+//        }
     }
 
     /**
@@ -1348,10 +1359,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnResume();
         }
-
-        if (cordovaWebView != null) {
-            cordovaWebView.handleResume(this.shouldKeepRunning());
-        }
+//
+//        if (cordovaWebView != null) {
+//            cordovaWebView.handleResume(this.shouldKeepRunning());
+//        }
     }
 
     /**
@@ -1362,10 +1373,10 @@ public class Bridge {
             plugin.getInstance().handleOnPause();
         }
 
-        if (cordovaWebView != null) {
-            boolean keepRunning = this.shouldKeepRunning() || cordovaInterface.getActivityResultCallback() != null;
-            cordovaWebView.handlePause(keepRunning);
-        }
+//        if (cordovaWebView != null) {
+//            boolean keepRunning = this.shouldKeepRunning() || cordovaInterface.getActivityResultCallback() != null;
+//            cordovaWebView.handlePause(keepRunning);
+//        }
     }
 
     /**
@@ -1375,10 +1386,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStop();
         }
-
-        if (cordovaWebView != null) {
-            cordovaWebView.handleStop();
-        }
+//
+//        if (cordovaWebView != null) {
+//            cordovaWebView.handleStop();
+//        }
     }
 
     /**
@@ -1390,10 +1401,10 @@ public class Bridge {
         }
 
         handlerThread.quitSafely();
-
-        if (cordovaWebView != null) {
-            cordovaWebView.handleDestroy();
-        }
+//
+//        if (cordovaWebView != null) {
+//            cordovaWebView.handleDestroy();
+//        }
     }
 
     /**
@@ -1591,9 +1602,9 @@ public class Bridge {
                 webView,
                 plugins,
                 pluginInstances,
-                cordovaInterface,
-                pluginManager,
-                preferences,
+//                cordovaInterface,
+//                pluginManager,
+//                preferences,
                 config
             );
 
@@ -1602,11 +1613,15 @@ public class Bridge {
                 capacitorWebView.edgeToEdgeHandler(bridge);
             }
 
-            bridge.setCordovaWebView(mockWebView);
+//            bridge.setCordovaWebView(mockWebView);
             bridge.setWebViewListeners(webViewListeners);
             bridge.setRouteProcessor(routeProcessor);
 
             if (instanceState != null) {
+                PluginHandle maybeCordova = bridge.getPlugin("__CordovaPlugin");
+                if (maybeCordova != null) {
+                    maybeCordova.getInstance().restoreState(instanceState);
+                }
                 bridge.restoreInstanceState(instanceState);
             }
 

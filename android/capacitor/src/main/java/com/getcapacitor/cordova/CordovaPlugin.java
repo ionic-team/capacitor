@@ -1,5 +1,6 @@
 package com.getcapacitor.cordova;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
 
@@ -11,20 +12,27 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPreferences;
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
+import org.json.JSONException;
 
 import java.util.List;
 
-@CapacitorPlugin
+@CapacitorPlugin(name = "__CordovaPlugin")
 public class CordovaPlugin extends Plugin {
     private MockCordovaInterfaceImpl cordovaInterface;
+    private CordovaWebView webView;
+    private CordovaPreferences preferences;
+
+    private boolean pluginHadActivityResult = false;
+    private boolean pluginHadPermissionResult = false;
 
     @Override
     public void load() {
         ConfigXmlParser parser = new ConfigXmlParser();
         parser.parse(getActivity().getApplicationContext());
-        CordovaPreferences preferences = parser.getPreferences();
+        preferences = parser.getPreferences();
         preferences.setPreferencesBundle(getActivity().getIntent().getExtras());
         List<PluginEntry> pluginEntries = parser.getPluginEntries();
 
@@ -32,6 +40,7 @@ public class CordovaPlugin extends Plugin {
 
         MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(getActivity().getApplicationContext());
         mockWebView.init(cordovaInterface, pluginEntries, preferences, bridge.getWebView());
+        webView = mockWebView;
         PluginManager pluginManager = mockWebView.getPluginManager();
         cordovaInterface.onCordovaInit(pluginManager);
 
@@ -70,4 +79,66 @@ public class CordovaPlugin extends Plugin {
             cordovaInterface.restoreInstanceState(state);
         }
     }
+
+
+    @Override
+    protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        try {
+            pluginHadPermissionResult = cordovaInterface.handlePermissionResult(requestCode, permissions, grantResults);
+        } catch (JSONException e) {
+            Logger.debug("Error on Cordova plugin permissions request " + e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean hasDefinedRequiredPermissions() {
+        boolean currentPermissionResult = pluginHadPermissionResult;
+        pluginHadPermissionResult = false;
+        return currentPermissionResult;
+    }
+
+    @Override
+    protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
+        pluginHadActivityResult = cordovaInterface.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean hasRequiredPermissions() {
+        boolean currentActivityResult = pluginHadActivityResult;
+        pluginHadActivityResult = false;
+        return currentActivityResult;
+    }
+
+    @Override
+    protected void handleOnNewIntent(Intent intent) {
+        webView.onNewIntent(intent);
+    }
+
+    @Override
+    protected void handleOnStart() {
+        webView.handleStart();
+    }
+
+    @Override
+    protected void handleOnResume() {
+       webView.handleResume(bridge.shouldKeepRunning());
+    }
+
+    @Override
+    protected void handleOnPause() {
+        boolean keepRunning = bridge.shouldKeepRunning() || cordovaInterface.getActivityResultCallback() != null;
+        webView.handlePause(keepRunning);
+    }
+
+    @Override
+    protected void handleOnStop() {
+        webView.handleStop();
+    }
+
+    @Override
+    protected void handleOnDestroy() {
+       webView.handleDestroy();
+    }
+
+
 }
