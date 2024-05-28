@@ -35,8 +35,6 @@ import androidx.webkit.WebViewFeature;
 import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
-import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
-import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.InternalUtils;
 import com.getcapacitor.util.PermissionHelper;
@@ -1583,22 +1581,8 @@ public class Bridge {
 
         public Bridge create() {
             // Cordova initialization
-            ConfigXmlParser parser = new ConfigXmlParser();
-            parser.parse(activity.getApplicationContext());
-            CordovaPreferences preferences = parser.getPreferences();
-            preferences.setPreferencesBundle(activity.getIntent().getExtras());
-            List<PluginEntry> pluginEntries = parser.getPluginEntries();
-
-            MockCordovaInterfaceImpl cordovaInterface = new MockCordovaInterfaceImpl(activity);
-            if (instanceState != null) {
-                cordovaInterface.restoreInstanceState(instanceState);
-            }
-
             WebView webView = this.fragment != null ? fragment.getView().findViewById(R.id.webview) : activity.findViewById(R.id.webview);
-            MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(activity.getApplicationContext());
-            mockWebView.init(cordovaInterface, pluginEntries, preferences, webView);
-            PluginManager pluginManager = mockWebView.getPluginManager();
-            cordovaInterface.onCordovaInit(pluginManager);
+
 
             // Bridge initialization
             Bridge bridge = new Bridge(

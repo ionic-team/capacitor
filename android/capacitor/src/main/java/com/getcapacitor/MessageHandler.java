@@ -173,9 +173,11 @@ public class MessageHandler {
         bridge.callPluginMethod(pluginId, methodName, call);
     }
 
-    private void callCordovaPluginMethod(String callbackId, String service, String action, String actionArgs) {
-        bridge.execute(() -> {
-            cordovaPluginManager.exec(service, action, callbackId, actionArgs);
-        });
-    }
+//    private void callCordovaPluginMethod(String callbackId, String service, String action, String actionArgs) {
+//        bridge.execute(
+//            () -> {
+//                cordovaPluginManager.exec(service, action, callbackId, actionArgs);
+//            }
+//        );
+//    }
 }
