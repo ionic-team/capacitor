@@ -69,54 +69,12 @@ public class MessageHandler {
 
 //            boolean typeIsNotNull = type != null;
             if (type == null)
-                return;
+                type = "message";
 
             Interceptor interceptor = bridge.getCallInterceptor(type);
             if (interceptor != null) {
                 interceptor.intercept(postData);
             }
-
-
-//            boolean isCapacitorPlugin = typeIsNotNull && type.equals("message");
-//            boolean isCordovaPlugin = typeIsNotNull && type.equals("cordova");
-//            boolean isJavaScriptError = typeIsNotNull && type.equals("js.error");
-//
-//            String callbackId = postData.getString("callbackId");
-//
-//            if (isCordovaPlugin) {
-//                String pluginId = postData.getString("pluginId");
-//                String methodName = postData.getString("methodName");
-//                JSObject methodData = postData.getJSObject("options", new JSObject());
-//
-//                Logger.verbose(
-//                        Logger.tags("Plugin"),
-//                        "To native (Capacitor plugin): callbackId: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName
-//                );
-//
-//                this.callPluginMethod(callbackId, pluginId, methodName, methodData);
-//                // start cordova
-//                String service = postData.getString("service");
-//                String action = postData.getString("action");
-//                String actionArgs = postData.getString("actionArgs");
-//
-//                Logger.verbose(
-//                    Logger.tags("Plugin"),
-//                    "To native (Cordova plugin): callbackId: " +
-//                    callbackId +
-//                    ", service: " +
-//                    service +
-//                    ", action: " +
-//                    action +
-//                    ", actionArgs: " +
-//                    actionArgs
-//                );
-//
-//                this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
-//            } else if (isJavaScriptError) {
-//                Logger.error("JavaScript Error: " + jsonStr);
-//            } else if (typeIsNotNull && bridge.getCallInterceptor(type) != null) {
-//                bridge.getCallInterceptor(type).intercept(postData);
-//            }
         } catch (Exception ex) {
             Logger.error("Post message error:", ex);
         }
