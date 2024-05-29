@@ -1643,6 +1643,30 @@ public class Bridge {
                 bridge.restoreInstanceState(instanceState);
             }
 
+            bridge.registerInterceptor("message", (postData) -> {
+                try {
+                    String callbackId = postData.getString("callbackId");
+                    String pluginId = postData.getString("pluginId");
+                    String methodName = postData.getString("methodName");
+                    JSObject methodData = postData.getJSObject("options", new JSObject());
+
+                    Logger.verbose(
+                            Logger.tags("Plugin"),
+                            "To native (Capacitor plugin): callbackId: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName
+                    );
+
+                    PluginCall call = new PluginCall(bridge.msgHandler, pluginId, callbackId, methodName, methodData);
+                    bridge.callPluginMethod(pluginId, methodName, call);
+
+                } catch(JSONException e) {
+                    Logger.error(e.getMessage());
+                }
+            });
+
+            bridge.registerInterceptor("js.error", (postData) -> {
+                Logger.error("JavaScript Error: " + postData.toString());
+            });
+
             return bridge;
         }
     }
