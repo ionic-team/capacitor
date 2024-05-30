@@ -398,6 +398,15 @@ public class HttpRequestHandler {
 
         boolean isHttpMutate = method.equals("DELETE") || method.equals("PATCH") || method.equals("POST") || method.equals("PUT");
 
+        if (headers != null && isHttpMutate){
+            boolean hasContentType = false;
+            Iterator<String> keys = headers.keys();
+            while (keys.hasNext()){
+                if (keys.next().equalsIgnoreCase("content-type")) hasContentType = true;
+            }
+            if (!hasContentType) headers.put("content-type","application/json");
+        }
+
         URL url = new URL(urlString);
         HttpURLConnectionBuilder connectionBuilder = new HttpURLConnectionBuilder()
             .setUrl(url)
