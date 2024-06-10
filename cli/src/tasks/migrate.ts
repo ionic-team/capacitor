@@ -1,7 +1,7 @@
 import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
-import { coerce, gt, gte } from 'semver';
+import { coerce, gt, gte, lt } from 'semver';
 
 import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
@@ -284,35 +284,48 @@ export async function migrateCommand(
             for (const variable of Object.keys(
               variablesAndClasspaths.variables,
             )) {
+              let replaceStart = `${variable} = '`;
+              let replaceEnd = `'\n`;
               if (
-                !(await updateFile(
-                  config,
-                  variablesPath,
-                  `${variable} = '`,
-                  `'`,
-                  variablesAndClasspaths.variables[variable].toString(),
-                  true,
-                ))
+                typeof variablesAndClasspaths.variables[variable] === 'number'
               ) {
-                const didWork = await updateFile(
-                  config,
-                  variablesPath,
-                  `${variable} = `,
-                  `\n`,
-                  variablesAndClasspaths.variables[variable].toString(),
-                  true,
+                replaceStart = `${variable} = `;
+                replaceEnd = `\n`;
+              }
+
+              if (txt.includes(replaceStart)) {
+                const first = txt.indexOf(replaceStart) + replaceStart.length;
+                const value = txt.substring(
+                  first,
+                  txt.indexOf(replaceEnd, first),
                 );
-                if (!didWork) {
-                  let file = readFile(variablesPath);
-                  if (file) {
-                    file = file.replace(
-                      '}',
-                      `    ${variable} = '${variablesAndClasspaths.variables[
-                        variable
-                      ].toString()}'\n}`,
-                    );
-                    writeFileSync(variablesPath, file);
-                  }
+                if (
+                  (typeof variablesAndClasspaths.variables[variable] ===
+                    'number' &&
+                    value <= variablesAndClasspaths.variables[variable]) ||
+                  (typeof variablesAndClasspaths.variables[variable] ===
+                    'string' &&
+                    lt(value, variablesAndClasspaths.variables[variable]))
+                ) {
+                  await updateFile(
+                    config,
+                    variablesPath,
+                    replaceStart,
+                    replaceEnd,
+                    variablesAndClasspaths.variables[variable].toString(),
+                    true,
+                  );
+                }
+              } else {
+                let file = readFile(variablesPath);
+                if (file) {
+                  file = file.replace(
+                    '}',
+                    `    ${replaceStart}${variablesAndClasspaths.variables[
+                      variable
+                    ].toString()}${replaceEnd}}`,
+                  );
+                  writeFileSync(variablesPath, file);
                 }
               }
             }
