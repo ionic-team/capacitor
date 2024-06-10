@@ -12,7 +12,7 @@ import { logger, logPrompt, logSuccess } from '../log';
 import { getPlugins } from '../plugin';
 import { deleteFolderRecursive } from '../util/fs';
 import { resolveNode } from '../util/node';
-import { runCommand, getCommandOutput } from '../util/subprocess';
+import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
 // eslint-disable-next-line prefer-const
@@ -182,6 +182,14 @@ export async function migrateCommand(
             );
           },
         );
+      }
+
+      if (!installFailed) {
+        await runTask(`Running cap sync.`, () => {
+          return runCommand('npx', ['cap', 'sync']);
+        });
+      } else {
+        logger.warn('Skipped Running cap sync.');
       }
 
       if (
@@ -362,15 +370,6 @@ export async function migrateCommand(
             'Skipped migrating package from Manifest to build.gradle in Capacitor plugins',
           );
         }
-      }
-
-      if (!installFailed) {
-        // Run Cap Sync
-        await runTask(`Running cap sync.`, () => {
-          return getCommandOutput('npx', ['cap', 'sync']);
-        });
-      } else {
-        logger.warn('Skipped Running cap sync.');
       }
 
       // Write all breaking changes
