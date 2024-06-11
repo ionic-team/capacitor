@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.6](https://github.com/ionic-team/capacitor/compare/5.7.5...5.7.6) (2024-06-11)
+
+### Bug Fixes
+
+- **http:** don't override readyState for non POST requests ([#7510](https://github.com/ionic-team/capacitor/issues/7510)) ([a56f9b9](https://github.com/ionic-team/capacitor/commit/a56f9b9262ffc43a4c73fea947991245102433d8))
+
 ## [5.7.5](https://github.com/ionic-team/capacitor/compare/5.7.4...5.7.5) (2024-04-15)
 
 ### Bug Fixes

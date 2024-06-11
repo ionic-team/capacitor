@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.6](https://github.com/ionic-team/capacitor/compare/5.7.5...5.7.6) (2024-06-11)
+
+**Note:** Version bump only for package @capacitor/cli
+
 ## [5.7.5](https://github.com/ionic-team/capacitor/compare/5.7.4...5.7.5) (2024-04-15)
 
 ### Bug Fixes
