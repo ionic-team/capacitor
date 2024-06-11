@@ -107,7 +107,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     }
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-        CAPLog.print("scheme stop")
+        urlSchemeTask.stopped = true
     }
 
     open func mimeTypeForExtension(pathExtension: String) -> String {
@@ -155,43 +155,46 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
         let urlSession = URLSession.shared
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
-            if let error = error {
-                urlSchemeTask.didFailWithError(error)
-                return
-            }
-
-            if let response = response as? HTTPURLResponse {
-                let existingHeaders = response.allHeaderFields
-                var newHeaders: [AnyHashable: Any] = [:]
-
-                // if using live reload, then set CORS headers
-                if self.isUsingLiveReload(url) {
-                    newHeaders = [
-                        "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
-                        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"
-                    ]
+            DispatchQueue.main.async {
+                guard !urlSchemeTask.stopped else { return }
+                if let error = error {
+                    urlSchemeTask.didFailWithError(error)
+                    return
                 }
 
-                if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (_, newHeaders) in newHeaders }) as? [String: String] {
+                if let response = response as? HTTPURLResponse {
+                    let existingHeaders = response.allHeaderFields
+                    var newHeaders: [AnyHashable: Any] = [:]
 
-                    if let responseUrl = response.url {
-                        if let modifiedResponse = HTTPURLResponse(
-                            url: responseUrl,
-                            statusCode: response.statusCode,
-                            httpVersion: nil,
-                            headerFields: mergedHeaders
-                        ) {
-                            urlSchemeTask.didReceive(modifiedResponse)
+                    // if using live reload, then set CORS headers
+                    if self.isUsingLiveReload(url) {
+                        newHeaders = [
+                            "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
+                            "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"
+                        ]
+                    }
+
+                    if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (_, newHeaders) in newHeaders }) as? [String: String] {
+
+                        if let responseUrl = response.url {
+                            if let modifiedResponse = HTTPURLResponse(
+                                url: responseUrl,
+                                statusCode: response.statusCode,
+                                httpVersion: nil,
+                                headerFields: mergedHeaders
+                            ) {
+                                urlSchemeTask.didReceive(modifiedResponse)
+                            }
+                        }
+
+                        if let data = data {
+                            urlSchemeTask.didReceive(data)
                         }
                     }
-
-                    if let data = data {
-                        urlSchemeTask.didReceive(data)
-                    }
                 }
+                urlSchemeTask.didFinish()
+                return
             }
-            urlSchemeTask.didFinish()
-            return
         }
 
         task.resume()
@@ -545,4 +548,17 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         "z": "application/x-compress",
         "zip": "application/x-zip-compressed"
     ]
+}
+
+private var stoppedKey = malloc(1)
+
+private extension WKURLSchemeTask {
+    var stopped: Bool {
+        get {
+            return objc_getAssociatedObject(self, &stoppedKey) as? Bool ?? false
+        }
+        set {
+            objc_setAssociatedObject(self, &stoppedKey, newValue, .OBJC_ASSOCIATION_ASSIGN)
+        }
+    }
 }
