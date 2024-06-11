@@ -5,6 +5,7 @@ import c from '../colors';
 import {
   checkWebDir,
   resolvePlatform,
+  runHooks,
   runPlatformHook,
   runTask,
   isValidPlatform,
@@ -70,7 +71,7 @@ export async function copy(
       throw result;
     }
 
-    await runPlatformHook(
+    await runHooks(
       config,
       platformName,
       config.app.rootDir,
@@ -190,7 +191,7 @@ export async function copy(
     }
   });
 
-  await runPlatformHook(
+  await runHooks(
     config,
     platformName,
     config.app.rootDir,
