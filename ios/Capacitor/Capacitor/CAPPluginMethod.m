@@ -31,6 +31,14 @@ typedef void(^CAPCallback)(id _arg, NSInteger index);
   return self;
 }
 
+-(instancetype)initWithSelector:(SEL) selector returnType:(CAPPluginReturnType *)returnType {
+    // need to drop the : from the selector string
+    NSString* rawSelString = NSStringFromSelector(selector);
+    self.name = [rawSelString substringToIndex:[rawSelString length] - 1];
+    self.selector = selector;
+    self.returnType = returnType;
+    return self;
+}
 
 @end
 

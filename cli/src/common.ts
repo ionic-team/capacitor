@@ -6,6 +6,7 @@ import c from './colors';
 import type { Config, PackageJson } from './definitions';
 import { fatal } from './errors';
 import { output, logger } from './log';
+import { getPlugins } from './plugin';
 import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools';
 import { resolveNode } from './util/node';
 import { runCommand } from './util/subprocess';
@@ -160,6 +161,20 @@ export async function checkAppName(
 
 export async function wait(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
+}
+
+export async function runHooks(
+  config: Config,
+  platformName: string,
+  dir: string,
+  hook: string,
+): Promise<void> {
+  await runPlatformHook(config, platformName, dir, hook);
+
+  const allPlugins = await getPlugins(config, platformName);
+  allPlugins.forEach(async p => {
+    await runPlatformHook(config, platformName, p.rootPath, hook);
+  });
 }
 
 export async function runPlatformHook(

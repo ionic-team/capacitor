@@ -4,6 +4,7 @@ import {
   check,
   checkPackage,
   resolvePlatform,
+  runHooks,
   runPlatformHook,
   runTask,
   selectPlatforms,
@@ -84,7 +85,7 @@ export async function update(
   deployment: boolean,
 ): Promise<void> {
   await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
-    await runPlatformHook(
+    await runHooks(
       config,
       platformName,
       config.app.rootDir,
@@ -97,7 +98,7 @@ export async function update(
       await updateAndroid(config);
     }
 
-    await runPlatformHook(
+    await runHooks(
       config,
       platformName,
       config.app.rootDir,

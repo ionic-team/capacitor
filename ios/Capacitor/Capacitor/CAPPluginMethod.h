@@ -31,6 +31,6 @@ typedef NSString CAPPluginReturnType;
 @property (nonatomic, strong) CAPPluginReturnType *returnType; // Return type of method (i.e. callback/promise/sync)
 
 - (instancetype)initWithName:(NSString *)name returnType:(CAPPluginReturnType *)returnType;
-
+- (instancetype)initWithSelector:(SEL)selector returnType:(CAPPluginReturnType *)returnType;
 
 @end
