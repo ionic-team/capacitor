@@ -284,7 +284,6 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                         os.writeBytes(twoHyphens + boundary + lineEnd);
                         os.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"" + lineEnd);
                         os.writeBytes("Content-Type: " + fileContentType + lineEnd);
-                        os.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
                         os.writeBytes(lineEnd);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
