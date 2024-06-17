@@ -113,7 +113,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // Manager for getting Cordova plugins
     var cordovaPluginManager: CDVPluginManager?
     // Calls we are storing to resolve later
-    var storedCalls = [String: CAPPluginCall]()
+    var storedCalls = ConcurrentDictionary<CAPPluginCall>()
     // Whether to inject the Cordova files
     private var injectCordovaFiles = false
     private var cordovaParser: CDVConfigParser?
@@ -276,7 +276,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      sending data back to the page from a previous page.
      */
     func reset() {
-        storedCalls = [String: CAPPluginCall]()
+        storedCalls.withLock { $0.removeAll() }
     }
 
     /**
@@ -386,7 +386,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     @objc public func releaseCall(withID: String) {
-        storedCalls.removeValue(forKey: withID)
+        let _ = storedCalls.withLock { $0.removeValue(forKey: withID) }
     }
 
     // MARK: - Deprecated Versions

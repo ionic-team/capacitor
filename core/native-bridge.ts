@@ -650,20 +650,7 @@ const initBridge = (w: any): void => {
               value: xhr.method,
               writable: true,
             },
-            readyState: {
-              get: function () {
-                return this._readyState ?? 0;
-              },
-              set: function (val: number) {
-                this._readyState = val;
-                setTimeout(() => {
-                  this.dispatchEvent(new Event('readystatechange'));
-                });
-              },
-            },
           });
-
-          xhr.readyState = 0;
           const prototype = win.CapacitorWebXMLHttpRequest.prototype;
 
           const isProgressEventAvailable = () =>
@@ -710,7 +697,19 @@ const initBridge = (w: any): void => {
                 this._url,
               );
             }
-
+            Object.defineProperties(this, {
+              readyState: {
+                get: function () {
+                  return this._readyState ?? 0;
+                },
+                set: function (val: number) {
+                  this._readyState = val;
+                  setTimeout(() => {
+                    this.dispatchEvent(new Event('readystatechange'));
+                  });
+                },
+              },
+            });
             setTimeout(() => {
               this.dispatchEvent(new Event('loadstart'));
             });
