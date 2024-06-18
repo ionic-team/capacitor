@@ -63,7 +63,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
 
         var data = Data()
         var boundary = UUID().uuidString
-        if contentType.contains("="), let contentBoundary = contentType.components(separatedBy: "=").last {
+        if contentType.contains("boundary="), let contentBoundary = extractBoundary(from: contentType)  {
             boundary = contentBoundary
         } else {
             overrideContentType(boundary)
@@ -82,6 +82,27 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         let contentType = "multipart/form-data; boundary=\(boundary)"
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
         headers["Content-Type"] = contentType
+    }
+    
+    /**
+     Extracts the boundary value of the `content-type` header for multiplart/form-data requests, if provided
+     The boundary value might be surrounded by double quotes (") which will be stripped away.
+     */
+    private func extractBoundary(from contentType: String) -> String? {
+        if let boundaryRange = contentType.range(of: "boundary=") {
+            var boundary = contentType[boundaryRange.upperBound...]
+            if let endRange = boundary.range(of: ";") {
+                boundary = boundary[..<endRange.lowerBound]
+            }
+            
+            if boundary.hasPrefix("\"") && boundary.hasSuffix("\"") {
+                return String(boundary.dropFirst().dropLast())
+            } else {
+                return String(boundary)
+            }
+        }
+        
+        return nil
     }
 
     public func getRequestDataAsString(_ data: JSValue) throws -> Data {
@@ -107,7 +128,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
         var data = Data()
         var boundary = UUID().uuidString
-        if contentType.contains("="), let contentBoundary = contentType.components(separatedBy: "=").last {
+        if contentType.contains("boundary="), let contentBoundary = extractBoundary(from: contentType) {    
             boundary = contentBoundary
         } else {
             overrideContentType(boundary)
