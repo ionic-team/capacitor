@@ -262,7 +262,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 
     private void writeFormDataRequestBody(String contentType, JSArray entries) throws IOException, JSONException {
         try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
-            String boundary = contentType.split(";")[1].split("=")[1];
+            String boundary = extractBoundary(contentType);
             String lineEnd = "\r\n";
             String twoHyphens = "--";
 
@@ -299,6 +299,39 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             os.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
             os.flush();
         }
+    }
+
+    /**
+     * Extracts the boundary value from the `Content-Type` header for multipart/form-data requests, if provided.
+     *
+     * The boundary value might be surrounded by double quotes (") which will be stripped away.
+     *
+     * @param contentType The `Content-Type` header string.
+     * @return The boundary value if found, otherwise `null`.
+     */
+    public static String extractBoundary(String contentType) {
+        String boundaryPrefix = "boundary=";
+        int boundaryIndex = contentType.indexOf(boundaryPrefix);
+        if (boundaryIndex == -1) {
+            return null;
+        }
+
+        // Extract the substring starting right after "boundary="
+        String boundary = contentType.substring(boundaryIndex + boundaryPrefix.length());
+
+        // Find the end of the boundary value by looking for the next ";"
+        int endIndex = boundary.indexOf(";");
+        if (endIndex != -1) {
+            boundary = boundary.substring(0, endIndex);
+        }
+
+        // Remove surrounding double quotes if present
+        boundary = boundary.trim();
+        if (boundary.startsWith("\"") && boundary.endsWith("\"")) {
+            boundary = boundary.substring(1, boundary.length() - 1);
+        }
+
+        return boundary;
     }
 
     /**
