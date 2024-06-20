@@ -142,6 +142,7 @@ class CapLiveReload {
     this.configJsonToRevertTo.platformPath = capConfigPath;
     const url = `http://${options.host}:${options.port}`;
     configJson.server = {
+      ...configJson.server,
       url,
     };
     return configJson;
