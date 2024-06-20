@@ -174,10 +174,7 @@ public class WebViewLocalServer {
 
         if (
             null != loadingUrl.getPath() &&
-            (
-                loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START) ||
-                loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START)
-            )
+            loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START)
         ) {
             Logger.debug("Handling CapacitorHttp request: " + loadingUrl);
             try {
