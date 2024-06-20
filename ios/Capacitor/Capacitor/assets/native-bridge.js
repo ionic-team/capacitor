@@ -134,6 +134,7 @@ var nativeBridge = (function (exports) {
     };
     const CAPACITOR_HTTP_INTERCEPTOR = '/_capacitor_http_interceptor_';
     const CAPACITOR_HTTPS_INTERCEPTOR = '/_capacitor_https_interceptor_';
+    const CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM = 'u';
     // TODO: export as Cap function
     const isRelativeOrProxyUrl = (url) => !url ||
         !(url.startsWith('http:') || url.startsWith('https:')) ||
@@ -145,11 +146,11 @@ var nativeBridge = (function (exports) {
         if (isRelativeOrProxyUrl(url))
             return url;
         const proxyUrl = new URL(url);
-        const bridgeUrl = new URL((_b = (_a = win.Capacitor) === null || _a === void 0 ? void 0 : _a.getServerUrl()) !== null && _b !== void 0 ? _b : '');
         const isHttps = proxyUrl.protocol === 'https:';
-        bridgeUrl.search = proxyUrl.search;
-        bridgeUrl.hash = proxyUrl.hash;
-        bridgeUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${encodeURIComponent(proxyUrl.host)}${proxyUrl.pathname}`;
+        const bridgeUrl = new URL((_b = (_a = win.Capacitor) === null || _a === void 0 ? void 0 : _a.getServerUrl()) !== null && _b !== void 0 ? _b : '');
+        bridgeUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}`;
+        // URLSearchParams `append()` method will automatically percent encode the url
+        bridgeUrl.searchParams.append(CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM, url);
         return bridgeUrl.toString();
     };
     const initBridge = (w) => {

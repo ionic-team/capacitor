@@ -262,13 +262,10 @@ public class WebViewLocalServer {
         boolean isHttps =
             request.getUrl().getPath() != null && request.getUrl().getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START);
 
-        String urlString = request
-            .getUrl()
-            .toString()
-            .replace(bridge.getLocalUrl(), isHttps ? "https:/" : "http:/")
-            .replace(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START, "")
-            .replace(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START, "");
-        urlString = URLDecoder.decode(urlString, "UTF-8");
+        Uri uri = Uri.parse(request.getUrl().toString());
+        // `getQueryParameter` method of Android Uri lib already decodes the value automatically
+        String urlString = uri.getQueryParameter(Bridge.CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM);
+
         URL url = new URL(urlString);
         JSObject headers = new JSObject();
 

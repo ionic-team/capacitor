@@ -121,6 +121,7 @@ const convertBody = async (
 
 const CAPACITOR_HTTP_INTERCEPTOR = '/_capacitor_http_interceptor_';
 const CAPACITOR_HTTPS_INTERCEPTOR = '/_capacitor_https_interceptor_';
+const CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM = 'u';
 
 // TODO: export as Cap function
 const isRelativeOrProxyUrl = (url: string | undefined): boolean =>
@@ -134,13 +135,14 @@ const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   if (isRelativeOrProxyUrl(url)) return url;
 
   const proxyUrl = new URL(url);
-  const bridgeUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
   const isHttps = proxyUrl.protocol === 'https:';
-  bridgeUrl.search = proxyUrl.search;
-  bridgeUrl.hash = proxyUrl.hash;
+  const bridgeUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
   bridgeUrl.pathname = `${
     isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
-  }/${encodeURIComponent(proxyUrl.host)}${proxyUrl.pathname}`;
+  }`;
+  // URLSearchParams `append()` method will automatically percent encode the url
+  bridgeUrl.searchParams.append(CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM, url);
+
   return bridgeUrl.toString();
 };
 
