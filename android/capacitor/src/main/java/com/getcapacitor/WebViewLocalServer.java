@@ -256,9 +256,6 @@ public class WebViewLocalServer {
     }
 
     private WebResourceResponse handleCapacitorHttpRequest(WebResourceRequest request) throws IOException {
-        boolean isHttps =
-            request.getUrl().getPath() != null && request.getUrl().getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START);
-
         Uri uri = Uri.parse(request.getUrl().toString());
         // `getQueryParameter` method of Android Uri lib already decodes the value automatically
         String urlString = uri.getQueryParameter(Bridge.CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM);
