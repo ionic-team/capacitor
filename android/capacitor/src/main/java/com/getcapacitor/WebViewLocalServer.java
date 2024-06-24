@@ -174,10 +174,7 @@ public class WebViewLocalServer {
 
         if (
             null != loadingUrl.getPath() &&
-            (
-                loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START) ||
-                loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START)
-            )
+            loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START)
         ) {
             Logger.debug("Handling CapacitorHttp request: " + loadingUrl);
             try {
@@ -259,16 +256,10 @@ public class WebViewLocalServer {
     }
 
     private WebResourceResponse handleCapacitorHttpRequest(WebResourceRequest request) throws IOException {
-        boolean isHttps =
-            request.getUrl().getPath() != null && request.getUrl().getPath().startsWith(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START);
+        Uri uri = Uri.parse(request.getUrl().toString());
+        // `getQueryParameter` method of Android Uri lib already decodes the value automatically
+        String urlString = uri.getQueryParameter(Bridge.CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM);
 
-        String urlString = request
-            .getUrl()
-            .toString()
-            .replace(bridge.getLocalUrl(), isHttps ? "https:/" : "http:/")
-            .replace(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START, "")
-            .replace(Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START, "");
-        urlString = URLDecoder.decode(urlString, "UTF-8");
         URL url = new URL(urlString);
         JSObject headers = new JSObject();
 

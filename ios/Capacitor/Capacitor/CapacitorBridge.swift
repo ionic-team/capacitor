@@ -95,7 +95,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
-    public static let httpsInterceptorStartIdentifier = "/_capacitor_https_interceptor_"
+    public static let httpInterceptorUrlParam = "u"
     public static let defaultScheme = "capacitor"
 
     public private(set) var webViewAssetHandler: WebViewAssetHandler
