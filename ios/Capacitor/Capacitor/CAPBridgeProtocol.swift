@@ -11,10 +11,8 @@ import WebKit
     var isDevEnvironment: Bool { get }
     var userInterfaceStyle: UIUserInterfaceStyle { get }
     var autoRegisterPlugins: Bool { get }
-    #if os(iOS)
     var statusBarVisible: Bool { get set }
     var statusBarStyle: UIStatusBarStyle { get set }
-    #endif
     var statusBarAnimation: UIStatusBarAnimation { get set }
 
     // MARK: - Deprecated
@@ -81,9 +79,7 @@ import WebKit
 
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
-    #if os(iOS)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
-    #endif
     func dismissVC(animated flag: Bool, completion: (() -> Void)?)
 }
 
