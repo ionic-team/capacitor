@@ -11,8 +11,10 @@ import WebKit
     var isDevEnvironment: Bool { get }
     var userInterfaceStyle: UIUserInterfaceStyle { get }
     var autoRegisterPlugins: Bool { get }
+    #if os(iOS)
     var statusBarVisible: Bool { get set }
     var statusBarStyle: UIStatusBarStyle { get set }
+    #endif
     var statusBarAnimation: UIStatusBarAnimation { get set }
 
     // MARK: - Deprecated
@@ -24,13 +26,13 @@ import WebKit
 
     @available(*, deprecated, renamed: "isDevEnvironment")
     func isDevMode() -> Bool
-
+    #if os(iOS)
     @available(*, deprecated, renamed: "statusBarVisible")
     func getStatusBarVisible() -> Bool
 
     @available(*, deprecated, renamed: "statusBarStyle")
     func getStatusBarStyle() -> UIStatusBarStyle
-
+    #endif
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
 
@@ -79,7 +81,9 @@ import WebKit
 
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
+    #if os(iOS)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
+    #endif
     func dismissVC(animated flag: Bool, completion: (() -> Void)?)
 }
 
@@ -105,12 +109,16 @@ extension CAPBridgeProtocol {
 
     @available(*, deprecated, renamed: "statusBarVisible")
     public func setStatusBarVisible(_ visible: Bool) {
+        #if os(iOS)
         statusBarVisible = visible
+        #endif
     }
 
     @available(*, deprecated, renamed: "statusBarStyle")
     public func setStatusBarStyle(_ style: UIStatusBarStyle) {
+        #if os(iOS)
         statusBarStyle = style
+        #endif
     }
 
     @available(*, deprecated, renamed: "statusBarAnimation")

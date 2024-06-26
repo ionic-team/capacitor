@@ -56,7 +56,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public var userInterfaceStyle: UIUserInterfaceStyle {
         return viewController?.traitCollection.userInterfaceStyle ?? .unspecified
     }
-
+    #if os(iOS)
     public var statusBarVisible: Bool {
         get {
             return !(viewController?.prefersStatusBarHidden ?? true)
@@ -78,7 +78,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-
+    #endif
     public var statusBarAnimation: UIStatusBarAnimation {
         get {
             return (viewController as? CAPBridgeViewController)?.statusBarAnimation ?? .slide
@@ -136,20 +136,25 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public func isDevMode() -> Bool {
         return isDevEnvironment
     }
-
+    #if os(iOS)
     public func getStatusBarVisible() -> Bool {
         return statusBarVisible
     }
-
+    #endif
     @nonobjc public func setStatusBarVisible(_ visible: Bool) {
+        #if os(iOS)
         statusBarVisible = visible
+        #endif
     }
-
+    #if os(iOS)
     public func getStatusBarStyle() -> UIStatusBarStyle {
         return statusBarStyle
     }
+    #endif
     @nonobjc public func setStatusBarStyle(_ style: UIStatusBarStyle) {
+        #if os(iOS)
         statusBarStyle = style
+        #endif
     }
 
     public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
@@ -709,7 +714,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
         self.viewController?.present(alert, animated: true, completion: nil)
     }
-
+    #if os(iOS)
     @objc open func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         if viewControllerToPresent.modalPresentationStyle == .popover {
             self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
@@ -720,7 +725,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self.tmpWindow?.rootViewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         }
     }
-
+    #endif
     @objc open func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
         if self.tmpWindow == nil {
             self.viewController?.dismiss(animated: flag, completion: completion)
