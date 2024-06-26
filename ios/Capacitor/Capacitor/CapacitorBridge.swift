@@ -150,30 +150,18 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     public func getStatusBarVisible() -> Bool {
-        #if os(iOS)
         return statusBarVisible
-        #else
-        return false
-        #endif
     }
 
     @nonobjc public func setStatusBarVisible(_ visible: Bool) {
-        #if os(iOS)
         statusBarVisible = visible
-        #endif
     }
 
     public func getStatusBarStyle() -> UIStatusBarStyle {
-        #if os(iOS)
         return statusBarStyle
-        #else
-        return .default
-        #endif
     }
     @nonobjc public func setStatusBarStyle(_ style: UIStatusBarStyle) {
-        #if os(iOS)
         statusBarStyle = style
-        #endif
     }
 
     public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
