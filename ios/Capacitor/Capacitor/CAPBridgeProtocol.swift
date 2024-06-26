@@ -105,16 +105,12 @@ extension CAPBridgeProtocol {
 
     @available(*, deprecated, renamed: "statusBarVisible")
     public func setStatusBarVisible(_ visible: Bool) {
-        #if os(iOS)
         statusBarVisible = visible
-        #endif
     }
 
     @available(*, deprecated, renamed: "statusBarStyle")
     public func setStatusBarStyle(_ style: UIStatusBarStyle) {
-        #if os(iOS)
         statusBarStyle = style
-        #endif
     }
 
     @available(*, deprecated, renamed: "statusBarAnimation")
