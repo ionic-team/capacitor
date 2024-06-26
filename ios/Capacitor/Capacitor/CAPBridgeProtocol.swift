@@ -26,13 +26,13 @@ import WebKit
 
     @available(*, deprecated, renamed: "isDevEnvironment")
     func isDevMode() -> Bool
-    #if os(iOS)
+    
     @available(*, deprecated, renamed: "statusBarVisible")
     func getStatusBarVisible() -> Bool
 
     @available(*, deprecated, renamed: "statusBarStyle")
     func getStatusBarStyle() -> UIStatusBarStyle
-    #endif
+    
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
 
