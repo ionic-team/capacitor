@@ -220,7 +220,7 @@ import Cordova
     override open var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         return statusBarAnimation
     }
-    
+
     open func setStatusBarVisible(_ isStatusBarVisible: Bool) {
         self.isStatusBarVisible = isStatusBarVisible
         #if os(iOS)
@@ -238,7 +238,7 @@ import Cordova
         })
         #endif
     }
-    
+
     open func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
         self.statusBarAnimation = statusBarAnimation
     }
