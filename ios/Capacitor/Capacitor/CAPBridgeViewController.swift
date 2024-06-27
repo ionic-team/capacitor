@@ -8,7 +8,7 @@ import Cordova
         return capacitorBridge
     }
 
-    public fileprivate(set) var webView: WKWebView?
+    @objc public fileprivate(set) var webView: WKWebView?
 
     public var isStatusBarVisible = true
     public var statusBarStyle: UIStatusBarStyle = .default
@@ -27,6 +27,11 @@ import Cordova
         return false
     }()
 
+    public var didStartProvisionalNavigationCallback: (() -> Void)? = nil
+    public var didFinishCallback: (() -> Void)? = nil
+    public var didFailCallback: (() -> Void)? = nil
+    public var didFailProvisionalNavigationCallback: (() -> Void)? = nil
+
     override public final func loadView() {
         // load the configuration and set the logging flag
         let configDescriptor = instanceDescriptor()
@@ -41,7 +46,13 @@ import Cordova
         let assetHandler = WebViewAssetHandler(router: router())
         assetHandler.setAssetPath(configuration.appLocation.path)
         assetHandler.setServerUrl(configuration.serverURL)
+
         let delegationHandler = WebViewDelegationHandler()
+        delegationHandler.didStartProvisionalNavigationCallback = didStartProvisionalNavigationCallback
+        delegationHandler.didFinishCallback = didFinishCallback
+        delegationHandler.didFailCallback = didFailCallback
+        delegationHandler.didFailProvisionalNavigationCallback = didFailProvisionalNavigationCallback
+        
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView
         // create the bridge
