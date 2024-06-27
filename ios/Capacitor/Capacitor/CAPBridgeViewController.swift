@@ -27,10 +27,10 @@ import Cordova
         return false
     }()
 
-    public var didStartProvisionalNavigationCallback: (() -> Void)? = nil
-    public var didFinishCallback: (() -> Void)? = nil
-    public var didFailCallback: (() -> Void)? = nil
-    public var didFailProvisionalNavigationCallback: (() -> Void)? = nil
+    open func didStartProvisionalNavigationCallback(){}
+    open func didFinishCallback(){}
+    open func didFailCallback(){}
+    open func didFailProvisionalNavigationCallback(){}
 
     override public final func loadView() {
         // load the configuration and set the logging flag
