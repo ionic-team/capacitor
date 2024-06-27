@@ -50,7 +50,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
     open func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         // Reset the bridge on each navigation
         bridge?.reset()
-        if callback = didStartProvisionalNavigationCallback {
+        if let callback = didStartProvisionalNavigationCallback {
             callback()
         }
     }
@@ -136,7 +136,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             webViewLoadingState = .subsequentLoad
         }
         CAPLog.print("⚡️  WebView loaded")
-        if callback = didFinishCallback {
+        if let callback = didFinishCallback {
             callback()
         }
     }
@@ -155,7 +155,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
         CAPLog.print("⚡️  WebView failed to load")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
-        if callback = didFailCallback {
+        if let callback = didFailCallback {
             callback()
         }
     }
@@ -169,7 +169,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
         CAPLog.print("⚡️  WebView failed provisional navigation")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
-        if callback = didFailProvisionalNavigationCallback {
+        if let callback = didFailProvisionalNavigationCallback {
             callback()
         }
     }
