@@ -45,16 +45,20 @@ import Cordova
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView
         // create the bridge
-        capacitorBridge = CapacitorBridge(with: configuration,
-                                          delegate: self,
-                                          cordovaConfiguration: configDescriptor.cordovaConfiguration,
-                                          assetHandler: assetHandler,
-                                          delegationHandler: delegationHandler)
+        capacitorBridge = instanceCapacitorBridge(configDescriptor, configuration, assetHandler, delegationHandler)
         capacitorDidLoad()
 
         if configDescriptor.instanceType == .fixed {
             updateBinaryVersion()
         }
+    }
+    
+    open func instanceCapacitorBridge(_ configDescriptor: InstanceDescriptor, _ configuration: InstanceConfiguration, _ assetHandler: WebViewAssetHandler, _ delegationHandler: WebViewDelegationHandler) -> CapacitorBridge {
+        return CapacitorBridge(with: configuration,
+                                              delegate: self,
+                                              cordovaConfiguration: configDescriptor.cordovaConfiguration,
+                                              assetHandler: assetHandler,
+                                              delegationHandler: delegationHandler)
     }
 
     override open func viewDidLoad() {
