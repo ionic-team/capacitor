@@ -69,6 +69,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *serverURL;
 /**
+ @brief The file URL from which Capacitor will load configuration
+ @discussion Defaults to @c capacitor.config.json located at the root of the application bundle.
+ */
+@property (nonatomic, copy, nullable) NSURL *configUrl;
+/**
  @brief The JSON dictionary that contains the plugin-specific configuration information.
  @discussion Set by @c plugins in the configuration file.
  */
