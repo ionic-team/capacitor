@@ -565,20 +565,7 @@ var nativeBridge = (function (exports) {
                                 value: xhr.method,
                                 writable: true,
                             },
-                            readyState: {
-                                get: function () {
-                                    var _a;
-                                    return (_a = this._readyState) !== null && _a !== void 0 ? _a : 0;
-                                },
-                                set: function (val) {
-                                    this._readyState = val;
-                                    setTimeout(() => {
-                                        this.dispatchEvent(new Event('readystatechange'));
-                                    });
-                                },
-                            },
                         });
-                        xhr.readyState = 0;
                         const prototype = win.CapacitorWebXMLHttpRequest.prototype;
                         const isProgressEventAvailable = () => typeof ProgressEvent !== 'undefined' &&
                             ProgressEvent.prototype instanceof Event;
@@ -608,6 +595,20 @@ var nativeBridge = (function (exports) {
                                 this._url = createProxyUrl(this._url, win);
                                 return win.CapacitorWebXMLHttpRequest.open.call(this, method, this._url);
                             }
+                            Object.defineProperties(this, {
+                                readyState: {
+                                    get: function () {
+                                        var _a;
+                                        return (_a = this._readyState) !== null && _a !== void 0 ? _a : 0;
+                                    },
+                                    set: function (val) {
+                                        this._readyState = val;
+                                        setTimeout(() => {
+                                            this.dispatchEvent(new Event('readystatechange'));
+                                        });
+                                    },
+                                },
+                            });
                             setTimeout(() => {
                                 this.dispatchEvent(new Event('loadstart'));
                             });

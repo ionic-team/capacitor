@@ -4,7 +4,7 @@ import {
   checkWebDir,
   selectPlatforms,
   isValidPlatform,
-  runPlatformHook,
+  runHooks,
 } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
@@ -63,7 +63,7 @@ export async function sync(
   deployment: boolean,
   inline = false,
 ): Promise<void> {
-  await runPlatformHook(
+  await runHooks(
     config,
     platformName,
     config.app.rootDir,
@@ -77,7 +77,7 @@ export async function sync(
   }
   await update(config, platformName, deployment);
 
-  await runPlatformHook(
+  await runHooks(
     config,
     platformName,
     config.app.rootDir,

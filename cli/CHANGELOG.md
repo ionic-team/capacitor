@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/ionic-team/capacitor/compare/6.0.0...6.1.0) (2024-06-11)
+
+### Bug Fixes
+
+- **cli:** Avoid duplicate entries in packageClassList ([#7470](https://github.com/ionic-team/capacitor/issues/7470)) ([cca0b80](https://github.com/ionic-team/capacitor/commit/cca0b805291bd002c515be0a1c15de84ee23c5d3))
+- **cli:** Run sync before updating gradle ([#7497](https://github.com/ionic-team/capacitor/issues/7497)) ([f27786e](https://github.com/ionic-team/capacitor/commit/f27786ea1367bc0ec53697eeb6d654a7e12a1507))
+
+### Features
+
+- **cli:** run plugin hooks ([#7499](https://github.com/ionic-team/capacitor/issues/7499)) ([3b847ea](https://github.com/ionic-team/capacitor/commit/3b847eac42673c812a4538c319b81c8f8afc9955))
+
 # [6.0.0](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.2...6.0.0) (2024-04-15)
 
 ### Bug Fixes
