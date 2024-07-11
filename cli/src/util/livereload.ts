@@ -120,6 +120,7 @@ class CapLiveReload {
     return !all.length ? loopback(family) : all[0];
   }
 
+  // TODO remove on next major as it's unused
   async editExtConfigForLiveReload(
     config: Config,
     platformName: string,
@@ -147,6 +148,7 @@ class CapLiveReload {
     return configJson;
   }
 
+  // TODO remove rootConfigChange param on next major as it's unused
   async editCapConfigForLiveReload(
     config: Config,
     platformName: string,
