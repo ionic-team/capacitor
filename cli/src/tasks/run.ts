@@ -95,36 +95,34 @@ export async function runCommand(
       if (options.sync) {
         await sync(config, platformName, false, true);
       }
+      const cordovaPlugins = await getCordovaPlugins(config, platformName);
       if (options.liveReload) {
         await CapLiveReloadHelper.editCapConfigForLiveReload(
           config,
           platformName,
           options,
         );
-      }
-      const cordovaPlugins = await getCordovaPlugins(config, platformName);
-      if (platformName === config.android.name) {
-        await await writeCordovaAndroidManifest(
-          cordovaPlugins,
-          config,
-          platformName,
-          true,
-        );
+        if (platformName === config.android.name) {
+          await await writeCordovaAndroidManifest(
+            cordovaPlugins,
+            config,
+            platformName,
+            true,
+          );
+        }
       }
       await run(config, platformName, options);
       if (options.liveReload) {
         new Promise(resolve => process.on('SIGINT', resolve))
           .then(async () => {
-            if (options.liveReload) {
-              await CapLiveReloadHelper.revertCapConfigForLiveReload();
-              if (platformName === config.android.name) {
-                await writeCordovaAndroidManifest(
-                  cordovaPlugins,
-                  config,
-                  platformName,
-                  false,
-                );
-              }
+            await CapLiveReloadHelper.revertCapConfigForLiveReload();
+            if (platformName === config.android.name) {
+              await writeCordovaAndroidManifest(
+                cordovaPlugins,
+                config,
+                platformName,
+                false,
+              );
             }
           })
           .then(() => process.exit());
