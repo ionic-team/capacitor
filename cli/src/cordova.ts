@@ -679,6 +679,7 @@ export function needsStaticPod(plugin: Plugin, config: Config): boolean {
     'onesignal-cordova-plugin',
   ];
   if (config.app.extConfig?.cordova?.staticPlugins) {
+    logger.warn('cordova.staticPlugins is deprecated, make sure you are using latest version of the plugin')
     pluginList = pluginList.concat(
       config.app.extConfig?.cordova?.staticPlugins,
     );
