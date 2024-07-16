@@ -255,7 +255,7 @@ public class Bridge {
         JSInjector injector = getJSInjector();
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
             String allowedOrigin = appUrl;
-            Uri appUri = Uri.parse(appUrl);
+            Uri appUri = Uri.parse(appUrl).buildUpon().clearQuery().build();
             if (appUri.getPath() != null) {
                 if (appUri.getPath().equals("/")) {
                     allowedOrigin = appUrl.substring(0, appUrl.length() - 1);
