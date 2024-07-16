@@ -367,7 +367,7 @@ public class Bridge {
             }
         }
 
-        if (url.getScheme().equals("data")) {
+        if (url.getScheme().equals("data") || url.getScheme().equals("blob")) {
             return false;
         }
 
