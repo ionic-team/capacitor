@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.7](https://github.com/ionic-team/capacitor/compare/5.7.6...5.7.7) (2024-07-17)
+
+### Bug Fixes
+
+- **http:** handle UInt8Array on body ([#7546](https://github.com/ionic-team/capacitor/issues/7546)) ([#7558](https://github.com/ionic-team/capacitor/issues/7558)) ([39bbc02](https://github.com/ionic-team/capacitor/commit/39bbc0276bfd3341a3a2d5a707c55eed8d1ce4a6))
+
 ## [5.7.6](https://github.com/ionic-team/capacitor/compare/5.7.5...5.7.6) (2024-06-11)
 
 ### Bug Fixes
