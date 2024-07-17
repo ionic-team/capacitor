@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.1.1](https://github.com/ionic-team/capacitor/compare/6.1.0...6.1.1) (2024-07-17)
+
+### Bug Fixes
+
+- **android:** Allow WebView to load blob urls ([#7551](https://github.com/ionic-team/capacitor/issues/7551)) ([0dca917](https://github.com/ionic-team/capacitor/commit/0dca917da54b01c6cf4fcd063f8191a8457d7c93))
+- **android:** javascript injection not working on urls with query ([#7545](https://github.com/ionic-team/capacitor/issues/7545)) ([57ce5c6](https://github.com/ionic-team/capacitor/commit/57ce5c65560c34d106e8b88cffe26ad22947bba6))
+- **android:** send FormData on older devices ([#7519](https://github.com/ionic-team/capacitor/issues/7519)) ([de8b50d](https://github.com/ionic-team/capacitor/commit/de8b50dc1d87510c5f19d04f30b6be12b51d8482))
+- **android:** UTF-8 encode form data value ([#7525](https://github.com/ionic-team/capacitor/issues/7525)) ([a73ed31](https://github.com/ionic-team/capacitor/commit/a73ed318cdb819863425f6b1b7ec23ea53454931))
+- **http:** handle UInt8Array on body ([#7546](https://github.com/ionic-team/capacitor/issues/7546)) ([cfb9ce1](https://github.com/ionic-team/capacitor/commit/cfb9ce175615f69fe86b61af6d51ec2044d147cd))
+
 # [6.1.0](https://github.com/ionic-team/capacitor/compare/6.0.0...6.1.0) (2024-06-11)
 
 ### Bug Fixes
