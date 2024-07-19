@@ -263,7 +263,12 @@ public class Bridge {
                     allowedOrigin = appUri.toString().replace(appUri.getPath(), "");
                 }
             }
-            WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), Collections.singleton(allowedOrigin));
+            final String finalAllowedOrigin = allowedOrigin;
+            Set<String> allowedOrigins = new HashSet<String>() {{
+                add(finalAllowedOrigin);
+                addAll(allowedOriginRules);
+            }};
+            WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), allowedOrigins);
             injector = null;
         }
         localServer = new WebViewLocalServer(context, this, injector, authorities, html5mode);
