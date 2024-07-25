@@ -17,7 +17,10 @@ export async function getPluginFiles(plugins: Plugin[]): Promise<string[]> {
 
   const options: ReaddirPOptions = {
     filter: item => {
-      if (item.stats.isFile() && (item.path.endsWith('.swift') || item.path.endsWith('.m'))) {
+      if (
+        item.stats.isFile() &&
+        (item.path.endsWith('.swift') || item.path.endsWith('.m'))
+      ) {
         return true;
       } else {
         return false;
