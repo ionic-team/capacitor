@@ -580,7 +580,10 @@ export interface CapacitorConfig {
      * List of Cordova plugins that need to be static but are not
      * already in the static plugin list.
      *
+     * It's deprecated and will be removed in Capacitor 7
+     *
      * @since 3.3.0
+     * @deprecated 6.1.1
      */
     staticPlugins?: string[];
   };
