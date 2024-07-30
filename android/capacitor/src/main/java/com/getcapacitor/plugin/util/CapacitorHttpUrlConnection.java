@@ -298,6 +298,8 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             os.write(Base64.getDecoder().decode(value));
+                        } else {
+                            os.write(android.util.Base64.decode(value, android.util.Base64.DEFAULT));
                         }
 
                         os.writeBytes(lineEnd);

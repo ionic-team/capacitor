@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.1.1](https://github.com/ionic-team/capacitor/compare/6.1.0...6.1.1) (2024-07-17)
+
+### Bug Fixes
+
+- **cli:** enable cleartext for live reload ([#7563](https://github.com/ionic-team/capacitor/issues/7563)) ([e06648f](https://github.com/ionic-team/capacitor/commit/e06648f4566c0b80ab420f977e02f1b4cd73fc1f))
+- **ios:** Match CapApp-SPM iOS version with project version ([#7556](https://github.com/ionic-team/capacitor/issues/7556)) ([df4dc9a](https://github.com/ionic-team/capacitor/commit/df4dc9a17f1b999a68093091d201ba15d234c5f8))
+
 # [6.1.0](https://github.com/ionic-team/capacitor/compare/6.0.0...6.1.0) (2024-06-11)
 
 ### Bug Fixes
