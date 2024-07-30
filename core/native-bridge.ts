@@ -55,24 +55,30 @@ const convertBody = async (
   body: Document | XMLHttpRequestBodyInit | ReadableStream<any> | undefined,
   contentType?: string,
 ): Promise<any> => {
-  if (body instanceof ReadableStream) {
-    const reader = body.getReader();
-    const chunks: any[] = [];
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-    }
-    const concatenated = new Uint8Array(
-      chunks.reduce((acc, chunk) => acc + chunk.length, 0),
-    );
-    let position = 0;
-    for (const chunk of chunks) {
-      concatenated.set(chunk, position);
-      position += chunk.length;
+  if (body instanceof ReadableStream || body instanceof Uint8Array) {
+    let encodedData;
+    if (body instanceof ReadableStream) {
+      const reader = body.getReader();
+      const chunks: any[] = [];
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+      }
+      const concatenated = new Uint8Array(
+        chunks.reduce((acc, chunk) => acc + chunk.length, 0),
+      );
+      let position = 0;
+      for (const chunk of chunks) {
+        concatenated.set(chunk, position);
+        position += chunk.length;
+      }
+      encodedData = concatenated;
+    } else {
+      encodedData = body;
     }
 
-    let data = new TextDecoder().decode(concatenated);
+    let data = new TextDecoder().decode(encodedData);
     let type;
     if (contentType === 'application/json') {
       try {
