@@ -253,10 +253,7 @@ public class WebViewLocalServer {
     }
 
     private WebResourceResponse handleCapacitorHttpRequest(WebResourceRequest request) throws IOException {
-        Uri uri = Uri.parse(request.getUrl().toString());
-        // `getQueryParameter` method of Android Uri lib already decodes the value automatically
-        String urlString = uri.getQueryParameter(Bridge.CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM);
-
+        String urlString = request.getUrl().getQueryParameter(Bridge.CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM);
         URL url = new URL(urlString);
         JSObject headers = new JSObject();
 

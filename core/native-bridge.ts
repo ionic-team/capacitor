@@ -139,7 +139,6 @@ const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   if (isRelativeOrProxyUrl(url)) return url;
   const bridgeUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
   bridgeUrl.pathname = CAPACITOR_HTTP_INTERCEPTOR;
-  // URLSearchParams `append()` method will automatically percent encode the url
   bridgeUrl.searchParams.append(CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM, url);
 
   return bridgeUrl.toString();

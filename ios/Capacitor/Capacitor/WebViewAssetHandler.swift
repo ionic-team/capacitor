@@ -137,7 +137,6 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
         if let targetUrl = urlComponents?.queryItems?.first(where: { $0.name == CapacitorBridge.httpInterceptorUrlParam })?.value,
            !targetUrl.isEmpty {
-            // Note that URLComponents are already percent-decoded so we do not need to do this manually
             urlRequest.url = URL(string: targetUrl)
         }
 
