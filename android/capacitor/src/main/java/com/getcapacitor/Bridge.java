@@ -92,6 +92,11 @@ public class Bridge {
     public static final String CAPACITOR_FILE_START = "/_capacitor_file_";
     public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
     public static final String CAPACITOR_HTTP_INTERCEPTOR_START = "/_capacitor_http_interceptor_";
+
+    /** @deprecated CAPACITOR_HTTPS_INTERCEPTOR_START is no longer required. All proxied requests are handled via CAPACITOR_HTTP_INTERCEPTOR_START instead */
+    @Deprecated
+    public static final String CAPACITOR_HTTPS_INTERCEPTOR_START = "/_capacitor_https_interceptor_";
+
     public static final String CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM = "u";
 
     public static final int DEFAULT_ANDROID_WEBVIEW_VERSION = 60;
