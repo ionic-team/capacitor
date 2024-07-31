@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.license = 'MIT'
   s.homepage = 'https://capacitorjs.com/'
   s.ios.deployment_target = '13.0'
+  s.visionos.deployment_target = '1.0'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { git: 'https://github.com/ionic-team/capacitor.git', tag: package['version'] }
   s.source_files = "#{prefix}Capacitor/Capacitor/**/*.{swift,h,m}"
