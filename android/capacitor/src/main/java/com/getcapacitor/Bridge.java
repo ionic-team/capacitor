@@ -255,10 +255,11 @@ public class Bridge {
         JSInjector injector = getJSInjector();
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
             String allowedOrigin = appUrl;
-            Uri appUri = Uri.parse(appUrl).buildUpon().clearQuery().build();
+            Uri appUri = Uri.parse(appUrl).buildUpon().clearQuery().fragment(null).build();
             if (appUri.getPath() != null) {
                 if (appUri.getPath().equals("/")) {
-                    allowedOrigin = appUrl.substring(0, appUrl.length() - 1);
+                    String allowedOriginWithSlashPath = appUri.toString();
+                    allowedOrigin = allowedOriginWithSlashPath.substring(0, allowedOriginWithSlashPath.length() - 1);
                 } else {
                     allowedOrigin = appUri.toString().replace(appUri.getPath(), "");
                 }
