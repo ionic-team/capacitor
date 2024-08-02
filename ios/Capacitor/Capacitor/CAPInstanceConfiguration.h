@@ -19,6 +19,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly) BOOL scrollingEnabled;
 @property (nonatomic, readonly) BOOL zoomingEnabled;
 @property (nonatomic, readonly) BOOL allowLinkPreviews;
+@property (nonatomic, readonly) BOOL allowsBackForwardNavigationGestures;
 @property (nonatomic, readonly) BOOL handleApplicationNotifications;
 @property (nonatomic, readonly) BOOL isWebDebuggable;
 @property (nonatomic, readonly) BOOL cordovaDeployDisabled;
