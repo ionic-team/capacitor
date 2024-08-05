@@ -156,7 +156,6 @@ var nativeBridge = (function (exports) {
             return url;
         const bridgeUrl = new URL((_b = (_a = win.Capacitor) === null || _a === void 0 ? void 0 : _a.getServerUrl()) !== null && _b !== void 0 ? _b : '');
         bridgeUrl.pathname = CAPACITOR_HTTP_INTERCEPTOR;
-        // URLSearchParams `append()` method will automatically percent encode the url
         bridgeUrl.searchParams.append(CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM, url);
         return bridgeUrl.toString();
     };
