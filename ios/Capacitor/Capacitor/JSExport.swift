@@ -129,7 +129,7 @@ internal class JSExport {
         paramList.append(catchallOptionsParameter)
 
         // Automatically add the _callback param if returning data through a callback
-        if returnType == CAPPluginReturnCallback {
+        if returnType != CAPPluginReturnNone {
             paramList.append(callbackParameter)
         }
 
@@ -154,7 +154,7 @@ internal class JSExport {
 
             // ...using a promise
             lines.append("""
-                    return w.Capacitor.nativePromise('\(pluginClassName)', '\(methodName)', \(argObjectString));
+                    return w.Capacitor.nativePromise('\(pluginClassName)', '\(methodName)', \(argObjectString), \(callbackParameter));
                     """)
         } else if returnType == CAPPluginReturnCallback {
             // ...using a callback

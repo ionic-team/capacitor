@@ -121,8 +121,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         const methodHeader = pluginHeader?.methods.find(m => prop === m.name);
         if (methodHeader) {
           if (methodHeader.rtype === 'promise') {
-            return (options: any) =>
-              cap.nativePromise(pluginName, prop.toString(), options);
+            return (options: any, callback: any) =>
+              cap.nativePromise(pluginName, prop.toString(), options, callback);
           } else {
             return (options: any, callback: any) =>
               cap.nativeCallback(
