@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.8](https://github.com/ionic-team/capacitor/compare/5.7.7...5.7.8) (2024-08-07)
+
+### Bug Fixes
+
+- **cli:** enable cleartext for live reload ([#7563](https://github.com/ionic-team/capacitor/issues/7563)) ([#7587](https://github.com/ionic-team/capacitor/issues/7587)) ([bb23779](https://github.com/ionic-team/capacitor/commit/bb23779bd843dcc70b6fb9259d9d013b7846e885))
+- **http:** pass original url as query param on the proxy url ([#7527](https://github.com/ionic-team/capacitor/issues/7527)) ([#7604](https://github.com/ionic-team/capacitor/issues/7604)) ([1c830ad](https://github.com/ionic-team/capacitor/commit/1c830ada4645829513e1d213c4b9a3e9b521745e))
+
 ## [5.7.7](https://github.com/ionic-team/capacitor/compare/5.7.6...5.7.7) (2024-07-17)
 
 ### Bug Fixes
