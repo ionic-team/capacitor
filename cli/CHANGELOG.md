@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.1.2](https://github.com/ionic-team/capacitor/compare/6.1.1...6.1.2) (2024-08-07)
+
+### Bug Fixes
+
+- support dependencies with ".swift" at the end of name ([#7583](https://github.com/ionic-team/capacitor/issues/7583)) ([ceee68a](https://github.com/ionic-team/capacitor/commit/ceee68a2db363e9d9a638aa4ed8569fd82d1013a))
+
 ## [6.1.1](https://github.com/ionic-team/capacitor/compare/6.1.0...6.1.1) (2024-07-17)
 
 ### Bug Fixes
