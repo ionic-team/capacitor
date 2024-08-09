@@ -165,6 +165,8 @@ function createRunnablePlatformFilter(
 
 async function sleepForever(): Promise<never> {
   return new Promise<never>(() => {
-    setInterval(() => { /* do nothing */ }, 1000);
+    setInterval(() => {
+      /* do nothing */
+    }, 1000);
   });
 }
