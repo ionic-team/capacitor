@@ -92,7 +92,12 @@ public class Bridge {
     public static final String CAPACITOR_FILE_START = "/_capacitor_file_";
     public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
     public static final String CAPACITOR_HTTP_INTERCEPTOR_START = "/_capacitor_http_interceptor_";
+
+    /** @deprecated CAPACITOR_HTTPS_INTERCEPTOR_START is no longer required. All proxied requests are handled via CAPACITOR_HTTP_INTERCEPTOR_START instead */
+    @Deprecated
     public static final String CAPACITOR_HTTPS_INTERCEPTOR_START = "/_capacitor_https_interceptor_";
+
+    public static final String CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM = "u";
 
     public static final int DEFAULT_ANDROID_WEBVIEW_VERSION = 60;
     public static final int MINIMUM_ANDROID_WEBVIEW_VERSION = 55;
@@ -254,17 +259,13 @@ public class Bridge {
         // Start the local web server
         JSInjector injector = getJSInjector();
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
-            String allowedOrigin = appUrl;
-            Uri appUri = Uri.parse(appUrl);
-            if (appUri.getPath() != null) {
-                if (appUri.getPath().equals("/")) {
-                    allowedOrigin = appUrl.substring(0, appUrl.length() - 1);
-                } else {
-                    allowedOrigin = appUri.toString().replace(appUri.getPath(), "");
-                }
+            String allowedOrigin = Uri.parse(appUrl).buildUpon().path(null).fragment(null).clearQuery().build().toString();
+            try {
+                WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), Collections.singleton(allowedOrigin));
+                injector = null;
+            } catch (IllegalArgumentException ex) {
+                Logger.warn("Invalid url, using fallback");
             }
-            WebViewCompat.addDocumentStartJavaScript(webView, injector.getScriptString(), Collections.singleton(allowedOrigin));
-            injector = null;
         }
         localServer = new WebViewLocalServer(context, this, injector, authorities, html5mode);
         localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
@@ -384,7 +385,7 @@ public class Bridge {
             }
         }
 
-        if (url.getScheme().equals("data")) {
+        if (url.getScheme().equals("data") || url.getScheme().equals("blob")) {
             return false;
         }
 
