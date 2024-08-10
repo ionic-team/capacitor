@@ -126,27 +126,21 @@ const convertBody = async (
 };
 
 const CAPACITOR_HTTP_INTERCEPTOR = '/_capacitor_http_interceptor_';
-const CAPACITOR_HTTPS_INTERCEPTOR = '/_capacitor_https_interceptor_';
+const CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM = 'u';
 
 // TODO: export as Cap function
 const isRelativeOrProxyUrl = (url: string | undefined): boolean =>
   !url ||
   !(url.startsWith('http:') || url.startsWith('https:')) ||
-  url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1 ||
-  url.indexOf(CAPACITOR_HTTPS_INTERCEPTOR) > -1;
+  url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1;
 
 // TODO: export as Cap function
 const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   if (isRelativeOrProxyUrl(url)) return url;
-
-  const proxyUrl = new URL(url);
   const bridgeUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
-  const isHttps = proxyUrl.protocol === 'https:';
-  bridgeUrl.search = proxyUrl.search;
-  bridgeUrl.hash = proxyUrl.hash;
-  bridgeUrl.pathname = `${
-    isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR
-  }/${encodeURIComponent(proxyUrl.host)}${proxyUrl.pathname}`;
+  bridgeUrl.pathname = CAPACITOR_HTTP_INTERCEPTOR;
+  bridgeUrl.searchParams.append(CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM, url);
+
   return bridgeUrl.toString();
 };
 

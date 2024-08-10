@@ -11,7 +11,8 @@ import {
   promptForPlatform,
   getPlatformTargetName,
 } from '../common';
-import type { AppConfig, Config } from '../definitions';
+import { getCordovaPlugins, writeCordovaAndroidManifest } from '../cordova';
+import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { runIOS } from '../ios/run';
 import { logger, output } from '../log';
@@ -92,44 +93,41 @@ export async function runCommand(
 
     try {
       if (options.sync) {
-        if (options.liveReload) {
-          const newExtConfig =
-            await CapLiveReloadHelper.editExtConfigForLiveReload(
-              config,
-              platformName,
-              options,
-            );
-          const cfg: {
-            -readonly [K in keyof Config]: Config[K];
-          } = config;
-          const cfgapp: {
-            -readonly [K in keyof AppConfig]: AppConfig[K];
-          } = config.app;
-          cfgapp.extConfig = newExtConfig;
-          cfg.app = cfgapp;
-          await sync(cfg, platformName, false, true);
-        } else {
-          await sync(config, platformName, false, true);
-        }
-      } else {
-        if (options.liveReload) {
-          await CapLiveReloadHelper.editCapConfigForLiveReload(
+        await sync(config, platformName, false, true);
+      }
+      const cordovaPlugins = await getCordovaPlugins(config, platformName);
+      if (options.liveReload) {
+        await CapLiveReloadHelper.editCapConfigForLiveReload(
+          config,
+          platformName,
+          options,
+        );
+        if (platformName === config.android.name) {
+          await await writeCordovaAndroidManifest(
+            cordovaPlugins,
             config,
             platformName,
-            options,
+            true,
           );
         }
       }
       await run(config, platformName, options);
       if (options.liveReload) {
-        process.on('SIGINT', async () => {
-          if (options.liveReload) {
+        new Promise(resolve => process.on('SIGINT', resolve))
+          .then(async () => {
             await CapLiveReloadHelper.revertCapConfigForLiveReload();
-          }
-          process.exit();
-        });
-        console.log(
-          `\nApp running with live reload listing for: http://${options.host}:${options.port}. Press Ctrl+C to quit.`,
+            if (platformName === config.android.name) {
+              await writeCordovaAndroidManifest(
+                cordovaPlugins,
+                config,
+                platformName,
+                false,
+              );
+            }
+          })
+          .then(() => process.exit());
+        logger.info(
+          `App running with live reload listing for: http://${options.host}:${options.port}. Press Ctrl+C to quit.`,
         );
         await sleepForever();
       }

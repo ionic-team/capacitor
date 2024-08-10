@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.1.2](https://github.com/ionic-team/capacitor/compare/6.1.1...6.1.2) (2024-08-07)
+
+### Bug Fixes
+
+- **http:** pass original url as query param on the proxy url ([#7527](https://github.com/ionic-team/capacitor/issues/7527)) ([1da06e6](https://github.com/ionic-team/capacitor/commit/1da06e66cb9cfbf5a5cc48ba6c23cdbe18bc8fc0))
+
+## [6.1.1](https://github.com/ionic-team/capacitor/compare/6.1.0...6.1.1) (2024-07-17)
+
+### Bug Fixes
+
+- **http:** handle UInt8Array on body ([#7546](https://github.com/ionic-team/capacitor/issues/7546)) ([cfb9ce1](https://github.com/ionic-team/capacitor/commit/cfb9ce175615f69fe86b61af6d51ec2044d147cd))
+- **ios:** make removeAllListeners accessible from javascript ([#7566](https://github.com/ionic-team/capacitor/issues/7566)) ([388a822](https://github.com/ionic-team/capacitor/commit/388a8223c60e8eac8437ca4cb26a93ab359f53ad))
+
 # [6.1.0](https://github.com/ionic-team/capacitor/compare/6.0.0...6.1.0) (2024-06-11)
 
 ### Bug Fixes

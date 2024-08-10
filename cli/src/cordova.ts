@@ -679,6 +679,9 @@ export function needsStaticPod(plugin: Plugin, config: Config): boolean {
     'onesignal-cordova-plugin',
   ];
   if (config.app.extConfig?.cordova?.staticPlugins) {
+    logger.warn(
+      'cordova.staticPlugins is deprecated, make sure you are using latest version of the plugin',
+    );
     pluginList = pluginList.concat(
       config.app.extConfig?.cordova?.staticPlugins,
     );
@@ -760,6 +763,7 @@ export async function writeCordovaAndroidManifest(
   cordovaPlugins: Plugin[],
   config: Config,
   platform: string,
+  cleartext?: boolean,
 ): Promise<void> {
   const manifestPath = join(
     config.android.cordovaPluginsDirAbs,
@@ -1078,15 +1082,15 @@ export async function writeCordovaAndroidManifest(
     });
   });
   const cleartextString = 'android:usesCleartextTraffic="true"';
-  const cleartext =
-    config.app.extConfig.server?.cleartext &&
+  const cleartextValue =
+    (cleartext || config.app.extConfig.server?.cleartext) &&
     !applicationXMLAttributes.includes(cleartextString)
       ? cleartextString
       : '';
   let content = `<?xml version='1.0' encoding='utf-8'?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:amazon="http://schemas.amazon.com/apk/res/android">
-<application ${applicationXMLAttributes.join('\n')} ${cleartext}>
+<application ${applicationXMLAttributes.join('\n')} ${cleartextValue}>
 ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
