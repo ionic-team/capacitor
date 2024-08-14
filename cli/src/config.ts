@@ -304,6 +304,7 @@ async function loadIOSConfig(
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
   const scheme = extConfig.ios?.scheme ?? 'App';
+  const target = extConfig.ios?.target ?? scheme;
   const nativeProjectDir = 'App';
   const nativeProjectDirAbs = resolve(platformDirAbs, nativeProjectDir);
   const nativeTargetDir = `${nativeProjectDir}/App`;
@@ -335,6 +336,7 @@ async function loadIOSConfig(
     platformDir,
     platformDirAbs,
     scheme,
+    target,
     cordovaPluginsDir,
     cordovaPluginsDirAbs: resolve(platformDirAbs, cordovaPluginsDir),
     nativeProjectDir,
