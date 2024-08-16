@@ -1,4 +1,3 @@
-import { sleepForever } from '@ionic/utils-process';
 import { columnar } from '@ionic/utils-terminal';
 
 import { runAndroid } from '../android/run';
@@ -162,4 +161,12 @@ function createRunnablePlatformFilter(
 ): (platform: string) => boolean {
   return platform =>
     platform === config.ios.name || platform === config.android.name;
+}
+
+async function sleepForever(): Promise<never> {
+  return new Promise<never>(() => {
+    setInterval(() => {
+      /* do nothing */
+    }, 1000);
+  });
 }
