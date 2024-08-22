@@ -108,13 +108,11 @@ export class WebPlugin implements Plugin {
     };
   }
 
-  protected unimplemented(msg = 'not implemented'): CapacitorException {
-    return new Capacitor.Exception(msg, ExceptionCode.Unimplemented);
-  }
+  protected unimplemented = (msg = 'not implemented'): CapacitorException =>
+    new Capacitor.Exception(msg, ExceptionCode.Unimplemented);
 
-  protected unavailable(msg = 'not available'): CapacitorException {
-    return new Capacitor.Exception(msg, ExceptionCode.Unavailable);
-  }
+  protected unavailable = (msg = 'not available'): CapacitorException =>
+    new Capacitor.Exception(msg, ExceptionCode.Unavailable);
 
   private async removeListener(
     eventName: string,
