@@ -110,6 +110,9 @@ export type RegisterPlugin = <T>(
  * implementation for the respective platform.
  */
 export type PluginImplementations = {
+  android?: (() => Promise<any>) | any;
+  ios?: (() => Promise<any>) | any;
+  web?: (() => Promise<any>) | any;
   [platform: string]: (() => Promise<any>) | any;
 };
 
