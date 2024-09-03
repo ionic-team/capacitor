@@ -4,7 +4,7 @@
       "hoist": true
     },
     "version": {
-      "allowBranch": "main",
+      "allowBranch": "6.x",
       "conventionalCommits": true,
       "createRelease": "github",
       "message": "Release %s",
