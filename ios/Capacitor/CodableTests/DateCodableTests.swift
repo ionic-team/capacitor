@@ -154,5 +154,9 @@ final class JSValueEncoderDateTests: XCTestCase {
         let rawResult = try encoder.encode(Foo(date: referenceDate))
         let result = try XCTUnwrap(rawResult as? [String: String])
         XCTAssertEqual(result, ["date": iso8601])
+
+        let json = #"{ "key": "value" }"#.data(using: .utf8)!
+        let rawJsonData = try encoder.encode(json)
+        print(rawJsonData)
     }
 }

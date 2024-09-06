@@ -12,12 +12,38 @@ import Combine
 /// A decoder that can decode ``JSValue`` objects into `Decodable` types.
 public final class JSValueDecoder: TopLevelDecoder {
     public typealias DateDecodingStrategy = JSONDecoder.DateDecodingStrategy
+    public typealias DataDecodingStrategy = JSONDecoder.DataDecodingStrategy
 
-    public init(dateDecodingStrategy: DateDecodingStrategy = .deferredToDate) {
-        self.dateDecodingStrategy = dateDecodingStrategy
+    public enum NonConformingFloatDecodingStrategy {
+        case deferred
+        case `throw`
+        case convertFromString(positiveInfinity: String, negativeInfinity: String, nan: String)
     }
 
-    public var dateDecodingStrategy: DateDecodingStrategy
+    fileprivate struct Options {
+        var dataStrategy: DataDecodingStrategy
+        var dateStrategy: DateDecodingStrategy
+        var nonConformingStrategy: NonConformingFloatDecodingStrategy
+    }
+
+    private var options: Options
+
+    public init(
+        dateDecodingStrategy: DateDecodingStrategy = .deferredToDate,
+        dataDecodingStrategy: DataDecodingStrategy = .deferredToData,
+        nonConformingFloatDecodingStrategy: NonConformingFloatDecodingStrategy = .deferred
+    ) {
+        self.options = .init(dataStrategy: dataDecodingStrategy, dateStrategy: dateDecodingStrategy, nonConformingStrategy: nonConformingFloatDecodingStrategy)
+    }
+
+    fileprivate init(options: Options) {
+        self.options = options
+    }
+
+    public var dateDecodingStrategy: DateDecodingStrategy {
+        get { options.dateStrategy }
+        set { options.dateStrategy = newValue }
+    }
 
     /// Decodes a ``JSValue`` into the provided `Decodable` type
     /// - Parameters:
@@ -29,23 +55,23 @@ public final class JSValueDecoder: TopLevelDecoder {
     /// 1. A type mismatch was found.
     /// 2. A key was not found in the `data` field that is required in the `type` provided.
     public func decode<T>(_ type: T.Type, from data: JSValue) throws -> T where T: Decodable {
-        let decoder = _JSValueDecoder(data: data, dateDecodingStrategy: dateDecodingStrategy)
+        let decoder = _JSValueDecoder(data: data, options: options)
         return try decoder.decodeData(as: T.self)
     }
 }
 
 typealias CodingUserInfo = [CodingUserInfoKey: Any]
-private typealias DDS = JSValueDecoder.DateDecodingStrategy
+private typealias Options = JSValueDecoder.Options
 
 private final class _JSValueDecoder {
     var codingPath: [CodingKey] = []
     var userInfo: CodingUserInfo = [:]
-    let dateDecodingStrategy: DDS
+    var options: Options
     fileprivate var data: JSValue
 
-    init(data: JSValue, dateDecodingStrategy: DDS) {
+    init(data: JSValue, options: Options) {
         self.data = data
-        self.dateDecodingStrategy = dateDecodingStrategy
+        self.options = options
     }
 }
 
@@ -60,7 +86,7 @@ extension _JSValueDecoder: Decoder {
                 data: data,
                 codingPath: codingPath,
                 userInfo: userInfo,
-                dateDecodingStrategy: dateDecodingStrategy
+                options: options
             )
         )
     }
@@ -70,17 +96,17 @@ extension _JSValueDecoder: Decoder {
             throw DecodingError.typeMismatch(JSArray.self, on: data, codingPath: codingPath)
         }
 
-        return UnkeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo, dateDecodingStrategy: dateDecodingStrategy)
+        return UnkeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo, options: options)
     }
 
     func singleValueContainer() throws -> SingleValueDecodingContainer {
-        SingleValueContainer(data: data, codingPath: codingPath, userInfo: userInfo, dateDecodingStrategy: dateDecodingStrategy)
+        SingleValueContainer(data: data, codingPath: codingPath, userInfo: userInfo, options: options)
     }
 
     fileprivate func decodeData<T>(as type: T.Type) throws -> T where T: Decodable {
         switch type {
         case is Date.Type:
-            switch dateDecodingStrategy {
+            switch options.dateStrategy {
             case .deferredToDate:
                 return try T(from: self)
             case .secondsSince1970:
@@ -109,6 +135,19 @@ extension _JSValueDecoder: Decoder {
             else { throw DecodingError.dataCorrupted(data, target: URL.self, codingPath: codingPath) }
 
             return url as! T
+        case is Data.Type:
+            switch options.dataStrategy {
+            case .deferredToData:
+                return try T(from: self)
+            case .base64:
+                guard let value = data as? String else { throw DecodingError.dataCorrupted(data, target: String.self, codingPath: codingPath) }
+                guard let data = Data(base64Encoded: value) else { throw DecodingError.dataCorrupted(value, target: Data.self, codingPath: codingPath) }
+                return data as! T
+            case .custom(let decode):
+                return try decode(self) as! T
+            @unknown default:
+                return try T(from: self)
+            }
         default:
             return try T(from: self)
         }
@@ -120,14 +159,14 @@ private final class KeyedContainer<Key> where Key: CodingKey {
     var codingPath: [CodingKey]
     var userInfo: CodingUserInfo
     var allKeys: [Key]
-    var dateDecodingStrategy: DDS
+    var options: Options
 
-    init(data: JSObject, codingPath: [CodingKey], userInfo: CodingUserInfo, dateDecodingStrategy: DDS) {
+    init(data: JSObject, codingPath: [CodingKey], userInfo: CodingUserInfo, options: Options) {
         self.data = data
         self.codingPath = codingPath
         self.userInfo = userInfo
         self.allKeys = data.keys.compactMap(Key.init(stringValue:))
-        self.dateDecodingStrategy = dateDecodingStrategy
+        self.options = options
     }
 }
 
@@ -147,7 +186,7 @@ extension KeyedContainer: KeyedDecodingContainerProtocol {
 
         var newPath = codingPath
         newPath.append(key)
-        let decoder = _JSValueDecoder(data: rawValue, dateDecodingStrategy: dateDecodingStrategy)
+        let decoder = _JSValueDecoder(data: rawValue, options: options)
         return try decoder.decodeData(as: T.self)
     }
 
@@ -162,7 +201,7 @@ extension KeyedContainer: KeyedDecodingContainerProtocol {
             )
         }
 
-        return UnkeyedContainer(data: data, codingPath: newPath, userInfo: userInfo, dateDecodingStrategy: dateDecodingStrategy)
+        return UnkeyedContainer(data: data, codingPath: newPath, userInfo: userInfo, options: options)
     }
 
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
@@ -176,7 +215,7 @@ extension KeyedContainer: KeyedDecodingContainerProtocol {
             )
         }
 
-        return KeyedDecodingContainer(KeyedContainer<NestedKey>(data: data, codingPath: newPath, userInfo: userInfo, dateDecodingStrategy: dateDecodingStrategy))
+        return KeyedDecodingContainer(KeyedContainer<NestedKey>(data: data, codingPath: newPath, userInfo: userInfo, options: options))
     }
 
     enum SuperKey: String, CodingKey { case `super` }
@@ -188,7 +227,7 @@ extension KeyedContainer: KeyedDecodingContainerProtocol {
             throw DecodingError.keyNotFound(SuperKey.super, on: data, codingPath: newPath)
         }
 
-        return _JSValueDecoder(data: data, dateDecodingStrategy: dateDecodingStrategy)
+        return _JSValueDecoder(data: data, options: options)
     }
 
     func superDecoder(forKey key: Key) throws -> Decoder {
@@ -198,7 +237,7 @@ extension KeyedContainer: KeyedDecodingContainerProtocol {
             throw DecodingError.keyNotFound(key, on: data, codingPath: newPath)
         }
 
-        return _JSValueDecoder(data: data, dateDecodingStrategy: dateDecodingStrategy)
+        return _JSValueDecoder(data: data, options: options)
     }
 }
 
@@ -207,13 +246,13 @@ private final class UnkeyedContainer {
     var codingPath: [CodingKey]
     var userInfo: CodingUserInfo
     private(set) var currentIndex = 0
-    var dateDecodingStrategy: DDS
+    var options: Options
 
-    init(data: JSArray, codingPath: [CodingKey], userInfo: CodingUserInfo, dateDecodingStrategy: DDS) {
+    init(data: JSArray, codingPath: [CodingKey], userInfo: CodingUserInfo, options: Options) {
         self.data = data
         self.codingPath = codingPath
         self.userInfo = userInfo
-        self.dateDecodingStrategy = dateDecodingStrategy
+        self.options = options
     }
 }
 
@@ -233,7 +272,7 @@ extension UnkeyedContainer: UnkeyedDecodingContainer {
 
     func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
         defer { currentIndex += 1 }
-        let decoder = _JSValueDecoder(data: data[currentIndex], dateDecodingStrategy: dateDecodingStrategy)
+        let decoder = _JSValueDecoder(data: data[currentIndex], options: options)
         return try decoder.decodeData(as: T.self)
     }
 
@@ -243,7 +282,7 @@ extension UnkeyedContainer: UnkeyedDecodingContainer {
             throw DecodingError.typeMismatch(JSArray.self, on: data[currentIndex], codingPath: codingPath)
         }
 
-        return UnkeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo, dateDecodingStrategy: dateDecodingStrategy)
+        return UnkeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo, options: options)
     }
 
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
@@ -252,13 +291,13 @@ extension UnkeyedContainer: UnkeyedDecodingContainer {
             throw DecodingError.typeMismatch(JSObject.self, on: data[currentIndex], codingPath: codingPath)
         }
 
-        return KeyedDecodingContainer(KeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo, dateDecodingStrategy: dateDecodingStrategy))
+        return KeyedDecodingContainer(KeyedContainer(data: data, codingPath: codingPath, userInfo: userInfo, options: options))
     }
 
     func superDecoder() throws -> Decoder {
         defer { currentIndex += 1 }
         let data = data[currentIndex]
-        return _JSValueDecoder(data: data, dateDecodingStrategy: dateDecodingStrategy)
+        return _JSValueDecoder(data: data, options: options)
     }
 }
 
@@ -266,13 +305,13 @@ private final class SingleValueContainer {
     var data: JSValue
     var codingPath: [CodingKey]
     var userInfo: CodingUserInfo
-    var dateDecodingStrategy: DDS
+    var options: Options
 
-    init(data: JSValue, codingPath: [CodingKey], userInfo: CodingUserInfo, dateDecodingStrategy: DDS) {
+    init(data: JSValue, codingPath: [CodingKey], userInfo: CodingUserInfo, options: Options) {
         self.data = data
         self.codingPath = codingPath
         self.userInfo = userInfo
-        self.dateDecodingStrategy = dateDecodingStrategy
+        self.options = options
     }
 }
 
@@ -289,6 +328,28 @@ extension SingleValueContainer: SingleValueDecodingContainer {
         return data
     }
 
+    private func castFloat<N>(to type: N.Type) throws -> N where N: FloatingPoint {
+        if let data = data as? String,
+            case let .convertFromString(positiveInfinity: pos, negativeInfinity: neg, nan: nan) = options.nonConformingStrategy {
+            switch data {
+            case pos:
+                return N.infinity
+            case neg:
+                return -N.infinity
+            case nan:
+                return N.nan
+            default:
+                throw DecodingError.typeMismatch(type, on: data, codingPath: codingPath)
+            }
+        }
+
+        let data = try cast(to: N.self)
+        if !data.isFinite, case .throw = options.nonConformingStrategy {
+            throw DecodingError.dataCorrupted(.init(codingPath: codingPath, debugDescription: "\(data) is a non-conforming floating point number"))
+        }
+        return data
+    }
+
     func decode(_ type: Bool.Type) throws -> Bool {
         try cast(to: type)
     }
@@ -298,11 +359,11 @@ extension SingleValueContainer: SingleValueDecodingContainer {
     }
 
     func decode(_ type: Double.Type) throws -> Double {
-        try cast(to: type)
+        try castFloat(to: type)
     }
 
     func decode(_ type: Float.Type) throws -> Float {
-        try cast(to: type)
+        try castFloat(to: type)
     }
 
     func decode(_ type: Int.Type) throws -> Int {
@@ -346,7 +407,7 @@ extension SingleValueContainer: SingleValueDecodingContainer {
     }
 
     func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
-        let decoder = _JSValueDecoder(data: data, dateDecodingStrategy: dateDecodingStrategy)
+        let decoder = _JSValueDecoder(data: data, options: options)
         return try decoder.decodeData(as: T.self)
     }
 }
