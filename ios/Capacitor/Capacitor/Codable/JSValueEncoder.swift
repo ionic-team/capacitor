@@ -19,9 +19,13 @@ public final class JSValueEncoder: TopLevelEncoder {
         case undefined
     }
 
+    /// The strategies available for encoding .nan, .infinity, and -.infinity
     public enum NonConformingFloatEncodingStrategy: Equatable {
+        /// Throws an error when encountering an exceptional floating-point value
         case `throw`
+        /// Converts to the provided strings
         case convertToString(positiveInfinity: String, negativeInfinity: String, nan: String)
+        /// Encodes directly into an NSNumber
         case deferred
     }
 
@@ -46,20 +50,29 @@ public final class JSValueEncoder: TopLevelEncoder {
         set { options.optionalStrategy = newValue }
     }
 
-    /// The strategy to use when encoding dates.
+    /// The strategy to use when encoding dates
     public var dateEncodingStrategy: DateEncodingStrategy {
         get { options.dateStrategy }
         set { options.dateStrategy = newValue }
     }
 
+    /// The encoding strategy to use when encoding raw data
     public var dataEncodingStrategy: DataEncodingStrategy {
         get { options.dataStrategy }
         set { options.dataStrategy = newValue }
     }
 
+    /// The encoding strategy to use when the encoder encounters exceptional floating-point values
+    public var nonConformingFloatEncodingStrategy: NonConformingFloatEncodingStrategy {
+        get { options.nonConformingFloatStrategy }
+        set { options.nonConformingFloatStrategy = newValue }
+    }
+
     /// Creates a new `JSValueEncoder`
-    /// - Parameter optionalEncodingStrategy: The strategy to use when encoding `nil` values
-    /// - Parameter dateEncodingStrategy: The date encoding strategy.
+    /// - Parameter optionalEncodingStrategy: The strategy to use when encoding `nil` values. Defaults to ``OptionalEncodingStrategy-swift.enum/undefined``
+    /// - Parameter dateEncodingStrategy: Defaults to `DateEncodingStrategy.deferredToDate`
+    /// - Parameter dataEncodingStrategy: Defaults to `DataEncodingStrategy.deferredToData`
+    /// - Parameter nonConformingFloatEncodingStategy: Defaults to ``NonConformingFloatEncodingStrategy-swift.enum/deferred``
     public init(
         optionalEncodingStrategy: OptionalEncodingStrategy = .undefined,
         dateEncodingStrategy: DateEncodingStrategy = .deferredToDate,

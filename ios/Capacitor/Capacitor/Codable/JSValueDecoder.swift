@@ -11,12 +11,18 @@ import Combine
 
 /// A decoder that can decode ``JSValue`` objects into `Decodable` types.
 public final class JSValueDecoder: TopLevelDecoder {
+    /// The strategies available for formatting dates when decoding from a ``JSValue``
     public typealias DateDecodingStrategy = JSONDecoder.DateDecodingStrategy
+    /// The strategies available for decoding raw data.
     public typealias DataDecodingStrategy = JSONDecoder.DataDecodingStrategy
 
+    /// The strategies availble for decoding NaN, Infinity, and -Infinity
     public enum NonConformingFloatDecodingStrategy {
+        /// Decodes directly into the floating point type as .infinity, -.infinity, or .nan
         case deferred
+        /// Throw an error when a non-conforming float is encountered
         case `throw`
+        /// Converts from the provided strings into .infinity, -.infinity, or .nan
         case convertFromString(positiveInfinity: String, negativeInfinity: String, nan: String)
     }
 
@@ -28,6 +34,11 @@ public final class JSValueDecoder: TopLevelDecoder {
 
     private var options: Options
 
+    /// Creates a new JSValueDecoder with the provided decoding and formatting strategies
+    /// - Parameters:
+    ///   - dateDecodingStrategy: Defaults to `DateDecodingStrategy.deferredToDate`
+    ///   - dataDecodingStrategy: Defaults to `DataDecodingStrategy.deferredToData`
+    ///   - nonConformingFloatDecodingStrategy: Defaults to ``NonConformingFloatDecodingStrategy/deferred``
     public init(
         dateDecodingStrategy: DateDecodingStrategy = .deferredToDate,
         dataDecodingStrategy: DataDecodingStrategy = .deferredToData,
@@ -40,9 +51,22 @@ public final class JSValueDecoder: TopLevelDecoder {
         self.options = options
     }
 
+    /// The strategy to use when decoding dates from a ``JSValue``
     public var dateDecodingStrategy: DateDecodingStrategy {
         get { options.dateStrategy }
         set { options.dateStrategy = newValue }
+    }
+
+    /// The strategy to use when decoding raw data from a ``JSValue``
+    public var dataDecodingStrategy: DataDecodingStrategy {
+        get { options.dataStrategy }
+        set { options.dataStrategy = newValue }
+    }
+
+    /// The strategy used by a decoder when it encounters exceptional floating-point values
+    public var nonConformingFloatDecodingStrategy: NonConformingFloatDecodingStrategy {
+        get { options.nonConformingStrategy }
+        set { options.nonConformingStrategy = newValue }
     }
 
     /// Decodes a ``JSValue`` into the provided `Decodable` type
