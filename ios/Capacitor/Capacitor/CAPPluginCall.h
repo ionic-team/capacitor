@@ -17,6 +17,8 @@ typedef void(^CAPPluginCallErrorHandler)(CAPPluginCallError *error);
 @property (nonatomic, copy) CAPPluginCallSuccessHandler successHandler;
 @property (nonatomic, copy) CAPPluginCallErrorHandler errorHandler;
 
+- (instancetype)initWithCallbackId:(NSString *)callbackId options:(NSDictionary *)options success:(CAPPluginCallSuccessHandler)success error:(CAPPluginCallErrorHandler)error DEPRECATED_MSG_ATTRIBUTE("Specify the method name as well.");
+
 - (instancetype)initWithCallbackId:(NSString *)callbackId methodName:(NSString *)methodName options:(NSDictionary *)options success:(CAPPluginCallSuccessHandler)success error:(CAPPluginCallErrorHandler)error;
 
 - (void)save DEPRECATED_MSG_ATTRIBUTE("Use the 'keepAlive' property instead.");
