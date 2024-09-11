@@ -142,7 +142,7 @@ export async function checkAppId(
   if (!id) {
     return `Invalid App ID. Must be in Java package form with no dashes (ex: com.example.app)`;
   }
-  if (/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(id.toLowerCase())) {
+  if (/^[a-zA-Z][\w]*(?:\.[a-zA-Z][\w]*)+$/.test(id.toLowerCase())) {
     return null;
   }
   return `Invalid App ID "${id}". Must be in Java package form with no dashes (ex: com.example.app)`;
