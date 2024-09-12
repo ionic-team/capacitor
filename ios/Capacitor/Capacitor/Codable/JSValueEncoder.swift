@@ -19,22 +19,77 @@ public final class JSValueEncoder: TopLevelEncoder {
         case undefined
     }
 
+    /// The strategies available for encoding .nan, .infinity, and -.infinity
+    public enum NonConformingFloatEncodingStrategy: Equatable {
+        /// Throws an error when encountering an exceptional floating-point value
+        case `throw`
+        /// Converts to the provided strings
+        case convertToString(positiveInfinity: String, negativeInfinity: String, nan: String)
+        /// Encodes directly into an NSNumber
+        case deferred
+    }
+
+    /// The strategy to use when encoding `Date` values
+    public typealias DateEncodingStrategy = JSONEncoder.DateEncodingStrategy
+
+    /// The strategy to use when encoding `Data` values
+    public typealias DataEncodingStrategy = JSONEncoder.DataEncodingStrategy
+
+    fileprivate struct Options {
+        var optionalStrategy: OptionalEncodingStrategy
+        var dateStrategy: DateEncodingStrategy
+        var dataStrategy: DataEncodingStrategy
+        var nonConformingFloatStrategy: NonConformingFloatEncodingStrategy
+    }
+
+    private var options: Options
+
     /// The strategy to use when encoding `nil` values
-    public var optionalEncodingStrategy: OptionalEncodingStrategy
+    public var optionalEncodingStrategy: OptionalEncodingStrategy {
+        get { options.optionalStrategy }
+        set { options.optionalStrategy = newValue }
+    }
+
+    /// The strategy to use when encoding dates
+    public var dateEncodingStrategy: DateEncodingStrategy {
+        get { options.dateStrategy }
+        set { options.dateStrategy = newValue }
+    }
+
+    /// The encoding strategy to use when encoding raw data
+    public var dataEncodingStrategy: DataEncodingStrategy {
+        get { options.dataStrategy }
+        set { options.dataStrategy = newValue }
+    }
+
+    /// The encoding strategy to use when the encoder encounters exceptional floating-point values
+    public var nonConformingFloatEncodingStrategy: NonConformingFloatEncodingStrategy {
+        get { options.nonConformingFloatStrategy }
+        set { options.nonConformingFloatStrategy = newValue }
+    }
 
     /// Creates a new `JSValueEncoder`
-    /// - Parameter optionalEncodingStrategy: The strategy to use when encoding `nil` values
-    public init(optionalEncodingStrategy: OptionalEncodingStrategy = .undefined) {
-        self.optionalEncodingStrategy = optionalEncodingStrategy
+    /// - Parameter optionalEncodingStrategy: The strategy to use when encoding `nil` values. Defaults to ``OptionalEncodingStrategy-swift.enum/undefined``
+    /// - Parameter dateEncodingStrategy: Defaults to `DateEncodingStrategy.deferredToDate`
+    /// - Parameter dataEncodingStrategy: Defaults to `DataEncodingStrategy.deferredToData`
+    /// - Parameter nonConformingFloatEncodingStategy: Defaults to ``NonConformingFloatEncodingStrategy-swift.enum/deferred``
+    public init(
+        optionalEncodingStrategy: OptionalEncodingStrategy = .undefined,
+        dateEncodingStrategy: DateEncodingStrategy = .deferredToDate,
+        dataEncodingStrategy: DataEncodingStrategy = .deferredToData,
+        nonConformingFloatEncodingStategy: NonConformingFloatEncodingStrategy = .deferred
+    ) {
+        self.options = .init(optionalStrategy: optionalEncodingStrategy, dateStrategy: dateEncodingStrategy, dataStrategy: dataEncodingStrategy, nonConformingFloatStrategy: nonConformingFloatEncodingStategy)
     }
+
 
     /// Encodes an `Encodable` value to a ``JSValue``
     /// - Parameter value: The value to encode to ``JSValue``
     /// - Returns: The encoded ``JSValue``
     /// - Throws: An error if the value could not be encoded as a ``JSValue``
     public func encode<T>(_ value: T) throws -> JSValue where T: Encodable {
-        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
-        try value.encode(to: encoder)
+        let encoder = _JSValueEncoder(options: options)
+        try encoder.encodeGeneric(value)
         guard let value = encoder.data else {
             throw EncodingError.invalidValue(
                 value,
@@ -103,19 +158,21 @@ private enum EncodingContainer: JSValueEncodingContainer {
     }
 }
 
+private typealias Options = JSValueEncoder.Options
+
 private final class _JSValueEncoder: JSValueEncodingContainer {
     var codingPath: [CodingKey] = []
     var data: JSValue? {
         containers.data
     }
 
-    let optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
+    var options: Options
 
     var userInfo: CodingUserInfo = [:]
     fileprivate var containers: [EncodingContainer] = []
 
-    init(optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy) {
-        self.optionalEncodingStrategy = optionalEncodingStrategy
+    init(options: Options) {
+        self.options = options
     }
 }
 
@@ -171,21 +228,72 @@ extension _JSValueEncoder: Encoder {
     }
 
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey {
-        let container = KeyedContainer<Key>(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
+        let container = KeyedContainer<Key>(
+            codingPath: codingPath,
+            userInfo: userInfo,
+            options: options
+        )
         addContainer(.keyed(.init(container)))
         return KeyedEncodingContainer(container)
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
-        let container = UnkeyedContainer(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
+        let container = UnkeyedContainer(
+            codingPath: codingPath,
+            userInfo: userInfo,
+            options: options
+        )
         addContainer(.unkeyed(container))
         return container
     }
 
     func singleValueContainer() -> SingleValueEncodingContainer {
-        let container = SingleValueContainer(codingPath: codingPath, userInfo: userInfo, optionalEncodingStrategy: optionalEncodingStrategy)
+        let container = SingleValueContainer(
+            codingPath: codingPath,
+            userInfo: userInfo,
+            options: options
+        )
         addContainer(.singleValue(container))
         return container
+    }
+
+    fileprivate func encodeGeneric<T>(_ value: T) throws where T: Encodable {
+        switch value {
+        case let value as Date:
+            switch options.dateStrategy {
+            case .deferredToDate:
+                try value.encode(to: self)
+            case .millisecondsSince1970:
+                try (value.timeIntervalSince1970 * Double(MSEC_PER_SEC)).encode(to: self)
+            case .secondsSince1970:
+                try value.timeIntervalSince1970.encode(to: self)
+            case .iso8601:
+                let formattedDate = ISO8601DateFormatter().string(from: value)
+                try formattedDate.encode(to: self)
+            case .formatted(let formatter):
+                let formattedDate = formatter.string(from: value)
+                try formattedDate.encode(to: self)
+            case .custom(let encode):
+                try encode(value, self)
+            @unknown default:
+                try value.encode(to: self)
+            }
+        case let value as URL:
+            try value.absoluteString.encode(to: self)
+        case let value as Data:
+            switch options.dataStrategy {
+            case .deferredToData:
+                try value.encode(to: self)
+            case .base64:
+                try value.base64EncodedString().encode(to: self)
+            case .custom(let encode):
+                try encode(value, self)
+            @unknown default:
+                try value.encode(to: self)
+            }
+        default:
+            try value.encode(to: self)
+        }
     }
 }
 
@@ -204,13 +312,13 @@ private final class KeyedContainer<Key> where Key: CodingKey {
 
     var codingPath: [CodingKey]
     var userInfo: CodingUserInfo
-    var optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
+    var options: Options
     private var encodedKeyedValue: [String: EncodedValue]?
 
-    init(codingPath: [CodingKey], userInfo: CodingUserInfo, optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy) {
+    init(codingPath: [CodingKey], userInfo: CodingUserInfo, options: Options) {
         self.codingPath = codingPath
         self.userInfo = userInfo
-        self.optionalEncodingStrategy = optionalEncodingStrategy
+        self.options = options
     }
 }
 
@@ -232,8 +340,8 @@ extension KeyedContainer: KeyedEncodingContainerProtocol {
     }
 
     func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
-        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
-        try value.encode(to: encoder)
+        let encoder = _JSValueEncoder(options: options)
+        try encoder.encodeGeneric(value)
         insert(.nestedContainer(encoder), for: key)
     }
 
@@ -241,7 +349,7 @@ extension KeyedContainer: KeyedEncodingContainerProtocol {
     // protocol requirement.
     // swiftlint:disable:next identifier_name
     func _encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T: Encodable {
-        switch optionalEncodingStrategy {
+        switch options.optionalStrategy {
         case .explicitNulls:
             if let value = value {
                 try encode(value, forKey: key)
@@ -321,7 +429,7 @@ extension KeyedContainer: KeyedEncodingContainerProtocol {
         let nestedContainer = KeyedContainer<NestedKey>(
             codingPath: newPath,
             userInfo: userInfo,
-            optionalEncodingStrategy: optionalEncodingStrategy
+            options: options
         )
 
         insert(.nestedContainer(nestedContainer), for: key)
@@ -334,7 +442,7 @@ extension KeyedContainer: KeyedEncodingContainerProtocol {
         let nestedContainer = UnkeyedContainer(
             codingPath: codingPath,
             userInfo: userInfo,
-            optionalEncodingStrategy: optionalEncodingStrategy
+            options: options
         )
         insert(.nestedContainer(nestedContainer), for: key)
         return nestedContainer
@@ -345,13 +453,13 @@ extension KeyedContainer: KeyedEncodingContainerProtocol {
     }
 
     func superEncoder() -> Encoder {
-        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
+        let encoder = _JSValueEncoder(options: options)
         insert(.nestedContainer(encoder), for: SuperKey.super)
         return encoder
     }
 
     func superEncoder(forKey key: Key) -> Encoder {
-        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
+        let encoder = _JSValueEncoder(options: options)
         insert(.nestedContainer(encoder), for: key)
         return encoder
     }
@@ -385,13 +493,13 @@ private final class UnkeyedContainer {
 
     var codingPath: [CodingKey]
     var userInfo: CodingUserInfo
-    var optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
+    var options: Options
     private var encodedUnkeyedValue: [EncodedValue]?
 
-    init(codingPath: [CodingKey], userInfo: CodingUserInfo, optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy) {
+    init(codingPath: [CodingKey], userInfo: CodingUserInfo, options: Options) {
         self.codingPath = codingPath
         self.userInfo = userInfo
-        self.optionalEncodingStrategy = optionalEncodingStrategy
+        self.options = options
     }
 }
 
@@ -417,8 +525,8 @@ extension UnkeyedContainer: UnkeyedEncodingContainer {
     }
 
     func encode<T>(_ value: T) throws where T: Encodable {
-        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
-        try value.encode(to: encoder)
+        let encoder = _JSValueEncoder(options: options)
+        try encoder.encodeGeneric(value)
         append(.nestedContainer(encoder))
     }
 
@@ -426,7 +534,7 @@ extension UnkeyedContainer: UnkeyedEncodingContainer {
         let nestedContainer = UnkeyedContainer(
             codingPath: codingPath,
             userInfo: userInfo,
-            optionalEncodingStrategy: optionalEncodingStrategy
+            options: options
         )
         append(.nestedContainer(nestedContainer))
         return nestedContainer
@@ -436,14 +544,14 @@ extension UnkeyedContainer: UnkeyedEncodingContainer {
         let nestedContainer = KeyedContainer<NestedKey>(
             codingPath: codingPath,
             userInfo: userInfo,
-            optionalEncodingStrategy: optionalEncodingStrategy
+            options: options
         )
         append(.nestedContainer(nestedContainer))
         return KeyedEncodingContainer(nestedContainer)
     }
 
     func superEncoder() -> Encoder {
-        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
+        let encoder = _JSValueEncoder(options: options)
         append(.nestedContainer(encoder))
         return encoder
     }
@@ -457,16 +565,12 @@ private final class SingleValueContainer {
     var data: JSValue?
     var codingPath: [CodingKey]
     var userInfo: CodingUserInfo
-    var optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
+    var options: Options
 
-    init(
-        codingPath: [CodingKey],
-        userInfo: CodingUserInfo,
-        optionalEncodingStrategy: JSValueEncoder.OptionalEncodingStrategy
-    ) {
+    init(codingPath: [CodingKey], userInfo: CodingUserInfo, options: Options) {
         self.codingPath = codingPath
         self.userInfo = userInfo
-        self.optionalEncodingStrategy = optionalEncodingStrategy
+        self.options = options
     }
 }
 
@@ -484,11 +588,31 @@ extension SingleValueContainer: SingleValueEncodingContainer {
     }
 
     func encode(_ value: Double) throws {
-        data = value as NSNumber
+        try encodeFloat(value)
+    }
+
+    private func encodeFloat<N>(_ value: N) throws where N: FloatingPoint {
+        if value.isFinite {
+            data = value as! NSNumber
+        } else {
+            switch options.nonConformingFloatStrategy {
+            case .deferred:
+                data = value as! NSNumber
+            case let .convertToString(positiveInfinity: pos, negativeInfinity: neg, nan: nan):
+                if value == .infinity { data = pos }
+                if value == -.infinity { data = neg }
+                if value.isNaN { data = nan }
+            case .throw:
+                throw EncodingError.invalidValue(
+                    value,
+                    .init(codingPath: codingPath, debugDescription: "Unable to encode \(value) to JSValue")
+                )
+            }
+        }
     }
 
     func encode(_ value: Float) throws {
-        data = value as NSNumber
+        try encodeFloat(value)
     }
 
     func encode(_ value: Int) throws {
@@ -532,8 +656,8 @@ extension SingleValueContainer: SingleValueEncodingContainer {
     }
 
     func encode<T>(_ value: T) throws where T: Encodable {
-        let encoder = _JSValueEncoder(optionalEncodingStrategy: optionalEncodingStrategy)
-        try value.encode(to: encoder)
+        let encoder = _JSValueEncoder(options: options)
+        try encoder.encodeGeneric(value)
         data = encoder.data
     }
 }
