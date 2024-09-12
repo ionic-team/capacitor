@@ -140,16 +140,17 @@ export async function checkAppId(
   id: string,
 ): Promise<string | null> {
   if (!id) {
-    return `Invalid App ID. Must be in Java package form with no dashes (ex: com.example.app)`;
+    return `Invalid App ID. App ID is required and cannot be blank.`;
   }
   if (/^[a-zA-Z][\w]*(?:\.[a-zA-Z][\w]*)+$/.test(id.toLowerCase())) {
     return null;
   }
   return `
-    Invalid App ID "${id}". Must be in Java package form with no dashes (ex: com.example.app):
-    -  It must have at least two segments (one or more dots).
-    -  Each segment must start with a letter.
-    -  All characters must be alphanumeric or an underscore [a-zA-Z0-9_].
+    Invalid App ID "${id}". Your App ID must meet the following requirements:
+    - Must be in Java package form with no dashes (ex: com.example.app)
+    - It must have at least two segments (one or more dots).
+    - Each segment must start with a letter.
+    - All characters must be alphanumeric or an underscore [a-zA-Z0-9_].
   `;
 }
 
