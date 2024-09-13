@@ -13,6 +13,7 @@ import Cordova
     public var isStatusBarVisible = true
     public var statusBarStyle: UIStatusBarStyle = .default
     public var statusBarAnimation: UIStatusBarAnimation = .fade
+    open var autoRegisterPlugins: Bool { true }
     @objc public var supportedOrientations: [Int] = []
 
     public lazy final var isNewBinary: Bool = {
@@ -49,7 +50,8 @@ import Cordova
                                           delegate: self,
                                           cordovaConfiguration: configDescriptor.cordovaConfiguration,
                                           assetHandler: assetHandler,
-                                          delegationHandler: delegationHandler)
+                                          delegationHandler: delegationHandler,
+                                          autoRegisterPlugins: autoRegisterPlugins)
         capacitorDidLoad()
 
         if configDescriptor.instanceType == .fixed {
