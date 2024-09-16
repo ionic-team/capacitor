@@ -2,7 +2,7 @@ import { Option, program } from 'commander';
 import { resolve } from 'path';
 
 import c from './colors';
-import { checkExternalConfig, loadConfig } from './config';
+import { loadConfig } from './config';
 import type { Config } from './definitions';
 import { fatal, isFatal } from './errors';
 import { receive } from './ipc';
@@ -96,7 +96,6 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { deployment, inline }) => {
-          checkExternalConfig(config.app);
           const { syncCommand } = await import('./tasks/sync');
           await syncCommand(config, platform, deployment, inline);
         }),
@@ -117,7 +116,6 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { deployment }) => {
-          checkExternalConfig(config.app);
           const { updateCommand } = await import('./tasks/update');
           await updateCommand(config, platform, deployment);
         }),
@@ -135,7 +133,6 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { inline }) => {
-          checkExternalConfig(config.app);
           const { copyCommand } = await import('./tasks/copy');
           await copyCommand(config, platform, inline);
         }),
@@ -283,7 +280,6 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { packagemanager }) => {
-          checkExternalConfig(config.app);
           const { addCommand } = await import('./tasks/add');
 
           const configWritable: Writable<Config> = config as Writable<Config>;
@@ -307,7 +303,6 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async platform => {
-          checkExternalConfig(config.app);
           const { listCommand } = await import('./tasks/list');
           await listCommand(config, platform);
         }),
@@ -320,7 +315,6 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async platform => {
-          checkExternalConfig(config.app);
           const { doctorCommand } = await import('./tasks/doctor');
           await doctorCommand(config, platform);
         }),
