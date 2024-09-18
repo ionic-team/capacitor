@@ -23,7 +23,6 @@ import { logger } from '../log';
 import { getPlugins } from '../plugin';
 import { generateIOSPackageJSON } from '../util/iosplugin';
 import { allSerial } from '../util/promise';
-import { copyWeb } from '../web/copy';
 
 import { inlineSourceMaps } from './sourcemaps';
 
@@ -180,8 +179,6 @@ export async function copy(
         logger.info(
           'FederatedCapacitor Plugin installed, skipping web bundling...',
         );
-      } else {
-        await copyWeb(config);
       }
     } else {
       throw `Platform ${platformName} is not valid.`;
