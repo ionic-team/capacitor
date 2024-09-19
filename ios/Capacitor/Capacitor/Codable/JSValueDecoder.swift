@@ -146,8 +146,8 @@ extension _JSValueDecoder: Decoder {
                 return date as! T
             case .formatted(let formatter):
                 guard let value = data as? String else { throw DecodingError.dataCorrupted(data, target: String.self, codingPath: codingPath) }
-                  guard let date = formatter.date(from: value) else { throw DecodingError.dataCorrupted(value, target: Date.self, codingPath: codingPath) }
-                  return date as! T
+                guard let date = formatter.date(from: value) else { throw DecodingError.dataCorrupted(value, target: Date.self, codingPath: codingPath) }
+                return date as! T
             case .custom(let decode):
                 return try decode(self) as! T
             @unknown default:
@@ -155,7 +155,7 @@ extension _JSValueDecoder: Decoder {
             }
         case is URL.Type:
             guard let str = data as? String,
-                let url = URL(string: str)
+                  let url = URL(string: str)
             else { throw DecodingError.dataCorrupted(data, target: URL.self, codingPath: codingPath) }
 
             return url as! T
@@ -354,7 +354,7 @@ extension SingleValueContainer: SingleValueDecodingContainer {
 
     private func castFloat<N>(to type: N.Type) throws -> N where N: FloatingPoint {
         if let data = data as? String,
-            case let .convertFromString(positiveInfinity: pos, negativeInfinity: neg, nan: nan) = options.nonConformingStrategy {
+           case let .convertFromString(positiveInfinity: pos, negativeInfinity: neg, nan: nan) = options.nonConformingStrategy {
             switch data {
             case pos:
                 return N.infinity
