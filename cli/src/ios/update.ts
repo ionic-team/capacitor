@@ -243,7 +243,7 @@ async function generatePodFile(
       });
     });
   });
-  const staticPlugins = cordovaPlugins.filter(p => needsStaticPod(p, config));
+  const staticPlugins = cordovaPlugins.filter(p => needsStaticPod(p));
   const noStaticPlugins = cordovaPlugins.filter(
     el => !staticPlugins.includes(el),
   );
@@ -289,7 +289,7 @@ async function generateCordovaPodspecs(
   cordovaPlugins: Plugin[],
   config: Config,
 ) {
-  const staticPlugins = cordovaPlugins.filter(p => needsStaticPod(p, config));
+  const staticPlugins = cordovaPlugins.filter(p => needsStaticPod(p));
   const noStaticPlugins = cordovaPlugins.filter(
     el => !staticPlugins.includes(el),
   );
@@ -472,7 +472,7 @@ async function copyPluginsNativeFiles(
     const codeFiles = sourceFiles.concat(headerFiles);
     const frameworks = getPlatformElement(p, platform, 'framework');
     let sourcesFolderName = 'sources';
-    if (needsStaticPod(p, config)) {
+    if (needsStaticPod(p)) {
       sourcesFolderName += 'static';
     }
     const sourcesFolder = join(
