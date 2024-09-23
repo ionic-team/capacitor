@@ -523,17 +523,3 @@ const config: CapacitorConfig = ${formatJSObject(extConfig)};
 
 export default config;\n`;
 }
-
-export function checkExternalConfig(config: ExtConfigPairs): void {
-  if (typeof config.extConfig.bundledWebRuntime !== 'undefined') {
-    let actionMessage = `Can be safely deleted.`;
-    if (config.extConfig.bundledWebRuntime === true) {
-      actionMessage = `Please, use a bundler to bundle Capacitor and its plugins.`;
-    }
-    logger.warn(
-      `The ${c.strong(
-        'bundledWebRuntime',
-      )} configuration option has been deprecated. ${actionMessage}`,
-    );
-  }
-}
