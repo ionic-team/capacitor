@@ -22,6 +22,7 @@ export async function initCommand(
   name: string,
   id: string,
   webDirFromCLI?: string,
+  skipAppIDValidation?: boolean,
 ): Promise<void> {
   try {
     if (!checkInteractive(name, id)) {
@@ -45,10 +46,14 @@ export async function initCommand(
       ? await getWebDir(config, webDirFromCLI)
       : webDirFromCLI ?? config.app.extConfig.webDir ?? 'www';
 
-    await check([
-      () => checkAppName(config, appName),
-      () => checkAppId(config, appId),
-    ]);
+    if (skipAppIDValidation === true) {
+      await check([() => checkAppName(config, appName)]);
+    } else {
+      await check([
+        () => checkAppName(config, appName),
+        () => checkAppId(config, appId),
+      ]);
+    }
 
     const cordova = await getCordovaPreferences(config);
 

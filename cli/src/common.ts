@@ -146,11 +146,13 @@ export async function checkAppId(
     return null;
   }
   return `
-    Invalid App ID "${id}". Your App ID must meet the following requirements:
+    Invalid App ID "${id}". Your App ID must meet the following requirements to be valid on both iOS and Android:
     - Must be in Java package form with no dashes (ex: com.example.app)
     - It must have at least two segments (one or more dots).
     - Each segment must start with a letter.
-    - All characters must be alphanumeric or an underscore [a-zA-Z0-9_].
+    - All characters must be alphanumeric or an underscore [a-zA-Z][a-zA-Z0-9]+.
+
+    If you would like to skip validation, run "cap init" with the "--skip-appid-validation" flag.
   `;
 }
 
