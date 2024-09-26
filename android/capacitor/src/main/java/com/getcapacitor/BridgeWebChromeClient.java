@@ -104,8 +104,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
     @Override
     public void onPermissionRequest(final PermissionRequest request) {
-        boolean isRequestPermissionRequired = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M;
-
         List<String> permissionList = new ArrayList<>();
         if (Arrays.asList(request.getResources()).contains("android.webkit.resource.VIDEO_CAPTURE")) {
             permissionList.add(Manifest.permission.CAMERA);
@@ -114,7 +112,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
             permissionList.add(Manifest.permission.MODIFY_AUDIO_SETTINGS);
             permissionList.add(Manifest.permission.RECORD_AUDIO);
         }
-        if (!permissionList.isEmpty() && isRequestPermissionRequired) {
+        if (!permissionList.isEmpty()) {
             String[] permissions = permissionList.toArray(new String[0]);
             permissionListener =
                 isGranted -> {
