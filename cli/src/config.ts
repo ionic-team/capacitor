@@ -270,7 +270,7 @@ async function loadAndroidConfig(
 
   return {
     name,
-    minVersion: '22',
+    minVersion: '23',
     studioPath,
     platformDir,
     platformDirAbs,
