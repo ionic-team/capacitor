@@ -595,7 +595,7 @@ extension SingleValueContainer: SingleValueEncodingContainer {
         try encodeFloat(value)
     }
 
-    //swiftlint:disable force_cast
+    // swiftlint:disable force_cast
     private func encodeFloat<N>(_ value: N) throws where N: FloatingPoint {
         if value.isFinite {
             data = value as! NSNumber
@@ -615,7 +615,7 @@ extension SingleValueContainer: SingleValueEncodingContainer {
             }
         }
     }
-    //swiftlint:enable force_cast
+    // swiftlint:enable force_cast
 
     func encode(_ value: Float) throws {
         try encodeFloat(value)
