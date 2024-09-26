@@ -331,7 +331,7 @@ async function loadIOSConfig(
 
   return {
     name,
-    minVersion: '13.0',
+    minVersion: '14.0',
     platformDir,
     platformDirAbs,
     scheme,
