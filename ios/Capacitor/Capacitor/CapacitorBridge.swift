@@ -492,13 +492,13 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             let pluginCall = CAPPluginCall(callbackId: call.callbackId, methodName: call.method,
                                            options: JSTypes.coerceDictionaryToJSObject(call.options,
                                                                                        formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
-                                           success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
+                                           success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) in
                                             if let result = result {
                                                 self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.keepAlive ?? false)
                                             } else {
                                                 self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.keepAlive ?? false)
                                             }
-                                           }, error: {(error: CAPPluginCallError?) -> Void in
+                                           }, error: {(error: CAPPluginCallError?) in
                                             if let error = error {
                                                 self?.toJsError(error: JSResultError(call: call, callError: error))
                                             } else {
