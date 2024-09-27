@@ -489,7 +489,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         dispatchQueue.async { [weak self] in
             // let startTime = CFAbsoluteTimeGetCurrent()
 
-            let pluginCall = CAPPluginCall(callbackId: call.callbackId,
+            let pluginCall = CAPPluginCall(callbackId: call.callbackId, methodName: call.method,
                                            options: JSTypes.coerceDictionaryToJSObject(call.options,
                                                                                        formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
                                            success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) in
