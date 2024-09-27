@@ -62,12 +62,25 @@ export function runProgram(config: Config): void {
       '--web-dir <value>',
       'Optional: Directory of your projects built web assets',
     )
+    .option(
+      '--skip-appid-validation',
+      'Optional: Skip validating the app ID for iOS and Android compatibility',
+    )
     .action(
       wrapAction(
-        telemetryAction(config, async (appName, appId, { webDir }) => {
-          const { initCommand } = await import('./tasks/init');
-          await initCommand(config, appName, appId, webDir);
-        }),
+        telemetryAction(
+          config,
+          async (appName, appId, { webDir, skipAppidValidation }) => {
+            const { initCommand } = await import('./tasks/init');
+            await initCommand(
+              config,
+              appName,
+              appId,
+              webDir,
+              skipAppidValidation,
+            );
+          },
+        ),
       ),
     );
 
