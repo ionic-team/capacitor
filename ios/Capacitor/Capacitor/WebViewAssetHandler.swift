@@ -133,7 +133,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) {
         var urlRequest = urlSchemeTask.request
         guard let url = urlRequest.url else { return }
-        
+
         let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
         if let targetUrl = urlComponents?.queryItems?.first(where: { $0.name == CapacitorBridge.httpInterceptorUrlParam })?.value,
            !targetUrl.isEmpty {
