@@ -130,7 +130,7 @@ extension _JSValueDecoder: Decoder {
     // force casting is fine becasue we've already determined that T is the type in the case
     // the swift standard library also force casts in their similar functions
     // https://github.com/swiftlang/swift-foundation/blob/da80d51fa3e77f3e7ed57c4300a870689e755713/Sources/FoundationEssentials/JSON/JSONEncoder.swift#L1140
-    //swiftlint:disable force_cast
+    // swiftlint:disable force_cast
     fileprivate func decodeData<T>(as type: T.Type) throws -> T where T: Decodable {
         switch type {
         case is Date.Type:
@@ -143,7 +143,7 @@ extension _JSValueDecoder: Decoder {
             return try T(from: self)
         }
     }
-    //swiftlint:enable force_cast
+    // swiftlint:enable force_cast
 
     private func decodeDate() throws -> Date {
         switch options.dateStrategy {
@@ -162,8 +162,8 @@ extension _JSValueDecoder: Decoder {
             return date
         case .formatted(let formatter):
             guard let value = data as? String else { throw DecodingError.dataCorrupted(data, target: String.self, codingPath: codingPath) }
-              guard let date = formatter.date(from: value) else { throw DecodingError.dataCorrupted(value, target: Date.self, codingPath: codingPath) }
-              return date
+            guard let date = formatter.date(from: value) else { throw DecodingError.dataCorrupted(value, target: Date.self, codingPath: codingPath) }
+            return date
         case .custom(let decode):
             return try decode(self)
         @unknown default:
@@ -173,7 +173,7 @@ extension _JSValueDecoder: Decoder {
 
     private func decodeUrl() throws -> URL {
         guard let str = data as? String,
-            let url = URL(string: str)
+              let url = URL(string: str)
         else { throw DecodingError.dataCorrupted(data, target: URL.self, codingPath: codingPath) }
 
         return url
@@ -371,7 +371,7 @@ extension SingleValueContainer: SingleValueDecodingContainer {
 
     private func castFloat<N>(to type: N.Type) throws -> N where N: FloatingPoint {
         if let data = data as? String,
-            case let .convertFromString(positiveInfinity: pos, negativeInfinity: neg, nan: nan) = options.nonConformingStrategy {
+           case let .convertFromString(positiveInfinity: pos, negativeInfinity: neg, nan: nan) = options.nonConformingStrategy {
             switch data {
             case pos:
                 return N.infinity
