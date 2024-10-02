@@ -75,7 +75,6 @@ import org.json.JSONException;
  */
 public class Bridge {
 
-    private static final String PREFS_NAME = "CapacitorSettings";
     private static final String PERMISSION_PREFS_NAME = "PluginPermStates";
     private static final String BUNDLE_LAST_PLUGIN_ID_KEY = "capacitorLastActivityPluginId";
     private static final String BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY = "capacitorLastActivityPluginMethod";
