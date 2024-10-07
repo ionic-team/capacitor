@@ -34,27 +34,12 @@ extension CAPPluginCall: JSValueContainer {
         return !(value is NSNull)
     }
 
-    @available(*, deprecated, renamed: "resolve()")
-    func success() {
-        successHandler(CAPPluginCallResult([:]), self)
-    }
-
-    @available(*, deprecated, renamed: "resolve")
-    func success(_ data: PluginCallResultData = [:]) {
-        successHandler(CAPPluginCallResult(data), self)
-    }
-
     func resolve() {
         successHandler(CAPPluginCallResult(nil), self)
     }
 
     func resolve(_ data: PluginCallResultData = [:]) {
         successHandler(CAPPluginCallResult(data), self)
-    }
-
-    @available(*, deprecated, renamed: "reject")
-    func error(_ message: String, _ error: Error? = nil, _ data: PluginCallResultData = [:]) {
-        errorHandler(CAPPluginCallError(message: message, code: nil, error: error, data: data))
     }
 
     func reject(_ message: String, _ code: String? = nil, _ error: Error? = nil, _ data: PluginCallResultData? = nil) {
