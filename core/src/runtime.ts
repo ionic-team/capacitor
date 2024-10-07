@@ -24,11 +24,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
    */
   const capPlatforms: CapacitorPlatformsInstance = win.CapacitorPlatforms;
 
-  const defaultGetPlatform = () => {
-    return capCustomPlatform !== null
-      ? capCustomPlatform.name
-      : getPlatformId(win);
-  };
+  const defaultGetPlatform = () =>
+    capCustomPlatform !== null ? capCustomPlatform.name : getPlatformId(win);
   const getPlatform =
     capPlatforms?.currentPlatform?.getPlatform || defaultGetPlatform;
 
@@ -36,21 +33,10 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const isNativePlatform =
     capPlatforms?.currentPlatform?.isNativePlatform || defaultIsNativePlatform;
 
-  const defaultIsPluginAvailable = (pluginName: string): boolean => {
-    const plugin = registeredPlugins.get(pluginName);
+  const defaultIsPluginAvailable = (pluginName: string): boolean =>
+    registeredPlugins.get(pluginName)?.platforms.has(getPlatform()) || // JS implementation available for the current platform.
+    !!getPluginHeader(pluginName); // Native implementation available.
 
-    if (plugin?.platforms.has(getPlatform())) {
-      // JS implementation available for the current platform.
-      return true;
-    }
-
-    if (getPluginHeader(pluginName)) {
-      // Native implementation available.
-      return true;
-    }
-
-    return false;
-  };
   const isPluginAvailable =
     capPlatforms?.currentPlatform?.isPluginAvailable ||
     defaultIsPluginAvailable;
@@ -68,11 +54,10 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     _target: any,
     prop: PropertyKey,
     pluginName: string,
-  ) => {
-    return Promise.reject(
+  ) =>
+    Promise.reject(
       `${pluginName} does not have an implementation of "${prop as any}".`,
     );
-  };
 
   const registeredPlugins = new Map<string, RegisteredPlugin>();
 
