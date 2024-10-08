@@ -50,25 +50,6 @@ public class PluginCall {
         this.msgHandler.sendResponseMessage(this, successResult, null);
     }
 
-    /**
-     * @deprecated
-     * Use {@link #resolve(JSObject data)}
-     */
-    @Deprecated
-    public void success(JSObject data) {
-        PluginResult result = new PluginResult(data);
-        this.msgHandler.sendResponseMessage(this, result, null);
-    }
-
-    /**
-     * @deprecated
-     * Use {@link #resolve()}
-     */
-    @Deprecated
-    public void success() {
-        this.resolve(new JSObject());
-    }
-
     public void resolve(JSObject data) {
         PluginResult result = new PluginResult(data);
         this.msgHandler.sendResponseMessage(this, result, null);
@@ -88,33 +69,6 @@ public class PluginCall {
         }
 
         this.msgHandler.sendResponseMessage(this, null, errorResult);
-    }
-
-    /**
-     * @deprecated
-     * Use {@link #reject(String msg, Exception ex)}
-     */
-    @Deprecated
-    public void error(String msg, Exception ex) {
-        reject(msg, ex);
-    }
-
-    /**
-     * @deprecated
-     * Use {@link #reject(String msg, String code, Exception ex)}
-     */
-    @Deprecated
-    public void error(String msg, String code, Exception ex) {
-        reject(msg, code, ex);
-    }
-
-    /**
-     * @deprecated
-     * Use {@link #reject(String msg)}
-     */
-    @Deprecated
-    public void error(String msg) {
-        reject(msg);
     }
 
     public void reject(String msg, String code, Exception ex, JSObject data) {
