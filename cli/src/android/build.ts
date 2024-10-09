@@ -7,16 +7,11 @@ import { logSuccess } from '../log';
 import type { BuildCommandOptions } from '../tasks/build';
 import { runCommand } from '../util/subprocess';
 
-export async function buildAndroid(
-  config: Config,
-  buildOptions: BuildCommandOptions,
-): Promise<void> {
+export async function buildAndroid(config: Config, buildOptions: BuildCommandOptions): Promise<void> {
   const releaseType = buildOptions.androidreleasetype ?? 'AAB';
   const releaseTypeIsAAB = releaseType === 'AAB';
   const flavor = buildOptions.flavor ?? '';
-  const arg = releaseTypeIsAAB
-    ? `:app:bundle${flavor}Release`
-    : `assemble${flavor}Release`;
+  const arg = releaseTypeIsAAB ? `:app:bundle${flavor}Release` : `assemble${flavor}Release`;
   const gradleArgs = [arg];
 
   try {
@@ -56,28 +51,14 @@ export async function buildAndroid(
   }.${releaseType.toLowerCase()}`;
 
   const signedReleaseName = unsignedReleaseName.replace(
-    `-release${
-      releaseTypeIsAAB ? '' : '-unsigned'
-    }.${releaseType.toLowerCase()}`,
+    `-release${releaseTypeIsAAB ? '' : '-unsigned'}.${releaseType.toLowerCase()}`,
     `-release-signed.${releaseType.toLowerCase()}`,
   );
 
   if (buildOptions.signingtype == 'jarsigner') {
-    await signWithJarSigner(
-      config,
-      buildOptions,
-      releasePath,
-      signedReleaseName,
-      unsignedReleaseName,
-    );
+    await signWithJarSigner(config, buildOptions, releasePath, signedReleaseName, unsignedReleaseName);
   } else {
-    await signWithApkSigner(
-      config,
-      buildOptions,
-      releasePath,
-      signedReleaseName,
-      unsignedReleaseName,
-    );
+    await signWithApkSigner(config, buildOptions, releasePath, signedReleaseName, unsignedReleaseName);
   }
 
   logSuccess(`Successfully generated ${signedReleaseName} at: ${releasePath}`);
