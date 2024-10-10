@@ -76,6 +76,26 @@ public class JSONUtils {
     }
 
     /**
+     * Get a double value from the given JSON object.
+     * 
+     * @param jsonObject A JSON object to search
+     * @param key A key to fetch from the JSON object
+     * @param defaultValue A default value to return if the key cannot be found
+     * @return The value at the given key in the JSON object, or the default value
+     */
+    public static double getDouble(JSONObject jsonObject, String key, double defaultValue) {
+        String k = getDeepestKey(key);
+        try {
+            JSONObject o = getDeepestObject(jsonObject, key);
+            return o.getDouble(k);
+        } catch (JSONException ignore) {
+            // value was not found
+        }
+
+        return defaultValue;
+    }
+
+    /**
      * Get a JSON object value from the given JSON object.
      *
      * @param jsonObject A JSON object to search
