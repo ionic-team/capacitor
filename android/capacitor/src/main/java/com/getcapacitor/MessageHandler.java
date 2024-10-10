@@ -49,6 +49,7 @@ public class MessageHandler implements IMessageHandler {
      */
     @JavascriptInterface
     @SuppressWarnings("unused")
+    @Override
     public void postMessage(String jsonStr) {
         try {
             JSObject postData = new JSObject(jsonStr);
@@ -98,6 +99,7 @@ public class MessageHandler implements IMessageHandler {
         }
     }
 
+    @Override
     public void sendResponseMessage(PluginCall call, PluginResult successResult, PluginResult errorResult) {
         try {
             PluginResult data = new PluginResult();
