@@ -11,7 +11,7 @@ import org.apache.cordova.PluginManager;
  * MessageHandler handles messages from the WebView, dispatching them
  * to plugins.
  */
-public class MessageHandler {
+public class MessageHandler implements IMessageHandler {
 
     private Bridge bridge;
     private WebView webView;
