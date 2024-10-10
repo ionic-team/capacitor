@@ -14,9 +14,7 @@ export async function telemetryCommand(onOrOff?: string): Promise<void> {
     } else {
       await writeConfig({ ...sysconfig, telemetry: enabled });
       logSuccess(
-        `You have ${c.strong(`opted ${enabled ? 'in' : 'out'}`)} ${
-          enabled ? 'for' : 'of'
-        } telemetry on this machine.`,
+        `You have ${c.strong(`opted ${enabled ? 'in' : 'out'}`)} ${enabled ? 'for' : 'of'} telemetry on this machine.`,
       );
 
       if (enabled) {
@@ -38,9 +36,5 @@ function interpretEnabled(onOrOff?: string): boolean | undefined {
       return undefined;
   }
 
-  fatal(
-    `Argument must be ${c.strong('on')} or ${c.strong(
-      'off',
-    )} (or left unspecified)`,
-  );
+  fatal(`Argument must be ${c.strong('on')} or ${c.strong('off')} (or left unspecified)`);
 }

@@ -40,22 +40,21 @@ public class ConfigBuildingTest {
 
             pluginConfig.put(TEST_PLUGIN_NAME, testPluginObject);
 
-            config =
-                new CapConfig.Builder(context)
-                    .setAllowMixedContent(true)
-                    .setAllowNavigation(new String[] { "http://www.google.com" })
-                    .setAndroidScheme("test")
-                    .setCaptureInput(true)
-                    .setLoggingEnabled(true)
-                    .setHTML5mode(false)
-                    .setOverriddenUserAgentString("test-user-agent")
-                    .setAppendedUserAgentString("test-append")
-                    .setWebContentsDebuggingEnabled(true)
-                    .setZoomableWebView(false)
-                    .setBackgroundColor("red")
-                    .setPluginsConfiguration(pluginConfig)
-                    .setServerUrl("http://www.google.com")
-                    .create();
+            config = new CapConfig.Builder(context)
+                .setAllowMixedContent(true)
+                .setAllowNavigation(new String[] { "http://www.google.com" })
+                .setAndroidScheme("test")
+                .setCaptureInput(true)
+                .setLoggingEnabled(true)
+                .setHTML5mode(false)
+                .setOverriddenUserAgentString("test-user-agent")
+                .setAppendedUserAgentString("test-append")
+                .setWebContentsDebuggingEnabled(true)
+                .setZoomableWebView(false)
+                .setBackgroundColor("red")
+                .setPluginsConfiguration(pluginConfig)
+                .setServerUrl("http://www.google.com")
+                .create();
         } catch (Exception e) {
             fail();
         }

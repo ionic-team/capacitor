@@ -3,11 +3,7 @@ import { basename, dirname, resolve } from 'path';
 
 import c from '../colors';
 import { check, checkAppId, checkAppName, runTask } from '../common';
-import {
-  CONFIG_FILE_NAME_JSON,
-  CONFIG_FILE_NAME_TS,
-  writeConfig,
-} from '../config';
+import { CONFIG_FILE_NAME_JSON, CONFIG_FILE_NAME_TS, writeConfig } from '../config';
 import { getCordovaPreferences } from '../cordova';
 import type { Config, ExternalConfig } from '../definitions';
 import { fatal, isFatal } from '../errors';
@@ -31,9 +27,7 @@ export async function initCommand(
 
     if (config.app.extConfigType !== 'json') {
       fatal(
-        `Cannot run ${c.input(
-          'init',
-        )} for a project using a non-JSON configuration file.\n` +
+        `Cannot run ${c.input('init')} for a project using a non-JSON configuration file.\n` +
           `Delete ${c.strong(config.app.extConfigName)} and try again.`,
       );
     }
@@ -44,15 +38,12 @@ export async function initCommand(
     const appId = await getAppId(config, id);
     const webDir = isInteractive()
       ? await getWebDir(config, webDirFromCLI)
-      : webDirFromCLI ?? config.app.extConfig.webDir ?? 'www';
+      : (webDirFromCLI ?? config.app.extConfig.webDir ?? 'www');
 
     if (skipAppIDValidation === true) {
       await check([() => checkAppName(config, appName)]);
     } else {
-      await check([
-        () => checkAppName(config, appName),
-        () => checkAppId(config, appId),
-      ]);
+      await check([() => checkAppName(config, appName), () => checkAppId(config, appId)]);
     }
 
     const cordova = await getCordovaPreferences(config);
@@ -69,10 +60,7 @@ export async function initCommand(
     );
   } catch (e: any) {
     if (!isFatal(e)) {
-      output.write(
-        'Usage: npx cap init appName appId\n' +
-          'Example: npx cap init "My App" "com.example.myapp"\n\n',
-      );
+      output.write('Usage: npx cap init appName appId\n' + 'Example: npx cap init "My App" "com.example.myapp"\n\n');
 
       fatal(e.stack ?? e);
     }
@@ -90,9 +78,7 @@ async function getName(config: Config, name: string) {
         type: 'text',
         name: 'name',
         message: `Name`,
-        initial: config.app.appName
-          ? config.app.appName
-          : config.app.package.name ?? 'App',
+        initial: config.app.appName ? config.app.appName : (config.app.package.name ?? 'App'),
       },
     );
     return answers.name;
@@ -126,9 +112,7 @@ async function getWebDir(config: Config, webDir?: string) {
 
     const answers = await logPrompt(
       `${c.strong(`What is the web asset directory for your app?`)}\n` +
-        `This directory should contain the final ${c.strong(
-          'index.html',
-        )} of your app.`,
+        `This directory should contain the final ${c.strong('index.html')} of your app.`,
       {
         type: 'text',
         name: 'webDir',
@@ -141,25 +125,13 @@ async function getWebDir(config: Config, webDir?: string) {
   return webDir;
 }
 
-async function runMergeConfig(
-  config: Config,
-  extConfig: ExternalConfig,
-  type: 'json' | 'ts',
-) {
+async function runMergeConfig(config: Config, extConfig: ExternalConfig, type: 'json' | 'ts') {
   const configDirectory = dirname(config.app.extConfigFilePath);
-  const newConfigPath = resolve(
-    configDirectory,
-    type === 'ts' ? CONFIG_FILE_NAME_TS : CONFIG_FILE_NAME_JSON,
-  );
+  const newConfigPath = resolve(configDirectory, type === 'ts' ? CONFIG_FILE_NAME_TS : CONFIG_FILE_NAME_JSON);
 
-  await runTask(
-    `Creating ${c.strong(basename(newConfigPath))} in ${c.input(
-      config.app.rootDir,
-    )}`,
-    async () => {
-      await mergeConfig(config, extConfig, newConfigPath);
-    },
-  );
+  await runTask(`Creating ${c.strong(basename(newConfigPath))} in ${c.input(config.app.rootDir)}`, async () => {
+    await mergeConfig(config, extConfig, newConfigPath);
+  });
 
   printNextSteps(basename(newConfigPath));
   if (isInteractive()) {
@@ -172,11 +144,7 @@ async function runMergeConfig(
   }
 }
 
-async function mergeConfig(
-  config: Config,
-  extConfig: ExternalConfig,
-  newConfigPath: string,
-): Promise<void> {
+async function mergeConfig(config: Config, extConfig: ExternalConfig, newConfigPath: string): Promise<void> {
   const oldConfig = { ...config.app.extConfig };
   const newConfig = { ...oldConfig, ...extConfig };
 
@@ -185,11 +153,7 @@ async function mergeConfig(
 
 function printNextSteps(newConfigName: string) {
   logSuccess(`${c.strong(newConfigName)} created!`);
-  output.write(
-    `\nNext steps: \n${c.strong(
-      `https://capacitorjs.com/docs/getting-started#where-to-go-next`,
-    )}\n`,
-  );
+  output.write(`\nNext steps: \n${c.strong(`https://capacitorjs.com/docs/getting-started#where-to-go-next`)}\n`);
 }
 
 async function promptToSignup(): Promise<boolean> {

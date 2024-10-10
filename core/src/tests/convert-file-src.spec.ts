@@ -1,8 +1,5 @@
 import { initBridge } from '../../native-bridge';
-import type {
-  CapacitorInstance,
-  WindowCapacitor,
-} from '../definitions-internal';
+import type { CapacitorInstance, WindowCapacitor } from '../definitions-internal';
 import { createCapacitor } from '../runtime';
 
 describe('convertFileSrc', () => {
@@ -18,21 +15,15 @@ describe('convertFileSrc', () => {
   });
 
   it('starts with content://', () => {
-    expect(cap.convertFileSrc('content://myfile')).toBe(
-      'webviewSeverUrl/_capacitor_content_/myfile',
-    );
+    expect(cap.convertFileSrc('content://myfile')).toBe('webviewSeverUrl/_capacitor_content_/myfile');
   });
 
   it('starts with file://', () => {
-    expect(cap.convertFileSrc('file://myfile')).toBe(
-      'webviewSeverUrl/_capacitor_file_myfile',
-    );
+    expect(cap.convertFileSrc('file://myfile')).toBe('webviewSeverUrl/_capacitor_file_myfile');
   });
 
   it('starts with /', () => {
-    expect(cap.convertFileSrc('/myfile')).toBe(
-      'webviewSeverUrl/_capacitor_file_/myfile',
-    );
+    expect(cap.convertFileSrc('/myfile')).toBe('webviewSeverUrl/_capacitor_file_/myfile');
   });
 
   it('non string', () => {

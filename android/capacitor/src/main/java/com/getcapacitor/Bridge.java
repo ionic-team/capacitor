@@ -1024,8 +1024,13 @@ public class Bridge {
                 try {
                     JSObject options = new JSObject(lastOptionsJson);
 
-                    pluginCallForLastActivity =
-                        new PluginCall(msgHandler, lastPluginId, PluginCall.CALLBACK_ID_DANGLING, lastPluginCallMethod, options);
+                    pluginCallForLastActivity = new PluginCall(
+                        msgHandler,
+                        lastPluginId,
+                        PluginCall.CALLBACK_ID_DANGLING,
+                        lastPluginCallMethod,
+                        options
+                    );
                 } catch (JSONException ex) {
                     Logger.error("Unable to restore plugin call, unable to parse persisted JSON object", ex);
                 }

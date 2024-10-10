@@ -10,9 +10,10 @@ import org.junit.Test;
 public class HttpRequestHandlerTest {
 
     static final String BASE_URL = "https://httpbin.org/get";
-    static final String PARAMS_JSON = """
-            {"k": "a&b"}
-            """;
+    static final String PARAMS_JSON =
+        """
+        {"k": "a&b"}
+        """;
 
     @Test
     public void testHttpURLConnectionBuilderSetUrlParamsEncoded() throws Exception {
