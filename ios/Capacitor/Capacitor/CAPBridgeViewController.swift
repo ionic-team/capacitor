@@ -114,7 +114,7 @@ import Cordova
         webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
-                webViewConfiguration.applicationNameForUserAgent = "\(appName)  \(appendUserAgent)"
+                webViewConfiguration.applicationNameForUserAgent = "\(appName) \(appendUserAgent)"
             } else {
                 webViewConfiguration.applicationNameForUserAgent = appendUserAgent
             }
