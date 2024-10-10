@@ -39,17 +39,13 @@ export interface Metric<N extends string, D> {
 
 type CommanderAction = (...args: any[]) => void | Promise<void>;
 
-export function telemetryAction(
-  config: Config,
-  action: CommanderAction,
-): CommanderAction {
+export function telemetryAction(config: Config, action: CommanderAction): CommanderAction {
   return async (...actionArgs: any[]): Promise<void> => {
     const start = new Date();
     // This is how commanderjs works--the command object is either the last
     // element or second to last if there are additional options (via `.allowUnknownOption()`)
     const lastArg = actionArgs[actionArgs.length - 1];
-    const cmd: Command =
-      lastArg instanceof Command ? lastArg : actionArgs[actionArgs.length - 2];
+    const cmd: Command = lastArg instanceof Command ? lastArg : actionArgs[actionArgs.length - 2];
     const command = getFullCommandName(cmd);
     let error: any;
 
@@ -69,9 +65,7 @@ export function telemetryAction(
 
     // Only collect packages in the capacitor org:
     // https://www.npmjs.com/org/capacitor
-    const capacitorPackages = packages.filter(([k]) =>
-      k.startsWith('@capacitor/'),
-    );
+    const capacitorPackages = packages.filter(([k]) => k.startsWith('@capacitor/'));
 
     const versions = capacitorPackages.map(([k, v]) => [
       `${k.replace(/^@capacitor\//, '').replace(/-/g, '_')}_version`,
@@ -128,22 +122,16 @@ export async function sendMetric<D>(
 
     await send({ type: 'telemetry', data: message });
   } else {
-    debug(
-      'Telemetry is off (user choice, non-interactive terminal, or CI)--not sending metric',
-    );
+    debug('Telemetry is off (user choice, non-interactive terminal, or CI)--not sending metric');
   }
 }
 
 async function promptForTelemetry(): Promise<boolean> {
   const { confirm } = await logPrompt(
-    `${c.strong(
-      'Would you like to help improve Capacitor by sharing anonymous usage data? 💖',
-    )}\n` +
+    `${c.strong('Would you like to help improve Capacitor by sharing anonymous usage data? 💖')}\n` +
       `Read more about what is being collected and why here: ${c.strong(
         'https://capacitorjs.com/telemetry',
-      )}. You can change your mind at any time by using the ${c.input(
-        'npx cap telemetry',
-      )} command.`,
+      )}. You can change your mind at any time by using the ${c.input('npx cap telemetry')} command.`,
     {
       type: 'confirm',
       name: 'confirm',
@@ -166,11 +154,7 @@ async function getAppIdentifier(config: Config): Promise<string | null> {
   const { createHash } = await import('crypto');
 
   // get the first commit hash, which should be universally unique
-  const output = await getCommandOutput(
-    'git',
-    ['rev-list', '--max-parents=0', 'HEAD'],
-    { cwd: config.app.rootDir },
-  );
+  const output = await getCommandOutput('git', ['rev-list', '--max-parents=0', 'HEAD'], { cwd: config.app.rootDir });
 
   const firstLine = output?.split('\n')[0];
 

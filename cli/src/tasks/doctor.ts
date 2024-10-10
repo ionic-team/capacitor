@@ -10,32 +10,26 @@ import { emoji as _e } from '../util/emoji';
 import { resolveNode } from '../util/node';
 import { getCommandOutput } from '../util/subprocess';
 
-export async function doctorCommand(
-  config: Config,
-  selectedPlatformName: string,
-): Promise<void> {
-  output.write(
-    `${_e('💊', '')}   ${c.strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`,
-  );
+export async function doctorCommand(config: Config, selectedPlatformName: string): Promise<void> {
+  output.write(`${_e('💊', '')}   ${c.strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`);
 
   await doctorCore(config);
 
   const platforms = await selectPlatforms(config, selectedPlatformName);
   await Promise.all(
-    platforms.map(platformName => {
+    platforms.map((platformName) => {
       return doctor(config, platformName);
     }),
   );
 }
 
 export async function doctorCore(config: Config): Promise<void> {
-  const [cliVersion, coreVersion, androidVersion, iosVersion] =
-    await Promise.all([
-      getCommandOutput('npm', ['info', '@capacitor/cli', 'version']),
-      getCommandOutput('npm', ['info', '@capacitor/core', 'version']),
-      getCommandOutput('npm', ['info', '@capacitor/android', 'version']),
-      getCommandOutput('npm', ['info', '@capacitor/ios', 'version']),
-    ]);
+  const [cliVersion, coreVersion, androidVersion, iosVersion] = await Promise.all([
+    getCommandOutput('npm', ['info', '@capacitor/cli', 'version']),
+    getCommandOutput('npm', ['info', '@capacitor/core', 'version']),
+    getCommandOutput('npm', ['info', '@capacitor/android', 'version']),
+    getCommandOutput('npm', ['info', '@capacitor/ios', 'version']),
+  ]);
 
   output.write(
     `${c.strong('Latest Dependencies:')}\n\n` +
@@ -52,28 +46,16 @@ export async function doctorCore(config: Config): Promise<void> {
 }
 
 async function printInstalledPackages(config: Config) {
-  const packageNames = [
-    '@capacitor/cli',
-    '@capacitor/core',
-    '@capacitor/android',
-    '@capacitor/ios',
-  ];
+  const packageNames = ['@capacitor/cli', '@capacitor/core', '@capacitor/android', '@capacitor/ios'];
   await Promise.all(
-    packageNames.map(async packageName => {
-      const packagePath = resolveNode(
-        config.app.rootDir,
-        packageName,
-        'package.json',
-      );
+    packageNames.map(async (packageName) => {
+      const packagePath = resolveNode(config.app.rootDir, packageName, 'package.json');
       await printPackageVersion(packageName, packagePath);
     }),
   );
 }
 
-async function printPackageVersion(
-  packageName: string,
-  packagePath: string | null,
-) {
+async function printPackageVersion(packageName: string, packagePath: string | null) {
   let version;
   if (packagePath) {
     version = (await readJSON(packagePath)).version;
@@ -81,10 +63,7 @@ async function printPackageVersion(
   output.write(`  ${packageName}: ${c.weak(version || 'not installed')}\n`);
 }
 
-export async function doctor(
-  config: Config,
-  platformName: string,
-): Promise<void> {
+export async function doctor(config: Config, platformName: string): Promise<void> {
   if (platformName === config.ios.name) {
     await doctorIOS(config);
   } else if (platformName === config.android.name) {

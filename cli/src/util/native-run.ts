@@ -8,15 +8,8 @@ import { resolveNode } from './node';
 import { runCommand } from './subprocess';
 import type { RunCommandOptions } from './subprocess';
 
-export async function runNativeRun(
-  args: readonly string[],
-  options: RunCommandOptions = {},
-): Promise<string> {
-  const p = resolveNode(
-    __dirname,
-    dirname('native-run/package'),
-    'bin/native-run',
-  );
+export async function runNativeRun(args: readonly string[], options: RunCommandOptions = {}): Promise<string> {
+  const p = resolveNode(__dirname, dirname('native-run/package'), 'bin/native-run');
 
   if (!p) {
     fatal(`${c.input('native-run')} not found.`);
@@ -25,9 +18,7 @@ export async function runNativeRun(
   return await runCommand(p, args, options);
 }
 
-export async function getPlatformTargets(
-  platformName: string,
-): Promise<PlatformTarget[]> {
+export async function getPlatformTargets(platformName: string): Promise<PlatformTarget[]> {
   const errors = [];
   try {
     const output = await runNativeRun([platformName, '--list', '--json']);

@@ -9,10 +9,7 @@ import type { BuildCommandOptions } from '../tasks/build';
 import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
-export async function buildiOS(
-  config: Config,
-  buildOptions: BuildCommandOptions,
-): Promise<void> {
+export async function buildiOS(config: Config, buildOptions: BuildCommandOptions): Promise<void> {
   const theScheme = buildOptions.scheme ?? 'App';
 
   const packageManager = await checkPackageManager(config);
@@ -57,10 +54,7 @@ export async function buildiOS(
 </dict>
 </plist>`;
 
-  const archivePlistPath = join(
-    `${config.ios.nativeProjectDirAbs}`,
-    'archive.plist',
-  );
+  const archivePlistPath = join(`${config.ios.nativeProjectDirAbs}`, 'archive.plist');
 
   writeFileSync(archivePlistPath, archivePlistContents);
 
@@ -91,10 +85,5 @@ export async function buildiOS(
     rimraf.sync(join(config.ios.nativeProjectDirAbs, `${theScheme}.xcarchive`));
   });
 
-  logSuccess(
-    `Successfully generated an IPA at: ${join(
-      config.ios.nativeProjectDirAbs,
-      'output',
-    )}`,
-  );
+  logSuccess(`Successfully generated an IPA at: ${join(config.ios.nativeProjectDirAbs, 'output')}`);
 }
