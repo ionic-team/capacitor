@@ -22,7 +22,7 @@ jobs:
           cache: npm
           cache-dependency-path: '**/package.json'
       - run: |
-          npm install
+          npm install --force
       - name: Version & Publish
         env:
           GH_TOKEN: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
