@@ -65,22 +65,29 @@ var nativeBridge = (function (exports) {
         return newFormData;
     };
     const convertBody = async (body, contentType) => {
-        if (body instanceof ReadableStream) {
-            const reader = body.getReader();
-            const chunks = [];
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done)
-                    break;
-                chunks.push(value);
+        if (body instanceof ReadableStream || body instanceof Uint8Array) {
+            let encodedData;
+            if (body instanceof ReadableStream) {
+                const reader = body.getReader();
+                const chunks = [];
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done)
+                        break;
+                    chunks.push(value);
+                }
+                const concatenated = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+                let position = 0;
+                for (const chunk of chunks) {
+                    concatenated.set(chunk, position);
+                    position += chunk.length;
+                }
+                encodedData = concatenated;
             }
-            const concatenated = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
-            let position = 0;
-            for (const chunk of chunks) {
-                concatenated.set(chunk, position);
-                position += chunk.length;
+            else {
+                encodedData = body;
             }
-            let data = new TextDecoder().decode(concatenated);
+            let data = new TextDecoder().decode(encodedData);
             let type;
             if (contentType === 'application/json') {
                 try {
@@ -133,23 +140,19 @@ var nativeBridge = (function (exports) {
         return { data: body, type: 'json' };
     };
     const CAPACITOR_HTTP_INTERCEPTOR = '/_capacitor_http_interceptor_';
-    const CAPACITOR_HTTPS_INTERCEPTOR = '/_capacitor_https_interceptor_';
+    const CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM = 'u';
     // TODO: export as Cap function
     const isRelativeOrProxyUrl = (url) => !url ||
         !(url.startsWith('http:') || url.startsWith('https:')) ||
-        url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1 ||
-        url.indexOf(CAPACITOR_HTTPS_INTERCEPTOR) > -1;
+        url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1;
     // TODO: export as Cap function
     const createProxyUrl = (url, win) => {
         var _a, _b;
         if (isRelativeOrProxyUrl(url))
             return url;
-        const proxyUrl = new URL(url);
         const bridgeUrl = new URL((_b = (_a = win.Capacitor) === null || _a === void 0 ? void 0 : _a.getServerUrl()) !== null && _b !== void 0 ? _b : '');
-        const isHttps = proxyUrl.protocol === 'https:';
-        bridgeUrl.search = proxyUrl.search;
-        bridgeUrl.hash = proxyUrl.hash;
-        bridgeUrl.pathname = `${isHttps ? CAPACITOR_HTTPS_INTERCEPTOR : CAPACITOR_HTTP_INTERCEPTOR}/${encodeURIComponent(proxyUrl.host)}${proxyUrl.pathname}`;
+        bridgeUrl.pathname = CAPACITOR_HTTP_INTERCEPTOR;
+        bridgeUrl.searchParams.append(CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM, url);
         return bridgeUrl.toString();
     };
     const initBridge = (w) => {
@@ -565,20 +568,7 @@ var nativeBridge = (function (exports) {
                                 value: xhr.method,
                                 writable: true,
                             },
-                            readyState: {
-                                get: function () {
-                                    var _a;
-                                    return (_a = this._readyState) !== null && _a !== void 0 ? _a : 0;
-                                },
-                                set: function (val) {
-                                    this._readyState = val;
-                                    setTimeout(() => {
-                                        this.dispatchEvent(new Event('readystatechange'));
-                                    });
-                                },
-                            },
                         });
-                        xhr.readyState = 0;
                         const prototype = win.CapacitorWebXMLHttpRequest.prototype;
                         const isProgressEventAvailable = () => typeof ProgressEvent !== 'undefined' &&
                             ProgressEvent.prototype instanceof Event;
@@ -608,6 +598,20 @@ var nativeBridge = (function (exports) {
                                 this._url = createProxyUrl(this._url, win);
                                 return win.CapacitorWebXMLHttpRequest.open.call(this, method, this._url);
                             }
+                            Object.defineProperties(this, {
+                                readyState: {
+                                    get: function () {
+                                        var _a;
+                                        return (_a = this._readyState) !== null && _a !== void 0 ? _a : 0;
+                                    },
+                                    set: function (val) {
+                                        this._readyState = val;
+                                        setTimeout(() => {
+                                            this.dispatchEvent(new Event('readystatechange'));
+                                        });
+                                    },
+                                },
+                            });
                             setTimeout(() => {
                                 this.dispatchEvent(new Event('loadstart'));
                             });

@@ -35,23 +35,12 @@ export async function buildCommand(
   const buildCommandOptions: BuildCommandOptions = {
     scheme: buildOptions.scheme || config.ios.scheme,
     flavor: buildOptions.flavor || config.android.flavor,
-    keystorepath:
-      buildOptions.keystorepath || config.android.buildOptions.keystorePath,
-    keystorepass:
-      buildOptions.keystorepass || config.android.buildOptions.keystorePassword,
-    keystorealias:
-      buildOptions.keystorealias || config.android.buildOptions.keystoreAlias,
-    keystorealiaspass:
-      buildOptions.keystorealiaspass ||
-      config.android.buildOptions.keystoreAliasPassword,
-    androidreleasetype:
-      buildOptions.androidreleasetype ||
-      config.android.buildOptions.releaseType ||
-      'AAB',
-    signingtype:
-      buildOptions.signingtype ||
-      config.android.buildOptions.signingType ||
-      'jarsigner',
+    keystorepath: buildOptions.keystorepath || config.android.buildOptions.keystorePath,
+    keystorepass: buildOptions.keystorepass || config.android.buildOptions.keystorePassword,
+    keystorealias: buildOptions.keystorealias || config.android.buildOptions.keystoreAlias,
+    keystorealiaspass: buildOptions.keystorealiaspass || config.android.buildOptions.keystoreAliasPassword,
+    androidreleasetype: buildOptions.androidreleasetype || config.android.buildOptions.releaseType || 'AAB',
+    signingtype: buildOptions.signingtype || config.android.buildOptions.signingType || 'jarsigner',
     configuration: buildOptions.configuration || 'Release',
   };
 
@@ -65,11 +54,7 @@ export async function buildCommand(
   }
 }
 
-export async function build(
-  config: Config,
-  platformName: string,
-  buildOptions: BuildCommandOptions,
-): Promise<void> {
+export async function build(config: Config, platformName: string, buildOptions: BuildCommandOptions): Promise<void> {
   if (platformName == config.ios.name) {
     await buildiOS(config, buildOptions);
   } else if (platformName === config.android.name) {
@@ -81,9 +66,6 @@ export async function build(
   }
 }
 
-function createBuildablePlatformFilter(
-  config: Config,
-): (platform: string) => boolean {
-  return platform =>
-    platform === config.ios.name || platform === config.android.name;
+function createBuildablePlatformFilter(config: Config): (platform: string) => boolean {
+  return (platform) => platform === config.ios.name || platform === config.android.name;
 }

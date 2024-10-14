@@ -1,12 +1,4 @@
-import {
-  copy,
-  ensureDir,
-  mkdirp,
-  pathExists,
-  readFile,
-  remove,
-  writeFile,
-} from '@ionic/utils-fs';
+import { copy, ensureDir, mkdirp, pathExists, readFile, remove, writeFile } from '@ionic/utils-fs';
 import { basename, extname, join, resolve } from 'path';
 import plist from 'plist';
 import type { PlistObject } from 'plist';
@@ -37,14 +29,10 @@ import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.
  */
-export function generateCordovaPluginsJSFile(
-  config: Config,
-  plugins: Plugin[],
-  platform: string,
-): string {
+export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], platform: string): string {
   const pluginModules: any[] = [];
   const pluginExports: string[] = [];
-  plugins.map(p => {
+  plugins.map((p) => {
     const pluginId = p.xml.$.id;
     const jsModules = getJSModules(p, platform);
     jsModules.map((jsModule: any) => {
@@ -83,11 +71,7 @@ export function generateCordovaPluginsJSFile(
         merge: mergeKey,
         // mimics Cordova's module name logic if the name attr is missing
         pluginContent: `{
-          "id": "${
-            pluginId +
-            '.' +
-            (jsModule.$.name || jsModule.$.src.match(/([^/]+)\.js/)[1])
-          }",
+          "id": "${pluginId + '.' + (jsModule.$.name || jsModule.$.src.match(/([^/]+)\.js/)[1])}",
           "file": "plugins/${pluginId}/${jsModule.$.src}",
           "pluginId": "${pluginId}"${clobbersModule}${mergesModule}${runsModule}
         }`,
@@ -105,10 +89,10 @@ export function generateCordovaPluginsJSFile(
             a.clobber && b.clobber // Clobbers in alpha order
               ? a.clobber.localeCompare(b.clobber)
               : a.clobber || b.clobber // Clobbers before anything else
-              ? b.clobber.localeCompare(a.clobber)
-              : a.merge.localeCompare(b.merge), // Merges in alpha order
+                ? b.clobber.localeCompare(a.clobber)
+                : a.merge.localeCompare(b.merge), // Merges in alpha order
         )
-        .map(e => e.pluginContent)
+        .map((e) => e.pluginContent)
         .join(',\n      ')}
     ];
     module.exports.metadata =
@@ -124,17 +108,13 @@ export function generateCordovaPluginsJSFile(
 /**
  * Build the plugins/* files for each Cordova plugin installed.
  */
-export async function copyPluginsJS(
-  config: Config,
-  cordovaPlugins: Plugin[],
-  platform: string,
-): Promise<void> {
+export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], platform: string): Promise<void> {
   const webDir = await getWebDir(config, platform);
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
   await removePluginFiles(config, platform);
   await Promise.all(
-    cordovaPlugins.map(async p => {
+    cordovaPlugins.map(async (p) => {
       const pluginId = p.xml.$.id;
       const pluginDir = join(pluginsDir, pluginId, 'www');
       await ensureDir(pluginDir);
@@ -146,16 +126,9 @@ export async function copyPluginsJS(
           let data = await readFile(filePath, { encoding: 'utf-8' });
           data = data.trim();
           // mimics Cordova's module name logic if the name attr is missing
-          const name =
-            pluginId +
-            '.' +
-            (jsModule.$.name ||
-              basename(jsModule.$.src, extname(jsModule.$.src)));
+          const name = pluginId + '.' + (jsModule.$.name || basename(jsModule.$.src, extname(jsModule.$.src)));
           data = `cordova.define("${name}", function(require, exports, module) { \n${data}\n});`;
-          data = data.replace(
-            /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi,
-            '',
-          );
+          data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '');
           await writeFile(filePath, data, { encoding: 'utf-8' });
         }),
       );
@@ -168,48 +141,28 @@ export async function copyPluginsJS(
       );
     }),
   );
-  await writeFile(
-    cordovaPluginsJSFile,
-    generateCordovaPluginsJSFile(config, cordovaPlugins, platform),
-  );
+  await writeFile(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, cordovaPlugins, platform));
 }
 
-export async function copyCordovaJS(
-  config: Config,
-  platform: string,
-): Promise<void> {
-  const cordovaPath = resolveNode(
-    config.app.rootDir,
-    '@capacitor/core',
-    'cordova.js',
-  );
+export async function copyCordovaJS(config: Config, platform: string): Promise<void> {
+  const cordovaPath = resolveNode(config.app.rootDir, '@capacitor/core', 'cordova.js');
   if (!cordovaPath) {
     fatal(
-      `Unable to find ${c.strong(
-        'node_modules/@capacitor/core/cordova.js',
-      )}.\n` + `Are you sure ${c.strong('@capacitor/core')} is installed?`,
+      `Unable to find ${c.strong('node_modules/@capacitor/core/cordova.js')}.\n` +
+        `Are you sure ${c.strong('@capacitor/core')} is installed?`,
     );
   }
 
-  return copy(
-    cordovaPath,
-    join(await getWebDir(config, platform), 'cordova.js'),
-  );
+  return copy(cordovaPath, join(await getWebDir(config, platform), 'cordova.js'));
 }
 
-export async function createEmptyCordovaJS(
-  config: Config,
-  platform: string,
-): Promise<void> {
+export async function createEmptyCordovaJS(config: Config, platform: string): Promise<void> {
   const webDir = await getWebDir(config, platform);
   await writeFile(join(webDir, 'cordova.js'), '');
   await writeFile(join(webDir, 'cordova_plugins.js'), '');
 }
 
-export async function removePluginFiles(
-  config: Config,
-  platform: string,
-): Promise<void> {
+export async function removePluginFiles(config: Config, platform: string): Promise<void> {
   const webDir = await getWebDir(config, platform);
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
@@ -217,11 +170,7 @@ export async function removePluginFiles(
   await remove(cordovaPluginsJSFile);
 }
 
-export async function autoGenerateConfig(
-  config: Config,
-  cordovaPlugins: Plugin[],
-  platform: string,
-): Promise<void> {
+export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[], platform: string): Promise<void> {
   let xmlDir = join(config.android.resDirAbs, 'xml');
   const fileName = 'config.xml';
   if (platform === 'ios') {
@@ -231,7 +180,7 @@ export async function autoGenerateConfig(
   const cordovaConfigXMLFile = join(xmlDir, fileName);
   await remove(cordovaConfigXMLFile);
   const pluginEntries: any[] = [];
-  cordovaPlugins.map(p => {
+  cordovaPlugins.map((p) => {
     const currentPlatform = getPluginPlatform(p, platform);
     if (currentPlatform) {
       const configFiles = currentPlatform['config-file'];
@@ -252,12 +201,10 @@ export async function autoGenerateConfig(
   let accessOriginString: string[] = [];
   if (config.app.extConfig?.cordova?.accessOrigins) {
     accessOriginString = await Promise.all(
-      config.app.extConfig.cordova.accessOrigins.map(
-        async (host): Promise<string> => {
-          return `
+      config.app.extConfig.cordova.accessOrigins.map(async (host): Promise<string> => {
+        return `
   <access origin="${host}" />`;
-        },
-      ),
+      }),
     );
   } else {
     accessOriginString.push(`<access origin="*" />`);
@@ -271,12 +218,10 @@ export async function autoGenerateConfig(
   let pluginPreferencesString: string[] = [];
   if (config.app.extConfig?.cordova?.preferences) {
     pluginPreferencesString = await Promise.all(
-      Object.entries(config.app.extConfig.cordova.preferences).map(
-        async ([key, value]): Promise<string> => {
-          return `
+      Object.entries(config.app.extConfig.cordova.preferences).map(async ([key, value]): Promise<string> => {
+        return `
   <preference name="${key}" value="${value}" />`;
-        },
-      ),
+      }),
     );
   }
   const content = `<?xml version='1.0' encoding='utf-8'?>
@@ -317,10 +262,7 @@ export async function handleCordovaPluginsJS(
   await autoGenerateConfig(config, cordovaPlugins, platform);
 }
 
-export async function getCordovaPlugins(
-  config: Config,
-  platform: string,
-): Promise<Plugin[]> {
+export async function getCordovaPlugins(config: Config, platform: string): Promise<Plugin[]> {
   const allPlugins = await getPlugins(config, platform);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
@@ -328,15 +270,11 @@ export async function getCordovaPlugins(
   } else if (platform === config.android.name) {
     plugins = await getAndroidPlugins(allPlugins);
   }
-  return plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);
+  return plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
 }
 
-export async function logCordovaManualSteps(
-  cordovaPlugins: Plugin[],
-  config: Config,
-  platform: string,
-): Promise<void> {
-  cordovaPlugins.map(p => {
+export async function logCordovaManualSteps(cordovaPlugins: Plugin[], config: Config, platform: string): Promise<void> {
+  cordovaPlugins.map((p) => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
     editConfig.concat(configFile).map(async (configElement: any) => {
@@ -354,17 +292,10 @@ export async function logCordovaManualSteps(
 async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
   let plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
   if (config.app.extConfig.ios?.scheme) {
-    plistPath = resolve(
-      config.ios.nativeProjectDirAbs,
-      `${config.app.extConfig.ios?.scheme}-Info.plist`,
-    );
+    plistPath = resolve(config.ios.nativeProjectDirAbs, `${config.app.extConfig.ios?.scheme}-Info.plist`);
   }
   if (!(await pathExists(plistPath))) {
-    plistPath = resolve(
-      config.ios.nativeTargetDirAbs,
-      'Base.lproj',
-      'Info.plist',
-    );
+    plistPath = resolve(config.ios.nativeTargetDirAbs, 'Base.lproj', 'Info.plist');
   }
   if (await pathExists(plistPath)) {
     const xmlMeta = await readXML(plistPath);
@@ -374,20 +305,10 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
     const dict = xmlMeta.plist.dict.pop();
     if (!dict.key.includes(configElement.$.parent)) {
       let xml = buildConfigFileXml(configElement);
-      xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(
-        xml,
-      )}`;
-      logger.warn(
-        `Configuration required for ${c.strong(plugin.id)}.\n` +
-          `Add the following to Info.plist:\n` +
-          xml,
-      );
+      xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
+      logger.warn(`Configuration required for ${c.strong(plugin.id)}.\n` + `Add the following to Info.plist:\n` + xml);
     } else if (configElement.array || configElement.dict) {
-      if (
-        configElement.array &&
-        configElement.array.length > 0 &&
-        configElement.array[0].string
-      ) {
+      if (configElement.array && configElement.array.length > 0 && configElement.array[0].string) {
         let xml = '';
         configElement.array[0].string.map((element: any) => {
           const d = plistData[configElement.$.parent];
@@ -398,23 +319,16 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
         if (xml.length > 0) {
           logger.warn(
             `Configuration required for ${c.strong(plugin.id)}.\n` +
-              `Add the following in the existing ${c.strong(
-                configElement.$.parent,
-              )} array of your Info.plist:\n` +
+              `Add the following in the existing ${c.strong(configElement.$.parent)} array of your Info.plist:\n` +
               xml,
           );
         }
       } else {
         let xml = buildConfigFileXml(configElement);
-        xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(
-          xml,
-        )}`;
+        xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
         xml = `<plist version="1.0"><dict>${xml}</dict></plist>`;
 
-        const parseXmlToSearchable = (
-          childElementsObj: any[],
-          arrayToAddTo: any[],
-        ) => {
+        const parseXmlToSearchable = (childElementsObj: any[], arrayToAddTo: any[]) => {
           for (const childElement of childElementsObj) {
             const childElementName = childElement['#name'];
             const toAdd: {
@@ -484,15 +398,9 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
         );
         parsedRequiredElements.push(rootOfRequiredElementsToAdd);
 
-        const doesContainElements = (
-          requiredElementsArray: any[],
-          existingElementsArray: any[],
-        ) => {
+        const doesContainElements = (requiredElementsArray: any[], existingElementsArray: any[]) => {
           for (const requiredElement of requiredElementsArray) {
-            if (
-              requiredElement.name === 'key' ||
-              requiredElement.name === 'string'
-            ) {
+            if (requiredElement.name === 'key' || requiredElement.name === 'string') {
               let foundMatch = false;
               for (const existingElement of existingElementsArray) {
                 if (
@@ -511,16 +419,8 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
               let foundMatch = false;
               for (const existingElement of existingElementsArray) {
                 if (existingElement.name === requiredElement.name) {
-                  if (
-                    (requiredElement.children !== undefined) ===
-                    (existingElement.children !== undefined)
-                  ) {
-                    if (
-                      doesContainElements(
-                        requiredElement.children,
-                        existingElement.children,
-                      )
-                    ) {
+                  if ((requiredElement.children !== undefined) === (existingElement.children !== undefined)) {
+                    if (doesContainElements(requiredElement.children, existingElement.children)) {
                       foundMatch = true;
                       break;
                     }
@@ -535,9 +435,7 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
           return true;
         };
 
-        if (
-          !doesContainElements(parsedRequiredElements, parsedExistingElements)
-        ) {
+        if (!doesContainElements(parsedRequiredElements, parsedExistingElements)) {
           logPossibleMissingItem(configElement, plugin);
         }
       }
@@ -553,9 +451,7 @@ function logPossibleMissingItem(configElement: any, plugin: Plugin) {
   xml = removeOuterTags(xml);
   logger.warn(
     `Configuration might be missing for ${c.strong(plugin.id)}.\n` +
-      `Add the following to the existing ${c.strong(
-        configElement.$.parent,
-      )} entry of Info.plist:\n` +
+      `Add the following to the existing ${c.strong(configElement.$.parent)} entry of Info.plist:\n` +
       xml,
   );
 }
@@ -574,31 +470,21 @@ function removeOuterTags(str: string) {
   return str.substring(start, end);
 }
 
-export async function checkPluginDependencies(
-  plugins: Plugin[],
-  platform: string,
-): Promise<void> {
+export async function checkPluginDependencies(plugins: Plugin[], platform: string): Promise<void> {
   const pluginDeps: Map<string, string[]> = new Map();
-  const cordovaPlugins = plugins.filter(
-    p => getPluginType(p, platform) === PluginType.Cordova,
-  );
-  const incompatible = plugins.filter(
-    p => getPluginType(p, platform) === PluginType.Incompatible,
-  );
+  const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
+  const incompatible = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);
   await Promise.all(
-    cordovaPlugins.map(async p => {
+    cordovaPlugins.map(async (p) => {
       let allDependencies: string[] = [];
-      allDependencies = allDependencies.concat(
-        getPlatformElement(p, platform, 'dependency'),
-      );
+      allDependencies = allDependencies.concat(getPlatformElement(p, platform, 'dependency'));
       if (p.xml['dependency']) {
         allDependencies = allDependencies.concat(p.xml['dependency']);
       }
       allDependencies = allDependencies.filter(
         (dep: any) =>
           !getIncompatibleCordovaPlugins(platform).includes(dep.$.id) &&
-          incompatible.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id)
-            .length === 0,
+          incompatible.filter((p) => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0,
       );
       if (allDependencies) {
         await Promise.all(
@@ -608,11 +494,7 @@ export async function checkPluginDependencies(
             if (plugin.includes('@') && plugin.indexOf('@') !== 0) {
               [plugin, version] = plugin.split('@');
             }
-            if (
-              cordovaPlugins.filter(
-                p => p.id === plugin || p.xml.$.id === plugin,
-              ).length === 0
-            ) {
+            if (cordovaPlugins.filter((p) => p.id === plugin || p.xml.$.id === plugin).length === 0) {
               if (dep.$.url?.startsWith('http')) {
                 plugin = dep.$.url;
                 version = dep.$.commit;
@@ -630,13 +512,9 @@ export async function checkPluginDependencies(
   if (pluginDeps.size > 0) {
     let msg =
       `${c.failure(c.strong('Plugins are missing dependencies.'))}\n` +
-      `Cordova plugin dependencies must be installed in your project (e.g. w/ ${c.input(
-        'npm install',
-      )}).\n`;
+      `Cordova plugin dependencies must be installed in your project (e.g. w/ ${c.input('npm install')}).\n`;
     for (const [plugin, deps] of pluginDeps.entries()) {
-      msg +=
-        `\n  ${c.strong(plugin)} is missing dependencies:\n` +
-        deps.map(d => `    - ${d}`).join('\n');
+      msg += `\n  ${c.strong(plugin)} is missing dependencies:\n` + deps.map((d) => `    - ${d}`).join('\n');
     }
 
     logger.warn(`${msg}\n`);
@@ -660,11 +538,7 @@ export function getIncompatibleCordovaPlugins(platform: string): string[] {
     'cordova-support-google-services',
   ];
   if (platform === 'ios') {
-    pluginList.push(
-      'cordova-plugin-statusbar',
-      '@ionic-enterprise/statusbar',
-      'SalesforceMobileSDK-CordovaPlugin',
-    );
+    pluginList.push('cordova-plugin-statusbar', '@ionic-enterprise/statusbar', 'SalesforceMobileSDK-CordovaPlugin');
   }
   if (platform === 'android') {
     pluginList.push('cordova-plugin-compat');
@@ -672,27 +546,14 @@ export function getIncompatibleCordovaPlugins(platform: string): string[] {
   return pluginList;
 }
 
-export function needsStaticPod(plugin: Plugin, config: Config): boolean {
-  let pluginList = [
-    'phonegap-plugin-push',
-    '@batch.com/cordova-plugin',
-    'onesignal-cordova-plugin',
-  ];
-  if (config.app.extConfig?.cordova?.staticPlugins) {
-    pluginList = pluginList.concat(
-      config.app.extConfig?.cordova?.staticPlugins,
-    );
-  }
-  return pluginList.includes(plugin.id) || useFrameworks(plugin);
+export function needsStaticPod(plugin: Plugin): boolean {
+  return useFrameworks(plugin);
 }
 
 function useFrameworks(plugin: Plugin): boolean {
   const podspecs = getPlatformElement(plugin, 'ios', 'podspec');
   const frameworkPods = podspecs.filter(
-    (podspec: any) =>
-      podspec.pods.filter(
-        (pods: any) => pods.$ && pods.$['use-frameworks'] === 'true',
-      ).length > 0,
+    (podspec: any) => podspec.pods.filter((pods: any) => pods.$ && pods.$['use-frameworks'] === 'true').length > 0,
   );
   return frameworkPods.length > 0;
 }
@@ -712,17 +573,11 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
   if (cordova.preferences && Object.keys(cordova.preferences).length > 0) {
     if (isInteractive()) {
       const answers = await logPrompt(
-        `${c.strong(
-          `Cordova preferences can be automatically ported to ${c.strong(
-            config.app.extConfigName,
-          )}.`,
-        )}\n` +
+        `${c.strong(`Cordova preferences can be automatically ported to ${c.strong(config.app.extConfigName)}.`)}\n` +
           `Keep in mind: Not all values can be automatically migrated from ${c.strong(
             'config.xml',
           )}. There may be more work to do.\n` +
-          `More info: ${c.strong(
-            'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
-          )}`,
+          `More info: ${c.strong('https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor')}`,
         {
           type: 'confirm',
           name: 'confirm',
@@ -760,18 +615,14 @@ export async function writeCordovaAndroidManifest(
   cordovaPlugins: Plugin[],
   config: Config,
   platform: string,
+  cleartext?: boolean,
 ): Promise<void> {
-  const manifestPath = join(
-    config.android.cordovaPluginsDirAbs,
-    'src',
-    'main',
-    'AndroidManifest.xml',
-  );
+  const manifestPath = join(config.android.cordovaPluginsDirAbs, 'src', 'main', 'AndroidManifest.xml');
   const rootXMLEntries: any[] = [];
   const applicationXMLEntries: any[] = [];
   const applicationXMLAttributes: any[] = [];
   let prefsArray: any[] = [];
-  cordovaPlugins.map(async p => {
+  cordovaPlugins.map(async (p) => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
     prefsArray = prefsArray.concat(getAllElements(p, platform, 'preference'));
@@ -781,20 +632,14 @@ export async function writeCordovaAndroidManifest(
         (configElement.$.target?.includes('AndroidManifest.xml') ||
           configElement.$.file?.includes('AndroidManifest.xml'))
       ) {
-        const keys = Object.keys(configElement).filter(k => k !== '$');
-        keys.map(k => {
+        const keys = Object.keys(configElement).filter((k) => k !== '$');
+        keys.map((k) => {
           configElement[k].map(async (e: any) => {
             const xmlElement = buildXmlElement(e, k);
-            const pathParts = getPathParts(
-              configElement.$.parent || configElement.$.target,
-            );
+            const pathParts = getPathParts(configElement.$.parent || configElement.$.target);
             if (pathParts.length > 1) {
               if (pathParts.pop() === 'application') {
-                if (
-                  configElement.$.mode &&
-                  configElement.$.mode === 'merge' &&
-                  xmlElement.startsWith('<application')
-                ) {
+                if (configElement.$.mode && configElement.$.mode === 'merge' && xmlElement.startsWith('<application')) {
                   Object.keys(e.$).map((ek: any) => {
                     applicationXMLAttributes.push(`${ek}="${e.$[ek]}"`);
                   });
@@ -805,15 +650,8 @@ export async function writeCordovaAndroidManifest(
                   applicationXMLEntries.push(xmlElement);
                 }
               } else {
-                const manifestPathOfCapApp = join(
-                  config.android.appDirAbs,
-                  'src',
-                  'main',
-                  'AndroidManifest.xml',
-                );
-                const manifestContentTrimmed = (
-                  await readFile(manifestPathOfCapApp)
-                )
+                const manifestPathOfCapApp = join(config.android.appDirAbs, 'src', 'main', 'AndroidManifest.xml');
+                const manifestContentTrimmed = (await readFile(manifestPathOfCapApp))
                   .toString()
                   .trim()
                   .replace(/\n|\t|\r/g, '')
@@ -826,19 +664,14 @@ export async function writeCordovaAndroidManifest(
                   .replace(/[\s]{1,}</g, '<')
                   .replace(/>[\s]{1,}/g, '>')
                   .replace(/[\s]{2,}/g, ' ');
-                const pathPartList = getPathParts(
-                  configElement.$.parent || configElement.$.target,
-                );
+                const pathPartList = getPathParts(configElement.$.parent || configElement.$.target);
 
                 const doesXmlManifestContainRequiredInfo = (
                   requiredElements: any,
                   existingElements: any,
                   pathTarget: string[],
                 ): boolean => {
-                  const findElementsToSearchIn = (
-                    existingElements: any[],
-                    pathTarget: string[],
-                  ): any[] => {
+                  const findElementsToSearchIn = (existingElements: any[], pathTarget: string[]): any[] => {
                     const parts = [...pathTarget];
                     const elementsToSearchNextIn = [];
                     for (const existingElement of existingElements) {
@@ -859,23 +692,13 @@ export async function writeCordovaAndroidManifest(
                       if (parts.length <= 0) {
                         return elementsToSearchNextIn;
                       } else {
-                        return findElementsToSearchIn(
-                          elementsToSearchNextIn,
-                          parts,
-                        );
+                        return findElementsToSearchIn(elementsToSearchNextIn, parts);
                       }
                     }
                   };
-                  const parseXmlToSearchable = (
-                    childElementsObj: any,
-                    arrayToAddTo: any[],
-                  ) => {
-                    for (const childElementKey of Object.keys(
-                      childElementsObj,
-                    )) {
-                      for (const occurannceOfElement of childElementsObj[
-                        childElementKey
-                      ]) {
+                  const parseXmlToSearchable = (childElementsObj: any, arrayToAddTo: any[]) => {
+                    for (const childElementKey of Object.keys(childElementsObj)) {
+                      for (const occurannceOfElement of childElementsObj[childElementKey]) {
                         const toAdd: {
                           name: string;
                           attrs?: { [key: string]: any } | undefined;
@@ -886,42 +709,24 @@ export async function writeCordovaAndroidManifest(
                         }
                         if (occurannceOfElement['$$']) {
                           toAdd.children = [];
-                          parseXmlToSearchable(
-                            occurannceOfElement['$$'],
-                            toAdd['children'],
-                          );
+                          parseXmlToSearchable(occurannceOfElement['$$'], toAdd['children']);
                         }
                         arrayToAddTo.push(toAdd);
                       }
                     }
                   };
-                  const doesElementMatch = (
-                    requiredElement: any,
-                    existingElement: any,
-                  ): boolean => {
+                  const doesElementMatch = (requiredElement: any, existingElement: any): boolean => {
                     if (requiredElement.name !== existingElement.name) {
                       return false;
                     }
-                    if (
-                      (requiredElement.attrs !== undefined) !==
-                      (existingElement.attrs !== undefined)
-                    ) {
+                    if ((requiredElement.attrs !== undefined) !== (existingElement.attrs !== undefined)) {
                       return false;
                     } else {
                       if (requiredElement.attrs !== undefined) {
-                        const requiredELementAttrKeys = Object.keys(
-                          requiredElement.attrs,
-                        );
+                        const requiredELementAttrKeys = Object.keys(requiredElement.attrs);
                         for (const key of requiredELementAttrKeys) {
-                          if (
-                            !/^[$].{1,}$/.test(
-                              (requiredElement.attrs[key] as string).trim(),
-                            )
-                          ) {
-                            if (
-                              requiredElement.attrs[key] !==
-                              existingElement.attrs[key]
-                            ) {
+                          if (!/^[$].{1,}$/.test((requiredElement.attrs[key] as string).trim())) {
+                            if (requiredElement.attrs[key] !== existingElement.attrs[key]) {
                               return false;
                             }
                           }
@@ -929,8 +734,7 @@ export async function writeCordovaAndroidManifest(
                       }
                     }
                     if (
-                      (requiredElement.children !== undefined) !==
-                        (existingElement.children !== undefined) &&
+                      (requiredElement.children !== undefined) !== (existingElement.children !== undefined) &&
                       requiredElement.children?.length !== 0
                     ) {
                       return false;
@@ -940,10 +744,7 @@ export async function writeCordovaAndroidManifest(
                         for (const requiredElementItem of requiredElement.children) {
                           let foundRequiredElement = false;
                           for (const existingElementItem of existingElement.children) {
-                            const foundRequiredElementIn = doesElementMatch(
-                              requiredElementItem,
-                              existingElementItem,
-                            );
+                            const foundRequiredElementIn = doesElementMatch(requiredElementItem, existingElementItem);
                             if (foundRequiredElementIn) {
                               foundRequiredElement = true;
                               break;
@@ -954,18 +755,12 @@ export async function writeCordovaAndroidManifest(
                           }
                         }
                       } else {
-                        if (
-                          requiredElement.children === undefined &&
-                          existingElement.children === undefined
-                        ) {
+                        if (requiredElement.children === undefined && existingElement.children === undefined) {
                           return true;
                         } else {
                           let foundRequiredElement = false;
                           for (const existingElementItem of existingElement.children) {
-                            const foundRequiredElementIn = doesElementMatch(
-                              requiredElement,
-                              existingElementItem,
-                            );
+                            const foundRequiredElementIn = doesElementMatch(requiredElement, existingElementItem);
                             if (foundRequiredElementIn) {
                               foundRequiredElement = true;
                               break;
@@ -980,8 +775,7 @@ export async function writeCordovaAndroidManifest(
                     return true;
                   };
                   const parsedExistingElements: any[] = [];
-                  const rootKeyOfExistingElements =
-                    Object.keys(existingElements)[0];
+                  const rootKeyOfExistingElements = Object.keys(existingElements)[0];
                   const rootOfExistingElementsToAdd: {
                     name: string;
                     attrs?: { [key: string]: any } | undefined;
@@ -998,8 +792,7 @@ export async function writeCordovaAndroidManifest(
                   );
                   parsedExistingElements.push(rootOfExistingElementsToAdd);
                   const parsedRequiredElements: any[] = [];
-                  const rootKeyOfRequiredElements =
-                    Object.keys(requiredElements)[0];
+                  const rootKeyOfRequiredElements = Object.keys(requiredElements)[0];
                   const rootOfRequiredElementsToAdd: {
                     name: string;
                     attrs?: { [key: string]: any } | undefined;
@@ -1010,28 +803,19 @@ export async function writeCordovaAndroidManifest(
                       ...requiredElements[rootKeyOfRequiredElements]['$'],
                     };
                   }
-                  if (
-                    requiredElements[rootKeyOfRequiredElements]['$$'] !==
-                    undefined
-                  ) {
+                  if (requiredElements[rootKeyOfRequiredElements]['$$'] !== undefined) {
                     parseXmlToSearchable(
                       requiredElements[rootKeyOfRequiredElements]['$$'],
                       rootOfRequiredElementsToAdd['children'],
                     );
                   }
                   parsedRequiredElements.push(rootOfRequiredElementsToAdd);
-                  const elementsToSearch = findElementsToSearchIn(
-                    parsedExistingElements,
-                    pathTarget,
-                  );
+                  const elementsToSearch = findElementsToSearchIn(parsedExistingElements, pathTarget);
 
                   for (const requiredElement of parsedRequiredElements) {
                     let foundMatch = false;
                     for (const existingElement of elementsToSearch) {
-                      const doesContain = doesElementMatch(
-                        requiredElement,
-                        existingElement,
-                      );
+                      const doesContain = doesElementMatch(requiredElement, existingElement);
                       if (doesContain) {
                         foundMatch = true;
                         break;
@@ -1065,10 +849,7 @@ export async function writeCordovaAndroidManifest(
                 }
               }
             } else {
-              if (
-                !rootXMLEntries.includes(xmlElement) &&
-                !contains(rootXMLEntries, xmlElement, k)
-              ) {
+              if (!rootXMLEntries.includes(xmlElement) && !contains(rootXMLEntries, xmlElement, k)) {
                 rootXMLEntries.push(xmlElement);
               }
             }
@@ -1078,28 +859,21 @@ export async function writeCordovaAndroidManifest(
     });
   });
   const cleartextString = 'android:usesCleartextTraffic="true"';
-  const cleartext =
-    config.app.extConfig.server?.cleartext &&
-    !applicationXMLAttributes.includes(cleartextString)
+  const cleartextValue =
+    (cleartext || config.app.extConfig.server?.cleartext) && !applicationXMLAttributes.includes(cleartextString)
       ? cleartextString
       : '';
   let content = `<?xml version='1.0' encoding='utf-8'?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:amazon="http://schemas.amazon.com/apk/res/android">
-<application ${applicationXMLAttributes.join('\n')} ${cleartext}>
+<application ${applicationXMLAttributes.join('\n')} ${cleartextValue}>
 ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
 </manifest>`;
-  content = content.replace(
-    new RegExp('$PACKAGE_NAME'.replace('$', '\\$&'), 'g'),
-    '${applicationId}',
-  );
+  content = content.replace(new RegExp('$PACKAGE_NAME'.replace('$', '\\$&'), 'g'), '${applicationId}');
   for (const preference of prefsArray) {
-    content = content.replace(
-      new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'),
-      preference.$.default,
-    );
+    content = content.replace(new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
   }
   if (await pathExists(manifestPath)) {
     await writeFile(manifestPath, content);
@@ -1109,7 +883,7 @@ ${rootXMLEntries.join('\n')}
 function getPathParts(path: string) {
   const rootPath = 'manifest';
   path = path.replace('/*', rootPath);
-  const parts = path.split('/').filter(part => part !== '');
+  const parts = path.split('/').filter((part) => part !== '');
   if (parts.length > 1 || parts.includes(rootPath)) {
     return parts;
   }

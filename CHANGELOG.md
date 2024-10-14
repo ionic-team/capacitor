@@ -3,6 +3,55 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/6.1.2...7.0.0-alpha.1) (2024-10-14)
+
+### Bug Fixes
+
+- **android-template:** prevent app restart on bluetooh keyboard changes ([#7652](https://github.com/ionic-team/capacitor/issues/7652)) ([200c7cb](https://github.com/ionic-team/capacitor/commit/200c7cb911898fbfb12b0b25e8cfd1982e0a6bf0))
+- **cli:** replace app-store deprecated method on build ([#7637](https://github.com/ionic-team/capacitor/issues/7637)) ([942b108](https://github.com/ionic-team/capacitor/commit/942b108c1d506539c0c53276ed4ec35eed36634e))
+- **ios:** fix retain cycle caused by CDVPluginManager ([#7692](https://github.com/ionic-team/capacitor/issues/7692)) ([02bdb3d](https://github.com/ionic-team/capacitor/commit/02bdb3d1d15907dcc577f16b7f2e22050e54ffef))
+
+### Features
+
+- **core:** expose `methodName` via `CAPPluginCall` ([#7641](https://github.com/ionic-team/capacitor/issues/7641)) ([df109aa](https://github.com/ionic-team/capacitor/commit/df109aa1cfa1ea824e22feecbd2b7183a57fc693))
+- **ios:** JSValueEncoder/Decoder feature parity with JSONEncoder/Decoder ([#7647](https://github.com/ionic-team/capacitor/issues/7647)) ([410249b](https://github.com/ionic-team/capacitor/commit/410249b6c626e67235f25b466ed4969d52148bd1)), closes [#7576](https://github.com/ionic-team/capacitor/issues/7576)
+
+## [6.1.2](https://github.com/ionic-team/capacitor/compare/6.1.1...6.1.2) (2024-08-07)
+
+### Bug Fixes
+
+- **android:** better cleaning of allowedOrigin url ([#7607](https://github.com/ionic-team/capacitor/issues/7607)) ([d123260](https://github.com/ionic-team/capacitor/commit/d123260c70f26b0e786515ced9c95447f9ee81a0))
+- **http:** pass original url as query param on the proxy url ([#7527](https://github.com/ionic-team/capacitor/issues/7527)) ([1da06e6](https://github.com/ionic-team/capacitor/commit/1da06e66cb9cfbf5a5cc48ba6c23cdbe18bc8fc0))
+- support dependencies with ".swift" at the end of name ([#7583](https://github.com/ionic-team/capacitor/issues/7583)) ([ceee68a](https://github.com/ionic-team/capacitor/commit/ceee68a2db363e9d9a638aa4ed8569fd82d1013a))
+
+## [6.1.1](https://github.com/ionic-team/capacitor/compare/6.1.0...6.1.1) (2024-07-17)
+
+### Bug Fixes
+
+- **android:** Allow WebView to load blob urls ([#7551](https://github.com/ionic-team/capacitor/issues/7551)) ([0dca917](https://github.com/ionic-team/capacitor/commit/0dca917da54b01c6cf4fcd063f8191a8457d7c93))
+- **android:** javascript injection not working on urls with query ([#7545](https://github.com/ionic-team/capacitor/issues/7545)) ([57ce5c6](https://github.com/ionic-team/capacitor/commit/57ce5c65560c34d106e8b88cffe26ad22947bba6))
+- **android:** send FormData on older devices ([#7519](https://github.com/ionic-team/capacitor/issues/7519)) ([de8b50d](https://github.com/ionic-team/capacitor/commit/de8b50dc1d87510c5f19d04f30b6be12b51d8482))
+- **android:** UTF-8 encode form data value ([#7525](https://github.com/ionic-team/capacitor/issues/7525)) ([a73ed31](https://github.com/ionic-team/capacitor/commit/a73ed318cdb819863425f6b1b7ec23ea53454931))
+- **cli:** enable cleartext for live reload ([#7563](https://github.com/ionic-team/capacitor/issues/7563)) ([e06648f](https://github.com/ionic-team/capacitor/commit/e06648f4566c0b80ab420f977e02f1b4cd73fc1f))
+- **http:** handle UInt8Array on body ([#7546](https://github.com/ionic-team/capacitor/issues/7546)) ([cfb9ce1](https://github.com/ionic-team/capacitor/commit/cfb9ce175615f69fe86b61af6d51ec2044d147cd))
+- **ios:** make removeAllListeners accessible from javascript ([#7566](https://github.com/ionic-team/capacitor/issues/7566)) ([388a822](https://github.com/ionic-team/capacitor/commit/388a8223c60e8eac8437ca4cb26a93ab359f53ad))
+- **ios:** Match CapApp-SPM iOS version with project version ([#7556](https://github.com/ionic-team/capacitor/issues/7556)) ([df4dc9a](https://github.com/ionic-team/capacitor/commit/df4dc9a17f1b999a68093091d201ba15d234c5f8))
+
+# [6.1.0](https://github.com/ionic-team/capacitor/compare/6.0.0...6.1.0) (2024-06-11)
+
+### Bug Fixes
+
+- **android:** avoid crash if server url ends in / ([#7426](https://github.com/ionic-team/capacitor/issues/7426)) ([f8264cc](https://github.com/ionic-team/capacitor/commit/f8264ccae1f2fec553521bc62d767c4909ea6d79))
+- **cli:** Avoid duplicate entries in packageClassList ([#7470](https://github.com/ionic-team/capacitor/issues/7470)) ([cca0b80](https://github.com/ionic-team/capacitor/commit/cca0b805291bd002c515be0a1c15de84ee23c5d3))
+- **cli:** Run sync before updating gradle ([#7497](https://github.com/ionic-team/capacitor/issues/7497)) ([f27786e](https://github.com/ionic-team/capacitor/commit/f27786ea1367bc0ec53697eeb6d654a7e12a1507))
+- **http:** don't override readyState for non POST requests ([#7488](https://github.com/ionic-team/capacitor/issues/7488)) ([30c13a8](https://github.com/ionic-team/capacitor/commit/30c13a865e7710e6dc5f0ee014e951d52d030795))
+- **ios:** check if urlSchemeTask is stopped before calling its methods ([#7482](https://github.com/ionic-team/capacitor/issues/7482)) ([b32b5b1](https://github.com/ionic-team/capacitor/commit/b32b5b17ed14bd43c846b3fcb930bfd88e245e40))
+
+### Features
+
+- **cli:** run plugin hooks ([#7499](https://github.com/ionic-team/capacitor/issues/7499)) ([3b847ea](https://github.com/ionic-team/capacitor/commit/3b847eac42673c812a4538c319b81c8f8afc9955))
+- **ios:** CAPPluginMethod selector-based initializer ([#7412](https://github.com/ionic-team/capacitor/issues/7412)) ([44c5b55](https://github.com/ionic-team/capacitor/commit/44c5b55e36b85471a85ee5a1af47bdb1a5d83a8b))
+
 # [6.0.0](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.2...6.0.0) (2024-04-15)
 
 ### Bug Fixes
@@ -261,7 +310,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 - **android:** add check for excluded domains before ssl request ([7906d36](https://github.com/ionic-team/capacitor/commit/7906d3616e8bfb2e2c1c81ee123424c06fc4e5ab))
 - **cli:** add apksigner as a build option ([#6442](https://github.com/ionic-team/capacitor/issues/6442)) ([9818a76](https://github.com/ionic-team/capacitor/commit/9818a76ab4ea6660b444354f239344d37c77d3b3))
-- export buildRequestInit function so we can use for downloadFile ([95b0575](https://github.com/ionic-team/capacitor/commit/95b0575e3fbc1b1408aa69b61c58e18bf8882cea))
+- export buildRequestInit function so we can use for downloadFile ([95b0575](https://github.com/ionic-team/capacitor/commit/95b0575e3fbc1b1408aa69b61c58e18bf8882cea)
+  )
 
 ## [5.0.5](https://github.com/ionic-team/capacitor/compare/5.0.4...5.0.5) (2023-06-09)
 

@@ -4,6 +4,7 @@ import {
   check,
   checkPackage,
   resolvePlatform,
+  runHooks,
   runPlatformHook,
   runTask,
   selectPlatforms,
@@ -17,20 +18,11 @@ import { updateIOS } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
 
-export async function updateCommand(
-  config: Config,
-  selectedPlatformName: string,
-  deployment: boolean,
-): Promise<void> {
+export async function updateCommand(config: Config, selectedPlatformName: string, deployment: boolean): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(
-        config,
-        selectedPlatformName,
-        platformDir,
-        'capacitor:update',
-      );
+      await runPlatformHook(config, selectedPlatformName, platformDir, 'capacitor:update');
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
@@ -40,12 +32,7 @@ export async function updateCommand(
     try {
       await check([() => checkPackage(), ...updateChecks(config, platforms)]);
 
-      await allSerial(
-        platforms.map(
-          platformName => async () =>
-            await update(config, platformName, deployment),
-        ),
-      );
+      await allSerial(platforms.map((platformName) => async () => await update(config, platformName, deployment)));
       const now = +new Date();
       const diff = (now - then) / 1000;
       logger.info(`Update finished in ${diff}s`);
@@ -59,10 +46,7 @@ export async function updateCommand(
   }
 }
 
-export function updateChecks(
-  config: Config,
-  platforms: string[],
-): CheckFunction[] {
+export function updateChecks(config: Config, platforms: string[]): CheckFunction[] {
   const checks: CheckFunction[] = [];
   for (const platformName of platforms) {
     if (platformName === config.ios.name) {
@@ -78,18 +62,9 @@ export function updateChecks(
   return checks;
 }
 
-export async function update(
-  config: Config,
-  platformName: string,
-  deployment: boolean,
-): Promise<void> {
+export async function update(config: Config, platformName: string, deployment: boolean): Promise<void> {
   await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
-    await runPlatformHook(
-      config,
-      platformName,
-      config.app.rootDir,
-      'capacitor:update:before',
-    );
+    await runHooks(config, platformName, config.app.rootDir, 'capacitor:update:before');
 
     if (platformName === config.ios.name) {
       await updateIOS(config, deployment);
@@ -97,11 +72,6 @@ export async function update(
       await updateAndroid(config);
     }
 
-    await runPlatformHook(
-      config,
-      platformName,
-      config.app.rootDir,
-      'capacitor:update:after',
-    );
+    await runHooks(config, platformName, config.app.rootDir, 'capacitor:update:after');
   });
 }

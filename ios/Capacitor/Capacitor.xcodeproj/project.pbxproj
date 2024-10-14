@@ -86,8 +86,13 @@
 		A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */; };
 		A71289E627F380A500DADDF3 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289E527F380A500DADDF3 /* Router.swift */; };
 		A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289EA27F380FD00DADDF3 /* RouterTests.swift */; };
+		A7187FD22BD1CB7D00093C45 /* CAPPluginMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7187FD12BD1CB7D00093C45 /* CAPPluginMethod.swift */; };
 		A76739792B98E09700795F7B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A76739782B98E09700795F7B /* PrivacyInfo.xcprivacy */; };
+		A771ADEE2C8B845000AF234D /* DateCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A771ADED2C8B845000AF234D /* DateCodableTests.swift */; };
+		A771ADF12C8B909100AF234D /* URLCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A771ADF02C8B909100AF234D /* URLCodableTests.swift */; };
 		A7BE62CC2B486A5400165ACB /* KeyValueStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BE62CB2B486A5400165ACB /* KeyValueStore.swift */; };
+		A7D474D52C8BA8E8005620A8 /* DataCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D474D42C8BA8E8005620A8 /* DataCodableTests.swift */; };
+		A7D474D82C8BA8FD005620A8 /* NonconformingFloatCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D474D72C8BA8FD005620A8 /* NonconformingFloatCodableTests.swift */; };
 		A7D8B3522B238A840003FAD6 /* JSValueEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D8B3512B238A840003FAD6 /* JSValueEncoder.swift */; };
 		A7D8B3632B263B8D0003FAD6 /* NestedCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D8B3622B263B8D0003FAD6 /* NestedCodableTests.swift */; };
 		A7D8B3642B263B8D0003FAD6 /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Capacitor.framework */; };
@@ -237,8 +242,13 @@
 		A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookieManager.swift; sourceTree = "<group>"; };
 		A71289E527F380A500DADDF3 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		A71289EA27F380FD00DADDF3 /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
+		A7187FD12BD1CB7D00093C45 /* CAPPluginMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPPluginMethod.swift; sourceTree = "<group>"; };
 		A76739782B98E09700795F7B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A771ADED2C8B845000AF234D /* DateCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCodableTests.swift; sourceTree = "<group>"; };
+		A771ADF02C8B909100AF234D /* URLCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCodableTests.swift; sourceTree = "<group>"; };
 		A7BE62CB2B486A5400165ACB /* KeyValueStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueStore.swift; sourceTree = "<group>"; };
+		A7D474D42C8BA8E8005620A8 /* DataCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCodableTests.swift; sourceTree = "<group>"; };
+		A7D474D72C8BA8FD005620A8 /* NonconformingFloatCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonconformingFloatCodableTests.swift; sourceTree = "<group>"; };
 		A7D8B3512B238A840003FAD6 /* JSValueEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueEncoder.swift; sourceTree = "<group>"; };
 		A7D8B3562B23B2110003FAD6 /* CodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableTests.swift; sourceTree = "<group>"; };
 		A7D8B3602B263B8D0003FAD6 /* CodableTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodableTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -352,6 +362,7 @@
 				A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */,
 				62959B092524DA7700A3D7F1 /* CAPPluginMethod.h */,
 				62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */,
+				A7187FD12BD1CB7D00093C45 /* CAPPluginMethod.swift */,
 				62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */,
 				62959B062524DA7700A3D7F1 /* CAPPluginCall.m */,
 				62959AE62524DA7700A3D7F1 /* CAPPluginCall.swift */,
@@ -466,6 +477,10 @@
 				A7D8B3622B263B8D0003FAD6 /* NestedCodableTests.swift */,
 				A7D8B3562B23B2110003FAD6 /* CodableTests.swift */,
 				A7D8B36D2B2692300003FAD6 /* SuperCodableTests.swift */,
+				A771ADED2C8B845000AF234D /* DateCodableTests.swift */,
+				A771ADF02C8B909100AF234D /* URLCodableTests.swift */,
+				A7D474D42C8BA8E8005620A8 /* DataCodableTests.swift */,
+				A7D474D72C8BA8FD005620A8 /* NonconformingFloatCodableTests.swift */,
 			);
 			path = CodableTests;
 			sourceTree = "<group>";
@@ -693,6 +708,7 @@
 				62D43AF02581817500673C24 /* WKWebView+Capacitor.swift in Sources */,
 				62959B432524DA7800A3D7F1 /* Data+Capacitor.swift in Sources */,
 				62E207AE2588234500A78983 /* WebViewDelegationHandler.swift in Sources */,
+				A7187FD22BD1CB7D00093C45 /* CAPPluginMethod.swift in Sources */,
 				621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */,
 				621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */,
 				62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */,
@@ -767,9 +783,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A771ADEE2C8B845000AF234D /* DateCodableTests.swift in Sources */,
 				A7D8B3632B263B8D0003FAD6 /* NestedCodableTests.swift in Sources */,
+				A7D474D52C8BA8E8005620A8 /* DataCodableTests.swift in Sources */,
 				A7D8B36A2B263B990003FAD6 /* CodableTests.swift in Sources */,
 				A7D8B36E2B2692300003FAD6 /* SuperCodableTests.swift in Sources */,
+				A7D474D82C8BA8FD005620A8 /* NonconformingFloatCodableTests.swift in Sources */,
+				A771ADF12C8B909100AF234D /* URLCodableTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,7 +885,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -923,7 +943,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -950,6 +970,7 @@
 				);
 				INFOPLIST_FILE = Capacitor/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = Capacitor/Capacitor.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.Capacitor;
@@ -979,6 +1000,7 @@
 				);
 				INFOPLIST_FILE = Capacitor/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = Capacitor/Capacitor.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.Capacitor;
@@ -1042,7 +1064,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TestsHostApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1065,7 +1087,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TestsHostApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.TestsHostApp;
@@ -1088,7 +1110,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1115,7 +1137,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;

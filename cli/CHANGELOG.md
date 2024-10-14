@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/6.1.2...7.0.0-alpha.1) (2024-10-14)
+
+### Bug Fixes
+
+- **cli:** replace app-store deprecated method on build ([#7637](https://github.com/ionic-team/capacitor/issues/7637)) ([942b108](https://github.com/ionic-team/capacitor/commit/942b108c1d506539c0c53276ed4ec35eed36634e))
+
+## [6.1.2](https://github.com/ionic-team/capacitor/compare/6.1.1...6.1.2) (2024-08-07)
+
+### Bug Fixes
+
+- support dependencies with ".swift" at the end of name ([#7583](https://github.com/ionic-team/capacitor/issues/7583)) ([ceee68a](https://github.com/ionic-team/capacitor/commit/ceee68a2db363e9d9a638aa4ed8569fd82d1013a))
+
+## [6.1.1](https://github.com/ionic-team/capacitor/compare/6.1.0...6.1.1) (2024-07-17)
+
+### Bug Fixes
+
+- **cli:** enable cleartext for live reload ([#7563](https://github.com/ionic-team/capacitor/issues/7563)) ([e06648f](https://github.com/ionic-team/capacitor/commit/e06648f4566c0b80ab420f977e02f1b4cd73fc1f))
+- **ios:** Match CapApp-SPM iOS version with project version ([#7556](https://github.com/ionic-team/capacitor/issues/7556)) ([df4dc9a](https://github.com/ionic-team/capacitor/commit/df4dc9a17f1b999a68093091d201ba15d234c5f8))
+
+# [6.1.0](https://github.com/ionic-team/capacitor/compare/6.0.0...6.1.0) (2024-06-11)
+
+### Bug Fixes
+
+- **cli:** Avoid duplicate entries in packageClassList ([#7470](https://github.com/ionic-team/capacitor/issues/7470)) ([cca0b80](https://github.com/ionic-team/capacitor/commit/cca0b805291bd002c515be0a1c15de84ee23c5d3))
+- **cli:** Run sync before updating gradle ([#7497](https://github.com/ionic-team/capacitor/issues/7497)) ([f27786e](https://github.com/ionic-team/capacitor/commit/f27786ea1367bc0ec53697eeb6d654a7e12a1507))
+
+### Features
+
+- **cli:** run plugin hooks ([#7499](https://github.com/ionic-team/capacitor/issues/7499)) ([3b847ea](https://github.com/ionic-team/capacitor/commit/3b847eac42673c812a4538c319b81c8f8afc9955))
+
 # [6.0.0](https://github.com/ionic-team/capacitor/compare/6.0.0-rc.2...6.0.0) (2024-04-15)
 
 ### Bug Fixes

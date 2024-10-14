@@ -275,7 +275,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                     if (type.equals("string")) {
                         os.writeBytes(twoHyphens + boundary + lineEnd);
                         os.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd + lineEnd);
-                        os.writeBytes(value);
+                        os.write(value.getBytes(StandardCharsets.UTF_8));
                         os.writeBytes(lineEnd);
                     } else if (type.equals("base64File")) {
                         String fileName = entry.getString("fileName");
@@ -289,6 +289,8 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             os.write(Base64.getDecoder().decode(value));
+                        } else {
+                            os.write(android.util.Base64.decode(value, android.util.Base64.DEFAULT));
                         }
 
                         os.writeBytes(lineEnd);

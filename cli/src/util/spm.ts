@@ -1,5 +1,5 @@
-import { existsSync, writeFileSync } from '@ionic/utils-fs';
-import { relative, resolve } from 'path';
+import { existsSync, readFileSync, writeFileSync } from '@ionic/utils-fs';
+import { join, relative, resolve } from 'path';
 
 import type { Config } from '../definitions';
 import { logger } from '../log';
@@ -10,9 +10,7 @@ export interface SwiftPlugin {
   path: string;
 }
 
-export async function checkPackageManager(
-  config: Config,
-): Promise<'Cocoapods' | 'SPM'> {
+export async function checkPackageManager(config: Config): Promise<'Cocoapods' | 'SPM'> {
   const iosDirectory = config.ios.nativeProjectDirAbs;
   if (existsSync(resolve(iosDirectory, 'CapApp-SPM'))) {
     return 'SPM';
@@ -22,37 +20,36 @@ export async function checkPackageManager(
 }
 
 export async function findPackageSwiftFile(config: Config): Promise<string> {
-  const packageDirectory = resolve(
-    config.ios.nativeProjectDirAbs,
-    'CapApp-SPM',
-  );
+  const packageDirectory = resolve(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
   return resolve(packageDirectory, 'Package.swift');
 }
 
-export async function generatePackageFile(
-  config: Config,
-  plugins: Plugin[],
-): Promise<void> {
+export async function generatePackageFile(config: Config, plugins: Plugin[]): Promise<void> {
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
     logger.warn('SPM Support is still experimental');
     const textToWrite = generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
-    logger.error(
-      `Unable to write to ${packageSwiftFile}. Verify it is not already open. \n Error: ${err}`,
-    );
+    logger.error(`Unable to write to ${packageSwiftFile}. Verify it is not already open. \n Error: ${err}`);
   }
 }
 
 function generatePackageText(config: Config, plugins: Plugin[]): string {
+  const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
+  const searchString = 'IPHONEOS_DEPLOYMENT_TARGET = ';
+  const iosVersion = pbx.substring(
+    pbx.indexOf(searchString) + searchString.length,
+    pbx.indexOf(searchString) + searchString.length + 2,
+  );
+
   let packageSwiftText = `// swift-tools-version: 5.9
 import PackageDescription
 
 // DO NOT MODIFY THIS FILE - managed by Capacitor CLI commands
 let package = Package(
     name: "CapApp-SPM",
-    platforms: [.iOS(.v13)],
+    platforms: [.iOS(.v${iosVersion})],
     products: [
         .library(
             name: "CapApp-SPM",

@@ -94,7 +94,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
+    @available(*, deprecated, message: "`httpsInterceptorStartIdentifier` is no longer required. All proxied requests are handled via `httpInterceptorStartIdentifier` instead")
     public static let httpsInterceptorStartIdentifier = "/_capacitor_https_interceptor_"
+    public static let httpInterceptorUrlParam = "u"
     public static let defaultScheme = "capacitor"
 
     public private(set) var webViewAssetHandler: WebViewAssetHandler
@@ -112,7 +114,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // Manager for getting Cordova plugins
     //var cordovaPluginManager: CDVPluginManager?
     // Calls we are storing to resolve later
-    var storedCalls = [String: CAPPluginCall]()
+    var storedCalls = ConcurrentDictionary<CAPPluginCall>()
     // Whether to inject the Cordova files
     private var cordovaIsPresent = false
     //private var cordovaParser: CDVConfigParser?
@@ -281,7 +283,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      sending data back to the page from a previous page.
      */
     func reset() {
-        storedCalls = [String: CAPPluginCall]()
+        storedCalls.withLock { $0.removeAll() }
     }
 
     /**
@@ -396,7 +398,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     @objc public func releaseCall(withID: String) {
-        storedCalls.removeValue(forKey: withID)
+        _ = storedCalls.withLock { $0.removeValue(forKey: withID) }
     }
 
     // MARK: - Deprecated Versions
@@ -480,16 +482,16 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         dispatchQueue.async { [weak self] in
             // let startTime = CFAbsoluteTimeGetCurrent()
 
-            let pluginCall = CAPPluginCall(callbackId: call.callbackId,
+            let pluginCall = CAPPluginCall(callbackId: call.callbackId, methodName: call.method,
                                            options: JSTypes.coerceDictionaryToJSObject(call.options,
                                                                                        formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
-                                           success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
+                                           success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) in
                                             if let result = result {
                                                 self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.keepAlive ?? false)
                                             } else {
                                                 self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.keepAlive ?? false)
                                             }
-                                           }, error: {(error: CAPPluginCallError?) -> Void in
+                                           }, error: {(error: CAPPluginCallError?) in
                                             if let error = error {
                                                 self?.toJsError(error: JSResultError(call: call, callError: error))
                                             } else {

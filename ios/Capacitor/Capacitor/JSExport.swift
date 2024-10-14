@@ -67,6 +67,9 @@ internal class JSExport {
                     t.addListener = function(eventName, callback) {
                     return w.Capacitor.addListener('\(plugin.jsName)', eventName, callback);
                     }
+                    t.removeAllListeners = function() {
+                    return w.Capacitor.nativePromise('\(plugin.jsName)', 'removeAllListeners');
+                    }
                     """)
 
         for method in plugin.pluginMethods {

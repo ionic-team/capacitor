@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "6.0.0",
+  "version": "7.0.0-alpha.1",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -27,7 +27,7 @@
     "cross platform"
   ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "main": "dist/index.js",
   "types": "dist/declarations.d.ts",
@@ -46,7 +46,6 @@
   "dependencies": {
     "@ionic/cli-framework-output": "^2.2.5",
     "@ionic/utils-fs": "^3.1.6",
-    "@ionic/utils-process": "^2.1.11",
     "@ionic/utils-subprocess": "2.1.11",
     "@ionic/utils-terminal": "^2.3.3",
     "commander": "^9.3.0",

@@ -1,10 +1,5 @@
 import type { ReaddirPOptions } from '@ionic/utils-fs';
-import {
-  readFileSync,
-  readdirp,
-  readJSONSync,
-  writeJSONSync,
-} from '@ionic/utils-fs';
+import { readFileSync, readdirp, readJSONSync, writeJSONSync } from '@ionic/utils-fs';
 import { resolve } from 'path';
 
 import { getCordovaPlugins } from '../cordova';
@@ -16,8 +11,8 @@ export async function getPluginFiles(plugins: Plugin[]): Promise<string[]> {
   let filenameList: string[] = [];
 
   const options: ReaddirPOptions = {
-    filter: item => {
-      if (item.path.endsWith('.swift') || item.path.endsWith('.m')) {
+    filter: (item) => {
+      if (item.stats.isFile() && (item.path.endsWith('.swift') || item.path.endsWith('.m'))) {
         return true;
       } else {
         return false;
@@ -45,12 +40,12 @@ export async function findPluginClasses(files: string[]): Promise<string[]> {
     const objcPluginRegex = RegExp(/CAP_PLUGIN\(([A-Za-z0-9_-]+)/);
 
     const swiftMatches = swiftPluginRegex.exec(fileData);
-    if (swiftMatches?.[1] != null) {
+    if (swiftMatches?.[1] && !classList.includes(swiftMatches[1])) {
       classList.push(swiftMatches[1]);
     }
 
     const objcMatches = objcPluginRegex.exec(fileData);
-    if (objcMatches?.[1] != null) {
+    if (objcMatches?.[1] && !classList.includes(objcMatches[1])) {
       classList.push(objcMatches[1]);
     }
   }
@@ -58,23 +53,14 @@ export async function findPluginClasses(files: string[]): Promise<string[]> {
   return classList;
 }
 
-export async function writePluginJSON(
-  config: Config,
-  classList: string[],
-): Promise<void> {
-  const capJSONFile = resolve(
-    config.ios.nativeTargetDirAbs,
-    'capacitor.config.json',
-  );
+export async function writePluginJSON(config: Config, classList: string[]): Promise<void> {
+  const capJSONFile = resolve(config.ios.nativeTargetDirAbs, 'capacitor.config.json');
   const capJSON = readJSONSync(capJSONFile);
   capJSON['packageClassList'] = classList;
   writeJSONSync(capJSONFile, capJSON, { spaces: '\t' });
 }
 
-export async function generateIOSPackageJSON(
-  config: Config,
-  plugins: Plugin[],
-): Promise<void> {
+export async function generateIOSPackageJSON(config: Config, plugins: Plugin[]): Promise<void> {
   const fileList = await getPluginFiles(plugins);
   const classList = await findPluginClasses(fileList);
   const cordovaPlugins = await getCordovaPlugins(config, 'ios');
