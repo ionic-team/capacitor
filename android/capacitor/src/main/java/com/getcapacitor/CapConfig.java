@@ -256,18 +256,26 @@ public class CapConfig {
         allowNavigation = JSONUtils.getArray(configJSON, "server.allowNavigation", null);
 
         // Android
-        overriddenUserAgentString =
-            JSONUtils.getString(configJSON, "android.overrideUserAgent", JSONUtils.getString(configJSON, "overrideUserAgent", null));
-        appendedUserAgentString =
-            JSONUtils.getString(configJSON, "android.appendUserAgent", JSONUtils.getString(configJSON, "appendUserAgent", null));
-        backgroundColor =
-            JSONUtils.getString(configJSON, "android.backgroundColor", JSONUtils.getString(configJSON, "backgroundColor", null));
-        allowMixedContent =
-            JSONUtils.getBoolean(
-                configJSON,
-                "android.allowMixedContent",
-                JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
-            );
+        overriddenUserAgentString = JSONUtils.getString(
+            configJSON,
+            "android.overrideUserAgent",
+            JSONUtils.getString(configJSON, "overrideUserAgent", null)
+        );
+        appendedUserAgentString = JSONUtils.getString(
+            configJSON,
+            "android.appendUserAgent",
+            JSONUtils.getString(configJSON, "appendUserAgent", null)
+        );
+        backgroundColor = JSONUtils.getString(
+            configJSON,
+            "android.backgroundColor",
+            JSONUtils.getString(configJSON, "backgroundColor", null)
+        );
+        allowMixedContent = JSONUtils.getBoolean(
+            configJSON,
+            "android.allowMixedContent",
+            JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
+        );
         minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", DEFAULT_ANDROID_WEBVIEW_VERSION);
         minHuaweiWebViewVersion = JSONUtils.getInt(configJSON, "android.minHuaweiWebViewVersion", DEFAULT_HUAWEI_WEBVIEW_VERSION);
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
