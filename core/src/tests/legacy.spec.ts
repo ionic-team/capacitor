@@ -107,7 +107,7 @@ describe('legacy', () => {
     );
   });
 
-  it('doc.addEventListener backbutton', done => {
+  it('doc.addEventListener backbutton', (done) => {
     const AppWeb = class {
       async addListener(eventName: string) {
         expect(eventName).toBe('backButton');
@@ -135,7 +135,7 @@ describe('legacy', () => {
     win.document.addEventListener('backbutton', bbCallback);
   });
 
-  it('doc.addEventListener deviceready', done => {
+  it('doc.addEventListener deviceready', (done) => {
     win = {
       document: {
         addEventListener() {

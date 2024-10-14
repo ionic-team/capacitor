@@ -77,13 +77,12 @@ public class BridgeFragment extends Fragment {
             startDir = getArguments().getString(ARG_START_DIR);
         }
 
-        bridge =
-            new Bridge.Builder(this)
-                .setInstanceState(savedInstanceState)
-                .setPlugins(initialPlugins)
-                .setConfig(config)
-                .addWebViewListeners(webViewListeners)
-                .create();
+        bridge = new Bridge.Builder(this)
+            .setInstanceState(savedInstanceState)
+            .setPlugins(initialPlugins)
+            .setConfig(config)
+            .addWebViewListeners(webViewListeners)
+            .create();
 
         if (startDir != null) {
             bridge.setServerAssetPath(startDir);

@@ -31,7 +31,7 @@ export default {
       'module.exports': 'dummy',
       'exports.__esModule': 'dummy',
       'exports.initBridge': 'dummy',
-      'preventAssignment': false,
+      preventAssignment: false,
     }),
   ],
 };

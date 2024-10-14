@@ -38,18 +38,12 @@ export async function runCommand(
   selectedPlatformName: string,
   options: RunCommandOptions,
 ): Promise<void> {
-  options.host =
-    options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
+  options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
   options.port = options.port ?? '3000';
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(
-        config,
-        selectedPlatformName,
-        platformDir,
-        'capacitor:run',
-      );
+      await runPlatformHook(config, selectedPlatformName, platformDir, 'capacitor:run');
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
@@ -67,7 +61,7 @@ export async function runCommand(
 
     if (options.list) {
       const targets = await getPlatformTargets(platformName);
-      const outputTargets = targets.map(t => ({
+      const outputTargets = targets.map((t) => ({
         name: getPlatformTargetName(t),
         api: `${t.platform === 'ios' ? 'iOS' : 'API'} ${t.sdkVersion}`,
         id: t.id ?? '?',
@@ -77,7 +71,7 @@ export async function runCommand(
       if (process.argv.includes('--json')) {
         process.stdout.write(`${JSON.stringify(outputTargets)}\n`);
       } else {
-        const rows = outputTargets.map(t => [t.name, t.api, t.id]);
+        const rows = outputTargets.map((t) => [t.name, t.api, t.id]);
 
         output.write(
           `${columnar(rows, {
@@ -96,32 +90,18 @@ export async function runCommand(
       }
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       if (options.liveReload) {
-        await CapLiveReloadHelper.editCapConfigForLiveReload(
-          config,
-          platformName,
-          options,
-        );
+        await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options);
         if (platformName === config.android.name) {
-          await await writeCordovaAndroidManifest(
-            cordovaPlugins,
-            config,
-            platformName,
-            true,
-          );
+          await await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, true);
         }
       }
       await run(config, platformName, options);
       if (options.liveReload) {
-        new Promise(resolve => process.on('SIGINT', resolve))
+        new Promise((resolve) => process.on('SIGINT', resolve))
           .then(async () => {
             await CapLiveReloadHelper.revertCapConfigForLiveReload();
             if (platformName === config.android.name) {
-              await writeCordovaAndroidManifest(
-                cordovaPlugins,
-                config,
-                platformName,
-                false,
-              );
+              await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, false);
             }
           })
           .then(() => process.exit());
@@ -140,11 +120,7 @@ export async function runCommand(
   }
 }
 
-export async function run(
-  config: Config,
-  platformName: string,
-  options: RunCommandOptions,
-): Promise<void> {
+export async function run(config: Config, platformName: string, options: RunCommandOptions): Promise<void> {
   if (platformName == config.ios.name) {
     await runIOS(config, options);
   } else if (platformName === config.android.name) {
@@ -156,11 +132,8 @@ export async function run(
   }
 }
 
-function createRunnablePlatformFilter(
-  config: Config,
-): (platform: string) => boolean {
-  return platform =>
-    platform === config.ios.name || platform === config.android.name;
+function createRunnablePlatformFilter(config: Config): (platform: string) => boolean {
+  return (platform) => platform === config.ios.name || platform === config.android.name;
 }
 
 async function sleepForever(): Promise<never> {
