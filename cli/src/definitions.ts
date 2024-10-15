@@ -14,6 +14,7 @@ export const enum OS {
 export interface PackageJson {
   readonly name: string;
   readonly version: string;
+  readonly workspaces?: string[];
   readonly dependencies?: { readonly [key: string]: string | undefined };
   readonly devDependencies?: { readonly [key: string]: string | undefined };
 }
@@ -62,6 +63,7 @@ export interface AppConfig {
   readonly extConfigName: string;
   readonly extConfigFilePath: string;
   readonly extConfig: ExternalConfig;
+  readonly workspaces: 'npm' | undefined;
 }
 
 export interface AndroidConfig extends PlatformConfig {

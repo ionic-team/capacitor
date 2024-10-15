@@ -43,6 +43,7 @@ export async function loadConfig(): Promise<Config> {
   const appId = conf.extConfig.appId ?? '';
   const appName = conf.extConfig.appName ?? '';
   const webDir = conf.extConfig.webDir ?? 'www';
+  const workspaces = conf.extConfig.workspaces;
   const cli = await loadCLIConfig(cliRootDir);
 
   const config: Config = {
@@ -61,6 +62,7 @@ export async function loadConfig(): Promise<Config> {
         version: '1.0.0',
         ...depsForNx,
       },
+      workspaces,
       ...conf,
     },
   };

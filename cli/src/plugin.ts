@@ -1,4 +1,5 @@
 import { readJSON } from '@ionic/utils-fs';
+import mapWorkspaces from '@npmcli/map-workspaces';
 import { dirname, join } from 'path';
 
 import c from './colors';
@@ -52,8 +53,28 @@ export function getIncludedPluginPackages(config: Config, platform: string): rea
       return extConfig.ios?.includePlugins ?? extConfig.includePlugins;
   }
 }
-
 export async function getPlugins(config: Config, platform: string): Promise<Plugin[]> {
+  if (config.app.workspaces === 'npm' && config.app.package.workspaces !== undefined) {
+    const workspacePackages = await mapWorkspaces({
+      cwd: config.app.rootDir,
+      pkg: { workspaces: config.app.package.workspaces },
+    });
+    const resolvedWorkspacePackages = await Promise.all(
+      Array.from(workspacePackages.entries()).map(async ([name, path]) => {
+        return parsePluginMeta(join(path, 'package.json'), name);
+      }),
+    );
+    const possiblePackageJsonPlugins = getIncludedPluginPackages(config, platform) ?? getDependencies(config);
+
+    const resolvedPackageJsonPlugins = await Promise.all(
+      possiblePackageJsonPlugins.map(async (p) => resolvePlugin(config, p)),
+    );
+
+    const plugins = [...resolvedPackageJsonPlugins, ...resolvedWorkspacePackages].filter(
+      (p): p is Plugin => p !== null,
+    );
+    return plugins;
+  }
   const possiblePlugins = getIncludedPluginPackages(config, platform) ?? getDependencies(config);
   const resolvedPlugins = await Promise.all(possiblePlugins.map(async (p) => resolvePlugin(config, p)));
 
@@ -67,6 +88,15 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
       fatal(`Unable to find ${c.strong(`node_modules/${name}`)}.\n` + `Are you sure ${c.strong(name)} is installed?`);
     }
 
+    return parsePluginMeta(packagePath, name);
+  } catch (e) {
+    // ignore
+  }
+  return null;
+}
+
+const parsePluginMeta = async (packagePath: string, name: string): Promise<Plugin | null> => {
+  try {
     const rootPath = dirname(packagePath);
     const meta = await readJSON(packagePath);
     if (!meta) {
@@ -92,11 +122,11 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
       repository: meta.repository,
       xml: xmlMeta.plugin,
     };
-  } catch (e) {
-    // ignore
+  } catch {
+    // ignore;
   }
   return null;
-}
+};
 
 export function getDependencies(config: Config): string[] {
   return [
