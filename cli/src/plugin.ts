@@ -54,10 +54,11 @@ export function getIncludedPluginPackages(config: Config, platform: string): rea
   }
 }
 export async function getPlugins(config: Config, platform: string): Promise<Plugin[]> {
-  if (config.app.workspaces === 'npm' && config.app.package.workspaces !== undefined) {
+  if (config.app.workspaces?.type === 'npm') {
+    const { workspaceDirs, workspaceRoot } = config.app.workspaces;
     const workspacePackages = await mapWorkspaces({
-      cwd: config.app.rootDir,
-      pkg: { workspaces: config.app.package.workspaces },
+      cwd: workspaceRoot,
+      pkg: { workspaces: workspaceDirs },
     });
     const resolvedWorkspacePackages = await Promise.all(
       Array.from(workspacePackages.entries()).map(async ([name, path]) => {

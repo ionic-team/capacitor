@@ -63,7 +63,9 @@ export interface AppConfig {
   readonly extConfigName: string;
   readonly extConfigFilePath: string;
   readonly extConfig: ExternalConfig;
-  readonly workspaces: 'npm' | undefined;
+  readonly workspaces:
+    | { type: 'npm'; workspaceDirs: string[]; workspaceRoot: string }
+    | undefined;
 }
 
 export interface AndroidConfig extends PlatformConfig {

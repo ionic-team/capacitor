@@ -10,7 +10,7 @@ import { fatal, isFatal } from './errors';
 import { logger } from './log';
 import { tryFn } from './util/fn';
 import { formatJSObject } from './util/js';
-import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools';
+import { findMonorepoRoot, findNXMonorepoRoot, isMonorepo, isNXMonorepo } from './util/monorepotools';
 import { requireTS, resolveNode } from './util/node';
 import { lazy } from './util/promise';
 import { getCommandOutput } from './util/subprocess';
@@ -40,10 +40,29 @@ export async function loadConfig(): Promise<Config> {
     return {};
   })();
 
+  const workspacesSetup = await (async (): Promise<Config['app']['workspaces'] | undefined> => {
+    if (isMonorepo(appRootDir) && conf.extConfig.workspaces === 'npm') {
+      const { fileType, path: rootOfMonorepo } = findMonorepoRoot(appRootDir);
+      if (fileType === 'yaml') {
+        return undefined;
+      }
+      const pkgJSONOfMonorepoRoot: { workspaces: string[] } | null = await tryFn(
+        readJSON,
+        resolve(rootOfMonorepo, 'package.json'),
+      );
+      const workspaces = pkgJSONOfMonorepoRoot?.workspaces ?? [];
+      return {
+        type: conf.extConfig.workspaces,
+        workspaceDirs: workspaces,
+        workspaceRoot: rootOfMonorepo,
+      };
+    }
+    return undefined;
+  })();
+
   const appId = conf.extConfig.appId ?? '';
   const appName = conf.extConfig.appName ?? '';
   const webDir = conf.extConfig.webDir ?? 'www';
-  const workspaces = conf.extConfig.workspaces;
   const cli = await loadCLIConfig(cliRootDir);
 
   const config: Config = {
@@ -62,7 +81,7 @@ export async function loadConfig(): Promise<Config> {
         version: '1.0.0',
         ...depsForNx,
       },
-      workspaces,
+      workspaces: workspacesSetup,
       ...conf,
     },
   };
