@@ -4,7 +4,7 @@ import Debug from 'debug';
 import c from './colors';
 import type { Config } from './definitions';
 import { send } from './ipc';
-import { logger } from './log';
+import { output } from './log';
 import { readConfig, writeConfig } from './sysconfig';
 import type { SystemConfig } from './sysconfig';
 import { getCommandOutput } from './util/subprocess';
@@ -12,10 +12,10 @@ import { isInteractive } from './util/term';
 
 const debug = Debug('capacitor:telemetry');
 
-export const THANK_YOU =
+const THANK_YOU =
   `\nThank you for helping improve Capacitor by sharing anonymous usage data! 💖` +
   `\nInformation about the data we collect is available on our website: ${c.strong('https://capacitorjs.com/telemetry')}` +
-  `\nYou can change your mind at any time by using the ${c.input('npx cap telemetry')} command.`;
+  `\nYou can disable telemetry at any time by using the ${c.input('npx cap telemetry')} command.`;
 
 export interface CommandMetricData {
   app_id: string;
@@ -91,7 +91,7 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
         sysconfig = { ...sysconfig, telemetry: true };
         await writeConfig(sysconfig);
 
-        logger.msg(THANK_YOU);
+        output.write(THANK_YOU);
       }
 
       await sendMetric(sysconfig, 'capacitor_cli_command', data);
