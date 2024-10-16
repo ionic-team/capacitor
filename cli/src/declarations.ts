@@ -582,6 +582,17 @@ export interface CapacitorConfig {
    * @since 3.0.0
    */
   includePlugins?: string[];
+
+  /**
+   * Name of the workspace tool you are using.
+   *
+   * Setting this option tells `npx cap sync` to check you workspace packages for capacitor plugins.
+   *
+   * Currently only `npm` workspaces are supported.
+   *
+   * @since X.X.X
+   * */
+  readonly workspaces?: 'npm';
 }
 
 export interface PluginsConfig {

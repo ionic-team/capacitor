@@ -4,17 +4,22 @@ import { join, dirname, relative } from 'node:path';
 /**
  * Finds the monorepo root from the given path.
  * @param currentPath - The current path to start searching from.
- * @returns The path to the monorepo root.
+ * @return an object describing the monorepo root and the type of file where the workspace config was detected.
  * @throws An error if the monorepo root is not found.
  */
-export function findMonorepoRoot(currentPath: string): string {
+export function findMonorepoRoot(currentPath: string): {
+  /**
+   * The type of file where the workspace config was detected (ex. json for npm/yarn, yaml for pnpm).
+   */
+  fileType: 'json' | 'yaml';
+  path: string;
+} {
   const packageJsonPath = join(currentPath, 'package.json');
   const pnpmWorkspacePath = join(currentPath, 'pnpm-workspace.yaml');
-  if (
-    existsSync(pnpmWorkspacePath) ||
-    (existsSync(packageJsonPath) && JSON.parse(readFileSync(packageJsonPath, 'utf-8')).workspaces)
-  ) {
-    return currentPath;
+  if (existsSync(pnpmWorkspacePath)) {
+    return { fileType: 'yaml', path: currentPath };
+  } else if (existsSync(packageJsonPath) && JSON.parse(readFileSync(packageJsonPath, 'utf-8')).workspaces) {
+    return { fileType: 'json', path: currentPath };
   }
   const parentPath = dirname(currentPath);
   if (parentPath === currentPath) {
@@ -73,7 +78,7 @@ export function findPackagePath(
  * @returns The relative path to the package, or null if not found.
  */
 export function findPackageRelativePathInMonorepo(packageName: string, currentPath: string): string | null {
-  const monorepoRoot = findMonorepoRoot(currentPath);
+  const { path: monorepoRoot } = findMonorepoRoot(currentPath);
   const packagePath = findPackagePath(packageName, currentPath, monorepoRoot);
   if (packagePath) {
     return relative(currentPath, packagePath);
