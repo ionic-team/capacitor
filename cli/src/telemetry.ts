@@ -15,7 +15,7 @@ const debug = Debug('capacitor:telemetry');
 const THANK_YOU =
   `\nThank you for helping improve Capacitor by sharing anonymous usage data! 💖` +
   `\nInformation about the data we collect is available on our website: ${c.strong('https://capacitorjs.com/telemetry')}` +
-  `\nYou can disable telemetry at any time by using the ${c.input('npx cap telemetry')} command.`;
+  `\nYou can disable telemetry at any time by using the ${c.input('npx cap telemetry off')} command.`;
 
 export interface CommandMetricData {
   app_id: string;
