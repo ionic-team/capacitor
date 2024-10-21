@@ -59,16 +59,6 @@ export interface CapacitorGlobal {
    * @deprecated Deprecated in v3, will be removed from v4
    */
   pluginMethodNoop: (target: any, key: PropertyKey, pluginName: string) => Promise<never>;
-
-  /**
-   * @deprecated Use `isNativePlatform()` instead
-   */
-  isNative?: boolean;
-
-  /**
-   * @deprecated Use `getPlatform()` instead
-   */
-  platform?: string;
 }
 
 /**
