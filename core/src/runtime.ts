@@ -220,10 +220,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   cap.DEBUG = !!cap.DEBUG;
   cap.isLoggingEnabled = !!cap.isLoggingEnabled;
 
-  // Deprecated props
-  cap.platform = cap.getPlatform();
-  cap.isNative = cap.isNativePlatform();
-
   return cap;
 };
 

@@ -142,9 +142,7 @@ var nativeBridge = (function (exports) {
     const CAPACITOR_HTTP_INTERCEPTOR = '/_capacitor_http_interceptor_';
     const CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM = 'u';
     // TODO: export as Cap function
-    const isRelativeOrProxyUrl = (url) => !url ||
-        !(url.startsWith('http:') || url.startsWith('https:')) ||
-        url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1;
+    const isRelativeOrProxyUrl = (url) => !url || !(url.startsWith('http:') || url.startsWith('https:')) || url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1;
     // TODO: export as Cap function
     const createProxyUrl = (url, win) => {
         var _a, _b;
@@ -174,11 +172,10 @@ var nativeBridge = (function (exports) {
                     return webviewServerUrl + '/_capacitor_file_' + filePath;
                 }
                 else if (filePath.startsWith('file://')) {
-                    return (webviewServerUrl + filePath.replace('file://', '/_capacitor_file_'));
+                    return webviewServerUrl + filePath.replace('file://', '/_capacitor_file_');
                 }
                 else if (filePath.startsWith('content://')) {
-                    return (webviewServerUrl +
-                        filePath.replace('content:/', '/_capacitor_content_'));
+                    return webviewServerUrl + filePath.replace('content:/', '/_capacitor_content_');
                 }
             }
             return filePath;
@@ -289,9 +286,6 @@ var nativeBridge = (function (exports) {
                     return docAddEventListener.apply(doc, args);
                 };
             }
-            // deprecated in v3, remove from v4
-            cap.platform = cap.getPlatform();
-            cap.isNative = cap.isNativePlatform();
             win.Capacitor = cap;
         };
         const initVendor = (win, cap) => {
@@ -321,27 +315,14 @@ var nativeBridge = (function (exports) {
             win.Ionic.WebView = IonicWebView;
         };
         const initLogger = (win, cap) => {
-            const BRIDGED_CONSOLE_METHODS = [
-                'debug',
-                'error',
-                'info',
-                'log',
-                'trace',
-                'warn',
-            ];
+            const BRIDGED_CONSOLE_METHODS = ['debug', 'error', 'info', 'log', 'trace', 'warn'];
             const createLogFromNative = (c) => (result) => {
                 if (isFullConsole(c)) {
                     const success = result.success === true;
                     const tagStyles = success
                         ? 'font-style: italic; font-weight: lighter; color: gray'
                         : 'font-style: italic; font-weight: lighter; color: red';
-                    c.groupCollapsed('%cresult %c' +
-                        result.pluginId +
-                        '.' +
-                        result.methodName +
-                        ' (#' +
-                        result.callbackId +
-                        ')', tagStyles, 'font-style: italic; font-weight: bold; color: #444');
+                    c.groupCollapsed('%cresult %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')', tagStyles, 'font-style: italic; font-weight: bold; color: #444');
                     if (result.success === false) {
                         c.error(result.error);
                     }
@@ -361,13 +342,7 @@ var nativeBridge = (function (exports) {
             };
             const createLogToNative = (c) => (call) => {
                 if (isFullConsole(c)) {
-                    c.groupCollapsed('%cnative %c' +
-                        call.pluginId +
-                        '.' +
-                        call.methodName +
-                        ' (#' +
-                        call.callbackId +
-                        ')', 'font-weight: lighter; color: gray', 'font-weight: bold; color: #000');
+                    c.groupCollapsed('%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color: gray', 'font-weight: bold; color: #000');
                     c.dir(call);
                     c.groupEnd();
                 }
@@ -379,9 +354,7 @@ var nativeBridge = (function (exports) {
                 if (!c) {
                     return false;
                 }
-                return (typeof c.groupCollapsed === 'function' ||
-                    typeof c.groupEnd === 'function' ||
-                    typeof c.dir === 'function');
+                return typeof c.groupCollapsed === 'function' || typeof c.groupEnd === 'function' || typeof c.dir === 'function';
             };
             const serializeConsoleMessage = (msg) => {
                 try {
@@ -440,9 +413,7 @@ var nativeBridge = (function (exports) {
                         set: function (val) {
                             const cookiePairs = val.split(';');
                             const domainSection = val.toLowerCase().split('domain=')[1];
-                            const domain = cookiePairs.length > 1 &&
-                                domainSection != null &&
-                                domainSection.length > 0
+                            const domain = cookiePairs.length > 1 && domainSection != null && domainSection.length > 0
                                 ? domainSection.split(';')[0].trim()
                                 : '';
                             if (platform === 'ios') {
@@ -527,8 +498,7 @@ var nativeBridge = (function (exports) {
                                 dataType: type,
                                 headers: Object.assign(Object.assign({}, headers), optionHeaders),
                             });
-                            const contentType = nativeResponse.headers['Content-Type'] ||
-                                nativeResponse.headers['content-type'];
+                            const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
                             let data = (contentType === null || contentType === void 0 ? void 0 : contentType.startsWith('application/json'))
                                 ? JSON.stringify(nativeResponse.data)
                                 : nativeResponse.data;
@@ -570,8 +540,7 @@ var nativeBridge = (function (exports) {
                             },
                         });
                         const prototype = win.CapacitorWebXMLHttpRequest.prototype;
-                        const isProgressEventAvailable = () => typeof ProgressEvent !== 'undefined' &&
-                            ProgressEvent.prototype instanceof Event;
+                        const isProgressEventAvailable = () => typeof ProgressEvent !== 'undefined' && ProgressEvent.prototype instanceof Event;
                         // XHR patch abort
                         prototype.abort = function () {
                             if (isRelativeOrProxyUrl(this._url)) {
@@ -652,9 +621,7 @@ var nativeBridge = (function (exports) {
                                     },
                                 });
                                 convertBody(body).then(({ data, type, headers }) => {
-                                    const otherHeaders = this._headers != null && Object.keys(this._headers).length > 0
-                                        ? this._headers
-                                        : undefined;
+                                    const otherHeaders = this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined;
                                     // intercept request & pass to the bridge
                                     cap
                                         .nativePromise('CapacitorHttp', 'request', {
@@ -678,8 +645,7 @@ var nativeBridge = (function (exports) {
                                             }
                                             this._headers = nativeResponse.headers;
                                             this.status = nativeResponse.status;
-                                            if (this.responseType === '' ||
-                                                this.responseType === 'text') {
+                                            if (this.responseType === '' || this.responseType === 'text') {
                                                 this.response =
                                                     typeof nativeResponse.data !== 'string'
                                                         ? JSON.stringify(nativeResponse.data)
@@ -688,8 +654,7 @@ var nativeBridge = (function (exports) {
                                             else {
                                                 this.response = nativeResponse.data;
                                             }
-                                            this.responseText = ((_a = (nativeResponse.headers['Content-Type'] ||
-                                                nativeResponse.headers['content-type'])) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
+                                            this.responseText = ((_a = (nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'])) === null || _a === void 0 ? void 0 : _a.startsWith('application/json'))
                                                 ? JSON.stringify(nativeResponse.data)
                                                 : nativeResponse.data;
                                             this.responseURL = nativeResponse.url;
@@ -805,7 +770,7 @@ var nativeBridge = (function (exports) {
             };
             cap.logToNative = createLogToNative(win.console);
             cap.logFromNative = createLogFromNative(win.console);
-            cap.handleError = err => win.console.error(err);
+            cap.handleError = (err) => win.console.error(err);
             win.Capacitor = cap;
         };
         function initNativeBridge(win) {
@@ -814,7 +779,7 @@ var nativeBridge = (function (exports) {
             const callbacks = new Map();
             const webviewServerUrl = typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
             cap.getServerUrl = () => webviewServerUrl;
-            cap.convertFileSrc = filePath => convertFileSrcServerUrl(webviewServerUrl, filePath);
+            cap.convertFileSrc = (filePath) => convertFileSrcServerUrl(webviewServerUrl, filePath);
             // Counter of callback ids, randomized to avoid
             // any issues during reloads if a call comes back with
             // an existing callback id from an old session
@@ -823,12 +788,12 @@ var nativeBridge = (function (exports) {
             const isNativePlatform = () => true;
             const getPlatform = () => getPlatformId(win);
             cap.getPlatform = getPlatform;
-            cap.isPluginAvailable = name => Object.prototype.hasOwnProperty.call(cap.Plugins, name);
+            cap.isPluginAvailable = (name) => Object.prototype.hasOwnProperty.call(cap.Plugins, name);
             cap.isNativePlatform = isNativePlatform;
             // create the postToNative() fn if needed
             if (getPlatformId(win) === 'android') {
                 // android platform
-                postToNative = data => {
+                postToNative = (data) => {
                     var _a;
                     try {
                         win.androidBridge.postMessage(JSON.stringify(data));
@@ -840,7 +805,7 @@ var nativeBridge = (function (exports) {
             }
             else if (getPlatformId(win) === 'ios') {
                 // ios platform
-                postToNative = data => {
+                postToNative = (data) => {
                     var _a;
                     try {
                         data.type = data.type ? data.type : 'message';
@@ -885,8 +850,7 @@ var nativeBridge = (function (exports) {
                     if (typeof postToNative === 'function') {
                         let callbackId = '-1';
                         if (storedCallback &&
-                            (typeof storedCallback.callback === 'function' ||
-                                typeof storedCallback.resolve === 'function')) {
+                            (typeof storedCallback.callback === 'function' || typeof storedCallback.resolve === 'function')) {
                             // store the call for later lookup
                             callbackId = String(++callbackIdCount);
                             callbacks.set(callbackId, storedCallback);
@@ -921,7 +885,7 @@ var nativeBridge = (function (exports) {
             /**
              * Process a response from the native layer.
              */
-            cap.fromNative = result => {
+            cap.fromNative = (result) => {
                 returnResult(result);
             };
             const returnResult = (result) => {

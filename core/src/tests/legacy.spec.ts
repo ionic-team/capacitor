@@ -177,10 +177,4 @@ describe('legacy', () => {
     createCapacitor(win);
     expect(win.cordova).toBe(existingCordova);
   });
-
-  it('deprecated props', () => {
-    cap = createCapacitor(win) as any;
-    expect((cap as any).platform).toBe('web');
-    expect((cap as any).isNative).toBe(false);
-  });
 });
