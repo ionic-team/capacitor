@@ -4,7 +4,7 @@ import Debug from 'debug';
 import c from './colors';
 import type { Config } from './definitions';
 import { send } from './ipc';
-import { logPrompt, output } from './log';
+import { output } from './log';
 import { readConfig, writeConfig } from './sysconfig';
 import type { SystemConfig } from './sysconfig';
 import { getCommandOutput } from './util/subprocess';
@@ -12,11 +12,10 @@ import { isInteractive } from './util/term';
 
 const debug = Debug('capacitor:telemetry');
 
-export const THANK_YOU =
-  `\nThank you for helping to make Capacitor better! 💖` +
-  `\nInformation about the data we collect is available on our website: ${c.strong(
-    'https://capacitorjs.com/telemetry',
-  )}\n`;
+const THANK_YOU =
+  `\nThank you for helping improve Capacitor by sharing anonymous usage data! 💖` +
+  `\nInformation about the data we collect is available on our website: ${c.strong('https://capacitorjs.com/telemetry')}` +
+  `\nYou can disable telemetry at any time by using the ${c.input('npx cap telemetry off')} command.`;
 
 export interface CommandMetricData {
   app_id: string;
@@ -88,10 +87,11 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
       let sysconfig = await readConfig();
 
       if (!error && typeof sysconfig.telemetry === 'undefined') {
-        const confirm = await promptForTelemetry();
-        sysconfig = { ...sysconfig, telemetry: confirm };
-
+        // Telemetry is opt-out; turn telemetry on then inform the user how to opt-out.
+        sysconfig = { ...sysconfig, telemetry: true };
         await writeConfig(sysconfig);
+
+        output.write(THANK_YOU);
       }
 
       await sendMetric(sysconfig, 'capacitor_cli_command', data);
@@ -124,27 +124,6 @@ export async function sendMetric<D>(
   } else {
     debug('Telemetry is off (user choice, non-interactive terminal, or CI)--not sending metric');
   }
-}
-
-async function promptForTelemetry(): Promise<boolean> {
-  const { confirm } = await logPrompt(
-    `${c.strong('Would you like to help improve Capacitor by sharing anonymous usage data? 💖')}\n` +
-      `Read more about what is being collected and why here: ${c.strong(
-        'https://capacitorjs.com/telemetry',
-      )}. You can change your mind at any time by using the ${c.input('npx cap telemetry')} command.`,
-    {
-      type: 'confirm',
-      name: 'confirm',
-      message: 'Share anonymous usage data?',
-      initial: true,
-    },
-  );
-
-  if (confirm) {
-    output.write(THANK_YOU);
-  }
-
-  return confirm;
 }
 
 /**
