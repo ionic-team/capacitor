@@ -813,6 +813,7 @@ const initBridge = (w: any): void => {
           return xhr;
         } as unknown as PatchedXMLHttpRequestConstructor;
 
+        window.XMLHttpRequest.prototype = win.CapacitorWebXMLHttpRequest.prototype;
         Object.assign(window.XMLHttpRequest, win.CapacitorWebXMLHttpRequest.fullObject);
       }
     }
