@@ -12,6 +12,6 @@ jobs:
       - name: Assign Tag Number to RELEASE_VERSION environment variable
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Dispatch Release Workflow on ionic-team/capacitor-swift-pm
-        run: gh workflow run dispatch-release.yaml -f release-version=${{ env.RELEASE_VERSION }} --repo ionic-team/capacitor-swift-pm
+        run: gh workflow run dispatch-release.yaml -f release-version=${{ env.RELEASE_VERSION }} --repo ionic-team/capacitor-swift-pm -r 6.x
         env:
           GITHUB_TOKEN: ${{ secrets.CAPICTOR_PUBLISH_XCFRAMEWORK }}
