@@ -69,7 +69,7 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", branch: "6.x")`;
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "6.0.0")`;
 
   for (const plugin of plugins) {
     const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
