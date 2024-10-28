@@ -143,7 +143,7 @@ public class UriMatcher {
             int lj = list.size();
             for (int j = 0; j < lj; j++) {
                 UriMatcher n = list.get(j);
-                which_switch:switch (n.mWhich) {
+                which_switch: switch (n.mWhich) {
                     case MASK:
                         if (HostMask.Parser.parse(n.mText).matches(u)) {
                             node = n;
