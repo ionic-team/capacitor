@@ -17,12 +17,12 @@ jobs:
           token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           registry-url: https://registry.npmjs.org/
           cache: npm
           cache-dependency-path: '**/package.json'
       - run: |
-          npm install
+          npm install --force
       - name: Version & Publish
         env:
           GH_TOKEN: ${{ secrets.CAP_GH_RELEASE_TOKEN }}

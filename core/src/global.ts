@@ -6,12 +6,12 @@ export const Capacitor = /*#__PURE__*/ initCapacitorGlobal(
   typeof globalThis !== 'undefined'
     ? globalThis
     : typeof self !== 'undefined'
-    ? self
-    : typeof window !== 'undefined'
-    ? window
-    : typeof global !== 'undefined'
-    ? global
-    : {},
+      ? self
+      : typeof window !== 'undefined'
+        ? window
+        : typeof global !== 'undefined'
+          ? global
+          : {},
 );
 
 export const registerPlugin = Capacitor.registerPlugin;
@@ -34,5 +34,4 @@ export const Plugins = Capacitor.Plugins;
  *
  * @deprecated Deprecated in v3, will be removed from v4.
  */
-export const registerWebPlugin = (plugin: WebPlugin): void =>
-  legacyRegisterWebPlugin(Capacitor, plugin);
+export const registerWebPlugin = (plugin: WebPlugin): void => legacyRegisterWebPlugin(Capacitor, plugin);

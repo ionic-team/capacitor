@@ -3,11 +3,7 @@
  */
 
 import { initBridge } from '../../native-bridge';
-import type {
-  CapacitorInstance,
-  PluginResult,
-  WindowCapacitor,
-} from '../definitions-internal';
+import type { CapacitorInstance, PluginResult, WindowCapacitor } from '../definitions-internal';
 import { createCapacitor } from '../runtime';
 
 describe('bridge', () => {
@@ -23,7 +19,7 @@ describe('bridge', () => {
     window.prompt = () => {};
   });
 
-  it('android nativePromise error', done => {
+  it('android nativePromise error', (done) => {
     mockAndroidPluginResult({
       success: false,
       data: null,
@@ -40,7 +36,7 @@ describe('bridge', () => {
       .then(() => {
         done('should throw error');
       })
-      .catch(err => {
+      .catch((err) => {
         try {
           expect(err.message).toBe('darn it');
           done();
@@ -50,7 +46,7 @@ describe('bridge', () => {
       });
   });
 
-  it('android nativePromise success', done => {
+  it('android nativePromise success', (done) => {
     mockAndroidPluginResult({
       success: true,
       data: { mph: 88 },
@@ -63,7 +59,7 @@ describe('bridge', () => {
 
     cap
       .nativePromise('id', 'method')
-      .then(data => {
+      .then((data) => {
         try {
           expect(data).toEqual({ mph: 88 });
           done();
@@ -74,7 +70,7 @@ describe('bridge', () => {
       .catch(done);
   });
 
-  it('ios nativeCallback w/ callback error', done => {
+  it('ios nativeCallback w/ callback error', (done) => {
     mockIosPluginResult({
       data: null,
       success: false,
@@ -97,7 +93,7 @@ describe('bridge', () => {
     });
   });
 
-  it('ios nativeCallback w/ options and callback, success', done => {
+  it('ios nativeCallback w/ options and callback, success', (done) => {
     mockIosPluginResult({
       data: { mph: 88 },
       success: true,
@@ -121,7 +117,7 @@ describe('bridge', () => {
 
   const mockAndroidPluginResult = (pluginResult: PluginResult) => {
     win.androidBridge = {
-      postMessage: m => {
+      postMessage: (m) => {
         const d = JSON.parse(m);
         Promise.resolve().then(() => {
           pluginResult.callbackId = d.callbackId;
@@ -136,7 +132,7 @@ describe('bridge', () => {
     win.webkit = {
       messageHandlers: {
         bridge: {
-          postMessage: m => {
+          postMessage: (m) => {
             Promise.resolve().then(() => {
               pluginResult.callbackId = m.callbackId;
               pluginResult.methodName = m.methodName;

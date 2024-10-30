@@ -41,10 +41,7 @@
         var resultantId = id;
         // Its a relative path, so lop off the last portion and add the id (minus "./")
         if (id.charAt(0) === '.') {
-          resultantId =
-            module.id.slice(0, module.id.lastIndexOf(SEPARATOR)) +
-            SEPARATOR +
-            id.slice(2);
+          resultantId = module.id.slice(0, module.id.lastIndexOf(SEPARATOR)) + SEPARATOR + id.slice(2);
         }
         return require(resultantId);
       };
@@ -58,8 +55,7 @@
       if (!modules[id]) {
         throw 'module ' + id + ' not found';
       } else if (id in inProgressModules) {
-        var cycle =
-          requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
+        var cycle = requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
         throw 'Cycle in require graph: ' + cycle;
       }
       if (modules[id].factory) {
@@ -259,13 +255,7 @@
        * Called by native code when returning successful result from an action.
        */
       callbackSuccess: function (callbackId, args) {
-        cordova.callbackFromNative(
-          callbackId,
-          true,
-          args.status,
-          [args.message],
-          args.keepCallback,
-        );
+        cordova.callbackFromNative(callbackId, true, args.status, [args.message], args.keepCallback);
       },
 
       /**
@@ -274,25 +264,13 @@
       callbackError: function (callbackId, args) {
         // TODO: Deprecate callbackSuccess and callbackError in favour of callbackFromNative.
         // Derive success from status.
-        cordova.callbackFromNative(
-          callbackId,
-          false,
-          args.status,
-          [args.message],
-          args.keepCallback,
-        );
+        cordova.callbackFromNative(callbackId, false, args.status, [args.message], args.keepCallback);
       },
 
       /**
        * Called by native code when returning the result from an action.
        */
-      callbackFromNative: function (
-        callbackId,
-        isSuccess,
-        status,
-        args,
-        keepCallback,
-      ) {
+      callbackFromNative: function (callbackId, isSuccess, status, args, keepCallback) {
         try {
           var callback = cordova.callbacks[callbackId];
           if (callback) {
@@ -314,13 +292,7 @@
             }
           }
         } catch (err) {
-          var msg =
-            'Error in ' +
-            (isSuccess ? 'Success' : 'Error') +
-            ' callbackId: ' +
-            callbackId +
-            ' : ' +
-            err;
+          var msg = 'Error in ' + (isSuccess ? 'Success' : 'Error') + ' callbackId: ' + callbackId + ' : ' + err;
           console && console.log && console.log(msg);
           cordova.fireWindowEvent('cordovacallbackerror', { message: msg });
           throw err;
@@ -418,10 +390,7 @@
     };
 
     base64.toArrayBuffer = function (str) {
-      var decodedStr =
-        typeof atob !== 'undefined'
-          ? atob(str)
-          : Buffer.from(str, 'base64').toString('binary'); // eslint-disable-line no-undef
+      var decodedStr = typeof atob !== 'undefined' ? atob(str) : Buffer.from(str, 'base64').toString('binary'); // eslint-disable-line no-undef
       var arrayBuffer = new ArrayBuffer(decodedStr.length);
       var array = new Uint8Array(arrayBuffer);
       for (var i = 0, len = decodedStr.length; i < len; i++) {
@@ -437,8 +406,7 @@
      * platforms tested.
      */
 
-    var b64_6bit =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    var b64_6bit = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     var b64_12bit;
 
     var b64_12bitTable = function () {
@@ -527,35 +495,20 @@
           if (clobber) {
             // Clobber if it doesn't exist.
             if (typeof parent[key] === 'undefined') {
-              assignOrWrapInDeprecateGetter(
-                parent,
-                key,
-                result,
-                obj.deprecated,
-              );
+              assignOrWrapInDeprecateGetter(parent, key, result, obj.deprecated);
             } else if (typeof obj.path !== 'undefined') {
               // If merging, merge properties onto parent, otherwise, clobber.
               if (merge) {
                 recursiveMerge(parent[key], result);
               } else {
-                assignOrWrapInDeprecateGetter(
-                  parent,
-                  key,
-                  result,
-                  obj.deprecated,
-                );
+                assignOrWrapInDeprecateGetter(parent, key, result, obj.deprecated);
               }
             }
             result = parent[key];
           } else {
             // Overwrite if not currently defined.
             if (typeof parent[key] === 'undefined') {
-              assignOrWrapInDeprecateGetter(
-                parent,
-                key,
-                result,
-                obj.deprecated,
-              );
+              assignOrWrapInDeprecateGetter(parent, key, result, obj.deprecated);
             } else {
               // Set result to what already exists, so we can build children into it if they exist.
               result = parent[key];
@@ -566,13 +519,7 @@
             include(result, obj.children, clobber, merge);
           }
         } catch (e) {
-          utils.alert(
-            'Exception building Cordova JS globals: ' +
-              e +
-              ' for key "' +
-              key +
-              '"',
-          );
+          utils.alert('Exception building Cordova JS globals: ' + e + ' for key "' + key + '"');
         }
       });
     }
@@ -591,10 +538,7 @@
             // If the target object is a constructor override off prototype.
             clobber(target.prototype, prop, src[prop]);
           } else {
-            if (
-              typeof src[prop] === 'object' &&
-              typeof target[prop] === 'object'
-            ) {
+            if (typeof src[prop] === 'object' && typeof target[prop] === 'object') {
               recursiveMerge(target[prop], src[prop]);
             } else {
               clobber(target, prop, src[prop]);
@@ -737,13 +681,9 @@
     };
 
     function checkSubscriptionArgument(argument) {
-      if (
-        typeof argument !== 'function' &&
-        typeof argument.handleEvent !== 'function'
-      ) {
+      if (typeof argument !== 'function' && typeof argument.handleEvent !== 'function') {
         throw new Error(
-          'Must provide a function or an EventListener object ' +
-            'implementing the handleEvent interface.',
+          'Must provide a function or an EventListener object ' + 'implementing the handleEvent interface.',
         );
       }
     }
@@ -755,17 +695,11 @@
      * and a guid that can be used to stop subscribing to the channel.
      * Returns the guid.
      */
-    Channel.prototype.subscribe = function (
-      eventListenerOrFunction,
-      eventListener,
-    ) {
+    Channel.prototype.subscribe = function (eventListenerOrFunction, eventListener) {
       checkSubscriptionArgument(eventListenerOrFunction);
       var handleEvent, guid;
 
-      if (
-        eventListenerOrFunction &&
-        typeof eventListenerOrFunction === 'object'
-      ) {
+      if (eventListenerOrFunction && typeof eventListenerOrFunction === 'object') {
         // Received an EventListener object implementing the handleEvent interface
         handleEvent = eventListenerOrFunction.handleEvent;
         eventListener = eventListenerOrFunction;
@@ -808,10 +742,7 @@
       checkSubscriptionArgument(eventListenerOrFunction);
       var handleEvent, guid, handler;
 
-      if (
-        eventListenerOrFunction &&
-        typeof eventListenerOrFunction === 'object'
-      ) {
+      if (eventListenerOrFunction && typeof eventListenerOrFunction === 'object') {
         // Received an EventListener object implementing the handleEvent interface
         handleEvent = eventListenerOrFunction.handleEvent;
       } else {
@@ -1013,11 +944,7 @@
       };
       if (window.androidBridge) {
         window.androidBridge.postMessage(JSON.stringify(command));
-      } else if (
-        window.webkit &&
-        window.webkit.messageHandlers &&
-        window.webkit.messageHandlers.bridge
-      ) {
+      } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge) {
         window.webkit.messageHandlers.bridge.postMessage(command);
       }
     };
@@ -1043,13 +970,7 @@
           var actionArgs = command[3];
           var callbacks = cordova.callbacks[callbackId] || {};
 
-          execProxy(
-            callbacks.success,
-            callbacks.fail,
-            service,
-            action,
-            actionArgs,
-          );
+          execProxy(callbacks.success, callbacks.fail, service, action, actionArgs);
 
           commandString = commandQueue.shift();
         }
@@ -1107,23 +1028,11 @@
       return json;
     };
 
-    capacitorExec.nativeCallback = function (
-      callbackId,
-      status,
-      message,
-      keepCallback,
-      debug,
-    ) {
+    capacitorExec.nativeCallback = function (callbackId, status, message, keepCallback, debug) {
       var success = status === 0 || status === 1;
       var args = convertMessageToArgsNativeToJs(message);
       Promise.resolve().then(function () {
-        cordova.callbackFromNative(
-          callbackId,
-          success,
-          status,
-          args,
-          keepCallback,
-        ); // eslint-disable-line
+        cordova.callbackFromNative(callbackId, success, status, args, keepCallback); // eslint-disable-line
       });
     };
 
@@ -1186,9 +1095,7 @@
       },
 
       get: function (service, action) {
-        return CommandProxyMap[service]
-          ? CommandProxyMap[service][action]
-          : null;
+        return CommandProxyMap[service] ? CommandProxyMap[service][action] : null;
       },
     };
   });
@@ -1202,10 +1109,7 @@
     var pluginloader = require('cordova/pluginloader');
     var utils = require('cordova/utils');
 
-    var platformInitChannelsArray = [
-      channel.onNativeReady,
-      channel.onPluginsReady,
-    ];
+    var platformInitChannelsArray = [channel.onNativeReady, channel.onPluginsReady];
 
     function logUnfiredChannels(arr) {
       for (var i = 0; i < arr.length; ++i) {
@@ -1255,14 +1159,10 @@
     channel.onPause = cordova.addDocumentEventHandler('pause');
     channel.onResume = cordova.addDocumentEventHandler('resume');
     channel.onActivated = cordova.addDocumentEventHandler('activated');
-    channel.onDeviceReady =
-      cordova.addStickyDocumentEventHandler('deviceready');
+    channel.onDeviceReady = cordova.addStickyDocumentEventHandler('deviceready');
 
     // Listen for DOMContentLoaded and notify our channel subscribers.
-    if (
-      document.readyState === 'complete' ||
-      document.readyState === 'interactive'
-    ) {
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
       channel.onDOMContentLoaded.fire();
     } else {
       document.addEventListener(
@@ -1328,12 +1228,7 @@
       deprecationMap = {};
     };
 
-    function addEntry(
-      strategy,
-      moduleName,
-      symbolPath,
-      opt_deprecationMessage,
-    ) {
+    function addEntry(strategy, moduleName, symbolPath, opt_deprecationMessage) {
       if (!(moduleName in moduleMap)) {
         throw new Error('Module ' + moduleName + ' does not exist.');
       }
@@ -1344,11 +1239,7 @@
     }
 
     // Note: Android 2.3 does have Function.bind().
-    exports.clobbers = function (
-      moduleName,
-      symbolPath,
-      opt_deprecationMessage,
-    ) {
+    exports.clobbers = function (moduleName, symbolPath, opt_deprecationMessage) {
       addEntry('c', moduleName, symbolPath, opt_deprecationMessage);
     };
 
@@ -1356,11 +1247,7 @@
       addEntry('m', moduleName, symbolPath, opt_deprecationMessage);
     };
 
-    exports.defaults = function (
-      moduleName,
-      symbolPath,
-      opt_deprecationMessage,
-    ) {
+    exports.defaults = function (moduleName, symbolPath, opt_deprecationMessage) {
       addEntry('d', moduleName, symbolPath, opt_deprecationMessage);
     };
 
@@ -1399,10 +1286,7 @@
 
         var deprecationMsg =
           symbolPath in deprecationMap
-            ? 'Access made to deprecated symbol: ' +
-              symbolPath +
-              '. ' +
-              deprecationMsg
+            ? 'Access made to deprecated symbol: ' + symbolPath + '. ' + deprecationMsg
             : null;
         var parentObj = prepareNamespace(namespace, context);
         var target = parentObj[lastName];
@@ -1413,12 +1297,7 @@
           if (!(symbolPath in origSymbols)) {
             origSymbols[symbolPath] = target;
           }
-          builder.assignOrWrapInDeprecateGetter(
-            parentObj,
-            lastName,
-            module,
-            deprecationMsg,
-          );
+          builder.assignOrWrapInDeprecateGetter(parentObj, lastName, module, deprecationMsg);
         }
       }
     };
@@ -1578,12 +1457,7 @@
      * Does a deep clone of the object.
      */
     utils.clone = function (obj) {
-      if (
-        !obj ||
-        typeof obj === 'function' ||
-        utils.isDate(obj) ||
-        typeof obj !== 'object'
-      ) {
+      if (!obj || typeof obj === 'function' || utils.isDate(obj) || typeof obj !== 'object') {
         return obj;
       }
 
@@ -1602,11 +1476,7 @@
         // https://issues.apache.org/jira/browse/CB-11522 'unknown' type may be returned in
         // custom protocol activation case on Windows Phone 8.1 causing "No such interface supported" exception
         // on cloning.
-        if (
-          (!(i in retVal) || retVal[i] !== obj[i]) &&
-          typeof obj[i] !== 'undefined' &&
-          typeof obj[i] !== 'unknown'
-        ) {
+        if ((!(i in retVal) || retVal[i] !== obj[i]) && typeof obj[i] !== 'undefined' && typeof obj[i] !== 'unknown') {
           // eslint-disable-line valid-typeof
           retVal[i] = utils.clone(obj[i]);
         }

@@ -15,10 +15,7 @@ export async function readXML(path: string): Promise<any> {
 }
 
 export function parseXML(xmlStr: string, options?: xml2js.OptionsV2): any {
-  const parser =
-    options !== undefined
-      ? new xml2js.Parser({ ...options })
-      : new xml2js.Parser();
+  const parser = options !== undefined ? new xml2js.Parser({ ...options }) : new xml2js.Parser();
   let xmlObj;
   parser.parseString(xmlStr, (err: any, result: any) => {
     if (!err) {
@@ -29,7 +26,7 @@ export function parseXML(xmlStr: string, options?: xml2js.OptionsV2): any {
 }
 
 export async function writeXML(object: any): Promise<any> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const builder = new xml2js.Builder({
       headless: true,
       explicitRoot: false,

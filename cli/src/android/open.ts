@@ -18,20 +18,14 @@ export async function openAndroid(config: Config): Promise<void> {
     }
 
     await open(dir, { app: { name: androidStudioPath }, wait: false });
-    logger.info(
-      `Opening Android project at: ${c.strong(config.android.platformDir)}.`,
-    );
+    logger.info(`Opening Android project at: ${c.strong(config.android.platformDir)}.`);
   } catch (e) {
     debug('Error opening Android Studio: %O', e);
 
     logger.error(
       'Unable to launch Android Studio. Is it installed?\n' +
-        `Attempted to open Android Studio at: ${c.strong(
-          androidStudioPath,
-        )}\n` +
-        `You can configure this with the ${c.input(
-          'CAPACITOR_ANDROID_STUDIO_PATH',
-        )} environment variable.`,
+        `Attempted to open Android Studio at: ${c.strong(androidStudioPath)}\n` +
+        `You can configure this with the ${c.input('CAPACITOR_ANDROID_STUDIO_PATH')} environment variable.`,
     );
   }
 }

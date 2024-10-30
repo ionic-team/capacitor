@@ -40,16 +40,10 @@ class CapLiveReload {
     };
     const isPrivate = (addr: string) => {
       return (
-        /^(::f{4}:)?10\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(
-          addr,
-        ) ||
+        /^(::f{4}:)?10\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
         /^(::f{4}:)?192\.168\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
-        /^(::f{4}:)?172\.(1[6-9]|2\d|30|31)\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(
-          addr,
-        ) ||
-        /^(::f{4}:)?127\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(
-          addr,
-        ) ||
+        /^(::f{4}:)?172\.(1[6-9]|2\d|30|31)\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
+        /^(::f{4}:)?127\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
         /^(::f{4}:)?169\.254\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
         /^f[cd][0-9a-f]{2}:/i.test(addr) ||
         /^fe80:/i.test(addr) ||
@@ -94,7 +88,7 @@ class CapLiveReload {
     }
 
     const all = Object.keys(interfaces)
-      .map(nic => {
+      .map((nic) => {
         //
         // Note: name will only be `public` or `private`
         // when this is called.
@@ -108,9 +102,7 @@ class CapLiveReload {
             return true;
           }
 
-          return name === 'public'
-            ? isPrivate(details.address)
-            : isPublic(details.address);
+          return name === 'public' ? isPrivate(details.address) : isPublic(details.address);
         });
 
         return addresses.length ? addresses[0].address : undefined;
@@ -131,8 +123,8 @@ class CapLiveReload {
       platformName == config.ios.name
         ? config.ios.nativeTargetDirAbs
         : platformName == config.android.name
-        ? config.android.assetsDirAbs
-        : null;
+          ? config.android.assetsDirAbs
+          : null;
     if (platformAbsPath == null) throw new Error('Platform not found.');
     const capConfigPath = rootConfigChange
       ? config.app.extConfigFilePath
@@ -159,8 +151,8 @@ class CapLiveReload {
       platformName == config.ios.name
         ? config.ios.nativeTargetDirAbs
         : platformName == config.android.name
-        ? config.android.assetsDirAbs
-        : null;
+          ? config.android.assetsDirAbs
+          : null;
     if (platformAbsPath == null) throw new Error('Platform not found.');
     const capConfigPath = rootConfigChange
       ? config.app.extConfigFilePath
@@ -177,11 +169,7 @@ class CapLiveReload {
   }
 
   async revertCapConfigForLiveReload(): Promise<void> {
-    if (
-      this.configJsonToRevertTo.json == null ||
-      this.configJsonToRevertTo.platformPath == null
-    )
-      return;
+    if (this.configJsonToRevertTo.json == null || this.configJsonToRevertTo.platformPath == null) return;
     const capConfigPath = this.configJsonToRevertTo.platformPath;
     const configJson = this.configJsonToRevertTo.json;
     writeJSONSync(capConfigPath, JSON.parse(configJson), { spaces: '\t' });

@@ -79,9 +79,13 @@ public final class JSValueEncoder: TopLevelEncoder {
         dataEncodingStrategy: DataEncodingStrategy = .deferredToData,
         nonConformingFloatEncodingStategy: NonConformingFloatEncodingStrategy = .deferred
     ) {
-        self.options = .init(optionalStrategy: optionalEncodingStrategy, dateStrategy: dateEncodingStrategy, dataStrategy: dataEncodingStrategy, nonConformingFloatStrategy: nonConformingFloatEncodingStategy)
+        self.options = .init(
+            optionalStrategy: optionalEncodingStrategy,
+            dateStrategy: dateEncodingStrategy,
+            dataStrategy: dataEncodingStrategy,
+            nonConformingFloatStrategy: nonConformingFloatEncodingStategy
+        )
     }
-
 
     /// Encodes an `Encodable` value to a ``JSValue``
     /// - Parameter value: The value to encode to ``JSValue``
@@ -591,6 +595,7 @@ extension SingleValueContainer: SingleValueEncodingContainer {
         try encodeFloat(value)
     }
 
+    // swiftlint:disable force_cast
     private func encodeFloat<N>(_ value: N) throws where N: FloatingPoint {
         if value.isFinite {
             data = value as! NSNumber
@@ -610,6 +615,7 @@ extension SingleValueContainer: SingleValueEncodingContainer {
             }
         }
     }
+    // swiftlint:enable force_cast
 
     func encode(_ value: Float) throws {
         try encodeFloat(value)

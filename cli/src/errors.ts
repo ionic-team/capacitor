@@ -1,11 +1,17 @@
 export abstract class BaseException<T> extends Error {
-  constructor(readonly message: string, readonly code: T) {
+  constructor(
+    readonly message: string,
+    readonly code: T,
+  ) {
     super(message);
   }
 }
 
 export class FatalException extends BaseException<'FATAL'> {
-  constructor(readonly message: string, readonly exitCode = 1) {
+  constructor(
+    readonly message: string,
+    readonly exitCode = 1,
+  ) {
     super(message, 'FATAL');
   }
 }

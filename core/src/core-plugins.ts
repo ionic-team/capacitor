@@ -31,8 +31,7 @@ const encode = (str: string) =>
  * Safely web decode a string value (inspired by js-cookie)
  * @param str The string value to decode
  */
-const decode = (str: string): string =>
-  str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
+const decode = (str: string): string => str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
 
 export interface CapacitorCookiesPlugin {
   getCookies(options?: GetCookieOptions): Promise<HttpCookieMap>;
@@ -89,14 +88,11 @@ export type SetCookieOptions = HttpCookie & HttpCookieExtras;
 export type DeleteCookieOptions = Omit<HttpCookie, 'value'>;
 export type ClearCookieOptions = Omit<HttpCookie, 'key' | 'value'>;
 
-export class CapacitorCookiesPluginWeb
-  extends WebPlugin
-  implements CapacitorCookiesPlugin
-{
+export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCookiesPlugin {
   async getCookies(): Promise<HttpCookieMap> {
     const cookies = document.cookie;
     const cookieMap: HttpCookieMap = {};
-    cookies.split(';').forEach(cookie => {
+    cookies.split(';').forEach((cookie) => {
       if (cookie.length <= 0) return;
       // Replace first "=" with CAP_COOKIE to prevent splitting on additional "="
       let [key, value] = cookie.replace(/=/, 'CAP_COOKIE').split('CAP_COOKIE');
@@ -114,20 +110,12 @@ export class CapacitorCookiesPluginWeb
       const encodedValue = encode(options.value);
 
       // Clean & sanitize options
-      const expires = `; expires=${(options.expires || '').replace(
-        'expires=',
-        '',
-      )}`; // Default is "; expires="
+      const expires = `; expires=${(options.expires || '').replace('expires=', '')}`; // Default is "; expires="
 
       const path = (options.path || '/').replace('path=', ''); // Default is "path=/"
-      const domain =
-        options.url != null && options.url.length > 0
-          ? `domain=${options.url}`
-          : '';
+      const domain = options.url != null && options.url.length > 0 ? `domain=${options.url}` : '';
 
-      document.cookie = `${encodedKey}=${
-        encodedValue || ''
-      }${expires}; path=${path}; ${domain};`;
+      document.cookie = `${encodedKey}=${encodedValue || ''}${expires}; path=${path}; ${domain};`;
     } catch (error) {
       return Promise.reject(error);
     }
@@ -145,9 +133,7 @@ export class CapacitorCookiesPluginWeb
     try {
       const cookies = document.cookie.split(';') || [];
       for (const cookie of cookies) {
-        document.cookie = cookie
-          .replace(/^ +/, '')
-          .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
+        document.cookie = cookie.replace(/^ +/, '').replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
       }
     } catch (error) {
       return Promise.reject(error);
@@ -163,12 +149,9 @@ export class CapacitorCookiesPluginWeb
   }
 }
 
-export const CapacitorCookies = registerPlugin<CapacitorCookiesPlugin>(
-  'CapacitorCookies',
-  {
-    web: () => new CapacitorCookiesPluginWeb(),
-  },
-);
+export const CapacitorCookies = registerPlugin<CapacitorCookiesPlugin>('CapacitorCookies', {
+  web: () => new CapacitorCookiesPluginWeb(),
+});
 
 /******** END COOKIES PLUGIN ********/
 
@@ -203,12 +186,7 @@ export interface CapacitorHttpPlugin {
 /**
  * How to parse the Http response before returning it to the client.
  */
-export type HttpResponseType =
-  | 'arraybuffer'
-  | 'blob'
-  | 'json'
-  | 'text'
-  | 'document';
+export type HttpResponseType = 'arraybuffer' | 'blob' | 'json' | 'text' | 'document';
 
 export interface HttpOptions {
   /**
@@ -315,11 +293,7 @@ export const readBlobAsBase64 = async (blob: Blob): Promise<string> =>
     reader.onload = () => {
       const base64String = reader.result as string;
       // remove prefix "data:application/pdf;base64,"
-      resolve(
-        base64String.indexOf(',') >= 0
-          ? base64String.split(',')[1]
-          : base64String,
-      );
+      resolve(base64String.indexOf(',') >= 0 ? base64String.split(',')[1] : base64String);
     };
     reader.onerror = (error: any) => reject(error);
     reader.readAsDataURL(blob);
@@ -331,7 +305,7 @@ export const readBlobAsBase64 = async (blob: Blob): Promise<string> =>
  */
 const normalizeHttpHeaders = (headers: HttpHeaders = {}): HttpHeaders => {
   const originalKeys = Object.keys(headers);
-  const loweredKeys = Object.keys(headers).map(k => k.toLocaleLowerCase());
+  const loweredKeys = Object.keys(headers).map((k) => k.toLocaleLowerCase());
   const normalized = loweredKeys.reduce<HttpHeaders>((acc, key, index) => {
     acc[key] = headers[originalKeys[index]];
     return acc;
@@ -344,10 +318,7 @@ const normalizeHttpHeaders = (headers: HttpHeaders = {}): HttpHeaders => {
  * @param params A map of url parameters
  * @param shouldEncode true if you should encodeURIComponent() the values (true by default)
  */
-const buildUrlParams = (
-  params?: HttpParams,
-  shouldEncode = true,
-): string | null => {
+const buildUrlParams = (params?: HttpParams, shouldEncode = true): string | null => {
   if (!params) return null;
 
   const output = Object.entries(params).reduce((accumulator, entry) => {
@@ -357,7 +328,7 @@ const buildUrlParams = (
     let item: string;
     if (Array.isArray(value)) {
       item = '';
-      value.forEach(str => {
+      value.forEach((str) => {
         encodedValue = shouldEncode ? encodeURIComponent(str) : str;
         item += `${key}=${encodedValue}&`;
       });
@@ -380,10 +351,7 @@ const buildUrlParams = (
  * @param options The Http plugin options
  * @param extra Any extra RequestInit values
  */
-export const buildRequestInit = (
-  options: HttpOptions,
-  extra: RequestInit = {},
-): RequestInit => {
+export const buildRequestInit = (options: HttpOptions, extra: RequestInit = {}): RequestInit => {
   const output: RequestInit = {
     method: options.method || 'GET',
     headers: options.headers,
@@ -405,10 +373,7 @@ export const buildRequestInit = (
       params.set(key, value as any);
     }
     output.body = params.toString();
-  } else if (
-    type.includes('multipart/form-data') ||
-    options.data instanceof FormData
-  ) {
+  } else if (type.includes('multipart/form-data') || options.data instanceof FormData) {
     const form = new FormData();
     if (options.data instanceof FormData) {
       options.data.forEach((value, key) => {
@@ -423,10 +388,7 @@ export const buildRequestInit = (
     const headers = new Headers(output.headers);
     headers.delete('content-type'); // content-type will be set by `window.fetch` to includy boundary
     output.headers = headers;
-  } else if (
-    type.includes('application/json') ||
-    typeof options.data === 'object'
-  ) {
+  } else if (type.includes('application/json') || typeof options.data === 'object') {
     output.body = JSON.stringify(options.data);
   }
 
@@ -434,20 +396,14 @@ export const buildRequestInit = (
 };
 
 // WEB IMPLEMENTATION
-export class CapacitorHttpPluginWeb
-  extends WebPlugin
-  implements CapacitorHttpPlugin
-{
+export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPlugin {
   /**
    * Perform an Http request given a set of options
    * @param options Options to build the HTTP request
    */
   async request(options: HttpOptions): Promise<HttpResponse> {
     const requestInit = buildRequestInit(options, options.webFetchExtra);
-    const urlParams = buildUrlParams(
-      options.params,
-      options.shouldEncodeUrlParams,
-    );
+    const urlParams = buildUrlParams(options.params, options.shouldEncodeUrlParams);
     const url = urlParams ? `${options.url}?${urlParams}` : options.url;
 
     const response = await fetch(url, requestInit);
@@ -533,11 +489,8 @@ export class CapacitorHttpPluginWeb
   }
 }
 
-export const CapacitorHttp = registerPlugin<CapacitorHttpPlugin>(
-  'CapacitorHttp',
-  {
-    web: () => new CapacitorHttpPluginWeb(),
-  },
-);
+export const CapacitorHttp = registerPlugin<CapacitorHttpPlugin>('CapacitorHttp', {
+  web: () => new CapacitorHttpPluginWeb(),
+});
 
 /******** END HTTP PLUGIN ********/
