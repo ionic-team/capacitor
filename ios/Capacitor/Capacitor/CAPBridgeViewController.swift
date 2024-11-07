@@ -64,7 +64,7 @@ import Cordova
     
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.becomeFirstResponder()
+        self.webView?.becomeFirstResponder()
     }
 
     override open func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
