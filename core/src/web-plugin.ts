@@ -7,12 +7,9 @@ import type { CapacitorException } from './util';
  * Base class web plugins should extend.
  */
 export class WebPlugin implements Plugin {
-
   protected listeners: { [eventName: string]: ListenerCallback[] } = {};
   protected retainedEventArguments: { [eventName: string]: any[] } = {};
   protected windowListeners: { [eventName: string]: WindowListenerHandle } = {};
-
-  constructor() {}
 
   addListener(eventName: string, listenerFunc: ListenerCallback): Promise<PluginListenerHandle> {
     let firstListener = false;
