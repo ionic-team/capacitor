@@ -15,7 +15,11 @@ export async function runNativeRun(args: readonly string[], options: RunCommandO
     fatal(`${c.input('native-run')} not found.`);
   }
 
-  return await runCommand(p, args, options);
+  if (process.versions.pnp) {
+    return await runCommand('yarn', ['node', p, ...args], options);
+  } else {
+    return await runCommand(p, args, options);
+  }
 }
 
 export async function getPlatformTargets(platformName: string): Promise<PlatformTarget[]> {
