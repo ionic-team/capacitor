@@ -1,8 +1,5 @@
 import { initBridge } from '../../native-bridge';
-import type {
-  CapacitorInstance,
-  WindowCapacitor,
-} from '../definitions-internal';
+import type { CapacitorInstance, WindowCapacitor } from '../definitions-internal';
 import { createCapacitor } from '../runtime';
 
 describe('runtime', () => {

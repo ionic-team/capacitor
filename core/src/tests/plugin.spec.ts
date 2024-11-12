@@ -4,10 +4,7 @@
 
 import { initBridge } from '../../native-bridge';
 import type { CapacitorGlobal, Plugin } from '../definitions';
-import type {
-  WindowCapacitor,
-  CapacitorInstance,
-} from '../definitions-internal';
+import type { WindowCapacitor, CapacitorInstance } from '../definitions-internal';
 import { initCapacitorGlobal } from '../runtime';
 import { ExceptionCode } from '../util';
 import { WebPlugin } from '../web-plugin';
@@ -23,7 +20,7 @@ describe('plugin', () => {
     global.setImmediate = global.setTimeout;
   });
 
-  it('error from missing method from native implementation', async done => {
+  it('error from missing method from native implementation', async (done) => {
     // mock the global with the android bridge
     mockAndroidBridge();
     initBridge(win);
@@ -76,7 +73,7 @@ describe('plugin', () => {
     expect(results2).toBe(88);
   });
 
-  it('error from missing native implementation', async done => {
+  it('error from missing native implementation', async (done) => {
     // mock the global with the android bridge
     mockAndroidBridge();
     initBridge(win);
@@ -105,7 +102,7 @@ describe('plugin', () => {
     }
   });
 
-  it('error lazy loading implementation', async done => {
+  it('error lazy loading implementation', async (done) => {
     mockAndroidBridge();
     initBridge(win);
 
@@ -204,7 +201,7 @@ describe('plugin', () => {
     expect(async () => cap.Plugins.Awesome.mph()).rejects.toThrowError('nope!');
   });
 
-  it('missing method on lazy loaded implementation', async done => {
+  it('missing method on lazy loaded implementation', async (done) => {
     cap = initCapacitorGlobal(win);
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
@@ -229,7 +226,7 @@ describe('plugin', () => {
     }
   });
 
-  it('missing method on already loaded implementation', async done => {
+  it('missing method on already loaded implementation', async (done) => {
     mockAndroidBridge();
     initBridge(win);
 
@@ -257,7 +254,7 @@ describe('plugin', () => {
     }
   });
 
-  it('no web platform implementation', async done => {
+  it('no web platform implementation', async (done) => {
     cap = initCapacitorGlobal(win);
     expect(cap.getPlatform()).toBe('web');
 
@@ -281,7 +278,7 @@ describe('plugin', () => {
     }
   });
 
-  it('no native platform implementation', async done => {
+  it('no native platform implementation', async (done) => {
     mockAndroidBridge();
     initBridge(win);
 
@@ -324,7 +321,7 @@ describe('plugin', () => {
     expect(Awesome1).toBe(Awesome2);
   });
 
-  it('addListener, w/out addListener on implementation', async done => {
+  it('addListener, w/out addListener on implementation', async (done) => {
     const LazyWeb = class {
       val = 88;
       async addListener(_eventName: string, fn: any) {
@@ -337,7 +334,7 @@ describe('plugin', () => {
       web: async () => new LazyWeb(),
     });
 
-    Awesome.addListener('eventName', data => {
+    Awesome.addListener('eventName', (data) => {
       try {
         expect(data).toEqual(88);
         done();
@@ -381,7 +378,7 @@ describe('plugin', () => {
     expect(typeof (rtn as any).remove === 'function').toBe(true);
   });
 
-  it('async removeAllListeners on web, lazy load and call implementation', async done => {
+  it('async removeAllListeners on web, lazy load and call implementation', async (done) => {
     const AwesomeWeb = class extends WebPlugin {
       async removeAllListeners() {
         setImmediate(() => done());
