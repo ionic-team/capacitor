@@ -107,7 +107,7 @@ describe('legacy', () => {
     );
   });
 
-  it('doc.addEventListener backbutton', done => {
+  it('doc.addEventListener backbutton', (done) => {
     const AppWeb = class {
       async addListener(eventName: string) {
         expect(eventName).toBe('backButton');
@@ -135,7 +135,7 @@ describe('legacy', () => {
     win.document.addEventListener('backbutton', bbCallback);
   });
 
-  it('doc.addEventListener deviceready', done => {
+  it('doc.addEventListener deviceready', (done) => {
     win = {
       document: {
         addEventListener() {
@@ -176,11 +176,5 @@ describe('legacy', () => {
     initBridge(win);
     createCapacitor(win);
     expect(win.cordova).toBe(existingCordova);
-  });
-
-  it('deprecated props', () => {
-    cap = createCapacitor(win) as any;
-    expect((cap as any).platform).toBe('web');
-    expect((cap as any).isNative).toBe(false);
   });
 });

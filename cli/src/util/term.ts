@@ -18,17 +18,14 @@ export const checkInteractive = (...args: string[]): boolean => {
 
   // Make sure none of the provided args are empty, otherwise print the interactive
   // warning and return false
-  if (args.filter(arg => !arg).length) {
+  if (args.filter((arg) => !arg).length) {
     logger.error(
       `Non-interactive shell detected.\n` +
-        `Run the command with ${c.input(
-          '--help',
-        )} to see a list of arguments that must be provided.`,
+        `Run the command with ${c.input('--help')} to see a list of arguments that must be provided.`,
     );
     return false;
   }
   return true;
 };
 
-export const isInteractive = (): boolean =>
-  TERMINAL_INFO.tty && !TERMINAL_INFO.ci;
+export const isInteractive = (): boolean => TERMINAL_INFO.tty && !TERMINAL_INFO.ci;

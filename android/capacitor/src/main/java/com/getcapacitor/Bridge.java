@@ -75,7 +75,6 @@ import org.json.JSONException;
  */
 public class Bridge {
 
-    private static final String PREFS_NAME = "CapacitorSettings";
     private static final String PERMISSION_PREFS_NAME = "PluginPermStates";
     private static final String BUNDLE_LAST_PLUGIN_ID_KEY = "capacitorLastActivityPluginId";
     private static final String BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY = "capacitorLastActivityPluginMethod";
@@ -563,7 +562,6 @@ public class Bridge {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setGeolocationEnabled(true);
-        settings.setDatabaseEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         if (this.config.isMixedContentAllowed()) {
@@ -1026,8 +1024,13 @@ public class Bridge {
                 try {
                     JSObject options = new JSObject(lastOptionsJson);
 
-                    pluginCallForLastActivity =
-                        new PluginCall(msgHandler, lastPluginId, PluginCall.CALLBACK_ID_DANGLING, lastPluginCallMethod, options);
+                    pluginCallForLastActivity = new PluginCall(
+                        msgHandler,
+                        lastPluginId,
+                        PluginCall.CALLBACK_ID_DANGLING,
+                        lastPluginCallMethod,
+                        options
+                    );
                 } catch (JSONException ex) {
                     Logger.error("Unable to restore plugin call, unable to parse persisted JSON object", ex);
                 }
