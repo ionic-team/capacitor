@@ -56,15 +56,13 @@ async function validateBuildTreeshaking() {
   if (outputCode !== '') {
     console.error(`\nTreeshake output: ${outputFile}\n`);
 
-    throw new Error(
-      `🧨  Not all code was not treeshaken (treeshooken? treeshaked?) Review the ${outputFile} file.`,
-    );
+    throw new Error(`🧨  Not all code was not treeshaken (treeshooken? treeshaked?) Review the ${outputFile} file.`);
   }
 
   console.log(`🌳  validated treeshaking: ${entryModulePath}`);
 }
 
-validateBuildTreeshaking().catch(err => {
+validateBuildTreeshaking().catch((err) => {
   console.error(err);
   process.exit(1);
 });

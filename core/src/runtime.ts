@@ -15,8 +15,7 @@ export interface RegisteredPlugin {
 }
 
 export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
-  const capCustomPlatform: CapacitorCustomPlatformInstance =
-    win.CapacitorCustomPlatform || null;
+  const capCustomPlatform: CapacitorCustomPlatformInstance = win.CapacitorCustomPlatform || null;
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
   const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
   /**
@@ -25,16 +24,12 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const capPlatforms: CapacitorPlatformsInstance = win.CapacitorPlatforms;
 
   const defaultGetPlatform = () => {
-    return capCustomPlatform !== null
-      ? capCustomPlatform.name
-      : getPlatformId(win);
+    return capCustomPlatform !== null ? capCustomPlatform.name : getPlatformId(win);
   };
-  const getPlatform =
-    capPlatforms?.currentPlatform?.getPlatform || defaultGetPlatform;
+  const getPlatform = capPlatforms?.currentPlatform?.getPlatform || defaultGetPlatform;
 
   const defaultIsNativePlatform = () => getPlatform() !== 'web';
-  const isNativePlatform =
-    capPlatforms?.currentPlatform?.isNativePlatform || defaultIsNativePlatform;
+  const isNativePlatform = capPlatforms?.currentPlatform?.isNativePlatform || defaultIsNativePlatform;
 
   const defaultIsPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
@@ -51,40 +46,24 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
     return false;
   };
-  const isPluginAvailable =
-    capPlatforms?.currentPlatform?.isPluginAvailable ||
-    defaultIsPluginAvailable;
+  const isPluginAvailable = capPlatforms?.currentPlatform?.isPluginAvailable || defaultIsPluginAvailable;
 
-  const defaultGetPluginHeader = (
-    pluginName: string,
-  ): PluginHeader | undefined =>
-    cap.PluginHeaders?.find(h => h.name === pluginName);
-  const getPluginHeader =
-    capPlatforms?.currentPlatform?.getPluginHeader || defaultGetPluginHeader;
+  const defaultGetPluginHeader = (pluginName: string): PluginHeader | undefined =>
+    cap.PluginHeaders?.find((h) => h.name === pluginName);
+  const getPluginHeader = capPlatforms?.currentPlatform?.getPluginHeader || defaultGetPluginHeader;
 
   const handleError = (err: Error) => win.console.error(err);
 
-  const pluginMethodNoop = (
-    _target: any,
-    prop: PropertyKey,
-    pluginName: string,
-  ) => {
-    return Promise.reject(
-      `${pluginName} does not have an implementation of "${prop as any}".`,
-    );
+  const pluginMethodNoop = (_target: any, prop: PropertyKey, pluginName: string) => {
+    return Promise.reject(`${pluginName} does not have an implementation of "${prop as any}".`);
   };
 
   const registeredPlugins = new Map<string, RegisteredPlugin>();
 
-  const defaultRegisterPlugin = (
-    pluginName: string,
-    jsImplementations: PluginImplementations = {},
-  ): any => {
+  const defaultRegisterPlugin = (pluginName: string, jsImplementations: PluginImplementations = {}): any => {
     const registeredPlugin = registeredPlugins.get(pluginName);
     if (registeredPlugin) {
-      console.warn(
-        `Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`,
-      );
+      console.warn(`Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`);
 
       return registeredPlugin.proxy;
     }
@@ -99,11 +78,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
           typeof jsImplementations[platform] === 'function'
             ? (jsImplementation = await jsImplementations[platform]())
             : (jsImplementation = jsImplementations[platform]);
-      } else if (
-        capCustomPlatform !== null &&
-        !jsImplementation &&
-        'web' in jsImplementations
-      ) {
+      } else if (capCustomPlatform !== null && !jsImplementation && 'web' in jsImplementations) {
         jsImplementation =
           typeof jsImplementations['web'] === 'function'
             ? (jsImplementation = await jsImplementations['web']())
@@ -113,24 +88,14 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       return jsImplementation;
     };
 
-    const createPluginMethod = (
-      impl: any,
-      prop: PropertyKey,
-    ): ((...args: any[]) => any) => {
+    const createPluginMethod = (impl: any, prop: PropertyKey): ((...args: any[]) => any) => {
       if (pluginHeader) {
-        const methodHeader = pluginHeader?.methods.find(m => prop === m.name);
+        const methodHeader = pluginHeader?.methods.find((m) => prop === m.name);
         if (methodHeader) {
           if (methodHeader.rtype === 'promise') {
-            return (options: any) =>
-              cap.nativePromise(pluginName, prop.toString(), options);
+            return (options: any) => cap.nativePromise(pluginName, prop.toString(), options);
           } else {
-            return (options: any, callback: any) =>
-              cap.nativeCallback(
-                pluginName,
-                prop.toString(),
-                options,
-                callback,
-              );
+            return (options: any, callback: any) => cap.nativeCallback(pluginName, prop.toString(), options, callback);
           }
         } else if (impl) {
           return impl[prop]?.bind(impl);
@@ -148,7 +113,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     const createPluginMethodWrapper = (prop: PropertyKey) => {
       let remove: (() => void) | undefined;
       const wrapper = (...args: any[]) => {
-        const p = loadPluginImplementation().then(impl => {
+        const p = loadPluginImplementation().then((impl) => {
           const fn = createPluginMethod(impl, prop);
 
           if (fn) {
@@ -157,9 +122,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
             return p;
           } else {
             throw new CapacitorException(
-              `"${pluginName}.${
-                prop as any
-              }()" is not implemented on ${platform}`,
+              `"${pluginName}.${prop as any}()" is not implemented on ${platform}`,
               ExceptionCode.Unimplemented,
             );
           }
@@ -199,7 +162,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         );
       };
 
-      const p = new Promise(resolve => call.then(() => resolve({ remove })));
+      const p = new Promise((resolve) => call.then(() => resolve({ remove })));
 
       (p as any).remove = async () => {
         console.warn(`Using addListener() without 'await' is deprecated.`);
@@ -235,20 +198,16 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     registeredPlugins.set(pluginName, {
       name: pluginName,
       proxy,
-      platforms: new Set([
-        ...Object.keys(jsImplementations),
-        ...(pluginHeader ? [platform] : []),
-      ]),
+      platforms: new Set([...Object.keys(jsImplementations), ...(pluginHeader ? [platform] : [])]),
     });
 
     return proxy;
   };
-  const registerPlugin =
-    capPlatforms?.currentPlatform?.registerPlugin || defaultRegisterPlugin;
+  const registerPlugin = capPlatforms?.currentPlatform?.registerPlugin || defaultRegisterPlugin;
 
   // Add in convertFileSrc for web, it will already be available in native context
   if (!cap.convertFileSrc) {
-    cap.convertFileSrc = filePath => filePath;
+    cap.convertFileSrc = (filePath) => filePath;
   }
 
   cap.getPlatform = getPlatform;
@@ -261,12 +220,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   cap.DEBUG = !!cap.DEBUG;
   cap.isLoggingEnabled = !!cap.isLoggingEnabled;
 
-  // Deprecated props
-  cap.platform = cap.getPlatform();
-  cap.isNative = cap.isNativePlatform();
-
   return cap;
 };
 
-export const initCapacitorGlobal = (win: any): CapacitorGlobal =>
-  (win.Capacitor = createCapacitor(win));
+export const initCapacitorGlobal = (win: any): CapacitorGlobal => (win.Capacitor = createCapacitor(win));

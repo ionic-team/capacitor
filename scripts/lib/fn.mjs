@@ -1,5 +1,5 @@
-export const identity = v => v;
+export const identity = (v) => v;
 export const pipe =
   (...fns) =>
-  v =>
+  (v) =>
     fns.reduce((r, fn) => fn(r), v);

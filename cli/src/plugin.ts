@@ -42,10 +42,7 @@ export interface Plugin {
   };
 }
 
-export function getIncludedPluginPackages(
-  config: Config,
-  platform: string,
-): readonly string[] | undefined {
+export function getIncludedPluginPackages(config: Config, platform: string): readonly string[] | undefined {
   const { extConfig } = config.app;
 
   switch (platform) {
@@ -56,30 +53,18 @@ export function getIncludedPluginPackages(
   }
 }
 
-export async function getPlugins(
-  config: Config,
-  platform: string,
-): Promise<Plugin[]> {
-  const possiblePlugins =
-    getIncludedPluginPackages(config, platform) ?? getDependencies(config);
-  const resolvedPlugins = await Promise.all(
-    possiblePlugins.map(async p => resolvePlugin(config, p)),
-  );
+export async function getPlugins(config: Config, platform: string): Promise<Plugin[]> {
+  const possiblePlugins = getIncludedPluginPackages(config, platform) ?? getDependencies(config);
+  const resolvedPlugins = await Promise.all(possiblePlugins.map(async (p) => resolvePlugin(config, p)));
 
   return resolvedPlugins.filter((p): p is Plugin => !!p);
 }
 
-export async function resolvePlugin(
-  config: Config,
-  name: string,
-): Promise<Plugin | null> {
+export async function resolvePlugin(config: Config, name: string): Promise<Plugin | null> {
   try {
     const packagePath = resolveNode(config.app.rootDir, name, 'package.json');
     if (!packagePath) {
-      fatal(
-        `Unable to find ${c.strong(`node_modules/${name}`)}.\n` +
-          `Are you sure ${c.strong(name)} is installed?`,
-      );
+      fatal(`Unable to find ${c.strong(`node_modules/${name}`)}.\n` + `Are you sure ${c.strong(name)} is installed?`);
     }
 
     const rootPath = dirname(packagePath);
@@ -125,7 +110,7 @@ export function fixName(name: string): string {
     .replace(/\//g, '_')
     .replace(/-/g, '_')
     .replace(/@/g, '')
-    .replace(/_\w/g, m => m[1].toUpperCase());
+    .replace(/_\w/g, (m) => m[1].toUpperCase());
 
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
@@ -144,25 +129,19 @@ export function printPlugins(
 
   switch (type) {
     case 'cordova':
-      msg = `Found ${plugins.length} Cordova plugin${plural} for ${c.strong(
-        platform,
-      )}:\n`;
+      msg = `Found ${plugins.length} Cordova plugin${plural} for ${c.strong(platform)}:\n`;
       break;
     case 'incompatible':
-      msg = `Found ${
-        plugins.length
-      } incompatible Cordova plugin${plural} for ${c.strong(
+      msg = `Found ${plugins.length} incompatible Cordova plugin${plural} for ${c.strong(
         platform,
       )}, skipped install:\n`;
       break;
     case 'capacitor':
-      msg = `Found ${plugins.length} Capacitor plugin${plural} for ${c.strong(
-        platform,
-      )}:\n`;
+      msg = `Found ${plugins.length} Capacitor plugin${plural} for ${c.strong(platform)}:\n`;
       break;
   }
 
-  msg += plugins.map(p => `${p.id}${c.weak(`@${p.version}`)}`).join('\n');
+  msg += plugins.map((p) => `${p.id}${c.weak(`@${p.version}`)}`).join('\n');
 
   logger.info(msg);
 }
@@ -178,11 +157,7 @@ export function getPluginPlatform(p: Plugin, platform: string): any {
   return [];
 }
 
-export function getPlatformElement(
-  p: Plugin,
-  platform: string,
-  elementName: string,
-): any {
+export function getPlatformElement(p: Plugin, platform: string, elementName: string): any {
   const platformTag = getPluginPlatform(p, platform);
   if (platformTag) {
     const element = platformTag[elementName];
@@ -218,18 +193,11 @@ export function getAssets(p: Plugin, platform: string): any {
   return getAllElements(p, platform, 'asset');
 }
 
-export function getFilePath(
-  config: Config,
-  plugin: Plugin,
-  path: string,
-): string {
+export function getFilePath(config: Config, plugin: Plugin, path: string): string {
   if (path.startsWith('node_modules')) {
     let pathSegments = path.split('/').slice(1);
     if (pathSegments[0].startsWith('@')) {
-      pathSegments = [
-        pathSegments[0] + '/' + pathSegments[1],
-        ...pathSegments.slice(2),
-      ];
+      pathSegments = [pathSegments[0] + '/' + pathSegments[1], ...pathSegments.slice(2)];
     }
 
     const filePath = resolveNode(config.app.rootDir, ...pathSegments);
@@ -245,11 +213,7 @@ export function getFilePath(
 /**
  * For a given plugin, return all the plugin.xml elements with elementName, checking root and specified platform
  */
-export function getAllElements(
-  p: Plugin,
-  platform: string,
-  elementName: string,
-): any {
+export function getAllElements(p: Plugin, platform: string, elementName: string): any {
   let modules: string[] = [];
   if (p.xml[elementName]) {
     modules = modules.concat(p.xml[elementName]);

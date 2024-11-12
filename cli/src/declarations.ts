@@ -30,21 +30,6 @@ export interface CapacitorConfig {
   webDir?: string;
 
   /**
-   * Whether to copy the Capacitor runtime bundle or not.
-   *
-   * If your app is not using a bundler, set this to `true`, then Capacitor
-   * will create a `capacitor.js` file that you'll need to add as a script in
-   * your `index.html` file.
-   *
-   * It's deprecated and will be removed in Capacitor 6
-   *
-   * @since 1.0.0
-   * @deprecated 5.0.0
-   * @default false
-   */
-  bundledWebRuntime?: boolean;
-
-  /**
    * The build configuration (as defined by the native app) under which Capacitor
    * will send statements to the log system. This applies to log statements in
    * native code as well as statements redirected from JavaScript (`console.debug`,
@@ -575,17 +560,6 @@ export interface CapacitorConfig {
      * @since 1.3.0
      */
     preferences?: { [key: string]: string | undefined };
-
-    /**
-     * List of Cordova plugins that need to be static but are not
-     * already in the static plugin list.
-     *
-     * It's deprecated and will be removed in Capacitor 7
-     *
-     * @since 3.3.0
-     * @deprecated 6.1.1
-     */
-    staticPlugins?: string[];
   };
 
   /**
