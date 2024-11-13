@@ -31,7 +31,7 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
   lint:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 30
     steps:
       - uses: actions/setup-node@v4
@@ -47,7 +47,7 @@ jobs:
       - run: brew install swiftlint
       - run: npm run lint
   test-cli:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 30
     needs:
       - setup
@@ -89,7 +89,7 @@ jobs:
       - run: npm test
         working-directory: ./core
   test-ios:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 30
     needs:
       - setup
