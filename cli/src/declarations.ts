@@ -278,6 +278,14 @@ export interface CapacitorConfig {
      * @default false
      */
     useLegacyBridge?: boolean;
+
+    /**
+     * Make service worker requests go through Capacitor bridge
+     *
+     * @since 7.0.0
+     * @default true
+     */
+    resolveServiceWorkerRequests?: boolean;
   };
 
   ios?: {
