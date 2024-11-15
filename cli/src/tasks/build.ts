@@ -14,6 +14,7 @@ export interface BuildCommandOptions {
   androidreleasetype?: 'AAB' | 'APK';
   signingtype?: 'apksigner' | 'jarsigner';
   configuration: string;
+  xcodeSigningType: 'automatic' | 'manual';
 }
 
 export async function buildCommand(
@@ -42,6 +43,7 @@ export async function buildCommand(
     androidreleasetype: buildOptions.androidreleasetype || config.android.buildOptions.releaseType || 'AAB',
     signingtype: buildOptions.signingtype || config.android.buildOptions.signingType || 'jarsigner',
     configuration: buildOptions.configuration || 'Release',
+    xcodeSigningType: buildOptions.xcodeSigningType || 'automatic',
   };
 
   try {

@@ -51,6 +51,8 @@ export async function buildiOS(config: Config, buildOptions: BuildCommandOptions
 <dict>
 <key>method</key>
 <string>app-store-connect</string>
+<key>signingStyle</key>
+<string>${buildOptions.xcodeSigningType}</string>
 </dict>
 </plist>`;
 
