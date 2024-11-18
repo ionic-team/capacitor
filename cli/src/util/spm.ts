@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from '@ionic/utils-fs';
 import { join, relative, resolve } from 'path';
 
+import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
@@ -36,7 +37,7 @@ export async function generatePackageFile(
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
     logger.warn('SPM Support is still experimental');
-    const textToWrite = generatePackageText(config, plugins);
+    const textToWrite = await generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
     logger.error(
@@ -45,7 +46,15 @@ export async function generatePackageFile(
   }
 }
 
-function generatePackageText(config: Config, plugins: Plugin[]): string {
+async function generatePackageText(
+  config: Config,
+  plugins: Plugin[],
+): Promise<string> {
+  const iosPlatformVersion = await getCapacitorPackageVersion(
+    config,
+    config.ios.name,
+  );
+
   const pbx = readFileSync(
     join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'),
     'utf-8',
@@ -69,7 +78,7 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", branch: "main")`;
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "${iosPlatformVersion}")`;
 
   for (const plugin of plugins) {
     const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
