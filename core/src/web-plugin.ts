@@ -7,24 +7,9 @@ import type { CapacitorException } from './util';
  * Base class web plugins should extend.
  */
 export class WebPlugin implements Plugin {
-  /**
-   * @deprecated WebPluginConfig deprecated in v3 and will be removed in v4.
-   */
-  config?: WebPluginConfig;
-
   protected listeners: { [eventName: string]: ListenerCallback[] } = {};
   protected retainedEventArguments: { [eventName: string]: any[] } = {};
   protected windowListeners: { [eventName: string]: WindowListenerHandle } = {};
-
-  constructor(config?: WebPluginConfig) {
-    if (config) {
-      // TODO: add link to upgrade guide
-      console.warn(
-        `Capacitor WebPlugin "${config.name}" config object was deprecated in v3 and will be removed in v4.`,
-      );
-      this.config = config;
-    }
-  }
 
   addListener(eventName: string, listenerFunc: ListenerCallback): Promise<PluginListenerHandle> {
     let firstListener = false;
@@ -157,18 +142,4 @@ export interface WindowListenerHandle {
   windowEventName: string;
   pluginEventName: string;
   handler: (event: any) => void;
-}
-
-/**
- * @deprecated Deprecated in v3, removing in v4.
- */
-export interface WebPluginConfig {
-  /**
-   * @deprecated Deprecated in v3, removing in v4.
-   */
-  readonly name: string;
-  /**
-   * @deprecated Deprecated in v3, removing in v4.
-   */
-  platforms?: string[];
 }
