@@ -5,7 +5,7 @@ import { readConfig, writeConfig } from '../sysconfig';
 
 const THANK_YOU =
   `\nThank you for helping to make Capacitor better! 💖` +
-  `\nInformation about the data we collect is available on our website: ${c.strong('https://capacitorjs.com/telemetry')}\n`;
+  `\nInformation about the data we collect is available on our website: ${c.strong('https://capacitorjs.com/docs/cli/telemetry')}\n`;
 
 export async function telemetryCommand(onOrOff?: string): Promise<void> {
   const sysconfig = await readConfig();
