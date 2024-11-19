@@ -160,7 +160,7 @@ export function runProgram(config: Config): void {
       ),
     )
     .addOption(
-      new Option('--xcode-provisioning-profile <xcodeProvisioningProfile>', 'A provisioning profile name or UUID'),
+      new Option('--xcode-provisioning-profile <xcodeProvisioningProfile>', 'A provisioning profile name or UUID for iOS builds'),
     )
     .action(
       wrapAction(
