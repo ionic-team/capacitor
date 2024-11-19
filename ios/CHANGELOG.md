@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.2.0](https://github.com/ionic-team/capacitor/compare/6.1.2...6.2.0) (2024-11-19)
+
+### Bug Fixes
+
+- **ios:** fix retain cycle caused by CDVPluginManager ([#7692](https://github.com/ionic-team/capacitor/issues/7692)) ([#7694](https://github.com/ionic-team/capacitor/issues/7694)) ([dd068fe](https://github.com/ionic-team/capacitor/commit/dd068fe6b75eeb7e5baf948473dfcebcb628239f))
+
+### Features
+
+- **core:** cherrypick: expose `methodName` via `CAPPluginCall` ([#7641](https://github.com/ionic-team/capacitor/issues/7641)) ([#7684](https://github.com/ionic-team/capacitor/issues/7684)) ([bf6ef8e](https://github.com/ionic-team/capacitor/commit/bf6ef8e1472a789d3216686ed5141f84cc8b95ff))
+- **ios:** cherry-pick - JSValueEncoder/Decoder feature parity with JSONEncoder/Decoder ([#7657](https://github.com/ionic-team/capacitor/issues/7657)) ([ce30924](https://github.com/ionic-team/capacitor/commit/ce30924da58aa2e58e98d58d81ed5b30cdaea208))
+
 ## [6.1.2](https://github.com/ionic-team/capacitor/compare/6.1.1...6.1.2) (2024-08-07)
 
 ### Bug Fixes
