@@ -45,6 +45,14 @@ export async function buildiOS(config: Config, buildOptions: BuildCommandOptions
     ),
   );
 
+  const manualSigningContents = `<key>provisioningProfiles</key>
+<dict>
+<key>${config.app.appId}</key>
+<string>${buildOptions.xcodeProvisioningProfile ?? ''}</string>
+</dict>
+<key>signingCertificate</key>
+<string>${buildOptions.xcodeSigningCertificate ?? ''}</string>`;
+
   const archivePlistContents = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -53,6 +61,7 @@ export async function buildiOS(config: Config, buildOptions: BuildCommandOptions
 <string>app-store-connect</string>
 <key>signingStyle</key>
 <string>${buildOptions.xcodeSigningType}</string>
+${buildOptions.xcodeSigningType == 'manual' ? manualSigningContents : ''}
 </dict>
 </plist>`;
 

@@ -11,11 +11,9 @@ import { telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
 
-type Writable<T> = T extends object
-  ? { -readonly [K in keyof T]: Writable<T[K]> }
-  : T;
+type Writable<T> = T extends object ? { -readonly [K in keyof T]: Writable<T[K]> } : T;
 
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
   console.error(c.failure('[fatal]'), error);
 });
 
@@ -58,29 +56,14 @@ export function runProgram(config: Config): void {
   program
     .command('init [appName] [appId]')
     .description(`Initialize Capacitor configuration`)
-    .option(
-      '--web-dir <value>',
-      'Optional: Directory of your projects built web assets',
-    )
-    .option(
-      '--skip-appid-validation',
-      'Optional: Skip validating the app ID for iOS and Android compatibility',
-    )
+    .option('--web-dir <value>', 'Optional: Directory of your projects built web assets')
+    .option('--skip-appid-validation', 'Optional: Skip validating the app ID for iOS and Android compatibility')
     .action(
       wrapAction(
-        telemetryAction(
-          config,
-          async (appName, appId, { webDir, skipAppidValidation }) => {
-            const { initCommand } = await import('./tasks/init');
-            await initCommand(
-              config,
-              appName,
-              appId,
-              webDir,
-              skipAppidValidation,
-            );
-          },
-        ),
+        telemetryAction(config, async (appName, appId, { webDir, skipAppidValidation }) => {
+          const { initCommand } = await import('./tasks/init');
+          await initCommand(config, appName, appId, webDir, skipAppidValidation);
+        }),
       ),
     );
 
@@ -97,10 +80,7 @@ export function runProgram(config: Config): void {
   program
     .command('sync [platform]')
     .description(`${c.input('copy')} + ${c.input('update')}`)
-    .option(
-      '--deployment',
-      'Optional: if provided, pod install will use --deployment option',
-    )
+    .option('--deployment', 'Optional: if provided, pod install will use --deployment option')
     .option(
       '--inline',
       'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
@@ -117,15 +97,8 @@ export function runProgram(config: Config): void {
 
   program
     .command('update [platform]')
-    .description(
-      `updates the native plugins and dependencies based on ${c.strong(
-        'package.json',
-      )}`,
-    )
-    .option(
-      '--deployment',
-      'Optional: if provided, pod install will use --deployment option',
-    )
+    .description(`updates the native plugins and dependencies based on ${c.strong('package.json')}`)
+    .option('--deployment', 'Optional: if provided, pod install will use --deployment option')
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { deployment }) => {
@@ -161,27 +134,33 @@ export function runProgram(config: Config): void {
     .option('--keystorepass <keystorePass>', 'Password to the keystore')
     .option('--keystorealias <keystoreAlias>', 'Key Alias in the keystore')
     .option('--configuration <name>', 'Configuration name of the iOS Scheme')
-    .option(
-      '--keystorealiaspass <keystoreAliasPass>',
-      'Password for the Key Alias',
+    .option('--keystorealiaspass <keystoreAliasPass>', 'Password for the Key Alias')
+    .addOption(
+      new Option('--androidreleasetype <androidreleasetype>', 'Android release type; APK or AAB').choices([
+        'AAB',
+        'APK',
+      ]),
     )
     .addOption(
-      new Option(
-        '--androidreleasetype <androidreleasetype>',
-        'Android release type; APK or AAB',
-      ).choices(['AAB', 'APK']),
-    )
-    .addOption(
-      new Option(
-        '--signing-type <signingtype>',
-        'Program used to sign apps (default: jarsigner)',
-      ).choices(['apksigner', 'jarsigner']),
+      new Option('--signing-type <signingtype>', 'Program used to sign apps (default: jarsigner)').choices([
+        'apksigner',
+        'jarsigner',
+      ]),
     )
     .addOption(
       new Option(
         '--xcode-signing-style <xcodeSigningStyle>',
         'The iOS signing style to use when building the app for distribution',
       ).choices(['automatic', 'manual']),
+    )
+    .addOption(
+      new Option(
+        '--xcode-signing-certificate <xcodeSigningCertificate>',
+        'A certificate name, SHA-1 hash, or automatic selector to use for signing for iOS builds',
+      ),
+    )
+    .addOption(
+      new Option('--xcode-provisioning-profile <xcodeProvisioningProfile>', 'A provisioning profile name or UUID'),
     )
     .action(
       wrapAction(
@@ -200,6 +179,8 @@ export function runProgram(config: Config): void {
               signingType,
               configuration,
               xcodeSigningStyle,
+              xcodeSigningCertificate,
+              xcodeProvisioningProfile,
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
@@ -214,6 +195,8 @@ export function runProgram(config: Config): void {
               signingtype: signingType,
               configuration,
               xcodeSigningType: xcodeSigningStyle,
+              xcodeSigningCertificate,
+              xcodeProvisioningProfile,
             });
           },
         ),
@@ -221,23 +204,15 @@ export function runProgram(config: Config): void {
     );
   program
     .command(`run [platform]`)
-    .description(
-      `runs ${c.input('sync')}, then builds and deploys the native app`,
-    )
+    .description(`runs ${c.input('sync')}, then builds and deploys the native app`)
     .option('--scheme <schemeName>', 'set the scheme of the iOS project')
-    .option(
-      '--flavor <flavorName>',
-      'set the flavor of the Android project (flavor dimensions not yet supported)',
-    )
+    .option('--flavor <flavorName>', 'set the flavor of the Android project (flavor dimensions not yet supported)')
     .option('--list', 'list targets, then quit')
     // TODO: remove once --json is a hidden option (https://github.com/tj/commander.js/issues/1106)
     .allowUnknownOption(true)
     .option('--target <id>', 'use a specific target')
     .option('--no-sync', `do not run ${c.input('sync')}`)
-    .option(
-      '--forwardPorts <port:port>',
-      'Automatically run "adb reverse" for better live-reloading support',
-    )
+    .option('--forwardPorts <port:port>', 'Automatically run "adb reverse" for better live-reloading support')
     .option('-l, --live-reload', 'Enable Live Reload')
     .option('--host <host>', 'Host used for live reload')
     .option('--port <port>', 'Port used for live reload')
@@ -248,18 +223,7 @@ export function runProgram(config: Config): void {
           config,
           async (
             platform,
-            {
-              scheme,
-              flavor,
-              list,
-              target,
-              sync,
-              forwardPorts,
-              liveReload,
-              host,
-              port,
-              configuration,
-            },
+            { scheme, flavor, list, target, sync, forwardPorts, liveReload, host, port, configuration },
           ) => {
             const { runCommand } = await import('./tasks/run');
             await runCommand(config, platform, {
@@ -284,7 +248,7 @@ export function runProgram(config: Config): void {
     .description('opens the native project workspace (Xcode for iOS)')
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform) => {
           const { openCommand } = await import('./tasks/open');
           await openCommand(config, platform);
         }),
@@ -305,8 +269,7 @@ export function runProgram(config: Config): void {
 
           const configWritable: Writable<Config> = config as Writable<Config>;
           if (packagemanager === 'SPM') {
-            configWritable.cli.assets.ios.platformTemplateArchive =
-              'ios-spm-template.tar.gz';
+            configWritable.cli.assets.ios.platformTemplateArchive = 'ios-spm-template.tar.gz';
             configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(
               configWritable.cli.assetsDirAbs,
               configWritable.cli.assets.ios.platformTemplateArchive,
@@ -323,7 +286,7 @@ export function runProgram(config: Config): void {
     .description('list installed Cordova and Capacitor plugins')
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform) => {
           const { listCommand } = await import('./tasks/list');
           await listCommand(config, platform);
         }),
@@ -335,7 +298,7 @@ export function runProgram(config: Config): void {
     .description('checks the current setup for common errors')
     .action(
       wrapAction(
-        telemetryAction(config, async platform => {
+        telemetryAction(config, async (platform) => {
           const { doctorCommand } = await import('./tasks/doctor');
           await doctorCommand(config, platform);
         }),
@@ -346,7 +309,7 @@ export function runProgram(config: Config): void {
     .command('telemetry [on|off]', { hidden: true })
     .description('enable or disable telemetry')
     .action(
-      wrapAction(async onOrOff => {
+      wrapAction(async (onOrOff) => {
         const { telemetryCommand } = await import('./tasks/telemetry');
         await telemetryCommand(onOrOff);
       }),
@@ -372,13 +335,8 @@ export function runProgram(config: Config): void {
   program
     .command('migrate')
     .option('--noprompt', 'do not prompt for confirmation')
-    .option(
-      '--packagemanager <packageManager>',
-      'The package manager to use for dependency installs (npm, pnpm, yarn)',
-    )
-    .description(
-      'Migrate your current Capacitor app to the latest major version of Capacitor.',
-    )
+    .option('--packagemanager <packageManager>', 'The package manager to use for dependency installs (npm, pnpm, yarn)')
+    .description('Migrate your current Capacitor app to the latest major version of Capacitor.')
     .action(
       wrapAction(async ({ noprompt, packagemanager }) => {
         const { migrateCommand } = await import('./tasks/migrate');
@@ -387,7 +345,7 @@ export function runProgram(config: Config): void {
     );
 
   program.arguments('[command]').action(
-    wrapAction(async cmd => {
+    wrapAction(async (cmd) => {
       if (typeof cmd === 'undefined') {
         output.write(
           `\n  ${_e('⚡️', '--')}  ${c.strong(
