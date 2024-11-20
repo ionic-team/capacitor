@@ -67,7 +67,7 @@ public class PluginConfig {
 
     /**
      * Get a double value for a plugin in the Capacitor config.
-     * 
+     *
      * @param configKey The key of the value to retrieve
      * @param defaultValue A default value to return if the key does not exist in the config
      * @return The value from the config, if key exists. Default value returned if not

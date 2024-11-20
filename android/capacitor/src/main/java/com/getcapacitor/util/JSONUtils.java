@@ -77,7 +77,7 @@ public class JSONUtils {
 
     /**
      * Get a double value from the given JSON object.
-     * 
+     *
      * @param jsonObject A JSON object to search
      * @param key A key to fetch from the JSON object
      * @param defaultValue A default value to return if the key cannot be found
