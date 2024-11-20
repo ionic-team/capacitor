@@ -1,4 +1,4 @@
-import { pathExists, readdirp, readFile } from '@ionic/utils-fs';
+import { pathExists, readFile } from 'fs-extra';
 import { join, extname, parse } from 'path';
 
 import c from '../colors';
@@ -6,6 +6,7 @@ import { check } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { logSuccess } from '../log';
+import { readdirp } from '../util/fs';
 import { readXML } from '../util/xml';
 
 export async function doctorAndroid(config: Config): Promise<void> {

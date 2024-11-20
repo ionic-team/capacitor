@@ -1,4 +1,4 @@
-import { readJSONSync, writeJSONSync } from '@ionic/utils-fs';
+import { readJSONSync, writeJSONSync } from 'fs-extra';
 import { networkInterfaces } from 'os';
 import { join } from 'path';
 

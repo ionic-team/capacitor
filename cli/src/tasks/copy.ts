@@ -1,4 +1,4 @@
-import { copy as fsCopy, pathExists, remove, writeJSON } from '@ionic/utils-fs';
+import { copy as fsCopy, pathExists, remove, writeJSON } from 'fs-extra';
 import { basename, join, relative, resolve } from 'path';
 
 import c from '../colors';
