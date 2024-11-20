@@ -6,10 +6,7 @@ export interface CapacitorPlatform {
   getPlatform?(): string;
   isPluginAvailable?(pluginName: string): boolean;
   getPluginHeader?(pluginName: string): PluginHeader | undefined;
-  registerPlugin?(
-    pluginName: string,
-    jsImplementations: PluginImplementations,
-  ): any;
+  registerPlugin?(pluginName: string, jsImplementations: PluginImplementations): any;
   isNativePlatform?(): boolean;
 }
 
@@ -45,8 +42,7 @@ const createCapacitorPlatforms = (win: any): CapacitorPlatformsInstance => {
   return capPlatforms;
 };
 
-const initPlatforms = (win: any) =>
-  (win.CapacitorPlatforms = createCapacitorPlatforms(win));
+const initPlatforms = (win: any) => (win.CapacitorPlatforms = createCapacitorPlatforms(win));
 
 /**
  * @deprecated Set `CapacitorCustomPlatform` on the window object prior to runtime executing in the web app instead
@@ -55,12 +51,12 @@ export const CapacitorPlatforms = /*#__PURE__*/ initPlatforms(
   (typeof globalThis !== 'undefined'
     ? globalThis
     : typeof self !== 'undefined'
-    ? self
-    : typeof window !== 'undefined'
-    ? window
-    : typeof global !== 'undefined'
-    ? global
-    : {}) as any,
+      ? self
+      : typeof window !== 'undefined'
+        ? window
+        : typeof global !== 'undefined'
+          ? global
+          : {}) as any,
 );
 /**
  * @deprecated Set `CapacitorCustomPlatform` on the window object prior to runtime executing in the web app instead

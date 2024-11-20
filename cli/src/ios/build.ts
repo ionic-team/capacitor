@@ -1,4 +1,4 @@
-import { writeFileSync, unlinkSync } from '@ionic/utils-fs';
+import { writeFileSync, unlinkSync } from 'fs-extra';
 import { basename, join } from 'path';
 import rimraf from 'rimraf';
 
@@ -9,10 +9,7 @@ import type { BuildCommandOptions } from '../tasks/build';
 import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
-export async function buildiOS(
-  config: Config,
-  buildOptions: BuildCommandOptions,
-): Promise<void> {
+export async function buildiOS(config: Config, buildOptions: BuildCommandOptions): Promise<void> {
   const theScheme = buildOptions.scheme ?? 'App';
 
   const packageManager = await checkPackageManager(config);
@@ -53,14 +50,11 @@ export async function buildiOS(
 <plist version="1.0">
 <dict>
 <key>method</key>
-<string>app-store</string>
+<string>app-store-connect</string>
 </dict>
 </plist>`;
 
-  const archivePlistPath = join(
-    `${config.ios.nativeProjectDirAbs}`,
-    'archive.plist',
-  );
+  const archivePlistPath = join(`${config.ios.nativeProjectDirAbs}`, 'archive.plist');
 
   writeFileSync(archivePlistPath, archivePlistContents);
 
@@ -91,10 +85,5 @@ export async function buildiOS(
     rimraf.sync(join(config.ios.nativeProjectDirAbs, `${theScheme}.xcarchive`));
   });
 
-  logSuccess(
-    `Successfully generated an IPA at: ${join(
-      config.ios.nativeProjectDirAbs,
-      'output',
-    )}`,
-  );
+  logSuccess(`Successfully generated an IPA at: ${join(config.ios.nativeProjectDirAbs, 'output')}`);
 }

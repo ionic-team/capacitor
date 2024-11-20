@@ -9,15 +9,13 @@ on:
 
 jobs:
   publish-ios:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_15.0.1.app
+      - run: sudo xcode-select --switch /Applications/Xcode_16.app
       - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-      - name: NPM ^9.5.0
-        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
+          node-version: 20.x
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0

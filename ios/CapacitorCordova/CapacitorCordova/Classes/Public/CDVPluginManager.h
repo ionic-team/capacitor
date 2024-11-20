@@ -15,8 +15,8 @@
 @property (nonatomic, strong) NSMutableDictionary * pluginsMap;
 @property (nonatomic, strong) NSMutableDictionary * pluginObjects;
 @property (nonatomic, strong) NSMutableDictionary * settings;
-@property (nonatomic, strong) UIViewController * viewController;
-@property (nonatomic, strong) WKWebView * webView;
+@property (nonatomic, weak) UIViewController * viewController;
+@property (nonatomic, weak) WKWebView * webView;
 @property (nonatomic, strong) id <CDVCommandDelegate> commandDelegate;
 
 - (id)initWithParser:(CDVConfigParser*)parser viewController:(UIViewController*)viewController webView:(WKWebView *)webview;

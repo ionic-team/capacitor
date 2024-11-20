@@ -12,8 +12,7 @@ export function findMonorepoRoot(currentPath: string): string {
   const pnpmWorkspacePath = join(currentPath, 'pnpm-workspace.yaml');
   if (
     existsSync(pnpmWorkspacePath) ||
-    (existsSync(packageJsonPath) &&
-      JSON.parse(readFileSync(packageJsonPath, 'utf-8')).workspaces)
+    (existsSync(packageJsonPath) && JSON.parse(readFileSync(packageJsonPath, 'utf-8')).workspaces)
   ) {
     return currentPath;
   }
@@ -73,10 +72,7 @@ export function findPackagePath(
  * @param currentPath - The current path to start searching from.
  * @returns The relative path to the package, or null if not found.
  */
-export function findPackageRelativePathInMonorepo(
-  packageName: string,
-  currentPath: string,
-): string | null {
+export function findPackageRelativePathInMonorepo(packageName: string, currentPath: string): string | null {
   const monorepoRoot = findMonorepoRoot(currentPath);
   const packagePath = findPackagePath(packageName, currentPath, monorepoRoot);
   if (packagePath) {

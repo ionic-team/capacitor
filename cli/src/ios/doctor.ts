@@ -19,11 +19,7 @@ export async function doctorIOS(config: Config): Promise<void> {
   // check online datebase of common errors
   // check if www folder is empty (index.html does not exist)
   try {
-    await check([
-      () => checkBundler(config) || checkCocoaPods(config),
-      () => checkWebDir(config),
-      checkXcode,
-    ]);
+    await check([() => checkBundler(config) || checkCocoaPods(config), () => checkWebDir(config), checkXcode]);
     logSuccess('iOS looking great! 👌');
   } catch (e: any) {
     fatal(e.stack ?? e);

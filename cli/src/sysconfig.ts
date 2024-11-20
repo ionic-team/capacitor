@@ -1,5 +1,5 @@
-import { readJSON, writeJSON, mkdirp } from '@ionic/utils-fs';
 import Debug from 'debug';
+import { readJSON, writeJSON, mkdirp } from 'fs-extra';
 import { dirname, resolve } from 'path';
 
 import { ENV_PATHS } from './util/cli';
