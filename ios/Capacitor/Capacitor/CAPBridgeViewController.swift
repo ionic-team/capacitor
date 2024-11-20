@@ -61,10 +61,10 @@ import Cordova
         super.viewDidLoad()
         loadWebView()
     }
-    
+
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         if bridge?.config.hasInitialFocus ?? true {
             self.webView?.becomeFirstResponder()
         }
