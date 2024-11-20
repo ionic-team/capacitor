@@ -1,5 +1,5 @@
-import { readJSON, pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
+import { readJSON, pathExists } from 'fs-extra';
 import { dirname, join } from 'path';
 
 import c from './colors';

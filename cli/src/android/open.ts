@@ -1,5 +1,5 @@
-import { pathExists } from '@ionic/utils-fs';
 import Debug from 'debug';
+import { pathExists } from 'fs-extra';
 import open from 'open';
 
 import c from '../colors';
