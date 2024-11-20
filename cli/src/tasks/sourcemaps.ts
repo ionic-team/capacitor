@@ -1,4 +1,4 @@
-import { readdirSync, existsSync, readFileSync, writeFileSync, unlinkSync, lstatSync } from '@ionic/utils-fs';
+import { readdirSync, existsSync, readFileSync, writeFileSync, unlinkSync, lstatSync } from 'fs-extra';
 import { join, extname } from 'path';
 
 import type { Config } from '../definitions';

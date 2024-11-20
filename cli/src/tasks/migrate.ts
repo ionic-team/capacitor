@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
+import { writeFileSync, readFileSync, existsSync } from 'fs-extra';
 import { join } from 'path';
 import rimraf from 'rimraf';
 import { coerce, gt, gte, lt } from 'semver';

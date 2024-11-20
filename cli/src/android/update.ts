@@ -1,5 +1,5 @@
-import { copy, remove, pathExists, readdirp, readFile, writeFile, writeJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
+import { copy, remove, pathExists, readFile, writeFile, writeJSON } from 'fs-extra';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from '../colors';
@@ -20,7 +20,7 @@ import {
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { patchOldCapacitorPlugins } from '../tasks/migrate';
-import { convertToUnixPath } from '../util/fs';
+import { readdirp, convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
 
