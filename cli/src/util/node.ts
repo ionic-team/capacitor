@@ -1,5 +1,5 @@
-import { readFileSync } from '@ionic/utils-fs';
 import { existsSync } from 'fs';
+import { readFileSync } from 'fs-extra';
 import { resolve } from 'path';
 import type typescript from 'typescript';
 

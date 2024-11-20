@@ -1,4 +1,4 @@
-import { readJSON } from '@ionic/utils-fs';
+import { readJSON } from 'fs-extra';
 import { dirname, join } from 'path';
 
 import c from './colors';

@@ -45,12 +45,12 @@
   },
   "dependencies": {
     "@ionic/cli-framework-output": "^2.2.5",
-    "@ionic/utils-fs": "^3.1.6",
     "@ionic/utils-subprocess": "2.1.11",
     "@ionic/utils-terminal": "^2.3.3",
     "commander": "^9.3.0",
     "debug": "^4.3.4",
     "env-paths": "^2.2.0",
+    "fs-extra": "^11.2.0",
     "kleur": "^4.1.4",
     "native-run": "^2.0.0",
     "open": "^8.4.0",
@@ -64,6 +64,7 @@
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",
+    "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.0",
     "@types/plist": "^3.0.2",
     "@types/prompts": "^2.0.14",

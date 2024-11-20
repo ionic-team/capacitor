@@ -1,4 +1,4 @@
-import { mkdir } from '@ionic/utils-fs';
+import { mkdir } from 'fs-extra';
 import { join } from 'path';
 
 import { APP_ID, APP_NAME, run, mktmp, MappedFS } from './util';

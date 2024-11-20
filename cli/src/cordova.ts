@@ -1,4 +1,4 @@
-import { copy, ensureDir, mkdirp, pathExists, readFile, remove, writeFile } from '@ionic/utils-fs';
+import { copy, ensureDir, mkdirp, pathExists, readFile, remove, writeFile } from 'fs-extra';
 import { basename, extname, join, resolve } from 'path';
 import plist from 'plist';
 import type { PlistObject } from 'plist';

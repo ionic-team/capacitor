@@ -1,4 +1,4 @@
-import { readFile } from '@ionic/utils-fs';
+import { readFile } from 'fs-extra';
 import xml2js from 'xml2js';
 
 export async function readXML(path: string): Promise<any> {

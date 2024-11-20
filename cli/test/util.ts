@@ -1,5 +1,5 @@
-import { mkdir, mkdirp, readFile, pathExists, writeFile } from '@ionic/utils-fs';
 import { exec } from 'child_process';
+import { mkdir, mkdirp, readFile, pathExists, writeFile } from 'fs-extra';
 import { join, resolve } from 'path';
 import tmp from 'tmp';
 import type { DirCallback } from 'tmp';
