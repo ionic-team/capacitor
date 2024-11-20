@@ -104,6 +104,12 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, assign) BOOL isWebDebuggable;
 /**
+ @brief Whether or not the webview will have focus.
+ @discussion Defaults to @c true.  Set by @c ios.initialFocus in the configuration file.
+ */
+@property (nonatomic, assign) BOOL hasInitialFocus;
+
+/**
  @brief How the web view will inset its content
  @discussion Set by @c ios.contentInset in the configuration file. Corresponds to @c contentInsetAdjustmentBehavior on WKWebView.
  */
