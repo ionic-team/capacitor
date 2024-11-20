@@ -54,10 +54,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   const handleError = (err: Error) => win.console.error(err);
 
-  const pluginMethodNoop = (_target: any, prop: PropertyKey, pluginName: string) => {
-    return Promise.reject(`${pluginName} does not have an implementation of "${prop as any}".`);
-  };
-
   const registeredPlugins = new Map<string, RegisteredPlugin>();
 
   const defaultRegisterPlugin = (pluginName: string, jsImplementations: PluginImplementations = {}): any => {
@@ -214,7 +210,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   cap.handleError = handleError;
   cap.isNativePlatform = isNativePlatform;
   cap.isPluginAvailable = isPluginAvailable;
-  cap.pluginMethodNoop = pluginMethodNoop;
   cap.registerPlugin = registerPlugin;
   cap.Exception = CapacitorException;
   cap.DEBUG = !!cap.DEBUG;

@@ -1,4 +1,3 @@
-import type { PluginRegistry } from './legacy/legacy-definitions';
 import type { CapacitorException } from './util';
 
 export interface CapacitorGlobal {
@@ -44,21 +43,6 @@ export interface CapacitorGlobal {
 
   DEBUG?: boolean;
   isLoggingEnabled?: boolean;
-
-  // Deprecated in v3, will be removed from v4
-
-  /**
-   * @deprecated Plugins should be imported instead. Deprecated in
-   * v3 and Capacitor.Plugins property definition will not be exported in v4.
-   */
-  Plugins: PluginRegistry;
-
-  /**
-   * Called when a plugin method is not available. Defaults to console
-   * logging a warning. Provided for backwards compatibility.
-   * @deprecated Deprecated in v3, will be removed from v4
-   */
-  pluginMethodNoop: (target: any, key: PropertyKey, pluginName: string) => Promise<never>;
 }
 
 /**
