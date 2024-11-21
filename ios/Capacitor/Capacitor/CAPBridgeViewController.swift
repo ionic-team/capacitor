@@ -59,8 +59,15 @@ import Cordova
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-        self.becomeFirstResponder()
         loadWebView()
+    }
+
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if bridge?.config.hasInitialFocus ?? true {
+            self.webView?.becomeFirstResponder()
+        }
     }
 
     override open func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
