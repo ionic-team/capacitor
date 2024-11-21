@@ -11,6 +11,7 @@
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/dw/@capacitor/core?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/v/@capacitor/core?style=flat-square" /></a>
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/l/@capacitor/core?style=flat-square" /></a>
+  <a href="https://gurubase.io/g/capacitor"><img src="https://img.shields.io/badge/Gurubase-Ask%20Capacitor%20Guru-006BFF?style=flat-square" /></a>
 </p>
 <p align="center">
   <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=capacitorjs.com&color=blue&style=flat-square" /></a>
