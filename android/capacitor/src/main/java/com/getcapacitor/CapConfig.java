@@ -299,7 +299,11 @@ public class CapConfig {
                 loggingEnabled = isDebug;
         }
 
-        initialFocus = JSONUtils.getBoolean(configJSON, "android.initialFocus", JSONUtils.getBoolean(configJSON, "initialFocus", initialFocus));
+        initialFocus = JSONUtils.getBoolean(
+            configJSON,
+            "android.initialFocus",
+            JSONUtils.getBoolean(configJSON, "initialFocus", initialFocus)
+        );
 
         // Plugins
         pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
