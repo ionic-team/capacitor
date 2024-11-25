@@ -199,6 +199,8 @@ export interface CapacitorConfig {
     /**
      * Whether to give the webview initial focus.
      *
+     * Overrides global `initialFocus` option.
+     *
      * @since 3.5.1
      * @default true
      */
@@ -460,6 +462,8 @@ export interface CapacitorConfig {
 
     /**
      * Whether to give the webview initial focus.
+     *
+     * Overrides global `initialFocus` option.
      *
      * @since 7.0.0
      * @default true
