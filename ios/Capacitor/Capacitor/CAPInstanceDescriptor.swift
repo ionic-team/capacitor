@@ -30,6 +30,8 @@ internal extension InstanceDescriptor {
     // swiftlint:disable function_body_length
     // swiftlint:disable:next identifier_name
     @objc func _parseConfiguration(at capacitorURL: URL?, cordovaConfiguration cordovaURL: URL?) {
+        configUrl = capacitorURL
+        
         // sanity check that the app directory is valid
         var isDirectory: ObjCBool = ObjCBool(false)
         if warnings.contains(.missingAppDir) == false,
