@@ -449,6 +449,14 @@ export interface CapacitorConfig {
      * @default false
      */
     webContentsDebuggingEnabled?: boolean;
+
+    /**
+     * Whether to give the webview initial focus.
+     *
+     * @since 7.0.0
+     * @default true
+     */
+    initialFocus?: boolean;
   };
 
   server?: {
