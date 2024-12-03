@@ -123,7 +123,8 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     open func isMediaExtension(pathExtension: String) -> Bool {
         let mediaExtensions = ["m4v", "mov", "mp4",
-                               "aac", "ac3", "aiff", "au", "flac", "m4a", "mp3", "wav"]
+                               "aac", "ac3", "aiff", "au", "flac", "m4a", "mp3", "wav",
+                               "pmtiles"]
         if mediaExtensions.contains(pathExtension.lowercased()) {
             return true
         }
