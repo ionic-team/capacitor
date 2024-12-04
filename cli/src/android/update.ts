@@ -1,5 +1,5 @@
-import { copy, remove, pathExists, readdirp, readFile, writeFile, writeJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
+import { copy, remove, pathExists, readFile, writeFile, writeJSON } from 'fs-extra';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from '../colors';
@@ -20,7 +20,7 @@ import {
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { patchOldCapacitorPlugins } from '../tasks/migrate';
-import { convertToUnixPath } from '../util/fs';
+import { readdirp, convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
 
@@ -226,7 +226,7 @@ if (hasProperty('postBuildExtras')) {
 export async function handleCordovaPluginsGradle(config: Config, cordovaPlugins: Plugin[]): Promise<void> {
   const pluginsGradlePath = join(config.android.cordovaPluginsDirAbs, 'build.gradle');
   const kotlinNeeded = await kotlinNeededCheck(config, cordovaPlugins);
-  const kotlinVersionString = config.app.extConfig.cordova?.preferences?.GradlePluginKotlinVersion ?? '1.8.20';
+  const kotlinVersionString = config.app.extConfig.cordova?.preferences?.GradlePluginKotlinVersion ?? '1.9.25';
   const frameworksArray: any[] = [];
   let prefsArray: any[] = [];
   const applyArray: any[] = [];
