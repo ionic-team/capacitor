@@ -25,6 +25,13 @@ export async function buildiOS(config: Config, buildOptions: BuildCommandOptions
     projectName = basename(await config.ios.nativeXcodeProjDirAbs);
   }
 
+  if (
+    buildOptions.xcodeSigningType == 'manual' &&
+    (!buildOptions.xcodeSigningCertificate || !buildOptions.xcodeProvisioningProfile)
+  ) {
+    throw 'Manually signed Xcode builds require a signing certificate and provisioning profile.';
+  }
+
   await runTask('Building xArchive', async () =>
     runCommand(
       'xcodebuild',
