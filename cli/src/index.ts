@@ -150,7 +150,7 @@ export function runProgram(config: Config): void {
     .addOption(
       new Option(
         '--xcode-signing-style <xcodeSigningStyle>',
-        'The iOS signing style to use when building the app for distribution',
+        'The iOS signing style to use when building the app for distribution (default: automatic)',
       ).choices(['automatic', 'manual']),
     )
     .addOption(

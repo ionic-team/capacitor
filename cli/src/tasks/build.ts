@@ -14,7 +14,7 @@ export interface BuildCommandOptions {
   androidreleasetype?: 'AAB' | 'APK';
   signingtype?: 'apksigner' | 'jarsigner';
   configuration: string;
-  xcodeSigningType: 'automatic' | 'manual';
+  xcodeSigningType?: 'automatic' | 'manual';
   xcodeSigningCertificate?: string;
   xcodeProvisioningProfile?: string;
 }
