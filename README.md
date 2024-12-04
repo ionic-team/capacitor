@@ -15,6 +15,7 @@
 <p align="center">
   <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=capacitorjs.com&color=blue&style=flat-square" /></a>
   <a href="https://twitter.com/capacitorjs"><img src="https://img.shields.io/twitter/follow/capacitorjs" /></a>
+  <a href="https://gurubase.io/g/capacitor"><img src="https://img.shields.io/badge/Gurubase-Ask%20Capacitor%20Guru-006BFF?style=flat-square" /></a>
 </p>
 
 ---
