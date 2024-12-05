@@ -1,5 +1,4 @@
 import type { CapacitorGlobal, PluginCallback, PluginResultData, PluginResultError } from './definitions';
-import type { CapacitorPlatformsInstance } from './platforms';
 
 export interface PluginHeaderMethod {
   readonly name: string;
@@ -148,10 +147,6 @@ export interface WindowCapacitor {
   CapacitorHttpAndroidInterface?: any;
   CapacitorWebFetch?: any;
   CapacitorWebXMLHttpRequest?: any;
-  /**
-   * @deprecated Use `CapacitorCustomPlatform` instead
-   */
-  CapacitorPlatforms?: CapacitorPlatformsInstance;
   CapacitorCustomPlatform?: CapacitorCustomPlatformInstance;
   Ionic?: {
     WebView?: {

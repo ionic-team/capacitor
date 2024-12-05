@@ -10,9 +10,6 @@ export type {
   PluginResultError,
 } from './definitions';
 
-// Platforms Map
-export { CapacitorPlatforms, addPlatform, setPlatform } from './platforms';
-
 // Global APIs
 export { Capacitor, registerPlugin } from './global';
 

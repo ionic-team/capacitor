@@ -5,7 +5,6 @@ import type {
   PluginHeader,
   WindowCapacitor,
 } from './definitions-internal';
-import type { CapacitorPlatformsInstance } from './platforms';
 import { CapacitorException, getPlatformId, ExceptionCode } from './util';
 
 export interface RegisteredPlugin {
@@ -18,20 +17,14 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   const capCustomPlatform: CapacitorCustomPlatformInstance = win.CapacitorCustomPlatform || null;
   const cap: CapacitorInstance = win.Capacitor || ({} as any);
   const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
-  /**
-   * @deprecated Use `capCustomPlatform` instead, default functions like registerPlugin will function with the new object.
-   */
-  const capPlatforms: CapacitorPlatformsInstance = win.CapacitorPlatforms;
 
-  const defaultGetPlatform = () => {
+  const getPlatform = () => {
     return capCustomPlatform !== null ? capCustomPlatform.name : getPlatformId(win);
   };
-  const getPlatform = capPlatforms?.currentPlatform?.getPlatform || defaultGetPlatform;
 
-  const defaultIsNativePlatform = () => getPlatform() !== 'web';
-  const isNativePlatform = capPlatforms?.currentPlatform?.isNativePlatform || defaultIsNativePlatform;
+  const isNativePlatform = () => getPlatform() !== 'web';
 
-  const defaultIsPluginAvailable = (pluginName: string): boolean => {
+  const isPluginAvailable = (pluginName: string): boolean => {
     const plugin = registeredPlugins.get(pluginName);
 
     if (plugin?.platforms.has(getPlatform())) {
@@ -46,17 +39,15 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
     return false;
   };
-  const isPluginAvailable = capPlatforms?.currentPlatform?.isPluginAvailable || defaultIsPluginAvailable;
 
-  const defaultGetPluginHeader = (pluginName: string): PluginHeader | undefined =>
+  const getPluginHeader = (pluginName: string): PluginHeader | undefined =>
     cap.PluginHeaders?.find((h) => h.name === pluginName);
-  const getPluginHeader = capPlatforms?.currentPlatform?.getPluginHeader || defaultGetPluginHeader;
 
   const handleError = (err: Error) => win.console.error(err);
 
   const registeredPlugins = new Map<string, RegisteredPlugin>();
 
-  const defaultRegisterPlugin = (pluginName: string, jsImplementations: PluginImplementations = {}): any => {
+  const registerPlugin = (pluginName: string, jsImplementations: PluginImplementations = {}): any => {
     const registeredPlugin = registeredPlugins.get(pluginName);
     if (registeredPlugin) {
       console.warn(`Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`);
@@ -199,7 +190,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
     return proxy;
   };
-  const registerPlugin = capPlatforms?.currentPlatform?.registerPlugin || defaultRegisterPlugin;
 
   // Add in convertFileSrc for web, it will already be available in native context
   if (!cap.convertFileSrc) {
