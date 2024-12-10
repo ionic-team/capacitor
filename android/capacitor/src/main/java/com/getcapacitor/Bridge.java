@@ -15,7 +15,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.webkit.ServiceWorkerClient;
+import android.webkit.ServiceWorkerController;
 import android.webkit.ValueCallback;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import androidx.activity.result.ActivityResultCallback;
@@ -273,6 +277,18 @@ public class Bridge {
 
         webView.setWebChromeClient(new BridgeWebChromeClient(this));
         webView.setWebViewClient(this.webViewClient);
+
+        if (Build.VERSION.SDK_INT >= 24 && config.isResolveServiceWorkerRequests()) {
+            ServiceWorkerController swController = ServiceWorkerController.getInstance();
+            swController.setServiceWorkerClient(
+                new ServiceWorkerClient() {
+                    @Override
+                    public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
+                        return getLocalServer().shouldInterceptRequest(request);
+                    }
+                }
+            );
+        }
 
         if (!isDeployDisabled() && !isNewBinary()) {
             SharedPreferences prefs = getContext()
