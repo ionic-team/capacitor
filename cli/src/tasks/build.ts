@@ -45,9 +45,9 @@ export async function buildCommand(
     androidreleasetype: buildOptions.androidreleasetype || config.android.buildOptions.releaseType || 'AAB',
     signingtype: buildOptions.signingtype || config.android.buildOptions.signingType || 'jarsigner',
     configuration: buildOptions.configuration || 'Release',
-    xcodeSigningType: buildOptions.xcodeSigningType || 'automatic',
-    xcodeSigningCertificate: buildOptions.xcodeSigningCertificate,
-    xcodeProvisioningProfile: buildOptions.xcodeProvisioningProfile,
+    xcodeSigningType: buildOptions.xcodeSigningType || config.ios.buildOptions.xcodeSigningStyle || 'automatic',
+    xcodeSigningCertificate: buildOptions.xcodeSigningCertificate || config.ios.buildOptions.signingCertificate,
+    xcodeProvisioningProfile: buildOptions.xcodeProvisioningProfile || config.ios.buildOptions.provisioningProfile,
   };
 
   try {

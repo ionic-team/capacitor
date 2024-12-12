@@ -117,6 +117,11 @@ export interface IOSConfig extends PlatformConfig {
   readonly nativeXcodeProjDirAbs: string;
   readonly nativeXcodeWorkspaceDir: Promise<string>;
   readonly nativeXcodeWorkspaceDirAbs: Promise<string>;
+  readonly buildOptions: {
+    xcodeSigningStyle?: 'automatic' | 'manual';
+    signingCertificate?: string;
+    provisioningProfile?: string;
+  };
 }
 
 export type WebConfig = PlatformConfig;
