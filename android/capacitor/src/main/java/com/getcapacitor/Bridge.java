@@ -416,7 +416,7 @@ public class Bridge {
             PackageManager pm = getContext().getPackageManager();
             PackageInfo pInfo = InternalUtils.getPackageInfo(pm, getContext().getPackageName());
             versionCode = Integer.toString((int) PackageInfoCompat.getLongVersionCode(pInfo));
-            versionName = pInfo.versionName;
+            if (pInfo.versionName != null) versionName = pInfo.versionName;
         } catch (Exception ex) {
             Logger.error("Unable to get package info", ex);
         }
