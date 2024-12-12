@@ -457,6 +457,28 @@ export interface CapacitorConfig {
      * @default true
      */
     initialFocus?: boolean;
+
+    buildOptions?: {
+      /**
+       * The signing style to use when building the app for distribution.
+       *
+       * @since 7.0.0
+       * @default 'automatic'
+       */
+      signingStyle?: 'automatic' | 'manual';
+      /**
+       * A certificate name, SHA-1 hash, or automatic selector to use for signing for iOS builds.
+       *
+       * @since 7.0.0
+       */
+      signingCertificate?: string;
+      /**
+       * A provisioning profile name or UUID for iOS builds.
+       *
+       * @since 7.0.0
+       */
+      provisioningProfile?: string;
+    };
   };
 
   server?: {
