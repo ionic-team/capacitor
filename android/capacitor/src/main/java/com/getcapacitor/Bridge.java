@@ -50,11 +50,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-//import org.apache.cordova.ConfigXmlParser;
-//import org.apache.cordova.CordovaPreferences;
-//import org.apache.cordova.CordovaWebView;
-//import org.apache.cordova.PluginEntry;
-//import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 
 /**
@@ -118,10 +113,6 @@ public class Bridge {
     private ArrayList<String> authorities = new ArrayList<>();
     // A reference to the main WebView for the app
     private final WebView webView;
-    /// RUH ROH
-//    public final MockCordovaInterfaceImpl cordovaInterface;
-//    private CordovaWebView cordovaWebView;
-//    private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
     private App app;
 
@@ -469,10 +460,6 @@ public class Bridge {
     public boolean isDevMode() {
         return (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
-
-//    protected void setCordovaWebView(CordovaWebView cordovaWebView) {
-//        this.cordovaWebView = cordovaWebView;
-//    }
 
     /**
      * Get the Context for the App
