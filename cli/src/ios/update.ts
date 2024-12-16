@@ -1,4 +1,4 @@
-import { copy, remove, pathExists, readFile, realpath, writeFile } from 'fs-extra';
+import { pathExists, readFile, realpath, writeFile } from 'fs-extra';
 import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
@@ -7,13 +7,7 @@ import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps,
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
-import {
-  PluginType,
-  getPlatformElement,
-  getPluginType,
-  getPlugins,
-  printPlugins,
-} from '../plugin';
+import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import {
@@ -193,17 +187,11 @@ async function generatePodFile(config: Config, plugins: Plugin[]): Promise<strin
   );
   const cordovaPodlines = cordovaPodfileLines(config, plugins);
   pods.concat(cordovaPodlines);
-  if (staticPlugins.length > 0) {
-    pods.push(`  pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'\n`);
-  }
-  const resourcesPlugins = cordovaPlugins.filter(filterResources);
-  if (resourcesPlugins.length > 0) {
-    pods.push(`  pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'\n`);
 
   return `
-  pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
-  pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'
-${pods.join('').trimEnd()}`;
+    pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
+    pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'
+    ${pods.join('').trimEnd()}`;
 }
 
 async function getPluginsTask(config: Config) {
