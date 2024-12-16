@@ -23,6 +23,7 @@ import { checkPackageManager, generatePackageFile, checkPluginsForPackageSwift }
 import { runCommand, isInstalled } from '../util/subprocess';
 
 import { getIOSPlugins, getMajoriOSVersion } from './common';
+import { replace } from 'tar';
 
 const platform = 'ios';
 
@@ -125,7 +126,7 @@ async function updatePodfile(config: Config, plugins: Plugin[], deployment: bool
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
   podfileContent = podfileContent.replace(/(def capacitor_pods)[\s\S]+?(\nend)/, `$1${dependenciesContent}$2`);
   podfileContent = podfileContent.replace(
-    /(require_relative)[\s\S]+?(@capacitor\/ios\/scripts\/pods_helpers')/,
+    /(require_relative)[\s\S]+?(ios\/scripts\/pods_helpers')/,
     `require_relative '${relativeCapacitoriOSPath}/scripts/pods_helpers'`,
   );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
