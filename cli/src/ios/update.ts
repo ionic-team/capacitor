@@ -1,5 +1,6 @@
 import { pathExists, readFile, realpath, writeFile } from 'fs-extra';
 import { basename, dirname, join, relative } from 'path';
+import { replace } from 'tar';
 
 import c from '../colors';
 import { checkPlatformVersions, getCapacitorPackageVersion, runTask } from '../common';
@@ -23,7 +24,6 @@ import { checkPackageManager, generatePackageFile, checkPluginsForPackageSwift }
 import { runCommand, isInstalled } from '../util/subprocess';
 
 import { getIOSPlugins, getMajoriOSVersion } from './common';
-import { replace } from 'tar';
 
 const platform = 'ios';
 
