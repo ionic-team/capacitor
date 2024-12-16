@@ -22,7 +22,6 @@ public class MessageHandler {
 
     private Bridge bridge;
     private WebView webView;
-//    private PluginManager cordovaPluginManager;
     private JavaScriptReplyProxy javaScriptReplyProxy;
 
 
@@ -67,7 +66,6 @@ public class MessageHandler {
 
             String type = postData.getString("type");
 
-//            boolean typeIsNotNull = type != null;
             if (type == null)
                 type = "message";
 
@@ -130,12 +128,4 @@ public class MessageHandler {
         PluginCall call = new PluginCall(this, pluginId, callbackId, methodName, methodData);
         bridge.callPluginMethod(pluginId, methodName, call);
     }
-
-//    private void callCordovaPluginMethod(String callbackId, String service, String action, String actionArgs) {
-//        bridge.execute(
-//            () -> {
-//                cordovaPluginManager.exec(service, action, callbackId, actionArgs);
-//            }
-//        );
-//    }
 }
