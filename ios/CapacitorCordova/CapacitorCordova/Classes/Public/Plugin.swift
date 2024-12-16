@@ -8,7 +8,7 @@ public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
 
     private var _cordovaDeployDisabled = false
 
-    public override func load() {
+    override public func load() {
         injectJavascript()
         configureRuntime()
     }
@@ -68,7 +68,7 @@ public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
                 return
             }
         }
-        
+
         _cordovaDeployDisabled = (cordovaConfigParser.settings?["DisableDeploy".lowercased()] as? NSString)?.boolValue ?? false
     }
 

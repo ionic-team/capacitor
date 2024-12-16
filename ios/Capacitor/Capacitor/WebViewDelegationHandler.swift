@@ -200,29 +200,17 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                 let pluginId = dict["pluginId"] as? String ?? ""
                 let method = dict["methodName"] as? String ?? ""
                 let callbackId = dict["callbackId"] as? String ?? ""
-                
+
                 let options = dict["options"] as? [String: Any] ?? [:]
-                
+
                 if pluginId != "Console" {
                     CAPLog.print("⚡️  To Native -> ", pluginId, method, callbackId)
                 }
-                
+
                 bridge.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
             } else if let handler = bridge.callInterceptors[type] {
                 handler(dict)
             }
-//            } else if type == "cordova" {
-//                let pluginId = dict["service"] as? String ?? ""
-//                let method = dict["action"] as? String ?? ""
-//                let callbackId = dict["callbackId"] as? String ?? ""
-//
-//                let args = dict["actionArgs"] as? Array ?? []
-//                let options = ["options": args]
-//
-//                CAPLog.print("To Native Cordova -> ", pluginId, method, callbackId, options)
-//
-//                //bridge.handleCordovaJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
-//            }
         }
     }
 
