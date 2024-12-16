@@ -1,7 +1,7 @@
 import { writeFileSync, readFileSync, existsSync } from 'fs-extra';
 import { join } from 'path';
 import rimraf from 'rimraf';
-import { coerce, gt, gte, lt } from 'semver';
+import { coerce, gte, lt } from 'semver';
 
 import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
