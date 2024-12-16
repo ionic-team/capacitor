@@ -11,7 +11,6 @@ public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
             "url": url,
             "options": options
         ])
-        //NotificationCenter.default.post(name: NSNotification.Name.CDVPluginHandleOpenURL, object: url)
         lastURL = url
         return true
     }
