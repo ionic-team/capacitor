@@ -1319,10 +1319,6 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnNewIntent(intent);
         }
-        //
-        //        if (cordovaWebView != null) {
-        //            cordovaWebView.onNewIntent(intent);
-        //        }
     }
 
     /**
@@ -1351,9 +1347,6 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStart();
         }
-        //        if (cordovaWebView != null) {
-        //            cordovaWebView.handleStart();
-        //        }
     }
 
     /**
@@ -1363,10 +1356,6 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnResume();
         }
-        //
-        //        if (cordovaWebView != null) {
-        //            cordovaWebView.handleResume(this.shouldKeepRunning());
-        //        }
     }
 
     /**
@@ -1376,10 +1365,6 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnPause();
         }
-        //        if (cordovaWebView != null) {
-        //            boolean keepRunning = this.shouldKeepRunning() || cordovaInterface.getActivityResultCallback() != null;
-        //            cordovaWebView.handlePause(keepRunning);
-        //        }
     }
 
     /**
@@ -1389,10 +1374,6 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStop();
         }
-        //
-        //        if (cordovaWebView != null) {
-        //            cordovaWebView.handleStop();
-        //        }
     }
 
     /**
@@ -1404,10 +1385,6 @@ public class Bridge {
         }
 
         handlerThread.quitSafely();
-        //
-        //        if (cordovaWebView != null) {
-        //            cordovaWebView.handleDestroy();
-        //        }
     }
 
     /**
