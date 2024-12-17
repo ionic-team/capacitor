@@ -3,12 +3,11 @@ package com.getcapacitor.cordova;
 import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
-
 import com.getcapacitor.Logger;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
-
+import java.util.List;
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPreferences;
@@ -17,10 +16,9 @@ import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 
-import java.util.List;
-
 @CapacitorPlugin(name = "__CordovaPlugin")
 public class CordovaPlugin extends Plugin {
+
     private MockCordovaInterfaceImpl cordovaInterface;
     private CordovaWebView webView;
     private CordovaPreferences preferences;
@@ -44,8 +42,7 @@ public class CordovaPlugin extends Plugin {
         PluginManager pluginManager = mockWebView.getPluginManager();
         cordovaInterface.onCordovaInit(pluginManager);
 
-
-        bridge.registerInterceptor("cordova", (postData) -> {
+        bridge.registerInterceptor("cordova", postData -> {
             String callbackId = postData.getString("callbackId");
 
             String service = postData.getString("service");
@@ -53,22 +50,20 @@ public class CordovaPlugin extends Plugin {
             String actionArgs = postData.getString("actionArgs");
 
             Logger.verbose(
-                    Logger.tags("Plugin"),
-                    "To native (Cordova plugin): callbackId: " +
-                            callbackId +
-                            ", service: " +
-                            service +
-                            ", action: " +
-                            action +
-                            ", actionArgs: " +
-                            actionArgs
+                Logger.tags("Plugin"),
+                "To native (Cordova plugin): callbackId: " +
+                callbackId +
+                ", service: " +
+                service +
+                ", action: " +
+                action +
+                ", actionArgs: " +
+                actionArgs
             );
 
-            bridge.execute(
-                    () -> {
-                        pluginManager.exec(service, action, callbackId, actionArgs);
-                    }
-            );
+            bridge.execute(() -> {
+                pluginManager.exec(service, action, callbackId, actionArgs);
+            });
         });
     }
 
@@ -79,7 +74,6 @@ public class CordovaPlugin extends Plugin {
             cordovaInterface.restoreInstanceState(state);
         }
     }
-
 
     @Override
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -134,7 +128,7 @@ public class CordovaPlugin extends Plugin {
 
     @Override
     protected void handleOnResume() {
-       webView.handleResume(bridge.shouldKeepRunning());
+        webView.handleResume(bridge.shouldKeepRunning());
     }
 
     @Override
@@ -150,8 +144,6 @@ public class CordovaPlugin extends Plugin {
 
     @Override
     protected void handleOnDestroy() {
-       webView.handleDestroy();
+        webView.handleDestroy();
     }
-
-
 }
