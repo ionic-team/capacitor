@@ -45,34 +45,43 @@ export async function updateIOS(config: Config, deployment: boolean): Promise<vo
 async function updateIOSCocoaPods(config: Config, plugins: Plugin[], deployment: boolean) {
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
-  if (cordovaPlugins.length > 0) {
-    // TODO: all the new logic should probably go here
-    // with an else that removes cordova plugins
 
+  const enableCordova = cordovaPlugins.length > 0
+
+  if (enableCordova) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
+
   if (!(await pathExists(await config.ios.webDirAbs))) {
     await copyTask(config, platform);
   }
+
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await checkPluginDependencies(plugins, platform);
-  await generateCordovaPodspecs(cordovaPlugins, config);
-  await installCocoaPodsPlugins(config, plugins, deployment);
-  await logCordovaManualSteps(cordovaPlugins, config, platform);
+
+  if (enableCordova) {
+    await generateCordovaPodspecs(cordovaPlugins, config);
+  }
+
+  await installCocoaPodsPlugins(config, plugins, deployment, enableCordova);
+
+  if (enableCordova) {
+    await logCordovaManualSteps(cordovaPlugins, config, platform);
+  }
 
   const incompatibleCordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
   await checkPlatformVersions(config, platform);
 }
 
-export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {
+export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean, enableCordova: boolean): Promise<void> {
   await runTask(`Updating iOS native dependencies with ${c.input(`${await config.ios.podPath} install`)}`, () => {
-    return updatePodfile(config, plugins, deployment);
+    return updatePodfile(config, plugins, deployment, enableCordova);
   });
 }
 
-async function updatePodfile(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {
-  const dependenciesContent = await generatePodFile(config, plugins);
+async function updatePodfile(config: Config, plugins: Plugin[], deployment: boolean, enableCordova: boolean): Promise<void> {
+  const dependenciesContent = await generatePodFile(config, plugins, enableCordova);
   const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
   const podfilePath = join(config.ios.nativeProjectDirAbs, 'Podfile');
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
@@ -123,7 +132,7 @@ async function getRelativeCapacitoriOSPath(config: Config) {
   return convertToUnixPath(relative(config.ios.nativeProjectDirAbs, await realpath(dirname(capacitoriOSPath))));
 }
 
-async function generatePodFile(config: Config, plugins: Plugin[]): Promise<string> {
+async function generatePodFile(config: Config, plugins: Plugin[], enableCordova: boolean): Promise<string> {
   const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
 
   const capacitorPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Core);
@@ -141,10 +150,16 @@ async function generatePodFile(config: Config, plugins: Plugin[]): Promise<strin
   const cordovaPodlines = cordovaPodfileLines(config, plugins);
   pods.concat(cordovaPodlines);
 
-  return `
-    pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
-    pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'
-    ${pods.join('').trimEnd()}`;
+  let podfileString = '\n'
+  podfileString += `  pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'\n`
+
+  if (enableCordova) {
+    podfileString += `  pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'\n`
+  }
+
+  podfileString += pods.join('').trimEnd()
+
+  return podfileString
 }
 
 async function getPluginsTask(config: Config) {
