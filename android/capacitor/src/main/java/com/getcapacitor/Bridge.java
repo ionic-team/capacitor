@@ -1290,7 +1290,7 @@ public class Bridge {
                 // This is our disgusting way of returning the boolean out of the cordova interface
                 return cordovaPlugin.hasRequiredPermissions();
             }
-//            return cordovaInterface.onActivityResult(requestCode, resultCode, data);
+            //            return cordovaInterface.onActivityResult(requestCode, resultCode, data);
         }
 
         // deprecated, to be removed
@@ -1320,10 +1320,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnNewIntent(intent);
         }
-//
-//        if (cordovaWebView != null) {
-//            cordovaWebView.onNewIntent(intent);
-//        }
+        //
+        //        if (cordovaWebView != null) {
+        //            cordovaWebView.onNewIntent(intent);
+        //        }
     }
 
     /**
@@ -1352,10 +1352,9 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStart();
         }
-
-//        if (cordovaWebView != null) {
-//            cordovaWebView.handleStart();
-//        }
+        //        if (cordovaWebView != null) {
+        //            cordovaWebView.handleStart();
+        //        }
     }
 
     /**
@@ -1365,10 +1364,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnResume();
         }
-//
-//        if (cordovaWebView != null) {
-//            cordovaWebView.handleResume(this.shouldKeepRunning());
-//        }
+        //
+        //        if (cordovaWebView != null) {
+        //            cordovaWebView.handleResume(this.shouldKeepRunning());
+        //        }
     }
 
     /**
@@ -1378,11 +1377,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnPause();
         }
-
-//        if (cordovaWebView != null) {
-//            boolean keepRunning = this.shouldKeepRunning() || cordovaInterface.getActivityResultCallback() != null;
-//            cordovaWebView.handlePause(keepRunning);
-//        }
+        //        if (cordovaWebView != null) {
+        //            boolean keepRunning = this.shouldKeepRunning() || cordovaInterface.getActivityResultCallback() != null;
+        //            cordovaWebView.handlePause(keepRunning);
+        //        }
     }
 
     /**
@@ -1392,10 +1390,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStop();
         }
-//
-//        if (cordovaWebView != null) {
-//            cordovaWebView.handleStop();
-//        }
+        //
+        //        if (cordovaWebView != null) {
+        //            cordovaWebView.handleStop();
+        //        }
     }
 
     /**
@@ -1407,10 +1405,10 @@ public class Bridge {
         }
 
         handlerThread.quitSafely();
-//
-//        if (cordovaWebView != null) {
-//            cordovaWebView.handleDestroy();
-//        }
+        //
+        //        if (cordovaWebView != null) {
+        //            cordovaWebView.handleDestroy();
+        //        }
     }
 
     /**
@@ -1599,7 +1597,6 @@ public class Bridge {
             // Cordova initialization
             WebView webView = this.fragment != null ? fragment.getView().findViewById(R.id.webview) : activity.findViewById(R.id.webview);
 
-
             // Bridge initialization
             Bridge bridge = new Bridge(
                 activity,
@@ -1608,9 +1605,9 @@ public class Bridge {
                 webView,
                 plugins,
                 pluginInstances,
-//                cordovaInterface,
-//                pluginManager,
-//                preferences,
+                //                cordovaInterface,
+                //                pluginManager,
+                //                preferences,
                 config
             );
 
@@ -1618,7 +1615,7 @@ public class Bridge {
                 capacitorWebView.setBridge(bridge);
             }
 
-//            bridge.setCordovaWebView(mockWebView);
+            //            bridge.setCordovaWebView(mockWebView);
             bridge.setWebViewListeners(webViewListeners);
             bridge.setRouteProcessor(routeProcessor);
 
@@ -1630,7 +1627,7 @@ public class Bridge {
                 bridge.restoreInstanceState(instanceState);
             }
 
-            bridge.registerInterceptor("message", (postData) -> {
+            bridge.registerInterceptor("message", postData -> {
                 try {
                     String callbackId = postData.getString("callbackId");
                     String pluginId = postData.getString("pluginId");
@@ -1638,19 +1635,23 @@ public class Bridge {
                     JSObject methodData = postData.getJSObject("options", new JSObject());
 
                     Logger.verbose(
-                            Logger.tags("Plugin"),
-                            "To native (Capacitor plugin): callbackId: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName
+                        Logger.tags("Plugin"),
+                        "To native (Capacitor plugin): callbackId: " +
+                        callbackId +
+                        ", pluginId: " +
+                        pluginId +
+                        ", methodName: " +
+                        methodName
                     );
 
                     PluginCall call = new PluginCall(bridge.msgHandler, pluginId, callbackId, methodName, methodData);
                     bridge.callPluginMethod(pluginId, methodName, call);
-
-                } catch(JSONException e) {
+                } catch (JSONException e) {
                     Logger.error(e.getMessage());
                 }
             });
 
-            bridge.registerInterceptor("js.error", (postData) -> {
+            bridge.registerInterceptor("js.error", postData -> {
                 Logger.error("JavaScript Error: " + postData.toString());
             });
 

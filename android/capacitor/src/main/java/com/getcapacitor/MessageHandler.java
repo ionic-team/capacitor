@@ -5,8 +5,8 @@ import android.webkit.WebView;
 import androidx.webkit.JavaScriptReplyProxy;
 import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewFeature;
-
 import java.util.function.Function;
+
 //import org.apache.cordova.PluginManager;
 
 /**
@@ -14,16 +14,15 @@ import java.util.function.Function;
  * to plugins.
  */
 public class MessageHandler {
+
     @FunctionalInterface
     public interface Interceptor {
         void intercept(JSObject object);
     }
 
-
     private Bridge bridge;
     private WebView webView;
     private JavaScriptReplyProxy javaScriptReplyProxy;
-
 
     public MessageHandler(Bridge bridge, WebView webView) {
         this.bridge = bridge;
@@ -66,8 +65,7 @@ public class MessageHandler {
 
             String type = postData.getString("type");
 
-            if (type == null)
-                type = "message";
+            if (type == null) type = "message";
 
             Interceptor interceptor = bridge.getCallInterceptor(type);
             if (interceptor != null) {
