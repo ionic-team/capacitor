@@ -169,28 +169,6 @@ internal class JSExport {
         return lines.joined(separator: "\n")
     }
 
-    //    static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
-    //        if let pluginsJSFolder = Bundle.main.url(forResource: "public/plugins", withExtension: nil) {
-    //            self.injectFilesForFolder(folder: pluginsJSFolder, userContentController: userContentController)
-    //        }
-    //    }
-
-    //    static func injectFilesForFolder(folder: URL, userContentController: WKUserContentController) {
-    //        let fileManager = FileManager.default
-    //        do {
-    //            let fileURLs = try fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil, options: [])
-    //            for fileURL in fileURLs {
-    //                if fileURL.hasDirectoryPath {
-    //                    injectFilesForFolder(folder: fileURL, userContentController: userContentController)
-    //                } else {
-    //                    try self.injectFile(fileURL: fileURL, userContentController: userContentController)
-    //                }
-    //            }
-    //        } catch {
-    //            CAPLog.print("Error while enumerating files")
-    //        }
-    //    }
-
     static func injectFile(fileURL: URL, userContentController: WKUserContentController) throws {
         do {
             let data = try String(contentsOf: fileURL, encoding: .utf8)
