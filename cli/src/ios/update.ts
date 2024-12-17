@@ -46,7 +46,7 @@ async function updateIOSCocoaPods(config: Config, plugins: Plugin[], deployment:
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
 
-  const enableCordova = cordovaPlugins.length > 0
+  const enableCordova = cordovaPlugins.length > 0;
 
   if (enableCordova) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
@@ -74,13 +74,23 @@ async function updateIOSCocoaPods(config: Config, plugins: Plugin[], deployment:
   await checkPlatformVersions(config, platform);
 }
 
-export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean, enableCordova: boolean): Promise<void> {
+export async function installCocoaPodsPlugins(
+  config: Config,
+  plugins: Plugin[],
+  deployment: boolean,
+  enableCordova: boolean,
+): Promise<void> {
   await runTask(`Updating iOS native dependencies with ${c.input(`${await config.ios.podPath} install`)}`, () => {
     return updatePodfile(config, plugins, deployment, enableCordova);
   });
 }
 
-async function updatePodfile(config: Config, plugins: Plugin[], deployment: boolean, enableCordova: boolean): Promise<void> {
+async function updatePodfile(
+  config: Config,
+  plugins: Plugin[],
+  deployment: boolean,
+  enableCordova: boolean,
+): Promise<void> {
   const dependenciesContent = await generatePodFile(config, plugins, enableCordova);
   const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
   const podfilePath = join(config.ios.nativeProjectDirAbs, 'Podfile');
@@ -150,16 +160,16 @@ async function generatePodFile(config: Config, plugins: Plugin[], enableCordova:
   const cordovaPodlines = cordovaPodfileLines(config, plugins);
   pods.concat(cordovaPodlines);
 
-  let podfileString = '\n'
-  podfileString += `  pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'\n`
+  let podfileString = '\n';
+  podfileString += `  pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'\n`;
 
   if (enableCordova) {
-    podfileString += `  pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'\n`
+    podfileString += `  pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'\n`;
   }
 
-  podfileString += pods.join('').trimEnd()
+  podfileString += pods.join('').trimEnd();
 
-  return podfileString
+  return podfileString;
 }
 
 async function getPluginsTask(config: Config) {
