@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/7.0.0-beta.0...7.0.0-rc.0) (2024-12-20)
+
+**Note:** Version bump only for package capacitor
+
 # [7.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/7.0.0-alpha.2...7.0.0-beta.0) (2024-12-20)
 
 ### Bug Fixes
