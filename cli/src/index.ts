@@ -147,6 +147,24 @@ export function runProgram(config: Config): void {
         'jarsigner',
       ]),
     )
+    .addOption(
+      new Option(
+        '--xcode-signing-style <xcodeSigningStyle>',
+        'The iOS signing style to use when building the app for distribution (default: automatic)',
+      ).choices(['automatic', 'manual']),
+    )
+    .addOption(
+      new Option(
+        '--xcode-signing-certificate <xcodeSigningCertificate>',
+        'A certificate name, SHA-1 hash, or automatic selector to use for signing for iOS builds',
+      ),
+    )
+    .addOption(
+      new Option(
+        '--xcode-provisioning-profile <xcodeProvisioningProfile>',
+        'A provisioning profile name or UUID for iOS builds',
+      ),
+    )
     .action(
       wrapAction(
         telemetryAction(
@@ -163,6 +181,9 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingType,
               configuration,
+              xcodeSigningStyle,
+              xcodeSigningCertificate,
+              xcodeProvisioningProfile,
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
@@ -176,6 +197,9 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingtype: signingType,
               configuration,
+              xcodeSigningType: xcodeSigningStyle,
+              xcodeSigningCertificate,
+              xcodeProvisioningProfile,
             });
           },
         ),
