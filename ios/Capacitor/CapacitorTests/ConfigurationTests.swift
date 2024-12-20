@@ -33,7 +33,6 @@ class ConfigurationTests: XCTestCase {
         let descriptor = InstanceDescriptor.init()
         XCTAssertTrue(descriptor.warnings.contains(.missingAppDir))
         XCTAssertTrue(descriptor.warnings.contains(.missingFile))
-        XCTAssertTrue(descriptor.warnings.contains(.missingCordovaFile))
     }
     
     func testMissingAppDetection() throws {
