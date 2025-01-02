@@ -77,7 +77,9 @@ public class UriMatcher {
         UriMatcher node = this;
         for (int i = -2; i < numTokens; i++) {
             String token;
-            if (i == -2) token = scheme; else if (i == -1) token = authority; else token = tokens[i];
+            if (i == -2) token = scheme;
+            else if (i == -1) token = authority;
+            else token = tokens[i];
             ArrayList<UriMatcher> children = node.mChildren;
             int numChildren = children.size();
             UriMatcher child;
@@ -130,7 +132,9 @@ public class UriMatcher {
 
         for (int i = -2; i < li; i++) {
             String u;
-            if (i == -2) u = uri.getScheme(); else if (i == -1) u = uri.getAuthority(); else u = pathSegments.get(i);
+            if (i == -2) u = uri.getScheme();
+            else if (i == -1) u = uri.getAuthority();
+            else u = pathSegments.get(i);
             ArrayList<UriMatcher> list = node.mChildren;
             if (list == null) {
                 break;
@@ -139,7 +143,7 @@ public class UriMatcher {
             int lj = list.size();
             for (int j = 0; j < lj; j++) {
                 UriMatcher n = list.get(j);
-                which_switch:switch (n.mWhich) {
+                which_switch: switch (n.mWhich) {
                     case MASK:
                         if (HostMask.Parser.parse(n.mText).matches(u)) {
                             node = n;

@@ -59,8 +59,15 @@ import Cordova
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-        self.becomeFirstResponder()
         loadWebView()
+    }
+
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if bridge?.config.hasInitialFocus ?? true {
+            self.webView?.becomeFirstResponder()
+        }
     }
 
     override open func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
@@ -111,9 +118,7 @@ import Cordova
         webViewConfiguration.suppressesIncrementalRendering = false
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
         webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
-        if #available(iOS 14.0, *) {
-            webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
-        }
+        webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
                 webViewConfiguration.applicationNameForUserAgent = "\(appName)  \(appendUserAgent)"

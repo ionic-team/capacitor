@@ -15,7 +15,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.webkit.ServiceWorkerClient;
+import android.webkit.ServiceWorkerController;
 import android.webkit.ValueCallback;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import androidx.activity.result.ActivityResultCallback;
@@ -75,7 +79,6 @@ import org.json.JSONException;
  */
 public class Bridge {
 
-    private static final String PREFS_NAME = "CapacitorSettings";
     private static final String PERMISSION_PREFS_NAME = "PluginPermStates";
     private static final String BUNDLE_LAST_PLUGIN_ID_KEY = "capacitorLastActivityPluginId";
     private static final String BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY = "capacitorLastActivityPluginMethod";
@@ -274,6 +277,18 @@ public class Bridge {
 
         webView.setWebChromeClient(new BridgeWebChromeClient(this));
         webView.setWebViewClient(this.webViewClient);
+
+        if (Build.VERSION.SDK_INT >= 24 && config.isResolveServiceWorkerRequests()) {
+            ServiceWorkerController swController = ServiceWorkerController.getInstance();
+            swController.setServiceWorkerClient(
+                new ServiceWorkerClient() {
+                    @Override
+                    public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
+                        return getLocalServer().shouldInterceptRequest(request);
+                    }
+                }
+            );
+        }
 
         if (!isDeployDisabled() && !isNewBinary()) {
             SharedPreferences prefs = getContext()
@@ -563,7 +578,6 @@ public class Bridge {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setGeolocationEnabled(true);
-        settings.setDatabaseEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         if (this.config.isMixedContentAllowed()) {
@@ -1026,8 +1040,13 @@ public class Bridge {
                 try {
                     JSObject options = new JSObject(lastOptionsJson);
 
-                    pluginCallForLastActivity =
-                        new PluginCall(msgHandler, lastPluginId, PluginCall.CALLBACK_ID_DANGLING, lastPluginCallMethod, options);
+                    pluginCallForLastActivity = new PluginCall(
+                        msgHandler,
+                        lastPluginId,
+                        PluginCall.CALLBACK_ID_DANGLING,
+                        lastPluginCallMethod,
+                        options
+                    );
                 } catch (JSONException ex) {
                     Logger.error("Unable to restore plugin call, unable to parse persisted JSON object", ex);
                 }

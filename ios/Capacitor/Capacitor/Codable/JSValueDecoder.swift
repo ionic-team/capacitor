@@ -127,53 +127,70 @@ extension _JSValueDecoder: Decoder {
         SingleValueContainer(data: data, codingPath: codingPath, userInfo: userInfo, options: options)
     }
 
+    // force casting is fine becasue we've already determined that T is the type in the case
+    // the swift standard library also force casts in their similar functions
+    // https://github.com/swiftlang/swift-foundation/blob/da80d51fa3e77f3e7ed57c4300a870689e755713/Sources/FoundationEssentials/JSON/JSONEncoder.swift#L1140
+    // swiftlint:disable force_cast
     fileprivate func decodeData<T>(as type: T.Type) throws -> T where T: Decodable {
         switch type {
         case is Date.Type:
-            switch options.dateStrategy {
-            case .deferredToDate:
-                return try T(from: self)
-            case .secondsSince1970:
-                guard let value = data as? NSNumber else { throw DecodingError.dataCorrupted(data, target: Double.self, codingPath: codingPath) }
-                return Date(timeIntervalSince1970: value.doubleValue) as! T
-            case .millisecondsSince1970:
-                guard let value = data as? NSNumber else { throw DecodingError.dataCorrupted(data, target: Double.self, codingPath: codingPath) }
-                return Date(timeIntervalSince1970: value.doubleValue / Double(MSEC_PER_SEC)) as! T
-            case .iso8601:
-                guard let value = data as? String else { throw DecodingError.dataCorrupted(data, target: String.self, codingPath: codingPath) }
-                let formatter = ISO8601DateFormatter()
-                guard let date = formatter.date(from: value) else { throw DecodingError.dataCorrupted(value, target: Date.self, codingPath: codingPath) }
-                return date as! T
-            case .formatted(let formatter):
-                guard let value = data as? String else { throw DecodingError.dataCorrupted(data, target: String.self, codingPath: codingPath) }
-                  guard let date = formatter.date(from: value) else { throw DecodingError.dataCorrupted(value, target: Date.self, codingPath: codingPath) }
-                  return date as! T
-            case .custom(let decode):
-                return try decode(self) as! T
-            @unknown default:
-                return try T(from: self)
-            }
+            return try decodeDate() as! T
         case is URL.Type:
-            guard let str = data as? String,
-                let url = URL(string: str)
-            else { throw DecodingError.dataCorrupted(data, target: URL.self, codingPath: codingPath) }
-
-            return url as! T
+            return try decodeUrl() as! T
         case is Data.Type:
-            switch options.dataStrategy {
-            case .deferredToData:
-                return try T(from: self)
-            case .base64:
-                guard let value = data as? String else { throw DecodingError.dataCorrupted(data, target: String.self, codingPath: codingPath) }
-                guard let data = Data(base64Encoded: value) else { throw DecodingError.dataCorrupted(value, target: Data.self, codingPath: codingPath) }
-                return data as! T
-            case .custom(let decode):
-                return try decode(self) as! T
-            @unknown default:
-                return try T(from: self)
-            }
+            return try decodeData() as! T
         default:
             return try T(from: self)
+        }
+    }
+    // swiftlint:enable force_cast
+
+    private func decodeDate() throws -> Date {
+        switch options.dateStrategy {
+        case .deferredToDate:
+            return try Date(from: self)
+        case .secondsSince1970:
+            guard let value = data as? NSNumber else { throw DecodingError.dataCorrupted(data, target: Double.self, codingPath: codingPath) }
+            return Date(timeIntervalSince1970: value.doubleValue)
+        case .millisecondsSince1970:
+            guard let value = data as? NSNumber else { throw DecodingError.dataCorrupted(data, target: Double.self, codingPath: codingPath) }
+            return Date(timeIntervalSince1970: value.doubleValue / Double(MSEC_PER_SEC))
+        case .iso8601:
+            guard let value = data as? String else { throw DecodingError.dataCorrupted(data, target: String.self, codingPath: codingPath) }
+            let formatter = ISO8601DateFormatter()
+            guard let date = formatter.date(from: value) else { throw DecodingError.dataCorrupted(value, target: Date.self, codingPath: codingPath) }
+            return date
+        case .formatted(let formatter):
+            guard let value = data as? String else { throw DecodingError.dataCorrupted(data, target: String.self, codingPath: codingPath) }
+            guard let date = formatter.date(from: value) else { throw DecodingError.dataCorrupted(value, target: Date.self, codingPath: codingPath) }
+            return date
+        case .custom(let decode):
+            return try decode(self)
+        @unknown default:
+            return try Date(from: self)
+        }
+    }
+
+    private func decodeUrl() throws -> URL {
+        guard let str = data as? String,
+              let url = URL(string: str)
+        else { throw DecodingError.dataCorrupted(data, target: URL.self, codingPath: codingPath) }
+
+        return url
+    }
+
+    private func decodeData() throws -> Data {
+        switch options.dataStrategy {
+        case .deferredToData:
+            return try Data(from: self)
+        case .base64:
+            guard let value = data as? String else { throw DecodingError.dataCorrupted(data, target: String.self, codingPath: codingPath) }
+            guard let data = Data(base64Encoded: value) else { throw DecodingError.dataCorrupted(value, target: Data.self, codingPath: codingPath) }
+            return data
+        case .custom(let decode):
+            return try decode(self)
+        @unknown default:
+            return try Data(from: self)
         }
     }
 }
@@ -354,7 +371,7 @@ extension SingleValueContainer: SingleValueDecodingContainer {
 
     private func castFloat<N>(to type: N.Type) throws -> N where N: FloatingPoint {
         if let data = data as? String,
-            case let .convertFromString(positiveInfinity: pos, negativeInfinity: neg, nan: nan) = options.nonConformingStrategy {
+           case let .convertFromString(positiveInfinity: pos, negativeInfinity: neg, nan: nan) = options.nonConformingStrategy {
             switch data {
             case pos:
                 return N.infinity

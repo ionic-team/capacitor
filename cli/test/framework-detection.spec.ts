@@ -156,7 +156,6 @@ describe('framework detection', () => {
 });
 
 function addDep(config: Config, depName: string) {
-  (config.app.package as any).dependencies =
-    config.app.package.dependencies || {};
+  (config.app.package as any).dependencies = config.app.package.dependencies || {};
   (config.app.package.dependencies as any)[depName] = '0.0.0';
 }

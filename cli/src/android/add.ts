@@ -1,4 +1,4 @@
-import { pathExists, writeFile } from '@ionic/utils-fs';
+import { pathExists, writeFile } from 'fs-extra';
 import { homedir } from 'os';
 import { join } from 'path';
 
@@ -9,20 +9,12 @@ import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
 export async function addAndroid(config: Config): Promise<void> {
-  await runTask(
-    `Adding native android project in ${c.strong(config.android.platformDir)}`,
-    async () => {
-      return extractTemplate(
-        config.cli.assets.android.platformTemplateArchiveAbs,
-        config.android.platformDirAbs,
-      );
-    },
-  );
+  await runTask(`Adding native android project in ${c.strong(config.android.platformDir)}`, async () => {
+    return extractTemplate(config.cli.assets.android.platformTemplateArchiveAbs, config.android.platformDirAbs);
+  });
 }
 
-export async function createLocalProperties(
-  platformDir: string,
-): Promise<void> {
+export async function createLocalProperties(platformDir: string): Promise<void> {
   const defaultAndroidPath = join(homedir(), 'Library/Android/sdk');
   if (await pathExists(defaultAndroidPath)) {
     const localSettings = `

@@ -21,14 +21,14 @@ private let formatter: DateFormatter = {
     formatter.dateStyle = .medium
     formatter.timeStyle = .long
     formatter.timeZone = .init(abbreviation: "CDT")
+    formatter.locale = .init(identifier: "en_US")
     return formatter
 }()
-private let formatted = "Sep 5, 2024 at 5:36:20 PM CDT" 
+private let formatted = "Sep 5, 2024 at 5:36:20 PM CDT"
 
 private struct Foo: Codable, Equatable {
     var date: Date
 }
-
 
 final class JSValueDecoderDateTests: XCTestCase {
     func testDecode_date__default() throws {

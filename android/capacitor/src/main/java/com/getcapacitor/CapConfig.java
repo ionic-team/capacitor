@@ -53,6 +53,7 @@ public class CapConfig {
     private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
     private String errorPath;
     private boolean zoomableWebView = false;
+    private boolean resolveServiceWorkerRequests = true;
 
     // Embedded
     private String startPath;
@@ -179,6 +180,7 @@ public class CapConfig {
         this.minHuaweiWebViewVersion = builder.minHuaweiWebViewVersion;
         this.errorPath = builder.errorPath;
         this.zoomableWebView = builder.zoomableWebView;
+        this.resolveServiceWorkerRequests = builder.resolveServiceWorkerRequests;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -256,24 +258,33 @@ public class CapConfig {
         allowNavigation = JSONUtils.getArray(configJSON, "server.allowNavigation", null);
 
         // Android
-        overriddenUserAgentString =
-            JSONUtils.getString(configJSON, "android.overrideUserAgent", JSONUtils.getString(configJSON, "overrideUserAgent", null));
-        appendedUserAgentString =
-            JSONUtils.getString(configJSON, "android.appendUserAgent", JSONUtils.getString(configJSON, "appendUserAgent", null));
-        backgroundColor =
-            JSONUtils.getString(configJSON, "android.backgroundColor", JSONUtils.getString(configJSON, "backgroundColor", null));
-        allowMixedContent =
-            JSONUtils.getBoolean(
-                configJSON,
-                "android.allowMixedContent",
-                JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
-            );
+        overriddenUserAgentString = JSONUtils.getString(
+            configJSON,
+            "android.overrideUserAgent",
+            JSONUtils.getString(configJSON, "overrideUserAgent", null)
+        );
+        appendedUserAgentString = JSONUtils.getString(
+            configJSON,
+            "android.appendUserAgent",
+            JSONUtils.getString(configJSON, "appendUserAgent", null)
+        );
+        backgroundColor = JSONUtils.getString(
+            configJSON,
+            "android.backgroundColor",
+            JSONUtils.getString(configJSON, "backgroundColor", null)
+        );
+        allowMixedContent = JSONUtils.getBoolean(
+            configJSON,
+            "android.allowMixedContent",
+            JSONUtils.getBoolean(configJSON, "allowMixedContent", allowMixedContent)
+        );
         minWebViewVersion = JSONUtils.getInt(configJSON, "android.minWebViewVersion", DEFAULT_ANDROID_WEBVIEW_VERSION);
         minHuaweiWebViewVersion = JSONUtils.getInt(configJSON, "android.minHuaweiWebViewVersion", DEFAULT_HUAWEI_WEBVIEW_VERSION);
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         useLegacyBridge = JSONUtils.getBoolean(configJSON, "android.useLegacyBridge", useLegacyBridge);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
         zoomableWebView = JSONUtils.getBoolean(configJSON, "android.zoomEnabled", JSONUtils.getBoolean(configJSON, "zoomEnabled", false));
+        resolveServiceWorkerRequests = JSONUtils.getBoolean(configJSON, "android.resolveServiceWorkerRequests", true);
 
         String logBehavior = JSONUtils.getString(
             configJSON,
@@ -291,7 +302,11 @@ public class CapConfig {
                 loggingEnabled = isDebug;
         }
 
-        initialFocus = JSONUtils.getBoolean(configJSON, "android.initialFocus", initialFocus);
+        initialFocus = JSONUtils.getBoolean(
+            configJSON,
+            "android.initialFocus",
+            JSONUtils.getBoolean(configJSON, "initialFocus", initialFocus)
+        );
 
         // Plugins
         pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
@@ -360,6 +375,10 @@ public class CapConfig {
 
     public boolean isInputCaptured() {
         return captureInput;
+    }
+
+    public boolean isResolveServiceWorkerRequests() {
+        return resolveServiceWorkerRequests;
     }
 
     public boolean isWebContentsDebuggingEnabled() {
@@ -561,6 +580,7 @@ public class CapConfig {
         private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
         private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
         private boolean zoomableWebView = false;
+        private boolean resolveServiceWorkerRequests = true;
 
         // Embedded
         private String startPath = null;
@@ -657,6 +677,11 @@ public class CapConfig {
 
         public Builder setUseLegacyBridge(boolean useLegacyBridge) {
             this.useLegacyBridge = useLegacyBridge;
+            return this;
+        }
+
+        public Builder setResolveServiceWorkerRequests(boolean resolveServiceWorkerRequests) {
+            this.resolveServiceWorkerRequests = resolveServiceWorkerRequests;
             return this;
         }
 

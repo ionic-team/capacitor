@@ -65,9 +65,7 @@ const convertBody = async (
         if (done) break;
         chunks.push(value);
       }
-      const concatenated = new Uint8Array(
-        chunks.reduce((acc, chunk) => acc + chunk.length, 0),
-      );
+      const concatenated = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
       let position = 0;
       for (const chunk of chunks) {
         concatenated.set(chunk, position);
@@ -130,9 +128,7 @@ const CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM = 'u';
 
 // TODO: export as Cap function
 const isRelativeOrProxyUrl = (url: string | undefined): boolean =>
-  !url ||
-  !(url.startsWith('http:') || url.startsWith('https:')) ||
-  url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1;
+  !url || !(url.startsWith('http:') || url.startsWith('https:')) || url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1;
 
 // TODO: export as Cap function
 const createProxyUrl = (url: string, win: WindowCapacitor): string => {
@@ -155,22 +151,14 @@ const initBridge = (w: any): void => {
     }
   };
 
-  const convertFileSrcServerUrl = (
-    webviewServerUrl: string,
-    filePath: string,
-  ): string => {
+  const convertFileSrcServerUrl = (webviewServerUrl: string, filePath: string): string => {
     if (typeof filePath === 'string') {
       if (filePath.startsWith('/')) {
         return webviewServerUrl + '/_capacitor_file_' + filePath;
       } else if (filePath.startsWith('file://')) {
-        return (
-          webviewServerUrl + filePath.replace('file://', '/_capacitor_file_')
-        );
+        return webviewServerUrl + filePath.replace('file://', '/_capacitor_file_');
       } else if (filePath.startsWith('content://')) {
-        return (
-          webviewServerUrl +
-          filePath.replace('content:/', '/_capacitor_content_')
-        );
+        return webviewServerUrl + filePath.replace('content:/', '/_capacitor_content_');
       }
     }
     return filePath;
@@ -293,10 +281,6 @@ const initBridge = (w: any): void => {
       };
     }
 
-    // deprecated in v3, remove from v4
-    cap.platform = cap.getPlatform();
-    cap.isNative = cap.isNativePlatform();
-
     win.Capacitor = cap;
   };
 
@@ -330,81 +314,56 @@ const initBridge = (w: any): void => {
   };
 
   const initLogger = (win: WindowCapacitor, cap: CapacitorInstance) => {
-    const BRIDGED_CONSOLE_METHODS: (keyof Console)[] = [
-      'debug',
-      'error',
-      'info',
-      'log',
-      'trace',
-      'warn',
-    ];
+    const BRIDGED_CONSOLE_METHODS: (keyof Console)[] = ['debug', 'error', 'info', 'log', 'trace', 'warn'];
 
-    const createLogFromNative =
-      (c: Partial<Console>) => (result: PluginResult) => {
-        if (isFullConsole(c)) {
-          const success = result.success === true;
+    const createLogFromNative = (c: Partial<Console>) => (result: PluginResult) => {
+      if (isFullConsole(c)) {
+        const success = result.success === true;
 
-          const tagStyles = success
-            ? 'font-style: italic; font-weight: lighter; color: gray'
-            : 'font-style: italic; font-weight: lighter; color: red';
+        const tagStyles = success
+          ? 'font-style: italic; font-weight: lighter; color: gray'
+          : 'font-style: italic; font-weight: lighter; color: red';
 
-          c.groupCollapsed(
-            '%cresult %c' +
-              result.pluginId +
-              '.' +
-              result.methodName +
-              ' (#' +
-              result.callbackId +
-              ')',
-            tagStyles,
-            'font-style: italic; font-weight: bold; color: #444',
-          );
-          if (result.success === false) {
-            c.error(result.error);
-          } else {
-            c.dir(result.data);
-          }
-          c.groupEnd();
+        c.groupCollapsed(
+          '%cresult %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')',
+          tagStyles,
+          'font-style: italic; font-weight: bold; color: #444',
+        );
+        if (result.success === false) {
+          c.error(result.error);
         } else {
-          if (result.success === false) {
-            c.error('LOG FROM NATIVE', result.error);
-          } else {
-            c.log('LOG FROM NATIVE', result.data);
-          }
+          c.dir(result.data);
         }
-      };
-
-    const createLogToNative =
-      (c: Partial<Console>) => (call: MessageCallData) => {
-        if (isFullConsole(c)) {
-          c.groupCollapsed(
-            '%cnative %c' +
-              call.pluginId +
-              '.' +
-              call.methodName +
-              ' (#' +
-              call.callbackId +
-              ')',
-            'font-weight: lighter; color: gray',
-            'font-weight: bold; color: #000',
-          );
-          c.dir(call);
-          c.groupEnd();
+        c.groupEnd();
+      } else {
+        if (result.success === false) {
+          c.error('LOG FROM NATIVE', result.error);
         } else {
-          c.log('LOG TO NATIVE: ', call);
+          c.log('LOG FROM NATIVE', result.data);
         }
-      };
+      }
+    };
+
+    const createLogToNative = (c: Partial<Console>) => (call: MessageCallData) => {
+      if (isFullConsole(c)) {
+        c.groupCollapsed(
+          '%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')',
+          'font-weight: lighter; color: gray',
+          'font-weight: bold; color: #000',
+        );
+        c.dir(call);
+        c.groupEnd();
+      } else {
+        c.log('LOG TO NATIVE: ', call);
+      }
+    };
 
     const isFullConsole = (c: Partial<Console>): c is Console => {
       if (!c) {
         return false;
       }
 
-      return (
-        typeof c.groupCollapsed === 'function' ||
-        typeof c.groupEnd === 'function' ||
-        typeof c.dir === 'function'
-      );
+      return typeof c.groupCollapsed === 'function' || typeof c.groupEnd === 'function' || typeof c.dir === 'function';
     };
 
     const serializeConsoleMessage = (msg: any): string => {
@@ -442,8 +401,7 @@ const initBridge = (w: any): void => {
           doPatchCookies = true;
         }
       } else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
-        const isCookiesEnabled =
-          win.CapacitorCookiesAndroidInterface.isEnabled();
+        const isCookiesEnabled = win.CapacitorCookiesAndroidInterface.isEnabled();
         if (isCookiesEnabled === true) {
           doPatchCookies = true;
         }
@@ -462,9 +420,7 @@ const initBridge = (w: any): void => {
 
               const res = prompt(JSON.stringify(payload));
               return res;
-            } else if (
-              typeof win.CapacitorCookiesAndroidInterface !== 'undefined'
-            ) {
+            } else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
               // return original document.cookie since Android does not support filtering of `httpOnly` cookies
               return win.CapacitorCookiesDescriptor?.get?.call(document) ?? '';
             }
@@ -473,9 +429,7 @@ const initBridge = (w: any): void => {
             const cookiePairs = val.split(';');
             const domainSection = val.toLowerCase().split('domain=')[1];
             const domain =
-              cookiePairs.length > 1 &&
-              domainSection != null &&
-              domainSection.length > 0
+              cookiePairs.length > 1 && domainSection != null && domainSection.length > 0
                 ? domainSection.split(';')[0].trim()
                 : '';
 
@@ -490,9 +444,7 @@ const initBridge = (w: any): void => {
               };
 
               prompt(JSON.stringify(payload));
-            } else if (
-              typeof win.CapacitorCookiesAndroidInterface !== 'undefined'
-            ) {
+            } else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
               win.CapacitorCookiesAndroidInterface.setCookie(domain, val);
             }
           },
@@ -506,8 +458,7 @@ const initBridge = (w: any): void => {
         abort: window.XMLHttpRequest.prototype.abort,
         constructor: window.XMLHttpRequest.prototype.constructor,
         fullObject: window.XMLHttpRequest,
-        getAllResponseHeaders:
-          window.XMLHttpRequest.prototype.getAllResponseHeaders,
+        getAllResponseHeaders: window.XMLHttpRequest.prototype.getAllResponseHeaders,
         getResponseHeader: window.XMLHttpRequest.prototype.getResponseHeader,
         open: window.XMLHttpRequest.prototype.open,
         prototype: window.XMLHttpRequest.prototype,
@@ -539,10 +490,7 @@ const initBridge = (w: any): void => {
 
       if (doPatchHttp) {
         // fetch patch
-        window.fetch = async (
-          resource: RequestInfo | URL,
-          options?: RequestInit,
-        ) => {
+        window.fetch = async (resource: RequestInfo | URL, options?: RequestInit) => {
           const request = new Request(resource, options);
           if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
             return win.CapacitorWebFetch(resource, options);
@@ -555,15 +503,9 @@ const initBridge = (w: any): void => {
             method.toLocaleUpperCase() === 'TRACE'
           ) {
             if (typeof resource === 'string') {
-              return await win.CapacitorWebFetch(
-                createProxyUrl(resource, win),
-                options,
-              );
+              return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
             } else if (resource instanceof Request) {
-              const modifiedRequest = new Request(
-                createProxyUrl(resource.url, win),
-                resource,
-              );
+              const modifiedRequest = new Request(createProxyUrl(resource.url, win), resource);
               return await win.CapacitorWebFetch(modifiedRequest, options);
             }
           }
@@ -583,24 +525,18 @@ const initBridge = (w: any): void => {
               optionHeaders['Content-Type'] || optionHeaders['content-type'],
             );
 
-            const nativeResponse: HttpResponse = await cap.nativePromise(
-              'CapacitorHttp',
-              'request',
-              {
-                url: request.url,
-                method: method,
-                data: requestData,
-                dataType: type,
-                headers: {
-                  ...headers,
-                  ...optionHeaders,
-                },
+            const nativeResponse: HttpResponse = await cap.nativePromise('CapacitorHttp', 'request', {
+              url: request.url,
+              method: method,
+              data: requestData,
+              dataType: type,
+              headers: {
+                ...headers,
+                ...optionHeaders,
               },
-            );
+            });
 
-            const contentType =
-              nativeResponse.headers['Content-Type'] ||
-              nativeResponse.headers['content-type'];
+            const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
             let data = contentType?.startsWith('application/json')
               ? JSON.stringify(nativeResponse.data)
               : nativeResponse.data;
@@ -654,8 +590,7 @@ const initBridge = (w: any): void => {
           const prototype = win.CapacitorWebXMLHttpRequest.prototype;
 
           const isProgressEventAvailable = () =>
-            typeof ProgressEvent !== 'undefined' &&
-            ProgressEvent.prototype instanceof Event;
+            typeof ProgressEvent !== 'undefined' && ProgressEvent.prototype instanceof Event;
 
           // XHR patch abort
           prototype.abort = function () {
@@ -682,20 +617,12 @@ const initBridge = (w: any): void => {
               this._method === 'TRACE'
             ) {
               if (isRelativeOrProxyUrl(url)) {
-                return win.CapacitorWebXMLHttpRequest.open.call(
-                  this,
-                  method,
-                  url,
-                );
+                return win.CapacitorWebXMLHttpRequest.open.call(this, method, url);
               }
 
               this._url = createProxyUrl(this._url, win);
 
-              return win.CapacitorWebXMLHttpRequest.open.call(
-                this,
-                method,
-                this._url,
-              );
+              return win.CapacitorWebXMLHttpRequest.open.call(this, method, this._url);
             }
             Object.defineProperties(this, {
               readyState: {
@@ -717,16 +644,9 @@ const initBridge = (w: any): void => {
           };
 
           // XHR patch set request header
-          prototype.setRequestHeader = function (
-            header: string,
-            value: string,
-          ) {
+          prototype.setRequestHeader = function (header: string, value: string) {
             if (isRelativeOrProxyUrl(this._url)) {
-              return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(
-                this,
-                header,
-                value,
-              );
+              return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(this, header, value);
             }
             this._headers[header] = value;
           };
@@ -737,9 +657,7 @@ const initBridge = (w: any): void => {
               return win.CapacitorWebXMLHttpRequest.send.call(this, body);
             }
 
-            const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${
-              this._url
-            }`;
+            const tag = `CapacitorHttp XMLHttpRequest ${Date.now()} ${this._url}`;
             console.time(tag);
 
             try {
@@ -766,9 +684,7 @@ const initBridge = (w: any): void => {
 
               convertBody(body).then(({ data, type, headers }) => {
                 const otherHeaders =
-                  this._headers != null && Object.keys(this._headers).length > 0
-                    ? this._headers
-                    : undefined;
+                  this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined;
 
                 // intercept request & pass to the bridge
                 cap
@@ -797,10 +713,7 @@ const initBridge = (w: any): void => {
                       }
                       this._headers = nativeResponse.headers;
                       this.status = nativeResponse.status;
-                      if (
-                        this.responseType === '' ||
-                        this.responseType === 'text'
-                      ) {
+                      if (this.responseType === '' || this.responseType === 'text') {
                         this.response =
                           typeof nativeResponse.data !== 'string'
                             ? JSON.stringify(nativeResponse.data)
@@ -809,8 +722,7 @@ const initBridge = (w: any): void => {
                         this.response = nativeResponse.data;
                       }
                       this.responseText = (
-                        nativeResponse.headers['Content-Type'] ||
-                        nativeResponse.headers['content-type']
+                        nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type']
                       )?.startsWith('application/json')
                         ? JSON.stringify(nativeResponse.data)
                         : nativeResponse.data;
@@ -873,9 +785,7 @@ const initBridge = (w: any): void => {
           // XHR patch getAllResponseHeaders
           prototype.getAllResponseHeaders = function () {
             if (isRelativeOrProxyUrl(this._url)) {
-              return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(
-                this,
-              );
+              return win.CapacitorWebXMLHttpRequest.getAllResponseHeaders.call(this);
             }
 
             let returnString = '';
@@ -890,10 +800,7 @@ const initBridge = (w: any): void => {
           // XHR patch getResponseHeader
           prototype.getResponseHeader = function (name: string) {
             if (isRelativeOrProxyUrl(this._url)) {
-              return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(
-                this,
-                name,
-              );
+              return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
             }
             return this._headers[name];
           };
@@ -902,10 +809,7 @@ const initBridge = (w: any): void => {
           return xhr;
         } as unknown as PatchedXMLHttpRequestConstructor;
 
-        Object.assign(
-          window.XMLHttpRequest,
-          win.CapacitorWebXMLHttpRequest.fullObject,
-        );
+        Object.assign(window.XMLHttpRequest, win.CapacitorWebXMLHttpRequest.fullObject);
       }
     }
 
@@ -950,7 +854,7 @@ const initBridge = (w: any): void => {
     cap.logToNative = createLogToNative(win.console);
     cap.logFromNative = createLogFromNative(win.console);
 
-    cap.handleError = err => win.console.error(err);
+    cap.handleError = (err) => win.console.error(err);
 
     win.Capacitor = cap;
   };
@@ -961,11 +865,9 @@ const initBridge = (w: any): void => {
     // keep a collection of callbacks for native response data
     const callbacks = new Map();
 
-    const webviewServerUrl =
-      typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
+    const webviewServerUrl = typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
     cap.getServerUrl = () => webviewServerUrl;
-    cap.convertFileSrc = filePath =>
-      convertFileSrcServerUrl(webviewServerUrl, filePath);
+    cap.convertFileSrc = (filePath) => convertFileSrcServerUrl(webviewServerUrl, filePath);
 
     // Counter of callback ids, randomized to avoid
     // any issues during reloads if a call comes back with
@@ -978,14 +880,13 @@ const initBridge = (w: any): void => {
     const getPlatform = () => getPlatformId(win);
 
     cap.getPlatform = getPlatform;
-    cap.isPluginAvailable = name =>
-      Object.prototype.hasOwnProperty.call(cap.Plugins, name);
+    cap.isPluginAvailable = (name) => Object.prototype.hasOwnProperty.call(cap.Plugins, name);
     cap.isNativePlatform = isNativePlatform;
 
     // create the postToNative() fn if needed
     if (getPlatformId(win) === 'android') {
       // android platform
-      postToNative = data => {
+      postToNative = (data) => {
         try {
           win.androidBridge.postMessage(JSON.stringify(data));
         } catch (e) {
@@ -994,7 +895,7 @@ const initBridge = (w: any): void => {
       };
     } else if (getPlatformId(win) === 'ios') {
       // ios platform
-      postToNative = data => {
+      postToNative = (data) => {
         try {
           data.type = data.type ? data.type : 'message';
           win.webkit.messageHandlers.bridge.postMessage(data);
@@ -1047,8 +948,7 @@ const initBridge = (w: any): void => {
 
           if (
             storedCallback &&
-            (typeof storedCallback.callback === 'function' ||
-              typeof storedCallback.resolve === 'function')
+            (typeof storedCallback.callback === 'function' || typeof storedCallback.resolve === 'function')
           ) {
             // store the call for later lookup
             callbackId = String(++callbackIdCount);
@@ -1089,7 +989,7 @@ const initBridge = (w: any): void => {
     /**
      * Process a response from the native layer.
      */
-    cap.fromNative = result => {
+    cap.fromNative = (result) => {
       returnResult(result);
     };
 
@@ -1153,9 +1053,7 @@ const initBridge = (w: any): void => {
 
     cap.nativeCallback = (pluginName, methodName, options, callback) => {
       if (typeof options === 'function') {
-        console.warn(
-          `Using a callback as the 'options' parameter of 'nativeCallback()' is deprecated.`,
-        );
+        console.warn(`Using a callback as the 'options' parameter of 'nativeCallback()' is deprecated.`);
 
         callback = options as any;
         options = null;
@@ -1192,12 +1090,12 @@ initBridge(
   typeof globalThis !== 'undefined'
     ? (globalThis as WindowCapacitor)
     : typeof self !== 'undefined'
-    ? (self as WindowCapacitor)
-    : typeof window !== 'undefined'
-    ? (window as WindowCapacitor)
-    : typeof global !== 'undefined'
-    ? (global as WindowCapacitor)
-    : ({} as WindowCapacitor),
+      ? (self as WindowCapacitor)
+      : typeof window !== 'undefined'
+        ? (window as WindowCapacitor)
+        : typeof global !== 'undefined'
+          ? (global as WindowCapacitor)
+          : ({} as WindowCapacitor),
 );
 
 // Export only for tests
