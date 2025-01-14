@@ -172,6 +172,11 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
       }
 
       if (allDependencies['@capacitor/android'] && existsSync(config.android.platformDirAbs)) {
+        // AndroidManifest.xml add navigation"
+        await runTask(`Migrating AndroidManifest.xml by adding navigation to Activity configChanges.`, () => {
+          return updateAndroidManifest(join(config.android.srcMainDirAbs, 'AndroidManifest.xml'));
+        });
+
         const gradleWrapperVersion = getGradleWrapperVersion(
           join(config.android.platformDirAbs, 'gradle', 'wrapper', 'gradle-wrapper.properties'),
         );
@@ -594,6 +599,23 @@ function setAllStringIn(data: string, start: string, end: string, replacement: s
   return result;
 }
 
+async function updateAndroidManifest(filename: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+
+  if (txt.includes('navigation')) {
+    return; // Probably already updated
+  }
+  const replaced = txt.replace(
+    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"',
+    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"',
+  );
+
+  writeFileSync(filename, replaced, 'utf-8');
+}
+
 export async function patchOldCapacitorPlugins(config: Config): Promise<void[]> {
   const allPlugins = await getPlugins(config, 'android');
   const androidPlugins = await getAndroidPlugins(allPlugins);
@@ -627,29 +649,4 @@ export async function patchOldCapacitorPlugins(config: Config): Promise<void[]> 
       }
     }),
   );
-}
-
-async function removeKey(filename: string, key: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  let lines = txt.split('\n');
-  let removed = false;
-  let removing = false;
-  lines = lines.filter((line) => {
-    if (removing && line.includes('</string>')) {
-      removing = false;
-      return false;
-    }
-    if (line.includes(`<key>${key}</key`)) {
-      removing = true;
-      removed = true;
-    }
-    return !removing;
-  });
-
-  if (removed) {
-    writeFileSync(filename, lines.join('\n'), 'utf-8');
-  }
 }
