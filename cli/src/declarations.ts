@@ -488,6 +488,13 @@ export interface CapacitorConfig {
        */
       signingStyle?: 'automatic' | 'manual';
       /**
+       * The method used by xcodebuild to export the archive
+       *
+       * @since 7.0.0
+       * @default 'debugging'
+       */
+      exportMethod?: string;
+      /**
        * A certificate name, SHA-1 hash, or automatic selector to use for signing for iOS builds.
        *
        * @since 7.0.0

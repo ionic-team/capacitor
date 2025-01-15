@@ -268,6 +268,7 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
   const webDirAbs = lazy(() => determineIOSWebDirAbs(nativeProjectDirAbs, nativeTargetDirAbs, nativeXcodeProjDirAbs));
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
   const buildOptions = {
+    xcodeExportMethod: extConfig.ios?.buildOptions?.exportMethod,
     xcodeSigningStyle: extConfig.ios?.buildOptions?.signingStyle,
     signingCertificate: extConfig.ios?.buildOptions?.signingCertificate,
     provisioningProfile: extConfig.ios?.buildOptions?.provisioningProfile,
