@@ -5,7 +5,7 @@ import { rimraf } from 'rimraf';
 import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { logSuccess } from '../log';
-import type { BuildCommandOptions } from '../tasks/build';
+import { ExportMethod, type BuildCommandOptions } from '../tasks/build';
 import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
@@ -65,7 +65,7 @@ export async function buildiOS(config: Config, buildOptions: BuildCommandOptions
 <plist version="1.0">
 <dict>
 <key>method</key>
-<string>app-store-connect</string>
+<string>${buildOptions.xcodeExportMethod ?? ExportMethod.Debugging}</string>
 <key>signingStyle</key>
 <string>${buildOptions.xcodeSigningType}</string>
 ${buildOptions.xcodeSigningType == 'manual' ? manualSigningContents : ''}

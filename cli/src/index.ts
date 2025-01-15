@@ -149,6 +149,20 @@ export function runProgram(config: Config): void {
     )
     .addOption(
       new Option(
+        '--xcode-export-method <xcodeExportMethod>',
+        'Describes how xcodebuild should export the archive (default:  debugging)',
+      ).choices([
+        'app-store-connect',
+        'release-testing',
+        'enterprise',
+        'debugging',
+        'developer-id',
+        'mac-application',
+        'validation',
+      ]),
+    )
+    .addOption(
+      new Option(
         '--xcode-signing-style <xcodeSigningStyle>',
         'The iOS signing style to use when building the app for distribution (default: automatic)',
       ).choices(['automatic', 'manual']),
@@ -181,6 +195,7 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingType,
               configuration,
+              xcodeExportMethod,
               xcodeSigningStyle,
               xcodeSigningCertificate,
               xcodeProvisioningProfile,
@@ -197,6 +212,7 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingtype: signingType,
               configuration,
+              xcodeExportMethod,
               xcodeSigningType: xcodeSigningStyle,
               xcodeSigningCertificate,
               xcodeProvisioningProfile,

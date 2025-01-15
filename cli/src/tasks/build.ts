@@ -4,6 +4,16 @@ import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { buildiOS } from '../ios/build';
 
+export enum ExportMethod {
+  AppStoreConnect = 'app-store-connect',
+  ReleaseTesting = 'release-testing',
+  Enterprise = 'enterprise',
+  Debugging = 'debugging',
+  DeveloperID = 'developer-id',
+  MacApplication = 'mac-application',
+  Validation = 'validation',
+}
+
 export interface BuildCommandOptions {
   scheme?: string;
   flavor?: string;
@@ -14,6 +24,7 @@ export interface BuildCommandOptions {
   androidreleasetype?: 'AAB' | 'APK';
   signingtype?: 'apksigner' | 'jarsigner';
   configuration: string;
+  xcodeExportMethod?: ExportMethod;
   xcodeSigningType?: 'automatic' | 'manual';
   xcodeSigningCertificate?: string;
   xcodeProvisioningProfile?: string;
@@ -45,6 +56,7 @@ export async function buildCommand(
     androidreleasetype: buildOptions.androidreleasetype || config.android.buildOptions.releaseType || 'AAB',
     signingtype: buildOptions.signingtype || config.android.buildOptions.signingType || 'jarsigner',
     configuration: buildOptions.configuration || 'Release',
+    xcodeExportMethod: buildOptions.xcodeExportMethod || ExportMethod.Debugging,
     xcodeSigningType: buildOptions.xcodeSigningType || config.ios.buildOptions.xcodeSigningStyle || 'automatic',
     xcodeSigningCertificate: buildOptions.xcodeSigningCertificate || config.ios.buildOptions.signingCertificate,
     xcodeProvisioningProfile: buildOptions.xcodeProvisioningProfile || config.ios.buildOptions.provisioningProfile,
