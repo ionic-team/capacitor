@@ -44,11 +44,11 @@ export async function buildiOS(config: Config, buildOptions: BuildCommandOptions
     'archive',
   ];
 
-  if (buildOptions.xcodeSigningType == 'manual') {
-    if (buildOptions.xcodeTeamId) {
-      buildArgs.push(`DEVELOPMENT_TEAM=${buildOptions.xcodeTeamId}`);
-    }
+  if (buildOptions.xcodeTeamId) {
+    buildArgs.push(`DEVELOPMENT_TEAM=${buildOptions.xcodeTeamId}`);
+  }
 
+  if (buildOptions.xcodeSigningType == 'manual') {
     buildArgs.push(`PROVISIONING_PROFILE_SPECIFIER=${buildOptions.xcodeProvisioningProfile}`);
   }
 
