@@ -101,6 +101,16 @@ export interface AndroidConfig extends PlatformConfig {
   };
 }
 
+export enum XcodeExportMethod {
+  AppStoreConnect = 'app-store-connect',
+  ReleaseTesting = 'release-testing',
+  Enterprise = 'enterprise',
+  Debugging = 'debugging',
+  DeveloperID = 'developer-id',
+  MacApplication = 'mac-application',
+  Validation = 'validation',
+}
+
 export interface IOSConfig extends PlatformConfig {
   readonly cordovaPluginsDir: string;
   readonly cordovaPluginsDirAbs: string;
@@ -118,6 +128,8 @@ export interface IOSConfig extends PlatformConfig {
   readonly nativeXcodeWorkspaceDir: Promise<string>;
   readonly nativeXcodeWorkspaceDirAbs: Promise<string>;
   readonly buildOptions: {
+    teamId?: string;
+    exportMethod?: XcodeExportMethod;
     xcodeSigningStyle?: 'automatic' | 'manual';
     signingCertificate?: string;
     provisioningProfile?: string;

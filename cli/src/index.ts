@@ -148,6 +148,9 @@ export function runProgram(config: Config): void {
       ]),
     )
     .addOption(
+      new Option('--xcode-team-id <xcodeTeamID>', 'The Developer team to use for building and exporting the archive'),
+    )
+    .addOption(
       new Option(
         '--xcode-export-method <xcodeExportMethod>',
         'Describes how xcodebuild should export the archive (default:  debugging)',
@@ -195,6 +198,7 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingType,
               configuration,
+              xcodeTeamId,
               xcodeExportMethod,
               xcodeSigningStyle,
               xcodeSigningCertificate,
@@ -212,6 +216,7 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingtype: signingType,
               configuration,
+              xcodeTeamId,
               xcodeExportMethod,
               xcodeSigningType: xcodeSigningStyle,
               xcodeSigningCertificate,
