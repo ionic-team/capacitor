@@ -1,6 +1,7 @@
 import { buildAndroid } from '../android/build';
 import { selectPlatforms, promptForPlatform } from '../common';
-import { Config, XcodeExportMethod } from '../definitions';
+import type { Config } from '../definitions';
+import { XcodeExportMethod } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { buildiOS } from '../ios/build';
 
