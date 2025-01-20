@@ -153,7 +153,7 @@ export function runProgram(config: Config): void {
     .addOption(
       new Option(
         '--xcode-export-method <xcodeExportMethod>',
-        'Describes how xcodebuild should export the archive (default:  debugging)',
+        'Describes how xcodebuild should export the archive (default:  app-store-connect)',
       ).choices([
         'app-store-connect',
         'release-testing',

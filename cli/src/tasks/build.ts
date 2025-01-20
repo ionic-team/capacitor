@@ -50,7 +50,7 @@ export async function buildCommand(
     configuration: buildOptions.configuration || 'Release',
     xcodeTeamId: buildOptions.xcodeTeamId || config.ios.buildOptions.teamId,
     xcodeExportMethod:
-      buildOptions.xcodeExportMethod || config.ios.buildOptions.exportMethod || XcodeExportMethod.Debugging,
+      buildOptions.xcodeExportMethod || config.ios.buildOptions.exportMethod || XcodeExportMethod.AppStoreConnect,
     xcodeSigningType: buildOptions.xcodeSigningType || config.ios.buildOptions.xcodeSigningStyle || 'automatic',
     xcodeSigningCertificate: buildOptions.xcodeSigningCertificate || config.ios.buildOptions.signingCertificate,
     xcodeProvisioningProfile: buildOptions.xcodeProvisioningProfile || config.ios.buildOptions.provisioningProfile,
