@@ -41,7 +41,12 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
 
         obj.keys.forEach { (key: String) in
-            components.queryItems?.append(URLQueryItem(name: key, value: "\(obj[key] ?? "")"))
+            if let encodedValue = "\(obj[key] ?? "")".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                let queryItem = URLQueryItem(name: key, value: encodedValue)
+                components.queryItems?.append(queryItem)
+            } else {
+                print("Encoding failed")
+            }
         }
 
         if components.query != nil {
