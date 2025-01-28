@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
 import { join, relative, resolve } from 'path';
 
+import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
@@ -28,14 +29,16 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
     logger.warn('SPM Support is still experimental');
-    const textToWrite = generatePackageText(config, plugins);
+    const textToWrite = await generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
     logger.error(`Unable to write to ${packageSwiftFile}. Verify it is not already open. \n Error: ${err}`);
   }
 }
 
-function generatePackageText(config: Config, plugins: Plugin[]): string {
+async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
+  const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
+
   const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
   const searchString = 'IPHONEOS_DEPLOYMENT_TARGET = ';
   const iosVersion = pbx.substring(
@@ -56,7 +59,7 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", branch: "main")`;
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "${iosPlatformVersion}")`;
 
   for (const plugin of plugins) {
     const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
