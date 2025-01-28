@@ -14,11 +14,11 @@ public typealias JSResultBody = [String: Any]
 /**
  * A call originating from JavaScript land
  */
-internal struct JSCall {
-    let options: [String: Any]
-    let pluginId: String
-    let method: String
-    let callbackId: String
+public struct JSCall {
+    public let options: [String: Any]
+    public let pluginId: String
+    public let method: String
+    public let callbackId: String
 }
 
 internal protocol JSResultProtocol {
