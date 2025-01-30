@@ -122,6 +122,7 @@ public class Bridge {
     private Set<String> allowedOriginRules = new HashSet<String>();
     private ArrayList<String> authorities = new ArrayList<>();
     private ArrayList<String> miscJSFileInjections = new ArrayList<String>();
+    private Boolean canInjectJS = true;
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
@@ -1021,6 +1022,7 @@ public class Bridge {
             String miscJS = JSExport.getMiscFileJS(miscJSFileInjections, context);
 
             miscJSFileInjections = new ArrayList<>();
+            canInjectJS = false;
 
             return new JSInjector(globalJS, bridgeJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS, miscJS);
         } catch (Exception ex) {
@@ -1035,7 +1037,9 @@ public class Bridge {
      * @param context
      */
     public void injectJSFile(String path) {
-        miscJSFileInjections.add(path);
+        if (canInjectJS) {
+            miscJSFileInjections.add(path);
+        }
     }
 
     /**
