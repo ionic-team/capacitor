@@ -26,7 +26,7 @@ public class JSExport {
 
         for (String path : paths) {
             try {
-                String fileContent = readFileFromAssets(context.getAssets(), path);
+                String fileContent = readFileFromAssets(context.getAssets(), "public/" + path);
                 lines.add(fileContent);
             } catch(IOException ex) {
                 Logger.error("Unable to read public/" + path);
