@@ -121,6 +121,7 @@ public class Bridge {
     private HostMask appAllowNavigationMask;
     private Set<String> allowedOriginRules = new HashSet<String>();
     private ArrayList<String> authorities = new ArrayList<>();
+    private ArrayList<String> miscJSFileInjections = new ArrayList<String>();
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
@@ -1017,12 +1018,24 @@ public class Bridge {
             String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
             String cordovaPluginsFileJS = JSExport.getCordovaPluginsFileJS(context);
             String localUrlJS = "window.WEBVIEW_SERVER_URL = '" + localUrl + "';";
+            String miscJS = JSExport.getMiscFileJS(miscJSFileInjections, context);
 
-            return new JSInjector(globalJS, bridgeJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
+            miscJSFileInjections = new ArrayList<>();
+
+            return new JSInjector(globalJS, bridgeJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS, miscJS);
         } catch (Exception ex) {
             Logger.error("Unable to export Capacitor JS. App will not function!", ex);
         }
         return null;
+    }
+
+    /**
+     * Inject JS source code from files in the assets folder
+     * @param path
+     * @param context
+     */
+    public void injectJSFile(String path, Context context) {
+        miscJSFileInjections.add(path);
     }
 
     /**
