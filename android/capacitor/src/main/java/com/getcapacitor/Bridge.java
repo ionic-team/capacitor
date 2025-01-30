@@ -1034,7 +1034,7 @@ public class Bridge {
      * @param path
      * @param context
      */
-    public void injectJSFile(String path, Context context) {
+    public void injectJSFile(String path) {
         miscJSFileInjections.add(path);
     }
 
