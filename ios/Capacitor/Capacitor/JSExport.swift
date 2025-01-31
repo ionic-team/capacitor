@@ -52,6 +52,10 @@ internal class JSExport {
             throw CapacitorBridgeError.errorExportingCoreJS
         }
     }
+    
+    static func exportMiscFileJS(paths: [String], userContentController: WKUserContentController) {
+        // TODO
+    }
 
     /**
      Export the JS required to implement the given plugin.
