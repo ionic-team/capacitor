@@ -21,6 +21,21 @@ public class JSExport {
         return "window.Capacitor = { DEBUG: " + isDebug + ", isLoggingEnabled: " + loggingEnabled + ", Plugins: {} };";
     }
 
+    public static String getMiscFileJS(ArrayList<String> paths, Context context) {
+        List<String> lines = new ArrayList<>();
+
+        for (String path : paths) {
+            try {
+                String fileContent = readFileFromAssets(context.getAssets(), "public/" + path);
+                lines.add(fileContent);
+            } catch (IOException ex) {
+                Logger.error("Unable to read public/" + path);
+            }
+        }
+
+        return TextUtils.join("\n", lines);
+    }
+
     public static String getCordovaJS(Context context) {
         String fileContent = "";
         try {

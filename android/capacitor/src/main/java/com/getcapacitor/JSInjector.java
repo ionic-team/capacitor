@@ -20,6 +20,7 @@ class JSInjector {
     private String cordovaPluginsJS;
     private String cordovaPluginsFileJS;
     private String localUrlJS;
+    private String miscJS;
 
     public JSInjector(
         String globalJS,
@@ -28,7 +29,8 @@ class JSInjector {
         String cordovaJS,
         String cordovaPluginsJS,
         String cordovaPluginsFileJS,
-        String localUrlJS
+        String localUrlJS,
+        String miscJS
     ) {
         this.globalJS = globalJS;
         this.bridgeJS = bridgeJS;
@@ -37,6 +39,7 @@ class JSInjector {
         this.cordovaPluginsJS = cordovaPluginsJS;
         this.cordovaPluginsFileJS = cordovaPluginsFileJS;
         this.localUrlJS = localUrlJS;
+        this.miscJS = miscJS;
     }
 
     /**
@@ -58,7 +61,9 @@ class JSInjector {
             "\n\n" +
             cordovaPluginsFileJS +
             "\n\n" +
-            cordovaPluginsJS
+            cordovaPluginsJS +
+            "\n\n" +
+            miscJS
         );
     }
 

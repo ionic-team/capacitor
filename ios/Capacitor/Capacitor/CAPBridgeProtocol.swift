@@ -59,6 +59,8 @@ import WebKit
     func eval(js: String)
     // swiftlint:enable identifier_name
 
+    func injectJSFile(path: String)
+
     func triggerJSEvent(eventName: String, target: String)
     func triggerJSEvent(eventName: String, target: String, data: String)
 
