@@ -54,7 +54,17 @@ internal class JSExport {
     }
     
     static func exportMiscFileJS(paths: [String], userContentController: WKUserContentController) {
-        // TODO
+        for path in paths {
+            if let miscJSFilePath = Bundle.main.url(forResource: "public/\(path.replacingOccurrences(of: ".js", with: ""))", withExtension: "js") {
+                do {
+                    try self.injectFile(fileURL: miscJSFilePath, userContentController: userContentController)
+                } catch {
+                    CAPLog.print("WARNING: Unable to inject js from path \(miscJSFilePath)")
+                }
+            } else {
+                CAPLog.print("WARNING: Unable to inject js from path \(path)")
+            }
+        }
     }
 
     /**
