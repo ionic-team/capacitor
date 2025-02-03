@@ -28,7 +28,7 @@ public class JSExport {
             try {
                 String fileContent = readFileFromAssets(context.getAssets(), "public/" + path);
                 lines.add(fileContent);
-            } catch(IOException ex) {
+            } catch (IOException ex) {
                 Logger.error("Unable to read public/" + path);
             }
         }

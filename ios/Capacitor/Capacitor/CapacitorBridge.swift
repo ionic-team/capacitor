@@ -248,7 +248,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             type(of: self).fatalError(error, error)
         }
     }
-    
+
     /**
      Export misc JavaScript to the webview
      */
@@ -610,7 +610,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             injectMiscFiles.append(path)
         }
     }
-    
+
     /**
      Eval JS for a specific plugin.
 

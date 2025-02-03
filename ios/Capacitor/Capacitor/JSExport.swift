@@ -52,7 +52,7 @@ internal class JSExport {
             throw CapacitorBridgeError.errorExportingCoreJS
         }
     }
-    
+
     static func exportMiscFileJS(paths: [String], userContentController: WKUserContentController) {
         for path in paths {
             if let miscJSFilePath = Bundle.main.url(forResource: "public/\(path.replacingOccurrences(of: ".js", with: ""))", withExtension: "js") {

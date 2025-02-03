@@ -58,7 +58,7 @@ import WebKit
     func evalWithPlugin(_ plugin: CAPPlugin, js: String)
     func eval(js: String)
     // swiftlint:enable identifier_name
-    
+
     func injectJSFile(path: String)
 
     func triggerJSEvent(eventName: String, target: String)
