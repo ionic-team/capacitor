@@ -491,7 +491,7 @@ export interface CapacitorConfig {
        * The method used by xcodebuild to export the archive
        *
        * @since 7.0.0
-       * @default 'debugging'
+       * @default 'app-store-connect'
        */
       exportMethod?: string;
       /**

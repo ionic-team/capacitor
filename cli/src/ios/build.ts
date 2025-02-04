@@ -71,7 +71,7 @@ export async function buildiOS(config: Config, buildOptions: BuildCommandOptions
 <plist version="1.0">
 <dict>
 <key>method</key>
-<string>${buildOptions.xcodeExportMethod ?? XcodeExportMethod.Debugging}</string>
+<string>${buildOptions.xcodeExportMethod ?? XcodeExportMethod.AppStoreConnect}</string>
 <key>signingStyle</key>
 <string>${buildOptions.xcodeSigningType}</string>
 ${buildOptions.xcodeSigningType == 'manual' ? manualSigningContents : ''}
