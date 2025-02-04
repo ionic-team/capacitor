@@ -1,11 +1,13 @@
-import type { ReaddirPOptions } from '@ionic/utils-fs';
-import { readFileSync, readdirp, readJSONSync, writeJSONSync } from '@ionic/utils-fs';
+import { readFileSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { resolve } from 'path';
 
 import { getCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
 import type { Plugin } from '../plugin';
 import { getPluginType, PluginType } from '../plugin';
+
+import type { ReaddirPOptions } from './fs';
+import { readdirp } from './fs';
 
 export async function getPluginFiles(plugins: Plugin[]): Promise<string[]> {
   let filenameList: string[] = [];

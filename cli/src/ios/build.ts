@@ -1,6 +1,6 @@
-import { writeFileSync, unlinkSync } from '@ionic/utils-fs';
+import { writeFileSync, unlinkSync } from 'fs-extra';
 import { basename, join } from 'path';
-import rimraf from 'rimraf';
+import { rimraf } from 'rimraf';
 
 import { runTask } from '../common';
 import type { Config } from '../definitions';

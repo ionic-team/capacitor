@@ -1,5 +1,5 @@
-import { pathExists, readFile, readJSON, writeFile, writeJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
+import { pathExists, readFile, readJSON, writeFile, writeJSON } from 'fs-extra';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';

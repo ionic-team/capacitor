@@ -1,4 +1,4 @@
-import { readJSON } from '@ionic/utils-fs';
+import { readJSON } from 'fs-extra';
 
 import { doctorAndroid } from '../android/doctor';
 import c from '../colors';

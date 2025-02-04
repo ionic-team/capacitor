@@ -77,6 +77,14 @@ export interface CapacitorConfig {
    */
   zoomEnabled?: boolean;
 
+  /**
+   * Whether to give the webview initial focus.
+   *
+   * @since 7.0.0
+   * @default true
+   */
+  initialFocus?: boolean;
+
   android?: {
     /**
      * Specify a custom path to the native Android project.
@@ -191,6 +199,8 @@ export interface CapacitorConfig {
     /**
      * Whether to give the webview initial focus.
      *
+     * Overrides global `initialFocus` option.
+     *
      * @since 3.5.1
      * @default true
      */
@@ -278,6 +288,15 @@ export interface CapacitorConfig {
      * @default false
      */
     useLegacyBridge?: boolean;
+
+    /**
+     * Make service worker requests go through Capacitor bridge.
+     * Set it to false to use your own handling.
+     *
+     * @since 7.0.0
+     * @default true
+     */
+    resolveServiceWorkerRequests?: boolean;
   };
 
   ios?: {
@@ -449,6 +468,16 @@ export interface CapacitorConfig {
      * @default false
      */
     webContentsDebuggingEnabled?: boolean;
+
+    /**
+     * Whether to give the webview initial focus.
+     *
+     * Overrides global `initialFocus` option.
+     *
+     * @since 7.0.0
+     * @default true
+     */
+    initialFocus?: boolean;
   };
 
   server?: {
