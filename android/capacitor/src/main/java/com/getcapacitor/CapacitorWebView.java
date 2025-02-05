@@ -15,6 +15,7 @@ public class CapacitorWebView extends WebView {
 
     public CapacitorWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        edgeToEdgeHandler();
     }
 
     public void setBridge(Bridge bridge) {
@@ -49,4 +50,20 @@ public class CapacitorWebView extends WebView {
         }
         return super.dispatchKeyEvent(event);
     }
+
+    private void edgeToEdgeHandler() {
+        ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
+          Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+          MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
+          mlp.leftMargin = insets.left;
+          mlp.bottomMargin = insets.bottom;
+          mlp.rightMargin = insets.right;
+          mlp.topMargin = insets.top;
+          v.setLayoutParams(mlp);
+
+          // Don't pass window insets to children
+          return WindowInsetsCompat.CONSUMED;
+        });
+      }
 }
