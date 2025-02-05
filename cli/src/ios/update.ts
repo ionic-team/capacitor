@@ -1,4 +1,4 @@
-import { copy, remove, pathExists, readFile, realpath, writeFile } from 'fs-extra';
+import { copy, remove, pathExists, readFile, writeFile } from 'fs-extra';
 import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
@@ -73,7 +73,7 @@ export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[],
 
 async function updatePodfile(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {
   const dependenciesContent = await generatePodFile(config, plugins);
-  const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
+  const relativeCapacitoriOSPath = getRelativeCapacitoriOSPath(config);
   const podfilePath = join(config.ios.nativeProjectDirAbs, 'Podfile');
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
   podfileContent = podfileContent.replace(/(def capacitor_pods)[\s\S]+?(\nend)/, `$1${dependenciesContent}$2`);
@@ -110,7 +110,7 @@ async function updatePodfile(config: Config, plugins: Plugin[], deployment: bool
   }
 }
 
-async function getRelativeCapacitoriOSPath(config: Config) {
+function getRelativeCapacitoriOSPath(config: Config) {
   const capacitoriOSPath = resolveNode(config.app.rootDir, '@capacitor/ios', 'package.json');
 
   if (!capacitoriOSPath) {
@@ -120,24 +120,19 @@ async function getRelativeCapacitoriOSPath(config: Config) {
     );
   }
 
-  return convertToUnixPath(relative(config.ios.nativeProjectDirAbs, await realpath(dirname(capacitoriOSPath))));
+  return convertToUnixPath(relative(config.ios.nativeProjectDirAbs, dirname(capacitoriOSPath)));
 }
 
 async function generatePodFile(config: Config, plugins: Plugin[]): Promise<string> {
-  const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
+  const relativeCapacitoriOSPath = getRelativeCapacitoriOSPath(config);
 
-  const capacitorPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Core);
-  const pods = await Promise.all(
-    capacitorPlugins.map(async (p) => {
-      if (!p.ios) {
-        return '';
-      }
-
-      return `  pod '${p.ios.name}', :path => '${convertToUnixPath(
-        relative(config.ios.nativeProjectDirAbs, await realpath(p.rootPath)),
-      )}'\n`;
-    }),
-  );
+  const pods = plugins
+    .filter((p) => getPluginType(p, platform) === PluginType.Core && p.ios)
+    .map((p) =>
+      `  pod '${p.ios.name}', :path => '${convertToUnixPath(
+        relative(config.ios.nativeProjectDirAbs, p.rootPath),
+      )}'\n`
+    );
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
   cordovaPlugins.map(async (p) => {
     const podspecs = getPlatformElement(p, platform, 'podspec');
