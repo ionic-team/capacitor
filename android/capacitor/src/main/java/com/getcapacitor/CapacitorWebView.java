@@ -56,17 +56,17 @@ public class CapacitorWebView extends WebView {
 
     private void edgeToEdgeHandler() {
         ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
-          Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
 
-          MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
-          mlp.leftMargin = insets.left;
-          mlp.bottomMargin = insets.bottom;
-          mlp.rightMargin = insets.right;
-          mlp.topMargin = insets.top;
-          v.setLayoutParams(mlp);
+            MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
+            mlp.leftMargin = insets.left;
+            mlp.bottomMargin = insets.bottom;
+            mlp.rightMargin = insets.right;
+            mlp.topMargin = insets.top;
+            v.setLayoutParams(mlp);
 
-          // Don't pass window insets to children
-          return WindowInsetsCompat.CONSUMED;
+            // Don't pass window insets to children
+            return WindowInsetsCompat.CONSUMED;
         });
-      }
+    }
 }
