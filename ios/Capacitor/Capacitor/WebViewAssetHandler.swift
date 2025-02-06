@@ -58,8 +58,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             }
 
             if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"),
-               let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize,
-               isMediaExtension(pathExtension: url.pathExtension) {
+               let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize {
                 let fileHandle = try FileHandle(forReadingFrom: fileUrl)
                 let parts = rangeString.components(separatedBy: "=")
                 let streamParts = parts[1].components(separatedBy: "-")
