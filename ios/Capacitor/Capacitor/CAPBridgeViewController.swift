@@ -27,7 +27,19 @@ import Cordova
         return false
     }()
 
+    // TODO: Remove in Capacitor 8 after moving status bar plugin extensions code
+    @objc func handleViewDidAppear() {
+        if bridge?.config.hasInitialFocus ?? true {
+            self.webView?.becomeFirstResponder()
+        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     override public final func loadView() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.handleViewDidAppear), name: Notification.Name(rawValue: "CapacitorViewDidAppear"), object: nil)
         // load the configuration and set the logging flag
         let configDescriptor = instanceDescriptor()
         let configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)
@@ -64,7 +76,6 @@ import Cordova
 
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
         if bridge?.config.hasInitialFocus ?? true {
             self.webView?.becomeFirstResponder()
         }
