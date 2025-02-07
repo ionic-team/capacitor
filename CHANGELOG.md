@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.1](https://github.com/ionic-team/capacitor/compare/7.0.0...7.0.1) (2025-01-21)
+
+### Bug Fixes
+
+- make migrate use 7.0.0 ([#7837](https://github.com/ionic-team/capacitor/issues/7837)) ([5dc309e](https://github.com/ionic-team/capacitor/commit/5dc309ea8dd7905e9e6236744f29162df80b5ed8))
+- use Capacitor 7 for SPM dependency ([#7835](https://github.com/ionic-team/capacitor/issues/7835)) ([640c3cb](https://github.com/ionic-team/capacitor/commit/640c3cb22a62e4b8fb13cd36031d39307622c60a))
+
+# [7.0.0](https://github.com/ionic-team/capacitor/compare/7.0.0-rc.1...7.0.0) (2025-01-20)
+
+**Note:** Version bump only for package capacitor
+
+# [7.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/7.0.0-rc.0...7.0.0-rc.1) (2025-01-20)
+
+**Note:** Version bump only for package capacitor
+
+# [7.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/7.0.0-beta.0...7.0.0-rc.0) (2024-12-20)
+
+**Note:** Version bump only for package capacitor
+
+# [7.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/7.0.0-alpha.2...7.0.0-beta.0) (2024-12-20)
+
+### Bug Fixes
+
+- **cli:** correct rimraf import ([#7811](https://github.com/ionic-team/capacitor/issues/7811)) ([0891624](https://github.com/ionic-team/capacitor/commit/0891624c46b78a0fd39f617f834d5cdd1f54f5e6))
+- **cli:** update link to telemetry information ([e922e2b](https://github.com/ionic-team/capacitor/commit/e922e2b718f5c6f2e4062cdccdeb92da3321e67d))
+- **ios:** Make Bridge webView first responder ([#7753](https://github.com/ionic-team/capacitor/issues/7753)) ([77e4668](https://github.com/ionic-team/capacitor/commit/77e4668fa8dbb24b4561387e101547f74e37538e))
+
+### Features
+
+- Add global initialFocus configuration ([#7775](https://github.com/ionic-team/capacitor/issues/7775)) ([61d0165](https://github.com/ionic-team/capacitor/commit/61d01653685d8e3594d2d8a6bd870fa9643ba95c))
+
+# [7.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/7.0.0-alpha.1...7.0.0-alpha.2) (2024-11-19)
+
+### Bug Fixes
+
+- **cli:** make Cordova plugins use same default kotlin version as Capacitor ([#7752](https://github.com/ionic-team/capacitor/issues/7752)) ([a4aeb55](https://github.com/ionic-team/capacitor/commit/a4aeb55720ecc83b3870bf32bf9825d6aee4644f))
+
 # [7.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/6.1.2...7.0.0-alpha.1) (2024-10-14)
 
 ### Bug Fixes
@@ -311,6 +348,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **android:** add check for excluded domains before ssl request ([7906d36](https://github.com/ionic-team/capacitor/commit/7906d3616e8bfb2e2c1c81ee123424c06fc4e5ab))
 - **cli:** add apksigner as a build option ([#6442](https://github.com/ionic-team/capacitor/issues/6442)) ([9818a76](https://github.com/ionic-team/capacitor/commit/9818a76ab4ea6660b444354f239344d37c77d3b3))
 - export buildRequestInit function so we can use for downloadFile ([95b0575](https://github.com/ionic-team/capacitor/commit/95b0575e3fbc1b1408aa69b61c58e18bf8882cea)
+
   )
 
 ## [5.0.5](https://github.com/ionic-team/capacitor/compare/5.0.4...5.0.5) (2023-06-09)

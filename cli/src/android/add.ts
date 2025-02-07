@@ -1,4 +1,4 @@
-import { pathExists, writeFile } from '@ionic/utils-fs';
+import { pathExists, writeFile } from 'fs-extra';
 import { homedir } from 'os';
 import { join } from 'path';
 

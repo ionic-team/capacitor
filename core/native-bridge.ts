@@ -281,10 +281,6 @@ const initBridge = (w: any): void => {
       };
     }
 
-    // deprecated in v3, remove from v4
-    cap.platform = cap.getPlatform();
-    cap.isNative = cap.isNativePlatform();
-
     win.Capacitor = cap;
   };
 

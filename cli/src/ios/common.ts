@@ -1,5 +1,5 @@
-import { readFile, writeFile } from '@ionic/utils-fs';
 import { execSync } from 'child_process';
+import { readFile, writeFile } from 'fs-extra';
 import { resolve } from 'path';
 
 import c from '../colors';

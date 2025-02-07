@@ -1,5 +1,5 @@
-import { pathExists, readFile, readJSON, writeFile, writeJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
+import { pathExists, readFile, readJSON, writeFile, writeJSON } from 'fs-extra';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
@@ -267,7 +267,12 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
   const podPath = lazy(() => determineGemfileOrCocoapodPath(rootDir, platformDirAbs, nativeProjectDirAbs));
   const webDirAbs = lazy(() => determineIOSWebDirAbs(nativeProjectDirAbs, nativeTargetDirAbs, nativeXcodeProjDirAbs));
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
-
+  const buildOptions = {
+    xcodeExportMethod: extConfig.ios?.buildOptions?.exportMethod,
+    xcodeSigningStyle: extConfig.ios?.buildOptions?.signingStyle,
+    signingCertificate: extConfig.ios?.buildOptions?.signingCertificate,
+    provisioningProfile: extConfig.ios?.buildOptions?.provisioningProfile,
+  };
   return {
     name,
     minVersion: '14.0',
@@ -287,6 +292,7 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
     webDir: lazy(async () => relative(platformDirAbs, await webDirAbs)),
     webDirAbs,
     podPath,
+    buildOptions,
   };
 }
 

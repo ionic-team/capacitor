@@ -1,4 +1,4 @@
-import { copy, remove, pathExists, readFile, realpath, writeFile } from '@ionic/utils-fs';
+import { copy, remove, pathExists, readFile, realpath, writeFile } from 'fs-extra';
 import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
