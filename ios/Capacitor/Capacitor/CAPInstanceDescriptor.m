@@ -41,6 +41,7 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
     _allowLinkPreviews = YES;
     _handleApplicationNotifications = YES;
     _isWebDebuggable = NO;
+    _hasInitialFocus = YES;
     _contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     _appLocation = location;
     _limitsNavigationsToAppBoundDomains = FALSE;

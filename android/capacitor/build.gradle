@@ -13,7 +13,7 @@ ext {
 
 
 buildscript {
-    ext.kotlin_version = project.hasProperty("kotlin_version") ? rootProject.ext.kotlin_version : '1.9.10'
+    ext.kotlin_version = project.hasProperty("kotlin_version") ? rootProject.ext.kotlin_version : '1.9.25'
     repositories {
         google()
         mavenCentral()
@@ -22,7 +22,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.0'
+        classpath 'com.android.tools.build:gradle:8.7.2'
 
         if (System.getenv("CAP_PUBLISH") == "true") {
             classpath 'io.github.gradle-nexus:publish-plugin:1.3.0'
@@ -64,8 +64,8 @@ android {
         lintConfig file('lint.xml')
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
     publishing {
         singleVariant("release")
