@@ -1,6 +1,8 @@
 package com.getcapacitor;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.inputmethod.BaseInputConnection;
@@ -11,6 +13,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.getcapacitor.android.R;
+
 public class CapacitorWebView extends WebView {
 
     private BaseInputConnection capInputConnection;
@@ -18,7 +22,12 @@ public class CapacitorWebView extends WebView {
 
     public CapacitorWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        edgeToEdgeHandler();
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+          if(!attrs.getAttributeBooleanValue(android.R.attr.windowOptOutEdgeToEdgeEnforcement, false)) {
+              edgeToEdgeHandler();
+          }
+        }
     }
 
     public void setBridge(Bridge bridge) {
