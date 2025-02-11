@@ -20,6 +20,8 @@ public class CapacitorWebView extends WebView {
 
     public CapacitorWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        /*  In Android 15 or above, if you get opted into edge-to-edge layout, fix the margins as expected
+         *  so that navigation bars and status bars will work, otherwise, keep the previous behavior. */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             if (!attrs.getAttributeBooleanValue(android.R.attr.windowOptOutEdgeToEdgeEnforcement, false)) {
                 edgeToEdgeHandler();
