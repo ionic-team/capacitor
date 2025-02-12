@@ -603,9 +603,11 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // MARK: - CAPBridgeProtocol: JavaScript Handling
 
     /**
-     Inject JS via a public path into the WebView before the WebView is loaded.
+    Inject JavaScript from an external file before the WebView loads.
+     
+    `path` is relative to the public folder
      */
-    public func injectJSFile(path: String) {
+    public func injectScriptBeforeLoad(path: String) {
         if canInjectJS {
             injectMiscFiles.append(path)
         }

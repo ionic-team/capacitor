@@ -1032,11 +1032,10 @@ public class Bridge {
     }
 
     /**
-     * Inject JS source code from files in the assets folder
-     * @param path
-     * @param context
+     * Inject JavaScript from an external file before the WebView loads.
+     * @param path relative to public folder
      */
-    public void injectJSFile(String path) {
+    public void injectScriptBeforeLoad(String path) {
         if (canInjectJS) {
             miscJSFileInjections.add(path);
         }
