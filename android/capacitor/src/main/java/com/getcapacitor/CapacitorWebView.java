@@ -19,6 +19,11 @@ public class CapacitorWebView extends WebView {
 
     public CapacitorWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        //TODO: needs to be done in here I think, but I need the bridge...
+        CapConfig config;
+        config = CapConfig.loadDefault(getContext());
+        edgeToEdgeHandler(config);
     }
 
     public void setBridge(Bridge bridge) {
@@ -59,7 +64,7 @@ public class CapacitorWebView extends WebView {
     private void edgeToEdgeHandler(CapConfig config) {
         /*  In Android 15 or above, if you get opted into edge-to-edge layout, fix the margins as expected
          *  so that navigation bars and status bars will work, otherwise, keep the previous behavior. */
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM && !config.shouldAdjustMarginsForEdgeToEdge()) {
+        if (!(Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && config.shouldAdjustMarginsForEdgeToEdge())) {
             return;
         }
         // TODO: check for windowOptOutEdgeToEdgeEnforcement, TBD
