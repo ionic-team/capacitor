@@ -29,6 +29,18 @@ class JSInjector {
         String cordovaJS,
         String cordovaPluginsJS,
         String cordovaPluginsFileJS,
+        String localUrlJS
+    ) {
+        this(globalJS, bridgeJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS, null);
+    }
+
+    public JSInjector(
+        String globalJS,
+        String bridgeJS,
+        String pluginJS,
+        String cordovaJS,
+        String cordovaPluginsJS,
+        String cordovaPluginsFileJS,
         String localUrlJS,
         String miscJS
     ) {
@@ -48,7 +60,7 @@ class JSInjector {
      * @return
      */
     public String getScriptString() {
-        return (
+        String scriptString =
             globalJS +
             "\n\n" +
             localUrlJS +
@@ -61,10 +73,13 @@ class JSInjector {
             "\n\n" +
             cordovaPluginsFileJS +
             "\n\n" +
-            cordovaPluginsJS +
-            "\n\n" +
-            miscJS
-        );
+            cordovaPluginsJS;
+
+        if (miscJS != null) {
+            scriptString += "\n\n" + miscJS;
+        }
+
+        return scriptString;
     }
 
     /**
