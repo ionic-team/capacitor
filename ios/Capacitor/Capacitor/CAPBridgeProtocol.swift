@@ -59,7 +59,7 @@ import WebKit
     func eval(js: String)
     // swiftlint:enable identifier_name
 
-    func injectScriptBeforeLoad(path: String)
+    @objc optional func injectScriptBeforeLoad(path: String)
 
     func triggerJSEvent(eventName: String, target: String)
     func triggerJSEvent(eventName: String, target: String, data: String)
