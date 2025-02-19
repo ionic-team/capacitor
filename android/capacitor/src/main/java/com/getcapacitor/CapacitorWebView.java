@@ -1,6 +1,7 @@
 package com.getcapacitor;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.inputmethod.BaseInputConnection;
@@ -10,6 +11,7 @@ import android.webkit.WebView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import com.getcapacitor.android.R;
 
 public class CapacitorWebView extends WebView {
 
@@ -18,7 +20,13 @@ public class CapacitorWebView extends WebView {
 
     public CapacitorWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        edgeToEdgeHandler();
+        /*  In Android 15 or above, if you get opted into edge-to-edge layout, fix the margins as expected
+         *  so that navigation bars and status bars will work, otherwise, keep the previous behavior. */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            if (!attrs.getAttributeBooleanValue(android.R.attr.windowOptOutEdgeToEdgeEnforcement, false)) {
+                edgeToEdgeHandler();
+            }
+        }
     }
 
     public void setBridge(Bridge bridge) {
