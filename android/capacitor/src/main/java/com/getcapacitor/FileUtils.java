@@ -291,7 +291,7 @@ public class FileUtils {
         return null;
     }
 
-    private String sanitizeFilename(String displayName) {
+    private static String sanitizeFilename(String displayName) {
         String[] badCharacters = new String[] { "..", "/" };
         String[] segments = displayName.split("/");
         String fileName = segments[segments.length - 1];
