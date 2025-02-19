@@ -11,7 +11,6 @@ import android.webkit.WebView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import com.getcapacitor.android.R;
 
 public class CapacitorWebView extends WebView {
 
@@ -20,13 +19,6 @@ public class CapacitorWebView extends WebView {
 
     public CapacitorWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        /*  In Android 15 or above, if you get opted into edge-to-edge layout, fix the margins as expected
-         *  so that navigation bars and status bars will work, otherwise, keep the previous behavior. */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            if (!attrs.getAttributeBooleanValue(android.R.attr.windowOptOutEdgeToEdgeEnforcement, false)) {
-                edgeToEdgeHandler();
-            }
-        }
     }
 
     public void setBridge(Bridge bridge) {
@@ -41,6 +33,8 @@ public class CapacitorWebView extends WebView {
         } else {
             config = CapConfig.loadDefault(getContext());
         }
+
+        edgeToEdgeHandler(config);
 
         boolean captureInput = config.isInputCaptured();
         if (captureInput) {
@@ -62,10 +56,16 @@ public class CapacitorWebView extends WebView {
         return super.dispatchKeyEvent(event);
     }
 
-    private void edgeToEdgeHandler() {
+    private void edgeToEdgeHandler(CapConfig config) {
+        /*  In Android 15 or above, if you get opted into edge-to-edge layout, fix the margins as expected
+         *  so that navigation bars and status bars will work, otherwise, keep the previous behavior. */
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM && !config.shouldAdjustMarginsForEdgeToEdge()) {
+            return;
+        }
+        // TODO: check for windowOptOutEdgeToEdgeEnforcement, TBD
+
         ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-
             MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
             mlp.leftMargin = insets.left;
             mlp.bottomMargin = insets.bottom;

@@ -297,6 +297,14 @@ export interface CapacitorConfig {
      * @default true
      */
     resolveServiceWorkerRequests?: boolean;
+
+    /**
+     * In Android 15 and above(?) add an adjustment for edge to edge
+     *
+     * @since 7.1.0
+     * @default true
+     */
+    adjustMarginsForEdgeToEdge?: boolean;
   };
 
   ios?: {
