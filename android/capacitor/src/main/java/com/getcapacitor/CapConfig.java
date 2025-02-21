@@ -588,7 +588,7 @@ public class CapConfig {
         private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
         private boolean zoomableWebView = false;
         private boolean resolveServiceWorkerRequests = true;
-        private boolean adjustMarginsForEdgeToEdge = true;
+        private boolean adjustMarginsForEdgeToEdge = false;
 
         // Embedded
         private String startPath = null;
