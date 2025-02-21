@@ -287,7 +287,7 @@ public class CapConfig {
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
         zoomableWebView = JSONUtils.getBoolean(configJSON, "android.zoomEnabled", JSONUtils.getBoolean(configJSON, "zoomEnabled", false));
         resolveServiceWorkerRequests = JSONUtils.getBoolean(configJSON, "android.resolveServiceWorkerRequests", true);
-        adjustMarginsForEdgeToEdge = JSONUtils.getBoolean(configJSON, "android.adjustMarginsForEdgeToEdge", true);
+        adjustMarginsForEdgeToEdge = JSONUtils.getBoolean(configJSON, "android.adjustMarginsForEdgeToEdge", false);
 
         String logBehavior = JSONUtils.getString(
             configJSON,
