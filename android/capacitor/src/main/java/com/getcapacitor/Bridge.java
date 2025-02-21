@@ -10,11 +10,13 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.TypedValue;
 import android.webkit.ServiceWorkerClient;
 import android.webkit.ServiceWorkerController;
 import android.webkit.ValueCallback;
@@ -1608,6 +1610,7 @@ public class Bridge {
             if (webView instanceof CapacitorWebView) {
                 CapacitorWebView capacitorWebView = (CapacitorWebView) webView;
                 capacitorWebView.setBridge(bridge);
+                capacitorWebView.edgeToEdgeHandler(bridge);
             }
 
             bridge.setCordovaWebView(mockWebView);
