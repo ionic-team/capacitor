@@ -54,7 +54,7 @@ public class CapConfig {
     private String errorPath;
     private boolean zoomableWebView = false;
     private boolean resolveServiceWorkerRequests = true;
-    private boolean adjustMarginsForEdgeToEdge = true;
+    private boolean adjustMarginsForEdgeToEdge = false;
 
     // Embedded
     private String startPath;

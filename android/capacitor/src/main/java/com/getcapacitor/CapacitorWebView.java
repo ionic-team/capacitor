@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
@@ -63,22 +65,29 @@ public class CapacitorWebView extends WebView {
             config = CapConfig.loadDefault(getContext());
         }
 
-        if (!(Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && config.shouldAdjustMarginsForEdgeToEdge())) {
-            return;
+        boolean configEdgeToEdge = config.shouldAdjustMarginsForEdgeToEdge();
+        boolean foundOptOut = false;
+        boolean optOutValue = false;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            TypedValue value = new TypedValue();
+            foundOptOut = getContext().getTheme().resolveAttribute(android.R.attr.windowOptOutEdgeToEdgeEnforcement, value, true);
+            optOutValue = value.data != 0; // value is set to -1 on true as of Android 15, so we have to do this.
         }
-        // TODO: check for windowOptOutEdgeToEdgeEnforcement, TBD
 
-        ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
-            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
-            mlp.leftMargin = insets.left;
-            mlp.bottomMargin = insets.bottom;
-            mlp.rightMargin = insets.right;
-            mlp.topMargin = insets.top;
-            v.setLayoutParams(mlp);
+        if (configEdgeToEdge || (foundOptOut && optOutValue)) {
+            ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
+                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+                MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
+                mlp.leftMargin = insets.left;
+                mlp.bottomMargin = insets.bottom;
+                mlp.rightMargin = insets.right;
+                mlp.topMargin = insets.top;
+                v.setLayoutParams(mlp);
 
-            // Don't pass window insets to children
-            return WindowInsetsCompat.CONSUMED;
-        });
+                // Don't pass window insets to children
+                return WindowInsetsCompat.CONSUMED;
+            });
+        }
     }
 }
