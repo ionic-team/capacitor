@@ -12,7 +12,6 @@ import android.webkit.WebView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import java.util.Objects;
 
 public class CapacitorWebView extends WebView {
@@ -75,7 +74,7 @@ public class CapacitorWebView extends WebView {
             autoMargins = Objects.equals(configEdgeToEdge, "auto") && !(foundOptOut && optOutValue);
         }
 
-        if (forceMargins || autoMargins && !disableMargins) {
+        if (forceMargins || (autoMargins && !disableMargins)) {
             ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
                 Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
                 MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
