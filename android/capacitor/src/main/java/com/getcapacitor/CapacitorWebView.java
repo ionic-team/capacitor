@@ -73,7 +73,7 @@ public class CapacitorWebView extends WebView {
             optOutValue = value.data != 0; // value is set to -1 on true as of Android 15, so we have to do this.
         }
 
-        if (configEdgeToEdge || (foundOptOut && optOutValue)) {
+        if (configEdgeToEdge || !(foundOptOut && optOutValue)) {
             ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
                 Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
                 MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
