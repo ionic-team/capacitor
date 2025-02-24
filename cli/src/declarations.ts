@@ -299,8 +299,8 @@ export interface CapacitorConfig {
     resolveServiceWorkerRequests?: boolean;
 
     /**
-     * If set to "force", margins will be adjusted for edge to edge regardless of Android OS version.
-     * If set to "auto", or is missing, will check for Android 15 and the setting of [windowOptOutEdgeToEdgeEnforcement](https://developer.android.com/reference/android/R.attr#windowOptOutEdgeToEdgeEnforcement) and decided based on those.
+     * If set to "force", margins will be adjusted for edge to edge regardless of any other settings.
+     * If set to "auto", or is missing, will check for Android 15 and the setting of [windowOptOutEdgeToEdgeEnforcement](https://developer.android.com/reference/android/R.attr#windowOptOutEdgeToEdgeEnforcement) and decide based on those.
      * If set to "disable", will not adjust margins at all.
      *
      * @since 7.1.0
