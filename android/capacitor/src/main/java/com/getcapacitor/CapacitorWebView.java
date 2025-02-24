@@ -55,14 +55,7 @@ public class CapacitorWebView extends WebView {
         return super.dispatchKeyEvent(event);
     }
 
-    public void edgeToEdgeHandler() {
-        CapConfig config;
-        if (bridge != null) {
-            config = bridge.getConfig();
-        } else {
-            config = CapConfig.loadDefault(getContext());
-        }
-
+    public void edgeToEdgeHandler(Bridge bridge) {
         boolean configEdgeToEdge = config.shouldAdjustMarginsForEdgeToEdge();
         boolean foundOptOut = false;
         boolean optOutValue = false;

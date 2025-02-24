@@ -1607,7 +1607,7 @@ public class Bridge {
 
             if (webView instanceof CapacitorWebView capacitorWebView) {
                 capacitorWebView.setBridge(bridge);
-                capacitorWebView.edgeToEdgeHandler();
+                capacitorWebView.edgeToEdgeHandler(bridge);
             }
 
             bridge.setCordovaWebView(mockWebView);
