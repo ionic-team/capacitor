@@ -1,10 +1,8 @@
 package com.getcapacitor;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.inputmethod.BaseInputConnection;
