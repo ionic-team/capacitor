@@ -56,7 +56,7 @@ public class CapacitorWebView extends WebView {
     }
 
     public void edgeToEdgeHandler(Bridge bridge) {
-        boolean configEdgeToEdge = config.shouldAdjustMarginsForEdgeToEdge();
+        boolean configEdgeToEdge = bridge.getConfig().shouldAdjustMarginsForEdgeToEdge();
         boolean foundOptOut = false;
         boolean optOutValue = false;
 
