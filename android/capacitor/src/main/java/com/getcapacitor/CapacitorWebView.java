@@ -12,7 +12,6 @@ import android.webkit.WebView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import java.util.Objects;
 
 public class CapacitorWebView extends WebView {
 
@@ -59,22 +58,20 @@ public class CapacitorWebView extends WebView {
     public void edgeToEdgeHandler(Bridge bridge) {
         String configEdgeToEdge = bridge.getConfig().adjustMarginsForEdgeToEdge();
 
+        if(configEdgeToEdge.equals("disable")) return;
+
         boolean autoMargins = false;
-        boolean forceMargins = Objects.equals(configEdgeToEdge, "force");
-        boolean disableMargins = Objects.equals(configEdgeToEdge, "disable");
+        boolean forceMargins = configEdgeToEdge.equals("force");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            boolean foundOptOut = false;
-            boolean optOutValue = false;
-
             TypedValue value = new TypedValue();
-            foundOptOut = getContext().getTheme().resolveAttribute(android.R.attr.windowOptOutEdgeToEdgeEnforcement, value, true);
-            optOutValue = value.data != 0; // value is set to -1 on true as of Android 15, so we have to do this.
+            boolean foundOptOut = getContext().getTheme().resolveAttribute(android.R.attr.windowOptOutEdgeToEdgeEnforcement, value, true);
+            boolean optOutValue = value.data != 0; // value is set to -1 on true as of Android 15, so we have to do this.
 
-            autoMargins = Objects.equals(configEdgeToEdge, "auto") && !(foundOptOut && optOutValue);
+            autoMargins = configEdgeToEdge.equals("auto") && !(foundOptOut && optOutValue);
         }
 
-        if (forceMargins || (autoMargins && !disableMargins)) {
+        if (forceMargins || autoMargins) {
             ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
                 Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
                 MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
