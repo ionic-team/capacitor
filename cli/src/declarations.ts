@@ -302,9 +302,10 @@ export interface CapacitorConfig {
      * If set to "force", margins will be adjusted for edge to edge regardless of any other settings.
      * If set to "auto", or is missing, will check for Android 15 and the setting of [windowOptOutEdgeToEdgeEnforcement](https://developer.android.com/reference/android/R.attr#windowOptOutEdgeToEdgeEnforcement) and decide based on those.
      * If set to "disable", will not adjust margins at all.
+     * In Capacitor 8, this default will be changed to 'auto'
      *
      * @since 7.1.0
-     * @default auto
+     * @default disable
      */
     adjustMarginsForEdgeToEdge?: 'auto' | 'force' | 'disable';
   };
