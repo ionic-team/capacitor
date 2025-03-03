@@ -63,12 +63,12 @@ public class CapacitorWebView extends WebView {
         boolean autoMargins = false;
         boolean forceMargins = configEdgeToEdge.equals("force");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && configEdgeToEdge.equals("auto")) {
             TypedValue value = new TypedValue();
             boolean foundOptOut = getContext().getTheme().resolveAttribute(android.R.attr.windowOptOutEdgeToEdgeEnforcement, value, true);
             boolean optOutValue = value.data != 0; // value is set to -1 on true as of Android 15, so we have to do this.
 
-            autoMargins = configEdgeToEdge.equals("auto") && !(foundOptOut && optOutValue);
+            autoMargins = !(foundOptOut && optOutValue);
         }
 
         if (forceMargins || autoMargins) {
