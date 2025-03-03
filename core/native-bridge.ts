@@ -991,6 +991,8 @@ const initBridge = (w: any): void => {
      */
     cap.fromNative = (result) => {
       returnResult(result);
+      
+      // TODO: XXX acknowledge the message
     };
 
     const returnResult = (result: any) => {
@@ -1081,6 +1083,8 @@ const initBridge = (w: any): void => {
     initVendor(win, cap);
 
     win.Capacitor = cap;
+
+    // TODO: XXX postToNative message that we should start flowing messages
   }
 
   initNativeBridge(w);

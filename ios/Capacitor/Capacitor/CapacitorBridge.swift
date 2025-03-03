@@ -116,11 +116,15 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     var cordovaPluginManager: CDVPluginManager?
     // Calls we are storing to resolve later
     var storedCalls = ConcurrentDictionary<CAPPluginCall>()
+    // Messages sent to JS that have not yet been acknowledged.
+    private var unacknowledgedMessages = MyQueue()
     // Whether to inject the Cordova files
     private var injectCordovaFiles = false
     private var cordovaParser: CDVConfigParser?
     private var injectMiscFiles: [String] = []
     private var canInjectJS: Bool = true
+    // A FIFO queue used to store unacknowledged messages sent to JS
+    private var 
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
@@ -562,16 +566,23 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
+    func toJs(result: JSResultProtocol, save: Bool) {
+      let messageId = self.unacknowledgedMessages.add(.result(result: result, save: save))
+      toJsDispatch(result, save, messageId)
+    }
+
+
     /**
      Send a successful result to the JavaScript layer.
      */
-    func toJs(result: JSResultProtocol, save: Bool) {
+    func toJsDispatch(result: JSResultProtocol, save: Bool, messageId: Int) {
         let resultJson = result.jsonPayload()
         CAPLog.print("⚡️  TO JS", resultJson.prefix(256))
 
         DispatchQueue.main.async {
             self.webView?.evaluateJavaScript("""
              window.Capacitor.fromNative({
+             messageId: \(messageId),
              callbackId: '\(result.callbackID)',
              pluginId: '\(result.pluginID)',
              methodName: '\(result.methodName)',
@@ -591,6 +602,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      Send an error result to the JavaScript layer.
      */
     func toJsError(error: JSResultProtocol) {
+        // TODO: XXX use dispatch queue here
         DispatchQueue.main.async {
             self.webView?.evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(error.callbackID)', pluginId: '\(error.pluginID)', methodName: '\(error.methodName)', success: false, error: \(error.jsonPayload())})") { (_, error) in
                 if let error = error {
@@ -753,5 +765,35 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             self.tmpWindow?.rootViewController?.dismiss(animated: flag, completion: completion)
             self.tmpWindow = nil
         }
+    }
+}
+
+enum JSMessagePayload {
+    case result(result: JSResultProtocol, save: Bool)
+    case error(JSResultProtocol)
+}
+
+struct JSMessagePayloadWithId {
+    let id: Int
+    let payload: JSMessagePayload
+}
+
+class MyQueue: NSObject {
+    private var queue: [MessagePayloadWithId] = []
+    private var nextId: Int = 0
+
+    func add(_ payload: JSMessagePayload) -> Int {
+        let id = nextId
+        self.queue.append(MessagePayloadWithId(id, payload))
+        nextId += 1
+        return id
+    }
+
+    func purgeUpToId(_ id: Int) {
+        self.queue = self.queue.filter { $0.id > id }
+    }
+
+    func getQueue() -> [JSMessagePayloadWithId] {
+        return queue
     }
 }

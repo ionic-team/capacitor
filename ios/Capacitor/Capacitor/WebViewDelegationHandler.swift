@@ -188,6 +188,8 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                 }
 
                 bridge.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
+                // TODO: XXX add a new type for acknowledgement of receipt
+                // TODO: XXX add a new type for initial handshake
             } else if type == "cordova" {
                 let pluginId = dict["service"] as? String ?? ""
                 let method = dict["action"] as? String ?? ""
