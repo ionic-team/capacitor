@@ -398,6 +398,11 @@ public class HttpRequestHandler {
 
         boolean isHttpMutate = method.equals("DELETE") || method.equals("PATCH") || method.equals("POST") || method.equals("PUT");
 
+        String overriddenUserAgent = bridge.getConfig().getOverriddenUserAgentString();
+        if (overriddenUserAgent != null) {
+            headers.put("User-Agent", overriddenUserAgent);
+        }
+
         URL url = new URL(urlString);
         HttpURLConnectionBuilder connectionBuilder = new HttpURLConnectionBuilder()
             .setUrl(url)

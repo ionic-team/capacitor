@@ -165,7 +165,7 @@ open class HttpRequestHandler {
         guard var urlString = call.getString("url") else { throw URLError(.badURL) }
         let method = httpMethod ?? call.getString("method", "GET")
 
-        let headers = (call.getObject("headers") ?? [:]) as [String: Any]
+        var headers = (call.getObject("headers") ?? [:]) as [String: Any]
         let params = (call.getObject("params") ?? [:]) as [String: Any]
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")
@@ -183,6 +183,10 @@ open class HttpRequestHandler {
             .setUrlParams(params)
             .openConnection()
             .build()
+        
+        if let userAgentString = config?.overridenUserAgentString {
+            headers["User-Agent"] = userAgentString
+        }
 
         request.setRequestHeaders(headers)
 
