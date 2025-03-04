@@ -874,7 +874,7 @@ const initBridge = (w: any): void => {
     // an existing callback id from an old session
     let callbackIdCount = Math.floor(Math.random() * 134217728);
 
-    let postToNative: (data: CallData) => void | null = null;
+    let postToNative: ((data: CallData) => void) | null = null;
 
     const isNativePlatform = () => true;
     const getPlatform = () => getPlatformId(win);
@@ -994,7 +994,13 @@ const initBridge = (w: any): void => {
       acknowledgeMessage(result.messageId);
     };
 
-    const acknowledgeMessage = (messageId: number) => {
+    const acknowledgeMessage = (messageId?: number) => {
+      if (messageId === undefined) {
+        return;
+      }
+      if (typeof postToNative !== 'function') {
+        return;
+      }
       postToNative({
         type: 'acknowledgeMessage',
         messageId,
@@ -1009,7 +1015,6 @@ const initBridge = (w: any): void => {
       // get the stored call, if it exists
       try {
         const storedCall = callbacks.get(result.callbackId);
-
         if (storedCall) {
           // looks like we've got a stored call
 
@@ -1090,9 +1095,11 @@ const initBridge = (w: any): void => {
 
     win.Capacitor = cap;
 
-    postToNative({
-      type: 'startupHandshake',
-    });
+    if (typeof postToNative === 'function') {
+      postToNative({
+        type: 'startupHandshake',
+      });
+    }
   }
 
   initNativeBridge(w);

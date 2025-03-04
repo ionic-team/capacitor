@@ -119,6 +119,9 @@ describe('bridge', () => {
     win.androidBridge = {
       postMessage: (m) => {
         const d = JSON.parse(m);
+        if (d.type === 'startupHandshake') {
+          return;
+        }
         Promise.resolve().then(() => {
           pluginResult.callbackId = d.callbackId;
           pluginResult.methodName = d.methodName;
@@ -133,6 +136,9 @@ describe('bridge', () => {
       messageHandlers: {
         bridge: {
           postMessage: (m) => {
+            if (m.type === 'startupHandshake') {
+              return;
+            }
             Promise.resolve().then(() => {
               pluginResult.callbackId = m.callbackId;
               pluginResult.methodName = m.methodName;

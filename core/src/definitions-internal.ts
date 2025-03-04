@@ -125,7 +125,7 @@ export type CallData = StartupHandshakeCallData | MessageCallData | AcknowledgeM
  * A resulting call back from the native layer.
  */
 export interface PluginResult {
-  messageId: number;
+  messageId?: number;
   callbackId?: string;
   methodName?: string;
   data: PluginResultData;
