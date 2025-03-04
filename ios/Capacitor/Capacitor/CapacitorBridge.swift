@@ -117,7 +117,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // Calls we are storing to resolve later
     var storedCalls = ConcurrentDictionary<CAPPluginCall>()
     // Messages sent to JS that have not yet been acknowledged
-    private var unacknowledgedMessages = MyQueue()
+    private var unacknowledgedMessages = JSMessageQueue()
     // Whether to inject the Cordova files
     private var injectCordovaFiles = false
     private var cordovaParser: CDVConfigParser?
@@ -806,7 +806,7 @@ struct JSMessagePayloadWithId {
     let payload: JSMessagePayload
 }
 
-class MyQueue: NSObject {
+class JSMessageQueue: NSObject {
     private var queue: [JSMessagePayloadWithId] = []
     private var nextId: Int = 0
 
