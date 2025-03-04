@@ -116,15 +116,13 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     var cordovaPluginManager: CDVPluginManager?
     // Calls we are storing to resolve later
     var storedCalls = ConcurrentDictionary<CAPPluginCall>()
-    // Messages sent to JS that have not yet been acknowledged.
+    // Messages sent to JS that have not yet been acknowledged
     private var unacknowledgedMessages = MyQueue()
     // Whether to inject the Cordova files
     private var injectCordovaFiles = false
     private var cordovaParser: CDVConfigParser?
     private var injectMiscFiles: [String] = []
     private var canInjectJS: Bool = true
-    // A FIFO queue used to store unacknowledged messages sent to JS
-    private var 
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
@@ -571,9 +569,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         for message in messages {
             switch message.payload {
             case .result(let result, let save):
-                toJsDispatch(result, save, message.id)
+                toJsDispatch(result: result, save: save, messageId: message.id)
             case .error(let error):
-                toJsErrorDispatch(error: error, message.id)
+                toJsErrorDispatch(error: error, messageId: message.id)
             }
         }
     }
@@ -584,7 +582,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     func toJs(result: JSResultProtocol, save: Bool) {
       let messageId = self.unacknowledgedMessages.add(.result(result: result, save: save))
-      toJsDispatch(result, save, messageId)
+      toJsDispatch(result: result, save: save, messageId: messageId)
     }
 
 
@@ -809,12 +807,12 @@ struct JSMessagePayloadWithId {
 }
 
 class MyQueue: NSObject {
-    private var queue: [MessagePayloadWithId] = []
+    private var queue: [JSMessagePayloadWithId] = []
     private var nextId: Int = 0
 
     func add(_ payload: JSMessagePayload) -> Int {
         let id = nextId
-        self.queue.append(MessagePayloadWithId(id, payload))
+        self.queue.append(JSMessagePayloadWithId(id: id, payload: payload))
         nextId += 1
         return id
     }

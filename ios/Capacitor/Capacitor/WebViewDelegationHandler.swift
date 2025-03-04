@@ -193,7 +193,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             } else if type == "acknowledgeMessage" {
                 let messageId = dict["messageId"] as? Int
                 if messageId != nil {
-                    bridge.acknowledgeMessage(messageId: messageId!)
+                    bridge.acknowledgeMessageIdFromJs(messageId!)
                 }
             } else if type == "cordova" {
                 let pluginId = dict["service"] as? String ?? ""
