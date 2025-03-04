@@ -887,6 +887,13 @@ var nativeBridge = (function (exports) {
              */
             cap.fromNative = (result) => {
                 returnResult(result);
+                acknowledgeMessage(result.messageId);
+            };
+            const acknowledgeMessage = (messageId) => {
+                postToNative({
+                    type: 'acknowledgeMessage',
+                    messageId,
+                });
             };
             const returnResult = (result) => {
                 var _a, _b;
@@ -967,6 +974,9 @@ var nativeBridge = (function (exports) {
             initLegacyHandlers(win, cap);
             initVendor(win, cap);
             win.Capacitor = cap;
+            postToNative({
+                type: 'startupHandshake',
+            });
         }
         initNativeBridge(w);
     };
