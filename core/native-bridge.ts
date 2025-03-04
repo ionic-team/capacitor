@@ -991,8 +991,14 @@ const initBridge = (w: any): void => {
      */
     cap.fromNative = (result) => {
       returnResult(result);
-      
-      // TODO: XXX acknowledge the message
+      acknowledgeMessage(result.messageId);
+    };
+
+    const acknowledgeMessage = (messageId: number) => {
+      postToNative({
+        type: 'acknowledgeMessage',
+        messageId,
+      });
     };
 
     const returnResult = (result: any) => {
@@ -1084,7 +1090,9 @@ const initBridge = (w: any): void => {
 
     win.Capacitor = cap;
 
-    // TODO: XXX postToNative message that we should start flowing messages
+    postToNative({
+      type: 'startupHandshake',
+    });
   }
 
   initNativeBridge(w);

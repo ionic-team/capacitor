@@ -566,6 +566,22 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
+    func sendPendingJsMessages() {
+        let messages = unacknowledgedMessages.getQueue()
+        for message in messages {
+            switch message.payload {
+            case .result(let result, let save):
+                toJsDispatch(result, save, message.id)
+            case .error(let error):
+                toJsErrorDispatch(error: error, message.id)
+            }
+        }
+    }
+
+    func acknowledgeMessageIdFromJs(_ messageId: Int) {
+        unacknowledgedMessages.purgeUpToId(messageId)
+    }
+
     func toJs(result: JSResultProtocol, save: Bool) {
       let messageId = self.unacknowledgedMessages.add(.result(result: result, save: save))
       toJsDispatch(result, save, messageId)
@@ -602,9 +618,23 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      Send an error result to the JavaScript layer.
      */
     func toJsError(error: JSResultProtocol) {
-        // TODO: XXX use dispatch queue here
+      let messageId = self.unacknowledgedMessages.add(.error(error))
+      toJsErrorDispatch(error: error, messageId: messageId)
+    }
+
+    /**
+     Send an error result to the JavaScript layer.
+     */
+    func toJsErrorDispatch(error: JSResultProtocol, messageId: Int) {
         DispatchQueue.main.async {
-            self.webView?.evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(error.callbackID)', pluginId: '\(error.pluginID)', methodName: '\(error.methodName)', success: false, error: \(error.jsonPayload())})") { (_, error) in
+            self.webView?.evaluateJavaScript("""
+              window.Capacitor.fromNative({
+              messageId: \(messageId),
+              callbackId: '\(error.callbackID)',
+              pluginId: '\(error.pluginID)',
+              methodName: '\(error.methodName)',
+              success: false, error: \(error.jsonPayload())})
+              """) { (_, error) in
                 if let error = error {
                     CAPLog.print(error)
                 }

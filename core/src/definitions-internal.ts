@@ -110,12 +110,22 @@ export interface ErrorCallData {
   };
 }
 
-export type CallData = MessageCallData | ErrorCallData;
+export interface StartupHandshakeCallData {
+  type?: 'startupHandshake';
+}
+
+export interface AcknowledgeMessageCallData {
+  type?: 'acknowledgeMessage';
+  messageId: number;
+}
+
+export type CallData = StartupHandshakeCallData | MessageCallData | AcknowledgeMessageCallData | ErrorCallData;
 
 /**
  * A resulting call back from the native layer.
  */
 export interface PluginResult {
+  messageId: number;
   callbackId?: string;
   methodName?: string;
   data: PluginResultData;

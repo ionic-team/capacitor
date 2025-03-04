@@ -176,6 +176,8 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                 if let error = dict["error"] as? [String: Any] {
                     logJSError(error)
                 }
+            } else if type == "startupHandshake" {
+                bridge.sendPendingJsMessages()
             } else if type == "message" {
                 let pluginId = dict["pluginId"] as? String ?? ""
                 let method = dict["methodName"] as? String ?? ""
@@ -188,8 +190,11 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                 }
 
                 bridge.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
-                // TODO: XXX add a new type for acknowledgement of receipt
-                // TODO: XXX add a new type for initial handshake
+            } else if type == "acknowledgeMessage" {
+                let messageId = dict["messageId"] as? Int
+                if messageId != nil {
+                    bridge.acknowledgeMessage(messageId: messageId!)
+                }
             } else if type == "cordova" {
                 let pluginId = dict["service"] as? String ?? ""
                 let method = dict["action"] as? String ?? ""
