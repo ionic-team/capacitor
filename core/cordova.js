@@ -1320,7 +1320,7 @@
 
   define('cordova/platform', function (require, exports, module) {
     module.exports = {
-      id: Capacitor.platform,
+      id: Capacitor.getPlatform(),
       bootstrap: function () {
         require('cordova/channel').onNativeReady.fire();
       },
