@@ -544,7 +544,8 @@ const initBridge = (w: any): void => {
           options?: RequestInit,
         ) => {
           const headers = new Headers(options?.headers);
-          const contentType = headers.get('Content-Type') || headers.get('content-type');
+          const contentType =
+            headers.get('Content-Type') || headers.get('content-type');
           if (
             options?.body instanceof FormData &&
             contentType?.includes('multipart/form-data') &&
