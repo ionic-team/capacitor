@@ -543,6 +543,18 @@ const initBridge = (w: any): void => {
           resource: RequestInfo | URL,
           options?: RequestInit,
         ) => {
+          const headers = new Headers(options?.headers);
+          const contentType =
+            headers.get('Content-Type') || headers.get('content-type');
+          if (
+            options?.body instanceof FormData &&
+            contentType?.includes('multipart/form-data') &&
+            !contentType.includes('boundary')
+          ) {
+            headers.delete('Content-Type');
+            headers.delete('content-type');
+            options.headers = headers;
+          }
           const request = new Request(resource, options);
           if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
             return win.CapacitorWebFetch(resource, options);
