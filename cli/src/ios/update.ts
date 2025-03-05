@@ -140,7 +140,8 @@ end`,
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
   const podPath = await config.ios.podPath;
-  const useBundler = podPath.startsWith('bundle');
+  const useBundler =
+    podPath.startsWith('bundle') && (await isInstalled('bundle'));
   const podCommandExists = await isInstalled('pod');
   if (useBundler || podCommandExists) {
     if (useBundler) {
