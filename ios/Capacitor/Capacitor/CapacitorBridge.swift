@@ -562,6 +562,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
+    func removeAllPluginListeners() {
+        for plugin in plugins.values {
+			      plugin.perform(#selector(CAPPlugin.removeAllListeners(_:)), with: nil)
+        }
+    }
+
     /**
      Send a successful result to the JavaScript layer.
      */
