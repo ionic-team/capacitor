@@ -419,6 +419,7 @@ export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPl
 
     let data: any;
     let blob: any;
+    let responseText: string;
     switch (responseType) {
       case 'arraybuffer':
       case 'blob':
@@ -426,7 +427,12 @@ export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPl
         data = await readBlobAsBase64(blob);
         break;
       case 'json':
-        data = await response.json();
+        responseText = await response.text();
+        try {
+          data = JSON.parse(responseText);
+        } catch (e) {
+          data = responseText;
+        }
         break;
       case 'document':
       case 'text':
