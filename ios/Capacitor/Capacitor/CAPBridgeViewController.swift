@@ -130,6 +130,9 @@ import Cordova
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
         webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
         webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
+        if #available(iOS 15.4, *) {
+            webViewConfiguration.preferences.isElementFullscreenEnabled = true
+        }
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
                 webViewConfiguration.applicationNameForUserAgent = "\(appName)  \(appendUserAgent)"
