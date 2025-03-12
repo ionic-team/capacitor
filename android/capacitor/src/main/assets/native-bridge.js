@@ -468,6 +468,15 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
+                        const headers = new Headers(options === null || options === void 0 ? void 0 : options.headers);
+                        const contentType = headers.get('Content-Type') || headers.get('content-type');
+                        if ((options === null || options === void 0 ? void 0 : options.body) instanceof FormData &&
+                            (contentType === null || contentType === void 0 ? void 0 : contentType.includes('multipart/form-data')) &&
+                            !contentType.includes('boundary')) {
+                            headers.delete('Content-Type');
+                            headers.delete('content-type');
+                            options.headers = headers;
+                        }
                         const request = new Request(resource, options);
                         if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
                             return win.CapacitorWebFetch(resource, options);
