@@ -399,7 +399,7 @@ public class HttpRequestHandler {
         boolean isHttpMutate = method.equals("DELETE") || method.equals("PATCH") || method.equals("POST") || method.equals("PUT");
 
         String overriddenUserAgent = bridge.getConfig().getOverriddenUserAgentString();
-        if (overriddenUserAgent != null) {
+        if (!headers.has("User-Agent") && !headers.has("user-agent")) {
             headers.put("User-Agent", overriddenUserAgent);
         }
 
