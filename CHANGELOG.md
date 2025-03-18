@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.1.0](https://github.com/ionic-team/capacitor/compare/7.0.1...7.1.0) (2025-03-12)
+
+### Bug Fixes
+
+- **android:** add EdgeToEdge compatibility ([#7871](https://github.com/ionic-team/capacitor/issues/7871)) ([64a8bc4](https://github.com/ionic-team/capacitor/commit/64a8bc40de2522c75a94a40cba6c8ccd82481cb8))
+- **android:** sanitize portable file name ([#7894](https://github.com/ionic-team/capacitor/issues/7894)) ([5f09297](https://github.com/ionic-team/capacitor/commit/5f092970e33da1ec896efc4e2a5ae3fb77fca658))
+- **cli:** don't run bundle if not installed ([#7896](https://github.com/ionic-team/capacitor/issues/7896)) ([ee55f6c](https://github.com/ionic-team/capacitor/commit/ee55f6c54639c1a61fa4f9eed1f366ba2d968b86))
+- **core:** use getPlatform instead of platform in cordova.js ([#7902](https://github.com/ionic-team/capacitor/issues/7902)) ([277db7b](https://github.com/ionic-team/capacitor/commit/277db7b48caaf870eefdf701ea99332c4338d7ed))
+- **http:** boundary not added for Request objects ([#7897](https://github.com/ionic-team/capacitor/issues/7897)) ([bdaa6f3](https://github.com/ionic-team/capacitor/commit/bdaa6f3c38c33f3a021ac61f2de89101a5b66cff))
+- **ios:** don't check isMediaExtension on range requests ([#7868](https://github.com/ionic-team/capacitor/issues/7868)) ([028caa5](https://github.com/ionic-team/capacitor/commit/028caa5378d359fb1004098aa93a24ad0f49a4ae))
+- **ios:** listen for CapacitorViewDidAppear ([#7850](https://github.com/ionic-team/capacitor/issues/7850)) ([e24ffb7](https://github.com/ionic-team/capacitor/commit/e24ffb7d4de0bf3d53e92537f21c864f121c1fad))
+- **ios:** Reset plugin listeners when WebView process is terminated ([#7905](https://github.com/ionic-team/capacitor/issues/7905)) ([d039157](https://github.com/ionic-team/capacitor/commit/d0391576726955b2c1b484f1ca9a03465b9ef67e))
+
+### Features
+
+- Add function to inject external JS into WebView before document load ([#7864](https://github.com/ionic-team/capacitor/issues/7864)) ([ec0954c](https://github.com/ionic-team/capacitor/commit/ec0954c197543e913939f3ab9c4bcb172bfa3530))
+- **android:** add adjustMarginsForEdgeToEdge configuration option ([#7885](https://github.com/ionic-team/capacitor/issues/7885)) ([1ea86d1](https://github.com/ionic-team/capacitor/commit/1ea86d166afd315e72847c5e734a8c175fb90e04))
+- **cli:** add more configurations to build command ([#7769](https://github.com/ionic-team/capacitor/issues/7769)) ([90f95d1](https://github.com/ionic-team/capacitor/commit/90f95d1a829f3d87cb46af827b5bfaac319a9694))
+
 ## [7.0.1](https://github.com/ionic-team/capacitor/compare/7.0.0...7.0.1) (2025-01-21)
 
 ### Bug Fixes
