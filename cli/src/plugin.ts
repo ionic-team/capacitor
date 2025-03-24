@@ -118,7 +118,7 @@ export function fixName(name: string): string {
 export function printPlugins(
   plugins: Plugin[],
   platform: string,
-  type: 'capacitor' | 'cordova' | 'incompatible' = 'capacitor',
+  type: 'capacitor' | 'cordova' | 'incompatible' | 'packagespm' = 'capacitor',
 ): void {
   if (plugins.length === 0) {
     return;
@@ -139,6 +139,8 @@ export function printPlugins(
     case 'capacitor':
       msg = `Found ${plugins.length} Capacitor plugin${plural} for ${c.strong(platform)}:\n`;
       break;
+    case 'packagespm':
+      msg = `Found ${plugins.length} Plugin${plural} with ${c.strong("Package.swift")} files:\n`;
   }
 
   msg += plugins.map((p) => `${p.id}${c.weak(`@${p.version}`)}`).join('\n');

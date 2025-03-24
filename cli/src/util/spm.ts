@@ -1,8 +1,9 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
+import { pathExists, existsSync, readFileSync, writeFileSync, ensureDir } from 'fs-extra';
 import { join, relative, resolve } from 'path';
 
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
+import { getIOSPlugins } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
 
@@ -28,6 +29,7 @@ export async function findPackageSwiftFile(config: Config): Promise<string> {
 export async function generatePackageFile(config: Config, plugins: Plugin[]): Promise<void> {
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
+    logger.info("Writing Package.swift")
     const textToWrite = await generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
@@ -35,7 +37,24 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
   }
 }
 
-async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
+export async function iosPluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
+  const packageList = await pluginsWithPackageSwift(plugins)
+  const iosPackageList = await getIOSPlugins(packageList)
+
+  return iosPackageList
+}
+
+export async function createSPMDirectory(config: Config): Promise<void> {
+  const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM')
+  try {
+    logger.info("Creating " + spmDirectory + "...")
+    await ensureDir(spmDirectory)
+  } catch (err) {
+    logger.error("Failed to create " + spmDirectory)
+  }
+}
+
+export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
 
   const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
@@ -86,4 +105,19 @@ let package = Package(
 `;
 
   return packageSwiftText;
+}
+
+// Private Functions
+
+async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
+  const pluginList = Promise.all(plugins.filter(async (plugin, _index, _array) => {
+    const packageSwiftFound = await pathExists(plugin.rootPath + "/Package.swift")
+    if (packageSwiftFound) {
+      return plugin
+    } else {
+      logger.warn(plugin.name + " does not have a Package.swift")
+    }
+  }))
+
+  return pluginList
 }
