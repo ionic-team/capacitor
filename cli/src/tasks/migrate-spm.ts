@@ -14,9 +14,7 @@ export async function migrateToSPM(config: Config, dryRun: boolean, unsafe: bool
   }
 
   await createSPMDirectory(config, dryRun)
-  removeCocoapodsFiles(config, dryRun, unsafe)
-
-
+  await removeCocoapodsFiles(config, dryRun, unsafe)
 
   // TODO: Check if Extra data is needed data from Podfile?
 
