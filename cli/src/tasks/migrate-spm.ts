@@ -3,7 +3,7 @@ import { fatal } from '../errors';
 import { logger } from '../log';
 import type { Plugin} from '../plugin';
 import { getPlugins, printPlugins } from '../plugin'
-import { checkPackageManager, generatePackageFile, iosPluginsWithPackageSwift, createSPMDirectory } from '../util/spm';
+import { checkPackageManager, generatePackageFile, iosPluginsWithPackageSwift, createSPMDirectory, removeCocoapodsFiles } from '../util/spm';
 
 export async function migrateToSPM(config: Config, dryRun: boolean, unsafe: boolean): Promise<void> {
   if (dryRun) logger.warn('Dry-run enabled, no actions will be taken.');
@@ -13,20 +13,13 @@ export async function migrateToSPM(config: Config, dryRun: boolean, unsafe: bool
     fatal('Capacitor project is already using SPM, exiting.');
   }
 
-  logger.info("iOS Plugins Found")
+  await createSPMDirectory(config, dryRun)
+  removeCocoapodsFiles(config, dryRun, unsafe)
 
-  // Create CapAPP-SPM directory (including Sources/CapAPP-SPM)
-  await createSPMDirectory(config)
 
-  // Delete or Rename XCWorkspace
 
-  // Delete or Rename Pods directory
+  // TODO: Check if Extra data is needed data from Podfile?
 
-  // Extra needed data from Podfile?
-
-  // Delete or Rename Podfile/Podfile.lock
-
-  // Add Package.swift
   const packageSwiftPluginList = await processIosPackages(config)
   if (!dryRun) {
     await generatePackageFile(config, packageSwiftPluginList)

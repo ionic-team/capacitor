@@ -1,15 +1,20 @@
-import { pathExists, existsSync, readFileSync, writeFileSync, ensureDir } from 'fs-extra';
+import { LOGGER_LEVELS } from '@ionic/cli-framework-output'; // Ugh, I hate this, lets yank it
+import { pathExists, existsSync, readFileSync, writeFileSync, ensureDir, remove, move } from 'fs-extra';
 import { join, relative, resolve } from 'path';
 
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
 import { getIOSPlugins } from '../ios/common';
-import { logger } from '../log';
+import { logger, logOptSuffix } from '../log';
 import type { Plugin } from '../plugin';
 
 export interface SwiftPlugin {
   name: string;
   path: string;
+}
+interface InteractiveOptions {
+  dryRun: boolean,
+  unsafe: boolean
 }
 
 export async function checkPackageManager(config: Config): Promise<'Cocoapods' | 'SPM'> {
@@ -44,14 +49,30 @@ export async function iosPluginsWithPackageSwift(plugins: Plugin[]): Promise<Plu
   return iosPackageList
 }
 
-export async function createSPMDirectory(config: Config): Promise<void> {
+export async function createSPMDirectory(config: Config, dryRun: boolean): Promise<void> {
   const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM')
+
+  logOptSuffix("Creating " + spmDirectory, "dry-run", dryRun, LOGGER_LEVELS.INFO)
+
+  if (dryRun) return;
+
   try {
-    logger.info("Creating " + spmDirectory + "...")
     await ensureDir(spmDirectory)
   } catch (err) {
-    logger.error("Failed to create " + spmDirectory)
+    logger.error("Failed to create " + spmDirectory + " with error: " + err)
   }
+}
+
+export async function removeCocoapodsFiles(config: Config, dryRun: boolean, unsafe: boolean): Promise<void> {
+  const iosDirectory = config.ios.nativeProjectDirAbs;
+  const podFile = resolve(iosDirectory, 'Podfile');
+  const podlockFile = resolve(iosDirectory, 'Podfile.lock');
+  const xcworkspaceFile = resolve(iosDirectory, 'App.xcworkspace');
+  if(unsafe) logger.warn("Unsafe mode");
+
+  await removeWithOptions(podFile, { dryRun: dryRun, unsafe: unsafe })
+  await removeWithOptions(podlockFile, { dryRun: dryRun, unsafe: unsafe })
+  await removeWithOptions(xcworkspaceFile, { dryRun: dryRun, unsafe: unsafe })
 }
 
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
@@ -120,4 +141,19 @@ async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
   }))
 
   return pluginList
+}
+
+async function removeWithOptions(dir: string, options: InteractiveOptions): Promise<void> {
+  const backupName = dir + ".bak"
+  const message = options.unsafe ? "Deleting " + dir : "Moving " + dir + " to " + backupName
+
+  logOptSuffix(message, "dry-run", options.dryRun, LOGGER_LEVELS.INFO);
+
+  if(options.dryRun) return;
+
+  if (options.unsafe) {
+    remove(dir)
+  } else {
+    move(dir, backupName)
+  }
 }
