@@ -1,9 +1,7 @@
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
-import type { Plugin} from '../plugin';
-import { getPlugins, printPlugins } from '../plugin'
-import { checkPackageManager, generatePackageFile, iosPluginsWithPackageSwift, createSPMDirectory, removeCocoapodsFiles } from '../util/spm';
+import { checkPackageManager, generatePackageFile, processIosPackages, createSPMDirectory, removeCocoapodsFiles } from '../util/spm';
 
 export async function migrateToSPM(config: Config, dryRun: boolean, unsafe: boolean): Promise<void> {
   if (dryRun) logger.warn('Dry-run enabled, no actions will be taken.');
@@ -24,19 +22,5 @@ export async function migrateToSPM(config: Config, dryRun: boolean, unsafe: bool
   }
 }
 
-async function processIosPackages(config: Config): Promise<Plugin[]> {
-  const plugins = await getPlugins(config, 'ios')
-  printPlugins(plugins, "ios", "capacitor")
 
-  const packageSwiftPluginList = await iosPluginsWithPackageSwift(plugins)
-  printPlugins(packageSwiftPluginList, "ios", "packagespm")
-
-  if( plugins.length == packageSwiftPluginList.length ) {
-    logger.info("Number of plugins in lists match") // TODO: Word this better
-  } else {
-    logger.warn("Some installed packages my not be compatable with SPM")
-  }
-
-  return packageSwiftPluginList
-}
 

@@ -7,6 +7,7 @@ import type { Config } from '../definitions';
 import { getIOSPlugins } from '../ios/common';
 import { logger, logOptSuffix } from '../log';
 import type { Plugin } from '../plugin';
+import { getPlugins, printPlugins } from '../plugin'
 
 export interface SwiftPlugin {
   name: string;
@@ -40,6 +41,22 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
   } catch (err) {
     logger.error(`Unable to write to ${packageSwiftFile}. Verify it is not already open. \n Error: ${err}`);
   }
+}
+
+export async function processIosPackages(config: Config): Promise<Plugin[]> {
+  const plugins = await getPlugins(config, 'ios')
+  printPlugins(plugins, "ios", "capacitor")
+
+  const packageSwiftPluginList = await iosPluginsWithPackageSwift(plugins)
+  printPlugins(packageSwiftPluginList, "ios", "packagespm")
+
+  if( plugins.length == packageSwiftPluginList.length ) {
+    logger.info("Number of plugins in lists match") // TODO: Word this better
+  } else {
+    logger.warn("Some installed packages my not be compatable with SPM")
+  }
+
+  return packageSwiftPluginList
 }
 
 export async function iosPluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
