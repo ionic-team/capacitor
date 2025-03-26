@@ -12,6 +12,7 @@ import { logger, logPrompt, logSuccess } from '../log';
 import { getPlugins } from '../plugin';
 import { deleteFolderRecursive } from '../util/fs';
 import { resolveNode } from '../util/node';
+import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -157,10 +158,13 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
             '14.0',
           );
         });
-        // Update Podfile to 14.0
-        await runTask(`Migrating Podfile to 14.0.`, () => {
-          return updateFile(config, join(config.ios.nativeProjectDirAbs, 'Podfile'), `platform :ios, '`, `'`, '14.0');
-        });
+
+        if ((await checkPackageManager(config)) === 'Cocoapods') {
+          // Update Podfile to 14.0
+          await runTask(`Migrating Podfile to 14.0.`, () => {
+            return updateFile(config, join(config.ios.nativeProjectDirAbs, 'Podfile'), `platform :ios, '`, `'`, '14.0');
+          });
+        }
       }
 
       if (!installFailed) {

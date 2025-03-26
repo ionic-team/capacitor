@@ -284,7 +284,7 @@ export function runProgram(config: Config): void {
     .description('add a native platform project')
     .option(
       '--packagemanager <packageManager>',
-      'The package manager to use for dependency installs (Cocoapods, SPM **experimental**)',
+      'The package manager to use for dependency installs (CocoaPods or SPM)',
     )
     .action(
       wrapAction(
