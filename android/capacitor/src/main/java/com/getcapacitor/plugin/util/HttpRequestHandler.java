@@ -407,7 +407,7 @@ public class HttpRequestHandler {
         }
         headers.remove("x-cap-user-agent");
 
-        if (overriddenUserAgent != null && !headers.has("User-Agent") && !headers.has("user-agent")) {
+        if (!headers.has("User-Agent") && !headers.has("user-agent")) {
             headers.put("User-Agent", bridge.getConfig().getOverriddenUserAgentString());
         }
 
