@@ -401,18 +401,14 @@ public class HttpRequestHandler {
         // a workaround for the following android web view issue:
         // https://issues.chromium.org/issues/40450316
         // x-cap-user-agent contains the user agent set in JavaScript
-        if (headers.has("x-cap-user-agent")) {
-            String userAgentValue = headers.getString("x-cap-user-agent");
-            if (userAgentValue != null) {
-                headers.put("User-Agent", userAgentValue);
-            }
-
-            headers.remove("x-cap-user-agent");
+        String userAgentValue = headers.getString("x-cap-user-agent");
+        if (userAgentValue != null && !userAgentValue.isEmpty()) {
+            headers.put("User-Agent", userAgentValue);
         }
+        headers.remove("x-cap-user-agent");
 
-        String overriddenUserAgent = bridge.getConfig().getOverriddenUserAgentString();
-        if (!headers.has("User-Agent") && !headers.has("user-agent")) {
-            headers.put("User-Agent", overriddenUserAgent);
+        if (overriddenUserAgent != null && !headers.has("User-Agent") && !headers.has("user-agent")) {
+            headers.put("User-Agent", bridge.getConfig().getOverriddenUserAgentString());
         }
 
         URL url = new URL(urlString);
