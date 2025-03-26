@@ -490,14 +490,12 @@ var nativeBridge = (function (exports) {
                             // https://issues.chromium.org/issues/40450316
                             // Sets the user-agent header to a custom value so that its not stripped
                             // on its way to the native layer
-                            if (platform === 'android' && options) {
-                                if (headers.has('User-Agent')) {
-                                    headers.set('X-Cap-User-Agent', headers.get('User-Agent'));
+                            if (platform === 'android' && (options === null || options === void 0 ? void 0 : options.headers)) {
+                                const userAgent = headers.get('User-Agent') || headers.get('user-agent');
+                                if (userAgent) {
+                                    headers.set('x-cap-user-agent', userAgent);
+                                    options.headers = headers;
                                 }
-                                if (headers.has('user-agent')) {
-                                    headers.set('X-Cap-User-Agent', headers.get('user-agent'));
-                                }
-                                options.headers = headers;
                             }
                             if (typeof resource === 'string') {
                                 return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
