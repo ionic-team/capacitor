@@ -264,7 +264,7 @@ public class WebViewLocalServer {
         // https://issues.chromium.org/issues/40450316
         // x-cap-user-agent contains the user agent set in JavaScript
         String userAgentValue = headers.getString("x-cap-user-agent");
-        if (userAgentValue != null && !userAgentValue.isEmpty()) {
+        if (userAgentValue != null) {
             headers.put("User-Agent", userAgentValue);
         }
         headers.remove("x-cap-user-agent");

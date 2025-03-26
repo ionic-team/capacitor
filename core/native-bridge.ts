@@ -519,7 +519,7 @@ const initBridge = (w: any): void => {
             // on its way to the native layer
             if (platform === 'android' && options?.headers) {
               const userAgent = headers.get('User-Agent') || headers.get('user-agent');
-              if (userAgent) {
+              if (userAgent !== null) {
                 headers.set('x-cap-user-agent', userAgent);
                 options.headers = headers;
               }

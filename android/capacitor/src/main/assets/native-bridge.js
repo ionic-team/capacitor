@@ -492,7 +492,7 @@ var nativeBridge = (function (exports) {
                             // on its way to the native layer
                             if (platform === 'android' && (options === null || options === void 0 ? void 0 : options.headers)) {
                                 const userAgent = headers.get('User-Agent') || headers.get('user-agent');
-                                if (userAgent) {
+                                if (userAgent !== null) {
                                     headers.set('x-cap-user-agent', userAgent);
                                     options.headers = headers;
                                 }
