@@ -25,7 +25,7 @@ public class BridgeActivity extends AppCompatActivity {
         getApplication().setTheme(R.style.AppTheme_NoActionBar);
         setTheme(R.style.AppTheme_NoActionBar);
         try {
-            setContentView(R.layout.bridge_layout_main);
+            setContentView(R.layout.capacitor_bridge_layout_main);
         } catch (Exception ex) {
             setContentView(R.layout.no_webview);
             return;

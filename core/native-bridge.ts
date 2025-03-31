@@ -513,6 +513,18 @@ const initBridge = (w: any): void => {
             method.toLocaleUpperCase() === 'OPTIONS' ||
             method.toLocaleUpperCase() === 'TRACE'
           ) {
+            // a workaround for following android webview issue:
+            // https://issues.chromium.org/issues/40450316
+            // Sets the user-agent header to a custom value so that its not stripped
+            // on its way to the native layer
+            if (platform === 'android' && options?.headers) {
+              const userAgent = headers.get('User-Agent') || headers.get('user-agent');
+              if (userAgent !== null) {
+                headers.set('x-cap-user-agent', userAgent);
+                options.headers = headers;
+              }
+            }
+
             if (typeof resource === 'string') {
               return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
             } else if (resource instanceof Request) {
@@ -530,21 +542,33 @@ const initBridge = (w: any): void => {
             const {
               data: requestData,
               type,
-              headers,
+              headers: requestHeaders,
             } = await convertBody(
               options?.body || body || undefined,
               optionHeaders['Content-Type'] || optionHeaders['content-type'],
             );
+
+            const nativeHeaders = {
+              ...requestHeaders,
+              ...optionHeaders,
+            };
+
+            if (platform === 'android') {
+              if (headers.has('User-Agent')) {
+                nativeHeaders['User-Agent'] = headers.get('User-Agent');
+              }
+
+              if (headers.has('user-agent')) {
+                nativeHeaders['user-agent'] = headers.get('user-agent');
+              }
+            }
 
             const nativeResponse: HttpResponse = await cap.nativePromise('CapacitorHttp', 'request', {
               url: request.url,
               method: method,
               data: requestData,
               dataType: type,
-              headers: {
-                ...headers,
-                ...optionHeaders,
-              },
+              headers: nativeHeaders,
             });
 
             const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
@@ -656,6 +680,14 @@ const initBridge = (w: any): void => {
 
           // XHR patch set request header
           prototype.setRequestHeader = function (header: string, value: string) {
+            // a workaround for the following android web view issue:
+            // https://issues.chromium.org/issues/40450316
+            // Sets the user-agent header to a custom value so that its not stripped
+            // on its way to the native layer
+            if (platform === 'android' && (header === 'User-Agent' || header === 'user-agent')) {
+              header = 'x-cap-user-agent';
+            }
+
             if (isRelativeOrProxyUrl(this._url)) {
               return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(this, header, value);
             }
