@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.1](https://github.com/ionic-team/capacitor/compare/6.2.0...6.2.1) (2025-03-31)
+
+### Bug Fixes
+
+- **android:** sanitize portable file name ([#7894](https://github.com/ionic-team/capacitor/issues/7894)) ([#7895](https://github.com/ionic-team/capacitor/issues/7895)) ([0ac1d50](https://github.com/ionic-team/capacitor/commit/0ac1d5039a8d8ab7d7070c76de988d36dbaafa5a))
+- **http:** boundary not added for Request objects ([#7897](https://github.com/ionic-team/capacitor/issues/7897)) ([#7904](https://github.com/ionic-team/capacitor/issues/7904)) ([459cac2](https://github.com/ionic-team/capacitor/commit/459cac243a80f023653209aee3aca02a7db100ca))
+
 # [6.2.0](https://github.com/ionic-team/capacitor/compare/6.1.2...6.2.0) (2024-11-19)
 
 **Note:** Version bump only for package @capacitor/android

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.1](https://github.com/ionic-team/capacitor/compare/6.2.0...6.2.1) (2025-03-31)
+
+### Bug Fixes
+
+- **http:** boundary not added for Request objects ([#7897](https://github.com/ionic-team/capacitor/issues/7897)) ([#7904](https://github.com/ionic-team/capacitor/issues/7904)) ([459cac2](https://github.com/ionic-team/capacitor/commit/459cac243a80f023653209aee3aca02a7db100ca))
+- **ios:** don't check isMediaExtension on range requests ([#7868](https://github.com/ionic-team/capacitor/issues/7868)) ([#7873](https://github.com/ionic-team/capacitor/issues/7873)) ([f34a008](https://github.com/ionic-team/capacitor/commit/f34a0081ac0b5d80d55733a578cda6413fbf99fc))
+
 # [6.2.0](https://github.com/ionic-team/capacitor/compare/6.1.2...6.2.0) (2024-11-19)
 
 ### Bug Fixes

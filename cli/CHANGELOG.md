@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.1](https://github.com/ionic-team/capacitor/compare/6.2.0...6.2.1) (2025-03-31)
+
+### Bug Fixes
+
+- **cli:** don't run bundle if not installed ([#7896](https://github.com/ionic-team/capacitor/issues/7896)) ([#7903](https://github.com/ionic-team/capacitor/issues/7903)) ([03dcb5e](https://github.com/ionic-team/capacitor/commit/03dcb5ed358567bb9e33718c81a5128565163a4d))
+
 # [6.2.0](https://github.com/ionic-team/capacitor/compare/6.1.2...6.2.0) (2024-11-19)
 
 ### Bug Fixes
