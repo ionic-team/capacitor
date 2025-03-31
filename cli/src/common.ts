@@ -151,8 +151,10 @@ export async function runHooks(config: Config, platformName: string, dir: string
   await runPlatformHook(config, platformName, dir, hook);
 
   const allPlugins = await getPlugins(config, platformName);
-  const promises = allPlugins.map( p => runPlatformHook(config, platformName, p.rootPath, hook));
-  await Promise.all(promises);
+
+  for (const p of allPlugins) {
+    await runPlatformHook(config, platformName, p.rootPath, hook);
+  }
 }
 
 export async function runPlatformHook(
