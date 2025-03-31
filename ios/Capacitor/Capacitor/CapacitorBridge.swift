@@ -119,6 +119,8 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // Whether to inject the Cordova files
     private var injectCordovaFiles = false
     private var cordovaParser: CDVConfigParser?
+    private var injectMiscFiles: [String] = []
+    private var canInjectJS: Bool = true
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
@@ -214,6 +216,8 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
         setupCordovaCompatibility()
+        exportMiscJS()
+        canInjectJS = false
         observers.append(NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
             self?.tmpWindow = nil
         })
@@ -243,6 +247,14 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         } catch {
             type(of: self).fatalError(error, error)
         }
+    }
+
+    /**
+     Export misc JavaScript to the webview
+     */
+    func exportMiscJS() {
+        JSExport.exportMiscFileJS(paths: injectMiscFiles, userContentController: webViewDelegationHandler.contentController)
+        injectMiscFiles.removeAll()
     }
 
     /**
@@ -550,6 +562,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
+    func removeAllPluginListeners() {
+        for plugin in plugins.values {
+			      plugin.perform(#selector(CAPPlugin.removeAllListeners(_:)), with: nil)
+        }
+    }
+
     /**
      Send a successful result to the JavaScript layer.
      */
@@ -589,6 +607,17 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     // MARK: - CAPBridgeProtocol: JavaScript Handling
+
+    /**
+     Inject JavaScript from an external file before the WebView loads.
+
+     `path` is relative to the public folder
+     */
+    public func injectScriptBeforeLoad(path: String) {
+        if canInjectJS {
+            injectMiscFiles.append(path)
+        }
+    }
 
     /**
      Eval JS for a specific plugin.

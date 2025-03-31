@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.1.0](https://github.com/ionic-team/capacitor/compare/7.0.1...7.1.0) (2025-03-12)
+
+### Bug Fixes
+
+- **cli:** don't run bundle if not installed ([#7896](https://github.com/ionic-team/capacitor/issues/7896)) ([ee55f6c](https://github.com/ionic-team/capacitor/commit/ee55f6c54639c1a61fa4f9eed1f366ba2d968b86))
+
+### Features
+
+- **android:** add adjustMarginsForEdgeToEdge configuration option ([#7885](https://github.com/ionic-team/capacitor/issues/7885)) ([1ea86d1](https://github.com/ionic-team/capacitor/commit/1ea86d166afd315e72847c5e734a8c175fb90e04))
+- **cli:** add more configurations to build command ([#7769](https://github.com/ionic-team/capacitor/issues/7769)) ([90f95d1](https://github.com/ionic-team/capacitor/commit/90f95d1a829f3d87cb46af827b5bfaac319a9694))
+
 ## [7.0.1](https://github.com/ionic-team/capacitor/compare/7.0.0...7.0.1) (2025-01-21)
 
 ### Bug Fixes
