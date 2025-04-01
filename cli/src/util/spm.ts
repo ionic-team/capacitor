@@ -7,15 +7,15 @@ import type { Config } from '../definitions';
 import { getIOSPlugins } from '../ios/common';
 import { logger, logOptSuffix } from '../log';
 import type { Plugin } from '../plugin';
-import { getPlugins, printPlugins } from '../plugin'
+import { getPlugins, printPlugins } from '../plugin';
 
 export interface SwiftPlugin {
   name: string;
   path: string;
 }
 interface InteractiveOptions {
-  dryRun: boolean,
-  unsafe: boolean
+  dryRun: boolean;
+  unsafe: boolean;
 }
 
 export async function checkPackageManager(config: Config): Promise<'Cocoapods' | 'SPM'> {
@@ -32,10 +32,10 @@ export async function findPackageSwiftFile(config: Config): Promise<string> {
   return resolve(packageDirectory, 'Package.swift');
 }
 
-export async function generatePackageFile(config: Config, plugins: Plugin[]): Promise<void> {
+export async function generatePackageSwiftFile(config: Config, plugins: Plugin[]): Promise<void> {
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
-    logger.info("Writing Package.swift")
+    logger.info('Writing Package.swift');
     const textToWrite = await generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
@@ -44,39 +44,39 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
 }
 
 export async function processIosPackages(config: Config): Promise<Plugin[]> {
-  const plugins = await getPlugins(config, 'ios')
-  printPlugins(plugins, "ios", "capacitor")
+  const plugins = await getPlugins(config, 'ios');
+  printPlugins(plugins, 'ios', 'capacitor');
 
-  const packageSwiftPluginList = await iosPluginsWithPackageSwift(plugins)
-  printPlugins(packageSwiftPluginList, "ios", "packagespm")
+  const packageSwiftPluginList = await iosPluginsWithPackageSwift(plugins);
+  printPlugins(packageSwiftPluginList, 'ios', 'packagespm');
 
-  if( plugins.length == packageSwiftPluginList.length ) {
-    logger.info("Number of plugins in lists match") // TODO: Word this better
+  if (plugins.length == packageSwiftPluginList.length) {
+    logger.info('Number of plugins in lists match'); // TODO: Word this better
   } else {
-    logger.warn("Some installed packages my not be compatable with SPM")
+    logger.warn('Some installed packages my not be compatable with SPM');
   }
 
-  return packageSwiftPluginList
+  return packageSwiftPluginList;
 }
 
 export async function iosPluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
-  const packageList = await pluginsWithPackageSwift(plugins)
-  const iosPackageList = await getIOSPlugins(packageList)
+  const packageList = await pluginsWithPackageSwift(plugins);
+  const iosPackageList = await getIOSPlugins(packageList);
 
-  return iosPackageList
+  return iosPackageList;
 }
 
 export async function createSPMDirectory(config: Config, dryRun: boolean): Promise<void> {
-  const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM')
+  const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
 
-  logOptSuffix("Creating " + spmDirectory, "dry-run", dryRun, LOGGER_LEVELS.INFO)
+  logOptSuffix('Creating ' + spmDirectory, 'dry-run', dryRun, LOGGER_LEVELS.INFO);
 
   if (dryRun) return;
 
   try {
-    await ensureDir(spmDirectory)
+    await ensureDir(spmDirectory);
   } catch (err) {
-    logger.error("Failed to create " + spmDirectory + " with error: " + err)
+    logger.error('Failed to create ' + spmDirectory + ' with error: ' + err);
   }
 }
 
@@ -85,11 +85,11 @@ export async function removeCocoapodsFiles(config: Config, dryRun: boolean, unsa
   const podFile = resolve(iosDirectory, 'Podfile');
   const podlockFile = resolve(iosDirectory, 'Podfile.lock');
   const xcworkspaceFile = resolve(iosDirectory, 'App.xcworkspace');
-  if(unsafe) logger.warn("Unsafe mode");
+  if (unsafe) logger.warn('Unsafe mode');
 
-  await removeWithOptions(podFile, { dryRun: dryRun, unsafe: unsafe })
-  await removeWithOptions(podlockFile, { dryRun: dryRun, unsafe: unsafe })
-  await removeWithOptions(xcworkspaceFile, { dryRun: dryRun, unsafe: unsafe })
+  await removeWithOptions(podFile, { dryRun: dryRun, unsafe: unsafe });
+  await removeWithOptions(podlockFile, { dryRun: dryRun, unsafe: unsafe });
+  await removeWithOptions(xcworkspaceFile, { dryRun: dryRun, unsafe: unsafe });
 }
 
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
@@ -148,29 +148,31 @@ let package = Package(
 // Private Functions
 
 async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
-  const pluginList = Promise.all(plugins.filter(async (plugin, _index, _array) => {
-    const packageSwiftFound = await pathExists(plugin.rootPath + "/Package.swift")
-    if (packageSwiftFound) {
-      return plugin
-    } else {
-      logger.warn(plugin.name + " does not have a Package.swift")
-    }
-  }))
+  const pluginList = Promise.all(
+    plugins.filter(async (plugin, _index, _array) => {
+      const packageSwiftFound = await pathExists(plugin.rootPath + '/Package.swift');
+      if (packageSwiftFound) {
+        return plugin;
+      } else {
+        logger.warn(plugin.name + ' does not have a Package.swift');
+      }
+    }),
+  );
 
-  return pluginList
+  return pluginList;
 }
 
 async function removeWithOptions(dir: string, options: InteractiveOptions): Promise<void> {
-  const backupName = dir + ".bak"
-  const message = options.unsafe ? "Deleting " + dir : "Moving " + dir + " to " + backupName
+  const backupName = dir + '.bak';
+  const message = options.unsafe ? 'Deleting ' + dir : 'Moving ' + dir + ' to ' + backupName;
 
-  logOptSuffix(message, "dry-run", options.dryRun, LOGGER_LEVELS.INFO);
+  logOptSuffix(message, 'dry-run', options.dryRun, LOGGER_LEVELS.INFO);
 
-  if(options.dryRun) return;
+  if (options.dryRun) return;
 
   if (options.unsafe) {
-    remove(dir)
+    remove(dir);
   } else {
-    move(dir, backupName)
+    move(dir, backupName);
   }
 }

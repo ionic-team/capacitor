@@ -21,7 +21,7 @@ import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { generateIOSPackageJSON } from '../util/iosplugin';
 import { resolveNode } from '../util/node';
-import { checkPackageManager, generatePackageFile } from '../util/spm';
+import { checkPackageManager, generatePackageSwiftFile } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -35,7 +35,7 @@ export async function updateIOS(config: Config, deployment: boolean): Promise<vo
   const capacitorPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Core);
 
   if ((await checkPackageManager(config)) === 'SPM') {
-    await generatePackageFile(config, capacitorPlugins);
+    await generatePackageSwiftFile(config, capacitorPlugins);
   } else {
     await updateIOSCocoaPods(config, plugins, deployment);
   }
