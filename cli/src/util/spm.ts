@@ -1,8 +1,9 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
-import { join, relative, resolve } from 'path';
+import { existsSync, writeFileSync } from 'fs-extra';
+import { relative, resolve } from 'path';
 
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
+import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
 
@@ -37,13 +38,7 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
 
 async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
-
-  const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
-  const searchString = 'IPHONEOS_DEPLOYMENT_TARGET = ';
-  const iosVersion = pbx.substring(
-    pbx.indexOf(searchString) + searchString.length,
-    pbx.indexOf(searchString) + searchString.length + 2,
-  );
+  const iosVersion = getMajoriOSVersion(config);
 
   let packageSwiftText = `// swift-tools-version: 5.9
 import PackageDescription
