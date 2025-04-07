@@ -260,6 +260,15 @@ public class WebViewLocalServer {
             headers.put(header.getKey(), header.getValue());
         }
 
+        // a workaround for the following android web view issue:
+        // https://issues.chromium.org/issues/40450316
+        // x-cap-user-agent contains the user agent set in JavaScript
+        String userAgentValue = headers.getString("x-cap-user-agent");
+        if (userAgentValue != null) {
+            headers.put("User-Agent", userAgentValue);
+        }
+        headers.remove("x-cap-user-agent");
+
         HttpRequestHandler.HttpURLConnectionBuilder connectionBuilder = new HttpRequestHandler.HttpURLConnectionBuilder()
             .setUrl(url)
             .setMethod(request.getMethod())

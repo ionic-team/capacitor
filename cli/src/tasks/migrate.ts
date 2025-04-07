@@ -8,10 +8,12 @@ import c from '../colors';
 import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
+import { getMajoriOSVersion } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
 import { getPlugins } from '../plugin';
 import { deleteFolderRecursive } from '../util/fs';
 import { resolveNode } from '../util/node';
+import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -47,6 +49,7 @@ const plugins = [
 const coreVersion = '^7.0.0';
 const pluginVersion = '^7.0.0';
 const gradleVersion = '8.11.1';
+const iOSVersion = '14';
 let installFailed = false;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
@@ -89,7 +92,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
-    : await logPrompt(`Capacitor 7 sets a deployment target of iOS 14 and Android 15 (SDK 35). \n`, {
+    : await logPrompt(`Capacitor 7 sets a deployment target of iOS ${iOSVersion} and Android 15 (SDK 35). \n`, {
         type: 'text',
         name: 'migrateconfirm',
         message: `Are you sure you want to migrate? (Y/n)`,
@@ -146,21 +149,34 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
       // Update iOS Projects
       if (allDependencies['@capacitor/ios'] && existsSync(config.ios.platformDirAbs)) {
-        // ios template changes
-        // Set deployment target to 14.0
-        await runTask(`Migrating deployment target to 14.0.`, () => {
-          return updateFile(
-            config,
-            join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'),
-            'IPHONEOS_DEPLOYMENT_TARGET = ',
-            ';',
-            '14.0',
-          );
-        });
-        // Update Podfile to 14.0
-        await runTask(`Migrating Podfile to 14.0.`, () => {
-          return updateFile(config, join(config.ios.nativeProjectDirAbs, 'Podfile'), `platform :ios, '`, `'`, '14.0');
-        });
+        const currentiOSVersion = getMajoriOSVersion(config);
+        if (parseInt(currentiOSVersion) < parseInt(iOSVersion)) {
+          // ios template changes
+          await runTask(`Migrating deployment target to ${iOSVersion}.0.`, () => {
+            return updateFile(
+              config,
+              join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'),
+              'IPHONEOS_DEPLOYMENT_TARGET = ',
+              ';',
+              `${iOSVersion}.0`,
+            );
+          });
+
+          if ((await checkPackageManager(config)) === 'Cocoapods') {
+            // Update Podfile
+            await runTask(`Migrating Podfile to ${iOSVersion}.0.`, () => {
+              return updateFile(
+                config,
+                join(config.ios.nativeProjectDirAbs, 'Podfile'),
+                `platform :ios, '`,
+                `'`,
+                `${iOSVersion}.0`,
+              );
+            });
+          }
+        } else {
+          logger.warn('Skipped updating deployment target');
+        }
       }
 
       if (!installFailed) {

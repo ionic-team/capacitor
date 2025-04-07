@@ -5,8 +5,9 @@ import { extract } from 'tar';
 
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
-import { getIOSPlugins } from '../ios/common';
+import { getIOSPlugins, getMajoriOSVersion } from '../ios/common';
 import { logger, logOptSuffix } from '../log';
+
 import type { Plugin } from '../plugin';
 import { getPlugins, printPlugins } from '../plugin';
 
@@ -97,13 +98,7 @@ export async function removeCocoapodsFiles(config: Config, dryRun: boolean, unsa
 
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
-
-  const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
-  const searchString = 'IPHONEOS_DEPLOYMENT_TARGET = ';
-  const iosVersion = pbx.substring(
-    pbx.indexOf(searchString) + searchString.length,
-    pbx.indexOf(searchString) + searchString.length + 2,
-  );
+  const iosVersion = getMajoriOSVersion(config);
 
   let packageSwiftText = `// swift-tools-version: 5.9
 import PackageDescription
