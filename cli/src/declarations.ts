@@ -77,6 +77,14 @@ export interface CapacitorConfig {
    */
   zoomEnabled?: boolean;
 
+  /**
+   * Whether to give the webview initial focus.
+   *
+   * @since 7.0.0
+   * @default true
+   */
+  initialFocus?: boolean;
+
   android?: {
     /**
      * Specify a custom path to the native Android project.
@@ -191,6 +199,8 @@ export interface CapacitorConfig {
     /**
      * Whether to give the webview initial focus.
      *
+     * Overrides global `initialFocus` option.
+     *
      * @since 3.5.1
      * @default true
      */
@@ -278,6 +288,26 @@ export interface CapacitorConfig {
      * @default false
      */
     useLegacyBridge?: boolean;
+
+    /**
+     * Make service worker requests go through Capacitor bridge.
+     * Set it to false to use your own handling.
+     *
+     * @since 7.0.0
+     * @default true
+     */
+    resolveServiceWorkerRequests?: boolean;
+
+    /**
+     * If set to "force", margins will be adjusted for edge to edge regardless of any other settings.
+     * If set to "auto", or is missing, will check for Android 15 and the setting of [windowOptOutEdgeToEdgeEnforcement](https://developer.android.com/reference/android/R.attr#windowOptOutEdgeToEdgeEnforcement) and will adjust margins if on Android 15 and windowOptOutEdgeToEdgeEnforcement is false/missing.
+     * If set to "disable", will not adjust margins at all.
+     * In Capacitor 8, this default will be changed to 'auto'
+     *
+     * @since 7.1.0
+     * @default disable
+     */
+    adjustMarginsForEdgeToEdge?: 'auto' | 'force' | 'disable';
   };
 
   ios?: {
@@ -449,6 +479,45 @@ export interface CapacitorConfig {
      * @default false
      */
     webContentsDebuggingEnabled?: boolean;
+
+    /**
+     * Whether to give the webview initial focus.
+     *
+     * Overrides global `initialFocus` option.
+     *
+     * @since 7.0.0
+     * @default true
+     */
+    initialFocus?: boolean;
+
+    buildOptions?: {
+      /**
+       * The signing style to use when building the app for distribution.
+       *
+       * @since 7.1.0
+       * @default 'automatic'
+       */
+      signingStyle?: 'automatic' | 'manual';
+      /**
+       * The method used by xcodebuild to export the archive
+       *
+       * @since 7.1.0
+       * @default 'app-store-connect'
+       */
+      exportMethod?: string;
+      /**
+       * A certificate name, SHA-1 hash, or automatic selector to use for signing for iOS builds.
+       *
+       * @since 7.1.0
+       */
+      signingCertificate?: string;
+      /**
+       * A provisioning profile name or UUID for iOS builds.
+       *
+       * @since 7.1.0
+       */
+      provisioningProfile?: string;
+    };
   };
 
   server?: {

@@ -1,7 +1,7 @@
-import { writeFileSync, readFileSync, existsSync } from '@ionic/utils-fs';
+import { writeFileSync, readFileSync, existsSync } from 'fs-extra';
 import { join } from 'path';
-import rimraf from 'rimraf';
-import { coerce, gt, gte, lt } from 'semver';
+import { rimraf } from 'rimraf';
+import { coerce, gte, lt } from 'semver';
 
 import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
@@ -12,6 +12,7 @@ import { logger, logPrompt, logSuccess } from '../log';
 import { getPlugins } from '../plugin';
 import { deleteFolderRecursive } from '../util/fs';
 import { resolveNode } from '../util/node';
+import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -44,9 +45,9 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^6.0.0';
-const pluginVersion = '^6.0.0';
-const gradleVersion = '8.2.1';
+const coreVersion = '^7.0.0';
+const pluginVersion = '^7.0.0';
+const gradleVersion = '8.11.1';
 let installFailed = false;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
@@ -55,14 +56,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
   }
 
   const capMajor = await checkCapacitorMajorVersion(config);
-  if (capMajor < 5) {
-    fatal('Migrate can only be used on capacitor 5 and above, please use the CLI in Capacitor 5 to upgrade to 5 first');
+  if (capMajor < 6) {
+    fatal('Migrate can only be used on Capacitor 6, please use the CLI in Capacitor 6 to upgrade to 6 first');
   }
 
   const jdkMajor = await checkJDKMajorVersion();
 
-  if (jdkMajor < 17) {
-    logger.warn('Capacitor 6 requires JDK 17 or higher. Some steps may fail.');
+  if (jdkMajor < 21) {
+    logger.warn('Capacitor 7 requires JDK 21 or higher. Some steps may fail.');
   }
 
   const variablesAndClasspaths:
@@ -89,7 +90,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
-    : await logPrompt(`Capacitor 6 sets a deployment target of iOS 13 and Android 14 (SDK 34). \n`, {
+    : await logPrompt(`Capacitor 7 sets a deployment target of iOS 14 and Android 15 (SDK 35). \n`, {
         type: 'text',
         name: 'migrateconfirm',
         message: `Are you sure you want to migrate? (Y/n)`,
@@ -147,10 +148,23 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
       // Update iOS Projects
       if (allDependencies['@capacitor/ios'] && existsSync(config.ios.platformDirAbs)) {
         // ios template changes
-        // Remove NSLocationAlwaysUsageDescription
-        await runTask(`Migrating Info.plist by removing NSLocationAlwaysUsageDescription key.`, () => {
-          return removeKey(join(config.ios.nativeTargetDirAbs, 'Info.plist'), 'NSLocationAlwaysUsageDescription');
+        // Set deployment target to 14.0
+        await runTask(`Migrating deployment target to 14.0.`, () => {
+          return updateFile(
+            config,
+            join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'),
+            'IPHONEOS_DEPLOYMENT_TARGET = ',
+            ';',
+            '14.0',
+          );
         });
+
+        if ((await checkPackageManager(config)) === 'Cocoapods') {
+          // Update Podfile to 14.0
+          await runTask(`Migrating Podfile to 14.0.`, () => {
+            return updateFile(config, join(config.ios.nativeProjectDirAbs, 'Podfile'), `platform :ios, '`, `'`, '14.0');
+          });
+        }
       }
 
       if (!installFailed) {
@@ -162,12 +176,21 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
       }
 
       if (allDependencies['@capacitor/android'] && existsSync(config.android.platformDirAbs)) {
+        // AndroidManifest.xml add navigation"
+        await runTask(`Migrating AndroidManifest.xml by adding navigation to Activity configChanges.`, () => {
+          return updateAndroidManifest(join(config.android.srcMainDirAbs, 'AndroidManifest.xml'));
+        });
+
         const gradleWrapperVersion = getGradleWrapperVersion(
           join(config.android.platformDirAbs, 'gradle', 'wrapper', 'gradle-wrapper.properties'),
         );
 
-        if (!installFailed && gt(gradleVersion, gradleWrapperVersion)) {
+        if (!installFailed && gte(gradleVersion, gradleWrapperVersion)) {
           try {
+            await runTask(`Upgrading gradle wrapper`, () => {
+              return updateGradleWrapperFiles(config.android.platformDirAbs);
+            });
+            // Run twice as first time it only updates the wrapper properties file
             await runTask(`Upgrading gradle wrapper files`, () => {
               return updateGradleWrapperFiles(config.android.platformDirAbs);
             });
@@ -189,28 +212,6 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         }
         await runTask(`Migrating build.gradle file.`, () => {
           return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
-        });
-
-        // Replace deprecated compileSdkVersion
-        await runTask('Replacing deprecated compileSdkVersion from build.gradle', () => {
-          return (async (): Promise<void> => {
-            const buildGradleFilename = join(config.android.platformDirAbs, 'app', 'build.gradle');
-            const buildGradleText = readFile(buildGradleFilename);
-
-            if (!buildGradleText) {
-              logger.error(`Could not read ${buildGradleFilename}. Check its permissions and if it exists.`);
-              return;
-            }
-            const compileSdk = `compileSdkVersion rootProject.ext.compileSdkVersion`;
-            if (buildGradleText.includes(compileSdk)) {
-              const buildGradleReplaced = buildGradleText.replace(
-                compileSdk,
-                `compileSdk rootProject.ext.compileSdkVersion`,
-              );
-
-              writeFileSync(buildGradleFilename, buildGradleReplaced, 'utf-8');
-            }
-          })();
         });
 
         // Variables gradle
@@ -261,11 +262,11 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               }
             }
             const pluginVariables: { [key: string]: string } = {
-              firebaseMessagingVersion: '23.3.1',
-              playServicesLocationVersion: '21.1.0',
-              androidxBrowserVersion: '1.7.0',
-              androidxMaterialVersion: '1.10.0',
-              androidxExifInterfaceVersion: '1.3.6',
+              firebaseMessagingVersion: '24.1.0',
+              playServicesLocationVersion: '21.3.0',
+              androidxBrowserVersion: '1.8.0',
+              androidxMaterialVersion: '1.12.0',
+              androidxExifInterfaceVersion: '1.3.7',
               androidxCoreKTXVersion: '1.12.0',
               googleMapsPlayServicesVersion: '18.2.0',
               googleMapsUtilsVersion: '3.8.2',
@@ -360,11 +361,11 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
 
 async function writeBreakingChanges() {
   const breaking = [
-    '@capacitor/camera',
-    '@capacitor/filesystem',
-    '@capacitor/geolocation',
-    '@capacitor/google-maps',
-    '@capacitor/local-notifications',
+    '@capacitor/app',
+    '@capacitor/device',
+    '@capacitor/haptics',
+    '@capacitor/splash-screen',
+    '@capacitor/statusbar',
   ];
   const broken = [];
   for (const lib of breaking) {
@@ -374,7 +375,7 @@ async function writeBreakingChanges() {
   }
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/6-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/7-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
@@ -602,6 +603,23 @@ function setAllStringIn(data: string, start: string, end: string, replacement: s
   return result;
 }
 
+async function updateAndroidManifest(filename: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+
+  if (txt.includes('navigation')) {
+    return; // Probably already updated
+  }
+  const replaced = txt.replace(
+    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"',
+    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"',
+  );
+
+  writeFileSync(filename, replaced, 'utf-8');
+}
+
 export async function patchOldCapacitorPlugins(config: Config): Promise<void[]> {
   const allPlugins = await getPlugins(config, 'android');
   const androidPlugins = await getAndroidPlugins(allPlugins);
@@ -635,29 +653,4 @@ export async function patchOldCapacitorPlugins(config: Config): Promise<void[]> 
       }
     }),
   );
-}
-
-async function removeKey(filename: string, key: string) {
-  const txt = readFile(filename);
-  if (!txt) {
-    return;
-  }
-  let lines = txt.split('\n');
-  let removed = false;
-  let removing = false;
-  lines = lines.filter((line) => {
-    if (removing && line.includes('</string>')) {
-      removing = false;
-      return false;
-    }
-    if (line.includes(`<key>${key}</key`)) {
-      removing = true;
-      removed = true;
-    }
-    return !removing;
-  });
-
-  if (removed) {
-    writeFileSync(filename, lines.join('\n'), 'utf-8');
-  }
 }

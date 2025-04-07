@@ -76,7 +76,7 @@ open class HttpRequestHandler {
             return self
         }
 
-        public func setUrlParams(_ params: [String: Any]) -> CapacitorHttpRequestBuilder {
+        public func setUrlParams(_ params: [String: Any], _ shouldEncodeUrlParams: Bool = true) -> CapacitorHttpRequestBuilder {
             if params.count != 0 {
                 // swiftlint:disable force_cast
                 var cmps = URLComponents(url: url!, resolvingAgainstBaseURL: true)
@@ -84,18 +84,27 @@ open class HttpRequestHandler {
                     cmps?.queryItems = []
                 }
 
-                var urlSafeParams: [URLQueryItem] = []
-                for (key, value) in params {
-                    if let arr = value as? [String] {
-                        arr.forEach { str in
-                            urlSafeParams.append(URLQueryItem(name: key, value: str))
+                if shouldEncodeUrlParams {
+                    var urlSafeParams: [URLQueryItem] = []
+                    for (key, value) in params {
+                        if let arr = value as? [String] {
+                            arr.forEach { str in
+                                urlSafeParams.append(URLQueryItem(name: key, value: str))
+                            }
+                        } else {
+                            urlSafeParams.append(URLQueryItem(name: key, value: (value as! String)))
                         }
-                    } else {
-                        urlSafeParams.append(URLQueryItem(name: key, value: (value as! String)))
                     }
+                    cmps!.queryItems?.append(contentsOf: urlSafeParams)
+                } else {
+                    cmps?.query = params.flatMap { key, value -> [String] in
+                        if let arrayValue = value as? [String] {
+                            return arrayValue.map { "\(key)=\($0)" }
+                        } else {
+                            return ["\(key)=\(value)"]
+                        }
+                    }.joined(separator: "&")
                 }
-
-                cmps!.queryItems?.append(contentsOf: urlSafeParams)
                 url = cmps!.url!
             }
             return self
@@ -165,10 +174,11 @@ open class HttpRequestHandler {
         guard var urlString = call.getString("url") else { throw URLError(.badURL) }
         let method = httpMethod ?? call.getString("method", "GET")
 
-        let headers = (call.getObject("headers") ?? [:]) as [String: Any]
+        var headers = (call.getObject("headers") ?? [:]) as [String: Any]
         let params = (call.getObject("params") ?? [:]) as [String: Any]
         let responseType = call.getString("responseType") ?? "text"
         let connectTimeout = call.getDouble("connectTimeout")
+        let shouldEncodeUrlParams = call.getBool("shouldEncodeUrlParams", true)
         let readTimeout = call.getDouble("readTimeout")
         let dataType = call.getString("dataType") ?? "any"
 
@@ -180,9 +190,13 @@ open class HttpRequestHandler {
         let request = try CapacitorHttpRequestBuilder()
             .setUrl(urlString)
             .setMethod(method)
-            .setUrlParams(params)
+            .setUrlParams(params, shouldEncodeUrlParams)
             .openConnection()
             .build()
+
+        if let userAgentString = config?.overridenUserAgentString, headers["User-Agent"] == nil, headers["user-agent"] == nil {
+            headers["User-Agent"] = userAgentString
+        }
 
         request.setRequestHeaders(headers)
 

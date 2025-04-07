@@ -141,6 +141,9 @@ internal extension InstanceDescriptor {
                 isWebDebuggable = true
                 #endif
             }
+            if let initialFocus = (config[keyPath: "ios.initialFocus"] as? Bool) ?? (config[keyPath: "initialFocus"] as? Bool) {
+                hasInitialFocus = initialFocus
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity

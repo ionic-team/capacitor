@@ -1,4 +1,4 @@
-import { copy, remove, pathExists, readFile, realpath, writeFile } from '@ionic/utils-fs';
+import { copy, remove, pathExists, readFile, realpath, writeFile } from 'fs-extra';
 import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
@@ -84,7 +84,7 @@ async function updatePodfile(config: Config, plugins: Plugin[], deployment: bool
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
   const podPath = await config.ios.podPath;
-  const useBundler = podPath.startsWith('bundle');
+  const useBundler = podPath.startsWith('bundle') && (await isInstalled('bundle'));
   const podCommandExists = await isInstalled('pod');
   if (useBundler || podCommandExists) {
     if (useBundler) {

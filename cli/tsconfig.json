@@ -3,7 +3,10 @@
     "declaration": true,
     "esModuleInterop": true,
     "importHelpers": true,
-    "lib": ["es2019"],
+    "lib": [
+      "ES2021",
+      "ES2022.Error"
+    ],
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmitHelpers": true,
