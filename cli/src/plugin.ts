@@ -140,7 +140,7 @@ export function printPlugins(
       msg = `Found ${plugins.length} Capacitor plugin${plural} for ${c.strong(platform)}:\n`;
       break;
     case 'packagespm':
-      msg = `Found ${plugins.length} Plugin${plural} with ${c.strong("Package.swift")} files:\n`;
+      msg = `Found ${plugins.length} Plugin${plural} with ${c.strong('Package.swift')} files:\n`;
   }
 
   msg += plugins.map((p) => `${p.id}${c.weak(`@${p.version}`)}`).join('\n');

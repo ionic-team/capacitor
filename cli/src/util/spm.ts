@@ -7,7 +7,6 @@ import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
 import { getIOSPlugins, getMajoriOSVersion } from '../ios/common';
 import { logger, logOptSuffix } from '../log';
-
 import type { Plugin } from '../plugin';
 import { getPlugins, printPlugins } from '../plugin';
 

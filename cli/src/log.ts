@@ -48,11 +48,11 @@ export function logSuccess(msg: string): void {
 }
 
 export function logOptSuffix(msg: string, suffix: string, showSuffix: boolean, level?: LoggerLevelWeight): void {
-  const message = showSuffix ? `${msg} [${c.ancillary(suffix)}]` : msg
+  const message = showSuffix ? `${msg} [${c.ancillary(suffix)}]` : msg;
 
   logger.log({
     msg: message,
     logger,
-    level: level
-  })
+    level: level,
+  });
 }
