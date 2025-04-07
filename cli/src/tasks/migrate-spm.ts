@@ -5,7 +5,7 @@ import {
   checkPackageManager,
   generatePackageSwiftFile,
   processIosPackages,
-  createSPMDirectory,
+  extractSPMPackageDirectory,
   removeCocoapodsFiles,
 } from '../util/spm';
 
@@ -17,7 +17,7 @@ export async function migrateToSPM(config: Config, dryRun: boolean, unsafe: bool
     fatal('Capacitor project is already using SPM, exiting.');
   }
 
-  await createSPMDirectory(config, dryRun);
+  await extractSPMPackageDirectory(config, dryRun);
   await removeCocoapodsFiles(config, dryRun, unsafe);
 
   // TODO: Add Cap-SPM to XCodeProj file

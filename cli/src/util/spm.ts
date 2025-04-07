@@ -1,6 +1,7 @@
 import { LOGGER_LEVELS } from '@ionic/cli-framework-output'; // Ugh, I hate this, lets yank it
 import { pathExists, existsSync, readFileSync, writeFileSync, ensureDir, remove, move } from 'fs-extra';
 import { join, relative, resolve } from 'path';
+import { extract } from 'tar';
 
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
@@ -66,15 +67,17 @@ export async function iosPluginsWithPackageSwift(plugins: Plugin[]): Promise<Plu
   return iosPackageList;
 }
 
-export async function createSPMDirectory(config: Config, dryRun: boolean): Promise<void> {
+export async function extractSPMPackageDirectory(config: Config, dryRun: boolean): Promise<void> {
   const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
+  const spmTemplate = join(config.cli.assetsDirAbs, 'ios-spm-migrate-template.tar.gz');
 
-  logOptSuffix('Creating ' + spmDirectory, 'dry-run', dryRun, LOGGER_LEVELS.INFO);
+  logOptSuffix('Extracting ' + spmTemplate + ' to ' + spmDirectory, 'dry-run', dryRun, LOGGER_LEVELS.INFO);
 
   if (dryRun) return;
 
   try {
     await ensureDir(spmDirectory);
+    await extract({ file: spmTemplate, cwd: spmDirectory });
   } catch (err) {
     logger.error('Failed to create ' + spmDirectory + ' with error: ' + err);
   }
