@@ -9,12 +9,13 @@ import { getIOSPlugins, getMajoriOSVersion } from '../ios/common';
 import { logger, logOptSuffix } from '../log';
 import type { Plugin } from '../plugin';
 import { getPlugins, printPlugins } from '../plugin';
+import { runCommand, isInstalled } from '../util/subprocess';
 
 export interface SwiftPlugin {
   name: string;
   path: string;
 }
-interface InteractiveOptions {
+export interface MigrateSPMInteractiveOptions {
   dryRun: boolean;
   unsafe: boolean;
 }
@@ -67,13 +68,13 @@ export async function iosPluginsWithPackageSwift(plugins: Plugin[]): Promise<Plu
   return iosPackageList;
 }
 
-export async function extractSPMPackageDirectory(config: Config, dryRun: boolean): Promise<void> {
+export async function extractSPMPackageDirectory(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
   const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
   const spmTemplate = join(config.cli.assetsDirAbs, 'ios-spm-migrate-template.tar.gz');
 
-  logOptSuffix('Extracting ' + spmTemplate + ' to ' + spmDirectory, 'dry-run', dryRun, LOGGER_LEVELS.INFO);
+  logOptSuffix('Extracting ' + spmTemplate + ' to ' + spmDirectory, 'dry-run', options.dryRun, LOGGER_LEVELS.INFO);
 
-  if (dryRun) return;
+  if (options.dryRun) return;
 
   try {
     await ensureDir(spmDirectory);
@@ -83,16 +84,16 @@ export async function extractSPMPackageDirectory(config: Config, dryRun: boolean
   }
 }
 
-export async function removeCocoapodsFiles(config: Config, dryRun: boolean, unsafe: boolean): Promise<void> {
+export async function removeCocoapodsFiles(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
   const iosDirectory = config.ios.nativeProjectDirAbs;
   const podFile = resolve(iosDirectory, 'Podfile');
   const podlockFile = resolve(iosDirectory, 'Podfile.lock');
   const xcworkspaceFile = resolve(iosDirectory, 'App.xcworkspace');
-  if (unsafe) logger.warn('Unsafe mode');
+  if (options.unsafe) logger.warn('Unsafe mode');
 
-  await removeWithOptions(podFile, { dryRun: dryRun, unsafe: unsafe });
-  await removeWithOptions(podlockFile, { dryRun: dryRun, unsafe: unsafe });
-  await removeWithOptions(xcworkspaceFile, { dryRun: dryRun, unsafe: unsafe });
+  await removeWithOptions(podFile, options);
+  await removeWithOptions(podlockFile, options);
+  await removeWithOptions(xcworkspaceFile, options);
 }
 
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
@@ -142,6 +143,33 @@ let package = Package(
   return packageSwiftText;
 }
 
+export async function runCocoapodsDeintegrate(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
+  const podPath = await config.ios.podPath;
+  const projectFileName = config.ios.nativeXcodeProjDirAbs;
+  const useBundler = podPath.startsWith('bundle') && (await isInstalled('bundle'));
+  const podCommandExists = await isInstalled('pod');
+
+  if (useBundler) logger.info('Found bundler, using it run CocoaPods.');
+
+  logger.info('Running pod deintegrate on project ' + projectFileName);
+
+  if (options.dryRun) return;
+
+  if (useBundler || podCommandExists) {
+    if (useBundler) {
+      await runCommand('bundle', ['exec', 'pod', 'deintegrate', projectFileName], {
+        cwd: config.ios.nativeProjectDirAbs,
+      });
+    } else {
+      await runCommand(podPath, ['deintegrate', projectFileName], {
+        cwd: config.ios.nativeProjectDirAbs,
+      });
+    }
+  } else {
+    logger.warn('Skipping pod deintegrate because CocoaPods is not installed - migration will be incomplete');
+  }
+}
+
 // Private Functions
 
 async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
@@ -159,7 +187,7 @@ async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
   return pluginList;
 }
 
-async function removeWithOptions(dir: string, options: InteractiveOptions): Promise<void> {
+async function removeWithOptions(dir: string, options: MigrateSPMInteractiveOptions): Promise<void> {
   const backupName = dir + '.bak';
   const message = options.unsafe ? 'Deleting ' + dir : 'Moving ' + dir + ' to ' + backupName;
 

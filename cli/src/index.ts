@@ -376,7 +376,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(async ({ dryRun, unsafe }) => {
         const { migrateToSPM } = await import('./tasks/migrate-spm');
-        await migrateToSPM(config, dryRun, unsafe);
+        await migrateToSPM(config, { dryRun: dryRun, unsafe: unsafe });
       }),
     );
 
