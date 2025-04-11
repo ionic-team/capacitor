@@ -27,6 +27,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         #if DEBUG
         return true
         #else
+        if let debugValue = ProcessInfo.processInfo.environment["DEBUG"], debugValue == "true" {
+            return true
+        }
         return false
         #endif
     }

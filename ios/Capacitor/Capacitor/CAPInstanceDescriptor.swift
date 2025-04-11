@@ -139,6 +139,10 @@ internal extension InstanceDescriptor {
             } else {
                 #if DEBUG
                 isWebDebuggable = true
+                #else
+                if let debugValue = ProcessInfo.processInfo.environment["DEBUG"], debugValue == "true" {
+                    isWebDebuggable = true
+                }
                 #endif
             }
             if let initialFocus = (config[keyPath: "ios.initialFocus"] as? Bool) ?? (config[keyPath: "initialFocus"] as? Bool) {
