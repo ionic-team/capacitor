@@ -398,6 +398,19 @@ public class HttpRequestHandler {
 
         boolean isHttpMutate = method.equals("DELETE") || method.equals("PATCH") || method.equals("POST") || method.equals("PUT");
 
+        // a workaround for the following android web view issue:
+        // https://issues.chromium.org/issues/40450316
+        // x-cap-user-agent contains the user agent set in JavaScript
+        String userAgentValue = headers.getString("x-cap-user-agent");
+        if (userAgentValue != null) {
+            headers.put("User-Agent", userAgentValue);
+        }
+        headers.remove("x-cap-user-agent");
+
+        if (!headers.has("User-Agent") && !headers.has("user-agent")) {
+            headers.put("User-Agent", bridge.getConfig().getOverriddenUserAgentString());
+        }
+
         URL url = new URL(urlString);
         HttpURLConnectionBuilder connectionBuilder = new HttpURLConnectionBuilder()
             .setUrl(url)
