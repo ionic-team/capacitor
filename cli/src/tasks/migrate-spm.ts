@@ -4,7 +4,7 @@ import { logger } from '../log';
 import type { MigrateSPMInteractiveOptions } from '../util/spm';
 import {
   checkPackageManager,
-  generatePackageSwiftFile,
+  generatePackageFile,
   processIosPackages,
   extractSPMPackageDirectory,
   removeCocoapodsFiles,
@@ -25,7 +25,7 @@ export async function migrateToSPM(config: Config, options: MigrateSPMInteractiv
 
   const packageSwiftPluginList = await processIosPackages(config);
   if (!options.dryRun) {
-    await generatePackageSwiftFile(config, packageSwiftPluginList);
+    await generatePackageFile(config, packageSwiftPluginList);
   }
 
   logger.info(

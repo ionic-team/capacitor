@@ -33,7 +33,7 @@ export async function findPackageSwiftFile(config: Config): Promise<string> {
   return resolve(packageDirectory, 'Package.swift');
 }
 
-export async function generatePackageSwiftFile(config: Config, plugins: Plugin[]): Promise<void> {
+export async function generatePackageFile(config: Config, plugins: Plugin[]): Promise<void> {
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
     logger.info('Writing Package.swift');
