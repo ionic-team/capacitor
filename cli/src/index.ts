@@ -371,12 +371,11 @@ export function runProgram(config: Config): void {
   program
     .command('migrate-to-spm')
     .option('--dry-run', 'Show actions that will be taken but do not perform anything', false)
-    .option('--unsafe', 'Do not make backups of any files that will be deleted')
     .description('Remove Cocoapods from project and switch to Swift Package Manager')
     .action(
-      wrapAction(async ({ dryRun, unsafe }) => {
+      wrapAction(async ({ dryRun }) => {
         const { migrateToSPM } = await import('./tasks/migrate-spm');
-        await migrateToSPM(config, { dryRun: dryRun, unsafe: unsafe });
+        await migrateToSPM(config, { dryRun: dryRun });
       }),
     );
 

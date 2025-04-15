@@ -13,7 +13,6 @@ import {
 
 export async function migrateToSPM(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
   if (options.dryRun) logger.warn('Dry-run enabled, no actions will be taken.');
-  if (options.unsafe) logger.warn('Unsafe mode enabled, no file backups will be made.');
 
   if ((await checkPackageManager(config)) == 'SPM') {
     fatal('Capacitor project is already using SPM, exiting.');
@@ -28,4 +27,8 @@ export async function migrateToSPM(config: Config, options: MigrateSPMInteractiv
   if (!options.dryRun) {
     await generatePackageSwiftFile(config, packageSwiftPluginList);
   }
+
+  logger.info(
+    'To complete migration follow the manual steps at https://capacitorjs.com/docs/ios/spm#using-our-migration-tool',
+  );
 }

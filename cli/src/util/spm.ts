@@ -17,7 +17,6 @@ export interface SwiftPlugin {
 }
 export interface MigrateSPMInteractiveOptions {
   dryRun: boolean;
-  unsafe: boolean;
 }
 
 export async function checkPackageManager(config: Config): Promise<'Cocoapods' | 'SPM'> {
@@ -89,7 +88,6 @@ export async function removeCocoapodsFiles(config: Config, options: MigrateSPMIn
   const podFile = resolve(iosDirectory, 'Podfile');
   const podlockFile = resolve(iosDirectory, 'Podfile.lock');
   const xcworkspaceFile = resolve(iosDirectory, 'App.xcworkspace');
-  if (options.unsafe) logger.warn('Unsafe mode');
 
   await removeWithOptions(podFile, options);
   await removeWithOptions(podlockFile, options);
@@ -149,7 +147,7 @@ export async function runCocoapodsDeintegrate(config: Config, options: MigrateSP
   const useBundler = podPath.startsWith('bundle') && (await isInstalled('bundle'));
   const podCommandExists = await isInstalled('pod');
 
-  if (useBundler) logger.info('Found bundler, using it run CocoaPods.');
+  if (useBundler) logger.info('Found bundler, using it to run CocoaPods.');
 
   logger.info('Running pod deintegrate on project ' + projectFileName);
 
@@ -188,16 +186,10 @@ async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
 }
 
 async function removeWithOptions(dir: string, options: MigrateSPMInteractiveOptions): Promise<void> {
-  const backupName = dir + '.bak';
-  const message = options.unsafe ? 'Deleting ' + dir : 'Moving ' + dir + ' to ' + backupName;
-
+  const message = 'Deleting ' + dir;
   logOptSuffix(message, 'dry-run', options.dryRun, LOGGER_LEVELS.INFO);
 
   if (options.dryRun) return;
 
-  if (options.unsafe) {
-    remove(dir);
-  } else {
-    move(dir, backupName);
-  }
+  remove(dir);
 }
