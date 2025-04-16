@@ -69,7 +69,7 @@ export class WebPlugin implements Plugin {
   }
 
   protected hasListeners(eventName: string): boolean {
-    return !!this.listeners[eventName].length;
+    return !!this.listeners[eventName]?.length;
   }
 
   protected registerWindowListener(windowEventName: string, pluginEventName: string): void {
