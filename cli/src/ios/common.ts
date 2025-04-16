@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
-import { readFile, writeFile } from 'fs-extra';
-import { resolve } from 'path';
+import { readFile, readFileSync, writeFile } from 'fs-extra';
+import { join, resolve } from 'path';
 
 import c from '../colors';
 import { checkCapacitorPlatform } from '../common';
@@ -102,4 +102,14 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
 
   await writeFile(plistPath, plistContent, { encoding: 'utf-8' });
   await writeFile(pbxPath, pbxContent, { encoding: 'utf-8' });
+}
+
+export function getMajoriOSVersion(config: Config): string {
+  const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
+  const searchString = 'IPHONEOS_DEPLOYMENT_TARGET = ';
+  const iosVersion = pbx.substring(
+    pbx.indexOf(searchString) + searchString.length,
+    pbx.indexOf(searchString) + searchString.length + 2,
+  );
+  return iosVersion;
 }
