@@ -140,7 +140,7 @@ internal extension InstanceDescriptor {
                 #if DEBUG
                 isWebDebuggable = true
                 #else
-                if let debugValue = ProcessInfo.processInfo.environment["CAPACITOR_DEBUG"], debugValue == "true" {
+                if let debugValue = Bundle.main.object(forInfoDictionaryKey: "CAPACITOR_DEBUG") as? String {
                     isWebDebuggable = true
                 }
                 #endif
