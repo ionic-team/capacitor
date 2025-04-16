@@ -140,7 +140,7 @@ internal extension InstanceDescriptor {
                 #if DEBUG
                 isWebDebuggable = true
                 #else
-                if let debugValue = Bundle.main.object(forInfoDictionaryKey: "CAPACITOR_DEBUG") as? String {
+                if let debugValue = Bundle.main.object(forInfoDictionaryKey: "CAPACITOR_DEBUG") as? String, debugValue == "true" {
                     isWebDebuggable = true
                 }
                 #endif
