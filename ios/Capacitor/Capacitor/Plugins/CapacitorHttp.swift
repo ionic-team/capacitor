@@ -1,7 +1,18 @@
 import Foundation
 
 @objc(CAPHttpPlugin)
-public class CAPHttpPlugin: CAPPlugin {
+public class CAPHttpPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "CAPHttpPlugin"
+    public let jsName = "CapacitorHttp"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "request", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "get", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "post", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "put", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "patch", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "delete", returnType: CAPPluginReturnPromise)
+    ]
+
     @objc func http(_ call: CAPPluginCall, _ httpMethod: String?) {
         do {
             if let clazz = NSClassFromString("SSLPinningHttpRequestHandlerClass") {

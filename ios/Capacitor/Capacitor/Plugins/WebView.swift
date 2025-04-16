@@ -1,7 +1,15 @@
 import Foundation
 
 @objc(CAPWebViewPlugin)
-public class CAPWebViewPlugin: CAPPlugin {
+public class CAPWebViewPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "CAPWebViewPlugin"
+    public let jsName = "WebView"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "setServerAssetPath", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setServerBasePath", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getServerBasePath", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "persistServerBasePath", returnType: CAPPluginReturnPromise)
+    ]
 
     @objc func setServerAssetPath(_ call: CAPPluginCall) {
         if let path = call.getString("path"), let viewController = bridge?.viewController as? CAPBridgeViewController {
