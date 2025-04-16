@@ -569,6 +569,9 @@ public class Bridge {
 
     public void reset() {
         savedCalls = new HashMap<>();
+        for (PluginHandle handle : this.plugins.values()) {
+            handle.getInstance().removeAllListeners();
+        }
     }
 
     /**

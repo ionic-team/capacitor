@@ -291,6 +291,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func reset() {
         storedCalls.withLock { $0.removeAll() }
+        removeAllPluginListeners()
     }
 
     /**
@@ -564,7 +565,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     func removeAllPluginListeners() {
         for plugin in plugins.values {
-			      plugin.perform(#selector(CAPPlugin.removeAllListeners(_:)), with: nil)
+            plugin.perform(#selector(CAPPlugin.removeAllListeners(_:)), with: nil)
         }
     }
 
