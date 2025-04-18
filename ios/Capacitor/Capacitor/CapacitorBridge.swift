@@ -27,6 +27,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         #if DEBUG
         return true
         #else
+        if let debugValue = Bundle.main.object(forInfoDictionaryKey: "CAPACITOR_DEBUG") as? String, debugValue == "true" {
+            return true
+        }
         return false
         #endif
     }
