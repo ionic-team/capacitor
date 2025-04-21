@@ -140,6 +140,7 @@ internal extension InstanceDescriptor {
                 #if DEBUG
                 isWebDebuggable = true
                 #else
+                // this is needed for SPM xcframework Capacitor.  Can eventually be removed when the SPM package moves to being source-based.
                 if let debugValue = Bundle.main.object(forInfoDictionaryKey: "CAPACITOR_DEBUG") as? String, debugValue == "true" {
                     isWebDebuggable = true
                 }
