@@ -1,7 +1,17 @@
 import Foundation
 
 @objc(CAPCookiesPlugin)
-public class CAPCookiesPlugin: CAPPlugin {
+public class CAPCookiesPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "CAPCookiesPlugin"
+    public let jsName = "CapacitorCookies"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "getCookies", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setCookie", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "deleteCookie", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "clearCookies", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "clearAllCookies", returnType: CAPPluginReturnPromise)
+    ]
+
     var cookieManager: CapacitorCookieManager?
 
     @objc override public func load() {
