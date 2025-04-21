@@ -27,6 +27,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         #if DEBUG
         return true
         #else
+        // this is needed for SPM xcframework Capacitor.  Can eventually be removed when the SPM package moves to being source-based.
+        if let debugValue = Bundle.main.object(forInfoDictionaryKey: "CAPACITOR_DEBUG") as? String, debugValue == "true" {
+            return true
+        }
         return false
         #endif
     }
