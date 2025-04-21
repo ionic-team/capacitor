@@ -6,12 +6,12 @@ import { extract } from 'tar';
 
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
+import { fatal } from '../errors';
 import { getIOSPlugins, getMajoriOSVersion } from '../ios/common';
 import { logger, logOptSuffix } from '../log';
 import type { Plugin } from '../plugin';
 import { getPlugins, printPlugins } from '../plugin';
 import { runCommand, isInstalled } from '../util/subprocess';
-import { fatal } from '../errors';
 
 export interface SwiftPlugin {
   name: string;
