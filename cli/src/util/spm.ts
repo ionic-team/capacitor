@@ -1,5 +1,6 @@
 import { LOGGER_LEVELS } from '@ionic/cli-framework-output'; // Ugh, I hate this, lets yank it
-import { pathExists, existsSync, writeFileSync, ensureDir, remove, move } from 'fs-extra';
+import { pathExists, existsSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
+import { tmpdir } from 'os';
 import { join, relative, resolve } from 'path';
 import { extract } from 'tar';
 
@@ -10,6 +11,7 @@ import { logger, logOptSuffix } from '../log';
 import type { Plugin } from '../plugin';
 import { getPlugins, printPlugins } from '../plugin';
 import { runCommand, isInstalled } from '../util/subprocess';
+import { fatal } from '../errors';
 
 export interface SwiftPlugin {
   name: string;
@@ -69,17 +71,19 @@ export async function iosPluginsWithPackageSwift(plugins: Plugin[]): Promise<Plu
 
 export async function extractSPMPackageDirectory(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
   const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
-  const spmTemplate = join(config.cli.assetsDirAbs, 'ios-spm-migrate-template.tar.gz');
+  const spmTemplate = join(config.cli.assetsDirAbs, 'ios-spm-template.tar.gz');
 
   logOptSuffix('Extracting ' + spmTemplate + ' to ' + spmDirectory, 'dry-run', options.dryRun, LOGGER_LEVELS.INFO);
 
   if (options.dryRun) return;
 
   try {
-    await ensureDir(spmDirectory);
-    await extract({ file: spmTemplate, cwd: spmDirectory });
+    const tempDir = await mkdtemp(join(tmpdir(), 'cap-'));
+    const tempCapSPM = join(tempDir, 'App/CapApp-SPM');
+    await extract({ file: spmTemplate, cwd: tempDir });
+    await move(tempCapSPM, spmDirectory);
   } catch (err) {
-    logger.error('Failed to create ' + spmDirectory + ' with error: ' + err);
+    fatal('Failed to create ' + spmDirectory + ' with error: ' + err);
   }
 }
 

@@ -13,7 +13,6 @@ execute(async () => {
     'android-template',
     'ios-pods-template',
     'ios-spm-template',
-    'ios-spm-migrate-template',
     'capacitor-cordova-android-plugins',
     'capacitor-cordova-ios-plugins',
   ];
