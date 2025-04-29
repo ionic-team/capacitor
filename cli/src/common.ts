@@ -190,8 +190,14 @@ export async function runPlatformHook(
         ...process.env,
       },
     });
-    p.on('close', () => {
-      resolve();
+    p.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(
+          new Error(`${hook} hook on ${platformName} failed with error code: ${code} while running command: ${cmd}`),
+        );
+      }
     });
     p.on('error', (err) => {
       reject(err);
