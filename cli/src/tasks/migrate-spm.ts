@@ -9,6 +9,7 @@ import {
   extractSPMPackageDirectory,
   removeCocoapodsFiles,
   runCocoapodsDeintegrate,
+  addInfoPlistDebugIfNeeded
 } from '../util/spm';
 
 export async function migrateToSPM(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
@@ -21,6 +22,7 @@ export async function migrateToSPM(config: Config, options: MigrateSPMInteractiv
   await extractSPMPackageDirectory(config, options);
   await runCocoapodsDeintegrate(config, options);
   await removeCocoapodsFiles(config, options);
+  await addInfoPlistDebugIfNeeded(config, options);
   // TODO: Add CAP-SPM package to project dependencies
 
   const packageSwiftPluginList = await processIosPackages(config);

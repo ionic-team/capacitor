@@ -1,8 +1,9 @@
 import { LOGGER_LEVELS } from '@ionic/cli-framework-output'; // Ugh, I hate this, lets yank it
-import { pathExists, existsSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
+import { pathExists, existsSync, readFileSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
 import { tmpdir } from 'os';
 import { join, relative, resolve } from 'path';
 import { extract } from 'tar';
+import { build, parse, PlistObject } from 'plist'
 
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
@@ -169,6 +170,32 @@ export async function runCocoapodsDeintegrate(config: Config, options: MigrateSP
     }
   } else {
     logger.warn('Skipping pod deintegrate because CocoaPods is not installed - migration will be incomplete');
+  }
+}
+
+export async function addInfoPlistDebugIfNeeded(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
+  // Hello my old friend, how I hate you.
+  type Mutable<T> = { -readonly[P in keyof T]: T[P] };
+
+  const infoPlist = resolve(config.ios.nativeProjectDirAbs, 'App/Info.plist')
+  logger.info("Checking " + infoPlist + " for CAPACITOR_DEBUG");
+  
+  if (options.dryRun) return;
+
+  if (existsSync(infoPlist)) {
+    const infoPlistContents = readFileSync(infoPlist, 'utf-8')
+    const plistEntries = parse(infoPlistContents) as Mutable<PlistObject>
+
+    if (plistEntries["CAPACITOR_DEBUG"] === undefined) {
+      logger.info("Writing CAPACITOR_DEBUG to " + infoPlist);
+      plistEntries["CAPACITOR_DEBUG"] = "$(CAPACITOR_DEBUG)"
+      const plistToWrite = build(plistEntries)
+      writeFileSync(infoPlist, plistToWrite)
+    } else {
+      logger.warn("Found CAPACITOR_DEBUG set to " + plistEntries["CAPACITOR_DEBUG"] + ", skipping.") 
+    }
+  } else {
+    logger.warn(infoPlist + " not found.")
   }
 }
 
