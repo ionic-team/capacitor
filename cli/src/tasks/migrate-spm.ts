@@ -9,7 +9,7 @@ import {
   extractSPMPackageDirectory,
   removeCocoapodsFiles,
   runCocoapodsDeintegrate,
-  addInfoPlistDebugIfNeeded
+  addInfoPlistDebugIfNeeded,
 } from '../util/spm';
 
 export async function migrateToSPM(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
