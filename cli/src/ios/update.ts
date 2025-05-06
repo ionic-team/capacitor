@@ -63,11 +63,13 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
   const incompatibleCordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
 }
+
 async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config) {
   cordovaPlugins.map((plugin: any) => {
     generateCordovaPackageFile(plugin, config);
   });
 }
+
 async function generateCordovaPackageFile(p: Plugin, config: Config) {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
@@ -88,7 +90,8 @@ let package = Package(
     products: [
         .library(
             name: "${p.name}",
-            targets: ["${p.name}"])
+            targets: ["${p.name}"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")
