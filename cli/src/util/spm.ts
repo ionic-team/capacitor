@@ -41,6 +41,7 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
     logger.info('Writing Package.swift');
+
     const textToWrite = await generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
@@ -50,25 +51,19 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
 
 export async function processIosPackages(config: Config): Promise<Plugin[]> {
   const plugins = await getPlugins(config, 'ios');
-  printPlugins(plugins, 'ios', 'capacitor');
+  const iosPlugins = await getIOSPlugins(plugins);
+  printPlugins(iosPlugins, 'ios', 'capacitor');
 
-  const packageSwiftPluginList = await iosPluginsWithPackageSwift(plugins);
+  const packageSwiftPluginList = await pluginsWithPackageSwift(iosPlugins);
   printPlugins(packageSwiftPluginList, 'ios', 'packagespm');
 
-  if (plugins.length == packageSwiftPluginList.length) {
+  if (iosPlugins.length == packageSwiftPluginList.length) {
     logger.info('Number of plugins in lists match'); // TODO: Word this better
   } else {
     logger.warn('Some installed packages my not be compatable with SPM');
   }
 
   return packageSwiftPluginList;
-}
-
-export async function iosPluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
-  const packageList = await pluginsWithPackageSwift(plugins);
-  const iosPackageList = await getIOSPlugins(packageList);
-
-  return packageList;
 }
 
 export async function extractSPMPackageDirectory(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
@@ -205,16 +200,15 @@ export async function addInfoPlistDebugIfNeeded(config: Config, options: Migrate
 // Private Functions
 
 async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
-  const pluginList = Promise.all(
-    plugins.filter(async (plugin, _index, _array) => {
+  let pluginList: Plugin[] = []
+  for (const plugin of plugins) {
       const packageSwiftFound = await pathExists(plugin.rootPath + '/Package.swift');
       if (packageSwiftFound) {
-        return plugin;
+        pluginList.push(plugin)
       } else {
         logger.warn(plugin.name + ' does not have a Package.swift');
       }
-    }),
-  );
+  }
 
   return pluginList;
 }
