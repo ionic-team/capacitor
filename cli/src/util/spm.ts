@@ -200,14 +200,14 @@ export async function addInfoPlistDebugIfNeeded(config: Config, options: Migrate
 // Private Functions
 
 async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
-  let pluginList: Plugin[] = []
+  const pluginList: Plugin[] = [];
   for (const plugin of plugins) {
-      const packageSwiftFound = await pathExists(plugin.rootPath + '/Package.swift');
-      if (packageSwiftFound) {
-        pluginList.push(plugin)
-      } else {
-        logger.warn(plugin.name + ' does not have a Package.swift');
-      }
+    const packageSwiftFound = await pathExists(plugin.rootPath + '/Package.swift');
+    if (packageSwiftFound) {
+      pluginList.push(plugin);
+    } else {
+      logger.warn(plugin.name + ' does not have a Package.swift');
+    }
   }
 
   return pluginList;
