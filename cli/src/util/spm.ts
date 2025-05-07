@@ -68,22 +68,25 @@ export async function iosPluginsWithPackageSwift(plugins: Plugin[]): Promise<Plu
   const packageList = await pluginsWithPackageSwift(plugins);
   const iosPackageList = await getIOSPlugins(packageList);
 
-  return iosPackageList;
+  return packageList;
 }
 
 export async function extractSPMPackageDirectory(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
   const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
   const spmTemplate = join(config.cli.assetsDirAbs, 'ios-spm-template.tar.gz');
+  const debugConfig = join(config.ios.platformDirAbs, 'debug.xconfig');
 
   logOptSuffix('Extracting ' + spmTemplate + ' to ' + spmDirectory, 'dry-run', options.dryRun, LOGGER_LEVELS.INFO);
 
   if (options.dryRun) return;
 
   try {
-    const tempDir = await mkdtemp(join(tmpdir(), 'cap-'));
-    const tempCapSPM = join(tempDir, 'App/CapApp-SPM');
-    await extract({ file: spmTemplate, cwd: tempDir });
+    const tempCapDir = await mkdtemp(join(tmpdir(), 'cap-'));
+    const tempCapSPM = join(tempCapDir, 'App/CapApp-SPM');
+    const tempDebugXCConfig = join(tempCapDir, 'debug.xcconfig');
+    await extract({ file: spmTemplate, cwd: tempCapDir });
     await move(tempCapSPM, spmDirectory);
+    await move(tempDebugXCConfig, debugConfig);
   } catch (err) {
     fatal('Failed to create ' + spmDirectory + ' with error: ' + err);
   }
@@ -175,7 +178,6 @@ export async function runCocoapodsDeintegrate(config: Config, options: MigrateSP
 }
 
 export async function addInfoPlistDebugIfNeeded(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
-  // Hello my old friend, how I hate you.
   type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
   const infoPlist = resolve(config.ios.nativeProjectDirAbs, 'App/Info.plist');

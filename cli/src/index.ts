@@ -369,7 +369,7 @@ export function runProgram(config: Config): void {
     );
 
   program
-    .command('migrate-to-spm')
+    .command('spm-migration-assistant')
     .option('--dry-run', 'Show actions that will be taken but do not perform anything', false)
     .description('Remove Cocoapods from project and switch to Swift Package Manager')
     .action(
