@@ -69,7 +69,7 @@ export async function processIosPackages(config: Config): Promise<Plugin[]> {
 export async function extractSPMPackageDirectory(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
   const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
   const spmTemplate = join(config.cli.assetsDirAbs, 'ios-spm-template.tar.gz');
-  const debugConfig = join(config.ios.platformDirAbs, 'debug.xconfig');
+  const debugConfig = join(config.ios.nativeProjectDirAbs, 'debug.xcconfig');
 
   logOptSuffix('Extracting ' + spmTemplate + ' to ' + spmDirectory, 'dry-run', options.dryRun, LOGGER_LEVELS.INFO);
 
