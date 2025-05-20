@@ -1,4 +1,4 @@
-import { LOGGER_LEVELS } from '@ionic/cli-framework-output'; // Ugh, I hate this, lets yank it
+import { LOGGER_LEVELS } from '@ionic/cli-framework-output';
 import { pathExists, existsSync, readFileSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
 import { tmpdir } from 'os';
 import { join, relative, resolve } from 'path';
