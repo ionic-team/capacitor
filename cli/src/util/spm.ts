@@ -1,15 +1,26 @@
-import { existsSync, writeFileSync } from 'fs-extra';
-import { relative, resolve } from 'path';
+import { LOGGER_LEVELS } from '@ionic/cli-framework-output';
+import { pathExists, existsSync, readFileSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
+import { tmpdir } from 'os';
+import { join, relative, resolve } from 'path';
+import type { PlistObject } from 'plist';
+import { build, parse } from 'plist';
+import { extract } from 'tar';
 
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
-import { getMajoriOSVersion } from '../ios/common';
-import { logger } from '../log';
+import { fatal } from '../errors';
+import { getIOSPlugins, getMajoriOSVersion } from '../ios/common';
+import { logger, logOptSuffix } from '../log';
 import type { Plugin } from '../plugin';
+import { getPlugins, printPlugins } from '../plugin';
+import { runCommand, isInstalled } from '../util/subprocess';
 
 export interface SwiftPlugin {
   name: string;
   path: string;
+}
+export interface MigrateSPMInteractiveOptions {
+  dryRun: boolean;
 }
 
 export async function checkPackageManager(config: Config): Promise<'Cocoapods' | 'SPM'> {
@@ -29,6 +40,8 @@ export async function findPackageSwiftFile(config: Config): Promise<string> {
 export async function generatePackageFile(config: Config, plugins: Plugin[]): Promise<void> {
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
+    logger.info('Writing Package.swift');
+
     const textToWrite = await generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
@@ -36,7 +49,57 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
   }
 }
 
-async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
+export async function processIosPackages(config: Config): Promise<Plugin[]> {
+  const plugins = await getPlugins(config, 'ios');
+  const iosPlugins = await getIOSPlugins(plugins);
+  printPlugins(iosPlugins, 'ios', 'capacitor');
+
+  const packageSwiftPluginList = await pluginsWithPackageSwift(iosPlugins);
+  printPlugins(packageSwiftPluginList, 'ios', 'packagespm');
+
+  if (iosPlugins.length == packageSwiftPluginList.length) {
+    logger.debug(`Found ${iosPlugins.length} iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`);
+    logger.info('All plugins have a Package.swift file and were included in Package.swift')
+  } else {
+    logger.warn('Some installed packages my not be compatable with SPM');
+  }
+
+  return packageSwiftPluginList;
+}
+
+export async function extractSPMPackageDirectory(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
+  const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
+  const spmTemplate = join(config.cli.assetsDirAbs, 'ios-spm-template.tar.gz');
+  const debugConfig = join(config.ios.nativeProjectDirAbs, 'debug.xcconfig');
+
+  logOptSuffix('Extracting ' + spmTemplate + ' to ' + spmDirectory, 'dry-run', options.dryRun, LOGGER_LEVELS.INFO);
+
+  if (options.dryRun) return;
+
+  try {
+    const tempCapDir = await mkdtemp(join(tmpdir(), 'cap-'));
+    const tempCapSPM = join(tempCapDir, 'App/CapApp-SPM');
+    const tempDebugXCConfig = join(tempCapDir, 'debug.xcconfig');
+    await extract({ file: spmTemplate, cwd: tempCapDir });
+    await move(tempCapSPM, spmDirectory);
+    await move(tempDebugXCConfig, debugConfig);
+  } catch (err) {
+    fatal('Failed to create ' + spmDirectory + ' with error: ' + err);
+  }
+}
+
+export async function removeCocoapodsFiles(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
+  const iosDirectory = config.ios.nativeProjectDirAbs;
+  const podFile = resolve(iosDirectory, 'Podfile');
+  const podlockFile = resolve(iosDirectory, 'Podfile.lock');
+  const xcworkspaceFile = resolve(iosDirectory, 'App.xcworkspace');
+
+  await removeWithOptions(podFile, options);
+  await removeWithOptions(podlockFile, options);
+  await removeWithOptions(xcworkspaceFile, options);
+}
+
+export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
 
@@ -81,4 +144,81 @@ let package = Package(
 `;
 
   return packageSwiftText;
+}
+
+export async function runCocoapodsDeintegrate(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
+  const podPath = await config.ios.podPath;
+  const projectFileName = config.ios.nativeXcodeProjDirAbs;
+  const useBundler = podPath.startsWith('bundle') && (await isInstalled('bundle'));
+  const podCommandExists = await isInstalled('pod');
+
+  if (useBundler) logger.info('Found bundler, using it to run CocoaPods.');
+
+  logger.info('Running pod deintegrate on project ' + projectFileName);
+
+  if (options.dryRun) return;
+
+  if (useBundler || podCommandExists) {
+    if (useBundler) {
+      await runCommand('bundle', ['exec', 'pod', 'deintegrate', projectFileName], {
+        cwd: config.ios.nativeProjectDirAbs,
+      });
+    } else {
+      await runCommand(podPath, ['deintegrate', projectFileName], {
+        cwd: config.ios.nativeProjectDirAbs,
+      });
+    }
+  } else {
+    logger.warn('Skipping pod deintegrate because CocoaPods is not installed - migration will be incomplete');
+  }
+}
+
+export async function addInfoPlistDebugIfNeeded(config: Config, options: MigrateSPMInteractiveOptions): Promise<void> {
+  type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+
+  const infoPlist = resolve(config.ios.nativeProjectDirAbs, 'App/Info.plist');
+  logger.info('Checking ' + infoPlist + ' for CAPACITOR_DEBUG');
+
+  if (options.dryRun) return;
+
+  if (existsSync(infoPlist)) {
+    const infoPlistContents = readFileSync(infoPlist, 'utf-8');
+    const plistEntries = parse(infoPlistContents) as Mutable<PlistObject>;
+
+    if (plistEntries['CAPACITOR_DEBUG'] === undefined) {
+      logger.info('Writing CAPACITOR_DEBUG to ' + infoPlist);
+      plistEntries['CAPACITOR_DEBUG'] = '$(CAPACITOR_DEBUG)';
+      const plistToWrite = build(plistEntries);
+      writeFileSync(infoPlist, plistToWrite);
+    } else {
+      logger.warn('Found CAPACITOR_DEBUG set to ' + plistEntries['CAPACITOR_DEBUG'] + ', skipping.');
+    }
+  } else {
+    logger.warn(infoPlist + ' not found.');
+  }
+}
+
+// Private Functions
+
+async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
+  const pluginList: Plugin[] = [];
+  for (const plugin of plugins) {
+    const packageSwiftFound = await pathExists(plugin.rootPath + '/Package.swift');
+    if (packageSwiftFound) {
+      pluginList.push(plugin);
+    } else {
+      logger.warn(plugin.name + ' does not have a Package.swift');
+    }
+  }
+
+  return pluginList;
+}
+
+async function removeWithOptions(dir: string, options: MigrateSPMInteractiveOptions): Promise<void> {
+  const message = 'Deleting ' + dir;
+  logOptSuffix(message, 'dry-run', options.dryRun, LOGGER_LEVELS.INFO);
+
+  if (options.dryRun) return;
+
+  remove(dir);
 }
