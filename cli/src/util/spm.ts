@@ -58,7 +58,8 @@ export async function processIosPackages(config: Config): Promise<Plugin[]> {
   printPlugins(packageSwiftPluginList, 'ios', 'packagespm');
 
   if (iosPlugins.length == packageSwiftPluginList.length) {
-    logger.info('Number of plugins in lists match'); // TODO: Word this better
+    logger.debug(`Found ${iosPlugins.length} iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`);
+    logger.info('All plugins have a Package.swift file and were included in Package.swift')
   } else {
     logger.warn('Some installed packages my not be compatable with SPM');
   }
