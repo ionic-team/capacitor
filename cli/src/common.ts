@@ -379,8 +379,7 @@ export async function promptForPlatformTarget(
   targets: PlatformTarget[],
   selectedTarget?: string,
 ): Promise<PlatformTarget> {
-
-  if(targets.length === 0) {
+  if (targets.length === 0) {
     fatal(`No target devices found. Please make sure you have a device or emulator connected.`);
   }
 
