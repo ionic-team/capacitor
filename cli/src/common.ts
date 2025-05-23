@@ -379,6 +379,11 @@ export async function promptForPlatformTarget(
   targets: PlatformTarget[],
   selectedTarget?: string,
 ): Promise<PlatformTarget> {
+
+  if(targets.length === 0) {
+    fatal(`No target devices found. Please make sure you have a device or emulator connected.`);
+  }
+
   const { prompt } = await import('prompts');
   const validTargets = targets.filter((t) => t.id !== undefined);
   if (!selectedTarget) {
