@@ -42,6 +42,8 @@ export async function buildiOS(config: Config, buildOptions: BuildCommandOptions
     '-archivePath',
     `${theScheme}.xcarchive`,
     'archive',
+    '-configuration',
+    buildOptions.configuration,
   ];
 
   if (buildOptions.xcodeTeamId) {

@@ -4,7 +4,7 @@ import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
 import { parseApkNameFromFlavor } from './common';
-import type { AndroidConfig, AppConfig, CLIConfig, Config, ExternalConfig, IOSConfig, WebConfig } from './definitions';
+import type { AndroidConfig, AppConfig, CLIConfig, Config, ExternalConfig, IOSConfig, WebConfig, XcodeExportMethod } from './definitions';
 import { OS } from './definitions';
 import { fatal, isFatal } from './errors';
 import { logger } from './log';
@@ -268,7 +268,7 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
   const webDirAbs = lazy(() => determineIOSWebDirAbs(nativeProjectDirAbs, nativeTargetDirAbs, nativeXcodeProjDirAbs));
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
   const buildOptions = {
-    xcodeExportMethod: extConfig.ios?.buildOptions?.exportMethod,
+    exportMethod: extConfig.ios?.buildOptions?.exportMethod as XcodeExportMethod,
     xcodeSigningStyle: extConfig.ios?.buildOptions?.signingStyle,
     signingCertificate: extConfig.ios?.buildOptions?.signingCertificate,
     provisioningProfile: extConfig.ios?.buildOptions?.provisioningProfile,
