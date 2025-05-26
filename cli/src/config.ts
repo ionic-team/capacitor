@@ -4,7 +4,16 @@ import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
 import { parseApkNameFromFlavor } from './common';
-import type { AndroidConfig, AppConfig, CLIConfig, Config, ExternalConfig, IOSConfig, WebConfig, XcodeExportMethod } from './definitions';
+import type {
+  AndroidConfig,
+  AppConfig,
+  CLIConfig,
+  Config,
+  ExternalConfig,
+  IOSConfig,
+  WebConfig,
+  XcodeExportMethod,
+} from './definitions';
 import { OS } from './definitions';
 import { fatal, isFatal } from './errors';
 import { logger } from './log';
