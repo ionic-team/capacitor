@@ -40,6 +40,7 @@
         _pluginConfigurations = descriptor.pluginConfigurations;
         _isWebDebuggable = descriptor.isWebDebuggable;
         _hasInitialFocus = descriptor.hasInitialFocus;
+        _hashRoutingCompatibility = descriptor.hashRoutingCompatibility;
         _legacyConfig = descriptor.legacyConfig;
         // construct the necessary URLs
         _localURL = [[NSURL alloc] initWithString:[NSString stringWithFormat:@"%@://%@", descriptor.urlScheme, descriptor.urlHostname]];

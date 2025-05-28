@@ -490,6 +490,14 @@ export interface CapacitorConfig {
      */
     initialFocus?: boolean;
 
+    /**
+     * Whether to use hash-routing compatibility mode.
+     *
+     * @since 7.3.0
+     * @default false
+     */
+    hashRoutingCompatibility?: boolean;
+
     buildOptions?: {
       /**
        * The signing style to use when building the app for distribution.

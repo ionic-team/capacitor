@@ -12,6 +12,9 @@ extension InstanceConfiguration {
         if let path = appStartPath {
             return serverURL.appendingPathComponent(path)
         }
+        if hashRoutingCompatibility {
+            return serverURL.appendingPathComponent("/")
+        }
         return serverURL
     }
 

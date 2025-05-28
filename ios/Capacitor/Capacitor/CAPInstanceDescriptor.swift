@@ -149,6 +149,9 @@ internal extension InstanceDescriptor {
             if let initialFocus = (config[keyPath: "ios.initialFocus"] as? Bool) ?? (config[keyPath: "initialFocus"] as? Bool) {
                 hasInitialFocus = initialFocus
             }
+            if let hashRouting = config[keyPath: "ios.hashRoutingCompatibility"] as? Bool {
+                hashRoutingCompatibility = hashRouting
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity

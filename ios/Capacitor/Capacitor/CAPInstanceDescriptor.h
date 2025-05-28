@@ -108,6 +108,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @discussion Defaults to @c true.  Set by @c ios.initialFocus in the configuration file.
  */
 @property (nonatomic, assign) BOOL hasInitialFocus;
+/**
+  @brief Whether to use hash-routing compatibility mode.
+  @discussion Defaults to @c false. Set by @c ios.hashRoutingCompatibility in the configuration file.
+*/
+@property (nonatomic, assign) BOOL hashRoutingCompatibility;
 
 /**
  @brief How the web view will inset its content
