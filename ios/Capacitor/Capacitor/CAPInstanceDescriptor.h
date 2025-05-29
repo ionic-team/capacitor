@@ -59,6 +59,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *errorPath;
 /**
+  @brief Whether to append a slash to the hostname.
+  @discussion Defaults to @c false. Set by @c server.appendSlashToHostname in the configuration file.
+*/
+@property (nonatomic, assign) BOOL appendSlashToHostname;
+/**
  @brief The hostname that will be used for the server URL.
  @discussion Defaults to @c localhost. Set by @c server.hostname in the configuration file.
  */
@@ -108,11 +113,6 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @discussion Defaults to @c true.  Set by @c ios.initialFocus in the configuration file.
  */
 @property (nonatomic, assign) BOOL hasInitialFocus;
-/**
-  @brief Whether to use hash-routing compatibility mode.
-  @discussion Defaults to @c false. Set by @c ios.hashRoutingCompatibility in the configuration file.
-*/
-@property (nonatomic, assign) BOOL hashRoutingCompatibility;
 
 /**
  @brief How the web view will inset its content

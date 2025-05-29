@@ -9,13 +9,14 @@ extension InstanceConfiguration {
     }
 
     @objc public var appStartServerURL: URL {
+        var url = serverURL
         if let path = appStartPath {
-            return serverURL.appendingPathComponent(path)
+            url = url.appendingPathComponent(path)
         }
-        if hashRoutingCompatibility {
-            return serverURL.appendingPathComponent("/")
+        if appendSlashToHostname {
+            url = url.appendingPathComponent("/")
         }
-        return serverURL
+        return url
     }
 
     @objc public var errorPathURL: URL? {

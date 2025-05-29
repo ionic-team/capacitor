@@ -490,14 +490,6 @@ export interface CapacitorConfig {
      */
     initialFocus?: boolean;
 
-    /**
-     * Whether to use hash-routing compatibility mode.
-     *
-     * @since 7.3.0
-     * @default false
-     */
-    hashRoutingCompatibility?: boolean;
-
     buildOptions?: {
       /**
        * The signing style to use when building the app for distribution.
@@ -618,6 +610,15 @@ export interface CapacitorConfig {
      * @default null
      */
     errorPath?: string;
+
+    /**
+     * Only affects iOS.
+     * Whether to append `/` to the hostname.
+     *
+     * @since 7.3.0
+     * @default false
+     */
+    appendSlashToHostname?: boolean;
   };
 
   cordova?: {
