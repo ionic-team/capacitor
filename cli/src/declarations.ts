@@ -610,6 +610,15 @@ export interface CapacitorConfig {
      * @default null
      */
     errorPath?: string;
+
+    /**
+     * Only affects iOS.
+     * Whether to append `/` to the hostname.
+     *
+     * @since 7.3.0
+     * @default false
+     */
+    appendSlashToHostname?: boolean;
   };
 
   cordova?: {

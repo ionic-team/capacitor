@@ -149,6 +149,9 @@ internal extension InstanceDescriptor {
             if let initialFocus = (config[keyPath: "ios.initialFocus"] as? Bool) ?? (config[keyPath: "initialFocus"] as? Bool) {
                 hasInitialFocus = initialFocus
             }
+            if let appendSlash = config[keyPath: "server.appendSlashToHostname"] as? Bool {
+                appendSlashToHostname = appendSlash
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity
