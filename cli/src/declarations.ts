@@ -616,6 +616,7 @@ export interface CapacitorConfig {
      * Only affects iOS.
      *
      * @since 7.3.0
+     * @default null
      */
     appStartPath?: string;
   };
