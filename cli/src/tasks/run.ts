@@ -71,11 +71,6 @@ export async function runCommand(
       if (options.json) {
         process.stdout.write(`${JSON.stringify(outputTargets)}\n`);
       } else {
-        if (outputTargets.length === 0) {
-          logger.info(`No target devices found for ${platformName}.\n`);
-          return;
-        }
-
         const rows = outputTargets.map((t) => [t.name, t.api, t.id]);
 
         output.write(

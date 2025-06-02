@@ -3,6 +3,7 @@ import { dirname } from 'path';
 import c from '../colors';
 import type { PlatformTarget } from '../common';
 import { fatal } from '../errors';
+import { logger } from '../log';
 
 import { resolveNode } from './node';
 import { runCommand } from './subprocess';
@@ -23,10 +24,7 @@ export async function getPlatformTargets(platformName: string): Promise<Platform
   try {
     const output = await runNativeRun([platformName, '--list', '--json']);
     const parsedOutput = JSON.parse(output);
-    if (
-      parsedOutput.errors.length === 0 &&
-      (parsedOutput.devices.length >= 0 || parsedOutput.virtualDevices.length >= 0)
-    ) {
+    if (parsedOutput.devices.length || parsedOutput.virtualDevices.length) {
       return [
         ...parsedOutput.devices.map((t: any) => ({ ...t, virtual: false })),
         ...parsedOutput.virtualDevices.map((t: any) => ({
@@ -43,6 +41,12 @@ export async function getPlatformTargets(platformName: string): Promise<Platform
     const err = JSON.parse(e);
     errors.push(err);
   }
+
+  if (errors.length === 0) {
+    logger.info('No devices found.');
+    return [];
+  }
+
   const plural = errors.length > 1 ? 's' : '';
   const errMsg = `${c.strong('native-run')} failed with error${plural}\n
   ${errors
