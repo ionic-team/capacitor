@@ -610,6 +610,14 @@ export interface CapacitorConfig {
      * @default null
      */
     errorPath?: string;
+
+    /**
+     * Append a path to the app URL.
+     * Only affects iOS.
+     *
+     * @since 7.3.0
+     */
+    appStartPath?: string;
   };
 
   cordova?: {
