@@ -46,13 +46,3 @@ export async function logPrompt<T extends string>(msg: string, promptObject: Pro
 export function logSuccess(msg: string): void {
   logger.msg(`${c.success('[success]')} ${msg}`);
 }
-
-export function logOptSuffix(msg: string, suffix: string, showSuffix: boolean, level?: LoggerLevelWeight): void {
-  const message = showSuffix ? `${msg} [${c.ancillary(suffix)}]` : msg;
-
-  logger.log({
-    msg: message,
-    logger,
-    level: level,
-  });
-}
