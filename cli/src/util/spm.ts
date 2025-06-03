@@ -6,6 +6,7 @@ import type { Config } from '../definitions';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
+import { getPluginType, PluginType } from '../plugin';
 
 export interface SwiftPlugin {
   name: string;
@@ -56,8 +57,12 @@ let package = Package(
         .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "${iosPlatformVersion}")`;
 
   for (const plugin of plugins) {
-    const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
-    packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}")`;
+    if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
+      packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
+    } else {
+      const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+      packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}")`;
+    }
   }
 
   packageSwiftText += `
