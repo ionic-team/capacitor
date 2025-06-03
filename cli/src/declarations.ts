@@ -614,6 +614,7 @@ export interface CapacitorConfig {
     /**
      * Append a path to the app URL.
      *
+     * Allows loading from other paths than the default `/index.html`.
      * @since 7.3.0
      * @default null
      */
