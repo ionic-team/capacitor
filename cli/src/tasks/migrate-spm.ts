@@ -10,7 +10,6 @@ import {
 } from '../util/spm';
 
 export async function migrateToSPM(config: Config): Promise<void> {
-
   if ((await checkPackageManager(config)) == 'SPM') {
     fatal('Capacitor project is already using SPM, exiting.');
   }

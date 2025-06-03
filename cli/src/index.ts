@@ -372,7 +372,7 @@ export function runProgram(config: Config): void {
     .command('spm-migration-assistant')
     .description('Remove Cocoapods from project and switch to Swift Package Manager')
     .action(
-      wrapAction(async ({ }) => {
+      wrapAction(async () => {
         const { migrateToSPM } = await import('./tasks/migrate-spm');
         await migrateToSPM(config);
       }),

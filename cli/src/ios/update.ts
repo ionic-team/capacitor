@@ -54,8 +54,8 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
   if ((await checkPackageManager(config)) === 'SPM') {
     await generateCordovaPackageFiles(cordovaPlugins, config);
 
-    const validSPMPackages = await checkPluginsForPackageSwift(config, plugins)
-    
+    const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
+
     await generatePackageFile(config, validSPMPackages);
   } else {
     await generateCordovaPodspecs(cordovaPlugins, config);

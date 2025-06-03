@@ -48,7 +48,7 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
 export async function checkPluginsForPackageSwift(config: Config, plugins: Plugin[]): Promise<Plugin[]> {
   const iOSCapacitorPlugins = plugins.filter((p) => getPluginType(p, 'ios') === PluginType.Core);
 
-  const packageSwiftPluginList = await pluginsWithPackageSwift(plugins);
+  const packageSwiftPluginList = await pluginsWithPackageSwift(iOSCapacitorPlugins);
 
   if (plugins.length == packageSwiftPluginList.length) {
     logger.debug(`Found ${plugins.length} iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`);
