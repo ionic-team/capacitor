@@ -251,6 +251,7 @@ public class CapConfig {
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
         errorPath = JSONUtils.getString(configJSON, "server.errorPath", null);
+        startPath = JSONUtils.getString(configJSON, "server.appStartPath", null);
 
         String configSchema = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
         if (this.validateScheme(configSchema)) {
