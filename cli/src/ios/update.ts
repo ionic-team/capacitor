@@ -21,7 +21,7 @@ import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { generateIOSPackageJSON } from '../util/iosplugin';
 import { resolveNode } from '../util/node';
-import { checkPackageManager, generatePackageFile } from '../util/spm';
+import { checkPackageManager, generatePackageFile, checkPluginsForPackageSwift } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -53,7 +53,10 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
   await checkPluginDependencies(plugins, platform);
   if ((await checkPackageManager(config)) === 'SPM') {
     await generateCordovaPackageFiles(cordovaPlugins, config);
-    await generatePackageFile(config, plugins);
+
+    const validSPMPackages = await checkPluginsForPackageSwift(config, plugins)
+    
+    await generatePackageFile(config, validSPMPackages);
   } else {
     await generateCordovaPodspecs(cordovaPlugins, config);
     await installCocoaPodsPlugins(config, plugins, deployment);
