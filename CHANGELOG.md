@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.3.0](https://github.com/ionic-team/capacitor/compare/7.2.0...7.3.0) (2025-06-05)
+
+### Bug Fixes
+
+- add error code checking to `runPlatformHook` ([#7994](https://github.com/ionic-team/capacitor/issues/7994)) ([8717680](https://github.com/ionic-team/capacitor/commit/871768049187afe9f5d358d3fe08b6f18f70533e))
+- **cli:** Don't downgrade deployment target on migrate ([#7953](https://github.com/ionic-team/capacitor/issues/7953)) ([46e8792](https://github.com/ionic-team/capacitor/commit/46e87925b675933b413737854b1376eb1c71a23e))
+- **cli:** ensures the execution order of CLI hooks ([#7947](https://github.com/ionic-team/capacitor/issues/7947)) ([c3ea809](https://github.com/ionic-team/capacitor/commit/c3ea8094cdd385ac02a5aae89f8b44b6c53d493a))
+- **cli:** unexpected error on target device list ([#8015](https://github.com/ionic-team/capacitor/issues/8015)) ([f827c48](https://github.com/ionic-team/capacitor/commit/f827c48f08b13a265e8671291c24f3506e14a094))
+- **cli:** use proper build params ([#8016](https://github.com/ionic-team/capacitor/issues/8016)) ([12ce2a4](https://github.com/ionic-team/capacitor/commit/12ce2a486542011c8d6f4cd89a67464f3f27e28d))
+- **core:** Prevent error when hasListeners is empty ([#7975](https://github.com/ionic-team/capacitor/issues/7975)) ([a4a0942](https://github.com/ionic-team/capacitor/commit/a4a0942eddba068e078bd782bb093ed1ecff9e00))
+- Remove all plugin listeners in bridge reset ([#7962](https://github.com/ionic-team/capacitor/issues/7962)) ([06aeea9](https://github.com/ionic-team/capacitor/commit/06aeea973aa56ac2fb791f893ebd899253ee65f9))
+
+### Features
+
+- **cli:** Initial Cordova plugin SPM support ([#7999](https://github.com/ionic-team/capacitor/issues/7999)) ([c030354](https://github.com/ionic-team/capacitor/commit/c03035426343ddc4e303ca3420e476bb7f1e2201))
+- expose `appStartPath` on cap config server configuration ([#8019](https://github.com/ionic-team/capacitor/issues/8019)) ([a274fef](https://github.com/ionic-team/capacitor/commit/a274fef069176a8e528a22f4734d1e29a539709c))
+- **ios:** Alternative debug config for SPM ([#7982](https://github.com/ionic-team/capacitor/issues/7982)) ([a054aa5](https://github.com/ionic-team/capacitor/commit/a054aa5bb4d5eabe5da5d42a380bd51b8785958c))
+
 # [7.2.0](https://github.com/ionic-team/capacitor/compare/7.1.0...7.2.0) (2025-03-31)
 
 ### Bug Fixes

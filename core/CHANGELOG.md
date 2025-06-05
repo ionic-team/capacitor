@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.3.0](https://github.com/ionic-team/capacitor/compare/7.2.0...7.3.0) (2025-06-05)
+
+### Bug Fixes
+
+- **core:** Prevent error when hasListeners is empty ([#7975](https://github.com/ionic-team/capacitor/issues/7975)) ([a4a0942](https://github.com/ionic-team/capacitor/commit/a4a0942eddba068e078bd782bb093ed1ecff9e00))
+
 # [7.2.0](https://github.com/ionic-team/capacitor/compare/7.1.0...7.2.0) (2025-03-31)
 
 ### Features
