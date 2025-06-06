@@ -149,6 +149,9 @@ internal extension InstanceDescriptor {
             if let initialFocus = (config[keyPath: "ios.initialFocus"] as? Bool) ?? (config[keyPath: "initialFocus"] as? Bool) {
                 hasInitialFocus = initialFocus
             }
+            if let startPath = (config[keyPath: "server.appStartPath"] as? String) {
+                appStartPath = startPath
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity
