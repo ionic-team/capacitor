@@ -63,14 +63,14 @@ export async function checkPluginsForPackageSwift(config: Config, plugins: Plugi
 export async function extractSPMPackageDirectory(config: Config): Promise<void> {
   const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
   const spmTemplate = join(config.cli.assetsDirAbs, 'ios-spm-template.tar.gz');
-  const debugConfig = join(config.ios.nativeProjectDirAbs, 'App/App/Debug.xcconfig');
+  const debugConfig = join(config.ios.platformDirAbs, 'debug.xcconfig');
 
   logger.info('Extracting ' + spmTemplate + ' to ' + spmDirectory);
 
   try {
     const tempCapDir = await mkdtemp(join(tmpdir(), 'cap-'));
     const tempCapSPM = join(tempCapDir, 'App/CapApp-SPM');
-    const tempDebugXCConfig = join(tempCapDir, 'App/App/Debug.xcconfig');
+    const tempDebugXCConfig = join(tempCapDir, 'debug.xcconfig');
     await extract({ file: spmTemplate, cwd: tempCapDir });
     await move(tempCapSPM, spmDirectory);
     await move(tempDebugXCConfig, debugConfig);
