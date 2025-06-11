@@ -24,6 +24,7 @@ export interface RunCommandOptions {
   scheme?: string;
   flavor?: string;
   list?: boolean;
+  json?: boolean;
   target?: string;
   sync?: boolean;
   forwardPorts?: string;
@@ -67,8 +68,7 @@ export async function runCommand(
         id: t.id ?? '?',
       }));
 
-      // TODO: make hidden commander option (https://github.com/tj/commander.js/issues/1106)
-      if (process.argv.includes('--json')) {
+      if (options.json) {
         process.stdout.write(`${JSON.stringify(outputTargets)}\n`);
       } else {
         const rows = outputTargets.map((t) => [t.name, t.api, t.id]);

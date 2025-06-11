@@ -15,7 +15,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.webkit.ServiceWorkerClient;
+import android.webkit.ServiceWorkerController;
 import android.webkit.ValueCallback;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import androidx.activity.result.ActivityResultCallback;
@@ -117,6 +121,8 @@ public class Bridge {
     private HostMask appAllowNavigationMask;
     private Set<String> allowedOriginRules = new HashSet<String>();
     private ArrayList<String> authorities = new ArrayList<>();
+    private ArrayList<String> miscJSFileInjections = new ArrayList<String>();
+    private Boolean canInjectJS = true;
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
@@ -273,6 +279,18 @@ public class Bridge {
 
         webView.setWebChromeClient(new BridgeWebChromeClient(this));
         webView.setWebViewClient(this.webViewClient);
+
+        if (Build.VERSION.SDK_INT >= 24 && config.isResolveServiceWorkerRequests()) {
+            ServiceWorkerController swController = ServiceWorkerController.getInstance();
+            swController.setServiceWorkerClient(
+                new ServiceWorkerClient() {
+                    @Override
+                    public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
+                        return getLocalServer().shouldInterceptRequest(request);
+                    }
+                }
+            );
+        }
 
         if (!isDeployDisabled() && !isNewBinary()) {
             SharedPreferences prefs = getContext()
@@ -551,6 +569,9 @@ public class Bridge {
 
     public void reset() {
         savedCalls = new HashMap<>();
+        for (PluginHandle handle : this.plugins.values()) {
+            handle.getInstance().removeAllListeners();
+        }
     }
 
     /**
@@ -1001,12 +1022,26 @@ public class Bridge {
             String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
             String cordovaPluginsFileJS = JSExport.getCordovaPluginsFileJS(context);
             String localUrlJS = "window.WEBVIEW_SERVER_URL = '" + localUrl + "';";
+            String miscJS = JSExport.getMiscFileJS(miscJSFileInjections, context);
 
-            return new JSInjector(globalJS, bridgeJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
+            miscJSFileInjections = new ArrayList<>();
+            canInjectJS = false;
+
+            return new JSInjector(globalJS, bridgeJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS, miscJS);
         } catch (Exception ex) {
             Logger.error("Unable to export Capacitor JS. App will not function!", ex);
         }
         return null;
+    }
+
+    /**
+     * Inject JavaScript from an external file before the WebView loads.
+     * @param path relative to public folder
+     */
+    public void injectScriptBeforeLoad(String path) {
+        if (canInjectJS) {
+            miscJSFileInjections.add(path);
+        }
     }
 
     /**
@@ -1573,9 +1608,9 @@ public class Bridge {
                 config
             );
 
-            if (webView instanceof CapacitorWebView) {
-                CapacitorWebView capacitorWebView = (CapacitorWebView) webView;
+            if (webView instanceof CapacitorWebView capacitorWebView) {
                 capacitorWebView.setBridge(bridge);
+                capacitorWebView.edgeToEdgeHandler(bridge);
             }
 
             bridge.setCordovaWebView(mockWebView);

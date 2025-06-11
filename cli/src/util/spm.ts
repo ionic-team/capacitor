@@ -1,9 +1,12 @@
-import { existsSync, readFileSync, writeFileSync } from '@ionic/utils-fs';
-import { join, relative, resolve } from 'path';
+import { existsSync, writeFileSync } from 'fs-extra';
+import { relative, resolve } from 'path';
 
+import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
+import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
+import { getPluginType, PluginType } from '../plugin';
 
 export interface SwiftPlugin {
   name: string;
@@ -27,21 +30,16 @@ export async function findPackageSwiftFile(config: Config): Promise<string> {
 export async function generatePackageFile(config: Config, plugins: Plugin[]): Promise<void> {
   const packageSwiftFile = await findPackageSwiftFile(config);
   try {
-    logger.warn('SPM Support is still experimental');
-    const textToWrite = generatePackageText(config, plugins);
+    const textToWrite = await generatePackageText(config, plugins);
     writeFileSync(packageSwiftFile, textToWrite);
   } catch (err) {
     logger.error(`Unable to write to ${packageSwiftFile}. Verify it is not already open. \n Error: ${err}`);
   }
 }
 
-function generatePackageText(config: Config, plugins: Plugin[]): string {
-  const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
-  const searchString = 'IPHONEOS_DEPLOYMENT_TARGET = ';
-  const iosVersion = pbx.substring(
-    pbx.indexOf(searchString) + searchString.length,
-    pbx.indexOf(searchString) + searchString.length + 2,
-  );
+async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
+  const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
+  const iosVersion = getMajoriOSVersion(config);
 
   let packageSwiftText = `// swift-tools-version: 5.9
 import PackageDescription
@@ -56,11 +54,15 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", branch: "main")`;
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "${iosPlatformVersion}")`;
 
   for (const plugin of plugins) {
-    const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
-    packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}")`;
+    if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
+      packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
+    } else {
+      const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+      packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}")`;
+    }
   }
 
   packageSwiftText += `
