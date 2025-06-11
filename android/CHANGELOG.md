@@ -3,6 +3,65 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.3.0](https://github.com/ionic-team/capacitor/compare/7.2.0...7.3.0) (2025-06-05)
+
+### Bug Fixes
+
+- Remove all plugin listeners in bridge reset ([#7962](https://github.com/ionic-team/capacitor/issues/7962)) ([06aeea9](https://github.com/ionic-team/capacitor/commit/06aeea973aa56ac2fb791f893ebd899253ee65f9))
+
+### Features
+
+- expose `appStartPath` on cap config server configuration ([#8019](https://github.com/ionic-team/capacitor/issues/8019)) ([a274fef](https://github.com/ionic-team/capacitor/commit/a274fef069176a8e528a22f4734d1e29a539709c))
+
+# [7.2.0](https://github.com/ionic-team/capacitor/compare/7.1.0...7.2.0) (2025-03-31)
+
+### Bug Fixes
+
+- **android:** rename bridge layout to avoid collision ([#7919](https://github.com/ionic-team/capacitor/issues/7919)) ([a629f16](https://github.com/ionic-team/capacitor/commit/a629f167b345cda1c44f37131235d14353eff504))
+
+### Features
+
+- **http:** Apply overrideUserAgent to requests ([#7906](https://github.com/ionic-team/capacitor/issues/7906)) ([52482c9](https://github.com/ionic-team/capacitor/commit/52482c9d3c575b737054b41f9d1730c70cc5f471))
+
+# [7.1.0](https://github.com/ionic-team/capacitor/compare/7.0.1...7.1.0) (2025-03-12)
+
+### Bug Fixes
+
+- **android:** add EdgeToEdge compatibility ([#7871](https://github.com/ionic-team/capacitor/issues/7871)) ([64a8bc4](https://github.com/ionic-team/capacitor/commit/64a8bc40de2522c75a94a40cba6c8ccd82481cb8))
+- **android:** sanitize portable file name ([#7894](https://github.com/ionic-team/capacitor/issues/7894)) ([5f09297](https://github.com/ionic-team/capacitor/commit/5f092970e33da1ec896efc4e2a5ae3fb77fca658))
+- **http:** boundary not added for Request objects ([#7897](https://github.com/ionic-team/capacitor/issues/7897)) ([bdaa6f3](https://github.com/ionic-team/capacitor/commit/bdaa6f3c38c33f3a021ac61f2de89101a5b66cff))
+
+### Features
+
+- Add function to inject external JS into WebView before document load ([#7864](https://github.com/ionic-team/capacitor/issues/7864)) ([ec0954c](https://github.com/ionic-team/capacitor/commit/ec0954c197543e913939f3ab9c4bcb172bfa3530))
+- **android:** add adjustMarginsForEdgeToEdge configuration option ([#7885](https://github.com/ionic-team/capacitor/issues/7885)) ([1ea86d1](https://github.com/ionic-team/capacitor/commit/1ea86d166afd315e72847c5e734a8c175fb90e04))
+
+## [7.0.1](https://github.com/ionic-team/capacitor/compare/7.0.0...7.0.1) (2025-01-21)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [7.0.0](https://github.com/ionic-team/capacitor/compare/7.0.0-rc.1...7.0.0) (2025-01-20)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [7.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/7.0.0-rc.0...7.0.0-rc.1) (2025-01-20)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [7.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/7.0.0-beta.0...7.0.0-rc.0) (2024-12-20)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [7.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/7.0.0-alpha.2...7.0.0-beta.0) (2024-12-20)
+
+### Features
+
+- Add global initialFocus configuration ([#7775](https://github.com/ionic-team/capacitor/issues/7775)) ([61d0165](https://github.com/ionic-team/capacitor/commit/61d01653685d8e3594d2d8a6bd870fa9643ba95c))
+
+# [7.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/7.0.0-alpha.1...7.0.0-alpha.2) (2024-11-19)
+
+**Note:** Version bump only for package @capacitor/android
+
 # [7.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/6.1.2...7.0.0-alpha.1) (2024-10-14)
 
 **Note:** Version bump only for package @capacitor/android

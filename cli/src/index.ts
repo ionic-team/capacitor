@@ -147,6 +147,41 @@ export function runProgram(config: Config): void {
         'jarsigner',
       ]),
     )
+    .addOption(
+      new Option('--xcode-team-id <xcodeTeamID>', 'The Developer team to use for building and exporting the archive'),
+    )
+    .addOption(
+      new Option(
+        '--xcode-export-method <xcodeExportMethod>',
+        'Describes how xcodebuild should export the archive (default:  app-store-connect)',
+      ).choices([
+        'app-store-connect',
+        'release-testing',
+        'enterprise',
+        'debugging',
+        'developer-id',
+        'mac-application',
+        'validation',
+      ]),
+    )
+    .addOption(
+      new Option(
+        '--xcode-signing-style <xcodeSigningStyle>',
+        'The iOS signing style to use when building the app for distribution (default: automatic)',
+      ).choices(['automatic', 'manual']),
+    )
+    .addOption(
+      new Option(
+        '--xcode-signing-certificate <xcodeSigningCertificate>',
+        'A certificate name, SHA-1 hash, or automatic selector to use for signing for iOS builds',
+      ),
+    )
+    .addOption(
+      new Option(
+        '--xcode-provisioning-profile <xcodeProvisioningProfile>',
+        'A provisioning profile name or UUID for iOS builds',
+      ),
+    )
     .action(
       wrapAction(
         telemetryAction(
@@ -163,6 +198,11 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingType,
               configuration,
+              xcodeTeamId,
+              xcodeExportMethod,
+              xcodeSigningStyle,
+              xcodeSigningCertificate,
+              xcodeProvisioningProfile,
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
@@ -176,6 +216,11 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingtype: signingType,
               configuration,
+              xcodeTeamId,
+              xcodeExportMethod,
+              xcodeSigningType: xcodeSigningStyle,
+              xcodeSigningCertificate,
+              xcodeProvisioningProfile,
             });
           },
         ),
@@ -187,8 +232,7 @@ export function runProgram(config: Config): void {
     .option('--scheme <schemeName>', 'set the scheme of the iOS project')
     .option('--flavor <flavorName>', 'set the flavor of the Android project (flavor dimensions not yet supported)')
     .option('--list', 'list targets, then quit')
-    // TODO: remove once --json is a hidden option (https://github.com/tj/commander.js/issues/1106)
-    .allowUnknownOption(true)
+    .addOption(new Option('--json').hideHelp())
     .option('--target <id>', 'use a specific target')
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .option('--forwardPorts <port:port>', 'Automatically run "adb reverse" for better live-reloading support')
@@ -202,13 +246,14 @@ export function runProgram(config: Config): void {
           config,
           async (
             platform,
-            { scheme, flavor, list, target, sync, forwardPorts, liveReload, host, port, configuration },
+            { scheme, flavor, list, json, target, sync, forwardPorts, liveReload, host, port, configuration },
           ) => {
             const { runCommand } = await import('./tasks/run');
             await runCommand(config, platform, {
               scheme,
               flavor,
               list,
+              json,
               target,
               sync,
               forwardPorts,
@@ -239,7 +284,7 @@ export function runProgram(config: Config): void {
     .description('add a native platform project')
     .option(
       '--packagemanager <packageManager>',
-      'The package manager to use for dependency installs (Cocoapods, SPM **experimental**)',
+      'The package manager to use for dependency installs (CocoaPods or SPM)',
     )
     .action(
       wrapAction(

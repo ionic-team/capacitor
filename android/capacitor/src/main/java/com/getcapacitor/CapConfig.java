@@ -53,6 +53,8 @@ public class CapConfig {
     private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
     private String errorPath;
     private boolean zoomableWebView = false;
+    private boolean resolveServiceWorkerRequests = true;
+    private String adjustMarginsForEdgeToEdge = "disable";
 
     // Embedded
     private String startPath;
@@ -179,6 +181,8 @@ public class CapConfig {
         this.minHuaweiWebViewVersion = builder.minHuaweiWebViewVersion;
         this.errorPath = builder.errorPath;
         this.zoomableWebView = builder.zoomableWebView;
+        this.resolveServiceWorkerRequests = builder.resolveServiceWorkerRequests;
+        this.adjustMarginsForEdgeToEdge = builder.adjustMarginsForEdgeToEdge;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -247,6 +251,7 @@ public class CapConfig {
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
         errorPath = JSONUtils.getString(configJSON, "server.errorPath", null);
+        startPath = JSONUtils.getString(configJSON, "server.appStartPath", null);
 
         String configSchema = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
         if (this.validateScheme(configSchema)) {
@@ -282,6 +287,8 @@ public class CapConfig {
         useLegacyBridge = JSONUtils.getBoolean(configJSON, "android.useLegacyBridge", useLegacyBridge);
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
         zoomableWebView = JSONUtils.getBoolean(configJSON, "android.zoomEnabled", JSONUtils.getBoolean(configJSON, "zoomEnabled", false));
+        resolveServiceWorkerRequests = JSONUtils.getBoolean(configJSON, "android.resolveServiceWorkerRequests", true);
+        adjustMarginsForEdgeToEdge = JSONUtils.getString(configJSON, "android.adjustMarginsForEdgeToEdge", "disable");
 
         String logBehavior = JSONUtils.getString(
             configJSON,
@@ -299,7 +306,11 @@ public class CapConfig {
                 loggingEnabled = isDebug;
         }
 
-        initialFocus = JSONUtils.getBoolean(configJSON, "android.initialFocus", initialFocus);
+        initialFocus = JSONUtils.getBoolean(
+            configJSON,
+            "android.initialFocus",
+            JSONUtils.getBoolean(configJSON, "initialFocus", initialFocus)
+        );
 
         // Plugins
         pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
@@ -370,6 +381,10 @@ public class CapConfig {
         return captureInput;
     }
 
+    public boolean isResolveServiceWorkerRequests() {
+        return resolveServiceWorkerRequests;
+    }
+
     public boolean isWebContentsDebuggingEnabled() {
         return webContentsDebuggingEnabled;
     }
@@ -388,6 +403,10 @@ public class CapConfig {
 
     public boolean isUsingLegacyBridge() {
         return useLegacyBridge;
+    }
+
+    public String adjustMarginsForEdgeToEdge() {
+        return adjustMarginsForEdgeToEdge;
     }
 
     public int getMinWebViewVersion() {
@@ -569,6 +588,8 @@ public class CapConfig {
         private int minWebViewVersion = DEFAULT_ANDROID_WEBVIEW_VERSION;
         private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
         private boolean zoomableWebView = false;
+        private boolean resolveServiceWorkerRequests = true;
+        private String adjustMarginsForEdgeToEdge = "disable";
 
         // Embedded
         private String startPath = null;
@@ -665,6 +686,11 @@ public class CapConfig {
 
         public Builder setUseLegacyBridge(boolean useLegacyBridge) {
             this.useLegacyBridge = useLegacyBridge;
+            return this;
+        }
+
+        public Builder setResolveServiceWorkerRequests(boolean resolveServiceWorkerRequests) {
+            this.resolveServiceWorkerRequests = resolveServiceWorkerRequests;
             return this;
         }
 

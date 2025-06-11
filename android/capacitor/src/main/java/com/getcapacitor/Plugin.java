@@ -762,6 +762,10 @@ public class Plugin {
         call.resolve();
     }
 
+    public void removeAllListeners() {
+        eventListeners.clear();
+    }
+
     /**
      * Exported plugin call for checking the granted status for each permission
      * declared on the plugin. This plugin call responds with a mapping of permissions to

@@ -1,5 +1,5 @@
-import { pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
+import { pathExists } from 'fs-extra';
 
 import { addAndroid, createLocalProperties } from '../android/add';
 import { editProjectSettingsAndroid, checkAndroidPackage } from '../android/common';

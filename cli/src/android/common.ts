@@ -1,4 +1,4 @@
-import { copy, remove, mkdirp, readFile, pathExists, writeFile } from '@ionic/utils-fs';
+import { copy, remove, mkdirp, readFile, pathExists, writeFile } from 'fs-extra';
 import { join, resolve } from 'path';
 
 import { checkCapacitorPlatform } from '../common';

@@ -39,14 +39,6 @@ describe('plugin', () => {
     } catch (e) {
       expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
-    }
-
-    try {
-      await cap.Plugins.Awesome.mph();
-      done('did not throw');
-    } catch (e) {
-      expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
-      expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
   });
@@ -68,9 +60,6 @@ describe('plugin', () => {
 
     const results1 = await Awesome.mph();
     expect(results1).toBe(88);
-
-    const results2 = await cap.Plugins.Awesome.mph();
-    expect(results2).toBe(88);
   });
 
   it('error from missing native implementation', async (done) => {
@@ -86,14 +75,6 @@ describe('plugin', () => {
     try {
       const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
       await Awesome.mph();
-      done('did not throw');
-    } catch (e) {
-      expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
-      expect(e.code).toBe(ExceptionCode.Unimplemented);
-    }
-
-    try {
-      await cap.Plugins.Awesome.mph();
       done('did not throw');
     } catch (e) {
       expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
@@ -119,13 +100,6 @@ describe('plugin', () => {
       done('did not throw');
     } catch (e) {
       expect(e).toBe('unable to load module');
-    }
-
-    try {
-      await cap.Plugins.Awesome.mph();
-      done('did not throw');
-    } catch (e) {
-      expect(e).toBe('unable to load module');
       done();
     }
   });
@@ -148,9 +122,7 @@ describe('plugin', () => {
     });
 
     const p1 = Awesome.mph();
-    const p2 = cap.Plugins.Awesome.mph();
     expect(await p1).toBe(88);
-    expect(await p2).toBe(88);
 
     const rtn2 = await Awesome.mph();
     expect(rtn2).toBe(88);
@@ -178,9 +150,6 @@ describe('plugin', () => {
 
     const rtn2 = await Awesome.mph();
     expect(rtn2).toBe(88);
-
-    const rtn3 = await cap.Plugins.Awesome.mph();
-    expect(rtn3).toBe(88);
   });
 
   it('call method that had an error', async () => {
@@ -198,7 +167,6 @@ describe('plugin', () => {
     });
 
     expect(async () => Awesome.mph()).rejects.toThrowError('nope!');
-    expect(async () => cap.Plugins.Awesome.mph()).rejects.toThrowError('nope!');
   });
 
   it('missing method on lazy loaded implementation', async (done) => {
@@ -210,14 +178,6 @@ describe('plugin', () => {
 
     try {
       await Awesome.mph();
-      done('did not throw error');
-    } catch (e) {
-      expect(e.message).toBe(`"Awesome.mph()" is not implemented on web`);
-      expect(e.code).toBe(ExceptionCode.Unimplemented);
-    }
-
-    try {
-      await cap.Plugins.Awesome.mph();
       done('did not throw error');
     } catch (e) {
       expect(e.message).toBe(`"Awesome.mph()" is not implemented on web`);
@@ -242,14 +202,6 @@ describe('plugin', () => {
     } catch (e) {
       expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
-    }
-
-    try {
-      await cap.Plugins.Awesome.mph();
-      done('should throw error');
-    } catch (e) {
-      expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
-      expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
   });
@@ -262,14 +214,6 @@ describe('plugin', () => {
 
     try {
       await Awesome.mph();
-      done('should throw error');
-    } catch (e) {
-      expect(e.message).toBe(`"Awesome" plugin is not implemented on web`);
-      expect(e.code).toBe(ExceptionCode.Unimplemented);
-    }
-
-    try {
-      await cap.Plugins.Awesome.mph();
       done('should throw error');
     } catch (e) {
       expect(e.message).toBe(`"Awesome" plugin is not implemented on web`);
@@ -291,14 +235,6 @@ describe('plugin', () => {
 
     try {
       await Awesome.mph();
-      done('should throw error');
-    } catch (e) {
-      expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
-      expect(e.code).toBe(ExceptionCode.Unimplemented);
-    }
-
-    try {
-      await cap.Plugins.Awesome.mph();
       done('should throw error');
     } catch (e) {
       expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
