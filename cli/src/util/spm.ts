@@ -169,7 +169,7 @@ export async function runCocoapodsDeintegrate(config: Config): Promise<void> {
 export async function addInfoPlistDebugIfNeeded(config: Config): Promise<void> {
   type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
-  const infoPlist = resolve(config.ios.nativeProjectDirAbs, 'App/Info.plist');
+  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
   logger.info('Checking ' + infoPlist + ' for CAPACITOR_DEBUG');
 
   if (existsSync(infoPlist)) {
