@@ -194,7 +194,7 @@ export async function addInfoPlistDebugIfNeeded(config: Config): Promise<void> {
 async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
   const pluginList: Plugin[] = [];
   for (const plugin of plugins) {
-    const packageSwiftFound = await pathExists(plugin.rootPath + '/Package.swift');
+    const packageSwiftFound = await pathExists(join(plugin.rootPath, 'Package.swift'));
     if (packageSwiftFound) {
       pluginList.push(plugin);
     } else {
