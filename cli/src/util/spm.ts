@@ -198,7 +198,7 @@ async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
     if (packageSwiftFound) {
       pluginList.push(plugin);
     } else {
-      logger.warn(plugin.name + ' does not have a Package.swift');
+      logger.warn(plugin.id + ' does not have a Package.swift');
     }
   }
 
