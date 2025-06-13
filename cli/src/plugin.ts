@@ -118,7 +118,7 @@ export function fixName(name: string): string {
 export function printPlugins(
   plugins: Plugin[],
   platform: string,
-  type: 'capacitor' | 'cordova' | 'incompatible' | 'packagespm' = 'capacitor',
+  type: 'capacitor' | 'cordova' | 'incompatible' = 'capacitor',
 ): void {
   if (plugins.length === 0) {
     return;
