@@ -69,7 +69,7 @@ export async function extractSPMPackageDirectory(config: Config): Promise<void> 
 
   try {
     const tempCapDir = await mkdtemp(join(tmpdir(), 'cap-'));
-    const tempCapSPM = join(tempCapDir, 'App/CapApp-SPM');
+    const tempCapSPM = join(tempCapDir, 'App', 'CapApp-SPM');
     const tempDebugXCConfig = join(tempCapDir, 'debug.xcconfig');
     await extract({ file: spmTemplate, cwd: tempCapDir });
     await move(tempCapSPM, spmDirectory);
