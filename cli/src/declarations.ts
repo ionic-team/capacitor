@@ -644,7 +644,7 @@ export interface CapacitorConfig {
      * has uninstalled dependencies.
      *
      * @default false
-     * @since 8.0.0
+     * @since 7.4.0
      */
     failOnUninstalledPlugins?: boolean;
   };
