@@ -86,11 +86,12 @@ export function runProgram(config: Config): void {
       'Optional: if true, all source maps will be inlined for easier debugging on mobile devices',
       false,
     )
+    .option('--fail-on-missing-dependencies', 'Fail if there are unresolved Cordova plugins')
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { deployment, inline }) => {
+        telemetryAction(config, async (platform, { deployment, inline, failOnMissingDependencies }) => {
           const { syncCommand } = await import('./tasks/sync');
-          await syncCommand(config, platform, deployment, inline);
+          await syncCommand(config, platform, deployment, inline, failOnMissingDependencies);
         }),
       ),
     );
@@ -99,11 +100,12 @@ export function runProgram(config: Config): void {
     .command('update [platform]')
     .description(`updates the native plugins and dependencies based on ${c.strong('package.json')}`)
     .option('--deployment', 'Optional: if provided, pod install will use --deployment option')
+    .option('--fail-on-missing-dependencies', 'Fail if there are unresolved Cordova plugins')
     .action(
       wrapAction(
-        telemetryAction(config, async (platform, { deployment }) => {
+        telemetryAction(config, async (platform, { deployment, failOnMissingDependencies }) => {
           const { updateCommand } = await import('./tasks/update');
-          await updateCommand(config, platform, deployment);
+          await updateCommand(config, platform, deployment, failOnMissingDependencies);
         }),
       ),
     );

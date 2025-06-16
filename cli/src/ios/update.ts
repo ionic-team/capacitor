@@ -29,18 +29,18 @@ import { getIOSPlugins, getMajoriOSVersion } from './common';
 
 const platform = 'ios';
 
-export async function updateIOS(config: Config, deployment: boolean): Promise<void> {
+export async function updateIOS(config: Config, deployment: boolean, failOnMissingDeps?: boolean): Promise<void> {
   const plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Core);
-  await updatePluginFiles(config, plugins, deployment);
+  await updatePluginFiles(config, plugins, deployment, failOnMissingDeps);
   await checkPlatformVersions(config, platform);
   generateIOSPackageJSON(config, plugins);
 
   printPlugins(capacitorPlugins, 'ios');
 }
 
-async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: boolean) {
+async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: boolean, failOnMissingDeps?: boolean) {
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
   if (cordovaPlugins.length > 0) {
@@ -50,7 +50,7 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     await copyTask(config, platform);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
-  await checkPluginDependencies(plugins, platform);
+  await checkPluginDependencies(plugins, platform, failOnMissingDeps);
   if ((await checkPackageManager(config)) === 'SPM') {
     await generateCordovaPackageFiles(cordovaPlugins, config);
     await generatePackageFile(config, plugins);

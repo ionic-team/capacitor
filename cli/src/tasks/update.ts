@@ -18,7 +18,12 @@ import { updateIOS } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
 
-export async function updateCommand(config: Config, selectedPlatformName: string, deployment: boolean): Promise<void> {
+export async function updateCommand(
+  config: Config,
+  selectedPlatformName: string,
+  deployment: boolean,
+  failOnMissingDeps?: boolean,
+): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -32,7 +37,9 @@ export async function updateCommand(config: Config, selectedPlatformName: string
     try {
       await check([() => checkPackage(), ...updateChecks(config, platforms)]);
 
-      await allSerial(platforms.map((platformName) => async () => await update(config, platformName, deployment)));
+      await allSerial(
+        platforms.map((platformName) => async () => await update(config, platformName, deployment, failOnMissingDeps)),
+      );
       const now = +new Date();
       const diff = (now - then) / 1000;
       logger.info(`Update finished in ${diff}s`);
@@ -62,14 +69,19 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
   return checks;
 }
 
-export async function update(config: Config, platformName: string, deployment: boolean): Promise<void> {
+export async function update(
+  config: Config,
+  platformName: string,
+  deployment: boolean,
+  failOnMissingDeps?: boolean,
+): Promise<void> {
   await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
     await runHooks(config, platformName, config.app.rootDir, 'capacitor:update:before');
 
     if (platformName === config.ios.name) {
-      await updateIOS(config, deployment);
+      await updateIOS(config, deployment, failOnMissingDeps);
     } else if (platformName === config.android.name) {
-      await updateAndroid(config);
+      await updateAndroid(config, failOnMissingDeps);
     }
 
     await runHooks(config, platformName, config.app.rootDir, 'capacitor:update:after');

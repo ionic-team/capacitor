@@ -15,6 +15,7 @@ export async function syncCommand(
   selectedPlatformName: string,
   deployment: boolean,
   inline = false,
+  failOnMissingDeps?: boolean,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     try {
@@ -22,13 +23,15 @@ export async function syncCommand(
     } catch (e: any) {
       logger.error(e.stack ?? e);
     }
-    await updateCommand(config, selectedPlatformName, deployment);
+    await updateCommand(config, selectedPlatformName, deployment, failOnMissingDeps);
   } else {
     const then = +new Date();
     const platforms = await selectPlatforms(config, selectedPlatformName);
     try {
       await check([() => checkPackage(), () => checkWebDir(config), ...updateChecks(config, platforms)]);
-      await allSerial(platforms.map((platformName) => () => sync(config, platformName, deployment, inline)));
+      await allSerial(
+        platforms.map((platformName) => () => sync(config, platformName, deployment, inline, failOnMissingDeps)),
+      );
       const now = +new Date();
       const diff = (now - then) / 1000;
       logger.info(`Sync finished in ${diff}s`);
@@ -42,7 +45,13 @@ export async function syncCommand(
   }
 }
 
-export async function sync(config: Config, platformName: string, deployment: boolean, inline = false): Promise<void> {
+export async function sync(
+  config: Config,
+  platformName: string,
+  deployment: boolean,
+  inline = false,
+  failOnMissingDeps?: boolean,
+): Promise<void> {
   await runHooks(config, platformName, config.app.rootDir, 'capacitor:sync:before');
 
   try {
@@ -50,7 +59,7 @@ export async function sync(config: Config, platformName: string, deployment: boo
   } catch (e: any) {
     logger.error(e.stack ?? e);
   }
-  await update(config, platformName, deployment);
+  await update(config, platformName, deployment, failOnMissingDeps);
 
   await runHooks(config, platformName, config.app.rootDir, 'capacitor:sync:after');
 }

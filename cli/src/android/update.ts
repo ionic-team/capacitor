@@ -29,7 +29,7 @@ import { getAndroidPlugins } from './common';
 const platform = 'android';
 const debug = Debug('capacitor:android:update');
 
-export async function updateAndroid(config: Config): Promise<void> {
+export async function updateAndroid(config: Config, failOnMissingDeps?: boolean): Promise<void> {
   const plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Core);
@@ -47,7 +47,7 @@ export async function updateAndroid(config: Config): Promise<void> {
     await copyTask(config, platform);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
-  await checkPluginDependencies(plugins, platform);
+  await checkPluginDependencies(plugins, platform, failOnMissingDeps);
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
   await writeCordovaAndroidManifest(cordovaPlugins, config, platform);
