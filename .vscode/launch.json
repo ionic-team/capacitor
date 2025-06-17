@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug CLI cli/dist/**.js (only works with js files in the cli/dist folder)",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/cli/bin/capacitor",
+      "args": ["${input:capacitorCommand}"],
+      "outFiles": [
+        "${workspaceFolder}/cli/dist/**/*.js"
+      ],
+      "sourceMaps": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${input:projectPath}",
+      "env": {
+        "CLI_PATH": "${workspaceFolder}/cli",
+        "CAPACITOR_CLI_PATH": "${workspaceFolder}",
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "capacitorCommand",
+      "type": "promptString",
+      "description": "Capacitor CLI command to run (e.g. 'doctor')",
+      "default": "doctor"
+    },
+    {
+      "id": "projectPath",
+      "type": "promptString",
+      "description": "Path to the project where you want to run the command",
+      "default": "${env:HOME}/repos/capacitor-testapp"
+    }
+  ]
+}
