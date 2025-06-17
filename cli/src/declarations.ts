@@ -638,6 +638,15 @@ export interface CapacitorConfig {
      * @since 1.3.0
      */
     preferences?: { [key: string]: string | undefined };
+
+    /**
+     * Fail on cap update/sync if the CLI detects that a cordova plugin
+     * has uninstalled dependencies.
+     *
+     * @default false
+     * @since 7.4.0
+     */
+    failOnUninstalledPlugins?: boolean;
   };
 
   /**

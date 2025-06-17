@@ -47,7 +47,7 @@ export async function updateAndroid(config: Config): Promise<void> {
     await copyTask(config, platform);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
-  await checkPluginDependencies(plugins, platform);
+  await checkPluginDependencies(plugins, platform, config.app.extConfig.cordova?.failOnUninstalledPlugins);
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
   await writeCordovaAndroidManifest(cordovaPlugins, config, platform);
