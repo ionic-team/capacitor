@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.4.0](https://github.com/ionic-team/capacitor/compare/7.3.0...7.4.0) (2025-06-18)
+
+### Features
+
+- **cli:** add spm-migration-assistant command ([#7963](https://github.com/ionic-team/capacitor/issues/7963)) ([ef42722](https://github.com/ionic-team/capacitor/commit/ef427225f63056b1731b3cd8941aea2311d3bc4d))
+- **cli:** fail cap update on uninstalled cordova dependencies ([#8032](https://github.com/ionic-team/capacitor/issues/8032)) ([b393de8](https://github.com/ionic-team/capacitor/commit/b393de8bc9e68aff2cb70428a7c86c98367feade))
+
 # [7.3.0](https://github.com/ionic-team/capacitor/compare/7.2.0...7.3.0) (2025-06-05)
 
 ### Bug Fixes
