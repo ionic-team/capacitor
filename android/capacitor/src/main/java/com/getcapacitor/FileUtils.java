@@ -219,7 +219,8 @@ public class FileUtils {
         int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
         cursor.moveToFirst();
         String name = (cursor.getString(nameIndex));
-        File file = new File(context.getFilesDir(), name);
+        String fileName = sanitizeFilename(name);
+        File file = new File(context.getFilesDir(), fileName);
         try {
             InputStream inputStream = context.getContentResolver().openInputStream(uri);
             FileOutputStream outputStream = new FileOutputStream(file);
@@ -288,5 +289,15 @@ public class FileUtils {
             }
         }
         return null;
+    }
+
+    private static String sanitizeFilename(String displayName) {
+        String[] badCharacters = new String[] { "..", "/" };
+        String[] segments = displayName.split("/");
+        String fileName = segments[segments.length - 1];
+        for (String suspString : badCharacters) {
+            fileName = fileName.replace(suspString, "_");
+        }
+        return fileName;
     }
 }

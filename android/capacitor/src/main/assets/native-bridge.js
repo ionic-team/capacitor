@@ -468,6 +468,15 @@ var nativeBridge = (function (exports) {
                 if (doPatchHttp) {
                     // fetch patch
                     window.fetch = async (resource, options) => {
+                        const headers = new Headers(options === null || options === void 0 ? void 0 : options.headers);
+                        const contentType = headers.get('Content-Type') || headers.get('content-type');
+                        if ((options === null || options === void 0 ? void 0 : options.body) instanceof FormData &&
+                            (contentType === null || contentType === void 0 ? void 0 : contentType.includes('multipart/form-data')) &&
+                            !contentType.includes('boundary')) {
+                            headers.delete('Content-Type');
+                            headers.delete('content-type');
+                            options.headers = headers;
+                        }
                         const request = new Request(resource, options);
                         if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
                             return win.CapacitorWebFetch(resource, options);
@@ -477,6 +486,17 @@ var nativeBridge = (function (exports) {
                             method.toLocaleUpperCase() === 'HEAD' ||
                             method.toLocaleUpperCase() === 'OPTIONS' ||
                             method.toLocaleUpperCase() === 'TRACE') {
+                            // a workaround for following android webview issue:
+                            // https://issues.chromium.org/issues/40450316
+                            // Sets the user-agent header to a custom value so that its not stripped
+                            // on its way to the native layer
+                            if (platform === 'android' && (options === null || options === void 0 ? void 0 : options.headers)) {
+                                const userAgent = headers.get('User-Agent') || headers.get('user-agent');
+                                if (userAgent !== null) {
+                                    headers.set('x-cap-user-agent', userAgent);
+                                    options.headers = headers;
+                                }
+                            }
                             if (typeof resource === 'string') {
                                 return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
                             }
@@ -490,13 +510,22 @@ var nativeBridge = (function (exports) {
                         try {
                             const { body } = request;
                             const optionHeaders = Object.fromEntries(request.headers.entries());
-                            const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || body || undefined, optionHeaders['Content-Type'] || optionHeaders['content-type']);
+                            const { data: requestData, type, headers: requestHeaders, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || body || undefined, optionHeaders['Content-Type'] || optionHeaders['content-type']);
+                            const nativeHeaders = Object.assign(Object.assign({}, requestHeaders), optionHeaders);
+                            if (platform === 'android') {
+                                if (headers.has('User-Agent')) {
+                                    nativeHeaders['User-Agent'] = headers.get('User-Agent');
+                                }
+                                if (headers.has('user-agent')) {
+                                    nativeHeaders['user-agent'] = headers.get('user-agent');
+                                }
+                            }
                             const nativeResponse = await cap.nativePromise('CapacitorHttp', 'request', {
                                 url: request.url,
                                 method: method,
                                 data: requestData,
                                 dataType: type,
-                                headers: Object.assign(Object.assign({}, headers), optionHeaders),
+                                headers: nativeHeaders,
                             });
                             const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
                             let data = (contentType === null || contentType === void 0 ? void 0 : contentType.startsWith('application/json'))
@@ -588,6 +617,13 @@ var nativeBridge = (function (exports) {
                         };
                         // XHR patch set request header
                         prototype.setRequestHeader = function (header, value) {
+                            // a workaround for the following android web view issue:
+                            // https://issues.chromium.org/issues/40450316
+                            // Sets the user-agent header to a custom value so that its not stripped
+                            // on its way to the native layer
+                            if (platform === 'android' && (header === 'User-Agent' || header === 'user-agent')) {
+                                header = 'x-cap-user-agent';
+                            }
                             if (isRelativeOrProxyUrl(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(this, header, value);
                             }

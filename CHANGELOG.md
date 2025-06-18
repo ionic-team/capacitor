@@ -3,6 +3,71 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.3.0](https://github.com/ionic-team/capacitor/compare/7.2.0...7.3.0) (2025-06-05)
+
+### Bug Fixes
+
+- add error code checking to `runPlatformHook` ([#7994](https://github.com/ionic-team/capacitor/issues/7994)) ([8717680](https://github.com/ionic-team/capacitor/commit/871768049187afe9f5d358d3fe08b6f18f70533e))
+- **cli:** Don't downgrade deployment target on migrate ([#7953](https://github.com/ionic-team/capacitor/issues/7953)) ([46e8792](https://github.com/ionic-team/capacitor/commit/46e87925b675933b413737854b1376eb1c71a23e))
+- **cli:** ensures the execution order of CLI hooks ([#7947](https://github.com/ionic-team/capacitor/issues/7947)) ([c3ea809](https://github.com/ionic-team/capacitor/commit/c3ea8094cdd385ac02a5aae89f8b44b6c53d493a))
+- **cli:** unexpected error on target device list ([#8015](https://github.com/ionic-team/capacitor/issues/8015)) ([f827c48](https://github.com/ionic-team/capacitor/commit/f827c48f08b13a265e8671291c24f3506e14a094))
+- **cli:** use proper build params ([#8016](https://github.com/ionic-team/capacitor/issues/8016)) ([12ce2a4](https://github.com/ionic-team/capacitor/commit/12ce2a486542011c8d6f4cd89a67464f3f27e28d))
+- **core:** Prevent error when hasListeners is empty ([#7975](https://github.com/ionic-team/capacitor/issues/7975)) ([a4a0942](https://github.com/ionic-team/capacitor/commit/a4a0942eddba068e078bd782bb093ed1ecff9e00))
+- Remove all plugin listeners in bridge reset ([#7962](https://github.com/ionic-team/capacitor/issues/7962)) ([06aeea9](https://github.com/ionic-team/capacitor/commit/06aeea973aa56ac2fb791f893ebd899253ee65f9))
+
+### Features
+
+- **cli:** Initial Cordova plugin SPM support ([#7999](https://github.com/ionic-team/capacitor/issues/7999)) ([c030354](https://github.com/ionic-team/capacitor/commit/c03035426343ddc4e303ca3420e476bb7f1e2201))
+- expose `appStartPath` on cap config server configuration ([#8019](https://github.com/ionic-team/capacitor/issues/8019)) ([a274fef](https://github.com/ionic-team/capacitor/commit/a274fef069176a8e528a22f4734d1e29a539709c))
+- **ios:** Alternative debug config for SPM ([#7982](https://github.com/ionic-team/capacitor/issues/7982)) ([a054aa5](https://github.com/ionic-team/capacitor/commit/a054aa5bb4d5eabe5da5d42a380bd51b8785958c))
+
+# [7.2.0](https://github.com/ionic-team/capacitor/compare/7.1.0...7.2.0) (2025-03-31)
+
+### Bug Fixes
+
+- **android:** rename bridge layout to avoid collision ([#7919](https://github.com/ionic-team/capacitor/issues/7919)) ([a629f16](https://github.com/ionic-team/capacitor/commit/a629f167b345cda1c44f37131235d14353eff504))
+- **cli:** Don't migrate Podfile on SPM projects ([#7939](https://github.com/ionic-team/capacitor/issues/7939)) ([ab4e700](https://github.com/ionic-team/capacitor/commit/ab4e700035289f445668dfd2f86278ffc71ab269))
+- **ios:** respect shouldEncodeUrlParams value ([#7931](https://github.com/ionic-team/capacitor/issues/7931)) ([4fb12a0](https://github.com/ionic-team/capacitor/commit/4fb12a03a92c0f38b0d48b114252342f4bdc17bf))
+
+### Features
+
+- **http:** Apply overrideUserAgent to requests ([#7906](https://github.com/ionic-team/capacitor/issues/7906)) ([52482c9](https://github.com/ionic-team/capacitor/commit/52482c9d3c575b737054b41f9d1730c70cc5f471))
+- **ios:** Enable Fullscreen API on WebView ([#7909](https://github.com/ionic-team/capacitor/issues/7909)) ([172638e](https://github.com/ionic-team/capacitor/commit/172638ec7b6eb67bf25f8dac2818122ba31c2c91))
+
+# [7.1.0](https://github.com/ionic-team/capacitor/compare/7.0.1...7.1.0) (2025-03-12)
+
+### Bug Fixes
+
+- **android:** add EdgeToEdge compatibility ([#7871](https://github.com/ionic-team/capacitor/issues/7871)) ([64a8bc4](https://github.com/ionic-team/capacitor/commit/64a8bc40de2522c75a94a40cba6c8ccd82481cb8))
+- **android:** sanitize portable file name ([#7894](https://github.com/ionic-team/capacitor/issues/7894)) ([5f09297](https://github.com/ionic-team/capacitor/commit/5f092970e33da1ec896efc4e2a5ae3fb77fca658))
+- **cli:** don't run bundle if not installed ([#7896](https://github.com/ionic-team/capacitor/issues/7896)) ([ee55f6c](https://github.com/ionic-team/capacitor/commit/ee55f6c54639c1a61fa4f9eed1f366ba2d968b86))
+- **core:** use getPlatform instead of platform in cordova.js ([#7902](https://github.com/ionic-team/capacitor/issues/7902)) ([277db7b](https://github.com/ionic-team/capacitor/commit/277db7b48caaf870eefdf701ea99332c4338d7ed))
+- **http:** boundary not added for Request objects ([#7897](https://github.com/ionic-team/capacitor/issues/7897)) ([bdaa6f3](https://github.com/ionic-team/capacitor/commit/bdaa6f3c38c33f3a021ac61f2de89101a5b66cff))
+- **ios:** don't check isMediaExtension on range requests ([#7868](https://github.com/ionic-team/capacitor/issues/7868)) ([028caa5](https://github.com/ionic-team/capacitor/commit/028caa5378d359fb1004098aa93a24ad0f49a4ae))
+- **ios:** listen for CapacitorViewDidAppear ([#7850](https://github.com/ionic-team/capacitor/issues/7850)) ([e24ffb7](https://github.com/ionic-team/capacitor/commit/e24ffb7d4de0bf3d53e92537f21c864f121c1fad))
+- **ios:** Reset plugin listeners when WebView process is terminated ([#7905](https://github.com/ionic-team/capacitor/issues/7905)) ([d039157](https://github.com/ionic-team/capacitor/commit/d0391576726955b2c1b484f1ca9a03465b9ef67e))
+
+### Features
+
+- Add function to inject external JS into WebView before document load ([#7864](https://github.com/ionic-team/capacitor/issues/7864)) ([ec0954c](https://github.com/ionic-team/capacitor/commit/ec0954c197543e913939f3ab9c4bcb172bfa3530))
+- **android:** add adjustMarginsForEdgeToEdge configuration option ([#7885](https://github.com/ionic-team/capacitor/issues/7885)) ([1ea86d1](https://github.com/ionic-team/capacitor/commit/1ea86d166afd315e72847c5e734a8c175fb90e04))
+- **cli:** add more configurations to build command ([#7769](https://github.com/ionic-team/capacitor/issues/7769)) ([90f95d1](https://github.com/ionic-team/capacitor/commit/90f95d1a829f3d87cb46af827b5bfaac319a9694))
+
+## [7.0.1](https://github.com/ionic-team/capacitor/compare/7.0.0...7.0.1) (2025-01-21)
+
+### Bug Fixes
+
+- make migrate use 7.0.0 ([#7837](https://github.com/ionic-team/capacitor/issues/7837)) ([5dc309e](https://github.com/ionic-team/capacitor/commit/5dc309ea8dd7905e9e6236744f29162df80b5ed8))
+- use Capacitor 7 for SPM dependency ([#7835](https://github.com/ionic-team/capacitor/issues/7835)) ([640c3cb](https://github.com/ionic-team/capacitor/commit/640c3cb22a62e4b8fb13cd36031d39307622c60a))
+
+# [7.0.0](https://github.com/ionic-team/capacitor/compare/7.0.0-rc.1...7.0.0) (2025-01-20)
+
+**Note:** Version bump only for package capacitor
+
+# [7.0.0-rc.1](https://github.com/ionic-team/capacitor/compare/7.0.0-rc.0...7.0.0-rc.1) (2025-01-20)
+
+**Note:** Version bump only for package capacitor
+
 # [7.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/7.0.0-beta.0...7.0.0-rc.0) (2024-12-20)
 
 **Note:** Version bump only for package capacitor

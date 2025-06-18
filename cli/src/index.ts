@@ -147,6 +147,41 @@ export function runProgram(config: Config): void {
         'jarsigner',
       ]),
     )
+    .addOption(
+      new Option('--xcode-team-id <xcodeTeamID>', 'The Developer team to use for building and exporting the archive'),
+    )
+    .addOption(
+      new Option(
+        '--xcode-export-method <xcodeExportMethod>',
+        'Describes how xcodebuild should export the archive (default:  app-store-connect)',
+      ).choices([
+        'app-store-connect',
+        'release-testing',
+        'enterprise',
+        'debugging',
+        'developer-id',
+        'mac-application',
+        'validation',
+      ]),
+    )
+    .addOption(
+      new Option(
+        '--xcode-signing-style <xcodeSigningStyle>',
+        'The iOS signing style to use when building the app for distribution (default: automatic)',
+      ).choices(['automatic', 'manual']),
+    )
+    .addOption(
+      new Option(
+        '--xcode-signing-certificate <xcodeSigningCertificate>',
+        'A certificate name, SHA-1 hash, or automatic selector to use for signing for iOS builds',
+      ),
+    )
+    .addOption(
+      new Option(
+        '--xcode-provisioning-profile <xcodeProvisioningProfile>',
+        'A provisioning profile name or UUID for iOS builds',
+      ),
+    )
     .action(
       wrapAction(
         telemetryAction(
@@ -163,6 +198,11 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingType,
               configuration,
+              xcodeTeamId,
+              xcodeExportMethod,
+              xcodeSigningStyle,
+              xcodeSigningCertificate,
+              xcodeProvisioningProfile,
             },
           ) => {
             const { buildCommand } = await import('./tasks/build');
@@ -176,6 +216,11 @@ export function runProgram(config: Config): void {
               androidreleasetype,
               signingtype: signingType,
               configuration,
+              xcodeTeamId,
+              xcodeExportMethod,
+              xcodeSigningType: xcodeSigningStyle,
+              xcodeSigningCertificate,
+              xcodeProvisioningProfile,
             });
           },
         ),
@@ -239,7 +284,7 @@ export function runProgram(config: Config): void {
     .description('add a native platform project')
     .option(
       '--packagemanager <packageManager>',
-      'The package manager to use for dependency installs (Cocoapods, SPM **experimental**)',
+      'The package manager to use for dependency installs (CocoaPods or SPM)',
     )
     .action(
       wrapAction(

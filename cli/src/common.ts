@@ -151,9 +151,10 @@ export async function runHooks(config: Config, platformName: string, dir: string
   await runPlatformHook(config, platformName, dir, hook);
 
   const allPlugins = await getPlugins(config, platformName);
-  allPlugins.forEach(async (p) => {
+
+  for (const p of allPlugins) {
     await runPlatformHook(config, platformName, p.rootPath, hook);
-  });
+  }
 }
 
 export async function runPlatformHook(
@@ -189,8 +190,14 @@ export async function runPlatformHook(
         ...process.env,
       },
     });
-    p.on('close', () => {
-      resolve();
+    p.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(
+          new Error(`${hook} hook on ${platformName} failed with error code: ${code} while running command: ${cmd}`),
+        );
+      }
     });
     p.on('error', (err) => {
       reject(err);
