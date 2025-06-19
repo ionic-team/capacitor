@@ -39,6 +39,7 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
     _scrollingEnabled = YES;
     _zoomingEnabled = NO;
     _allowLinkPreviews = YES;
+    _allowsBackForwardNavigationGestures = NO;
     _handleApplicationNotifications = YES;
     _isWebDebuggable = NO;
     _hasInitialFocus = YES;
