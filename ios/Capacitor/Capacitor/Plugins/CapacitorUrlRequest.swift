@@ -40,8 +40,11 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
             throw CapacitorUrlRequestError.serializationError("[ data ] argument for request with content-type [ multipart/form-data ] may only be a plain javascript object")
         }
 
+        let allowed = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._")
+
         obj.keys.forEach { (key: String) in
-            components.queryItems?.append(URLQueryItem(name: key, value: "\(obj[key] ?? "")"))
+            let value = obj[key] as? String ?? ""
+            components.queryItems?.append(URLQueryItem(name: key.addingPercentEncoding(withAllowedCharacters: allowed) ?? key, value: value.addingPercentEncoding(withAllowedCharacters: allowed)))
         }
 
         if components.query != nil {
