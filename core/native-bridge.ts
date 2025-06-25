@@ -110,6 +110,9 @@ const convertBody = async (
     return {
       data: formData,
       type: 'formData',
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}`,
+      },
     };
   } else if (body instanceof File) {
     const fileData = await readFileAsBase64(body);
@@ -611,7 +614,6 @@ const initBridge = (w: any): void => {
 
         window.XMLHttpRequest = function () {
           const xhr = new win.CapacitorWebXMLHttpRequest.constructor();
-
           Object.defineProperties(xhr, {
             _headers: {
               value: {},

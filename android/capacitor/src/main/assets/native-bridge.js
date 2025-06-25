@@ -127,6 +127,9 @@ var nativeBridge = (function (exports) {
             return {
                 data: formData,
                 type: 'formData',
+                headers: {
+                    'Content-Type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}`,
+                },
             };
         }
         else if (body instanceof File) {
@@ -369,8 +372,6 @@ var nativeBridge = (function (exports) {
             };
             const platform = getPlatformId(win);
             if (platform == 'android' || platform == 'ios') {
-                win.console.log('TODOASDF this is where we patch XML');
-                debugger;
                 // patch document.cookie on Android/iOS
                 win.CapacitorCookiesDescriptor =
                     Object.getOwnPropertyDescriptor(Document.prototype, 'cookie') ||
@@ -437,8 +438,6 @@ var nativeBridge = (function (exports) {
                 // patch fetch / XHR on Android/iOS
                 // store original fetch & XHR functions
                 win.CapacitorWebFetch = window.fetch;
-                win.console.log('TODOASDF this is where we patch XML');
-                debugger;
                 win.CapacitorWebXMLHttpRequest = {
                     abort: window.XMLHttpRequest.prototype.abort,
                     constructor: window.XMLHttpRequest.prototype.constructor,
