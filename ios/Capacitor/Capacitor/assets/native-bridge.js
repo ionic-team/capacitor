@@ -320,9 +320,9 @@ var nativeBridge = (function (exports) {
                 if (isFullConsole(c)) {
                     const success = result.success === true;
                     const tagStyles = success
-                        ? 'font-style: italic; font-weight: lighter; color: gray'
+                        ? 'font-style: italic; font-weight: lighter; color: green'
                         : 'font-style: italic; font-weight: lighter; color: red';
-                    c.groupCollapsed('%cresult %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')', tagStyles, 'font-style: italic; font-weight: bold; color: #444');
+                    c.groupCollapsed('%cmessage from native %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')', tagStyles, 'font-style: italic; font-weight: bold; color: #4EA1E0');
                     if (result.success === false) {
                         c.error(result.error);
                     }
@@ -342,7 +342,7 @@ var nativeBridge = (function (exports) {
             };
             const createLogToNative = (c) => (call) => {
                 if (isFullConsole(c)) {
-                    c.groupCollapsed('%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color: gray', 'font-weight: bold; color: #000');
+                    c.groupCollapsed('%cmessage to native %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color:rgb(195, 78, 224)', 'font-weight: bold;');
                     c.dir(call);
                     c.groupEnd();
                 }
@@ -369,6 +369,8 @@ var nativeBridge = (function (exports) {
             };
             const platform = getPlatformId(win);
             if (platform == 'android' || platform == 'ios') {
+                win.console.log('TODOASDF this is where we patch XML');
+                debugger;
                 // patch document.cookie on Android/iOS
                 win.CapacitorCookiesDescriptor =
                     Object.getOwnPropertyDescriptor(Document.prototype, 'cookie') ||
@@ -435,6 +437,8 @@ var nativeBridge = (function (exports) {
                 // patch fetch / XHR on Android/iOS
                 // store original fetch & XHR functions
                 win.CapacitorWebFetch = window.fetch;
+                win.console.log('TODOASDF this is where we patch XML');
+                debugger;
                 win.CapacitorWebXMLHttpRequest = {
                     abort: window.XMLHttpRequest.prototype.abort,
                     constructor: window.XMLHttpRequest.prototype.constructor,

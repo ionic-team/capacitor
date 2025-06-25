@@ -402,6 +402,8 @@ export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPl
    * @param options Options to build the HTTP request
    */
   async request(options: HttpOptions): Promise<HttpResponse> {
+    debugger;
+    console.log('TODOASDF hitting the request!!', options);
     const requestInit = buildRequestInit(options, options.webFetchExtra);
     const urlParams = buildUrlParams(options.params, options.shouldEncodeUrlParams);
     const url = urlParams ? `${options.url}?${urlParams}` : options.url;
