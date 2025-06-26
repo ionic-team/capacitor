@@ -26,6 +26,7 @@
   "scripts": {
     "build": "npm run clean && npm run docgen && npm run transpile && npm run rollup",
     "build:nativebridge": "tsc native-bridge.ts --target es2017 --moduleResolution node --outDir build && rollup --config rollup.bridge.config.js",
+    "build:all": "npm run build:nativebridge && npm run build",
     "clean": "rimraf dist",
     "docgen": "docgen --api CapacitorCookiesPlugin --output-readme cookies.md && docgen --api CapacitorHttpPlugin --output-readme http.md",
     "prepublishOnly": "npm run build",

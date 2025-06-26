@@ -127,6 +127,9 @@ var nativeBridge = (function (exports) {
             return {
                 data: formData,
                 type: 'formData',
+                headers: {
+                    'Content-Type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}`,
+                },
             };
         }
         else if (body instanceof File) {
@@ -320,9 +323,9 @@ var nativeBridge = (function (exports) {
                 if (isFullConsole(c)) {
                     const success = result.success === true;
                     const tagStyles = success
-                        ? 'font-style: italic; font-weight: lighter; color: gray'
+                        ? 'font-style: italic; font-weight: lighter; color: green'
                         : 'font-style: italic; font-weight: lighter; color: red';
-                    c.groupCollapsed('%cresult %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')', tagStyles, 'font-style: italic; font-weight: bold; color: #444');
+                    c.groupCollapsed('%cmessage from native %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')', tagStyles, 'font-style: italic; font-weight: bold; color: #4EA1E0');
                     if (result.success === false) {
                         c.error(result.error);
                     }
@@ -342,7 +345,7 @@ var nativeBridge = (function (exports) {
             };
             const createLogToNative = (c) => (call) => {
                 if (isFullConsole(c)) {
-                    c.groupCollapsed('%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color: gray', 'font-weight: bold; color: #000');
+                    c.groupCollapsed('%cmessage to native %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color:rgb(195, 78, 224)', 'font-weight: bold;');
                     c.dir(call);
                     c.groupEnd();
                 }

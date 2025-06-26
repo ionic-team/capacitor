@@ -110,6 +110,9 @@ const convertBody = async (
     return {
       data: formData,
       type: 'formData',
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}`,
+      },
     };
   } else if (body instanceof File) {
     const fileData = await readFileAsBase64(body);
@@ -321,13 +324,13 @@ const initBridge = (w: any): void => {
         const success = result.success === true;
 
         const tagStyles = success
-          ? 'font-style: italic; font-weight: lighter; color: gray'
+          ? 'font-style: italic; font-weight: lighter; color: green'
           : 'font-style: italic; font-weight: lighter; color: red';
 
         c.groupCollapsed(
-          '%cresult %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')',
+          '%cmessage from native %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')',
           tagStyles,
-          'font-style: italic; font-weight: bold; color: #444',
+          'font-style: italic; font-weight: bold; color: #4EA1E0',
         );
         if (result.success === false) {
           c.error(result.error);
@@ -347,9 +350,9 @@ const initBridge = (w: any): void => {
     const createLogToNative = (c: Partial<Console>) => (call: MessageCallData) => {
       if (isFullConsole(c)) {
         c.groupCollapsed(
-          '%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')',
-          'font-weight: lighter; color: gray',
-          'font-weight: bold; color: #000',
+          '%cmessage to native %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')',
+          'font-weight: lighter; color:rgb(195, 78, 224)',
+          'font-weight: bold;',
         );
         c.dir(call);
         c.groupEnd();
@@ -611,7 +614,6 @@ const initBridge = (w: any): void => {
 
         window.XMLHttpRequest = function () {
           const xhr = new win.CapacitorWebXMLHttpRequest.constructor();
-
           Object.defineProperties(xhr, {
             _headers: {
               value: {},
