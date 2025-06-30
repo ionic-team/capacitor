@@ -324,13 +324,12 @@ const initBridge = (w: any): void => {
         const success = result.success === true;
 
         const tagStyles = success
-          ? 'font-style: italic; font-weight: lighter; color: green'
+          ? 'font-style: italic; font-weight: lighter; color: gray'
           : 'font-style: italic; font-weight: lighter; color: red';
-
         c.groupCollapsed(
-          '%cmessage from native %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')',
+          '%cresult %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')',
           tagStyles,
-          'font-style: italic; font-weight: bold; color: #4EA1E0',
+          'font-style: italic; font-weight: bold; color: #444',
         );
         if (result.success === false) {
           c.error(result.error);
@@ -350,9 +349,9 @@ const initBridge = (w: any): void => {
     const createLogToNative = (c: Partial<Console>) => (call: MessageCallData) => {
       if (isFullConsole(c)) {
         c.groupCollapsed(
-          '%cmessage to native %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')',
-          'font-weight: lighter; color:rgb(195, 78, 224)',
-          'font-weight: bold;',
+          '%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')',
+          'font-weight: lighter; color: gray',
+          'font-weight: bold; color: #000',
         );
         c.dir(call);
         c.groupEnd();
