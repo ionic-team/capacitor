@@ -44,7 +44,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
 
         obj.keys.forEach { (key: String) in
             let value = obj[key] as? String ?? ""
-            components.queryItems?.append(URLQueryItem(name: key.addingPercentEncoding(withAllowedCharacters: allowed) ?? key, value: value.addingPercentEncoding(withAllowedCharacters: allowed)))
+            components.queryItems?.append(URLQueryItem(name: key.addingPercentEncoding(withAllowedCharacters: allowed)?.replacingOccurrences(of: "%20", with: "+") ?? key, value: value.addingPercentEncoding(withAllowedCharacters: allowed)?.replacingOccurrences(of: "%20", with: "+")))
         }
 
         if components.query != nil {
