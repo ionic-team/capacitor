@@ -40,7 +40,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
             throw CapacitorUrlRequestError.serializationError("[ data ] argument for request with content-type [ multipart/form-data ] may only be a plain javascript object")
         }
 
-        let allowed = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._")
+        let allowed = CharacterSet(charactersIn: "-._*").union(.alphanumerics)
 
         obj.keys.forEach { (key: String) in
             let value = obj[key] as? String ?? ""
