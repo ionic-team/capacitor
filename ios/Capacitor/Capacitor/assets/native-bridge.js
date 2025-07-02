@@ -32,6 +32,10 @@ var nativeBridge = (function (exports) {
         }
     }
 
+    /**
+     * Note: When making changes to this file, run `npm run build:nativebridge`
+     * afterwards to build the nativebridge.js files to the android and iOS projects.
+     */
     // For removing exports for iOS/Android, keep let for reassignment
     // eslint-disable-next-line
     let dummy = {};
@@ -123,12 +127,13 @@ var nativeBridge = (function (exports) {
             };
         }
         else if (body instanceof FormData) {
-            const formData = await convertFormData(body);
             return {
-                data: formData,
+                data: await convertFormData(body),
                 type: 'formData',
                 headers: {
-                    'Content-Type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}`,
+                    'Content-Type': contentType
+                        ? contentType
+                        : `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}`,
                 },
             };
         }
