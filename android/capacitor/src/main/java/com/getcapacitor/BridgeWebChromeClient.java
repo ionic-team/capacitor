@@ -67,7 +67,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         };
 
         permissionLauncher = bridge.registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissionCallback);
-        activityLauncher = bridge.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        activityLauncher = bridge.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), (result) -> {
             if (activityListener != null) {
                 activityListener.onActivityResult(result);
             }
@@ -110,7 +110,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         }
         if (!permissionList.isEmpty()) {
             String[] permissions = permissionList.toArray(new String[0]);
-            permissionListener = isGranted -> {
+            permissionListener = (isGranted) -> {
                 if (isGranted) {
                     request.grant(request.getResources());
                 } else {
@@ -144,7 +144,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
                 dialog.dismiss();
                 result.confirm();
             })
-            .setOnCancelListener(dialog -> {
+            .setOnCancelListener((dialog) -> {
                 dialog.dismiss();
                 result.cancel();
             });
@@ -182,7 +182,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
                 dialog.dismiss();
                 result.cancel();
             })
-            .setOnCancelListener(dialog -> {
+            .setOnCancelListener((dialog) -> {
                 dialog.dismiss();
                 result.cancel();
             });
@@ -225,7 +225,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
                 dialog.dismiss();
                 result.cancel();
             })
-            .setOnCancelListener(dialog -> {
+            .setOnCancelListener((dialog) -> {
                 dialog.dismiss();
                 result.cancel();
             });
@@ -249,7 +249,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
         if (!PermissionHelper.hasPermissions(bridge.getContext(), geoPermissions)) {
-            permissionListener = isGranted -> {
+            permissionListener = (isGranted) -> {
                 if (isGranted) {
                     callback.invoke(origin, true, false);
                 } else {
@@ -286,7 +286,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
             if (isMediaCaptureSupported()) {
                 showMediaCaptureOrFilePicker(filePathCallback, fileChooserParams, captureVideo);
             } else {
-                permissionListener = isGranted -> {
+                permissionListener = (isGranted) -> {
                     if (isGranted) {
                         showMediaCaptureOrFilePicker(filePathCallback, fileChooserParams, captureVideo);
                     } else {
@@ -345,7 +345,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return false;
         }
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
-        activityListener = activityResult -> {
+        activityListener = (activityResult) -> {
             Uri[] result = null;
             if (activityResult.getResultCode() == Activity.RESULT_OK) {
                 result = new Uri[] { imageFileUri };
@@ -364,7 +364,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return false;
         }
 
-        activityListener = activityResult -> {
+        activityListener = (activityResult) -> {
             Uri[] result = null;
             if (activityResult.getResultCode() == Activity.RESULT_OK) {
                 result = new Uri[] { activityResult.getData().getData() };
@@ -389,7 +389,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
             }
         }
         try {
-            activityListener = activityResult -> {
+            activityListener = (activityResult) -> {
                 Uri[] result;
                 Intent resultIntent = activityResult.getData();
                 if (activityResult.getResultCode() == Activity.RESULT_OK && resultIntent.getClipData() != null) {
