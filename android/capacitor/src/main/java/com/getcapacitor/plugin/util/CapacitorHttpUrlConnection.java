@@ -248,7 +248,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             while (keys.hasNext()) {
                 String key = keys.next();
                 Object d = object.get(key);
-                os.writeBytes(key);
+                os.writeBytes(URLEncoder.encode(key, "UTF-8"));
                 os.writeBytes("=");
                 os.writeBytes(URLEncoder.encode(d.toString(), "UTF-8"));
 
