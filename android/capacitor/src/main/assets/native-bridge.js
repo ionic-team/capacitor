@@ -130,11 +130,6 @@ var nativeBridge = (function (exports) {
             return {
                 data: await convertFormData(body),
                 type: 'formData',
-                headers: {
-                    'Content-Type': contentType
-                        ? contentType
-                        : `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}`,
-                },
             };
         }
         else if (body instanceof File) {
@@ -665,7 +660,10 @@ var nativeBridge = (function (exports) {
                                     },
                                 });
                                 convertBody(body).then(({ data, type, headers }) => {
-                                    const otherHeaders = this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined;
+                                    let otherHeaders = this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined;
+                                    if (body instanceof FormData) {
+                                        otherHeaders = Object.assign(Object.assign({}, otherHeaders), { 'content-type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}` });
+                                    }
                                     // intercept request & pass to the bridge
                                     cap
                                         .nativePromise('CapacitorHttp', 'request', {
