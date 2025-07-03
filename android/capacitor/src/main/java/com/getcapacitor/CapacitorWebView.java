@@ -73,7 +73,7 @@ public class CapacitorWebView extends WebView {
 
         if (forceMargins || autoMargins) {
             ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
-                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
                 MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
                 mlp.leftMargin = insets.left;
                 mlp.bottomMargin = insets.bottom;
