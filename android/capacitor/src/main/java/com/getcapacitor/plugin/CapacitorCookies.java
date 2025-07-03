@@ -46,7 +46,7 @@ public class CapacitorCookies extends Plugin {
 
     @PluginMethod
     public void getCookies(PluginCall call) {
-        this.bridge.eval("document.cookie", value -> {
+        this.bridge.eval("document.cookie", (value) -> {
                 String cookies = value.substring(1, value.length() - 1);
                 String[] cookieArray = cookies.split(";");
 
