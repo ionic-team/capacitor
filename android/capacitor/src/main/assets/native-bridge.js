@@ -663,7 +663,6 @@ var nativeBridge = (function (exports) {
                                     var _a, _b;
                                     let otherHeaders = this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined;
                                     if (body instanceof FormData) {
-                                        debugger;
                                         const multipartHeaderAlreadyExists = ((_a = this._headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.includes('multipart/form-data')) ||
                                             ((_b = this._headers['content-type']) === null || _b === void 0 ? void 0 : _b.includes('multipart/form-data'));
                                         if (!multipartHeaderAlreadyExists) {
