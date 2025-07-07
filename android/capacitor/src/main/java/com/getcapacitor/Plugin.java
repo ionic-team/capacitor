@@ -114,7 +114,7 @@ public class Plugin {
                 // register callbacks annotated with ActivityCallback for activity results
                 ActivityResultLauncher<Intent> launcher = bridge.registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
-                    result -> triggerActivityCallback(method, result)
+                    (result) -> triggerActivityCallback(method, result)
                 );
 
                 activityLaunchers.put(method.getName(), launcher);
@@ -122,7 +122,7 @@ public class Plugin {
                 // register callbacks annotated with PermissionCallback for permission results
                 ActivityResultLauncher<String[]> launcher = bridge.registerForActivityResult(
                     new ActivityResultContracts.RequestMultiplePermissions(),
-                    permissions -> triggerPermissionCallback(method, permissions)
+                    (permissions) -> triggerPermissionCallback(method, permissions)
                 );
 
                 permissionLaunchers.put(method.getName(), launcher);

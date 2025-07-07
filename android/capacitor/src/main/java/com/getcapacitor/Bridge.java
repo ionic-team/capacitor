@@ -293,8 +293,10 @@ public class Bridge {
         }
 
         if (!isDeployDisabled() && !isNewBinary()) {
-            SharedPreferences prefs = getContext()
-                .getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
+            SharedPreferences prefs = getContext().getSharedPreferences(
+                com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME,
+                Activity.MODE_PRIVATE
+            );
             String path = prefs.getString(com.getcapacitor.plugin.WebView.CAP_SERVER_PATH, null);
             if (path != null && !path.isEmpty() && new File(path).exists()) {
                 setServerBasePath(path);
@@ -425,8 +427,10 @@ public class Bridge {
     private boolean isNewBinary() {
         String versionCode = "";
         String versionName = "";
-        SharedPreferences prefs = getContext()
-            .getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences(
+            com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME,
+            Activity.MODE_PRIVATE
+        );
         String lastVersionCode = prefs.getString(LAST_BINARY_VERSION_CODE, null);
         String lastVersionName = prefs.getString(LAST_BINARY_VERSION_NAME, null);
 
@@ -878,11 +882,11 @@ public class Bridge {
     }
 
     public void triggerJSEvent(final String eventName, final String target) {
-        eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\")", s -> {});
+        eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\")", (s) -> {});
     }
 
     public void triggerJSEvent(final String eventName, final String target, final String data) {
-        eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\", " + data + ")", s -> {});
+        eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\", " + data + ")", (s) -> {});
     }
 
     public void triggerWindowJSEvent(final String eventName) {
