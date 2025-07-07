@@ -660,9 +660,15 @@ var nativeBridge = (function (exports) {
                                     },
                                 });
                                 convertBody(body).then(({ data, type, headers }) => {
+                                    var _a, _b;
                                     let otherHeaders = this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined;
                                     if (body instanceof FormData) {
-                                        otherHeaders = Object.assign(Object.assign({}, otherHeaders), { 'content-type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}` });
+                                        debugger;
+                                        const multipartHeaderAlreadyExists = ((_a = this._headers['Content-Type']) === null || _a === void 0 ? void 0 : _a.includes('multipart/form-data')) ||
+                                            ((_b = this._headers['content-type']) === null || _b === void 0 ? void 0 : _b.includes('multipart/form-data'));
+                                        if (!multipartHeaderAlreadyExists) {
+                                            otherHeaders = Object.assign(Object.assign({}, otherHeaders), { 'Content-Type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}` });
+                                        }
                                     }
                                     // intercept request & pass to the bridge
                                     cap
