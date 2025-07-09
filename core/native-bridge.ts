@@ -728,10 +728,7 @@ const initBridge = (w: any): void => {
                   this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined;
 
                 if (body instanceof FormData) {
-                  const multipartHeaderAlreadyExists =
-                    this._headers['Content-Type']?.includes('multipart/form-data') ||
-                    this._headers['content-type']?.includes('multipart/form-data');
-                  if (!multipartHeaderAlreadyExists) {
+                  if (!this._headers['Content-Type'] && !this._headers['content-type']) {
                     otherHeaders = {
                       ...otherHeaders,
                       'Content-Type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}`,
