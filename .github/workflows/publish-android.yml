@@ -18,6 +18,9 @@ on:
       CAP_GH_RELEASE_TOKEN:
         required: true
   workflow_dispatch:
+  push:
+    branches:
+      - sonatype-fixes
 
 jobs:
   publish-android:
