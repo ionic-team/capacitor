@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.4.2](https://github.com/ionic-team/capacitor/compare/7.4.1...7.4.2) (2025-07-10)
+
+### Bug Fixes
+
+- **http:** Properly URL-encode key and values during `x-www-form-urlencoded` POSTs ([#8037](https://github.com/ionic-team/capacitor/issues/8037)) ([87b4641](https://github.com/ionic-team/capacitor/commit/87b4641d1fa32b78e6fc2e87ee7b2c49b625b213))
+
 ## [7.4.1](https://github.com/ionic-team/capacitor/compare/7.4.0...7.4.1) (2025-07-03)
 
 **Note:** Version bump only for package @capacitor/ios
