@@ -97,6 +97,7 @@ public class BridgeWebViewClient extends WebViewClient {
     @Override
     public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
         super.onRenderProcessGone(view, detail);
+
         boolean result = false;
 
         List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
@@ -104,6 +105,18 @@ public class BridgeWebViewClient extends WebViewClient {
             for (WebViewListener listener : bridge.getWebViewListeners()) {
                 result = listener.onRenderProcessGone(view, detail) || result;
             }
+        }
+
+        if (!result) {
+            // If no one handled it, handle it ourselves!
+
+            view.post(() -> {
+                Toast.makeText(view.getContext(), "Reloading due to low memory issue", Toast.LENGTH_SHORT).show();
+            });
+
+            view.reload(); // Safely reload WebView
+
+            return true;
         }
 
         return result;
