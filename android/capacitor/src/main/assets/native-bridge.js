@@ -32,10 +32,6 @@ var nativeBridge = (function (exports) {
         }
     }
 
-    /**
-     * Note: When making changes to this file, run `npm run build:nativebridge`
-     * afterwards to build the nativebridge.js files to the android and iOS projects.
-     */
     // For removing exports for iOS/Android, keep let for reassignment
     // eslint-disable-next-line
     let dummy = {};
