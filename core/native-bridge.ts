@@ -2,7 +2,6 @@
  * Note: When making changes to this file, run `npm run build:nativebridge`
  * afterwards to build the nativebridge.js files to the android and iOS projects.
  */
-
 import type { HttpResponse } from './src/core-plugins';
 import type {
   CallData,
