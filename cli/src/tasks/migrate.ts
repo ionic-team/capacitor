@@ -624,14 +624,9 @@ async function updateAndroidManifest(filename: string) {
   if (txt.includes('navigation')) {
     return; // Probably already updated
   }
-  let replaced = txt.replace(
+  const replaced = txt.replace(
     'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"',
-    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"',
-  );
-
-  replaced = txt.replace(
     'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"',
-    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"',
   );
 
   writeFileSync(filename, replaced, 'utf-8');
