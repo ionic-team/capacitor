@@ -313,13 +313,8 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     private void showMediaCaptureOrFilePicker(ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams, boolean isVideo) {
-        // TODO: add support for video capture on Android M and older
-        // On Android M and lower the VIDEO_CAPTURE_INTENT (e.g.: intent.getData())
-        // returns a file:// URI instead of the expected content:// URI.
-        // So we disable it for now because it requires a bit more work
-        boolean isVideoCaptureSupported = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N;
-        boolean shown = false;
-        if (isVideo && isVideoCaptureSupported) {
+        boolean shown;
+        if (isVideo) {
             shown = showVideoCapturePicker(filePathCallback);
         } else {
             shown = showImageCapturePicker(filePathCallback);

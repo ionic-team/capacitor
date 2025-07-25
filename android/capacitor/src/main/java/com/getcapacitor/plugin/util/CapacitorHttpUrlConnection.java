@@ -442,12 +442,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      * Builds and returns a locale string describing the device's current locale preferences.
      */
     private String buildDefaultAcceptLanguageProperty() {
-        Locale locale;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            locale = LocaleList.getDefault().get(0);
-        } else {
-            locale = Locale.getDefault();
-        }
+        Locale locale = LocaleList.getDefault().get(0);
         String result = "";
         String lang = locale.getLanguage();
         String country = locale.getCountry();
