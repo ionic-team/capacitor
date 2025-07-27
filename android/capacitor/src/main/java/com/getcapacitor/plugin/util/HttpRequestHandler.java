@@ -320,7 +320,23 @@ public class HttpRequestHandler {
                 // a string enclosed in " " is a json value, return the string without the quotes
                 return input.trim().substring(1, input.trim().length() - 1);
             } else if (input.trim().matches("^-?\\d+$")) {
-                return Integer.parseInt(input.trim());
+                // parsing logic for a number literal taken from JSONTokener.readLiteral()
+                int base = 10;
+                String number = input.trim();
+                if (number.startsWith("0x") || number.startsWith("0X")) {
+                    number = number.substring(2);
+                    base = 16;
+                } else if (number.startsWith("0") && number.length() > 1) {
+                    number = number.substring(1);
+                    base = 8;
+                }
+
+                long longValue = Long.parseLong(number, base);
+                if (longValue <= Integer.MAX_VALUE && longValue >= Integer.MIN_VALUE) {
+                    return (int) longValue;
+                } else {
+                    return longValue;
+                }
             } else if (input.trim().matches("^-?\\d+(\\.\\d+)?$")) {
                 return Double.parseDouble(input.trim());
             } else {
