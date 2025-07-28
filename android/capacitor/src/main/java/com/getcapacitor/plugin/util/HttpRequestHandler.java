@@ -317,8 +317,8 @@ public class HttpRequestHandler {
                     // the value is probably a literal, so we can try to have the JSONTokener parse it for us
                     return new JSONTokener(input).nextValue();
                 } catch (JSONException e3) {
-                   // if nothing could be parsed, return the input as is
-                   return input;
+                    // if nothing could be parsed, return the input as is
+                    return input;
                 }
             }
         }
