@@ -284,7 +284,7 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
   };
   return {
     name,
-    minVersion: '14.0',
+    minVersion: '15.0',
     platformDir,
     platformDirAbs,
     scheme,
