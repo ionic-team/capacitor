@@ -280,7 +280,7 @@ public class Bridge {
         webView.setWebChromeClient(new BridgeWebChromeClient(this));
         webView.setWebViewClient(this.webViewClient);
 
-        if (Build.VERSION.SDK_INT >= 24 && config.isResolveServiceWorkerRequests()) {
+        if (config.isResolveServiceWorkerRequests()) {
             ServiceWorkerController swController = ServiceWorkerController.getInstance();
             swController.setServiceWorkerClient(
                 new ServiceWorkerClient() {
@@ -348,11 +348,7 @@ public class Bridge {
 
         // Otherwise manually check WebView versions
         try {
-            String webViewPackage = "com.google.android.webview";
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                webViewPackage = "com.android.chrome";
-            }
-            PackageInfo info = InternalUtils.getPackageInfo(pm, webViewPackage);
+            PackageInfo info = InternalUtils.getPackageInfo(pm, "com.android.chrome");
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
