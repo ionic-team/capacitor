@@ -29,12 +29,6 @@ public class BridgeWebViewClient extends WebViewClient {
         return bridge.launchIntent(url);
     }
 
-    @Deprecated
-    @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        return bridge.launchIntent(Uri.parse(url));
-    }
-
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
