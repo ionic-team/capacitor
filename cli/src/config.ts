@@ -396,8 +396,20 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
 
       return p;
     }
-    case OS.Linux:
-      return '/usr/local/android-studio/bin/studio.sh';
+    case OS.Linux: {
+      const studioExecPath = '/usr/local/android-studio/bin/studio';
+      const studioShPath = '/usr/local/android-studio/bin/studio.sh';
+      
+      try {
+        if (await pathExists(studioExecPath)) {
+          return studioExecPath;
+        }
+      } catch (e) {
+        debug(`Error checking for studio executable: %O`, e);
+      }
+      
+      return studioShPath;
+    }
   }
 
   return '';
