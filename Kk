@@ -1,0 +1,324 @@
+# Creating the full project structure and zipping it for user download.
+import os, json, textwrap, zipfile
+
+base = "/mnt/data/pdf_app"
+server_dir = os.path.join(base, "server")
+client_dir = os.path.join(base, "client")
+client_src = os.path.join(client_dir, "src")
+
+os.makedirs(server_dir, exist_ok=True)
+os.makedirs(client_src, exist_ok=True)
+
+# server/server.js
+server_js = textwrap.dedent(r"""
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const cors = require('cors');
+
+const app = express();
+const PORT = process.env.PORT || 4000;
+app.use(cors());
+app.use(express.json());
+
+const UPLOAD_DIR = path.join(__dirname, 'uploads');
+if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+const INDEX_FILE = path.join(UPLOAD_DIR, 'index.json');
+
+function readIndex() {
+  if (!fs.existsSync(INDEX_FILE)) return [];
+  try { return JSON.parse(fs.readFileSync(INDEX_FILE)); } catch (e) { return []; }
+}
+function writeIndex(arr) { fs.writeFileSync(INDEX_FILE, JSON.stringify(arr, null, 2)); }
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+  filename: (req, file, cb) => {
+    const safe = Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.\\-_%() ]/g, '_');
+    cb(null, safe);
+  }
+});
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'application/pdf') cb(null, true);
+  else cb(new Error('Seuls les fichiers PDF sont autorisés.'), false);
+};
+const upload = multer({ storage, fileFilter, limits: { fileSize: 100 * 1024 * 1024 } });
+
+app.post('/api/upload', upload.single('pdf'), (req, res) => {
+  try {
+    const subject = (req.body.subject || 'Divers').trim() || 'Divers';
+    if (!req.file) return res.status(400).json({ error: 'Aucun fichier reçu.' });
+
+    const stat = fs.statSync(path.join(UPLOAD_DIR, req.file.filename));
+    const index = readIndex();
+    const entry = {
+      filename: req.file.filename,
+      originalname: req.file.originalname,
+      subject,
+      size: stat.size,
+      mtime: new Date().toISOString()
+    };
+    index.push(entry);
+    writeIndex(index);
+    res.json(entry);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur serveur.' });
+  }
+});
+
+app.get('/api/pdfs', (req, res) => {
+  const index = readIndex();
+  res.json(index);
+});
+
+app.get('/api/pdfs/by-subject', (req, res) => {
+  const subject = req.query.subject;
+  const index = readIndex();
+  if (!subject) return res.json(index);
+  res.json(index.filter(e => e.subject.toLowerCase() === subject.toLowerCase()));
+});
+
+app.delete('/api/pdfs/:filename', (req, res) => {
+  const fn = req.params.filename;
+  const full = path.join(UPLOAD_DIR, fn);
+  try {
+    if (fs.existsSync(full)) fs.unlinkSync(full);
+    let index = readIndex();
+    index = index.filter(e => e.filename !== fn);
+    writeIndex(index);
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Impossible de supprimer.' });
+  }
+});
+
+app.use('/uploads', express.static(UPLOAD_DIR));
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+""").strip()
+
+# server/package.json
+server_pkg = {
+  "name": "pdf-server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "multer": "^1.4.5"
+  }
+}
+
+# client/src/App.jsx
+client_app = textwrap.dedent(r"""
+import React, { useEffect, useState } from 'react';
+
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+
+export default function App() {
+  const [index, setIndex] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [fileToUpload, setFileToUpload] = useState(null);
+  const [subject, setSubject] = useState('Maths');
+  const [filter, setFilter] = useState('Tous');
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => fetchIndex(), []);
+
+  async function fetchIndex() {
+    try {
+      const res = await fetch(`${API_BASE}/api/pdfs`);
+      const data = await res.json();
+      setIndex(data.sort((a,b)=> new Date(b.mtime)-new Date(a.mtime)));
+    } catch (e) { console.error(e); }
+  }
+
+  async function handleUpload(e) {
+    e.preventDefault();
+    if (!fileToUpload) return alert('Choisis un fichier PDF');
+    const data = new FormData();
+    data.append('pdf', fileToUpload);
+    data.append('subject', subject);
+    setUploading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/upload`, { method: 'POST', body: data });
+      if (!res.ok) throw new Error('Upload failed');
+      await res.json();
+      setFileToUpload(null);
+      fetchIndex();
+    } catch (err) { alert(err.message); }
+    setUploading(false);
+  }
+
+  async function handleDelete(filename) {
+    if (!confirm('Supprimer ce fichier ?')) return;
+    await fetch(`${API_BASE}/api/pdfs/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+    if (selected?.filename === filename) setSelected(null);
+    fetchIndex();
+  }
+
+  const subjects = Array.from(new Set(index.map(i => i.subject))).sort();
+  const grouped = index.reduce((acc, cur) => {
+    (acc[cur.subject] = acc[cur.subject] || []).push(cur);
+    return acc;
+  }, {});
+  const visibleSubjects = filter === 'Tous' ? Object.keys(grouped) : [filter];
+
+  return (
+    <div style={{ fontFamily: 'system-ui, Arial', padding: 20 }}>
+      <h1>Gestionnaire de PDFs — Par Matière</h1>
+
+      <form onSubmit={handleUpload} style={{ marginBottom: 16, display:'flex', gap:8, alignItems:'center' }}>
+        <input type="file" accept="application/pdf" onChange={e => setFileToUpload(e.target.files[0])} />
+        <select value={subject} onChange={e => setSubject(e.target.value)}>
+          <option>Maths</option>
+          <option>Physique</option>
+          <option>Chimie</option>
+          <option>Histoire</option>
+          <option>Géographie</option>
+          <option>Anglais</option>
+          <option>Divers</option>
+        </select>
+        <button type="submit" disabled={uploading}>{uploading ? 'Upload...' : 'Uploader'}</button>
+      </form>
+
+      <div style={{ marginBottom: 12 }}>
+        <label>Filtrer par matière: </label>
+        <select value={filter} onChange={e => setFilter(e.target.value)}>
+          <option>Tous</option>
+          {subjects.map(s => <option key={s}>{s}</option>)}
+        </select>
+      </div>
+
+      <div style={{ display:'flex', gap:16 }}>
+        <div style={{ width: '30%' }}>
+          <h3>Liste</h3>
+          {visibleSubjects.length === 0 && <div>Aucun PDF</div>}
+          {visibleSubjects.map(subj => (
+            <div key={subj} style={{ marginBottom: 12 }}>
+              <h4>{subj}</h4>
+              <ul style={{ paddingLeft: 8 }}>
+                {(grouped[subj] || []).map(f => (
+                  <li key={f.filename} style={{ marginBottom:6, display:'flex', justifyContent:'space-between' }}>
+                    <button style={{ background:'none', border:'none', textAlign:'left' }} onClick={() => setSelected(f)}>{f.originalname}</button>
+                    <div style={{ display:'flex', gap:8 }}>
+                      <button onClick={() => handleDelete(f.filename)}>Suppr</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ flex:1 }}>
+          <h3>Aperçu</h3>
+          {selected ? (
+            <iframe src={`${API_BASE}/uploads/${selected.filename}`} title="viewer" style={{ width: '100%', height: '80vh', border: '1px solid #ccc' }} />
+          ) : (
+            <div>Sélectionne un PDF pour le visualiser.</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+""").strip()
+
+# client/src/main.jsx
+client_main = textwrap.dedent(r"""
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+
+createRoot(document.getElementById('root')).render(<App />)
+""").strip()
+
+# client/index.html
+client_index_html = textwrap.dedent("""
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+""").strip()
+
+# client/package.json
+client_pkg = {
+  "name": "pdf-client",
+  "version": "1.0.0",
+  "private": True,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
+
+# README
+readme = textwrap.dedent("""
+PDF App - Fullstack (Server + Client)
+
+Usage (local):
+1. Backend:
+   cd server
+   npm install
+   node server.js
+   # server will listen on http://localhost:4000
+
+2. Frontend:
+   cd client
+   npm install
+   npm run dev
+   # open the URL shown by Vite (e.g. http://localhost:5173)
+
+Notes:
+- Uploaded PDFs are stored in server/uploads/ and an index.json holds metadata (subject, original name, mtime).
+- For production: add authentication, use cloud storage (S3), enable HTTPS and backups.
+""").strip()
+
+# Write files
+with open(os.path.join(server_dir, "server.js"), "w") as f:
+    f.write(server_js)
+with open(os.path.join(server_dir, "package.json"), "w") as f:
+    json.dump(server_pkg, f, indent=2, ensure_ascii=False)
+with open(os.path.join(client_src, "App.jsx"), "w") as f:
+    f.write(client_app)
+with open(os.path.join(client_src, "main.jsx"), "w") as f:
+    f.write(client_main)
+with open(os.path.join(client_dir, "index.html"), "w") as f:
+    f.write(client_index_html)
+with open(os.path.join(client_dir, "package.json"), "w") as f:
+    json.dump(client_pkg, f, indent=2, ensure_ascii=False)
+with open(os.path.join(base, "README.md"), "w") as f:
+    f.write(readme)
+
+# Create zip
+zip_path = "/mnt/data/pdf_app.zip"
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    for root, dirs, files in os.walk(base):
+        for file in files:
+            full = os.path.join(root, file)
+            arc = os.path.relpath(full, base)
+            z.write(full, arc)
+
+zip_path
+
