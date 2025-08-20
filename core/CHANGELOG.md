@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.4.3](https://github.com/ionic-team/capacitor/compare/7.4.2...7.4.3) (2025-08-20)
+
+### Bug Fixes
+
+- http content headers not sent when using axios ([#8064](https://github.com/ionic-team/capacitor/issues/8064)) ([3d1b12c](https://github.com/ionic-team/capacitor/commit/3d1b12cae90fb4e5506dc1c4626bb293ef12baf1))
+
 ## [7.4.2](https://github.com/ionic-team/capacitor/compare/7.4.1...7.4.2) (2025-07-10)
 
 **Note:** Version bump only for package @capacitor/core
