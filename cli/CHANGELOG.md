@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/7.4.2...8.0.0-alpha.1) (2025-08-20)
+
+**Note:** Version bump only for package @capacitor/cli
+
 ## [7.4.2](https://github.com/ionic-team/capacitor/compare/7.4.1...7.4.2) (2025-07-10)
 
 **Note:** Version bump only for package @capacitor/cli
