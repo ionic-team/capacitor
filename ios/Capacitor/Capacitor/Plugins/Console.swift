@@ -9,8 +9,10 @@ public class CAPConsolePlugin: CAPPlugin, CAPBridgedPlugin {
     ]
 
     @objc public func log(_ call: CAPPluginCall) {
+        let logger = CapacitorLogger(category: "Console")
         let message = call.getString("message") ?? ""
-        let level = call.getString("level") ?? "log"
-        CAPLog.print("⚡️  [\(level)] - \(message)")
+        let levelString = call.getString("level") ?? "log"
+        let level = CapacitorLogLevel(string: levelString)
+        logger.log(message: "[\(levelString)]: \(message)", level: level)
     }
 }

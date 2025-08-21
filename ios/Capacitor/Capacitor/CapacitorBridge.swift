@@ -125,6 +125,8 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     private var cordovaParser: CDVConfigParser?
     private var injectMiscFiles: [String] = []
     private var canInjectJS: Bool = true
+    
+    private let logger = CapacitorLogger(category: "CapacitorBridge")
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
@@ -185,21 +187,24 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      Print a hopefully informative error message to the log when something
      particularly dreadful happens.
      */
-    static func fatalError(_ error: Error, _ originalError: Error) {
-        CAPLog.print("⚡️ ❌  Capacitor: FATAL ERROR")
-        CAPLog.print("⚡️ ❌  Error was: ", originalError.localizedDescription)
+     func capacitorFatal(_ error: Error) {
+        var errorString = "⚡️ Capacitor: FATAL ERROR\n"
+        errorString += "⚡️ Error was: \(error.localizedDescription)\n"
+        
         switch error {
         case CapacitorBridgeError.errorExportingCoreJS:
-            CAPLog.print("⚡️ ❌  Unable to export required Bridge JavaScript. Bridge will not function.")
-            CAPLog.print("⚡️ ❌  You should run \"npx capacitor copy\" to ensure the Bridge JS is added to your project.")
-            if let wke = originalError as? WKError {
-                CAPLog.print("⚡️ ❌ ", wke.userInfo)
+            errorString += "⚡️ Unable to export required Bridge JavaScript. Bridge will not function.\n"
+            errorString += "⚡️ You should run \"npx capacitor copy\" to ensure the Bridge JS is added to your project.\n"
+            if let wke = error as? WKError {
+                errorString += "⚡️ \(wke.userInfo)\n"
             }
         default:
-            CAPLog.print("⚡️ ❌  Unknown error")
+            errorString += "⚡️ Unknown error"
         }
 
-        CAPLog.print("⚡️ ❌  Please verify your installation or file an issue")
+        errorString += "⚡️ Please verify your installation or file an issue"
+         
+         logger.error(message: errorString)
     }
 
     // MARK: - Initialization
@@ -214,7 +219,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         self.notificationRouter.handleApplicationNotifications = configuration.handleApplicationNotifications
         self.autoRegisterPlugins = autoRegisterPlugins
         super.init()
-
+        
         self.webViewDelegationHandler.bridge = self
 
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
@@ -249,7 +254,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                                                  localUrl: localUrl)
             try JSExport.exportBridgeJS(userContentController: webViewDelegationHandler.contentController)
         } catch {
-            type(of: self).fatalError(error, error)
+            capacitorFatal(error)
         }
     }
 
@@ -285,8 +290,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         do {
             try JSExport.exportCordovaJS(userContentController: webViewDelegationHandler.contentController)
         } catch {
-            type(of: self).fatalError(error, error)
-        }
+            capacitorFatal(error)        }
     }
 
     /**
@@ -321,7 +325,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                     }
                 }
             } catch {
-                CAPLog.print("Error registering plugins: \(error)")
+                logger.warn(message: "Error registering plugins: \(error)")
             }
         }
 
@@ -336,7 +340,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public func registerPluginType(_ pluginType: CAPPlugin.Type) {
         if autoRegisterPlugins { return }
         if pluginType is CAPInstancePlugin.Type {
-            Swift.fatalError("""
+            fatalError("""
 
             ⚡️ ❌  Cannot register class \(pluginType): CAPInstancePlugin through registerPluginType(_:).
             ⚡️ ❌  Use `registerPluginInstance(_:)` to register subclasses of CAPInstancePlugin.
@@ -437,7 +441,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         do {
             try JSExport.exportCordovaPluginsJS(userContentController: webViewDelegationHandler.contentController)
         } catch {
-            type(of: self).fatalError(error, error)
+            capacitorFatal(error)
         }
     }
 
