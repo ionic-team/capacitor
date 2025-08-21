@@ -68,6 +68,9 @@ export type RegisterPlugin = <T>(pluginName: string, implementations?: Readonly<
  * implementation for the respective platform.
  */
 export type PluginImplementations = {
+  android?: (() => Promise<any>) | any;
+  ios?: (() => Promise<any>) | any;
+  web?: (() => Promise<any>) | any;
   [platform: string]: (() => Promise<any>) | any;
 };
 
