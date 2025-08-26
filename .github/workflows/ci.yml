@@ -100,7 +100,7 @@ jobs:
           - /Applications/Xcode_16.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
-      - run: xcodebuild -downloadPlatform iOS
+      - run: xcodebuild -downloadPlatform iOS -buildVersion 18.0
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
