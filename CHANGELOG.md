@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.1...8.0.0-alpha.2) (2025-08-20)
+
+**Note:** Version bump only for package capacitor
+
+# [8.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/7.4.2...8.0.0-alpha.1) (2025-08-20)
+
+### Bug Fixes
+
+- http content headers not sent when using axios ([#8039](https://github.com/ionic-team/capacitor/issues/8039)) ([67cac40](https://github.com/ionic-team/capacitor/commit/67cac40660b3e8cc78d1d228b7c6915450948ef1))
+
+### Features
+
+- **android-template:** Bump minSdkVersion to 24 ([#8080](https://github.com/ionic-team/capacitor/issues/8080)) ([c5f9ea9](https://github.com/ionic-team/capacitor/commit/c5f9ea9db85bcf0eaf5d3c67060f10092c434e23))
+- **android:** Bump default minSdkVersion to 24 ([#8083](https://github.com/ionic-team/capacitor/issues/8083)) ([c022ddf](https://github.com/ionic-team/capacitor/commit/c022ddf21452379bb183ff7c846f73bd07a15dbf))
+- **ios-template:** bump deployment target to 15 ([#8088](https://github.com/ionic-team/capacitor/issues/8088)) ([7a0c09a](https://github.com/ionic-team/capacitor/commit/7a0c09a55428aef3f5af4a59eede70be0b741aa8))
+
 ## [7.4.2](https://github.com/ionic-team/capacitor/compare/7.4.1...7.4.2) (2025-07-10)
 
 ### Bug Fixes
