@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - run: sudo xcode-select --switch /Applications/Xcode_16.app
-      - run: xcodebuild -downloadPlatform iOS -buildVersion 18.0
+      - run: xcodebuild -downloadPlatform iOS -exportPath ~/Downloads
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
