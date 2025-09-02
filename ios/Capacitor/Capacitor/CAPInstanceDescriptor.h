@@ -125,6 +125,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *appStartPath;
 /**
+ @brief Whether to fallback to index.html for SPA routes with dots when file doesn't exist.
+ @discussion Defaults to @c false. Set by @c server.routeWithFallback in the configuration file.
+ */
+@property (nonatomic, assign) BOOL routeWithFallback;
+/**
  @brief Whether or not the Capacitor WebView will limit the navigation to @c WKAppBoundDomains listed in the Info.plist.
  @discussion Defaults to @c false. Set by @c ios.limitsNavigationsToAppBoundDomains in the configuration file.  Required to be @c true for plugins to work if the app includes @c WKAppBoundDomains in the Info.plist.
  */

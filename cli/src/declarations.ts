@@ -619,6 +619,17 @@ export interface CapacitorConfig {
      * @default null
      */
     appStartPath?: string;
+    
+    /**
+     * Enable fallback to index.html for SPA routes with dots.
+     * When true, if a requested path contains a dot but the file doesn't exist,
+     * the server will serve index.html instead. This allows SPA routes like
+     * /@user.name or /file.json to work correctly when they're not actual files.
+     * 
+     * @since 6.7.0
+     * @default false
+     */
+    routeWithFallback?: boolean;
   };
 
   cordova?: {
