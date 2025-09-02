@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova",
-    "xc:build:Capacitor": "cd Capacitor && xcodebuild clean test -workspace Capacitor.xcworkspace -scheme Capacitor -destination 'platform=iOS Simulator,name=iPhone 16,OS=26.0' && cd ..",
+    "xc:build:Capacitor": "cd Capacitor && xcodebuild clean test -workspace Capacitor.xcworkspace -scheme Capacitor -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.6' && cd ..",
     "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd .."
   },
   "peerDependencies": {
