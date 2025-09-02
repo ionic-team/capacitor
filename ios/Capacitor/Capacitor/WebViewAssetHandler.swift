@@ -43,7 +43,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
             startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
         } else {
-            startPath = router.route(for: stringToLoad, checkFileExists: routeWithFallback)
+            startPath = router.route(for: stringToLoad)
         }
 
         let fileUrl = URL.init(fileURLWithPath: startPath)
@@ -99,6 +99,27 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             }
             urlSchemeTask.didReceive(data)
         } catch let error as NSError {
+            // If routeWithFallback is enabled and the original request was for a file with an extension,
+            // try to serve index.html as a fallback for SPA routing
+            if routeWithFallback && stringToLoad.contains(".") && !stringToLoad.hasSuffix("/index.html") {
+                do {
+                    let indexPath = router.basePath + "/index.html"
+                    let indexUrl = URL(fileURLWithPath: indexPath)
+                    let indexData = try Data(contentsOf: indexUrl)
+                    let indexMimeType = "text/html"
+                    let indexHeaders = [
+                        "Content-Type": indexMimeType,
+                        "Cache-Control": "no-cache"
+                    ]
+                    let indexResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: indexHeaders)
+                    urlSchemeTask.didReceive(indexResponse!)
+                    urlSchemeTask.didReceive(indexData)
+                    urlSchemeTask.didFinish()
+                    return
+                } catch {
+                    // If index.html also fails, fall through to original error
+                }
+            }
             urlSchemeTask.didFailWithError(error)
             return
         }
