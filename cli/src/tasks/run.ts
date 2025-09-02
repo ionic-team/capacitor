@@ -1,6 +1,6 @@
 import { columnar } from '@ionic/utils-terminal';
 
-import { runAndroid } from '../android/run';
+import { runAndroid, writeAndroidManifest } from '../android/run';
 import c from '../colors';
 import {
   isValidPlatform,
@@ -92,6 +92,7 @@ export async function runCommand(
       if (options.liveReload) {
         await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options);
         if (platformName === config.android.name) {
+          await writeAndroidManifest(config, true);
           await await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, true);
         }
       }
@@ -101,6 +102,7 @@ export async function runCommand(
           .then(async () => {
             await CapLiveReloadHelper.revertCapConfigForLiveReload();
             if (platformName === config.android.name) {
+              await writeAndroidManifest(config, false);
               await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, false);
             }
           })
