@@ -53,6 +53,7 @@ import Cordova
         let assetHandler = WebViewAssetHandler(router: router())
         assetHandler.setAssetPath(configuration.appLocation.path)
         assetHandler.setServerUrl(configuration.serverURL)
+        assetHandler.setRouteWithFallback(configuration.routeWithFallback)
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView

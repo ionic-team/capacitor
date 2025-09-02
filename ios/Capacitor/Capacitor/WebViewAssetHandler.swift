@@ -6,6 +6,7 @@ import MobileCoreServices
 open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
+    private var routeWithFallback: Bool = false
 
     public init(router: Router) {
         self.router = router
@@ -18,6 +19,10 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     open func setServerUrl(_ serverUrl: URL?) {
         self.serverUrl = serverUrl
+    }
+    
+    open func setRouteWithFallback(_ routeWithFallback: Bool) {
+        self.routeWithFallback = routeWithFallback
     }
 
     private func isUsingLiveReload(_ localUrl: URL) -> Bool {
@@ -38,7 +43,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
             startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
         } else {
-            startPath = router.route(for: stringToLoad)
+            startPath = router.route(for: stringToLoad, checkFileExists: routeWithFallback)
         }
 
         let fileUrl = URL.init(fileURLWithPath: startPath)
