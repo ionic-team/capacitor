@@ -1,6 +1,5 @@
 import Debug from 'debug';
 import { pathExists, readFile, writeFile } from 'fs-extra';
-
 import { resolve, join } from 'path';
 
 import c from '../colors';
