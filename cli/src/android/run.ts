@@ -1,6 +1,5 @@
 import Debug from 'debug';
-import { pathExists, readFile, writeFile } from 'fs-extra';
-import { resolve, join } from 'path';
+import { resolve } from 'path';
 
 import c from '../colors';
 import { parseApkNameFromFlavor, promptForPlatformTarget, runTask } from '../common';
@@ -56,21 +55,4 @@ export async function runAndroid(
   debug('Invoking native-run with args: %O', nativeRunArgs);
 
   await runTask(`Deploying ${c.strong(apkName)} to ${c.input(target.id)}`, async () => runNativeRun(nativeRunArgs));
-}
-
-export async function writeAndroidManifest(config: Config, cleartext?: boolean): Promise<void> {
-  const manifestPath = join(config.android.appDirAbs, 'src', 'main', 'AndroidManifest.xml');
-
-  let manifestFile = await readFile(manifestPath, { encoding: 'utf-8' });
-  const cleartextProperty = 'android:usesCleartextTraffic';
-
-  if (cleartext === true && !manifestFile.includes(cleartextProperty)) {
-    manifestFile = manifestFile.replace('<application', `<application ${cleartextProperty}="true"`);
-  }
-
-  if (cleartext === false && manifestFile.includes(cleartextProperty)) {
-    manifestFile = manifestFile.replace(`${cleartextProperty}="true"`, '');
-  }
-
-  await writeFile(manifestPath, manifestFile, { encoding: 'utf-8' });
 }

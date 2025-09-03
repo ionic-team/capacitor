@@ -24,7 +24,7 @@ import { readdirp, convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
 
-import { getAndroidPlugins } from './common';
+import { getAndroidPlugins, writeCleartextAndroidManifest } from './common';
 
 const platform = 'android';
 const debug = Debug('capacitor:android:update');
@@ -50,6 +50,7 @@ export async function updateAndroid(config: Config): Promise<void> {
   await checkPluginDependencies(plugins, platform, config.app.extConfig.cordova?.failOnUninstalledPlugins);
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
+  await writeCleartextAndroidManifest(config, config.app.extConfig.server?.cleartext ?? false);
   await writeCordovaAndroidManifest(cordovaPlugins, config, platform);
 
   const incompatibleCordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);

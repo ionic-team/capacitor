@@ -104,3 +104,31 @@ export async function editProjectSettingsAndroid(config: Config): Promise<void> 
 
   await writeFile(stringsPath, stringsContent);
 }
+
+export async function writeCleartextAndroidManifest(config: Config, cleartext: boolean): Promise<void> {
+  const manifestPath = join(config.android.appDirAbs, 'src', 'main', 'AndroidManifest.xml');
+
+  if (!(await pathExists(manifestPath))) {
+    return;
+  }
+
+  let manifestFile = await readFile(manifestPath, { encoding: 'utf-8' });
+  const cleartextProperty = 'android:usesCleartextTraffic';
+  const cleartextPropertySet = manifestFile.includes(cleartextProperty);
+
+  if (cleartext && cleartextPropertySet) {
+    return;
+  }
+
+  if (!cleartext && !cleartextPropertySet) {
+    return;
+  }
+
+  if (cleartext) {
+    manifestFile = manifestFile.replace('<application', `<application ${cleartextProperty}="true"`);
+  } else {
+    manifestFile = manifestFile.replace(`${cleartextProperty}="true"`, '');
+  }
+
+  await writeFile(manifestPath, manifestFile, { encoding: 'utf-8' });
+}
