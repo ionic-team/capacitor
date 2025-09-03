@@ -99,7 +99,7 @@ jobs:
         xcode:
           - /Applications/Xcode_26.0.app
     steps:
-      - run: sudo xcode-select --switch ${{ matrix.xcode }}
+#      - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
