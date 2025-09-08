@@ -159,6 +159,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
     open func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         CAPLog.print("⚡️  WebView process terminated")
+        bridge?.reset()
         webView.reload()
     }
 
