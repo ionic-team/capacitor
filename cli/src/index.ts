@@ -292,7 +292,7 @@ export function runProgram(config: Config): void {
           const { addCommand } = await import('./tasks/add');
 
           const configWritable: Writable<Config> = config as Writable<Config>;
-          if (packagemanager.toLowerCase() === 'CocoaPods'.toLowerCase()) {
+          if (packagemanager?.toLowerCase() === 'CocoaPods'.toLowerCase()) {
             configWritable.cli.assets.ios.platformTemplateArchive = 'ios-pods-template.tar.gz';
             configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(
               configWritable.cli.assetsDirAbs,
