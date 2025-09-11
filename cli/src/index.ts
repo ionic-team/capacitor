@@ -292,8 +292,8 @@ export function runProgram(config: Config): void {
           const { addCommand } = await import('./tasks/add');
 
           const configWritable: Writable<Config> = config as Writable<Config>;
-          if (packagemanager === 'SPM') {
-            configWritable.cli.assets.ios.platformTemplateArchive = 'ios-spm-template.tar.gz';
+          if (packagemanager?.toLowerCase() === 'CocoaPods'.toLowerCase()) {
+            configWritable.cli.assets.ios.platformTemplateArchive = 'ios-pods-template.tar.gz';
             configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(
               configWritable.cli.assetsDirAbs,
               configWritable.cli.assets.ios.platformTemplateArchive,
