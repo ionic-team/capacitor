@@ -43,7 +43,6 @@
 		62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AE92524DA7700A3D7F1 /* UIColor.swift */; };
 		62959B222524DA7800A3D7F1 /* Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AEF2524DA7700A3D7F1 /* Console.swift */; };
 		62959B262524DA7800A3D7F1 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF32524DA7700A3D7F1 /* WebView.swift */; };
-		62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */; };
 		62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */; };
 		62959B312524DA7800A3D7F1 /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFF2524DA7700A3D7F1 /* JS.swift */; };
 		62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959B012524DA7700A3D7F1 /* CAPPlugin.m */; };
@@ -195,7 +194,6 @@
 		62959AE92524DA7700A3D7F1 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		62959AEF2524DA7700A3D7F1 /* Console.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
 		62959AF32524DA7700A3D7F1 /* WebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
-		62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultPlugins.m; sourceTree = "<group>"; };
 		62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIStatusBarManager+CAPHandleTapAction.m"; sourceTree = "<group>"; };
 		62959AFF2524DA7700A3D7F1 /* JS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
 		62959B012524DA7700A3D7F1 /* CAPPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPlugin.m; sourceTree = "<group>"; };
@@ -426,7 +424,6 @@
 				A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */,
 				A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */,
 				62959AEF2524DA7700A3D7F1 /* Console.swift */,
-				62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */,
 				62959AF32524DA7700A3D7F1 /* WebView.swift */,
 				A38C3D7628484E76004B3680 /* CapacitorCookies.swift */,
 				A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */,
@@ -748,7 +745,6 @@
 				A327E6B728DB8B2900CA8B0A /* CapacitorHttp.swift in Sources */,
 				0F8F33B327DA980A003F49D6 /* PluginConfig.swift in Sources */,
 				62959B3C2524DA7800A3D7F1 /* CAPBridgeDelegate.swift in Sources */,
-				62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */,
 				623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */,
 				623D68FA254C5037002D01D1 /* KeyPath.swift in Sources */,
 				62959B222524DA7800A3D7F1 /* Console.swift in Sources */,
@@ -893,7 +889,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -951,7 +947,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -978,7 +974,7 @@
 				);
 				INFOPLIST_FILE = Capacitor/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = Capacitor/Capacitor.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.Capacitor;
@@ -1008,7 +1004,7 @@
 				);
 				INFOPLIST_FILE = Capacitor/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = Capacitor/Capacitor.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.Capacitor;
@@ -1072,7 +1068,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TestsHostApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1095,7 +1091,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TestsHostApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.TestsHostApp;
@@ -1118,7 +1114,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1145,7 +1141,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;

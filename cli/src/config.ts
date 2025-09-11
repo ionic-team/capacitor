@@ -4,7 +4,16 @@ import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
 import { parseApkNameFromFlavor } from './common';
-import type { AndroidConfig, AppConfig, CLIConfig, Config, ExternalConfig, IOSConfig, WebConfig } from './definitions';
+import type {
+  AndroidConfig,
+  AppConfig,
+  CLIConfig,
+  Config,
+  ExternalConfig,
+  IOSConfig,
+  WebConfig,
+  XcodeExportMethod,
+} from './definitions';
 import { OS } from './definitions';
 import { fatal, isFatal } from './errors';
 import { logger } from './log';
@@ -226,7 +235,7 @@ async function loadAndroidConfig(
 
   return {
     name,
-    minVersion: '23',
+    minVersion: '24',
     studioPath,
     platformDir,
     platformDirAbs,
@@ -268,14 +277,14 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
   const webDirAbs = lazy(() => determineIOSWebDirAbs(nativeProjectDirAbs, nativeTargetDirAbs, nativeXcodeProjDirAbs));
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
   const buildOptions = {
-    xcodeExportMethod: extConfig.ios?.buildOptions?.exportMethod,
+    exportMethod: extConfig.ios?.buildOptions?.exportMethod as XcodeExportMethod,
     xcodeSigningStyle: extConfig.ios?.buildOptions?.signingStyle,
     signingCertificate: extConfig.ios?.buildOptions?.signingCertificate,
     provisioningProfile: extConfig.ios?.buildOptions?.provisioningProfile,
   };
   return {
     name,
-    minVersion: '14.0',
+    minVersion: '15.0',
     platformDir,
     platformDirAbs,
     scheme,
@@ -387,8 +396,20 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
 
       return p;
     }
-    case OS.Linux:
-      return '/usr/local/android-studio/bin/studio.sh';
+    case OS.Linux: {
+      const studioExecPath = '/usr/local/android-studio/bin/studio';
+      const studioShPath = '/usr/local/android-studio/bin/studio.sh';
+
+      try {
+        if (await pathExists(studioExecPath)) {
+          return studioExecPath;
+        }
+      } catch (e) {
+        debug(`Error checking for studio executable: %O`, e);
+      }
+
+      return studioShPath;
+    }
   }
 
   return '';

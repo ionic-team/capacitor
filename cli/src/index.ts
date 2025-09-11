@@ -284,7 +284,7 @@ export function runProgram(config: Config): void {
     .description('add a native platform project')
     .option(
       '--packagemanager <packageManager>',
-      'The package manager to use for dependency installs (Cocoapods, SPM **experimental**)',
+      'The package manager to use for dependency installs (CocoaPods or SPM)',
     )
     .action(
       wrapAction(
@@ -365,6 +365,16 @@ export function runProgram(config: Config): void {
       wrapAction(async ({ noprompt, packagemanager }) => {
         const { migrateCommand } = await import('./tasks/migrate');
         await migrateCommand(config, noprompt, packagemanager);
+      }),
+    );
+
+  program
+    .command('spm-migration-assistant')
+    .description('Remove Cocoapods from project and switch to Swift Package Manager')
+    .action(
+      wrapAction(async () => {
+        const { migrateToSPM } = await import('./tasks/migrate-spm');
+        await migrateToSPM(config);
       }),
     );
 

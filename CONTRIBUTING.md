@@ -35,14 +35,14 @@ To create a code reproduction:
 * [Capacitor](https://github.com/ionic-team/capacitor) (this repo): Core Capacitor platforms, CLI, and APIs
 * [Capacitor Plugins](https://github.com/ionic-team/capacitor-plugins): Official Capacitor plugins
 * [Capacitor Community](https://github.com/capacitor-community/): GitHub org for Capacitor Community plugins and platforms
-* [Capacitor Site](https://github.com/ionic-team/capacitor-site): Capacitor website and online documentation
+* [Capacitor Docs](https://github.com/ionic-team/capacitor-docs): Capacitor online documentation
 * [Capacitor TestApp](https://github.com/ionic-team/capacitor-testapp): Test app used by the core team for developing Capacitor
 
 ### Design Philosophy
 
 Before working on Capacitor, it's important to understand the philosophy behind the project to avoid investing time in things that won't fit into the goals of the project.
 
-Please read [@maxlynch](http://twitter.com/maxlynch)'s essay [How Capacitor Works](https://tinyletter.com/ionic-max/letters/how-capacitor-works) for a deep dive into the project and its goals.
+Please read Max Lynch's essay [How Capacitor Works](https://ionic.io/blog/how-capacitor-works-2) for a deep dive into the project and its goals.
 
 ### Consult with the team
 
@@ -74,8 +74,9 @@ On web, this means do not add any third party libraries such as Firebase or Loda
 ### Branches
 
 * [`main`](https://github.com/ionic-team/capacitor/tree/main): Latest Capacitor development branch
-* [`5.x`](https://github.com/ionic-team/capacitor/tree/5.x): Capacitor 5
-* [`4.x`](https://github.com/ionic-team/capacitor/tree/4.x): Capacitor 4 (security fixes only)
+* [`6.x`](https://github.com/ionic-team/capacitor/tree/6.x): Capacitor 6
+* [`5.x`](https://github.com/ionic-team/capacitor/tree/5.x): Capacitor 5 (not maintained)
+* [`4.x`](https://github.com/ionic-team/capacitor/tree/4.x): Capacitor 4 (not maintained)
 * [`3.x`](https://github.com/ionic-team/capacitor/tree/3.x): Capacitor 3 (not maintained)
 * [`2.x`](https://github.com/ionic-team/capacitor/tree/2.x): Capacitor 2 (not maintained)
 * [`1.x`](https://github.com/ionic-team/capacitor/tree/1.x): Capacitor 1 (not maintained)
@@ -84,9 +85,10 @@ On web, this means do not add any third party libraries such as Firebase or Loda
 
 This monorepo contains core Capacitor components. The current directory structure looks like this:
 
+* `android`: Capacitor Android Runtime
+* `android-template`: Default Android App installed by the CLI
 * `cli`: Capacitor CLI/Build scripts
 * `core`: Capacitor Core JS library
 * `ios`: Capacitor iOS Runtime
-* `ios-template`: Default iOS App installed by the CLI
-* `android`: Capacitor Android Runtime
-* `android-template`: Default Android App installed by the CLI
+* `ios-pods-template`: Default iOS CocoaPods App installed by the CLI
+* `ios-spm-template`: Default iOS SPM App installed by the CLI

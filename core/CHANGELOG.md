@@ -3,6 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.1...8.0.0-alpha.2) (2025-08-20)
+
+**Note:** Version bump only for package @capacitor/core
+
+# [8.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/7.4.2...8.0.0-alpha.1) (2025-08-20)
+
+### Bug Fixes
+
+- http content headers not sent when using axios ([#8039](https://github.com/ionic-team/capacitor/issues/8039)) ([67cac40](https://github.com/ionic-team/capacitor/commit/67cac40660b3e8cc78d1d228b7c6915450948ef1))
+
+## [7.4.2](https://github.com/ionic-team/capacitor/compare/7.4.1...7.4.2) (2025-07-10)
+
+**Note:** Version bump only for package @capacitor/core
+
+## [7.4.1](https://github.com/ionic-team/capacitor/compare/7.4.0...7.4.1) (2025-07-03)
+
+**Note:** Version bump only for package @capacitor/core
+
+# [7.4.0](https://github.com/ionic-team/capacitor/compare/7.3.0...7.4.0) (2025-06-18)
+
+**Note:** Version bump only for package @capacitor/core
+
+# [7.3.0](https://github.com/ionic-team/capacitor/compare/7.2.0...7.3.0) (2025-06-05)
+
+### Bug Fixes
+
+- **core:** Prevent error when hasListeners is empty ([#7975](https://github.com/ionic-team/capacitor/issues/7975)) ([a4a0942](https://github.com/ionic-team/capacitor/commit/a4a0942eddba068e078bd782bb093ed1ecff9e00))
+
+# [7.2.0](https://github.com/ionic-team/capacitor/compare/7.1.0...7.2.0) (2025-03-31)
+
+### Features
+
+- **http:** Apply overrideUserAgent to requests ([#7906](https://github.com/ionic-team/capacitor/issues/7906)) ([52482c9](https://github.com/ionic-team/capacitor/commit/52482c9d3c575b737054b41f9d1730c70cc5f471))
+
+# [7.1.0](https://github.com/ionic-team/capacitor/compare/7.0.1...7.1.0) (2025-03-12)
+
+### Bug Fixes
+
+- **core:** use getPlatform instead of platform in cordova.js ([#7902](https://github.com/ionic-team/capacitor/issues/7902)) ([277db7b](https://github.com/ionic-team/capacitor/commit/277db7b48caaf870eefdf701ea99332c4338d7ed))
+- **http:** boundary not added for Request objects ([#7897](https://github.com/ionic-team/capacitor/issues/7897)) ([bdaa6f3](https://github.com/ionic-team/capacitor/commit/bdaa6f3c38c33f3a021ac61f2de89101a5b66cff))
+
 ## [7.0.1](https://github.com/ionic-team/capacitor/compare/7.0.0...7.0.1) (2025-01-21)
 
 **Note:** Version bump only for package @capacitor/core
