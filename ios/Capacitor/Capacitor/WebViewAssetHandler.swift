@@ -111,7 +111,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     return mimetype as String
                 }
             }
-            // TODO: Remove in the future if Apple fixes the issue
+            // TODO: Remove when deployment target is set to iOS 17
             if let mimeType = mimeTypes[pathExtension] {
                 return mimeType
             }
