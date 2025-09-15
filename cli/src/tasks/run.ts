@@ -26,6 +26,7 @@ export interface RunCommandOptions {
   list?: boolean;
   json?: boolean;
   target?: string;
+  targetName?: string;
   sync?: boolean;
   forwardPorts?: string;
   liveReload?: boolean;

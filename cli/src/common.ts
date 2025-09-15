@@ -378,6 +378,7 @@ export interface PlatformTarget {
 export async function promptForPlatformTarget(
   targets: PlatformTarget[],
   selectedTarget?: string,
+  selectByName?: boolean,
 ): Promise<PlatformTarget> {
   const { prompt } = await import('prompts');
   const validTargets = targets.filter((t) => t.id !== undefined);
@@ -404,10 +405,23 @@ export async function promptForPlatformTarget(
     }
   }
 
+  console.log('Select by name', selectByName);
+
   const targetID = selectedTarget.trim();
-  const target = targets.find((t) => t.id === targetID);
+  const target = targets.find((t) => {
+    if (selectByName === true) {
+      return t.name === targetID;
+    }
+
+    t.id === targetID;
+  });
 
   if (!target) {
+    if (selectByName) {
+      fatal(
+        `Invalid target name: ${c.input(targetID)}.\n` + `Valid targets are: ${targets.map((t) => t.name).join(', ')}`,
+      );
+    }
     fatal(`Invalid target ID: ${c.input(targetID)}.\n` + `Valid targets are: ${targets.map((t) => t.id).join(', ')}`);
   }
 

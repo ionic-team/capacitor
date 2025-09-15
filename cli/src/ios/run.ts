@@ -13,9 +13,18 @@ const debug = Debug('capacitor:ios:run');
 
 export async function runIOS(
   config: Config,
-  { target: selectedTarget, scheme: selectedScheme, configuration: selectedConfiguration }: RunCommandOptions,
+  {
+    target: selectedTarget,
+    targetName: selectedTargetName,
+    scheme: selectedScheme,
+    configuration: selectedConfiguration,
+  }: RunCommandOptions,
 ): Promise<void> {
-  const target = await promptForPlatformTarget(await getPlatformTargets('ios'), selectedTarget);
+  const target = await promptForPlatformTarget(
+    await getPlatformTargets('ios'),
+    selectedTarget ?? selectedTargetName,
+    selectedTargetName !== undefined,
+  );
 
   const runScheme = selectedScheme || config.ios.scheme;
   const configuration = selectedConfiguration || 'Debug';
