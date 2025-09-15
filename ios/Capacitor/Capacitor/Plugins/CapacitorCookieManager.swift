@@ -21,7 +21,16 @@ public class CapacitorCookieManager {
     }
 
     public func getServerUrl() -> URL? {
-        return self.config?.serverURL ?? self.config?.localURL
+        guard let serverURL = self.config?.serverURL ?? self.config?.localURL else { return nil }
+        let assetHandlerScheme = self.config?.localURL.scheme ?? InstanceDescriptorDefaults.scheme
+        // If we're serving assets bundled with the app, then we need to change the scheme of the URL to
+        // https so that cookies marked secure are returned from HTTPCookieStorage.
+        if serverURL.scheme == assetHandlerScheme {
+            var components = URLComponents(url: serverURL, resolvingAgainstBaseURL: false)
+            components?.scheme = "https"
+            return components?.url
+        }
+        return serverURL
     }
 
     private func isUrlSanitized(_ urlString: String) -> Bool {
