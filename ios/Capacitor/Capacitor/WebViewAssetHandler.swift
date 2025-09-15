@@ -1,5 +1,5 @@
 import Foundation
-import MobileCoreServices
+import UniformTypeIdentifiers
 
 @objc(CAPWebViewAssetHandler)
 // swiftlint:disable type_body_length
@@ -106,9 +106,9 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     open func mimeTypeForExtension(pathExtension: String) -> String {
         if !pathExtension.isEmpty {
-            if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as NSString, nil)?.takeRetainedValue() {
-                if let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() {
-                    return mimetype as String
+            if let uti = UTType(filenameExtension: pathExtension) {
+                if let mimetype = uti.preferredMIMEType {
+                    return mimetype
                 }
             }
             // TODO: Remove when deployment target is set to iOS 17
