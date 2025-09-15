@@ -49,6 +49,13 @@
         else {
             _serverURL = _localURL;
         }
+        
+        if (descriptor.configUrl != nil) {
+            _configURL = descriptor.configUrl;
+        }
+        else {
+            _configURL = [[NSURL alloc] initWithString:(@"capacitor.config.json")];
+        }
         _errorPath = descriptor.errorPath;
         // extract the one value we care about from the cordova configuration
         _cordovaDeployDisabled = [descriptor cordovaDeployDisabled];
