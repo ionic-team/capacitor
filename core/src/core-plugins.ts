@@ -494,3 +494,43 @@ export const CapacitorHttp = registerPlugin<CapacitorHttpPlugin>('CapacitorHttp'
 });
 
 /******** END HTTP PLUGIN ********/
+
+/******** SYSTEM BARS PLUGIN ********/
+
+export type SystemBarStyle = 'DARK' | 'LIGHT';
+
+export interface SystemBarsStyleOptions {
+  style: SystemBarStyle;
+}
+
+export interface SystemBarsHiddenOptions {
+  hidden: boolean;
+}
+
+export interface SystemBarsPlugin {
+  /**
+   * Style of the text of the status bar.
+   *
+   * @since 8.0.0
+   * @default default
+   * @example "DARK"
+   */
+  setStyle(options: SystemBarsStyleOptions): Promise<void>;
+  setHidden(options: SystemBarsHiddenOptions): Promise<void>;
+}
+
+export class SystemBarsPluginWeb extends WebPlugin implements SystemBarsPlugin {
+  async setStyle(): Promise<void> {
+    this.unavailable('not available for web');
+  }
+
+  async setHidden(): Promise<void> {
+    this.unavailable('not available for web');
+  }
+}
+
+export const SystemBars = registerPlugin<SystemBarsPlugin>('SystemBars', {
+  web: () => new SystemBarsPluginWeb(),
+});
+
+/******** END SYSTEM BARS PLUGIN ********/
