@@ -497,17 +497,17 @@ export const CapacitorHttp = registerPlugin<CapacitorHttpPlugin>('CapacitorHttp'
 
 /******** SYSTEM BARS PLUGIN ********/
 
+/**
+ * Available status bar styles.
+ */
 export type SystemBarStyle = 'DARK' | 'LIGHT';
 
+/**
+ * Available inset edges.
+ */
+export type SystemBarInsets = 'top' | 'bottom' | 'left' | 'right';
+
 export interface SystemBarsStyleOptions {
-  style: SystemBarStyle;
-}
-
-export interface SystemBarsHiddenOptions {
-  hidden: boolean;
-}
-
-export interface SystemBarsPlugin {
   /**
    * Style of the text of the status bar.
    *
@@ -515,7 +515,42 @@ export interface SystemBarsPlugin {
    * @default default
    * @example "DARK"
    */
+  style: SystemBarStyle;
+
+  /**
+   * The inset edge for which to apply the style.
+   *
+   * @since 8.0.0
+   * @default null
+   * @example "top"
+   */
+  inset?: SystemBarInsets;
+}
+
+export interface SystemBarsHiddenOptions {
+  hidden: boolean;
+  /**
+   * The inset edge for which to hide.
+   *
+   * @since 8.0.0
+   * @default null
+   * @example "top"
+   */
+  inset?: SystemBarInsets;
+}
+
+export interface SystemBarsPlugin {
+  /**
+   * Set the current style of the status bar.
+   *
+   * @since 8.0.0
+   */
   setStyle(options: SystemBarsStyleOptions): Promise<void>;
+  /**
+   * Set the visibility of the status bar.
+   *
+   * @since 8.0.0
+   */
   setHidden(options: SystemBarsHiddenOptions): Promise<void>;
 }
 

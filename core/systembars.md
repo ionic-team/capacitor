@@ -20,7 +20,7 @@
 setStyle(options: SystemBarsStyleOptions) => Promise<void>
 ```
 
-Style of the text of the status bar.
+Set the current style of the status bar.
 
 | Param         | Type                                                                      |
 | ------------- | ------------------------------------------------------------------------- |
@@ -37,9 +37,13 @@ Style of the text of the status bar.
 setHidden(options: SystemBarsHiddenOptions) => Promise<void>
 ```
 
+Set the visibility of the status bar.
+
 | Param         | Type                                                                        |
 | ------------- | --------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#systembarshiddenoptions">SystemBarsHiddenOptions</a></code> |
+
+**Since:** 8.0.0
 
 --------------------
 
@@ -49,16 +53,18 @@ setHidden(options: SystemBarsHiddenOptions) => Promise<void>
 
 #### SystemBarsStyleOptions
 
-| Prop        | Type                                                      |
-| ----------- | --------------------------------------------------------- |
-| **`style`** | <code><a href="#systembarstyle">SystemBarStyle</a></code> |
+| Prop        | Type                                                        | Description                                  | Default              | Since |
+| ----------- | ----------------------------------------------------------- | -------------------------------------------- | -------------------- | ----- |
+| **`style`** | <code><a href="#systembarstyle">SystemBarStyle</a></code>   | Style of the text of the status bar.         | <code>default</code> | 8.0.0 |
+| **`inset`** | <code><a href="#systembarinsets">SystemBarInsets</a></code> | The inset edge for which to apply the style. | <code>null</code>    | 8.0.0 |
 
 
 #### SystemBarsHiddenOptions
 
-| Prop         | Type                 |
-| ------------ | -------------------- |
-| **`hidden`** | <code>boolean</code> |
+| Prop         | Type                                                        | Description                       | Default           | Since |
+| ------------ | ----------------------------------------------------------- | --------------------------------- | ----------------- | ----- |
+| **`hidden`** | <code>boolean</code>                                        |                                   |                   |       |
+| **`inset`**  | <code><a href="#systembarinsets">SystemBarInsets</a></code> | The inset edge for which to hide. | <code>null</code> | 8.0.0 |
 
 
 ### Type Aliases
@@ -66,8 +72,15 @@ setHidden(options: SystemBarsHiddenOptions) => Promise<void>
 
 #### SystemBarStyle
 
-****** SYSTEM BARS PLUGIN *******
+Available status bar styles.
 
 <code>'DARK' | 'LIGHT'</code>
+
+
+#### SystemBarInsets
+
+Available inset edges.
+
+<code>'top' | 'bottom' | 'left' | 'right'</code>
 
 </docgen-api>

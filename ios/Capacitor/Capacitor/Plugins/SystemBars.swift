@@ -1,10 +1,13 @@
 import Foundation
 
 @objc(CAPSystemBarsPlugin)
-public class SystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
+public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
     public let identifier = "CAPSystemBarsPlugin"
     public let jsName = "SystemBars"
-    public let pluginMethods: [CAPPluginMethod] = []
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "setStyle", returnType: CAPPluginReturnNone),
+        CAPPluginMethod(name: "setHidden", returnType: CAPPluginReturnNone),
+    ]
     
     enum Style: String {
         case dark = "DARK"
