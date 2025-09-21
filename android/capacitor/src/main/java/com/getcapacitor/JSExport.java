@@ -64,16 +64,16 @@ public class JSExport {
         for (PluginHandle plugin : plugins) {
             lines.add(
                 "(function(w) {\n" +
-                "var a = (w.Capacitor = w.Capacitor || {});\n" +
-                "var p = (a.Plugins = a.Plugins || {});\n" +
-                "var t = (p['" +
-                plugin.getId() +
-                "'] = {});\n" +
-                "t.addListener = function(eventName, callback) {\n" +
-                "  return w.Capacitor.addListener('" +
-                plugin.getId() +
-                "', eventName, callback);\n" +
-                "}"
+                    "var a = (w.Capacitor = w.Capacitor || {});\n" +
+                    "var p = (a.Plugins = a.Plugins || {});\n" +
+                    "var t = (p['" +
+                    plugin.getId() +
+                    "'] = {});\n" +
+                    "t.addListener = function(eventName, callback) {\n" +
+                    "  return w.Capacitor.addListener('" +
+                    plugin.getId() +
+                    "', eventName, callback);\n" +
+                    "}"
             );
             Collection<PluginMethodHandle> methods = plugin.getMethods();
             for (PluginMethodHandle method : methods) {
@@ -171,12 +171,12 @@ public class JSExport {
             case PluginMethod.RETURN_NONE:
                 lines.add(
                     "return w.Capacitor.nativeCallback('" +
-                    plugin.getId() +
-                    "', '" +
-                    method.getName() +
-                    "', " +
-                    CATCHALL_OPTIONS_PARAM +
-                    ")"
+                        plugin.getId() +
+                        "', '" +
+                        method.getName() +
+                        "', " +
+                        CATCHALL_OPTIONS_PARAM +
+                        ")"
                 );
                 break;
             case PluginMethod.RETURN_PROMISE:
@@ -187,14 +187,14 @@ public class JSExport {
             case PluginMethod.RETURN_CALLBACK:
                 lines.add(
                     "return w.Capacitor.nativeCallback('" +
-                    plugin.getId() +
-                    "', '" +
-                    method.getName() +
-                    "', " +
-                    CATCHALL_OPTIONS_PARAM +
-                    ", " +
-                    CALLBACK_PARAM +
-                    ")"
+                        plugin.getId() +
+                        "', '" +
+                        method.getName() +
+                        "', " +
+                        CATCHALL_OPTIONS_PARAM +
+                        ", " +
+                        CALLBACK_PARAM +
+                        ")"
                 );
                 break;
             default:
