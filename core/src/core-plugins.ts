@@ -524,7 +524,7 @@ export interface SystemBarsStyleOptions {
    * @default null
    * @example "top"
    */
-  inset?: SystemBarInsets;
+  inset?: Omit<SystemBarInsets, 'left, right'>;
 }
 
 export interface SystemBarsHiddenOptions {

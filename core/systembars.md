@@ -53,10 +53,10 @@ Set the visibility of the status bar.
 
 #### SystemBarsStyleOptions
 
-| Prop        | Type                                                        | Description                                  | Default              | Since |
-| ----------- | ----------------------------------------------------------- | -------------------------------------------- | -------------------- | ----- |
-| **`style`** | <code><a href="#systembarstyle">SystemBarStyle</a></code>   | Style of the text of the status bar.         | <code>default</code> | 8.0.0 |
-| **`inset`** | <code><a href="#systembarinsets">SystemBarInsets</a></code> | The inset edge for which to apply the style. | <code>null</code>    | 8.0.0 |
+| Prop        | Type                                                                                                       | Description                                  | Default              | Since |
+| ----------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------- | -------------------- | ----- |
+| **`style`** | <code><a href="#systembarstyle">SystemBarStyle</a></code>                                                  | Style of the text of the status bar.         | <code>default</code> | 8.0.0 |
+| **`inset`** | <code><a href="#omit">Omit</a>&lt;<a href="#systembarinsets">SystemBarInsets</a>, 'left, right'&gt;</code> | The inset edge for which to apply the style. | <code>null</code>    | 8.0.0 |
 
 
 #### SystemBarsHiddenOptions
@@ -75,6 +75,27 @@ Set the visibility of the status bar.
 Available status bar styles.
 
 <code>'DARK' | 'LIGHT'</code>
+
+
+#### Omit
+
+Construct a type with the properties of T except for those in type K.
+
+<code><a href="#pick">Pick</a>&lt;T, <a href="#exclude">Exclude</a>&lt;keyof T, K&gt;&gt;</code>
+
+
+#### Pick
+
+From T, pick a set of properties whose keys are in the union K
+
+<code>{ [P in K]: T[P]; }</code>
+
+
+#### Exclude
+
+<a href="#exclude">Exclude</a> from T those types that are assignable to U
+
+<code>T extends U ? never : T</code>
 
 
 #### SystemBarInsets

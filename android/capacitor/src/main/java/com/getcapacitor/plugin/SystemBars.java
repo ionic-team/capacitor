@@ -16,9 +16,11 @@ import java.util.Locale;
 
 @CapacitorPlugin
 public class SystemBars extends Plugin {
-
-    static final String STYLE_DARK = "DARK";
     static final String STYLE_LIGHT = "LIGHT";
+    static final String INSET_TOP = "top";
+    static final String INSET_BOTTOM = "bottom";
+    static final String INSET_LEFT = "left";
+    static final String INSET_RIGHT = "right";
 
     @Override
     public void load() {
@@ -28,20 +30,28 @@ public class SystemBars extends Plugin {
 
     @PluginMethod
     public void setStyle(final PluginCall call) {
+        boolean isLightStyle;
+
+        String inset = call.getString("inset", "").toLowerCase(Locale.US);
         String style = call.getString("style", "");
+
+        if (style.equals(STYLE_LIGHT)) {
+            isLightStyle = true;
+        } else {
+            isLightStyle = false;
+        }
 
         getBridge()
             .executeOnMainThread(() -> {
-                boolean isLightStyle = false;
-
-                if (style.equals(STYLE_LIGHT)) {
-                    isLightStyle = true;
-                }
-
                 Window window = getActivity().getWindow();
                 WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
-                windowInsetsControllerCompat.setAppearanceLightStatusBars(isLightStyle);
-                windowInsetsControllerCompat.setAppearanceLightNavigationBars(isLightStyle);
+                if (inset.isEmpty() || inset.equals(INSET_TOP)) {
+                    windowInsetsControllerCompat.setAppearanceLightStatusBars(isLightStyle);
+                }
+
+                if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
+                    windowInsetsControllerCompat.setAppearanceLightNavigationBars(isLightStyle);
+                }
 
                 call.resolve();
             });
@@ -50,18 +60,31 @@ public class SystemBars extends Plugin {
     @PluginMethod
     public void setHidden(final PluginCall call) {
         boolean hidden = call.getBoolean("hidden", false);
+        String inset = call.getString("inset", "").toLowerCase(Locale.US);
 
         getBridge()
             .executeOnMainThread(() -> {
                 Window window = getActivity().getWindow();
                 WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
                 if (hidden) {
-                    windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
+                    if (inset.isEmpty() || inset.equals(INSET_TOP)) {
+                        windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
+                    }
+                    if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
+                        windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
+                    }
+
                     call.resolve();
                     return;
                 }
 
-                windowInsetsControllerCompat.show(WindowInsetsCompat.Type.systemBars());
+                if (inset.isEmpty() || inset.equals(INSET_TOP)) {
+                    windowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars());
+                }
+                if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
+                    windowInsetsControllerCompat.show(WindowInsetsCompat.Type.navigationBars());
+                }
+                
                 call.resolve();
             });
     }
