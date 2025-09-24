@@ -17,7 +17,14 @@ export { Capacitor, registerPlugin } from './global';
 export { WebPlugin, ListenerCallback } from './web-plugin';
 
 // Core Plugins APIs
-export { SystemBars, CapacitorCookies, CapacitorHttp, WebView, buildRequestInit } from './core-plugins';
+export {
+  SystemBars,
+  SystemBarInsets,
+  CapacitorCookies,
+  CapacitorHttp,
+  WebView,
+  buildRequestInit,
+} from './core-plugins';
 
 // Core Plugin definitions
 export type {

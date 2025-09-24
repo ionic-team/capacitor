@@ -539,6 +539,10 @@ export interface SystemBarsHiddenOptions {
   inset?: SystemBarInsets;
 }
 
+export interface SystemBarsOverlayOptions {
+  enabled: boolean;
+}
+
 export interface SystemBarsPlugin {
   /**
    * Set the current style of the status bar.
@@ -552,6 +556,8 @@ export interface SystemBarsPlugin {
    * @since 8.0.0
    */
   setHidden(options: SystemBarsHiddenOptions): Promise<void>;
+
+  setOverlay(options: SystemBarsOverlayOptions): Promise<void>;
 }
 
 export class SystemBarsPluginWeb extends WebPlugin implements SystemBarsPlugin {
@@ -560,6 +566,10 @@ export class SystemBarsPluginWeb extends WebPlugin implements SystemBarsPlugin {
   }
 
   async setHidden(): Promise<void> {
+    this.unavailable('not available for web');
+  }
+
+  async setOverlay(): Promise<void> {
     this.unavailable('not available for web');
   }
 }

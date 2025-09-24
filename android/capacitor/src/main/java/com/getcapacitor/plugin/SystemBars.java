@@ -1,9 +1,14 @@
 package com.getcapacitor.plugin;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
+import android.view.WindowManager;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -79,7 +84,7 @@ public class SystemBars extends Plugin {
                 }
 
                 if (inset.isEmpty() || inset.equals(INSET_TOP)) {
-                    windowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars());
+                    windowInsetsControllerCompat.show(WindowInsetsCompat.Type.systemBars());
                 }
                 if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
                     windowInsetsControllerCompat.show(WindowInsetsCompat.Type.navigationBars());
@@ -89,14 +94,66 @@ public class SystemBars extends Plugin {
             });
     }
 
+    @PluginMethod
+    public void setOverlay(final PluginCall call) {
+        if (Build.VERSION.SDK_INT < 35) {
+            boolean isOverlay = call.getBoolean("enabled", false);
+
+            getBridge()
+                .executeOnMainThread(() -> {
+                    Window window = getActivity().getWindow();
+                    View decorView = window.getDecorView();
+
+                    int uiOptions = decorView.getSystemUiVisibility();
+                    int color;
+
+                    if (isOverlay) {
+                        uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                        color = Color.TRANSPARENT;
+                    } else {
+                        uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                        color = Color.BLACK;
+                        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    }
+
+                    window.getDecorView().setSystemUiVisibility(uiOptions);
+                    window.setStatusBarColor(color);
+                    window.setNavigationBarColor(color);
+
+
+//                    ViewCompat.setOnApplyWindowInsetsListener(window.getDecorView(), (v, insets) -> {
+//                        Insets statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars());
+//                        Insets navBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
+//
+//                        float density = getActivity().getResources().getDisplayMetrics().density;
+//                        float topPx = statusBarInsets.top / density;
+//                        float rightPx = statusBarInsets.right / density;
+//                        float bottomPx = navBarInsets.bottom / density;
+//                        float leftPx = statusBarInsets.left / density;
+//
+//                        v.setPadding((int)leftPx, (int)topPx, (int)rightPx, (int)bottomPx);
+//
+//                        return WindowInsetsCompat.CONSUMED;
+//                    });
+                });
+
+        }
+
+
+        call.resolve();
+
+    }
+
     private void setupSafeAreaInsets() {
+        Window window = getActivity().getWindow();
         View decorView = getActivity().getWindow().getDecorView();
 
-        decorView.setOnApplyWindowInsetsListener((v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 // Android 15+ supports edge to edge
-                android.graphics.Insets systemBars = insets.getInsets(WindowInsets.Type.systemBars());
-                android.graphics.Insets displayCutout = insets.getInsets(WindowInsets.Type.displayCutout());
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                Insets displayCutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
 
                 int top = Math.max(systemBars.top, displayCutout.top);
                 int bottom = Math.max(systemBars.bottom, displayCutout.bottom);
@@ -104,12 +161,34 @@ public class SystemBars extends Plugin {
                 int right = Math.max(systemBars.right, displayCutout.right);
 
                 injectSafeAreaCSS(top, right, bottom, left);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                injectSafeAreaCSS(0, 0, 0, 0);
+            } else {
+                Insets statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars());
+                Insets navBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+                injectSafeAreaCSS(statusBarInsets.top, statusBarInsets.right, navBarInsets.bottom, statusBarInsets.left);
             }
 
-            return insets;
+            return WindowInsetsCompat.CONSUMED;
         });
+
+//        decorView.setOnApplyWindowInsetsListener((v, insets) -> {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+//                // Android 15+ supports edge to edge
+//                android.graphics.Insets systemBars = insets.getInsets(WindowInsets.Type.systemBars());
+//                android.graphics.Insets displayCutout = insets.getInsets(WindowInsets.Type.displayCutout());
+//
+//                int top = Math.max(systemBars.top, displayCutout.top);
+//                int bottom = Math.max(systemBars.bottom, displayCutout.bottom);
+//                int left = Math.max(systemBars.left, displayCutout.left);
+//                int right = Math.max(systemBars.right, displayCutout.right);
+//
+//                injectSafeAreaCSS(top, right, bottom, left);
+//            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                injectSafeAreaCSS(0, 0, 0, 0);
+//            }
+//
+//            return insets;
+//        });
     }
 
     private void injectSafeAreaCSS(int top, int right, int bottom, int left) {

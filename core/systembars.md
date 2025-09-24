@@ -6,6 +6,7 @@
 
 * [`setStyle(...)`](#setstyle)
 * [`setHidden(...)`](#sethidden)
+* [`setOverlay(...)`](#setoverlay)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 
@@ -48,6 +49,19 @@ Set the visibility of the status bar.
 --------------------
 
 
+### setOverlay(...)
+
+```typescript
+setOverlay(options: SystemBarsOverlayOptions) => Promise<void>
+```
+
+| Param         | Type                                                                          |
+| ------------- | ----------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#systembarsoverlayoptions">SystemBarsOverlayOptions</a></code> |
+
+--------------------
+
+
 ### Interfaces
 
 
@@ -65,6 +79,13 @@ Set the visibility of the status bar.
 | ------------ | ----------------------------------------------------------- | --------------------------------- | ----------------- | ----- |
 | **`hidden`** | <code>boolean</code>                                        |                                   |                   |       |
 | **`inset`**  | <code><a href="#systembarinsets">SystemBarInsets</a></code> | The inset edge for which to hide. | <code>null</code> | 8.0.0 |
+
+
+#### SystemBarsOverlayOptions
+
+| Prop          | Type                 |
+| ------------- | -------------------- |
+| **`enabled`** | <code>boolean</code> |
 
 
 ### Type Aliases
