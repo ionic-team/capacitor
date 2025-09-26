@@ -20,6 +20,7 @@ export { WebPlugin, ListenerCallback } from './web-plugin';
 export {
   SystemBars,
   SystemBarInsets,
+  SystemBarStyle,
   CapacitorCookies,
   CapacitorHttp,
   WebView,
@@ -38,7 +39,6 @@ export type {
   HttpResponseType,
   WebViewPath,
   WebViewPlugin,
-  SystemBarStyle,
   SystemBarsHiddenOptions,
   SystemBarsStyleOptions,
 } from './core-plugins';

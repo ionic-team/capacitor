@@ -711,7 +711,13 @@ export interface PluginsConfig {
     enabled?: boolean;
   };
 
+  /**
+   * System Bars plugin configuration
+   *
+   * @since 8.0.0
+   */
   SystemBars?: {
     enabled?: boolean;
+    style?: string;
   };
 }

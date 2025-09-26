@@ -39,7 +39,7 @@ public class SystemBars extends Plugin {
         if (enabled) {
             setupSafeAreaInsets();
             getBridge().executeOnMainThread(() -> {
-                setStyle(style, null);
+                setStyle(style, "");
                 initOverlay();
             });
         }
