@@ -9,6 +9,7 @@
 * [`setOverlay(...)`](#setoverlay)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
+* [Enums](#enums)
 
 </docgen-index>
 
@@ -91,13 +92,6 @@ setOverlay(options: SystemBarsOverlayOptions) => Promise<void>
 ### Type Aliases
 
 
-#### SystemBarStyle
-
-Available status bar styles.
-
-<code>'DARK' | 'LIGHT'</code>
-
-
 #### Omit
 
 Construct a type with the properties of T except for those in type K.
@@ -124,5 +118,17 @@ From T, pick a set of properties whose keys are in the union K
 Available inset edges.
 
 <code>'top' | 'bottom' | 'left' | 'right'</code>
+
+
+### Enums
+
+
+#### SystemBarStyle
+
+| Members       | Value                  | Description                                                                                                                                                                          | Since |
+| ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- |
+| **`Dark`**    | <code>'DARK'</code>    | Light text for dark backgrounds.                                                                                                                                                     | 8.0.0 |
+| **`Light`**   | <code>'LIGHT'</code>   | Dark text for light backgrounds.                                                                                                                                                     | 8.0.0 |
+| **`Default`** | <code>'DEFAULT'</code> | The style is based on the device appearance. If the device is using Dark mode, the statusbar text will be light. If the device is using Light mode, the statusbar text will be dark. | 8.0.0 |
 
 </docgen-api>

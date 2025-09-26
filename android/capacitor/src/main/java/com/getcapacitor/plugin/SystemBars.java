@@ -1,11 +1,10 @@
 package com.getcapacitor.plugin;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowManager;
 
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -22,42 +21,55 @@ import java.util.Locale;
 @CapacitorPlugin
 public class SystemBars extends Plugin {
     static final String STYLE_LIGHT = "LIGHT";
+    static final String STYLE_DARK = "DARK";
+    static final String STYLE_DEFAULT = "DEFAULT";
     static final String INSET_TOP = "top";
     static final String INSET_BOTTOM = "bottom";
-    static final String INSET_LEFT = "left";
-    static final String INSET_RIGHT = "right";
 
     @Override
     public void load() {
         super.load();
-        setupSafeAreaInsets();
+        initSystemBars();
+    }
+
+    private void initSystemBars() {
+        boolean enabled = getConfig().getBoolean("enabled", true);
+        String style = getConfig().getString("style", STYLE_DEFAULT);
+
+        if (enabled) {
+            setupSafeAreaInsets();
+            getBridge().executeOnMainThread(() -> {
+                setStyle(style, null);
+                initOverlay();
+            });
+        }
+    }
+
+    private void initOverlay() {
+        if (Build.VERSION.SDK_INT < 35) {
+            Window window = getActivity().getWindow();
+            View decorView = window.getDecorView();
+
+            int uiOptions = decorView.getSystemUiVisibility();
+            int color;
+
+            uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+            color = Color.TRANSPARENT;
+
+            window.getDecorView().setSystemUiVisibility(uiOptions);
+            window.setStatusBarColor(color);
+            window.setNavigationBarColor(color);
+        }
     }
 
     @PluginMethod
     public void setStyle(final PluginCall call) {
-        boolean isLightStyle;
-
         String inset = call.getString("inset", "").toLowerCase(Locale.US);
-        String style = call.getString("style", "");
-
-        if (style.equals(STYLE_LIGHT)) {
-            isLightStyle = true;
-        } else {
-            isLightStyle = false;
-        }
+        String style = call.getString("style", STYLE_DEFAULT);
 
         getBridge()
             .executeOnMainThread(() -> {
-                Window window = getActivity().getWindow();
-                WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
-                if (inset.isEmpty() || inset.equals(INSET_TOP)) {
-                    windowInsetsControllerCompat.setAppearanceLightStatusBars(isLightStyle);
-                }
-
-                if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
-                    windowInsetsControllerCompat.setAppearanceLightNavigationBars(isLightStyle);
-                }
-
+                setStyle(style, inset);
                 call.resolve();
             });
     }
@@ -69,84 +81,12 @@ public class SystemBars extends Plugin {
 
         getBridge()
             .executeOnMainThread(() -> {
-                Window window = getActivity().getWindow();
-                WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
-                if (hidden) {
-                    if (inset.isEmpty() || inset.equals(INSET_TOP)) {
-                        windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
-                    }
-                    if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
-                        windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
-                    }
-
-                    call.resolve();
-                    return;
-                }
-
-                if (inset.isEmpty() || inset.equals(INSET_TOP)) {
-                    windowInsetsControllerCompat.show(WindowInsetsCompat.Type.systemBars());
-                }
-                if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
-                    windowInsetsControllerCompat.show(WindowInsetsCompat.Type.navigationBars());
-                }
-                
+                setHidden(hidden, inset);
                 call.resolve();
             });
     }
 
-    @PluginMethod
-    public void setOverlay(final PluginCall call) {
-        if (Build.VERSION.SDK_INT < 35) {
-            boolean isOverlay = call.getBoolean("enabled", false);
-
-            getBridge()
-                .executeOnMainThread(() -> {
-                    Window window = getActivity().getWindow();
-                    View decorView = window.getDecorView();
-
-                    int uiOptions = decorView.getSystemUiVisibility();
-                    int color;
-
-                    if (isOverlay) {
-                        uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                        color = Color.TRANSPARENT;
-                    } else {
-                        uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                        color = Color.BLACK;
-                        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    }
-
-                    window.getDecorView().setSystemUiVisibility(uiOptions);
-                    window.setStatusBarColor(color);
-                    window.setNavigationBarColor(color);
-
-
-//                    ViewCompat.setOnApplyWindowInsetsListener(window.getDecorView(), (v, insets) -> {
-//                        Insets statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars());
-//                        Insets navBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
-//
-//                        float density = getActivity().getResources().getDisplayMetrics().density;
-//                        float topPx = statusBarInsets.top / density;
-//                        float rightPx = statusBarInsets.right / density;
-//                        float bottomPx = navBarInsets.bottom / density;
-//                        float leftPx = statusBarInsets.left / density;
-//
-//                        v.setPadding((int)leftPx, (int)topPx, (int)rightPx, (int)bottomPx);
-//
-//                        return WindowInsetsCompat.CONSUMED;
-//                    });
-                });
-
-        }
-
-
-        call.resolve();
-
-    }
-
     private void setupSafeAreaInsets() {
-        Window window = getActivity().getWindow();
         View decorView = getActivity().getWindow().getDecorView();
 
         ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
@@ -170,25 +110,6 @@ public class SystemBars extends Plugin {
 
             return WindowInsetsCompat.CONSUMED;
         });
-
-//        decorView.setOnApplyWindowInsetsListener((v, insets) -> {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-//                // Android 15+ supports edge to edge
-//                android.graphics.Insets systemBars = insets.getInsets(WindowInsets.Type.systemBars());
-//                android.graphics.Insets displayCutout = insets.getInsets(WindowInsets.Type.displayCutout());
-//
-//                int top = Math.max(systemBars.top, displayCutout.top);
-//                int bottom = Math.max(systemBars.bottom, displayCutout.bottom);
-//                int left = Math.max(systemBars.left, displayCutout.left);
-//                int right = Math.max(systemBars.right, displayCutout.right);
-//
-//                injectSafeAreaCSS(top, right, bottom, left);
-//            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//                injectSafeAreaCSS(0, 0, 0, 0);
-//            }
-//
-//            return insets;
-//        });
     }
 
     private void injectSafeAreaCSS(int top, int right, int bottom, int left) {
@@ -225,5 +146,51 @@ public class SystemBars extends Plugin {
                     Logger.info("Safe area insets injected (edge-to-edge: enabled)");
                 }
             });
+    }
+
+    private void setStyle(String style, String inset) {
+        if (style.equals(STYLE_DEFAULT)) {
+            style = getStyleForTheme();
+        }
+
+        Window window = getActivity().getWindow();
+        WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
+        if (inset.isEmpty() || inset.equals(INSET_TOP)) {
+            windowInsetsControllerCompat.setAppearanceLightStatusBars(style.equals(STYLE_LIGHT));
+        }
+
+        if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
+            windowInsetsControllerCompat.setAppearanceLightNavigationBars(style.equals(STYLE_LIGHT));
+        }
+    }
+
+    private void setHidden(boolean hide, String inset) {
+        Window window = getActivity().getWindow();
+        WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
+
+        if (hide) {
+            if (inset.isEmpty() || inset.equals(INSET_TOP)) {
+                windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
+            }
+            if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
+                windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
+            }
+            return;
+        }
+
+        if (inset.isEmpty() || inset.equals(INSET_TOP)) {
+            windowInsetsControllerCompat.show(WindowInsetsCompat.Type.systemBars());
+        }
+        if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
+            windowInsetsControllerCompat.show(WindowInsetsCompat.Type.navigationBars());
+        }
+    }
+
+    private String getStyleForTheme() {
+        int currentNightMode = getActivity().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (currentNightMode != Configuration.UI_MODE_NIGHT_YES) {
+            return STYLE_LIGHT;
+        }
+        return STYLE_DARK;
     }
 }

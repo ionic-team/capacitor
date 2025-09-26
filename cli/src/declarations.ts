@@ -710,4 +710,8 @@ export interface PluginsConfig {
      */
     enabled?: boolean;
   };
+
+  SystemBars?: {
+    enabled?: boolean;
+  };
 }

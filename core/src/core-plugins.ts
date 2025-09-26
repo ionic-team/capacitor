@@ -500,7 +500,30 @@ export const CapacitorHttp = registerPlugin<CapacitorHttpPlugin>('CapacitorHttp'
 /**
  * Available status bar styles.
  */
-export type SystemBarStyle = 'DARK' | 'LIGHT';
+export enum SystemBarStyle {
+  /**
+   * Light text for dark backgrounds.
+   *
+   * @since 8.0.0
+   */
+  Dark = 'DARK',
+
+  /**
+   * Dark text for light backgrounds.
+   *
+   * @since 8.0.0
+   */
+  Light = 'LIGHT',
+
+  /**
+   * The style is based on the device appearance.
+   * If the device is using Dark mode, the statusbar text will be light.
+   * If the device is using Light mode, the statusbar text will be dark.
+   *
+   * @since 8.0.0
+   */
+  Default = 'DEFAULT',
+}
 
 /**
  * Available inset edges.
