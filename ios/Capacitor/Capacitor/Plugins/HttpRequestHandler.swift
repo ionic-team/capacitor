@@ -157,7 +157,7 @@ open class HttpRequestHandler {
             return output
         }
 
-        let contentType = (response.allHeaderFields["Content-Type"] as? String ?? "application/default").lowercased()
+        let contentType = (response.allHeaderFields["Content-Type"] as? String ?? "application/json").lowercased()
 
         if contentType.contains("application/json") || responseType == .json {
             output["data"] = tryParseJson(data)

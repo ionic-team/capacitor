@@ -392,7 +392,7 @@ public class HttpRequestHandler {
         Boolean disableRedirects = call.getBoolean("disableRedirects");
         Boolean shouldEncode = call.getBoolean("shouldEncodeUrlParams", true);
         ResponseType responseType = ResponseType.parse(call.getString("responseType"));
-        String dataType = call.getString("dataType");
+        String dataType = call.getString("dataType", "application/json");
 
         String method = httpMethod != null ? httpMethod.toUpperCase(Locale.ROOT) : call.getString("method", "GET").toUpperCase(Locale.ROOT);
 
