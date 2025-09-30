@@ -20,9 +20,9 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
         if let style = Style(rawValue: call.getString("style") ?? "") {
             switch style {
             case .dark:
-                newStyle = .darkContent
-            case .light:
                 newStyle = .lightContent
+            case .light:
+                newStyle = .darkContent
             }
         }
 
