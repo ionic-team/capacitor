@@ -125,10 +125,10 @@ Available inset edges.
 
 #### SystemBarStyle
 
-| Members       | Value                  | Description                                                                                                                                                                          | Since |
-| ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- |
-| **`Dark`**    | <code>'DARK'</code>    | Light text for dark backgrounds.                                                                                                                                                     | 8.0.0 |
-| **`Light`**   | <code>'LIGHT'</code>   | Dark text for light backgrounds.                                                                                                                                                     | 8.0.0 |
-| **`Default`** | <code>'DEFAULT'</code> | The style is based on the device appearance. If the device is using Dark mode, the statusbar text will be light. If the device is using Light mode, the statusbar text will be dark. | 8.0.0 |
+| Members       | Value                  | Description                                                                                                                                                                                                    | Since |
+| ------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| **`Dark`**    | <code>'DARK'</code>    | Light system bar content on a dark background.                                                                                                                                                                 | 8.0.0 |
+| **`Light`**   | <code>'LIGHT'</code>   | For dark system bar content on a light background.                                                                                                                                                             | 8.0.0 |
+| **`Default`** | <code>'DEFAULT'</code> | The style is based on the device appearance or the underlying content. If the device is using Dark mode, the statusbar text will be light. If the device is using Light mode, the statusbar text will be dark. | 8.0.0 |
 
 </docgen-api>

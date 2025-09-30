@@ -502,21 +502,21 @@ export const CapacitorHttp = registerPlugin<CapacitorHttpPlugin>('CapacitorHttp'
  */
 export enum SystemBarStyle {
   /**
-   * Light text for dark backgrounds.
+   * Light system bar content on a dark background.
    *
    * @since 8.0.0
    */
   Dark = 'DARK',
 
   /**
-   * Dark text for light backgrounds.
+   * For dark system bar content on a light background.
    *
    * @since 8.0.0
    */
   Light = 'LIGHT',
 
   /**
-   * The style is based on the device appearance.
+   * The style is based on the device appearance or the underlying content.
    * If the device is using Dark mode, the statusbar text will be light.
    * If the device is using Light mode, the statusbar text will be dark.
    *

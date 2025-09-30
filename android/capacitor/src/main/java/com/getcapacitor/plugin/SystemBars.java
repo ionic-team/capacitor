@@ -34,7 +34,7 @@ public class SystemBars extends Plugin {
 
     private void initSystemBars() {
         boolean enabled = getConfig().getBoolean("enabled", true);
-        String style = getConfig().getString("style", STYLE_DEFAULT);
+        String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase();
 
         if (enabled) {
             setupSafeAreaInsets();
@@ -156,11 +156,11 @@ public class SystemBars extends Plugin {
         Window window = getActivity().getWindow();
         WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
         if (inset.isEmpty() || inset.equals(INSET_TOP)) {
-            windowInsetsControllerCompat.setAppearanceLightStatusBars(style.equals(STYLE_LIGHT));
+            windowInsetsControllerCompat.setAppearanceLightStatusBars(!style.equals(STYLE_DARK));
         }
 
         if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
-            windowInsetsControllerCompat.setAppearanceLightNavigationBars(style.equals(STYLE_LIGHT));
+            windowInsetsControllerCompat.setAppearanceLightNavigationBars(!style.equals(STYLE_DARK));
         }
     }
 
