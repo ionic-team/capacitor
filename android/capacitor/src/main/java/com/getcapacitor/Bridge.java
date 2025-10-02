@@ -279,6 +279,9 @@ public class Bridge {
 
         webView.setWebChromeClient(new BridgeWebChromeClient(this));
         webView.setWebViewClient(this.webViewClient);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.setInitialScale(100);
+        webView.setPadding(0, 0, 0, 0);
 
         if (config.isResolveServiceWorkerRequests()) {
             ServiceWorkerController swController = ServiceWorkerController.getInstance();
