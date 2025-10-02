@@ -11,7 +11,7 @@ import org.apache.cordova.PluginManager;
  * MessageHandler handles messages from the WebView, dispatching them
  * to plugins.
  */
-public class MessageHandler {
+public class MessageHandler implements IMessageHandler {
 
     private Bridge bridge;
     private WebView webView;
@@ -49,6 +49,7 @@ public class MessageHandler {
      */
     @JavascriptInterface
     @SuppressWarnings("unused")
+    @Override
     public void postMessage(String jsonStr) {
         try {
             JSObject postData = new JSObject(jsonStr);
@@ -98,6 +99,7 @@ public class MessageHandler {
         }
     }
 
+    @Override
     public void sendResponseMessage(PluginCall call, PluginResult successResult, PluginResult errorResult) {
         try {
             PluginResult data = new PluginResult();
