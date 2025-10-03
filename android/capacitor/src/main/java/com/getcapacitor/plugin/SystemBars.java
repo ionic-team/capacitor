@@ -33,16 +33,17 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
-        boolean enabled = getConfig().getBoolean("enabled", true);
+        boolean enableInsets = getConfig().getBoolean("enableInsets", true);
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase();
 
-        if (enabled) {
+        if (enableInsets) {
             setupSafeAreaInsets();
-            getBridge().executeOnMainThread(() -> {
-                setStyle(style, "");
-                initOverlay();
-            });
         }
+
+        getBridge().executeOnMainThread(() -> {
+            setStyle(style, "");
+            initOverlay();
+        });
     }
 
     private void initOverlay() {
