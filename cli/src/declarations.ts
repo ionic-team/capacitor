@@ -710,4 +710,25 @@ export interface PluginsConfig {
      */
     enabled?: boolean;
   };
+
+  /**
+   * System Bars plugin configuration
+   *
+   * @since 8.0.0
+   */
+  SystemBars?: {
+    /**
+     * Enables the injection of device css insets into the webview.
+     *
+     * Only available on Android.
+     *
+     * @default true
+     */
+    enableInsets?: boolean;
+
+    /**
+     * Style of the text of the status bar.
+     */
+    style?: string;
+  };
 }

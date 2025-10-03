@@ -494,3 +494,111 @@ export const CapacitorHttp = registerPlugin<CapacitorHttpPlugin>('CapacitorHttp'
 });
 
 /******** END HTTP PLUGIN ********/
+
+/******** SYSTEM BARS PLUGIN ********/
+
+/**
+ * Available status bar styles.
+ */
+export enum SystemBarStyle {
+  /**
+   * Light system bar content on a dark background.
+   *
+   * @since 8.0.0
+   */
+  Dark = 'DARK',
+
+  /**
+   * For dark system bar content on a light background.
+   *
+   * @since 8.0.0
+   */
+  Light = 'LIGHT',
+
+  /**
+   * The style is based on the device appearance or the underlying content.
+   * If the device is using Dark mode, the statusbar text will be light.
+   * If the device is using Light mode, the statusbar text will be dark.
+   *
+   * @since 8.0.0
+   */
+  Default = 'DEFAULT',
+}
+
+/**
+ * Available inset edges.
+ */
+export type SystemBarInsets = 'top' | 'bottom' | 'left' | 'right';
+
+export interface SystemBarsStyleOptions {
+  /**
+   * Style of the text of the status bar.
+   *
+   * @since 8.0.0
+   * @default default
+   * @example "DARK"
+   */
+  style: SystemBarStyle;
+
+  /**
+   * The inset edge for which to apply the style.
+   *
+   * @since 8.0.0
+   * @default null
+   * @example "top"
+   */
+  inset?: Omit<SystemBarInsets, 'left, right'>;
+}
+
+export interface SystemBarsHiddenOptions {
+  hidden: boolean;
+  /**
+   * The inset edge for which to hide.
+   *
+   * @since 8.0.0
+   * @default null
+   * @example "top"
+   */
+  inset?: SystemBarInsets;
+}
+
+export interface SystemBarsOverlayOptions {
+  enabled: boolean;
+}
+
+export interface SystemBarsPlugin {
+  /**
+   * Set the current style of the status bar.
+   *
+   * @since 8.0.0
+   */
+  setStyle(options: SystemBarsStyleOptions): Promise<void>;
+  /**
+   * Set the visibility of the status bar.
+   *
+   * @since 8.0.0
+   */
+  setHidden(options: SystemBarsHiddenOptions): Promise<void>;
+
+  setOverlay(options: SystemBarsOverlayOptions): Promise<void>;
+}
+
+export class SystemBarsPluginWeb extends WebPlugin implements SystemBarsPlugin {
+  async setStyle(): Promise<void> {
+    this.unavailable('not available for web');
+  }
+
+  async setHidden(): Promise<void> {
+    this.unavailable('not available for web');
+  }
+
+  async setOverlay(): Promise<void> {
+    this.unavailable('not available for web');
+  }
+}
+
+export const SystemBars = registerPlugin<SystemBarsPlugin>('SystemBars', {
+  web: () => new SystemBarsPluginWeb(),
+});
+
+/******** END SYSTEM BARS PLUGIN ********/
