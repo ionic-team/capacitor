@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
-
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -20,6 +19,7 @@ import java.util.Locale;
 
 @CapacitorPlugin
 public class SystemBars extends Plugin {
+
     static final String STYLE_LIGHT = "LIGHT";
     static final String STYLE_DARK = "DARK";
     static final String STYLE_DEFAULT = "DEFAULT";
@@ -40,10 +40,11 @@ public class SystemBars extends Plugin {
             setupSafeAreaInsets();
         }
 
-        getBridge().executeOnMainThread(() -> {
-            setStyle(style, "");
-            initOverlay();
-        });
+        getBridge()
+            .executeOnMainThread(() -> {
+                setStyle(style, "");
+                initOverlay();
+            });
     }
 
     private void initOverlay() {
