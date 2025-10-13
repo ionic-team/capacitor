@@ -17,8 +17,16 @@
  under the License.
  */
 
-#import <WebKit/WebKit.h>
+#import <Cordova/CDVAvailabilityDeprecated.h>
 
+@class WKProcessPool;
+
+/**
+ @Metadata {
+    @Available(Cordova, introduced: "6.2.0", deprecated: "8.0.0")
+ }
+ */
+CDV_DEPRECATED(8.0.0, "WebKit WKProcessPool is deprecated in iOS")
 @interface CDVWebViewProcessPoolFactory : NSObject
 @property (nonatomic, retain) WKProcessPool* sharedPool;
 

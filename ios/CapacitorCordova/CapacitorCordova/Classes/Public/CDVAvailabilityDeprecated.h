@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,38 +17,5 @@
  under the License.
  */
 
-#import <WebKit/WebKit.h>
-#import <Cordova/CDVWebViewProcessPoolFactory.h>
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-
-static CDVWebViewProcessPoolFactory *factory = nil;
-
-@implementation CDVWebViewProcessPoolFactory
-
-+ (instancetype)sharedFactory
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        factory = [[CDVWebViewProcessPoolFactory alloc] init];
-    });
-    
-    return factory;
-}
-
-- (instancetype)init
-{
-    if (self = [super init]) {
-        _sharedPool = [[WKProcessPool alloc] init];
-    }
-    return self;
-}
-
-- (WKProcessPool*) sharedProcessPool {
-    return _sharedPool;
-}
-@end
-
-#pragma clang diagnostic pop
+#define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
+#define CDV_DEPRECATED_WITH_REPLACEMENT(version, msg, repl) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg, repl)))
