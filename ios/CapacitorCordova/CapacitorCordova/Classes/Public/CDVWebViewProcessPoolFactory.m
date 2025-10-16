@@ -17,7 +17,8 @@
  under the License.
  */
 
-#import <WebKit/WebKit.h>
+@import Foundation;
+@import WebKit;
 #import <Cordova/CDVWebViewProcessPoolFactory.h>
 
 #pragma clang diagnostic push
