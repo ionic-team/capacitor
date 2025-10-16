@@ -16,11 +16,9 @@
  specific language governing permissions and limitations
  under the License.
  */
- 
+
 #import <WebKit/WebKit.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
-
-@class WKProcessPool;
 
 /**
  @Metadata {
