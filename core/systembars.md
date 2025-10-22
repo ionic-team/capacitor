@@ -6,7 +6,7 @@
 
 * [`setStyle(...)`](#setstyle)
 * [`setHidden(...)`](#sethidden)
-* [`setOverlay(...)`](#setoverlay)
+* [`setAnimation(...)`](#setanimation)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -50,15 +50,21 @@ Set the visibility of the status bar.
 --------------------
 
 
-### setOverlay(...)
+### setAnimation(...)
 
 ```typescript
-setOverlay(options: SystemBarsOverlayOptions) => Promise<void>
+setAnimation(options: SystemBarsAnimationOptions) => Promise<void>
 ```
 
-| Param         | Type                                                                          |
-| ------------- | ----------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#systembarsoverlayoptions">SystemBarsOverlayOptions</a></code> |
+Set the animation to use when showing / hiding the status bar.
+
+Only available on iOS.
+
+| Param         | Type                                                                              |
+| ------------- | --------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#systembarsanimationoptions">SystemBarsAnimationOptions</a></code> |
+
+**Since:** 8.0.0
 
 --------------------
 
@@ -68,25 +74,26 @@ setOverlay(options: SystemBarsOverlayOptions) => Promise<void>
 
 #### SystemBarsStyleOptions
 
-| Prop        | Type                                                                                                       | Description                                  | Default              | Since |
-| ----------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------- | -------------------- | ----- |
-| **`style`** | <code><a href="#systembarstyle">SystemBarStyle</a></code>                                                  | Style of the text of the status bar.         | <code>default</code> | 8.0.0 |
-| **`inset`** | <code><a href="#omit">Omit</a>&lt;<a href="#systembarinsets">SystemBarInsets</a>, 'left, right'&gt;</code> | The inset edge for which to apply the style. | <code>null</code>    | 8.0.0 |
+| Prop        | Type                                                                                                       | Description                                                             | Default              | Since |
+| ----------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------- | ----- |
+| **`style`** | <code><a href="#systembarstyle">SystemBarStyle</a></code>                                                  | Style of the text of the status bar.                                    | <code>default</code> | 8.0.0 |
+| **`inset`** | <code><a href="#omit">Omit</a>&lt;<a href="#systembarinsets">SystemBarInsets</a>, 'left, right'&gt;</code> | The inset edge for which to apply the style. Only available on Android. | <code>null</code>    | 8.0.0 |
 
 
 #### SystemBarsHiddenOptions
 
-| Prop         | Type                                                        | Description                       | Default           | Since |
-| ------------ | ----------------------------------------------------------- | --------------------------------- | ----------------- | ----- |
-| **`hidden`** | <code>boolean</code>                                        |                                   |                   |       |
-| **`inset`**  | <code><a href="#systembarinsets">SystemBarInsets</a></code> | The inset edge for which to hide. | <code>null</code> | 8.0.0 |
+| Prop            | Type                                                              | Description                                                                                         | Default             | Since |
+| --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
+| **`hidden`**    | <code>boolean</code>                                              |                                                                                                     |                     |       |
+| **`inset`**     | <code><a href="#systembarinsets">SystemBarInsets</a></code>       | The inset edge for which to hide. Only available on Android.                                        | <code>null</code>   | 8.0.0 |
+| **`animation`** | <code><a href="#systembaranimation">SystemBarAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
 
 
-#### SystemBarsOverlayOptions
+#### SystemBarsAnimationOptions
 
-| Prop          | Type                 |
-| ------------- | -------------------- |
-| **`enabled`** | <code>boolean</code> |
+| Prop            | Type                                                              | Description                                                                                         | Default             | Since |
+| --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
+| **`animation`** | <code><a href="#systembaranimation">SystemBarAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
 
 
 ### Type Aliases
@@ -118,6 +125,13 @@ From T, pick a set of properties whose keys are in the union K
 Available inset edges.
 
 <code>'top' | 'bottom' | 'left' | 'right'</code>
+
+
+#### SystemBarAnimation
+
+Available iOS status bar animations.
+
+<code>'FADE' | 'NONE'</code>
 
 
 ### Enums

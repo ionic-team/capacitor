@@ -526,6 +526,11 @@ export enum SystemBarStyle {
 }
 
 /**
+ * Available iOS status bar animations.
+ */
+export type SystemBarAnimation = 'FADE' | 'NONE';
+
+/**
  * Available inset edges.
  */
 export type SystemBarInsets = 'top' | 'bottom' | 'left' | 'right';
@@ -543,6 +548,8 @@ export interface SystemBarsStyleOptions {
   /**
    * The inset edge for which to apply the style.
    *
+   * Only available on Android.
+   *
    * @since 8.0.0
    * @default null
    * @example "top"
@@ -555,15 +562,37 @@ export interface SystemBarsHiddenOptions {
   /**
    * The inset edge for which to hide.
    *
+   * Only available on Android.
+   *
    * @since 8.0.0
    * @default null
    * @example "top"
    */
   inset?: SystemBarInsets;
+
+  /**
+   * The type of status bar animation used when showing or hiding.
+   *
+   * This option is only supported on iOS.
+   *
+   * @default 'FADE'
+   *
+   * @since 8.0.0
+   */
+  animation?: SystemBarAnimation;
 }
 
-export interface SystemBarsOverlayOptions {
-  enabled: boolean;
+export interface SystemBarsAnimationOptions {
+  /**
+   * The type of status bar animation used when showing or hiding.
+   *
+   * This option is only supported on iOS.
+   *
+   * @default 'FADE'
+   *
+   * @since 8.0.0
+   */
+  animation: SystemBarAnimation;
 }
 
 export interface SystemBarsPlugin {
@@ -579,8 +608,14 @@ export interface SystemBarsPlugin {
    * @since 8.0.0
    */
   setHidden(options: SystemBarsHiddenOptions): Promise<void>;
-
-  setOverlay(options: SystemBarsOverlayOptions): Promise<void>;
+  /**
+   * Set the animation to use when showing / hiding the status bar.
+   *
+   * Only available on iOS.
+   *
+   * @since 8.0.0
+   */
+  setAnimation(options: SystemBarsAnimationOptions): Promise<void>;
 }
 
 export class SystemBarsPluginWeb extends WebPlugin implements SystemBarsPlugin {
@@ -592,7 +627,7 @@ export class SystemBarsPluginWeb extends WebPlugin implements SystemBarsPlugin {
     this.unavailable('not available for web');
   }
 
-  async setOverlay(): Promise<void> {
+  async setAnimation(): Promise<void> {
     this.unavailable('not available for web');
   }
 }

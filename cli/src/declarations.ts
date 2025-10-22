@@ -735,5 +735,15 @@ export interface PluginsConfig {
      * If the system bars are hidden or not.
      */
     hidden?: boolean;
+
+    /**
+     * The type of status bar animation used when showing or hiding.
+     *
+     * This option is only supported on iOS.
+     *
+     * @default 'FADE'
+     *
+     */
+    animation?: 'FADE' | 'NONE';
   };
 }

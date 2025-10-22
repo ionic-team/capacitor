@@ -88,6 +88,11 @@ public class SystemBars extends Plugin {
             });
     }
 
+    @PluginMethod
+    public void setAnimation(final PluginCall call) {
+        call.resolve();
+    }
+
     private void setupSafeAreaInsets() {
         View decorView = getActivity().getWindow().getDecorView();
 

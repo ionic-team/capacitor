@@ -21,6 +21,7 @@ export {
   SystemBars,
   SystemBarInsets,
   SystemBarStyle,
+  SystemBarAnimation,
   CapacitorCookies,
   CapacitorHttp,
   WebView,
