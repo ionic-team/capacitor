@@ -727,8 +727,13 @@ export interface PluginsConfig {
     enableInsets?: boolean;
 
     /**
-     * Style of the text of the status bar.
+     * Style of the text / icons of the system bars.
      */
     style?: string;
+
+    /**
+     * If the system bars are hidden or not.
+     */
+    hidden?: boolean;
   };
 }

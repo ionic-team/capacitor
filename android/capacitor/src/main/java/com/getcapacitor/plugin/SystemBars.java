@@ -2,8 +2,6 @@ package com.getcapacitor.plugin;
 
 import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.os.Build;
 import android.view.View;
 import android.view.Window;
 import androidx.core.graphics.Insets;
@@ -12,7 +10,6 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.webkit.WebViewCompat;
-import com.getcapacitor.Logger;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -54,6 +51,7 @@ public class SystemBars extends Plugin {
     private void initSystemBars() {
         boolean enableInsets = getConfig().getBoolean("enableInsets", true);
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase();
+        boolean hidden = getConfig().getBoolean("hidden", false);
 
         if (enableInsets) {
             setupSafeAreaInsets();
@@ -62,6 +60,7 @@ public class SystemBars extends Plugin {
         getBridge()
             .executeOnMainThread(() -> {
                 setStyle(style, "");
+                setHidden(hidden, "");
             });
     }
 
