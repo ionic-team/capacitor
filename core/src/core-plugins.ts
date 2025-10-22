@@ -500,7 +500,7 @@ export const CapacitorHttp = registerPlugin<CapacitorHttpPlugin>('CapacitorHttp'
 /**
  * Available status bar styles.
  */
-export enum SystemBarStyle {
+export enum SystemBarsStyle {
   /**
    * Light system bar content on a dark background.
    *
@@ -528,14 +528,14 @@ export enum SystemBarStyle {
 /**
  * Available iOS status bar animations.
  */
-export type SystemBarAnimation = 'FADE' | 'NONE';
+export type SystemBarsAnimation = 'FADE' | 'NONE';
 
 /**
  * Available inset edges.
  */
-export type SystemBarInsets = 'top' | 'bottom' | 'left' | 'right';
+export type SystemBarsInsets = 'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT';
 
-export interface SystemBarStyleOptions {
+export interface SystemBarsStyleOptions {
   /**
    * Style of the text and icons of the system bars.
    *
@@ -543,7 +543,7 @@ export interface SystemBarStyleOptions {
    * @default default
    * @example "DARK"
    */
-  style: SystemBarStyle;
+  style: SystemBarsStyle;
 
   /**
    * The inset edge for which to apply the style.
@@ -552,12 +552,12 @@ export interface SystemBarStyleOptions {
    *
    * @since 8.0.0
    * @default null
-   * @example "top"
+   * @example "TOP"
    */
-  inset?: Omit<SystemBarInsets, 'left, right'>;
+  inset?: Omit<SystemBarsInsets, 'LEFT, RIGHT'>;
 }
 
-export interface SystemBarVisibilityOptions {
+export interface SystemBarsVisibilityOptions {
   /**
    * The inset edge for which to hide.
    *
@@ -565,9 +565,9 @@ export interface SystemBarVisibilityOptions {
    *
    * @since 8.0.0
    * @default null
-   * @example "top"
+   * @example "TOP"
    */
-  inset?: SystemBarInsets;
+  inset?: SystemBarsInsets;
 
   /**
    * The type of status bar animation used when showing or hiding.
@@ -578,7 +578,7 @@ export interface SystemBarVisibilityOptions {
    *
    * @since 8.0.0
    */
-  animation?: SystemBarAnimation;
+  animation?: SystemBarsAnimation;
 }
 
 export interface SystemBarsAnimationOptions {
@@ -591,7 +591,7 @@ export interface SystemBarsAnimationOptions {
    *
    * @since 8.0.0
    */
-  animation: SystemBarAnimation;
+  animation: SystemBarsAnimation;
 }
 
 export interface SystemBarsPlugin {
@@ -600,21 +600,21 @@ export interface SystemBarsPlugin {
    *
    * @since 8.0.0
    */
-  setStyle(options: SystemBarStyleOptions): Promise<void>;
+  setStyle(options: SystemBarsStyleOptions): Promise<void>;
 
   /**
-   * Show the status / system bars.
+   * Show the system bars.
    *
    * @since 8.0.0
    */
-  show(options: SystemBarVisibilityOptions): Promise<void>;
+  show(options: SystemBarsVisibilityOptions): Promise<void>;
 
   /**
-   * Hide the status / system bars.
+   * Hide the system bars.
    *
    * @since 8.0.0
    */
-  hide(options: SystemBarVisibilityOptions): Promise<void>;
+  hide(options: SystemBarsVisibilityOptions): Promise<void>;
 
   /**
    * Set the animation to use when showing / hiding the status bar.

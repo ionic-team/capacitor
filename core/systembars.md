@@ -20,14 +20,14 @@
 ### setStyle(...)
 
 ```typescript
-setStyle(options: SystemBarStyleOptions) => Promise<void>
+setStyle(options: SystemBarsStyleOptions) => Promise<void>
 ```
 
 Set the current style of the system bars.
 
-| Param         | Type                                                                    |
-| ------------- | ----------------------------------------------------------------------- |
-| **`options`** | <code><a href="#systembarstyleoptions">SystemBarStyleOptions</a></code> |
+| Param         | Type                                                                      |
+| ------------- | ------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#systembarsstyleoptions">SystemBarsStyleOptions</a></code> |
 
 **Since:** 8.0.0
 
@@ -37,14 +37,14 @@ Set the current style of the system bars.
 ### show(...)
 
 ```typescript
-show(options: SystemBarVisibilityOptions) => Promise<void>
+show(options: SystemBarsVisibilityOptions) => Promise<void>
 ```
 
-Show the status / system bars.
+Show the system bars.
 
-| Param         | Type                                                                              |
-| ------------- | --------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#systembarvisibilityoptions">SystemBarVisibilityOptions</a></code> |
+| Param         | Type                                                                                |
+| ------------- | ----------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#systembarsvisibilityoptions">SystemBarsVisibilityOptions</a></code> |
 
 **Since:** 8.0.0
 
@@ -54,14 +54,14 @@ Show the status / system bars.
 ### hide(...)
 
 ```typescript
-hide(options: SystemBarVisibilityOptions) => Promise<void>
+hide(options: SystemBarsVisibilityOptions) => Promise<void>
 ```
 
-Hide the status / system bars.
+Hide the system bars.
 
-| Param         | Type                                                                              |
-| ------------- | --------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#systembarvisibilityoptions">SystemBarVisibilityOptions</a></code> |
+| Param         | Type                                                                                |
+| ------------- | ----------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#systembarsvisibilityoptions">SystemBarsVisibilityOptions</a></code> |
 
 **Since:** 8.0.0
 
@@ -90,27 +90,27 @@ Only available on iOS.
 ### Interfaces
 
 
-#### SystemBarStyleOptions
+#### SystemBarsStyleOptions
 
-| Prop        | Type                                                                                                       | Description                                                             | Default              | Since |
-| ----------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------- | ----- |
-| **`style`** | <code><a href="#systembarstyle">SystemBarStyle</a></code>                                                  | Style of the text and icons of the system bars.                         | <code>default</code> | 8.0.0 |
-| **`inset`** | <code><a href="#omit">Omit</a>&lt;<a href="#systembarinsets">SystemBarInsets</a>, 'left, right'&gt;</code> | The inset edge for which to apply the style. Only available on Android. | <code>null</code>    | 8.0.0 |
+| Prop        | Type                                                                                                         | Description                                                             | Default              | Since |
+| ----------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | -------------------- | ----- |
+| **`style`** | <code><a href="#systembarsstyle">SystemBarsStyle</a></code>                                                  | Style of the text and icons of the system bars.                         | <code>default</code> | 8.0.0 |
+| **`inset`** | <code><a href="#omit">Omit</a>&lt;<a href="#systembarsinsets">SystemBarsInsets</a>, 'LEFT, RIGHT'&gt;</code> | The inset edge for which to apply the style. Only available on Android. | <code>null</code>    | 8.0.0 |
 
 
-#### SystemBarVisibilityOptions
+#### SystemBarsVisibilityOptions
 
-| Prop            | Type                                                              | Description                                                                                         | Default             | Since |
-| --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
-| **`inset`**     | <code><a href="#systembarinsets">SystemBarInsets</a></code>       | The inset edge for which to hide. Only available on Android.                                        | <code>null</code>   | 8.0.0 |
-| **`animation`** | <code><a href="#systembaranimation">SystemBarAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
+| Prop            | Type                                                                | Description                                                                                         | Default             | Since |
+| --------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
+| **`inset`**     | <code><a href="#systembarsinsets">SystemBarsInsets</a></code>       | The inset edge for which to hide. Only available on Android.                                        | <code>null</code>   | 8.0.0 |
+| **`animation`** | <code><a href="#systembarsanimation">SystemBarsAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
 
 
 #### SystemBarsAnimationOptions
 
-| Prop            | Type                                                              | Description                                                                                         | Default             | Since |
-| --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
-| **`animation`** | <code><a href="#systembaranimation">SystemBarAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
+| Prop            | Type                                                                | Description                                                                                         | Default             | Since |
+| --------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
+| **`animation`** | <code><a href="#systembarsanimation">SystemBarsAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
 
 
 ### Type Aliases
@@ -137,14 +137,14 @@ From T, pick a set of properties whose keys are in the union K
 <code>T extends U ? never : T</code>
 
 
-#### SystemBarInsets
+#### SystemBarsInsets
 
 Available inset edges.
 
-<code>'top' | 'bottom' | 'left' | 'right'</code>
+<code>'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT'</code>
 
 
-#### SystemBarAnimation
+#### SystemBarsAnimation
 
 Available iOS status bar animations.
 
@@ -154,7 +154,7 @@ Available iOS status bar animations.
 ### Enums
 
 
-#### SystemBarStyle
+#### SystemBarsStyle
 
 | Members       | Value                  | Description                                                                                                                                                                                                    | Since |
 | ------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |

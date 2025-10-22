@@ -720,14 +720,14 @@ export interface PluginsConfig {
     /**
      * Enables the injection of device css insets into the webview.
      *
-     * Only available on Android.
+     * This option is only supported on Android.
      *
      * @default true
      */
     enableInsets?: boolean;
 
     /**
-     * Style of the text / icons of the system bars.
+     * Style of the text and icons of the system bars.
      */
     style?: string;
 

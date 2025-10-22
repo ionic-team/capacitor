@@ -18,13 +18,17 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     
     @objc override public func load() {
-        let style = getConfig().getString("style", Style.defaultStyle.rawValue) ?? Style.defaultStyle.rawValue
         let hidden = getConfig().getBoolean("hidden", false)
-        let animation = getConfig().getString("animation", "FADE") ?? "FADE"
         
-        setStyle(style: style)
+        if let style = getConfig().getString("style") {
+            setStyle(style: style)
+        }
+        
+        if let animation = getConfig().getString("animation") {
+            setAnimation(animation: animation)
+        }
+        
         setHidden(hidden: hidden)
-        setAnimation(animation: animation)
     }
 
     @objc func setStyle(_ call: CAPPluginCall) {

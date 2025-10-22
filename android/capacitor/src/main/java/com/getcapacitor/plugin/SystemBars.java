@@ -24,8 +24,8 @@ public class SystemBars extends Plugin {
     static final String STYLE_LIGHT = "LIGHT";
     static final String STYLE_DARK = "DARK";
     static final String STYLE_DEFAULT = "DEFAULT";
-    static final String INSET_TOP = "top";
-    static final String INSET_BOTTOM = "bottom";
+    static final String INSET_TOP = "TOP";
+    static final String INSET_BOTTOM = "BOTTOM";
 
     @Override
     public void load() {
@@ -66,7 +66,7 @@ public class SystemBars extends Plugin {
 
     @PluginMethod
     public void setStyle(final PluginCall call) {
-        String inset = call.getString("inset", "").toLowerCase(Locale.US);
+        String inset = call.getString("inset", "").toUpperCase(Locale.US);
         String style = call.getString("style", STYLE_DEFAULT);
 
         getBridge()
@@ -78,7 +78,7 @@ public class SystemBars extends Plugin {
 
     @PluginMethod
     public void show(final PluginCall call) {
-        String inset = call.getString("inset", "").toLowerCase(Locale.US);
+        String inset = call.getString("inset", "").toUpperCase(Locale.US);
 
         getBridge()
                 .executeOnMainThread(() -> {
@@ -89,7 +89,7 @@ public class SystemBars extends Plugin {
 
     @PluginMethod
     public void hide(final PluginCall call) {
-        String inset = call.getString("inset", "").toLowerCase(Locale.US);
+        String inset = call.getString("inset", "").toUpperCase(Locale.US);
 
         getBridge()
                 .executeOnMainThread(() -> {

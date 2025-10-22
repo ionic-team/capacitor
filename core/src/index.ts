@@ -19,9 +19,9 @@ export { WebPlugin, ListenerCallback } from './web-plugin';
 // Core Plugins APIs
 export {
   SystemBars,
-  SystemBarInsets,
-  SystemBarStyle,
-  SystemBarAnimation,
+  SystemBarsInsets,
+  SystemBarsStyle,
+  SystemBarsAnimation,
   CapacitorCookies,
   CapacitorHttp,
   WebView,
@@ -40,8 +40,8 @@ export type {
   HttpResponseType,
   WebViewPath,
   WebViewPlugin,
-  SystemBarVisibilityOptions,
-  SystemBarStyleOptions,
+  SystemBarsVisibilityOptions,
+  SystemBarsStyleOptions,
 } from './core-plugins';
 
 // Constants
