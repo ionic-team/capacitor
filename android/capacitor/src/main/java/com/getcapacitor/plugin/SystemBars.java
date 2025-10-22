@@ -43,25 +43,7 @@ public class SystemBars extends Plugin {
         getBridge()
             .executeOnMainThread(() -> {
                 setStyle(style, "");
-                initOverlay();
             });
-    }
-
-    private void initOverlay() {
-        if (Build.VERSION.SDK_INT < 35) {
-            Window window = getActivity().getWindow();
-            View decorView = window.getDecorView();
-
-            int uiOptions = decorView.getSystemUiVisibility();
-            int color;
-
-            uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-            color = Color.TRANSPARENT;
-
-            window.getDecorView().setSystemUiVisibility(uiOptions);
-            window.setStatusBarColor(color);
-            window.setNavigationBarColor(color);
-        }
     }
 
     @PluginMethod
