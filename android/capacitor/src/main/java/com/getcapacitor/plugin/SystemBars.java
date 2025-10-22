@@ -77,15 +77,25 @@ public class SystemBars extends Plugin {
     }
 
     @PluginMethod
-    public void setHidden(final PluginCall call) {
-        boolean hidden = call.getBoolean("hidden", false);
+    public void show(final PluginCall call) {
         String inset = call.getString("inset", "").toLowerCase(Locale.US);
 
         getBridge()
-            .executeOnMainThread(() -> {
-                setHidden(hidden, inset);
-                call.resolve();
-            });
+                .executeOnMainThread(() -> {
+                    setHidden(false, inset);
+                    call.resolve();
+                });
+    }
+
+    @PluginMethod
+    public void hide(final PluginCall call) {
+        String inset = call.getString("inset", "").toLowerCase(Locale.US);
+
+        getBridge()
+                .executeOnMainThread(() -> {
+                    setHidden(true, inset);
+                    call.resolve();
+                });
     }
 
     @PluginMethod

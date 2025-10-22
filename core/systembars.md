@@ -5,7 +5,8 @@
 <docgen-index>
 
 * [`setStyle(...)`](#setstyle)
-* [`setHidden(...)`](#sethidden)
+* [`show(...)`](#show)
+* [`hide(...)`](#hide)
 * [`setAnimation(...)`](#setanimation)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
@@ -19,31 +20,48 @@
 ### setStyle(...)
 
 ```typescript
-setStyle(options: SystemBarsStyleOptions) => Promise<void>
+setStyle(options: SystemBarStyleOptions) => Promise<void>
 ```
 
-Set the current style of the status bar.
+Set the current style of the system bars.
 
-| Param         | Type                                                                      |
-| ------------- | ------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#systembarsstyleoptions">SystemBarsStyleOptions</a></code> |
+| Param         | Type                                                                    |
+| ------------- | ----------------------------------------------------------------------- |
+| **`options`** | <code><a href="#systembarstyleoptions">SystemBarStyleOptions</a></code> |
 
 **Since:** 8.0.0
 
 --------------------
 
 
-### setHidden(...)
+### show(...)
 
 ```typescript
-setHidden(options: SystemBarsHiddenOptions) => Promise<void>
+show(options: SystemBarVisibilityOptions) => Promise<void>
 ```
 
-Set the visibility of the status bar.
+Show the status / system bars.
 
-| Param         | Type                                                                        |
-| ------------- | --------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#systembarshiddenoptions">SystemBarsHiddenOptions</a></code> |
+| Param         | Type                                                                              |
+| ------------- | --------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#systembarvisibilityoptions">SystemBarVisibilityOptions</a></code> |
+
+**Since:** 8.0.0
+
+--------------------
+
+
+### hide(...)
+
+```typescript
+hide(options: SystemBarVisibilityOptions) => Promise<void>
+```
+
+Hide the status / system bars.
+
+| Param         | Type                                                                              |
+| ------------- | --------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#systembarvisibilityoptions">SystemBarVisibilityOptions</a></code> |
 
 **Since:** 8.0.0
 
@@ -72,19 +90,18 @@ Only available on iOS.
 ### Interfaces
 
 
-#### SystemBarsStyleOptions
+#### SystemBarStyleOptions
 
 | Prop        | Type                                                                                                       | Description                                                             | Default              | Since |
 | ----------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------- | ----- |
-| **`style`** | <code><a href="#systembarstyle">SystemBarStyle</a></code>                                                  | Style of the text of the status bar.                                    | <code>default</code> | 8.0.0 |
+| **`style`** | <code><a href="#systembarstyle">SystemBarStyle</a></code>                                                  | Style of the text and icons of the system bars.                         | <code>default</code> | 8.0.0 |
 | **`inset`** | <code><a href="#omit">Omit</a>&lt;<a href="#systembarinsets">SystemBarInsets</a>, 'left, right'&gt;</code> | The inset edge for which to apply the style. Only available on Android. | <code>null</code>    | 8.0.0 |
 
 
-#### SystemBarsHiddenOptions
+#### SystemBarVisibilityOptions
 
 | Prop            | Type                                                              | Description                                                                                         | Default             | Since |
 | --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
-| **`hidden`**    | <code>boolean</code>                                              |                                                                                                     |                     |       |
 | **`inset`**     | <code><a href="#systembarinsets">SystemBarInsets</a></code>       | The inset edge for which to hide. Only available on Android.                                        | <code>null</code>   | 8.0.0 |
 | **`animation`** | <code><a href="#systembaranimation">SystemBarAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
 

@@ -6,8 +6,9 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
     public let jsName = "SystemBars"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "setStyle", returnType: CAPPluginReturnNone),
-        CAPPluginMethod(name: "setHidden", returnType: CAPPluginReturnNone),
-        CAPPluginMethod(name: "setAnimation", returnType: CAPPluginReturnNone)
+        CAPPluginMethod(name: "setAnimation", returnType: CAPPluginReturnNone),
+        CAPPluginMethod(name: "show", returnType: CAPPluginReturnNone),
+        CAPPluginMethod(name: "hide", returnType: CAPPluginReturnNone)
     ]
 
     enum Style: String {
@@ -32,9 +33,22 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve()
     }
 
-    @objc func setHidden(_ call: CAPPluginCall) {
-        let hidden = call.getBool("hidden") ?? false
-        setHidden(hidden: hidden)
+    @objc func show(_ call: CAPPluginCall) {
+        if let animation = call.getString("animation") {
+            setAnimation(animation: animation)
+        }
+        
+        setHidden(hidden: false)
+        
+        call.resolve()
+    }
+    
+    @objc func hide(_ call: CAPPluginCall) {
+        if let animation = call.getString("animation") {
+            setAnimation(animation: animation)
+        }
+        
+        setHidden(hidden: true)
         
         call.resolve()
     }

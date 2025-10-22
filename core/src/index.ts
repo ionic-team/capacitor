@@ -40,8 +40,8 @@ export type {
   HttpResponseType,
   WebViewPath,
   WebViewPlugin,
-  SystemBarsHiddenOptions,
-  SystemBarsStyleOptions,
+  SystemBarVisibilityOptions,
+  SystemBarStyleOptions,
 } from './core-plugins';
 
 // Constants

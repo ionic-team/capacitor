@@ -535,9 +535,9 @@ export type SystemBarAnimation = 'FADE' | 'NONE';
  */
 export type SystemBarInsets = 'top' | 'bottom' | 'left' | 'right';
 
-export interface SystemBarsStyleOptions {
+export interface SystemBarStyleOptions {
   /**
-   * Style of the text of the status bar.
+   * Style of the text and icons of the system bars.
    *
    * @since 8.0.0
    * @default default
@@ -557,8 +557,7 @@ export interface SystemBarsStyleOptions {
   inset?: Omit<SystemBarInsets, 'left, right'>;
 }
 
-export interface SystemBarsHiddenOptions {
-  hidden: boolean;
+export interface SystemBarVisibilityOptions {
   /**
    * The inset edge for which to hide.
    *
@@ -597,17 +596,26 @@ export interface SystemBarsAnimationOptions {
 
 export interface SystemBarsPlugin {
   /**
-   * Set the current style of the status bar.
+   * Set the current style of the system bars.
    *
    * @since 8.0.0
    */
-  setStyle(options: SystemBarsStyleOptions): Promise<void>;
+  setStyle(options: SystemBarStyleOptions): Promise<void>;
+
   /**
-   * Set the visibility of the status bar.
+   * Show the status / system bars.
    *
    * @since 8.0.0
    */
-  setHidden(options: SystemBarsHiddenOptions): Promise<void>;
+  show(options: SystemBarVisibilityOptions): Promise<void>;
+
+  /**
+   * Hide the status / system bars.
+   *
+   * @since 8.0.0
+   */
+  hide(options: SystemBarVisibilityOptions): Promise<void>;
+
   /**
    * Set the animation to use when showing / hiding the status bar.
    *
@@ -623,11 +631,15 @@ export class SystemBarsPluginWeb extends WebPlugin implements SystemBarsPlugin {
     this.unavailable('not available for web');
   }
 
-  async setHidden(): Promise<void> {
+  async setAnimation(): Promise<void> {
     this.unavailable('not available for web');
   }
 
-  async setAnimation(): Promise<void> {
+  async show(): Promise<void> {
+    this.unavailable('not available for web');
+  }
+
+  async hide(): Promise<void> {
     this.unavailable('not available for web');
   }
 }
