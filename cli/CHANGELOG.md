@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.4.4](https://github.com/ionic-team/capacitor/compare/7.4.3...7.4.4) (2025-10-22)
+
+### Bug Fixes
+
+- **cli:** change SPM incompatible plugin message ([#8129](https://github.com/ionic-team/capacitor/issues/8129)) ([#8130](https://github.com/ionic-team/capacitor/issues/8130)) ([bbaa8fa](https://github.com/ionic-team/capacitor/commit/bbaa8fa89c5b1b470cf00926353a2e0a751665ca))
+- **cli:** Don't exclude Cordova plugins from SPM management ([#8140](https://github.com/ionic-team/capacitor/issues/8140)) ([#8142](https://github.com/ionic-team/capacitor/issues/8142)) ([e871851](https://github.com/ionic-team/capacitor/commit/e871851efac3bde84ddfa69c792709217f71a87c))
+
 ## [7.4.3](https://github.com/ionic-team/capacitor/compare/7.4.2...7.4.3) (2025-08-20)
 
 **Note:** Version bump only for package @capacitor/cli

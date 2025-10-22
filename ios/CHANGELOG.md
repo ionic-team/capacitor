@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.4.4](https://github.com/ionic-team/capacitor/compare/7.4.3...7.4.4) (2025-10-22)
+
+### Bug Fixes
+
+- **ios:** also call bridge.reset() on webViewWebContentProcessDidTerminate ([#8150](https://github.com/ionic-team/capacitor/issues/8150)) ([5287a74](https://github.com/ionic-team/capacitor/commit/5287a74bce41cf7dc2ffcd46ae20f285014317cb))
+
 ## [7.4.3](https://github.com/ionic-team/capacitor/compare/7.4.2...7.4.3) (2025-08-20)
 
 ### Bug Fixes
