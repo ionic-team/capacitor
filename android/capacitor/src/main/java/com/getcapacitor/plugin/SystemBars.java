@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin;
 
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
@@ -10,12 +11,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.webkit.WebViewCompat;
+
 import com.getcapacitor.Logger;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @CapacitorPlugin
 public class SystemBars extends Plugin {
@@ -30,6 +35,21 @@ public class SystemBars extends Plugin {
     public void load() {
         super.load();
         initSystemBars();
+    }
+
+    private boolean hasFixedWebView() {
+        PackageInfo packageInfo = WebViewCompat.getCurrentWebViewPackage(bridge.getContext());
+        Pattern pattern = Pattern.compile("(\\d+)");
+        Matcher matcher = pattern.matcher(packageInfo.versionName);
+
+        if (!matcher.find()) {
+            return false;
+        }
+
+        String majorVersionStr = matcher.group(0);
+        int majorVersion = Integer.parseInt(majorVersionStr);
+
+        return majorVersion >= 140;
     }
 
     private void initSystemBars() {
@@ -74,25 +94,14 @@ public class SystemBars extends Plugin {
         View decorView = getActivity().getWindow().getDecorView();
 
         ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                // Android 15+ supports edge to edge
-                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                Insets displayCutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
+            if (!this.hasFixedWebView()) {
+                Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                injectSafeAreaCSS(safeArea.top, safeArea.right, safeArea.bottom, safeArea.left);
 
-                int top = Math.max(systemBars.top, displayCutout.top);
-                int bottom = Math.max(systemBars.bottom, displayCutout.bottom);
-                int left = Math.max(systemBars.left, displayCutout.left);
-                int right = Math.max(systemBars.right, displayCutout.right);
-
-                injectSafeAreaCSS(top, right, bottom, left);
-            } else {
-                Insets statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars());
-                Insets navBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
-
-                injectSafeAreaCSS(statusBarInsets.top, statusBarInsets.right, navBarInsets.bottom, statusBarInsets.left);
+                return WindowInsetsCompat.CONSUMED;
             }
 
-            return WindowInsetsCompat.CONSUMED;
+            return insets;
         });
     }
 
@@ -126,8 +135,6 @@ public class SystemBars extends Plugin {
                     );
 
                     bridge.getWebView().evaluateJavascript(script, null);
-
-                    Logger.info("Safe area insets injected (edge-to-edge: enabled)");
                 }
             });
     }
