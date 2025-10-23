@@ -732,7 +732,7 @@ export interface PluginsConfig {
     style?: string;
 
     /**
-     * If the system bars are hidden or not.
+     * Hide the system bars on start.
      */
     hidden?: boolean;
 

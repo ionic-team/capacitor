@@ -1,5 +1,113 @@
 # SystemBars
 
+The SystemBars API Provides methods for configuring the style and visibility of the device System Bars / Status Bar.  This API differs from the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin in that is only intended to support edge to edge use cases moving forward.  For legacy functionality, use the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin.
+
+## iOS Note
+
+This plugin requires "View controller-based status bar appearance"
+(`UIViewControllerBasedStatusBarAppearance`) set to `YES` in `Info.plist`. Read
+about [Configuring iOS](https://capacitorjs.com/docs/ios/configuration) for
+help.
+
+The status bar visibility defaults to visible and the style defaults to
+`Style.Default`. You can change these defaults by adding
+`UIStatusBarHidden` and/or `UIStatusBarStyle` in `Info.plist`.
+
+## Android Note
+
+Due to a [bug](https://issues.chromium.org/issues/40699457) in some older versions of Android WebView (< 140), correct safe area values are not available via the `safe-area-inset-x` CSS `env` variables.  This plugin will inject the correct inset values into CSS variables named `--safe-area-inset-x` that you can use as a fallback in your frontend syles:
+
+```css
+html {
+  padding-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  padding-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  padding-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+}
+```
+
+To disable the inset injection, set the configuration setting `enableInsets` to `false`.
+
+## Example
+
+```typescript
+import { SystemBars, SystemBarsStyle } from '@capacitor/core';
+
+const setSystemBarStyleDark = async () => {
+  await SystemBars.setStyle({ style: SystemBarsStyle.Dark });
+};
+
+const setSystemBarStyleLight = async () => {
+  await SystemBars.setStyle({ style: SystemBarsStyle.Light });
+};
+
+const hideSystemBars = async () => {
+  await SystemBars.hide();
+};
+
+const showSystemBars = async () => {
+  await SystemBars.show();
+};
+
+// Hide the bottom navigation bar, only on Android
+const hideNavigationBar = async () => {
+  await SystemBars.hide({
+    inset: "BOTTOM"
+  })
+}
+
+// Set the Status Bar animation, only on iOS
+const setStatusBarAnimation = async () => {
+  await SystemBars.setAnimation({ animation: "NONE" });
+}
+
+````
+
+## Configuration
+| Prop          | Type                 | Description                                                               | Default            |
+| ------------- | -------------------- | ------------------------------------------------------------------------- | ------------------ |
+| **`enableInsets`** | <code>boolean</code> | Enables the injection of device css insets into the webview.  This option is only supported on Android. | <code>true</code> |
+| **`style`** | <code>string</code> | Style of the text and icons of the system bars. | <code>DEFAULT</code> |
+| **`hidden`** | <code>boolean</code> | Hide the system bars on start. | <code>false</code> |
+| **`animation`** | <code>string</code> | The type of status bar animation used when showing or hiding.  This option is only supported on iOS. | <code>FADE</code> |
+
+
+### Example Configuration
+
+In `capacitor.config.json`:
+
+```json
+{
+  "plugins": {
+    "SystemBars": {
+      "enableInsets": false,
+      "style": "DARK",
+      "hidden": false,
+      "animation": "NONE"
+    }
+  }
+}
+```
+
+In `capacitor.config.ts`:
+
+```ts
+import { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  plugins: {
+    SystemBars: {
+      enableInsets: true,
+      style: "DARK",
+      hidden: false,
+      animation: "NONE"
+    },
+  },
+};
+
+export default config;
+```
+
 ## API
 
 <docgen-index>
@@ -127,7 +235,9 @@ Construct a type with the properties of T except for those in type K.
 
 From T, pick a set of properties whose keys are in the union K
 
-<code>{ [P in K]: T[P]; }</code>
+<code>{
+ [P in K]: T[P];
+ }</code>
 
 
 #### Exclude
