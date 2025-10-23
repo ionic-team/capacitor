@@ -710,4 +710,40 @@ export interface PluginsConfig {
      */
     enabled?: boolean;
   };
+
+  /**
+   * System Bars plugin configuration
+   *
+   * @since 8.0.0
+   */
+  SystemBars?: {
+    /**
+     * Enables the injection of device css insets into the webview.
+     *
+     * This option is only supported on Android.
+     *
+     * @default true
+     */
+    enableInsets?: boolean;
+
+    /**
+     * The style of the text and icons of the system bars.
+     */
+    style?: string;
+
+    /**
+     * Hide the system bars on start.
+     */
+    hidden?: boolean;
+
+    /**
+     * The type of status bar animation used when showing or hiding.
+     *
+     * This option is only supported on iOS.
+     *
+     * @default 'FADE'
+     *
+     */
+    animation?: 'FADE' | 'NONE';
+  };
 }

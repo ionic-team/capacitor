@@ -27,7 +27,7 @@
     "build": "npm run clean && npm run docgen && npm run transpile && npm run rollup",
     "build:nativebridge": "tsc native-bridge.ts --target es2017 --moduleResolution node --outDir build && rollup --config rollup.bridge.config.js",
     "clean": "rimraf dist",
-    "docgen": "docgen --api CapacitorCookiesPlugin --output-readme cookies.md && docgen --api CapacitorHttpPlugin --output-readme http.md",
+    "docgen": "docgen --api CapacitorCookiesPlugin --output-readme cookies.md && docgen --api CapacitorHttpPlugin --output-readme http.md && docgen --api SystemBarsPlugin --output-readme systembars.md",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
     "transpile": "tsc",
