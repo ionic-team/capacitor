@@ -10,7 +10,7 @@ public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
         NotificationCenter.default.post(name: .capacitorOpenURL, object: [
             "url": url,
             "options": options
-        ])
+        ] as [String : Any])
         NotificationCenter.default.post(name: NSNotification.Name.CDVPluginHandleOpenURL, object: url)
         lastURL = url
         return true
