@@ -727,7 +727,7 @@ export interface PluginsConfig {
     enableInsets?: boolean;
 
     /**
-     * Style of the text and icons of the system bars.
+     * The style of the text and icons of the system bars.
      */
     style?: string;
 

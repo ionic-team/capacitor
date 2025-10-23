@@ -526,12 +526,12 @@ export enum SystemBarsStyle {
 }
 
 /**
- * Available iOS status bar animations.
+ * Available status bar animations.  iOS only.
  */
 export type SystemBarsAnimation = 'FADE' | 'NONE';
 
 /**
- * Available inset edges.
+ * Available inset edges.  Android only.
  */
 export type SystemBarsInsets = 'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT';
 

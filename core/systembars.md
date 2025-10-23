@@ -1,6 +1,6 @@
 # SystemBars
 
-The SystemBars API Provides methods for configuring the style and visibility of the device System Bars / Status Bar.  This API differs from the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin in that is only intended to support edge to edge use cases moving forward.  For legacy functionality, use the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin.
+The SystemBars API provides methods for configuring the style and visibility of the device System Bars / Status Bar.  This API differs from the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin in that it is only intended to support modern edge to edge use cases moving forward.  For legacy functionality, use the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin.
 
 ## iOS Note
 
@@ -15,7 +15,7 @@ The status bar visibility defaults to visible and the style defaults to
 
 ## Android Note
 
-Due to a [bug](https://issues.chromium.org/issues/40699457) in some older versions of Android WebView (< 140), correct safe area values are not available via the `safe-area-inset-x` CSS `env` variables.  This plugin will inject the correct inset values into CSS variables named `--safe-area-inset-x` that you can use as a fallback in your frontend syles:
+Due to a [bug](https://issues.chromium.org/issues/40699457) in some older versions of Android WebView (< 140), correct safe area values are not available via the `safe-area-inset-x` CSS `env` variables.  This plugin will inject the correct inset values into a new CSS variable(s) named `--safe-area-inset-x` that you can use as a fallback in your frontend styles:
 
 ```css
 html {
@@ -26,7 +26,7 @@ html {
 }
 ```
 
-To disable the inset injection, set the configuration setting `enableInsets` to `false`.
+To disable the inset variable injections, set the configuration setting `enableInsets` to `false`.
 
 ## Example
 
@@ -67,7 +67,7 @@ const setStatusBarAnimation = async () => {
 | Prop          | Type                 | Description                                                               | Default            |
 | ------------- | -------------------- | ------------------------------------------------------------------------- | ------------------ |
 | **`enableInsets`** | <code>boolean</code> | Enables the injection of device css insets into the webview.  This option is only supported on Android. | <code>true</code> |
-| **`style`** | <code>string</code> | Style of the text and icons of the system bars. | <code>DEFAULT</code> |
+| **`style`** | <code>string</code> | The style of the text and icons of the system bars. | <code>DEFAULT</code> |
 | **`hidden`** | <code>boolean</code> | Hide the system bars on start. | <code>false</code> |
 | **`animation`** | <code>string</code> | The type of status bar animation used when showing or hiding.  This option is only supported on iOS. | <code>FADE</code> |
 
@@ -235,9 +235,7 @@ Construct a type with the properties of T except for those in type K.
 
 From T, pick a set of properties whose keys are in the union K
 
-<code>{
- [P in K]: T[P];
- }</code>
+<code>{ [P in K]: T[P]; }</code>
 
 
 #### Exclude
@@ -249,14 +247,14 @@ From T, pick a set of properties whose keys are in the union K
 
 #### SystemBarsInsets
 
-Available inset edges.
+Available inset edges.  Android only.
 
 <code>'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT'</code>
 
 
 #### SystemBarsAnimation
 
-Available iOS status bar animations.
+Available status bar animations.  iOS only.
 
 <code>'FADE' | 'NONE'</code>
 
