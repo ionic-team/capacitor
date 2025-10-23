@@ -18,7 +18,7 @@ buildscript {
         google()
         mavenCentral()
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
@@ -41,7 +41,7 @@ if (System.getenv("CAP_PUBLISH") == "true") {
 }
 
 android {
-    namespace "com.getcapacitor.android"
+    namespace = "com.getcapacitor.android"
     compileSdk project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 36
     defaultConfig {
         minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 24
@@ -59,9 +59,9 @@ android {
     }
     lintOptions {
         baseline file("lint-baseline.xml")
-        abortOnError true
-        warningsAsErrors true
-        lintConfig file('lint.xml')
+        abortOnError = true
+        warningsAsErrors = true
+        lintConfig = file('lint.xml')
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
