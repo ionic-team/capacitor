@@ -81,10 +81,10 @@ public class SystemBars extends Plugin {
         String inset = call.getString("inset", "").toUpperCase(Locale.US);
 
         getBridge()
-                .executeOnMainThread(() -> {
-                    setHidden(false, inset);
-                    call.resolve();
-                });
+            .executeOnMainThread(() -> {
+                setHidden(false, inset);
+                call.resolve();
+            });
     }
 
     @PluginMethod
@@ -92,10 +92,10 @@ public class SystemBars extends Plugin {
         String inset = call.getString("inset", "").toUpperCase(Locale.US);
 
         getBridge()
-                .executeOnMainThread(() -> {
-                    setHidden(true, inset);
-                    call.resolve();
-                });
+            .executeOnMainThread(() -> {
+                setHidden(true, inset);
+                call.resolve();
+            });
     }
 
     @PluginMethod
