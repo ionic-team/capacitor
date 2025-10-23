@@ -35,6 +35,7 @@
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
         _appLocation = descriptor.appLocation;
         _appStartPath = descriptor.appStartPath;
+        _routeWithFallback = descriptor.routeWithFallback;
         _limitsNavigationsToAppBoundDomains = descriptor.limitsNavigationsToAppBoundDomains;
         _preferredContentMode = descriptor.preferredContentMode;
         _pluginConfigurations = descriptor.pluginConfigurations;
@@ -81,6 +82,7 @@
         _legacyConfig = [[configuration legacyConfig] copy];
 #pragma clang diagnostic pop
         _appStartPath = configuration.appStartPath;
+        _routeWithFallback = configuration.routeWithFallback;
         _appLocation = [location copy];
     }
     return self;
