@@ -718,15 +718,6 @@ export interface PluginsConfig {
    */
   SystemBars?: {
     /**
-     * Enables the injection of device css insets into the webview.
-     *
-     * This option is only supported on Android.
-     *
-     * @default true
-     */
-    enableInsets?: boolean;
-
-    /**
      * The style of the text and icons of the system bars.
      */
     style?: string;

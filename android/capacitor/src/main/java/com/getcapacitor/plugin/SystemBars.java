@@ -27,6 +27,20 @@ public class SystemBars extends Plugin {
     static final String INSET_TOP = "TOP";
     static final String INSET_BOTTOM = "BOTTOM";
 
+    static final String viewportMetaJSFunction = """
+            function capacitorSystemBarsCheckMetaViewport() {
+                const meta = document.querySelectorAll("meta[name=viewport]");
+                if (meta.length == 0) {
+                    return false;
+                }
+                // get the last found meta viewport tag
+                const metaContent = meta[meta.length - 1].content;
+                return metaContent.includes("viewport-fit=cover");
+            }
+            
+            capacitorSystemBarsCheckMetaViewport();
+            """;
+
     @Override
     public void load() {
         super.load();
@@ -49,13 +63,13 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
-        boolean enableInsets = getConfig().getBoolean("enableInsets", true);
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase();
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        if (enableInsets) {
-            setupSafeAreaInsets();
-        }
+        this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
+            boolean hasMetaViewportCover = res.equals("true");
+            setupSafeAreaInsets(this.hasFixedWebView(), hasMetaViewportCover);
+        });
 
         getBridge()
             .executeOnMainThread(() -> {
@@ -103,18 +117,18 @@ public class SystemBars extends Plugin {
         call.resolve();
     }
 
-    private void setupSafeAreaInsets() {
+    private void setupSafeAreaInsets(boolean hasFixedWebView, boolean hasMetaViewportCover) {
         View decorView = getActivity().getWindow().getDecorView();
 
         ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
-            if (!this.hasFixedWebView()) {
-                Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-                injectSafeAreaCSS(safeArea.top, safeArea.right, safeArea.bottom, safeArea.left);
-
-                return WindowInsetsCompat.CONSUMED;
+            if (hasFixedWebView || hasMetaViewportCover) {
+                return insets;
             }
 
-            return insets;
+            Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            injectSafeAreaCSS(safeArea.top, safeArea.right, safeArea.bottom, safeArea.left);
+
+            return WindowInsetsCompat.CONSUMED;
         });
     }
 
