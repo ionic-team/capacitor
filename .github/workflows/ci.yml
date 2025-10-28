@@ -90,7 +90,7 @@ jobs:
         working-directory: ./core
   test-ios:
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 60
     needs:
       - setup
       - lint
