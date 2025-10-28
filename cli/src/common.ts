@@ -405,8 +405,6 @@ export async function promptForPlatformTarget(
     }
   }
 
-  console.log('Select by name', selectByName);
-
   const targetID = selectedTarget.trim();
   const target = targets.find((t) => {
     if (selectByName === true) {
