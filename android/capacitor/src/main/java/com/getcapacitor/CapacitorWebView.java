@@ -54,36 +54,4 @@ public class CapacitorWebView extends WebView {
         }
         return super.dispatchKeyEvent(event);
     }
-
-    public void edgeToEdgeHandler(Bridge bridge) {
-        String configEdgeToEdge = bridge.getConfig().adjustMarginsForEdgeToEdge();
-
-        if (configEdgeToEdge.equals("disable")) return;
-
-        boolean autoMargins = false;
-        boolean forceMargins = configEdgeToEdge.equals("force");
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && configEdgeToEdge.equals("auto")) {
-            TypedValue value = new TypedValue();
-            boolean foundOptOut = getContext().getTheme().resolveAttribute(android.R.attr.windowOptOutEdgeToEdgeEnforcement, value, true);
-            boolean optOutValue = value.data != 0; // value is set to -1 on true as of Android 15, so we have to do this.
-
-            autoMargins = !(foundOptOut && optOutValue);
-        }
-
-        if (forceMargins || autoMargins) {
-            ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
-                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-                MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
-                mlp.leftMargin = insets.left;
-                mlp.bottomMargin = insets.bottom;
-                mlp.rightMargin = insets.right;
-                mlp.topMargin = insets.top;
-                v.setLayoutParams(mlp);
-
-                // Don't pass window insets to children
-                return WindowInsetsCompat.CONSUMED;
-            });
-        }
-    }
 }
