@@ -103,6 +103,13 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             return
         }
 
+        // Handle Capacitor blob URLs
+        if navURL.absoluteString.starts(with: "blob:capacitor://") {
+            // Allow the request - it will be handled by the URL scheme handler
+            decisionHandler(.allow)
+            return
+        }
+
         // first, give plugins the chance to handle the decision
         for pluginObject in bridge.plugins {
             let plugin = pluginObject.value
