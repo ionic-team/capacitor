@@ -411,7 +411,7 @@ export async function promptForPlatformTarget(
       return t.name === targetID;
     }
 
-    t.id === targetID;
+    return t.id === targetID;
   });
 
   if (!target) {
