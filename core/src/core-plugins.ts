@@ -531,7 +531,7 @@ export enum SystemBarsStyle {
 export type SystemBarsAnimation = 'FADE' | 'NONE';
 
 /**
- * Available inset edges.  Android only.
+ * Available inset edges.
  */
 export type SystemBarsInsets = 'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT';
 
@@ -548,7 +548,6 @@ export interface SystemBarsStyleOptions {
   /**
    * The inset edge for which to apply the style.
    *
-   * Only available on Android.
    *
    * @since 8.0.0
    * @default null
@@ -560,8 +559,6 @@ export interface SystemBarsStyleOptions {
 export interface SystemBarsVisibilityOptions {
   /**
    * The inset edge for which to hide.
-   *
-   * Only available on Android.
    *
    * @since 8.0.0
    * @default null

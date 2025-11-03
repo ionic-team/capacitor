@@ -200,17 +200,17 @@ Only available on iOS.
 
 #### SystemBarsStyleOptions
 
-| Prop        | Type                                                                                                         | Description                                                             | Default              | Since |
-| ----------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | -------------------- | ----- |
-| **`style`** | <code><a href="#systembarsstyle">SystemBarsStyle</a></code>                                                  | Style of the text and icons of the system bars.                         | <code>default</code> | 8.0.0 |
-| **`inset`** | <code><a href="#omit">Omit</a>&lt;<a href="#systembarsinsets">SystemBarsInsets</a>, 'LEFT, RIGHT'&gt;</code> | The inset edge for which to apply the style. Only available on Android. | <code>null</code>    | 8.0.0 |
+| Prop        | Type                                                                                                         | Description                                     | Default              | Since |
+| ----------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | -------------------- | ----- |
+| **`style`** | <code><a href="#systembarsstyle">SystemBarsStyle</a></code>                                                  | Style of the text and icons of the system bars. | <code>default</code> | 8.0.0 |
+| **`inset`** | <code><a href="#omit">Omit</a>&lt;<a href="#systembarsinsets">SystemBarsInsets</a>, 'LEFT, RIGHT'&gt;</code> | The inset edge for which to apply the style.    | <code>null</code>    | 8.0.0 |
 
 
 #### SystemBarsVisibilityOptions
 
 | Prop            | Type                                                                | Description                                                                                         | Default             | Since |
 | --------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
-| **`inset`**     | <code><a href="#systembarsinsets">SystemBarsInsets</a></code>       | The inset edge for which to hide. Only available on Android.                                        | <code>null</code>   | 8.0.0 |
+| **`inset`**     | <code><a href="#systembarsinsets">SystemBarsInsets</a></code>       | The inset edge for which to hide.                                                                   | <code>null</code>   | 8.0.0 |
 | **`animation`** | <code><a href="#systembarsanimation">SystemBarsAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
 
 
@@ -247,7 +247,7 @@ From T, pick a set of properties whose keys are in the union K
 
 #### SystemBarsInsets
 
-Available inset edges.  Android only.
+Available inset edges.
 
 <code>'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT'</code>
 

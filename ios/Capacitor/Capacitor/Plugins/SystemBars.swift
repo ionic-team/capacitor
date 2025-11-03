@@ -11,6 +11,8 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "hide", returnType: CAPPluginReturnNone)
     ]
 
+    public var hideHomeIndicator: Bool = false
+
     enum Style: String {
         case dark = "DARK"
         case light = "LIGHT"
@@ -33,28 +35,33 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @objc func setStyle(_ call: CAPPluginCall) {
         setStyle(style: call.getString("style") ?? Style.defaultStyle.rawValue)
-
         call.resolve()
     }
 
     @objc func show(_ call: CAPPluginCall) {
+        let inset = call.getString("inset")?.uppercased()
+
         if let animation = call.getString("animation") {
             setAnimation(animation: animation)
         }
 
-        setHidden(hidden: false)
-
-        call.resolve()
+        DispatchQueue.main.async {
+            self.setHidden(hidden: false, inset: inset)
+            call.resolve()
+        }
     }
 
     @objc func hide(_ call: CAPPluginCall) {
+        let inset = call.getString("inset")?.uppercased()
+
         if let animation = call.getString("animation") {
             setAnimation(animation: animation)
         }
 
-        setHidden(hidden: true)
-
-        call.resolve()
+        DispatchQueue.main.async {
+            self.setHidden(hidden: true, inset: inset)
+            call.resolve()
+        }
     }
 
     @objc func setAnimation(_ call: CAPPluginCall) {
@@ -81,8 +88,29 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
         bridge?.statusBarStyle = newStyle
     }
 
-    func setHidden(hidden: Bool) {
-        bridge?.statusBarVisible = !hidden
+    func setHidden(hidden: Bool, inset: String? = nil) {
+        if hidden {
+            if inset == nil || inset == "TOP" {
+                bridge?.statusBarVisible = false
+            }
+
+            if inset == nil || inset == "BOTTOM" {
+                hideHomeIndicator = true
+                bridge?.viewController?.setNeedsUpdateOfHomeIndicatorAutoHidden()
+            }
+
+            return
+        }
+
+        if inset == nil || inset == "TOP" {
+            bridge?.statusBarVisible = true
+        }
+
+        if inset == nil || inset == "BOTTOM" {
+            hideHomeIndicator = false
+            bridge?.viewController?.setNeedsUpdateOfHomeIndicatorAutoHidden()
+        }
+
     }
 
     func setAnimation(animation: String) {
@@ -91,5 +119,15 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
         } else {
             bridge?.statusBarAnimation = .fade
         }
+    }
+}
+
+extension CAPBridgeViewController {
+    override public var prefersHomeIndicatorAutoHidden: Bool {
+        if let systemBarPlugin = self.bridge?.plugin(withName: "SystemBars") as? CAPSystemBarsPlugin {
+            return systemBarPlugin.hideHomeIndicator
+        }
+
+        return false
     }
 }
