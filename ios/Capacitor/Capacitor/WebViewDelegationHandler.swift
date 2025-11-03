@@ -160,6 +160,33 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
         bridge?.reset()
         webView.reload()
     }
+    
+    open func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        guard let bridge = bridge else {
+            completionHandler(.rejectProtectionSpace, nil)
+            return
+        }
+        
+        if bridge.isDomainExcludedFromPinning(
+            host: challenge.protectionSpace.host,
+            scheme: challenge.protectionSpace.protocol ?? ""
+        ) {
+            print("Domain Excluded from SSL Pinning. Performing normal request.")
+            completionHandler(.rejectProtectionSpace, nil)
+            return
+        }
+        
+        guard
+            challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
+            let serverTrust = challenge.protectionSpace.serverTrust else {            
+            completionHandler(.cancelAuthenticationChallenge, nil)
+            return
+        }
+                
+        
+        
+        completionHandler(.rejectProtectionSpace, nil)
+    }
 
     // MARK: - WKScriptMessageHandler
 

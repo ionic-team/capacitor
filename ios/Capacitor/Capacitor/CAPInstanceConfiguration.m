@@ -28,6 +28,8 @@
                 _loggingEnabled = false;
                 break;
         }
+        _sslPinningCerts = descriptor.sslPinningCerts;
+        _sslPinningExcludedDomains = descriptor.sslPinningExcludedDomains;
         _scrollingEnabled = descriptor.scrollingEnabled;
         _zoomingEnabled =  descriptor.zoomingEnabled;
         _allowLinkPreviews = descriptor.allowLinkPreviews;
@@ -67,6 +69,8 @@
         _errorPath = [[configuration errorPath] copy];
         _pluginConfigurations = [[configuration pluginConfigurations] copy];
         _loggingEnabled = configuration.loggingEnabled;
+        _sslPinningCerts = configuration.sslPinningCerts;
+        _sslPinningExcludedDomains = configuration.sslPinningExcludedDomains;
         _scrollingEnabled = configuration.scrollingEnabled;
         _zoomingEnabled = configuration.zoomingEnabled;
         _allowLinkPreviews = configuration.allowLinkPreviews;

@@ -80,6 +80,7 @@
 		62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */; };
 		62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */; };
 		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
+		955CC9402EB9431C00F31457 /* SSLPinning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955CC93E2EB9431800F31457 /* SSLPinning.swift */; };
 		A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */; };
 		A327E6B728DB8B2900CA8B0A /* CapacitorHttp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */; };
 		A327E6B828DB8B2900CA8B0A /* CapacitorUrlRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */; };
@@ -237,6 +238,7 @@
 		62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Capacitor.swift"; sourceTree = "<group>"; };
 		62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgedTypesTests.m; sourceTree = "<group>"; };
 		62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesHelper.swift; sourceTree = "<group>"; };
+		955CC93E2EB9431800F31457 /* SSLPinning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSLPinning.swift; sourceTree = "<group>"; };
 		A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
 		A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorHttp.swift; sourceTree = "<group>"; };
 		A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorUrlRequest.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 		62959AE12524DA7700A3D7F1 /* Capacitor */ = {
 			isa = PBXGroup;
 			children = (
+				955CC93E2EB9431800F31457 /* SSLPinning.swift */,
 				A7D9312C2B2370EF00FF59A2 /* Codable */,
 				0F8F33B127DA980A003F49D6 /* PluginConfig.swift */,
 				A76739782B98E09700795F7B /* PrivacyInfo.xcprivacy */,
@@ -712,6 +715,7 @@
 				62D43AF02581817500673C24 /* WKWebView+Capacitor.swift in Sources */,
 				62959B432524DA7800A3D7F1 /* Data+Capacitor.swift in Sources */,
 				62E207AE2588234500A78983 /* WebViewDelegationHandler.swift in Sources */,
+				955CC9402EB9431C00F31457 /* SSLPinning.swift in Sources */,
 				A7187FD22BD1CB7D00093C45 /* CAPPluginMethod.swift in Sources */,
 				621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */,
 				621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */,

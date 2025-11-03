@@ -11,6 +11,8 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly, nullable) NSString *overridenUserAgentString;
 @property (nonatomic, readonly, nullable) UIColor *backgroundColor;
 @property (nonatomic, readonly, nonnull) NSArray<NSString*> *allowedNavigationHostnames;
+@property (nonatomic, readonly, nonnull) NSArray<NSString*> *sslPinningCerts;
+@property (nonatomic, readonly, nonnull) NSArray<NSString*> *sslPinningExcludedDomains;
 @property (nonatomic, readonly, nonnull) NSURL *localURL;
 @property (nonatomic, readonly, nonnull) NSURL *serverURL;
 @property (nonatomic, readonly, nullable) NSString *errorPath;

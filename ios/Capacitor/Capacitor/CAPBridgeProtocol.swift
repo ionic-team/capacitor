@@ -83,6 +83,9 @@ import WebKit
     func showAlertWith(title: String, message: String, buttonTitle: String)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
     func dismissVC(animated flag: Bool, completion: (() -> Void)?)
+    
+    // MARK: - SSL Pinning
+    func isDomainExcludedFromPinning(host: String, scheme: String) -> Bool
 }
 
 /*
