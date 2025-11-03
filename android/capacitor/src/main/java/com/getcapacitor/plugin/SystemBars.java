@@ -27,19 +27,20 @@ public class SystemBars extends Plugin {
     static final String INSET_TOP = "TOP";
     static final String INSET_BOTTOM = "BOTTOM";
 
-    static final String viewportMetaJSFunction = """
-            function capacitorSystemBarsCheckMetaViewport() {
-                const meta = document.querySelectorAll("meta[name=viewport]");
-                if (meta.length == 0) {
-                    return false;
-                }
-                // get the last found meta viewport tag
-                const metaContent = meta[meta.length - 1].content;
-                return metaContent.includes("viewport-fit=cover");
+    static final String viewportMetaJSFunction =
+        """
+        function capacitorSystemBarsCheckMetaViewport() {
+            const meta = document.querySelectorAll("meta[name=viewport]");
+            if (meta.length == 0) {
+                return false;
             }
-            
-            capacitorSystemBarsCheckMetaViewport();
-            """;
+            // get the last found meta viewport tag
+            const metaContent = meta[meta.length - 1].content;
+            return metaContent.includes("viewport-fit=cover");
+        }
+
+        capacitorSystemBarsCheckMetaViewport();
+        """;
 
     @Override
     public void load() {
@@ -66,10 +67,11 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase();
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
-            boolean hasMetaViewportCover = res.equals("true");
-            setupSafeAreaInsets(this.hasFixedWebView(), hasMetaViewportCover);
-        });
+        this.bridge.getWebView()
+            .evaluateJavascript(viewportMetaJSFunction, res -> {
+                boolean hasMetaViewportCover = res.equals("true");
+                setupSafeAreaInsets(this.hasFixedWebView(), hasMetaViewportCover);
+            });
 
         getBridge()
             .executeOnMainThread(() -> {
