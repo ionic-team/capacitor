@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.2...8.0.0-alpha.3) (2025-10-22)
+
+### Bug Fixes
+
+- **ios:** also call bridge.reset() on webViewWebContentProcessDidTerminate ([#8143](https://github.com/ionic-team/capacitor/issues/8143)) ([1de1f15](https://github.com/ionic-team/capacitor/commit/1de1f157169bc0e23060ffabf044c6d391b98efe))
+- **ios:** Remove Cordova UIView extension ([#8189](https://github.com/ionic-team/capacitor/issues/8189)) ([0c7bcd3](https://github.com/ionic-team/capacitor/commit/0c7bcd3d10f3e3d5a1259f5096879771f8e26436))
+- **ios:** replace deprecation warnings ([#8156](https://github.com/ionic-team/capacitor/issues/8156)) ([e76b29b](https://github.com/ionic-team/capacitor/commit/e76b29b77a7d71ef2341dd3aa530c5d9f291a941))
+- **ios:** Silence WKProcessPool warning ([#8184](https://github.com/ionic-team/capacitor/issues/8184)) ([b6abcb7](https://github.com/ionic-team/capacitor/commit/b6abcb7d656ee24e48a5d0dc7b68888b0318fe5d))
+
+# [8.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.1...8.0.0-alpha.2) (2025-08-20)
+
+**Note:** Version bump only for package @capacitor/ios
+
+# [8.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/7.4.2...8.0.0-alpha.1) (2025-08-20)
+
+### Bug Fixes
+
+- http content headers not sent when using axios ([#8039](https://github.com/ionic-team/capacitor/issues/8039)) ([67cac40](https://github.com/ionic-team/capacitor/commit/67cac40660b3e8cc78d1d228b7c6915450948ef1))
+
+## [7.4.2](https://github.com/ionic-team/capacitor/compare/7.4.1...7.4.2) (2025-07-10)
+
+### Bug Fixes
+
+- **http:** Properly URL-encode key and values during `x-www-form-urlencoded` POSTs ([#8037](https://github.com/ionic-team/capacitor/issues/8037)) ([87b4641](https://github.com/ionic-team/capacitor/commit/87b4641d1fa32b78e6fc2e87ee7b2c49b625b213))
+
+## [7.4.1](https://github.com/ionic-team/capacitor/compare/7.4.0...7.4.1) (2025-07-03)
+
+**Note:** Version bump only for package @capacitor/ios
+
+# [7.4.0](https://github.com/ionic-team/capacitor/compare/7.3.0...7.4.0) (2025-06-18)
+
+**Note:** Version bump only for package @capacitor/ios
+
+# [7.3.0](https://github.com/ionic-team/capacitor/compare/7.2.0...7.3.0) (2025-06-05)
+
+### Bug Fixes
+
+- Remove all plugin listeners in bridge reset ([#7962](https://github.com/ionic-team/capacitor/issues/7962)) ([06aeea9](https://github.com/ionic-team/capacitor/commit/06aeea973aa56ac2fb791f893ebd899253ee65f9))
+
+### Features
+
+- expose `appStartPath` on cap config server configuration ([#8019](https://github.com/ionic-team/capacitor/issues/8019)) ([a274fef](https://github.com/ionic-team/capacitor/commit/a274fef069176a8e528a22f4734d1e29a539709c))
+- **ios:** Alternative debug config for SPM ([#7982](https://github.com/ionic-team/capacitor/issues/7982)) ([a054aa5](https://github.com/ionic-team/capacitor/commit/a054aa5bb4d5eabe5da5d42a380bd51b8785958c))
+
 # [7.2.0](https://github.com/ionic-team/capacitor/compare/7.1.0...7.2.0) (2025-03-31)
 
 ### Bug Fixes

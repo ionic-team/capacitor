@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.2...8.0.0-alpha.3) (2025-10-22)
+
+### Bug Fixes
+
+- **cli:** change SPM incompatible plugin message ([#8129](https://github.com/ionic-team/capacitor/issues/8129)) ([28c2a96](https://github.com/ionic-team/capacitor/commit/28c2a96d898b07a05ae763f798e8903601cc3f67))
+- **cli:** Don't exclude Cordova plugins from SPM management ([#8140](https://github.com/ionic-team/capacitor/issues/8140)) ([69bbd3d](https://github.com/ionic-team/capacitor/commit/69bbd3dc59cd6f56252c06f23b351952af8661be))
+- **cli:** prefer studio executable over studio.sh on linux if available ([#8110](https://github.com/ionic-team/capacitor/issues/8110)) ([62bd16f](https://github.com/ionic-team/capacitor/commit/62bd16f675cb492b52c0b73483fddfd63c608189))
+
+# [8.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.1...8.0.0-alpha.2) (2025-08-20)
+
+**Note:** Version bump only for package @capacitor/cli
+
+# [8.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/7.4.2...8.0.0-alpha.1) (2025-08-20)
+
+**Note:** Version bump only for package @capacitor/cli
+
+## [7.4.2](https://github.com/ionic-team/capacitor/compare/7.4.1...7.4.2) (2025-07-10)
+
+**Note:** Version bump only for package @capacitor/cli
+
+## [7.4.1](https://github.com/ionic-team/capacitor/compare/7.4.0...7.4.1) (2025-07-03)
+
+**Note:** Version bump only for package @capacitor/cli
+
+# [7.4.0](https://github.com/ionic-team/capacitor/compare/7.3.0...7.4.0) (2025-06-18)
+
+### Features
+
+- **cli:** add spm-migration-assistant command ([#7963](https://github.com/ionic-team/capacitor/issues/7963)) ([ef42722](https://github.com/ionic-team/capacitor/commit/ef427225f63056b1731b3cd8941aea2311d3bc4d))
+- **cli:** fail cap update on uninstalled cordova dependencies ([#8032](https://github.com/ionic-team/capacitor/issues/8032)) ([b393de8](https://github.com/ionic-team/capacitor/commit/b393de8bc9e68aff2cb70428a7c86c98367feade))
+
+# [7.3.0](https://github.com/ionic-team/capacitor/compare/7.2.0...7.3.0) (2025-06-05)
+
+### Bug Fixes
+
+- add error code checking to `runPlatformHook` ([#7994](https://github.com/ionic-team/capacitor/issues/7994)) ([8717680](https://github.com/ionic-team/capacitor/commit/871768049187afe9f5d358d3fe08b6f18f70533e))
+- **cli:** Don't downgrade deployment target on migrate ([#7953](https://github.com/ionic-team/capacitor/issues/7953)) ([46e8792](https://github.com/ionic-team/capacitor/commit/46e87925b675933b413737854b1376eb1c71a23e))
+- **cli:** ensures the execution order of CLI hooks ([#7947](https://github.com/ionic-team/capacitor/issues/7947)) ([c3ea809](https://github.com/ionic-team/capacitor/commit/c3ea8094cdd385ac02a5aae89f8b44b6c53d493a))
+- **cli:** unexpected error on target device list ([#8015](https://github.com/ionic-team/capacitor/issues/8015)) ([f827c48](https://github.com/ionic-team/capacitor/commit/f827c48f08b13a265e8671291c24f3506e14a094))
+- **cli:** use proper build params ([#8016](https://github.com/ionic-team/capacitor/issues/8016)) ([12ce2a4](https://github.com/ionic-team/capacitor/commit/12ce2a486542011c8d6f4cd89a67464f3f27e28d))
+
+### Features
+
+- **cli:** Initial Cordova plugin SPM support ([#7999](https://github.com/ionic-team/capacitor/issues/7999)) ([c030354](https://github.com/ionic-team/capacitor/commit/c03035426343ddc4e303ca3420e476bb7f1e2201))
+- expose `appStartPath` on cap config server configuration ([#8019](https://github.com/ionic-team/capacitor/issues/8019)) ([a274fef](https://github.com/ionic-team/capacitor/commit/a274fef069176a8e528a22f4734d1e29a539709c))
+
 # [7.2.0](https://github.com/ionic-team/capacitor/compare/7.1.0...7.2.0) (2025-03-31)
 
 ### Bug Fixes

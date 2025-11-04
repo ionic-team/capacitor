@@ -139,10 +139,18 @@ internal extension InstanceDescriptor {
             } else {
                 #if DEBUG
                 isWebDebuggable = true
+                #else
+                // this is needed for SPM xcframework Capacitor.  Can eventually be removed when the SPM package moves to being source-based.
+                if let debugValue = Bundle.main.object(forInfoDictionaryKey: "CAPACITOR_DEBUG") as? String, debugValue == "true" {
+                    isWebDebuggable = true
+                }
                 #endif
             }
             if let initialFocus = (config[keyPath: "ios.initialFocus"] as? Bool) ?? (config[keyPath: "initialFocus"] as? Bool) {
                 hasInitialFocus = initialFocus
+            }
+            if let startPath = (config[keyPath: "server.appStartPath"] as? String) {
+                appStartPath = startPath
             }
         }
     }

@@ -3,6 +3,49 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.2...8.0.0-alpha.3) (2025-10-22)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [8.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.1...8.0.0-alpha.2) (2025-08-20)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [8.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/7.4.2...8.0.0-alpha.1) (2025-08-20)
+
+### Bug Fixes
+
+- http content headers not sent when using axios ([#8039](https://github.com/ionic-team/capacitor/issues/8039)) ([67cac40](https://github.com/ionic-team/capacitor/commit/67cac40660b3e8cc78d1d228b7c6915450948ef1))
+
+### Features
+
+- **android:** Bump default minSdkVersion to 24 ([#8083](https://github.com/ionic-team/capacitor/issues/8083)) ([c022ddf](https://github.com/ionic-team/capacitor/commit/c022ddf21452379bb183ff7c846f73bd07a15dbf))
+
+## [7.4.2](https://github.com/ionic-team/capacitor/compare/7.4.1...7.4.2) (2025-07-10)
+
+### Bug Fixes
+
+- **android:** consider display cutout area for insets ([#8042](https://github.com/ionic-team/capacitor/issues/8042)) ([b478211](https://github.com/ionic-team/capacitor/commit/b4782116856c35e3fb567393f10a36ce4632b44c))
+- **http:** Properly URL-encode key and values during `x-www-form-urlencoded` POSTs ([#8037](https://github.com/ionic-team/capacitor/issues/8037)) ([87b4641](https://github.com/ionic-team/capacitor/commit/87b4641d1fa32b78e6fc2e87ee7b2c49b625b213))
+
+## [7.4.1](https://github.com/ionic-team/capacitor/compare/7.4.0...7.4.1) (2025-07-03)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [7.4.0](https://github.com/ionic-team/capacitor/compare/7.3.0...7.4.0) (2025-06-18)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [7.3.0](https://github.com/ionic-team/capacitor/compare/7.2.0...7.3.0) (2025-06-05)
+
+### Bug Fixes
+
+- Remove all plugin listeners in bridge reset ([#7962](https://github.com/ionic-team/capacitor/issues/7962)) ([06aeea9](https://github.com/ionic-team/capacitor/commit/06aeea973aa56ac2fb791f893ebd899253ee65f9))
+
+### Features
+
+- expose `appStartPath` on cap config server configuration ([#8019](https://github.com/ionic-team/capacitor/issues/8019)) ([a274fef](https://github.com/ionic-team/capacitor/commit/a274fef069176a8e528a22f4734d1e29a539709c))
+
 # [7.2.0](https://github.com/ionic-team/capacitor/compare/7.1.0...7.2.0) (2025-03-31)
 
 ### Bug Fixes

@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,18 +17,5 @@
  under the License.
  */
 
-#import <WebKit/WebKit.h>
-#import <Cordova/CDVAvailabilityDeprecated.h>
-
-/**
- @Metadata {
-    @Available(Cordova, introduced: "6.2.0", deprecated: "8.0.0")
- }
- */
-CDV_DEPRECATED(8.0.0, "WebKit WKProcessPool is deprecated in iOS")
-@interface CDVWebViewProcessPoolFactory : NSObject
-@property (nonatomic, retain) WKProcessPool* sharedPool;
-
-+(instancetype) sharedFactory;
--(WKProcessPool*) sharedProcessPool;
-@end
+#define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
+#define CDV_DEPRECATED_WITH_REPLACEMENT(version, msg, repl) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg, repl)))

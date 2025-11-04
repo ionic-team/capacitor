@@ -292,8 +292,8 @@ export function runProgram(config: Config): void {
           const { addCommand } = await import('./tasks/add');
 
           const configWritable: Writable<Config> = config as Writable<Config>;
-          if (packagemanager === 'SPM') {
-            configWritable.cli.assets.ios.platformTemplateArchive = 'ios-spm-template.tar.gz';
+          if (packagemanager?.toLowerCase() === 'CocoaPods'.toLowerCase()) {
+            configWritable.cli.assets.ios.platformTemplateArchive = 'ios-pods-template.tar.gz';
             configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(
               configWritable.cli.assetsDirAbs,
               configWritable.cli.assets.ios.platformTemplateArchive,
@@ -365,6 +365,16 @@ export function runProgram(config: Config): void {
       wrapAction(async ({ noprompt, packagemanager }) => {
         const { migrateCommand } = await import('./tasks/migrate');
         await migrateCommand(config, noprompt, packagemanager);
+      }),
+    );
+
+  program
+    .command('spm-migration-assistant')
+    .description('Remove Cocoapods from project and switch to Swift Package Manager')
+    .action(
+      wrapAction(async () => {
+        const { migrateToSPM } = await import('./tasks/migrate-spm');
+        await migrateToSPM(config);
       }),
     );
 

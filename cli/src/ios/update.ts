@@ -2,7 +2,7 @@ import { copy, remove, pathExists, readFile, realpath, writeFile } from 'fs-extr
 import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
-import { checkPlatformVersions, runTask } from '../common';
+import { checkPlatformVersions, getCapacitorPackageVersion, runTask } from '../common';
 import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps, needsStaticPod } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
@@ -21,11 +21,11 @@ import { copy as copyTask } from '../tasks/copy';
 import { convertToUnixPath } from '../util/fs';
 import { generateIOSPackageJSON } from '../util/iosplugin';
 import { resolveNode } from '../util/node';
-import { checkPackageManager, generatePackageFile } from '../util/spm';
+import { checkPackageManager, generatePackageFile, checkPluginsForPackageSwift } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
-import { getIOSPlugins } from './common';
+import { getIOSPlugins, getMajoriOSVersion } from './common';
 
 const platform = 'ios';
 
@@ -33,19 +33,14 @@ export async function updateIOS(config: Config, deployment: boolean): Promise<vo
   const plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Core);
-
-  if ((await checkPackageManager(config)) === 'SPM') {
-    await generatePackageFile(config, capacitorPlugins);
-  } else {
-    await updateIOSCocoaPods(config, plugins, deployment);
-  }
-
+  await updatePluginFiles(config, plugins, deployment);
+  await checkPlatformVersions(config, platform);
   generateIOSPackageJSON(config, plugins);
 
   printPlugins(capacitorPlugins, 'ios');
 }
 
-async function updateIOSCocoaPods(config: Config, plugins: Plugin[], deployment: boolean) {
+async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: boolean) {
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
   if (cordovaPlugins.length > 0) {
@@ -55,14 +50,66 @@ async function updateIOSCocoaPods(config: Config, plugins: Plugin[], deployment:
     await copyTask(config, platform);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
-  await checkPluginDependencies(plugins, platform);
-  await generateCordovaPodspecs(cordovaPlugins, config);
-  await installCocoaPodsPlugins(config, plugins, deployment);
+  await checkPluginDependencies(plugins, platform, config.app.extConfig.cordova?.failOnUninstalledPlugins);
+  if ((await checkPackageManager(config)) === 'SPM') {
+    await generateCordovaPackageFiles(cordovaPlugins, config);
+
+    const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
+
+    await generatePackageFile(config, validSPMPackages.concat(cordovaPlugins));
+  } else {
+    await generateCordovaPodspecs(cordovaPlugins, config);
+    await installCocoaPodsPlugins(config, plugins, deployment);
+  }
   await logCordovaManualSteps(cordovaPlugins, config, platform);
 
   const incompatibleCordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
-  await checkPlatformVersions(config, platform);
+}
+
+async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config) {
+  cordovaPlugins.map((plugin: any) => {
+    generateCordovaPackageFile(plugin, config);
+  });
+}
+
+async function generateCordovaPackageFile(p: Plugin, config: Config) {
+  const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
+  const iosVersion = getMajoriOSVersion(config);
+  const headerFiles = getPlatformElement(p, platform, 'header-file');
+  let headersText = '';
+  if (headerFiles.length > 0) {
+    headersText = `,
+            publicHeadersPath: "."`;
+  }
+
+  const content = `// swift-tools-version: 5.9
+
+import PackageDescription
+
+let package = Package(
+    name: "${p.name}",
+    platforms: [.iOS(.v${iosVersion})],
+    products: [
+        .library(
+            name: "${p.name}",
+            targets: ["${p.name}"]
+        )
+    ],
+    dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")
+    ],
+    targets: [
+        .target(
+            name: "${p.name}",
+            dependencies: [
+                .product(name: "Cordova", package: "capacitor-swift-pm")
+            ],
+            path: "."${headersText}
+        )
+    ]
+)`;
+  await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {

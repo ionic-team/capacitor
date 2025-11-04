@@ -12,6 +12,7 @@
     "noUnusedParameters": true,
     "outDir": "build",
     "declarationDir": "types",
+    "skipLibCheck": true,
     "sourceMap": true,
     "target": "es2017"
   },
