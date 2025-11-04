@@ -15,6 +15,7 @@ export async function runAndroid(
   {
     target: selectedTarget,
     targetName: selectedTargetName,
+    targetNameSdkVersion: selectedTargetSdkVersion,
     flavor: selectedFlavor,
     forwardPorts: selectedPorts,
   }: RunCommandOptions,
@@ -22,6 +23,7 @@ export async function runAndroid(
   const target = await promptForPlatformTarget(
     await getPlatformTargets('android'),
     selectedTarget ?? selectedTargetName,
+    selectedTargetSdkVersion,
     selectedTargetName !== undefined,
   );
 

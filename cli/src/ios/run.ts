@@ -16,6 +16,7 @@ export async function runIOS(
   {
     target: selectedTarget,
     targetName: selectedTargetName,
+    targetNameSdkVersion: selectedTargetSdkVersion,
     scheme: selectedScheme,
     configuration: selectedConfiguration,
   }: RunCommandOptions,
@@ -23,6 +24,7 @@ export async function runIOS(
   const target = await promptForPlatformTarget(
     await getPlatformTargets('ios'),
     selectedTarget ?? selectedTargetName,
+    selectedTargetSdkVersion,
     selectedTargetName !== undefined,
   );
 

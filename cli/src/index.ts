@@ -235,6 +235,7 @@ export function runProgram(config: Config): void {
     .addOption(new Option('--json').hideHelp())
     .option('--target <id>', 'use a specific target')
     .option('--target-name <name>', 'use a specific target by name')
+    .option('--target-name-sdk-version <version>', 'use a specific sdk version when using --target-name')
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .option('--forwardPorts <port:port>', 'Automatically run "adb reverse" for better live-reloading support')
     .option('-l, --live-reload', 'Enable Live Reload')
@@ -254,6 +255,7 @@ export function runProgram(config: Config): void {
               json,
               target,
               targetName,
+              targetNameSdkVersion,
               sync,
               forwardPorts,
               liveReload,
@@ -270,6 +272,7 @@ export function runProgram(config: Config): void {
               json,
               target,
               targetName,
+              targetNameSdkVersion,
               sync,
               forwardPorts,
               liveReload,

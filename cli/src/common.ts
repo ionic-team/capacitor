@@ -378,6 +378,7 @@ export interface PlatformTarget {
 export async function promptForPlatformTarget(
   targets: PlatformTarget[],
   selectedTarget?: string,
+  selectedTargetSdkVersion?: string,
   selectByName?: boolean,
 ): Promise<PlatformTarget> {
   const { prompt } = await import('prompts');
@@ -408,6 +409,10 @@ export async function promptForPlatformTarget(
   const targetID = selectedTarget.trim();
   const target = targets.find((t) => {
     if (selectByName === true) {
+      if (selectedTargetSdkVersion) {
+        return t.name === targetID && t.sdkVersion === selectedTargetSdkVersion;
+      }
+
       return t.name === targetID;
     }
 
@@ -417,7 +422,8 @@ export async function promptForPlatformTarget(
   if (!target) {
     if (selectByName) {
       fatal(
-        `Invalid target name: ${c.input(targetID)}.\n` + `Valid targets are: ${targets.map((t) => t.name).join(', ')}`,
+        `Invalid target name: ${c.input(targetID)}.\n` +
+          `Valid targets are: ${targets.map((t) => `${t.name} [${t.sdkVersion}]`).join(', ')}`,
       );
     }
     fatal(`Invalid target ID: ${c.input(targetID)}.\n` + `Valid targets are: ${targets.map((t) => t.id).join(', ')}`);
