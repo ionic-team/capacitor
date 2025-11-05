@@ -42,7 +42,7 @@ public class CordovaPlugin extends Plugin {
         PluginManager pluginManager = mockWebView.getPluginManager();
         cordovaInterface.onCordovaInit(pluginManager);
 
-        bridge.registerInterceptor("cordova", postData -> {
+        bridge.registerInterceptor("cordova", (postData) -> {
             String callbackId = postData.getString("callbackId");
 
             String service = postData.getString("service");
@@ -52,13 +52,13 @@ public class CordovaPlugin extends Plugin {
             Logger.verbose(
                 Logger.tags("Plugin"),
                 "To native (Cordova plugin): callbackId: " +
-                callbackId +
-                ", service: " +
-                service +
-                ", action: " +
-                action +
-                ", actionArgs: " +
-                actionArgs
+                    callbackId +
+                    ", service: " +
+                    service +
+                    ", action: " +
+                    action +
+                    ", actionArgs: " +
+                    actionArgs
             );
 
             bridge.execute(() -> {

@@ -49,9 +49,6 @@ internal class JSExport {
         }
     }
 
-
-
-
     /**
      Export the JS required to implement the given plugin.
      */

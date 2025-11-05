@@ -119,7 +119,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     var storedCalls = ConcurrentDictionary<CAPPluginCall>()
     // Whether to inject the Cordova files
     private var cordovaIsPresent = false
-    //private var cordovaParser: CDVConfigParser?
+    // private var cordovaParser: CDVConfigParser?
     private var injectMiscFiles: [String] = []
     private var canInjectJS: Bool = true
 
@@ -222,7 +222,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
-       // setupCordovaCompatibility()
+        // setupCordovaCompatibility()
         setupListeners()
         exportMiscJS()
         canInjectJS = false
@@ -279,14 +279,14 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 }
             )
 
-    /**
-     Set up our Cordova compat by loading all known Cordova plugins and injecting their JS.
-     */
-//    func setupCordovaCompatibility() {
-//        if injectCordovaFiles {
-//            exportCordovaJS()
-//          //  registerCordovaPlugins()
-//        } else {
+            /**
+             Set up our Cordova compat by loading all known Cordova plugins and injecting their JS.
+             */
+            //    func setupCordovaCompatibility() {
+            //        if injectCordovaFiles {
+            //            exportCordovaJS()
+            //          //  registerCordovaPlugins()
+            //        } else {
             observers.append(
                 NotificationCenter.default.addObserver(
                     forName: UIApplication.didEnterBackgroundNotification,
@@ -563,7 +563,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     //            CAPLog.print("Error: Cordova Plugin mapping not found")
     //            return
     //        }
-//    }
+    //    }
 
     func removeAllPluginListeners() {
         for plugin in plugins.values {

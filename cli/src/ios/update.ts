@@ -59,17 +59,17 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
 
     await generatePackageFile(config, validSPMPackages.concat(cordovaPlugins));
-  if (enableCordova) {
-    await generateCordovaPodspecs(cordovaPlugins, config);
-}
-    await installCocoaPodsPlugins(config, plugins, deployment);
 
-  if (enableCordova) {
-  await logCordovaManualSteps(cordovaPlugins, config, platform);
-}
+    if (enableCordova) {
+      await generateCordovaPodspecs(cordovaPlugins, config);
+    }
 
-  await installCocoaPodsPlugins(config, plugins, deployment, enableCordova);
-  printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
+    await installCocoaPodsPlugins(config, plugins, deployment, enableCordova);
+
+    if (enableCordova) {
+      await logCordovaManualSteps(cordovaPlugins, config, platform);
+    }
+  }
 }
 
 async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config) {
@@ -81,7 +81,7 @@ async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Con
 async function generateCordovaPackageFile(p: Plugin, config: Config) {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
-    await logCordovaManualSteps(cordovaPlugins, config, platform);
+  await logCordovaManualSteps(cordovaPlugins, config, platform);
   let headersText = '';
   if (headerFiles.length > 0) {
     headersText = `,

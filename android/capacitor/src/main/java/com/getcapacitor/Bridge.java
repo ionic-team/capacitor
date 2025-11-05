@@ -1604,7 +1604,7 @@ public class Bridge {
                 bridge.restoreInstanceState(instanceState);
             }
 
-            bridge.registerInterceptor("message", postData -> {
+            bridge.registerInterceptor("message", (postData) -> {
                 try {
                     String callbackId = postData.getString("callbackId");
                     String pluginId = postData.getString("pluginId");
@@ -1614,11 +1614,11 @@ public class Bridge {
                     Logger.verbose(
                         Logger.tags("Plugin"),
                         "To native (Capacitor plugin): callbackId: " +
-                        callbackId +
-                        ", pluginId: " +
-                        pluginId +
-                        ", methodName: " +
-                        methodName
+                            callbackId +
+                            ", pluginId: " +
+                            pluginId +
+                            ", methodName: " +
+                            methodName
                     );
 
                     PluginCall call = new PluginCall(bridge.msgHandler, pluginId, callbackId, methodName, methodData);
@@ -1628,7 +1628,7 @@ public class Bridge {
                 }
             });
 
-            bridge.registerInterceptor("js.error", postData -> {
+            bridge.registerInterceptor("js.error", (postData) -> {
                 Logger.error("JavaScript Error: " + postData.toString());
             });
 
