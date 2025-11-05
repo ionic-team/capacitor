@@ -265,8 +265,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         injectMiscFiles.removeAll()
     }
 
-    // TODO: Change this description
-    /// Setup listeners if Cordova is not present
     func setupListeners() {
         if !cordovaIsPresent {
             observers.append(
@@ -279,14 +277,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 }
             )
 
-            /**
-             Set up our Cordova compat by loading all known Cordova plugins and injecting their JS.
-             */
-            //    func setupCordovaCompatibility() {
-            //        if injectCordovaFiles {
-            //            exportCordovaJS()
-            //          //  registerCordovaPlugins()
-            //        } else {
             observers.append(
                 NotificationCenter.default.addObserver(
                     forName: UIApplication.didEnterBackgroundNotification,
@@ -536,34 +526,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             // CAPLog.print("Native call took", timeElapsed)
         }
     }
-
-    /**
-     Handle a Cordova call from JavaScript. First, find the corresponding plugin,
-     construct a selector, and perform that selector on the plugin instance.
-     */
-    //    func handleCordovaJSCall(call: JSCall) {
-    //        // Create a selector to send to the plugin
-    //
-    //        if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
-    //            let selector = NSSelectorFromString("\(call.method):")
-    //            if !plugin.responds(to: selector) {
-    //                CAPLog.print("Error: Plugin \(plugin.className ?? "") does not respond to method call \(selector).")
-    //                CAPLog.print("Ensure plugin method exists and uses @objc in its declaration")
-    //                return
-    //            }
-    //
-    //            let arguments: [Any] = call.options["options"] as? [Any] ?? []
-    //            let pluginCall = CDVInvokedUrlCommand(arguments: arguments,
-    //                                                  callbackId: call.callbackId,
-    //                                                  className: plugin.className,
-    //                                                  methodName: call.method)
-    //            plugin.perform(selector, with: pluginCall)
-    //
-    //        } else {
-    //            CAPLog.print("Error: Cordova Plugin mapping not found")
-    //            return
-    //        }
-    //    }
 
     func removeAllPluginListeners() {
         for plugin in plugins.values {
