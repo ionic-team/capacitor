@@ -46,7 +46,7 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
   if (!(await isInstalled(await config.ios.podPath)) && config.cli.os === OS.Mac) {
     return (
       `CocoaPods is not installed.\n` +
-      `See this install guide: ${c.strong('https://capacitorjs.com/docs/getting-started/environment-setup#homebrew')}`
+      `See this install guide: ${c.strong('https://capacitorjs.com/docs/getting-started/environment-setup#cocoapods')}`
     );
   }
   return null;
