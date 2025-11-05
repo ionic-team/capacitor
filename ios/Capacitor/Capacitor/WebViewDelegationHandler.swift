@@ -164,14 +164,14 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
     open func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         guard
             let bridge = bridge,
-            let sslPinningPlugin = bridge.plugin(withName: "SSLPinning") as? CAPSSLPinningPlugin,
-            sslPinningPlugin.enabled
+            let plugin = bridge.plugin(withName: "SSLPinning") as? CAPSSLPinningPlugin,
+            plugin.enabled
         else {
             completionHandler(.rejectProtectionSpace, nil)
             return
         }
         
-        if sslPinningPlugin.isDomainExcludedFromPinning(
+        if plugin.isDomainExcludedFromPinning(
             host: challenge.protectionSpace.host,
             scheme: challenge.protectionSpace.protocol ?? ""
         ) {
@@ -180,7 +180,8 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             return
         }
         
-        if sslPinningPlugin.certs.isEmpty {
+        if plugin.certs.isEmpty {
+            CAPLog.print("SSL Pinning: No certificates configured.")
             completionHandler(.cancelAuthenticationChallenge, nil)
             return
         }
@@ -192,9 +193,9 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             return
         }
         
-        for certEntry in sslPinningPlugin.certs {
+        for certEntry in plugin.certs {
             CAPLog.print("SSL Pinning: Trying " + certEntry.fileName)
-            if sslPinningPlugin.tryCertificate(certEntry, challenge, serverTrust) {
+            if plugin.tryCertificate(certEntry, challenge, serverTrust) {
                 completionHandler(.useCredential, URLCredential(trust:serverTrust))
                 return
             }
