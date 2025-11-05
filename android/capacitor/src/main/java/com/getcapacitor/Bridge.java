@@ -1287,10 +1287,9 @@ public class Bridge {
             if (cordovaHandle != null) {
                 Plugin cordovaPlugin = cordovaHandle.getInstance();
                 cordovaPlugin.handleOnActivityResult(requestCode, resultCode, data);
-                // This is our disgusting way of returning the boolean out of the cordova interface
+                // This is a bit hacky but required to return the boolean out of the cordova interface
                 return cordovaPlugin.hasRequiredPermissions();
             }
-            //            return cordovaInterface.onActivityResult(requestCode, resultCode, data);
         }
 
         // deprecated, to be removed
