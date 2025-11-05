@@ -162,30 +162,45 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
     }
     
     open func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        guard let bridge = bridge else {
+        guard
+            let bridge = bridge,
+            let sslPinningPlugin = bridge.plugin(withName: "SSLPinning") as? CAPSSLPinningPlugin,
+            sslPinningPlugin.enabled
+        else {
             completionHandler(.rejectProtectionSpace, nil)
             return
         }
         
-        if bridge.isDomainExcludedFromPinning(
+        if sslPinningPlugin.isDomainExcludedFromPinning(
             host: challenge.protectionSpace.host,
             scheme: challenge.protectionSpace.protocol ?? ""
         ) {
-            print("Domain Excluded from SSL Pinning. Performing normal request.")
+            CAPLog.print("SSL Pinning: Domain Excluded from SSL Pinning. Performing normal request.")
             completionHandler(.rejectProtectionSpace, nil)
+            return
+        }
+        
+        if sslPinningPlugin.certs.isEmpty {
+            completionHandler(.cancelAuthenticationChallenge, nil)
             return
         }
         
         guard
             challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
-            let serverTrust = challenge.protectionSpace.serverTrust else {            
+            let serverTrust = challenge.protectionSpace.serverTrust else {
             completionHandler(.cancelAuthenticationChallenge, nil)
             return
         }
-                
         
+        for certEntry in sslPinningPlugin.certs {
+            CAPLog.print("SSL Pinning: Trying " + certEntry.fileName)
+            if sslPinningPlugin.tryCertificate(certEntry, challenge, serverTrust) {
+                completionHandler(.useCredential, URLCredential(trust:serverTrust))
+                return
+            }
+        }
         
-        completionHandler(.rejectProtectionSpace, nil)
+        completionHandler(.cancelAuthenticationChallenge, nil)
     }
 
     // MARK: - WKScriptMessageHandler

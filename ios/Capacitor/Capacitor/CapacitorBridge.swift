@@ -130,11 +130,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
     // Array of block based observers
     var observers: [NSObjectProtocol] = []
-    
-    // SSL Pinning
-    private func getExludedSSLPinningDomains() -> [String] {
-        return config.sslPinningExcludedDomains
-    }
 
     // MARK: - CAPBridgeProtocol: Deprecated
 
@@ -307,7 +302,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      Register all plugins that have been declared
      */
     func registerPlugins() {
-        var pluginList: [AnyClass] = [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
+        var pluginList: [AnyClass] = [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self, CAPSSLPinningPlugin.self]
 
         if autoRegisterPlugins {
             do {
