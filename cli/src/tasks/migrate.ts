@@ -188,8 +188,8 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
       }
 
       if (allDependencies['@capacitor/android'] && existsSync(config.android.platformDirAbs)) {
-        // AndroidManifest.xml add navigation"
-        await runTask(`Migrating AndroidManifest.xml by adding navigation to Activity configChanges.`, () => {
+        // AndroidManifest.xml add "density"
+        await runTask(`Migrating AndroidManifest.xml by adding density to Activity configChanges.`, () => {
           return updateAndroidManifest(join(config.android.srcMainDirAbs, 'AndroidManifest.xml'));
         });
 
@@ -617,12 +617,12 @@ async function updateAndroidManifest(filename: string) {
     return;
   }
 
-  if (txt.includes('navigation')) {
+  if (txt.includes('|density')) {
     return; // Probably already updated
   }
   const replaced = txt.replace(
-    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"',
     'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"',
+    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"',
   );
 
   writeFileSync(filename, replaced, 'utf-8');
