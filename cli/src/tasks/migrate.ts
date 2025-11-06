@@ -48,7 +48,7 @@ const plugins = [
 ];
 const coreVersion = 'next';
 const pluginVersion = 'next';
-const gradleVersion = '8.11.1';
+const gradleVersion = '8.14.3';
 const iOSVersion = '15';
 let installFailed = false;
 
