@@ -373,11 +373,7 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
 
 async function writeBreakingChanges() {
   const breaking = [
-    '@capacitor/app',
-    '@capacitor/device',
-    '@capacitor/haptics',
-    '@capacitor/splash-screen',
-    '@capacitor/statusbar',
+    '@capacitor/status-bar',
   ];
   const broken = [];
   for (const lib of breaking) {
