@@ -222,8 +222,12 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         } else {
           logger.warn('Skipped upgrading gradle wrapper files');
         }
-        await runTask(`Migrating build.gradle file.`, () => {
+        await runTask(`Migrating root build.gradle file.`, () => {
           return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
+        });
+        
+        await runTask(`Migrating app build.gradle file.`, () => {
+          return updateAppBuildGradle(join(config.android.appDirAbs, 'build.gradle'));
         });
 
         // Variables gradle
@@ -540,6 +544,24 @@ async function updateBuildGradle(
         logger.info(`Set ${dep} = ${neededDeps[dep]}.`);
       }
     }
+  }
+  writeFileSync(filename, replaced, 'utf-8');
+}
+
+async function updateAppBuildGradle(filename: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+  let replaced = txt;
+
+  const gradlePproperties = ['compileSdk', 'namespace', 'ignoreAssetsPattern'];
+  for (const prop of gradlePproperties) {
+    // Use updated Groovy DSL syntax with " = " assignment
+    const regex = new RegExp(`(^\\s*${prop})\\s+(?!=)(.+)$`,'gm');
+    replaced = replaced.replace(regex, (_match, key, value) => {
+      return `${key} = ${value.trim()}`;
+    });
   }
   writeFileSync(filename, replaced, 'utf-8');
 }
