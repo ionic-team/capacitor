@@ -10,7 +10,6 @@ import com.getcapacitor.JSValue;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginHandle;
 import com.getcapacitor.plugin.SSLPinning;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
