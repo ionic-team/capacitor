@@ -46,10 +46,10 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^7.0.0';
-const pluginVersion = '^7.0.0';
+const coreVersion = 'next';
+const pluginVersion = 'next';
 const gradleVersion = '8.11.1';
-const iOSVersion = '14';
+const iOSVersion = '15';
 let installFailed = false;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
@@ -58,14 +58,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
   }
 
   const capMajor = await checkCapacitorMajorVersion(config);
-  if (capMajor < 6) {
-    fatal('Migrate can only be used on Capacitor 6, please use the CLI in Capacitor 6 to upgrade to 6 first');
+  if (capMajor < 7) {
+    fatal('Migrate can only be used on Capacitor 7, please use the CLI in Capacitor 7 to upgrade to 7 first');
   }
 
   const jdkMajor = await checkJDKMajorVersion();
 
   if (jdkMajor < 21) {
-    logger.warn('Capacitor 7 requires JDK 21 or higher. Some steps may fail.');
+    logger.warn('Capacitor 8 requires JDK 21 or higher. Some steps may fail.');
   }
 
   const variablesAndClasspaths:
@@ -92,7 +92,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
-    : await logPrompt(`Capacitor 7 sets a deployment target of iOS ${iOSVersion} and Android 15 (SDK 35). \n`, {
+    : await logPrompt(`Capacitor 8 sets a deployment target of iOS ${iOSVersion} and Android 16 (SDK 36). \n`, {
         type: 'text',
         name: 'migrateconfirm',
         message: `Are you sure you want to migrate? (Y/n)`,
