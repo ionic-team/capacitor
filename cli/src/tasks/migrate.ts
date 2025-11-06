@@ -383,7 +383,7 @@ async function writeBreakingChanges() {
   }
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/7-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/8-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
