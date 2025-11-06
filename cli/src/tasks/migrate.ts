@@ -280,10 +280,10 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               androidxMaterialVersion: '1.12.0',
               androidxExifInterfaceVersion: '1.3.7',
               androidxCoreKTXVersion: '1.12.0',
-              googleMapsPlayServicesVersion: '18.2.0',
+              googleMapsPlayServicesVersion: '19.0.0',
               googleMapsUtilsVersion: '3.8.2',
-              googleMapsKtxVersion: '5.0.0',
-              googleMapsUtilsKtxVersion: '5.0.0',
+              googleMapsKtxVersion: '5.1.1',
+              googleMapsUtilsKtxVersion: '5.1.1',
               kotlinxCoroutinesVersion: '1.7.3',
               coreSplashScreenVersion: '1.0.1',
             };
