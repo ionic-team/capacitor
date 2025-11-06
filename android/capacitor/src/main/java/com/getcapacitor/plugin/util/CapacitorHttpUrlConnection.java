@@ -8,6 +8,9 @@ import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
 import com.getcapacitor.PluginCall;
+import com.getcapacitor.PluginHandle;
+import com.getcapacitor.plugin.SSLPinning;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -457,14 +460,15 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
     }
 
     public void setSSLSocketFactory(Bridge bridge) {
-        // Attach SSL Certificates if Enterprise Plugin is available
+        // Attach SSL Certificates if SSL Pinning plugin is enabled
         try {
-            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
-            Method method = sslPinningImpl.getDeclaredMethod("getSSLSocketFactory", Bridge.class);
-            SSLSocketFactory sslSocketFactory = (SSLSocketFactory) method.invoke(
-                sslPinningImpl.getDeclaredConstructor().newInstance(),
-                bridge
-            );
+            PluginHandle pluginHandle = bridge.getPlugin("SSLPinning");
+            SSLPinning plugin = (SSLPinning) pluginHandle.getInstance();
+            if (!plugin.enabled) {
+                return;
+            }
+
+            SSLSocketFactory sslSocketFactory = plugin.getSSLSocketFactory();
             if (sslSocketFactory != null) {
                 ((HttpsURLConnection) this.connection).setSSLSocketFactory(sslSocketFactory);
             }

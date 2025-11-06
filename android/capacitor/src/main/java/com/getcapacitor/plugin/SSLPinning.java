@@ -18,6 +18,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,10 +135,14 @@ public class SSLPinning extends Plugin {
 
 
     private List<String> gePublicKeys(KeyStore keyStore) throws Exception {
-        return Stream.of(keyStore.aliases()).map( alias -> {
-            Certificate cert = keyStore.getCertificate(alias.toString());
-            return Base64.encodeToString(cert.getPublicKey().getEncoded(), Base64.NO_WRAP);
-        });
+        List<String> publicKeys = new ArrayList<>();
+
+        for (String alias : Collections.list(keyStore.aliases())) {
+            Certificate cert = keyStore.getCertificate(alias);
+            publicKeys.add(Base64.encodeToString(cert.getPublicKey().getEncoded(), Base64.NO_WRAP));
+        }
+
+        return publicKeys;
     }
 
     private Map<String, InputStream> loadCertificates(List<String> certs) {

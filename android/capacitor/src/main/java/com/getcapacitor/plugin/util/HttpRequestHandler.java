@@ -7,6 +7,9 @@ import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
 import com.getcapacitor.PluginCall;
+import com.getcapacitor.PluginHandle;
+import com.getcapacitor.plugin.SSLPinning;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -450,9 +453,9 @@ public class HttpRequestHandler {
 
     public static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
         try {
-            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
-            Method method = sslPinningImpl.getDeclaredMethod("isDomainExcluded", Bridge.class, URL.class);
-            return (Boolean) method.invoke(sslPinningImpl.getDeclaredConstructor().newInstance(), bridge, url);
+            PluginHandle pluginHandle = bridge.getPlugin("SSLPinning");
+            SSLPinning plugin = (SSLPinning) pluginHandle.getInstance();
+            return plugin.isDomainExcluded(url);
         } catch (Exception ignored) {
             return false;
         }
