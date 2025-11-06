@@ -114,15 +114,7 @@ internal extension InstanceDescriptor {
             if let scrollEnabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
                 scrollingEnabled = scrollEnabled
             }
-            
-            if let providedSSLPinningCerts = (config[keyPath: "ios.sslPinning.certs"] as? [String]) ?? (config[keyPath: "sslPinning.certs"] as? [String]) {
-                sslPinningCerts = providedSSLPinningCerts
-            }
-            
-            if let excludedSSLPinningDomains = (config[keyPath: "ios.sslPinning.excludedDomains"] as? [String]) ?? (config[keyPath: "sslPinning.excludedDomains"] as? [String]) { 
-                sslPinningExcludedDomains = excludedSSLPinningDomains
-            }
-            
+
             if let zoomEnabled = (config[keyPath: "ios.zoomEnabled"] as? Bool) ?? (config[keyPath: "zoomEnabled"] as? Bool) {
                 zoomingEnabled = zoomEnabled
             }

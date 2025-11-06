@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.res.AssetManager;
 import android.util.Base64;
 import android.util.Log;
-
 import com.getcapacitor.Plugin;
 import com.getcapacitor.annotation.CapacitorPlugin;
-
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,17 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-@CapacitorPlugin(
-        name = "SSLPinning"
-)
+@CapacitorPlugin(name = "SSLPinning")
 public class SSLPinning extends Plugin {
+
     private final String tag = "SSL Pinning";
     public boolean enabled = false;
     public ArrayList<String> excludedDomains = new ArrayList<>();
@@ -62,28 +58,32 @@ public class SSLPinning extends Plugin {
             return false;
         }
 
-        Log.i(tag, "Checking Excluded Domains: [" + excludedDomains +"]");
+        Log.i(tag, "Checking Excluded Domains: [" + excludedDomains + "]");
 
-        return excludedDomains.stream().anyMatch(domain -> {
-            URL excludedDomainUrl;
+        return excludedDomains
+            .stream()
+            .anyMatch(domain -> {
+                URL excludedDomainUrl;
 
-            try {
-                excludedDomainUrl = new URL(domain);
-            } catch (MalformedURLException ignored) {
-                excludedDomainUrl = null;
-            }
+                try {
+                    excludedDomainUrl = new URL(domain);
+                } catch (MalformedURLException ignored) {
+                    excludedDomainUrl = null;
+                }
 
-            if (excludedDomainUrl == null) {
-                Log.w(tag, "Invalid URL in Excluded Domains: " + domain);
-                return false;
-            } else if (excludedDomainUrl.getProtocol() == null || excludedDomainUrl.getProtocol().isEmpty()) {
-                Log.w(tag, "The excluded domain string needs to include a protocol: " + domain);
-                return false;
-            } else {
-                return Objects.equals(excludedDomainUrl.getHost(), url.getHost()) &&
-                        Objects.equals(excludedDomainUrl.getProtocol(), url.getProtocol());
-            }
-        });
+                if (excludedDomainUrl == null) {
+                    Log.w(tag, "Invalid URL in Excluded Domains: " + domain);
+                    return false;
+                } else if (excludedDomainUrl.getProtocol() == null || excludedDomainUrl.getProtocol().isEmpty()) {
+                    Log.w(tag, "The excluded domain string needs to include a protocol: " + domain);
+                    return false;
+                } else {
+                    return (
+                        Objects.equals(excludedDomainUrl.getHost(), url.getHost()) &&
+                        Objects.equals(excludedDomainUrl.getProtocol(), url.getProtocol())
+                    );
+                }
+            });
     }
 
     public SSLSocketFactory getSSLSocketFactory() {
@@ -94,7 +94,7 @@ public class SSLPinning extends Plugin {
                 SSLContext sslContext = SSLContext.getInstance("TLS");
                 List<String> pinnedPublicKeys = gePublicKeys(keyStore);
 
-                TrustManager[] tms = {new PublicKeyTrustManager(Arrays.asList(trustManagerFactory.getTrustManagers()), pinnedPublicKeys)};
+                TrustManager[] tms = { new PublicKeyTrustManager(Arrays.asList(trustManagerFactory.getTrustManagers()), pinnedPublicKeys) };
                 sslContext.init(null, null, null);
                 if (sslContext.getSocketFactory() == null) {
                     Log.w(tag, "Failed to pin any certificates. Performing normal request.");
@@ -133,7 +133,6 @@ public class SSLPinning extends Plugin {
         return trustManagerFactory;
     }
 
-
     private List<String> gePublicKeys(KeyStore keyStore) throws Exception {
         List<String> publicKeys = new ArrayList<>();
 
@@ -162,7 +161,7 @@ public class SSLPinning extends Plugin {
 
             try {
                 certList.put(fileName, assetManager.open("certs/" + fileName));
-                Log.i(this.tag, "Pinned (certs/"  + fileName + ").");
+                Log.i(this.tag, "Pinned (certs/" + fileName + ").");
             } catch (Exception ex) {
                 Log.e(this.tag, "Certificate not found or could not be loaded: " + ex);
             }
@@ -173,6 +172,7 @@ public class SSLPinning extends Plugin {
 
     @SuppressLint("CustomX509TrustManager")
     class PublicKeyTrustManager implements X509TrustManager {
+
         private final List<TrustManager> defaultTrustManagers;
         private final List<String> pinnedPublicKeys;
 
