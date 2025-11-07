@@ -123,7 +123,7 @@ public class SystemBars extends Plugin {
         View decorView = getActivity().getWindow().getDecorView();
 
         ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
-            if (hasFixedWebView || hasMetaViewportCover) {
+            if (hasFixedWebView && hasMetaViewportCover) {
                 return insets;
             }
 
