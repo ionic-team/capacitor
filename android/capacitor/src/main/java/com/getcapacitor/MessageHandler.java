@@ -66,7 +66,7 @@ public class MessageHandler {
                 String action = postData.getString("action");
                 String actionArgs = postData.getString("actionArgs");
 
-                Logger.verbose(
+                Logger.debug(
                     Logger.tags("Plugin"),
                     "To native (Cordova plugin): callbackId: " +
                         callbackId +
@@ -86,7 +86,7 @@ public class MessageHandler {
                 String methodName = postData.getString("methodName");
                 JSObject methodData = postData.getJSObject("options", new JSObject());
 
-                Logger.verbose(
+                Logger.debug(
                     Logger.tags("Plugin"),
                     "To native (Capacitor plugin): callbackId: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName
                 );

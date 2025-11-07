@@ -823,7 +823,7 @@ public class Bridge {
             }
 
             if (Logger.shouldLog()) {
-                Logger.verbose(
+                Logger.debug(
                     "callback: " +
                         call.getCallbackId() +
                         ", pluginId: " +
