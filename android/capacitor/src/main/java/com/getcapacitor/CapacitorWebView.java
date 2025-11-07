@@ -12,6 +12,7 @@ import android.webkit.WebView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.view.ViewGroup.MarginLayoutParams;
 
 public class CapacitorWebView extends WebView {
 
@@ -73,7 +74,19 @@ public class CapacitorWebView extends WebView {
 
         if (forceMargins || autoMargins) {
             ViewCompat.setOnApplyWindowInsetsListener(this, (v, windowInsets) -> {
+                // Exclude IME (keyboard) insets to prevent extra scroll space
                 Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                
+                // Check if keyboard configuration should prevent resizing
+                boolean preventKeyboardResize = bridge.getConfig().isInputCaptured();
+                if (preventKeyboardResize) {
+                    // Don't apply bottom margin when keyboard is visible to prevent scroll space
+                    Insets imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
+                    if (imeInsets.bottom > 0) {
+                        insets = Insets.of(insets.left, insets.top, insets.right, 0);
+                    }
+                }
+                
                 MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
                 mlp.leftMargin = insets.left;
                 mlp.bottomMargin = insets.bottom;
