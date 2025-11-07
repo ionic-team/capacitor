@@ -278,18 +278,18 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               }
             }
             const pluginVariables: { [key: string]: string } = {
-              firebaseMessagingVersion: '24.1.0',
+              firebaseMessagingVersion: '25.0.1',
               playServicesLocationVersion: '21.3.0',
-              androidxBrowserVersion: '1.8.0',
-              androidxMaterialVersion: '1.12.0',
-              androidxExifInterfaceVersion: '1.3.7',
-              androidxCoreKTXVersion: '1.12.0',
-              googleMapsPlayServicesVersion: '19.0.0',
-              googleMapsUtilsVersion: '3.8.2',
-              googleMapsKtxVersion: '5.1.1',
-              googleMapsUtilsKtxVersion: '5.1.1',
-              kotlinxCoroutinesVersion: '1.7.3',
-              coreSplashScreenVersion: '1.0.1',
+              androidxBrowserVersion: '1.9.0',
+              androidxMaterialVersion: '1.13.0',
+              androidxExifInterfaceVersion: '1.4.0',
+              androidxCoreKTXVersion: '1.17.0',
+              googleMapsPlayServicesVersion: '19.2.0',
+              googleMapsUtilsVersion: '3.19.1',
+              googleMapsKtxVersion: '5.2.1',
+              googleMapsUtilsKtxVersion: '5.2.1',
+              kotlinxCoroutinesVersion: '1.10.2',
+              coreSplashScreenVersion: '1.2.0',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(config, variablesPath, `${variable} = '`, `'`, pluginVariables[variable], true);
