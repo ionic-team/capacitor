@@ -1,0 +1,10 @@
+{
+  "appId": "com.example.app",
+  "appName": "cap",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}

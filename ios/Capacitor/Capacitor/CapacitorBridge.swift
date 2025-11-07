@@ -578,7 +578,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func toJs(result: JSResultProtocol, save: Bool) {
         let resultJson = result.jsonPayload()
-        CAPLog.print("⚡️  TO JS", resultJson.prefix(256))
 
         DispatchQueue.main.async {
             self.webView?.evaluateJavaScript("""
