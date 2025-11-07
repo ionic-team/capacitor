@@ -225,7 +225,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         await runTask(`Migrating root build.gradle file.`, () => {
           return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
         });
-        
+
         await runTask(`Migrating app build.gradle file.`, () => {
           return updateAppBuildGradle(join(config.android.appDirAbs, 'build.gradle'));
         });
@@ -376,9 +376,7 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
 }
 
 async function writeBreakingChanges() {
-  const breaking = [
-    '@capacitor/status-bar',
-  ];
+  const breaking = ['@capacitor/status-bar'];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
@@ -558,7 +556,7 @@ async function updateAppBuildGradle(filename: string) {
   const gradlePproperties = ['compileSdk', 'namespace', 'ignoreAssetsPattern'];
   for (const prop of gradlePproperties) {
     // Use updated Groovy DSL syntax with " = " assignment
-    const regex = new RegExp(`(^\\s*${prop})\\s+(?!=)(.+)$`,'gm');
+    const regex = new RegExp(`(^\\s*${prop})\\s+(?!=)(.+)$`, 'gm');
     replaced = replaced.replace(regex, (_match, key, value) => {
       return `${key} = ${value.trim()}`;
     });
