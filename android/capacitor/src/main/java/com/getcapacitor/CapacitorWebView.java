@@ -14,6 +14,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.os.Build;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 
 public class CapacitorWebView extends WebView {
 
@@ -51,6 +53,66 @@ public class CapacitorWebView extends WebView {
                         "})();", null
                     );
                 }
+            });
+        }
+    }
+    
+    /**
+     * Calculate navigation bar height for viewport correction
+     */
+    private int getNavigationBarHeight() {
+        Resources resources = getContext().getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        // Fallback: estimate based on screen density
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        return (int) (48 * metrics.density); // 48dp standard navigation bar
+    }
+    
+    /**
+     * Fix viewport calculations for Android < 15 by injecting corrected values
+     */
+    private void correctViewportForLegacyAndroid(int navigationBarHeight, int keyboardHeight) {
+        if (Build.VERSION.SDK_INT < 34) {
+            post(() -> {
+                String script = 
+                    "(function() {" +
+                    "  var navBarHeight = " + navigationBarHeight + ";" +
+                    "  var keyboardHeight = " + keyboardHeight + ";" +
+                    "  var correctedHeight = window.innerHeight;" +
+                    "  " +
+                    "  if (keyboardHeight > 0 && navBarHeight > 0) {" +
+                    "    correctedHeight = window.innerHeight - navBarHeight;" +
+                    "  }" +
+                    "  " +
+                    "  // Override visualViewport.height if available" +
+                    "  if (window.visualViewport) {" +
+                    "    Object.defineProperty(window.visualViewport, 'height', {" +
+                    "      get: function() { return correctedHeight; }," +
+                    "      configurable: true" +
+                    "    });" +
+                    "  }" +
+                    "  " +
+                    "  // Store corrected values for CSS env() variables" +
+                    "  window.Capacitor = window.Capacitor || {};" +
+                    "  window.Capacitor.safeAreaInsets = window.Capacitor.safeAreaInsets || {};" +
+                    "  window.Capacitor.safeAreaInsets.bottom = navBarHeight;" +
+                    "  " +
+                    "  // Inject CSS custom properties for safe area insets" +
+                    "  var style = document.getElementById('capacitor-safe-area-insets');" +
+                    "  if (!style) {" +
+                    "    style = document.createElement('style');" +
+                    "    style.id = 'capacitor-safe-area-insets';" +
+                    "    document.head.appendChild(style);" +
+                    "  }" +
+                    "  style.textContent = ':root { --safe-area-inset-bottom: ' + navBarHeight + 'px; }';" +
+                    "  " +
+                    "  // Dispatch resize event to notify components" +
+                    "  window.dispatchEvent(new Event('resize'));" +
+                    "})();"; 
+                evaluateJavascript(script, null);
             });
         }
     }
@@ -140,11 +202,15 @@ public class CapacitorWebView extends WebView {
                     
                     v.setLayoutParams(mlp);
                 } else {
-                    // Legacy handling for older Android versions
+                    // Legacy handling for older Android versions (< 15)
                     MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
                     mlp.leftMargin = systemInsets.left;
                     mlp.rightMargin = systemInsets.right;
                     mlp.topMargin = systemInsets.top;
+                    
+                    // Fix viewport calculations for Android < 15
+                    int navBarHeight = getNavigationBarHeight();
+                    correctViewportForLegacyAndroid(navBarHeight, imeInsets.bottom);
                     
                     if (bridge.getConfig().isInputCaptured() && imeInsets.bottom > 0) {
                         mlp.bottomMargin = 0;
