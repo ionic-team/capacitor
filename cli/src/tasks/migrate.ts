@@ -282,7 +282,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               playServicesLocationVersion: '21.3.0',
               androidxBrowserVersion: '1.9.0',
               androidxMaterialVersion: '1.13.0',
-              androidxExifInterfaceVersion: '1.4.0',
+              androidxExifInterfaceVersion: '1.4.1',
               androidxCoreKTXVersion: '1.17.0',
               googleMapsPlayServicesVersion: '19.2.0',
               googleMapsUtilsVersion: '3.19.1',
