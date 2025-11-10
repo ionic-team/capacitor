@@ -3,16 +3,13 @@ import { join } from 'path';
 import { rimraf } from 'rimraf';
 import { coerce, gte, lt } from 'semver';
 
-import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
 import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
-import { getPlugins } from '../plugin';
 import { deleteFolderRecursive } from '../util/fs';
-import { resolveNode } from '../util/node';
 import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
@@ -298,14 +295,6 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         });
 
         rimraf.sync(join(config.android.appDirAbs, 'build'));
-
-        if (!installFailed) {
-          await runTask('Migrating package from Manifest to build.gradle in Capacitor plugins', () => {
-            return patchOldCapacitorPlugins(config);
-          });
-        } else {
-          logger.warn('Skipped migrating package from Manifest to build.gradle in Capacitor plugins');
-        }
       }
 
       // Write all breaking changes
@@ -462,59 +451,6 @@ async function updateGradleWrapperFiles(platformDir: string) {
   );
 }
 
-async function movePackageFromManifestToBuildGradle(manifestFilename: string, buildGradleFilename: string) {
-  const manifestText = readFile(manifestFilename);
-  const buildGradleText = readFile(buildGradleFilename);
-
-  if (!manifestText) {
-    logger.error(`Could not read ${manifestFilename}. Check its permissions and if it exists.`);
-    return;
-  }
-
-  if (!buildGradleText) {
-    logger.error(`Could not read ${buildGradleFilename}. Check its permissions and if it exists.`);
-    return;
-  }
-
-  const namespaceExists = new RegExp(/\s+namespace\s+/).test(buildGradleText);
-  if (namespaceExists) {
-    logger.error('Found namespace in build.gradle already, skipping migration');
-    return;
-  }
-
-  let packageName: string;
-  const manifestRegEx = new RegExp(/package="([^"]+)"/);
-  const manifestResults = manifestRegEx.exec(manifestText);
-
-  if (manifestResults === null) {
-    logger.error(`Unable to update Android Manifest. Package not found.`);
-    return;
-  } else {
-    packageName = manifestResults[1];
-  }
-
-  let manifestReplaced = manifestText;
-
-  manifestReplaced = manifestReplaced.replace(manifestRegEx, '');
-
-  if (manifestText == manifestReplaced) {
-    logger.error(`Unable to update Android Manifest: no changes were detected in Android Manifest file`);
-    return;
-  }
-
-  let buildGradleReplaced = buildGradleText;
-
-  buildGradleReplaced = setAllStringIn(buildGradleText, 'android {', '\n', `\n    namespace "${packageName}"`);
-
-  if (buildGradleText == buildGradleReplaced) {
-    logger.error(`Unable to update buildGradleText: no changes were detected in Android Manifest file`);
-    return;
-  }
-
-  writeFileSync(manifestFilename, manifestReplaced, 'utf-8');
-  writeFileSync(buildGradleFilename, buildGradleReplaced, 'utf-8');
-}
-
 async function updateBuildGradle(
   filename: string,
   variablesAndClasspaths: {
@@ -646,39 +582,4 @@ async function updateAndroidManifest(filename: string) {
   );
 
   writeFileSync(filename, replaced, 'utf-8');
-}
-
-export async function patchOldCapacitorPlugins(config: Config): Promise<void[]> {
-  const allPlugins = await getPlugins(config, 'android');
-  const androidPlugins = await getAndroidPlugins(allPlugins);
-  return await Promise.all(
-    androidPlugins.map(async (p) => {
-      if (p.manifest?.android?.src) {
-        const buildGradlePath = resolveNode(config.app.rootDir, p.id, p.manifest.android.src, 'build.gradle');
-        const manifestPath = resolveNode(
-          config.app.rootDir,
-          p.id,
-          p.manifest.android.src,
-          'src',
-          'main',
-          'AndroidManifest.xml',
-        );
-        if (buildGradlePath && manifestPath) {
-          const gradleContent = readFile(buildGradlePath);
-          if (!gradleContent?.includes('namespace')) {
-            if (plugins.includes(p.id)) {
-              logger.warn(
-                `You are using an outdated version of ${p.id}, update the plugin to version ${pluginVersion}`,
-              );
-            } else {
-              logger.warn(
-                `${p.id}@${p.version} doesn't officially support Capacitor ${coreVersion} yet, doing our best moving it's package to build.gradle so it builds`,
-              );
-            }
-            movePackageFromManifestToBuildGradle(manifestPath, buildGradlePath);
-          }
-        }
-      }
-    }),
-  );
 }
