@@ -129,7 +129,7 @@ import Cordova
         }
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
-                webViewConfiguration.applicationNameForUserAgent = "\(appName)  \(appendUserAgent)"
+                webViewConfiguration.applicationNameForUserAgent = "\(appName) \(appendUserAgent)"
             } else {
                 webViewConfiguration.applicationNameForUserAgent = appendUserAgent
             }
