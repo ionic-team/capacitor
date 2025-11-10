@@ -1,6 +1,6 @@
-import { open, mkdirp } from '@ionic/utils-fs';
 import { fork } from '@ionic/utils-subprocess';
 import Debug from 'debug';
+import { open, mkdirp } from 'fs-extra';
 import { request } from 'https';
 import { resolve } from 'path';
 

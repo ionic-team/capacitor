@@ -21,6 +21,21 @@ public class JSExport {
         return "window.Capacitor = { DEBUG: " + isDebug + ", isLoggingEnabled: " + loggingEnabled + ", Plugins: {} };";
     }
 
+    public static String getMiscFileJS(ArrayList<String> paths, Context context) {
+        List<String> lines = new ArrayList<>();
+
+        for (String path : paths) {
+            try {
+                String fileContent = readFileFromAssets(context.getAssets(), "public/" + path);
+                lines.add(fileContent);
+            } catch (IOException ex) {
+                Logger.error("Unable to read public/" + path);
+            }
+        }
+
+        return TextUtils.join("\n", lines);
+    }
+
     public static String getCordovaJS(Context context) {
         String fileContent = "";
         try {
@@ -49,16 +64,16 @@ public class JSExport {
         for (PluginHandle plugin : plugins) {
             lines.add(
                 "(function(w) {\n" +
-                "var a = (w.Capacitor = w.Capacitor || {});\n" +
-                "var p = (a.Plugins = a.Plugins || {});\n" +
-                "var t = (p['" +
-                plugin.getId() +
-                "'] = {});\n" +
-                "t.addListener = function(eventName, callback) {\n" +
-                "  return w.Capacitor.addListener('" +
-                plugin.getId() +
-                "', eventName, callback);\n" +
-                "}"
+                    "var a = (w.Capacitor = w.Capacitor || {});\n" +
+                    "var p = (a.Plugins = a.Plugins || {});\n" +
+                    "var t = (p['" +
+                    plugin.getId() +
+                    "'] = {});\n" +
+                    "t.addListener = function(eventName, callback) {\n" +
+                    "  return w.Capacitor.addListener('" +
+                    plugin.getId() +
+                    "', eventName, callback);\n" +
+                    "}"
             );
             Collection<PluginMethodHandle> methods = plugin.getMethods();
             for (PluginMethodHandle method : methods) {
@@ -156,12 +171,12 @@ public class JSExport {
             case PluginMethod.RETURN_NONE:
                 lines.add(
                     "return w.Capacitor.nativeCallback('" +
-                    plugin.getId() +
-                    "', '" +
-                    method.getName() +
-                    "', " +
-                    CATCHALL_OPTIONS_PARAM +
-                    ")"
+                        plugin.getId() +
+                        "', '" +
+                        method.getName() +
+                        "', " +
+                        CATCHALL_OPTIONS_PARAM +
+                        ")"
                 );
                 break;
             case PluginMethod.RETURN_PROMISE:
@@ -172,14 +187,14 @@ public class JSExport {
             case PluginMethod.RETURN_CALLBACK:
                 lines.add(
                     "return w.Capacitor.nativeCallback('" +
-                    plugin.getId() +
-                    "', '" +
-                    method.getName() +
-                    "', " +
-                    CATCHALL_OPTIONS_PARAM +
-                    ", " +
-                    CALLBACK_PARAM +
-                    ")"
+                        plugin.getId() +
+                        "', '" +
+                        method.getName() +
+                        "', " +
+                        CATCHALL_OPTIONS_PARAM +
+                        ", " +
+                        CALLBACK_PARAM +
+                        ")"
                 );
                 break;
             default:

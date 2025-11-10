@@ -1,4 +1,4 @@
-import { copy, ensureDir, mkdirp, pathExists, readFile, remove, writeFile } from '@ionic/utils-fs';
+import { copy, ensureDir, mkdirp, pathExists, readFile, remove, writeFile } from 'fs-extra';
 import { basename, extname, join, resolve } from 'path';
 import plist from 'plist';
 import type { PlistObject } from 'plist';
@@ -470,7 +470,11 @@ function removeOuterTags(str: string) {
   return str.substring(start, end);
 }
 
-export async function checkPluginDependencies(plugins: Plugin[], platform: string): Promise<void> {
+export async function checkPluginDependencies(
+  plugins: Plugin[],
+  platform: string,
+  failOnMissingDeps = false,
+): Promise<void> {
   const pluginDeps: Map<string, string[]> = new Map();
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
   const incompatible = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);
@@ -515,6 +519,10 @@ export async function checkPluginDependencies(plugins: Plugin[], platform: strin
       `Cordova plugin dependencies must be installed in your project (e.g. w/ ${c.input('npm install')}).\n`;
     for (const [plugin, deps] of pluginDeps.entries()) {
       msg += `\n  ${c.strong(plugin)} is missing dependencies:\n` + deps.map((d) => `    - ${d}`).join('\n');
+    }
+
+    if (failOnMissingDeps) {
+      fatal(`${msg}\n`);
     }
 
     logger.warn(`${msg}\n`);

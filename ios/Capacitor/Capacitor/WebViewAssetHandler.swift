@@ -1,5 +1,5 @@
 import Foundation
-import MobileCoreServices
+import UniformTypeIdentifiers
 
 @objc(CAPWebViewAssetHandler)
 // swiftlint:disable type_body_length
@@ -58,8 +58,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             }
 
             if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"),
-               let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize,
-               isMediaExtension(pathExtension: url.pathExtension) {
+               let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize {
                 let fileHandle = try FileHandle(forReadingFrom: fileUrl)
                 let parts = rangeString.components(separatedBy: "=")
                 let streamParts = parts[1].components(separatedBy: "-")
@@ -107,12 +106,12 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     open func mimeTypeForExtension(pathExtension: String) -> String {
         if !pathExtension.isEmpty {
-            if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as NSString, nil)?.takeRetainedValue() {
-                if let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() {
-                    return mimetype as String
+            if let uti = UTType(filenameExtension: pathExtension) {
+                if let mimetype = uti.preferredMIMEType {
+                    return mimetype
                 }
             }
-            // TODO: Remove in the future if Apple fixes the issue
+            // TODO: Remove when deployment target is set to iOS 17
             if let mimeType = mimeTypes[pathExtension] {
                 return mimeType
             }

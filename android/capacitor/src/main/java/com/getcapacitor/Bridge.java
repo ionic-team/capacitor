@@ -15,7 +15,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.webkit.ServiceWorkerClient;
+import android.webkit.ServiceWorkerController;
 import android.webkit.ValueCallback;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import androidx.activity.result.ActivityResultCallback;
@@ -117,6 +121,8 @@ public class Bridge {
     private HostMask appAllowNavigationMask;
     private Set<String> allowedOriginRules = new HashSet<String>();
     private ArrayList<String> authorities = new ArrayList<>();
+    private ArrayList<String> miscJSFileInjections = new ArrayList<String>();
+    private Boolean canInjectJS = true;
     // A reference to the main WebView for the app
     private final WebView webView;
     public final MockCordovaInterfaceImpl cordovaInterface;
@@ -274,9 +280,23 @@ public class Bridge {
         webView.setWebChromeClient(new BridgeWebChromeClient(this));
         webView.setWebViewClient(this.webViewClient);
 
+        if (config.isResolveServiceWorkerRequests()) {
+            ServiceWorkerController swController = ServiceWorkerController.getInstance();
+            swController.setServiceWorkerClient(
+                new ServiceWorkerClient() {
+                    @Override
+                    public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
+                        return getLocalServer().shouldInterceptRequest(request);
+                    }
+                }
+            );
+        }
+
         if (!isDeployDisabled() && !isNewBinary()) {
-            SharedPreferences prefs = getContext()
-                .getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
+            SharedPreferences prefs = getContext().getSharedPreferences(
+                com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME,
+                Activity.MODE_PRIVATE
+            );
             String path = prefs.getString(com.getcapacitor.plugin.WebView.CAP_SERVER_PATH, null);
             if (path != null && !path.isEmpty() && new File(path).exists()) {
                 setServerBasePath(path);
@@ -328,11 +348,7 @@ public class Bridge {
 
         // Otherwise manually check WebView versions
         try {
-            String webViewPackage = "com.google.android.webview";
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                webViewPackage = "com.android.chrome";
-            }
-            PackageInfo info = InternalUtils.getPackageInfo(pm, webViewPackage);
+            PackageInfo info = InternalUtils.getPackageInfo(pm, "com.android.chrome");
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
@@ -407,8 +423,10 @@ public class Bridge {
     private boolean isNewBinary() {
         String versionCode = "";
         String versionName = "";
-        SharedPreferences prefs = getContext()
-            .getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences(
+            com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME,
+            Activity.MODE_PRIVATE
+        );
         String lastVersionCode = prefs.getString(LAST_BINARY_VERSION_CODE, null);
         String lastVersionName = prefs.getString(LAST_BINARY_VERSION_NAME, null);
 
@@ -444,9 +462,9 @@ public class Bridge {
         if (ex instanceof SocketTimeoutException) {
             Logger.error(
                 "Unable to load app. Ensure the server is running at " +
-                appUrl +
-                ", or modify the " +
-                "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).",
+                    appUrl +
+                    ", or modify the " +
+                    "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).",
                 ex
             );
         }
@@ -551,6 +569,9 @@ public class Bridge {
 
     public void reset() {
         savedCalls = new HashMap<>();
+        for (PluginHandle handle : this.plugins.values()) {
+            handle.getInstance().removeAllListeners();
+        }
     }
 
     /**
@@ -727,9 +748,9 @@ public class Bridge {
     private void logInvalidPluginException(Class<? extends Plugin> clazz) {
         Logger.error(
             "NativePlugin " +
-            clazz.getName() +
-            " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
-            " the class extends Plugin"
+                clazz.getName() +
+                " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
+                " the class extends Plugin"
         );
     }
 
@@ -804,13 +825,13 @@ public class Bridge {
             if (Logger.shouldLog()) {
                 Logger.verbose(
                     "callback: " +
-                    call.getCallbackId() +
-                    ", pluginId: " +
-                    plugin.getId() +
-                    ", methodName: " +
-                    methodName +
-                    ", methodData: " +
-                    call.getData().toString()
+                        call.getCallbackId() +
+                        ", pluginId: " +
+                        plugin.getId() +
+                        ", methodName: " +
+                        methodName +
+                        ", methodData: " +
+                        call.getData().toString()
                 );
             }
 
@@ -857,11 +878,11 @@ public class Bridge {
     }
 
     public void triggerJSEvent(final String eventName, final String target) {
-        eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\")", s -> {});
+        eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\")", (s) -> {});
     }
 
     public void triggerJSEvent(final String eventName, final String target, final String data) {
-        eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\", " + data + ")", s -> {});
+        eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\", " + data + ")", (s) -> {});
     }
 
     public void triggerWindowJSEvent(final String eventName) {
@@ -1001,12 +1022,26 @@ public class Bridge {
             String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
             String cordovaPluginsFileJS = JSExport.getCordovaPluginsFileJS(context);
             String localUrlJS = "window.WEBVIEW_SERVER_URL = '" + localUrl + "';";
+            String miscJS = JSExport.getMiscFileJS(miscJSFileInjections, context);
 
-            return new JSInjector(globalJS, bridgeJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
+            miscJSFileInjections = new ArrayList<>();
+            canInjectJS = false;
+
+            return new JSInjector(globalJS, bridgeJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS, miscJS);
         } catch (Exception ex) {
             Logger.error("Unable to export Capacitor JS. App will not function!", ex);
         }
         return null;
+    }
+
+    /**
+     * Inject JavaScript from an external file before the WebView loads.
+     * @param path relative to public folder
+     */
+    public void injectScriptBeforeLoad(String path) {
+        if (canInjectJS) {
+            miscJSFileInjections.add(path);
+        }
     }
 
     /**
@@ -1573,9 +1608,9 @@ public class Bridge {
                 config
             );
 
-            if (webView instanceof CapacitorWebView) {
-                CapacitorWebView capacitorWebView = (CapacitorWebView) webView;
+            if (webView instanceof CapacitorWebView capacitorWebView) {
                 capacitorWebView.setBridge(bridge);
+                capacitorWebView.edgeToEdgeHandler(bridge);
             }
 
             bridge.setCordovaWebView(mockWebView);

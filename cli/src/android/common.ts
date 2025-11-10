@@ -1,4 +1,4 @@
-import { copy, remove, mkdirp, readFile, pathExists, writeFile } from '@ionic/utils-fs';
+import { copy, remove, mkdirp, readFile, pathExists, writeFile } from 'fs-extra';
 import { join, resolve } from 'path';
 
 import { checkCapacitorPlatform } from '../common';
@@ -92,7 +92,7 @@ export async function editProjectSettingsAndroid(config: Config): Promise<void> 
   let gradleContent = await readFile(buildGradlePath, { encoding: 'utf-8' });
   gradleContent = gradleContent.replace(/applicationId "[^"]+"/, `applicationId "${appId}"`);
   // Update the namespace in build.gradle
-  gradleContent = gradleContent.replace(/namespace "[^"]+"/, `namespace "${appId}"`);
+  gradleContent = gradleContent.replace(/namespace = "[^"]+"/, `namespace = "${appId}"`);
 
   await writeFile(buildGradlePath, gradleContent, { encoding: 'utf-8' });
 

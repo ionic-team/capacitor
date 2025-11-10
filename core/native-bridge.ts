@@ -106,9 +106,8 @@ const convertBody = async (
       type: 'text',
     };
   } else if (body instanceof FormData) {
-    const formData = await convertFormData(body);
     return {
-      data: formData,
+      data: await convertFormData(body),
       type: 'formData',
     };
   } else if (body instanceof File) {
@@ -323,7 +322,6 @@ const initBridge = (w: any): void => {
         const tagStyles = success
           ? 'font-style: italic; font-weight: lighter; color: gray'
           : 'font-style: italic; font-weight: lighter; color: red';
-
         c.groupCollapsed(
           '%cresult %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')',
           tagStyles,
@@ -491,6 +489,17 @@ const initBridge = (w: any): void => {
       if (doPatchHttp) {
         // fetch patch
         window.fetch = async (resource: RequestInfo | URL, options?: RequestInit) => {
+          const headers = new Headers(options?.headers);
+          const contentType = headers.get('Content-Type') || headers.get('content-type');
+          if (
+            options?.body instanceof FormData &&
+            contentType?.includes('multipart/form-data') &&
+            !contentType.includes('boundary')
+          ) {
+            headers.delete('Content-Type');
+            headers.delete('content-type');
+            options.headers = headers;
+          }
           const request = new Request(resource, options);
           if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
             return win.CapacitorWebFetch(resource, options);
@@ -502,6 +511,18 @@ const initBridge = (w: any): void => {
             method.toLocaleUpperCase() === 'OPTIONS' ||
             method.toLocaleUpperCase() === 'TRACE'
           ) {
+            // a workaround for following android webview issue:
+            // https://issues.chromium.org/issues/40450316
+            // Sets the user-agent header to a custom value so that its not stripped
+            // on its way to the native layer
+            if (platform === 'android' && options?.headers) {
+              const userAgent = headers.get('User-Agent') || headers.get('user-agent');
+              if (userAgent !== null) {
+                headers.set('x-cap-user-agent', userAgent);
+                options.headers = headers;
+              }
+            }
+
             if (typeof resource === 'string') {
               return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
             } else if (resource instanceof Request) {
@@ -519,21 +540,33 @@ const initBridge = (w: any): void => {
             const {
               data: requestData,
               type,
-              headers,
+              headers: requestHeaders,
             } = await convertBody(
               options?.body || body || undefined,
               optionHeaders['Content-Type'] || optionHeaders['content-type'],
             );
+
+            const nativeHeaders = {
+              ...requestHeaders,
+              ...optionHeaders,
+            };
+
+            if (platform === 'android') {
+              if (headers.has('User-Agent')) {
+                nativeHeaders['User-Agent'] = headers.get('User-Agent');
+              }
+
+              if (headers.has('user-agent')) {
+                nativeHeaders['user-agent'] = headers.get('user-agent');
+              }
+            }
 
             const nativeResponse: HttpResponse = await cap.nativePromise('CapacitorHttp', 'request', {
               url: request.url,
               method: method,
               data: requestData,
               dataType: type,
-              headers: {
-                ...headers,
-                ...optionHeaders,
-              },
+              headers: nativeHeaders,
             });
 
             const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
@@ -576,7 +609,6 @@ const initBridge = (w: any): void => {
 
         window.XMLHttpRequest = function () {
           const xhr = new win.CapacitorWebXMLHttpRequest.constructor();
-
           Object.defineProperties(xhr, {
             _headers: {
               value: {},
@@ -645,6 +677,14 @@ const initBridge = (w: any): void => {
 
           // XHR patch set request header
           prototype.setRequestHeader = function (header: string, value: string) {
+            // a workaround for the following android web view issue:
+            // https://issues.chromium.org/issues/40450316
+            // Sets the user-agent header to a custom value so that its not stripped
+            // on its way to the native layer
+            if (platform === 'android' && (header === 'User-Agent' || header === 'user-agent')) {
+              header = 'x-cap-user-agent';
+            }
+
             if (isRelativeOrProxyUrl(this._url)) {
               return win.CapacitorWebXMLHttpRequest.setRequestHeader.call(this, header, value);
             }
@@ -683,8 +723,17 @@ const initBridge = (w: any): void => {
               });
 
               convertBody(body).then(({ data, type, headers }) => {
-                const otherHeaders =
+                let otherHeaders =
                   this._headers != null && Object.keys(this._headers).length > 0 ? this._headers : undefined;
+
+                if (body instanceof FormData) {
+                  if (!this._headers['Content-Type'] && !this._headers['content-type']) {
+                    otherHeaders = {
+                      ...otherHeaders,
+                      'Content-Type': `multipart/form-data; boundary=----WebKitFormBoundary${Math.random().toString(36).substring(2, 15)}`,
+                    };
+                  }
+                }
 
                 // intercept request & pass to the bridge
                 cap
