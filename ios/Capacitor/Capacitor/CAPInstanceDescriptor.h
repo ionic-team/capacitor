@@ -49,10 +49,6 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nonnull) NSArray<NSString*> *allowedNavigationHostnames;
 
-@property (nonatomic, copy, nonnull) NSArray<NSString*> *sslPinningCerts;
-
-@property (nonatomic, copy, nonnull) NSArray<NSString*> *sslPinningExcludedDomains;
-
 /**
  @brief The scheme that will be used for the server URL.
  @discussion Defaults to @c capacitor. Set by @c server.iosScheme in the configuration file.
