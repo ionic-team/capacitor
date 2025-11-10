@@ -654,7 +654,6 @@ public class Bridge {
     private void registerAllPlugins() {
         this.registerPlugin(com.getcapacitor.plugin.CapacitorCookies.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
-        this.registerPlugin(com.getcapacitor.plugin.SSLPinning.class);
         this.registerPlugin(com.getcapacitor.plugin.CapacitorHttp.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {

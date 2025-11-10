@@ -8,8 +8,7 @@ import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
 import com.getcapacitor.PluginCall;
-import com.getcapacitor.PluginHandle;
-import com.getcapacitor.plugin.SSLPinning;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import org.json.JSONException;
@@ -461,13 +461,12 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
     public void setSSLSocketFactory(Bridge bridge) {
         // Attach SSL Certificates if SSL Pinning plugin is enabled
         try {
-            PluginHandle pluginHandle = bridge.getPlugin("SSLPinning");
-            SSLPinning plugin = (SSLPinning) pluginHandle.getInstance();
-            if (!plugin.enabled) {
-                return;
-            }
-
-            SSLSocketFactory sslSocketFactory = plugin.getSSLSocketFactory();
+            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
+            Method method = sslPinningImpl.getDeclaredMethod("getSSLSocketFactory", Bridge.class);
+            SSLSocketFactory sslSocketFactory = (SSLSocketFactory) method.invoke(
+                    sslPinningImpl.getDeclaredConstructor().newInstance(),
+                    bridge
+            );
             if (sslSocketFactory != null) {
                 ((HttpsURLConnection) this.connection).setSSLSocketFactory(sslSocketFactory);
             }
