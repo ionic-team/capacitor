@@ -20,7 +20,7 @@ public class CAPHttpPlugin: CAPPlugin, CAPBridgedPlugin {
                 (clazz as! NSObject.Type).perform(#selector(self.request(_:)), with: [
                     "call": call,
                     "httpMethod": httpMethod as Any,
-                    "config": self.bridge?.config as Any,                    
+                    "config": self.bridge?.config as Any
                 ])
                 // swiftlint:enable force_cast
             } else {

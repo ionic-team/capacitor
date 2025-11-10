@@ -7,7 +7,6 @@ import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.JSValue;
 import com.getcapacitor.PluginCall;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
