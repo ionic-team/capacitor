@@ -48,7 +48,6 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @discussion Set by @c allowNavigation in the configuration file.
  */
 @property (nonatomic, copy, nonnull) NSArray<NSString*> *allowedNavigationHostnames;
-
 /**
  @brief The scheme that will be used for the server URL.
  @discussion Defaults to @c capacitor. Set by @c server.iosScheme in the configuration file.

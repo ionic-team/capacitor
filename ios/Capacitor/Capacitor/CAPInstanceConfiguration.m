@@ -66,7 +66,7 @@
         _serverURL = [[configuration serverURL] copy];
         _errorPath = [[configuration errorPath] copy];
         _pluginConfigurations = [[configuration pluginConfigurations] copy];
-        _loggingEnabled = configuration.loggingEnabled;        
+        _loggingEnabled = configuration.loggingEnabled;
         _scrollingEnabled = configuration.scrollingEnabled;
         _zoomingEnabled = configuration.zoomingEnabled;
         _allowLinkPreviews = configuration.allowLinkPreviews;
