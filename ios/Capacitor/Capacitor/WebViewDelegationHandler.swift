@@ -162,46 +162,24 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
     }
 
     open func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        guard
-            let bridge = bridge,
-            let plugin = bridge.plugin(withName: "SSLPinning") as? CAPSSLPinningPlugin,
-            plugin.enabled
-        else {
+        guard let bridge = bridge else {
             completionHandler(.rejectProtectionSpace, nil)
             return
         }
-
-        if plugin.isDomainExcludedFromPinning(
-            host: challenge.protectionSpace.host,
-            scheme: challenge.protectionSpace.protocol ?? ""
-        ) {
-            CAPLog.print("SSL Pinning: Domain Excluded from SSL Pinning. Performing normal request.")
-            completionHandler(.rejectProtectionSpace, nil)
-            return
-        }
-
-        if plugin.certs.isEmpty {
-            CAPLog.print("SSL Pinning: No certificates configured.")
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            return
-        }
-
-        guard
-            challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
-            let serverTrust = challenge.protectionSpace.serverTrust else {
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            return
-        }
-
-        for certEntry in plugin.certs {
-            CAPLog.print("SSL Pinning: Trying " + certEntry.fileName)
-            if plugin.tryCertificate(certEntry, challenge, serverTrust) {
-                completionHandler(.useCredential, URLCredential(trust: serverTrust))
-                return
+        
+        for pluginObject in bridge.plugins {
+            let plugin = pluginObject.value
+            let selector = NSSelectorFromString("handleWKWebViewURLAuthenticationChallenge:")
+            if plugin.responds(to: selector) {
+                if let response = plugin.handleWKWebViewURLAuthenticationChallenge(challenge) {
+                    completionHandler(response.response ,response.credential)
+                    return
+                }
             }
         }
-
-        completionHandler(.cancelAuthenticationChallenge, nil)
+        
+        completionHandler(.rejectProtectionSpace, nil)
+        return
     }
 
     // MARK: - WKScriptMessageHandler

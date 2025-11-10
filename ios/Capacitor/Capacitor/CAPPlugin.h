@@ -5,6 +5,7 @@
 @class CAPPluginCall;
 
 @class PluginConfig;
+@class PluginURLAuthChallenge;
 
 @interface CAPPlugin : NSObject
 
@@ -38,6 +39,10 @@
  * Returning nil will defer to the default Capacitor policy
  */
 - (NSNumber* _Nullable)shouldOverrideLoad:(WKNavigationAction* _Nonnull)navigationAction;
+/**
+ Give the plugin a chance to response to 
+ */
+- (PluginURLAuthChallenge* _Nullable)handleWKWebViewURLAuthenticationChallenge:(NSURLAuthenticationChallenge* _Nonnull)challenge;
 
 // Called after init if the plugin wants to do
 // some loading so the plugin author doesn't

@@ -80,7 +80,7 @@
 		62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */; };
 		62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */; };
 		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
-		95116A0E2EBBAB9C004FC93B /* SSLPinning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95116A0C2EBBAB91004FC93B /* SSLPinning.swift */; };
+		95116A122EC242F5004FC93B /* PluginURLAuthChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95116A112EC242E0004FC93B /* PluginURLAuthChallenge.swift */; };
 		A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */; };
 		A327E6B728DB8B2900CA8B0A /* CapacitorHttp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */; };
 		A327E6B828DB8B2900CA8B0A /* CapacitorUrlRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */; };
@@ -238,7 +238,7 @@
 		62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Capacitor.swift"; sourceTree = "<group>"; };
 		62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgedTypesTests.m; sourceTree = "<group>"; };
 		62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesHelper.swift; sourceTree = "<group>"; };
-		95116A0C2EBBAB91004FC93B /* SSLPinning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSLPinning.swift; sourceTree = "<group>"; };
+		95116A112EC242E0004FC93B /* PluginURLAuthChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginURLAuthChallenge.swift; sourceTree = "<group>"; };
 		A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
 		A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorHttp.swift; sourceTree = "<group>"; };
 		A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorUrlRequest.swift; sourceTree = "<group>"; };
@@ -355,6 +355,7 @@
 		62959AE12524DA7700A3D7F1 /* Capacitor */ = {
 			isa = PBXGroup;
 			children = (
+				95116A112EC242E0004FC93B /* PluginURLAuthChallenge.swift */,
 				A7D9312C2B2370EF00FF59A2 /* Codable */,
 				0F8F33B127DA980A003F49D6 /* PluginConfig.swift */,
 				A76739782B98E09700795F7B /* PrivacyInfo.xcprivacy */,
@@ -422,7 +423,6 @@
 		62959AEA2524DA7700A3D7F1 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				95116A0C2EBBAB91004FC93B /* SSLPinning.swift */,
 				A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */,
 				A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */,
 				A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */,
@@ -718,6 +718,7 @@
 				A7187FD22BD1CB7D00093C45 /* CAPPluginMethod.swift in Sources */,
 				621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */,
 				621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */,
+				95116A122EC242F5004FC93B /* PluginURLAuthChallenge.swift in Sources */,
 				62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */,
 				623D690A254C6FDF002D01D1 /* CAPInstanceDescriptor.m in Sources */,
 				A7D8B3522B238A840003FAD6 /* JSValueEncoder.swift in Sources */,
@@ -743,7 +744,6 @@
 				A7BE62CC2B486A5400165ACB /* KeyValueStore.swift in Sources */,
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
 				373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */,
-				95116A0E2EBBAB9C004FC93B /* SSLPinning.swift in Sources */,
 				0F83E885285A332E006C43CB /* AppUUID.swift in Sources */,
 				625AF1ED258963C700869675 /* WebViewAssetHandler.swift in Sources */,
 				A327E6B728DB8B2900CA8B0A /* CapacitorHttp.swift in Sources */,
