@@ -19,8 +19,8 @@ public class CAPHttpPlugin: CAPPlugin, CAPBridgedPlugin {
                 // swiftlint:disable force_cast
                 (clazz as! NSObject.Type).perform(#selector(self.request(_:)), with: [
                     "call": call,
-                    "httpMethod": httpMethod as Any,                    
-                    "plugin": self.bridge?.plugin(withName: "SSLPinning") as Any
+                    "httpMethod": httpMethod as Any,
+                    "config": self.bridge?.config as Any,                    
                 ])
                 // swiftlint:enable force_cast
             } else {
