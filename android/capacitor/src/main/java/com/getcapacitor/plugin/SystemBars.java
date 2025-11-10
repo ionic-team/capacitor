@@ -3,6 +3,7 @@ package com.getcapacitor.plugin;
 import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -121,8 +122,15 @@ public class SystemBars extends Plugin {
 
     private void setupSafeAreaInsets(boolean hasFixedWebView, boolean hasMetaViewportCover) {
         View decorView = getActivity().getWindow().getDecorView();
+        View activityLayoutRootView = ((ViewGroup) decorView.getRootView()).getChildAt(0);
 
-        ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(activityLayoutRootView, (v, insets) -> {
+            if (v.getFitsSystemWindows()) {
+                // We are not in edge to edge mode
+                injectSafeAreaCSS(0, 0, 0, 0);
+                return WindowInsetsCompat.CONSUMED;
+            }
+
             if (hasFixedWebView && hasMetaViewportCover) {
                 return insets;
             }
