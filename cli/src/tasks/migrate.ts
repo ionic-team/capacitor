@@ -365,7 +365,17 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
 }
 
 async function writeBreakingChanges() {
-  const breaking = ['@capacitor/status-bar'];
+  const breaking = [
+    '@capacitor/action-sheet',
+    '@capacitor/barcode-scanner',
+    '@capacitor/browser',
+    '@capacitor/camera',
+    '@capacitor/google-maps',
+    '@capacitor/push-notifications',
+    '@capacitor/screen-orientation',
+    '@capacitor/splash-screen',
+    '@capacitor/status-bar',
+  ];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
