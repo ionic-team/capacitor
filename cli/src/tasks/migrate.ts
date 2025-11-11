@@ -583,13 +583,23 @@ async function updateAndroidManifest(filename: string) {
     return;
   }
 
-  if (txt.includes('|density')) {
+  if (txt.includes('|density') || txt.includes('density|')) {
     return; // Probably already updated
   }
-  const replaced = txt.replace(
-    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"',
-    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"',
-  );
+  // Since navigation was an optional change in Capacitor 7, attempting to add density and/or navigation
+  const replaced = txt
+    .replace(
+      'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"',
+      'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"',
+    )
+    .replace(
+      'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"',
+      'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"',
+    );
 
-  writeFileSync(filename, replaced, 'utf-8');
+  if (!replaced.includes('|density')) {
+    throw new Error(`Unable to add 'density' to 'android:configChanges' in ${filename}. Try adding it manually`);
+  } else {
+    writeFileSync(filename, replaced, 'utf-8');
+  }
 }
