@@ -172,7 +172,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             let selector = NSSelectorFromString("handleWKWebViewURLAuthenticationChallenge:")
             if plugin.responds(to: selector) {
                 if let response = plugin.handleWKWebViewURLAuthenticationChallenge(challenge) {
-                    completionHandler(response.response, response.credential)
+                    completionHandler(response.disposition, response.credential)
                     return
                 }
             }
