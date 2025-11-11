@@ -40,7 +40,8 @@
  */
 - (NSNumber* _Nullable)shouldOverrideLoad:(WKNavigationAction* _Nonnull)navigationAction;
 /**
- Give the plugin a chance to response to 
+ * Allows plugins to hook into and respond to the WebView's URL authentication challenge.
+ * Returning nil will defer to the default response of [.rejectProtectionSpace](https://developer.apple.com/documentation/Foundation/URLSession/AuthChallengeDisposition/rejectProtectionSpace).
  */
 - (PluginURLAuthChallenge* _Nullable)handleWKWebViewURLAuthenticationChallenge:(NSURLAuthenticationChallenge* _Nonnull)challenge;
 
