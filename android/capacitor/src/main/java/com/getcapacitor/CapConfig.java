@@ -591,7 +591,6 @@ public class CapConfig {
         private boolean resolveServiceWorkerRequests = true;
         private String adjustMarginsForEdgeToEdge = "auto";
 
-
         // Embedded
         private String startPath = null;
 
