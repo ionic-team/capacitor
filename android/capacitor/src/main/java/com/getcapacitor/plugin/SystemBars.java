@@ -63,7 +63,7 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
-        String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase();
+        String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
         boolean disableCSSInsets = getConfig().getBoolean("disableInsets", false);
 
