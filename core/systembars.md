@@ -73,7 +73,7 @@ const setStatusBarAnimation = async () => {
 ## Configuration
 | Prop          | Type                 | Description                                                               | Default            |
 | ------------- | -------------------- | ------------------------------------------------------------------------- | ------------------ |
-| **`enableInsets`** | <code>boolean</code> | Enables the injection of device css insets into the webview.  This option is only supported on Android. | <code>true</code> |
+| **`disableInsets`** | <code>boolean</code> | Enables the injection of device css insets into the webview.  This option is only supported on Android. | <code>false</code> |
 | **`style`** | <code>string</code> | The style of the text and icons of the system bars. | <code>DEFAULT</code> |
 | **`hidden`** | <code>boolean</code> | Hide the system bars on start. | <code>false</code> |
 | **`animation`** | <code>string</code> | The type of status bar animation used when showing or hiding.  This option is only supported on iOS. | <code>FADE</code> |
@@ -87,7 +87,7 @@ In `capacitor.config.json`:
 {
   "plugins": {
     "SystemBars": {
-      "enableInsets": false,
+      "disableInsets": true,
       "style": "DARK",
       "hidden": false,
       "animation": "NONE"
@@ -104,7 +104,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   plugins: {
     SystemBars: {
-      enableInsets: true,
+      disableInsets: true,
       style: "DARK",
       hidden: false,
       animation: "NONE"
@@ -242,9 +242,7 @@ Construct a type with the properties of T except for those in type K.
 
 From T, pick a set of properties whose keys are in the union K
 
-<code>{
- [P in K]: T[P];
- }</code>
+<code>{ [P in K]: T[P]; }</code>
 
 
 #### Exclude

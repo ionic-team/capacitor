@@ -65,10 +65,13 @@ public class SystemBars extends Plugin {
     private void initSystemBars() {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase();
         boolean hidden = getConfig().getBoolean("hidden", false);
+        boolean disableCSSInsets = getConfig().getBoolean("disableInsets", false);
 
         this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
             boolean hasMetaViewportCover = res.equals("true");
-            setupSafeAreaInsets(this.hasFixedWebView(), hasMetaViewportCover);
+            if (!disableCSSInsets) {
+                setupSafeAreaInsets(this.hasFixedWebView(), hasMetaViewportCover);
+            }
         });
 
         getBridge().executeOnMainThread(() -> {

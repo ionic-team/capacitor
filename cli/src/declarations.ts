@@ -718,7 +718,15 @@ export interface PluginsConfig {
    */
   SystemBars?: {
     /**
+     * Disables the injection of device css insets into the web view.
+     *
+     * @default false
+     */
+    disableInsets?: boolean;
+    /**
      * The style of the text and icons of the system bars.
+     *
+     * This option is only supported on Android.
      *
      * @default `DEFAULT`
      */
