@@ -151,8 +151,7 @@ public class SystemBars extends Plugin {
                           document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
                           document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
                           document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
-                          document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
-                          window.dispatchEvent(new CustomEvent('safeAreaChanged'));
+                          document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");                          
                         } catch(e) { console.error('Error injecting safe area CSS:', e); }
                         """,
                         (int) topPx,
