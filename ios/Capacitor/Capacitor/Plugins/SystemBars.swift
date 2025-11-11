@@ -22,10 +22,8 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc override public func load() {
         let hidden = getConfig().getBoolean("hidden", false)
 
-        if let style = getConfig().getString("style") {
+        if let style = getConfig().getString("style", "DEFAULT") {
             setStyle(style: style)
-        } else {
-            setStyle(style: "DEFAULT")
         }
 
         if let animation = getConfig().getString("animation") {
