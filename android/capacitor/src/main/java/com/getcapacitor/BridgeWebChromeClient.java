@@ -450,7 +450,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
         return !(
             msg.contains("%cresult %c") ||
             (msg.contains("%cnative %c")) ||
-            msg.equalsIgnoreCase("[object Object]") ||
             msg.equalsIgnoreCase("console.groupEnd")
         );
     }
