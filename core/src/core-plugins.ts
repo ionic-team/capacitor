@@ -517,8 +517,8 @@ export enum SystemBarsStyle {
 
   /**
    * The style is based on the device appearance or the underlying content.
-   * If the device is using Dark mode, the statusbar text will be light.
-   * If the device is using Light mode, the statusbar text will be dark.
+   * If the device is using Dark mode, the system bars content will be light.
+   * If the device is using Light mode, the system bars content will be dark.
    *
    * @since 8.0.0
    */
@@ -540,7 +540,7 @@ export interface SystemBarsStyleOptions {
    * Style of the text and icons of the system bars.
    *
    * @since 8.0.0
-   * @default default
+   * @default 'DEFAULT'
    * @example "DARK"
    */
   style: SystemBarsStyle;

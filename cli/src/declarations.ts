@@ -719,11 +719,15 @@ export interface PluginsConfig {
   SystemBars?: {
     /**
      * The style of the text and icons of the system bars.
+     *
+     * @default `DEFAULT`
      */
     style?: string;
 
     /**
      * Hide the system bars on start.
+     *
+     * @default false
      */
     hidden?: boolean;
 
