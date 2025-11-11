@@ -27,8 +27,7 @@ public class SystemBars extends Plugin {
     static final String INSET_TOP = "TOP";
     static final String INSET_BOTTOM = "BOTTOM";
 
-    static final String viewportMetaJSFunction =
-        """
+    static final String viewportMetaJSFunction = """
         function capacitorSystemBarsCheckMetaViewport() {
             const meta = document.querySelectorAll("meta[name=viewport]");
             if (meta.length == 0) {
@@ -67,17 +66,15 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase();
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        this.bridge.getWebView()
-            .evaluateJavascript(viewportMetaJSFunction, res -> {
-                boolean hasMetaViewportCover = res.equals("true");
-                setupSafeAreaInsets(this.hasFixedWebView(), hasMetaViewportCover);
-            });
+        this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
+            boolean hasMetaViewportCover = res.equals("true");
+            setupSafeAreaInsets(this.hasFixedWebView(), hasMetaViewportCover);
+        });
 
-        getBridge()
-            .executeOnMainThread(() -> {
-                setStyle(style, "");
-                setHidden(hidden, "");
-            });
+        getBridge().executeOnMainThread(() -> {
+            setStyle(style, "");
+            setHidden(hidden, "");
+        });
     }
 
     @PluginMethod
@@ -85,33 +82,30 @@ public class SystemBars extends Plugin {
         String inset = call.getString("inset", "").toUpperCase(Locale.US);
         String style = call.getString("style", STYLE_DEFAULT);
 
-        getBridge()
-            .executeOnMainThread(() -> {
-                setStyle(style, inset);
-                call.resolve();
-            });
+        getBridge().executeOnMainThread(() -> {
+            setStyle(style, inset);
+            call.resolve();
+        });
     }
 
     @PluginMethod
     public void show(final PluginCall call) {
         String inset = call.getString("inset", "").toUpperCase(Locale.US);
 
-        getBridge()
-            .executeOnMainThread(() -> {
-                setHidden(false, inset);
-                call.resolve();
-            });
+        getBridge().executeOnMainThread(() -> {
+            setHidden(false, inset);
+            call.resolve();
+        });
     }
 
     @PluginMethod
     public void hide(final PluginCall call) {
         String inset = call.getString("inset", "").toUpperCase(Locale.US);
 
-        getBridge()
-            .executeOnMainThread(() -> {
-                setHidden(true, inset);
-                call.resolve();
-            });
+        getBridge().executeOnMainThread(() -> {
+            setHidden(true, inset);
+            call.resolve();
+        });
     }
 
     @PluginMethod
@@ -141,28 +135,27 @@ public class SystemBars extends Plugin {
         float leftPx = left / density;
 
         // Execute JavaScript to inject the CSS
-        getBridge()
-            .executeOnMainThread(() -> {
-                if (bridge != null && bridge.getWebView() != null) {
-                    String script = String.format(
-                        Locale.US,
-                        """
-                        try {
-                          document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
-                          document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
-                          document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
-                          document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
-                        } catch(e) { console.error('Error injecting safe area CSS:', e); }
-                        """,
-                        (int) topPx,
-                        (int) rightPx,
-                        (int) bottomPx,
-                        (int) leftPx
-                    );
+        getBridge().executeOnMainThread(() -> {
+            if (bridge != null && bridge.getWebView() != null) {
+                String script = String.format(
+                    Locale.US,
+                    """
+                    try {
+                      document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
+                      document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
+                      document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
+                      document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
+                    } catch(e) { console.error('Error injecting safe area CSS:', e); }
+                    """,
+                    (int) topPx,
+                    (int) rightPx,
+                    (int) bottomPx,
+                    (int) leftPx
+                );
 
-                    bridge.getWebView().evaluateJavascript(script, null);
-                }
-            });
+                bridge.getWebView().evaluateJavascript(script, null);
+            }
+        });
     }
 
     private void setStyle(String style, String inset) {
