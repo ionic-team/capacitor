@@ -182,8 +182,8 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
     @Deprecated
     @Override
-    public void sendJavascript(String statememt) {
-        nativeToJsMessageQueue.addJavaScript(statememt);
+    public void sendJavascript(String statement) {
+        nativeToJsMessageQueue.addJavaScript(statement);
     }
 
     public void eval(final String js, final ValueCallback<String> callback) {

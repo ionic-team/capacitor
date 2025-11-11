@@ -140,7 +140,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-- **android-template:** prevent app restart on bluetooh keyboard changes ([#7652](https://github.com/ionic-team/capacitor/issues/7652)) ([200c7cb](https://github.com/ionic-team/capacitor/commit/200c7cb911898fbfb12b0b25e8cfd1982e0a6bf0))
+- **android-template:** prevent app restart on bluetooth keyboard changes ([#7652](https://github.com/ionic-team/capacitor/issues/7652)) ([200c7cb](https://github.com/ionic-team/capacitor/commit/200c7cb911898fbfb12b0b25e8cfd1982e0a6bf0))
 - **cli:** replace app-store deprecated method on build ([#7637](https://github.com/ionic-team/capacitor/issues/7637)) ([942b108](https://github.com/ionic-team/capacitor/commit/942b108c1d506539c0c53276ed4ec35eed36634e))
 - **ios:** fix retain cycle caused by CDVPluginManager ([#7692](https://github.com/ionic-team/capacitor/issues/7692)) ([02bdb3d](https://github.com/ionic-team/capacitor/commit/02bdb3d1d15907dcc577f16b7f2e22050e54ffef))
 
@@ -562,7 +562,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **cli:** Add support for Android build `--flavor` ([#6437](https://github.com/ionic-team/capacitor/issues/6437)) ([e91a8e7](https://github.com/ionic-team/capacitor/commit/e91a8e795604042684ec9e20b620eee36e0dfda2))
 - **cli:** update migrate command for cap4 -> cap5 ([#6447](https://github.com/ionic-team/capacitor/issues/6447)) ([b1f0a37](https://github.com/ionic-team/capacitor/commit/b1f0a3744d3158dab083ea31ea3e747b937729d2))
 - retain multiple calls per event until consumed ([#6419](https://github.com/ionic-team/capacitor/issues/6419)) ([5aba2cb](https://github.com/ionic-team/capacitor/commit/5aba2cbe29bdbab2a7af861c65d8323acf9c54a6))
-- Upgrade to Typescript 5.x ([#6433](https://github.com/ionic-team/capacitor/issues/6433)) ([88d0ded](https://github.com/ionic-team/capacitor/commit/88d0ded9e7356531ffc4563b9b81a0f3f069484b))
+- Upgrade to Typescript 5.x ([#6433](https://github.com/ionic-team/capacitor/issues/6433)) ([88d0dead](https://github.com/ionic-team/capacitor/commit/88d0ded9e7356531ffc4563b9b81a0f3f069484b))
 
 # [5.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/4.7.0...5.0.0-alpha.1) (2023-03-16)
 
@@ -670,7 +670,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-- **android:** open external links in browser ([#5913](https://github.com/ionic-team/capacitor/issues/5913)) ([7553ede](https://github.com/ionic-team/capacitor/commit/7553ede93170971e21ab3dec1798443d084ead2a))
+- **android:** open external links in browser ([#5913](https://github.com/ionic-team/capacitor/issues/5913)) ([7553edge](https://github.com/ionic-team/capacitor/commit/7553ede93170971e21ab3dec1798443d084ead2a))
 - **android:** set all cookies on proxied requests ([#5781](https://github.com/ionic-team/capacitor/issues/5781)) ([5ef6a38](https://github.com/ionic-team/capacitor/commit/5ef6a3889121dd39a9159ff80250df18854bc557))
 - **android:** set WebViewClient on the WebView ([#5919](https://github.com/ionic-team/capacitor/issues/5919)) ([020ed8e](https://github.com/ionic-team/capacitor/commit/020ed8eaeb7864399d4b93f54ab7601c607d8e0d))
 - **cli:** Find the Info.plist when using scheme ([#5914](https://github.com/ionic-team/capacitor/issues/5914)) ([f7029ac](https://github.com/ionic-team/capacitor/commit/f7029acb885ec60f85a434b6f71e4f2a633c7651))
@@ -733,7 +733,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **android:** Use addWebMessageListener where available ([#5427](https://github.com/ionic-team/capacitor/issues/5427)) ([c2dfe80](https://github.com/ionic-team/capacitor/commit/c2dfe808446717412b35e82713d123b7a052f264))
 - **android-template:** Use Android 12 splash API ([#5777](https://github.com/ionic-team/capacitor/issues/5777)) ([f3ab951](https://github.com/ionic-team/capacitor/commit/f3ab9519e1f08d5dfeb2db61b6939725be92b4f3))
 - **cli:** add migrator for cap3 to cap4 ([#5762](https://github.com/ionic-team/capacitor/issues/5762)) ([7cb660a](https://github.com/ionic-team/capacitor/commit/7cb660a34d9a87274761d4492d0d77c9ef44ace8))
-- **ios:** Add overrideable router var for CAPWebView. ([#5743](https://github.com/ionic-team/capacitor/issues/5743)) ([c1de1c0](https://github.com/ionic-team/capacitor/commit/c1de1c0138aad188a760118e35983d10d257f8e7))
+- **ios:** Add overridable router var for CAPWebView. ([#5743](https://github.com/ionic-team/capacitor/issues/5743)) ([c1de1c0](https://github.com/ionic-team/capacitor/commit/c1de1c0138aad188a760118e35983d10d257f8e7))
 - **iOS:** post install script for deployment target ([#5783](https://github.com/ionic-team/capacitor/issues/5783)) ([f5afa94](https://github.com/ionic-team/capacitor/commit/f5afa94b3b9c246d87b2af03359840f503bace90))
 - Add option for custom error page ([#5723](https://github.com/ionic-team/capacitor/issues/5723)) ([e8bdef3](https://github.com/ionic-team/capacitor/commit/e8bdef3b4634e4ad45fa8fc34c7c0ab8dfa383f3))
 
@@ -829,7 +829,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 - **android:** Add overridable routing for WebViewLocalServer ([#5553](https://github.com/ionic-team/capacitor/issues/5553)) ([3bb288e](https://github.com/ionic-team/capacitor/commit/3bb288e848c5c0e49c1e58c0782e0b1ffd7b1f31))
 - **cli:** support capacitor portals plugin changes needed ([#5558](https://github.com/ionic-team/capacitor/issues/5558)) ([6810a19](https://github.com/ionic-team/capacitor/commit/6810a19ae2bbda1f4b2afad61d37ca822ca157f5))
-- **ios:** Add overrideable routing for CAPBridgeViewController subclasses ([#5546](https://github.com/ionic-team/capacitor/issues/5546)) ([8875d5e](https://github.com/ionic-team/capacitor/commit/8875d5e2721e8a8ee763ce70cb672db383f36efa))
+- **ios:** Add overridable routing for CAPBridgeViewController subclasses ([#5546](https://github.com/ionic-team/capacitor/issues/5546)) ([8875d5e](https://github.com/ionic-team/capacitor/commit/8875d5e2721e8a8ee763ce70cb672db383f36efa))
 
 # [4.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.1) (2022-03-25)
 
@@ -999,7 +999,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 - **cli:** Don't error if there are no scripts ([#4763](https://github.com/ionic-team/capacitor/issues/4763)) ([dec3fb2](https://github.com/ionic-team/capacitor/commit/dec3fb285239912980f2abea1cf48c583da6a163))
-- **ios:** isNewBinary is true if defaults have no stored versions ([#4779](https://github.com/ionic-team/capacitor/issues/4779)) ([bd86dbe](https://github.com/ionic-team/capacitor/commit/bd86dbeb74771ed201d0100773babf49e6764818))
+- **ios:** isNewBinary is true if defaults have no stored versions ([#4779](https://github.com/ionic-team/capacitor/issues/4779)) ([bd86be](https://github.com/ionic-team/capacitor/commit/bd86dbeb74771ed201d0100773babf49e6764818))
 
 ### Features
 
@@ -1436,7 +1436,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - chore: remove package-lock.json files (#3093) ([9cb36bb](https://github.com/ionic-team/capacitor/commit/9cb36bb)), closes [#3093](https://github.com/ionic-team/capacitor/issues/3093)
 - chore: update capacitor twitter url (#3099) ([782e57a](https://github.com/ionic-team/capacitor/commit/782e57a)), closes [#3099](https://github.com/ionic-team/capacitor/issues/3099)
 - chore: Update changelog for 2.2.0 ([dfe4239](https://github.com/ionic-team/capacitor/commit/dfe4239))
-- chore: update ios and android peerDependencies ([12daa6a](https://github.com/ionic-team/capacitor/commit/12daa6a))
+- chore: update ios and android peerDependencies ([12data6a](https://github.com/ionic-team/capacitor/commit/12daa6a))
 - chore: update site links (#3152) ([cdd0337](https://github.com/ionic-team/capacitor/commit/cdd0337)), closes [#3152](https://github.com/ionic-team/capacitor/issues/3152)
 - chore: Update the location of capacitor pods for IonicRunner (#3120) ([937e3a2](https://github.com/ionic-team/capacitor/commit/937e3a2)), closes [#3120](https://github.com/ionic-team/capacitor/issues/3120)
 - chore(android): update gradle wrapper to 5.6.4 (#3004) ([3a2244c](https://github.com/ionic-team/capacitor/commit/3a2244c)), closes [#3004](https://github.com/ionic-team/capacitor/issues/3004)
@@ -1606,7 +1606,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - docs(android): explain where to apply the variables change (#2791) ([e5bd2eb](https://github.com/ionic-team/capacitor/commit/e5bd2eb)), closes [#2791](https://github.com/ionic-team/capacitor/issues/2791)
 - docs(ce-plugins): Add capacitor-admob-advanced (#2780) ([9b1593d](https://github.com/ionic-team/capacitor/commit/9b1593d)), closes [#2780](https://github.com/ionic-team/capacitor/issues/2780)
 - docs(deep-links): Rename applinks.json to assetlinks.json (#2842) ([53883ce](https://github.com/ionic-team/capacitor/commit/53883ce)), closes [#2842](https://github.com/ionic-team/capacitor/issues/2842)
-- docs(firebase pn): Update Push Notifications with Firebase Guide (#2698) ([ee5e283](https://github.com/ionic-team/capacitor/commit/ee5e283)), closes [#2698](https://github.com/ionic-team/capacitor/issues/2698)
+- docs(firebase on): Update Push Notifications with Firebase Guide (#2698) ([ee5e283](https://github.com/ionic-team/capacitor/commit/ee5e283)), closes [#2698](https://github.com/ionic-team/capacitor/issues/2698)
 - docs(keyboard): Add missing import in example (#2749) ([04fb275](https://github.com/ionic-team/capacitor/commit/04fb275)), closes [#2749](https://github.com/ionic-team/capacitor/issues/2749)
 - docs(troubleshooting): Add AndroidX information and workaround (#2832) ([d9cd399](https://github.com/ionic-team/capacitor/commit/d9cd399)), closes [#2832](https://github.com/ionic-team/capacitor/issues/2832)
 - docs(updating): Provide a full path to variables.gradle file (#2769) ([3638a89](https://github.com/ionic-team/capacitor/commit/3638a89)), closes [#2769](https://github.com/ionic-team/capacitor/issues/2769)

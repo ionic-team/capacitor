@@ -16,7 +16,7 @@ export async function doctorIOS(config: Config): Promise<void> {
   // check plugins versions
   // check native project deps are up-to-date === npm install
   // check if npm install was updated
-  // check online datebase of common errors
+  // check online database of common errors
   // check if www folder is empty (index.html does not exist)
   try {
     await check([() => checkBundler(config) || checkCocoaPods(config), () => checkWebDir(config), checkXcode]);

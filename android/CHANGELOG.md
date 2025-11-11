@@ -467,7 +467,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-- **android:** open external links in browser ([#5913](https://github.com/ionic-team/capacitor/issues/5913)) ([7553ede](https://github.com/ionic-team/capacitor/commit/7553ede93170971e21ab3dec1798443d084ead2a))
+- **android:** open external links in browser ([#5913](https://github.com/ionic-team/capacitor/issues/5913)) ([7553edge](https://github.com/ionic-team/capacitor/commit/7553ede93170971e21ab3dec1798443d084ead2a))
 - **android:** set all cookies on proxied requests ([#5781](https://github.com/ionic-team/capacitor/issues/5781)) ([5ef6a38](https://github.com/ionic-team/capacitor/commit/5ef6a3889121dd39a9159ff80250df18854bc557))
 - **android:** set WebViewClient on the WebView ([#5919](https://github.com/ionic-team/capacitor/issues/5919)) ([020ed8e](https://github.com/ionic-team/capacitor/commit/020ed8eaeb7864399d4b93f54ab7601c607d8e0d))
 - **core:** Exception object was not set on Cap ([#5917](https://github.com/ionic-team/capacitor/issues/5917)) ([9ca27a4](https://github.com/ionic-team/capacitor/commit/9ca27a4f8441b368f8bf9d97dda57b1a55ac0e4e))
