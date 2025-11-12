@@ -39,27 +39,27 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @objc func show(_ call: CAPPluginCall) {
-        let inset = call.getString("inset")
+        let bar = call.getString("bar")
 
         if let animation = call.getString("animation") {
             setAnimation(animation: animation)
         }
 
         DispatchQueue.main.async {
-            self.setHidden(hidden: false, inset: inset)
+            self.setHidden(hidden: false, bar: bar)
             call.resolve()
         }
     }
 
     @objc func hide(_ call: CAPPluginCall) {
-        let inset = call.getString("inset")
+        let bar = call.getString("bar")
 
         if let animation = call.getString("animation") {
             setAnimation(animation: animation)
         }
 
         DispatchQueue.main.async {
-            self.setHidden(hidden: true, inset: inset)
+            self.setHidden(hidden: true, bar: bar)
             call.resolve()
         }
     }
@@ -88,13 +88,13 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
         bridge?.statusBarStyle = newStyle
     }
 
-    func setHidden(hidden: Bool, inset: String? = nil) {
+    func setHidden(hidden: Bool, bar: String? = nil) {
         if hidden {
-            if inset == nil || inset?.uppercased() == "TOP" {
+            if bar == nil || bar?.isEmpty ?? true || bar == "StatusBar" {
                 bridge?.statusBarVisible = false
             }
 
-            if inset == nil || inset?.uppercased() == "BOTTOM" {
+            if bar == nil || bar?.isEmpty ?? true || bar == "NavigationBar" {
                 hideHomeIndicator = true
                 bridge?.viewController?.setNeedsUpdateOfHomeIndicatorAutoHidden()
             }
@@ -102,11 +102,11 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
 
-        if inset == nil || inset?.uppercased() == "TOP" {
+        if bar == nil || bar?.isEmpty ?? true || bar == "StatusBar" {
             bridge?.statusBarVisible = true
         }
 
-        if inset == nil || inset?.uppercased() == "BOTTOM" {
+        if bar == nil || bar?.isEmpty ?? true || bar == "NavigationBar" {
             hideHomeIndicator = false
             bridge?.viewController?.setNeedsUpdateOfHomeIndicatorAutoHidden()
         }

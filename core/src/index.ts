@@ -19,7 +19,7 @@ export { WebPlugin, ListenerCallback } from './web-plugin';
 // Core Plugins APIs
 export {
   SystemBars,
-  SystemBarsInsets,
+  SystemBarType,
   SystemBarsStyle,
   SystemBarsAnimation,
   CapacitorCookies,

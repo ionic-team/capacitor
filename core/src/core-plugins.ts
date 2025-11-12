@@ -531,9 +531,22 @@ export enum SystemBarsStyle {
 export type SystemBarsAnimation = 'FADE' | 'NONE';
 
 /**
- * Available inset edges.
+ * Available system bar types.
  */
-export type SystemBarsInsets = 'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT';
+export enum SystemBarType {
+  /**
+   * The top status bar on both Android and iOS.
+   *
+   * @since 8.0.0
+   */
+  StatusBar = 'StatusBar',
+  /**
+   * The navigation bar (or gesture bar on iOS) on both Android and iOS.
+   *
+   * @since 8.0.0
+   */
+  NavigationBar = 'NavigationBar',
+}
 
 export interface SystemBarsStyleOptions {
   /**
@@ -546,25 +559,25 @@ export interface SystemBarsStyleOptions {
   style: SystemBarsStyle;
 
   /**
-   * The inset edge for which to apply the style.
+   * The system bar to which to apply the style.
    *
    *
    * @since 8.0.0
    * @default null
-   * @example "TOP"
+   * @example SystemBarType.StatusBar
    */
-  inset?: Omit<SystemBarsInsets, 'LEFT, RIGHT'>;
+  bar?: SystemBarType;
 }
 
 export interface SystemBarsVisibilityOptions {
   /**
-   * The inset edge for which to hide.
+   * The system bar to hide or show.
    *
    * @since 8.0.0
    * @default null
-   * @example "TOP"
+   * @example SystemBarType.StatusBar
    */
-  inset?: SystemBarsInsets;
+  bar?: SystemBarType;
 
   /**
    * The type of status bar animation used when showing or hiding.

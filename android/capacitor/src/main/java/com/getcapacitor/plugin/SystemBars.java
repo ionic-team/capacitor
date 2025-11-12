@@ -24,8 +24,8 @@ public class SystemBars extends Plugin {
     static final String STYLE_LIGHT = "LIGHT";
     static final String STYLE_DARK = "DARK";
     static final String STYLE_DEFAULT = "DEFAULT";
-    static final String INSET_TOP = "TOP";
-    static final String INSET_BOTTOM = "BOTTOM";
+    static final String BAR_STATUS_BAR = "StatusBar";
+    static final String BAR_GESTURE_BAR = "NavigationBar";
 
     static final String viewportMetaJSFunction = """
         function capacitorSystemBarsCheckMetaViewport() {
@@ -82,31 +82,31 @@ public class SystemBars extends Plugin {
 
     @PluginMethod
     public void setStyle(final PluginCall call) {
-        String inset = call.getString("inset", "").toUpperCase(Locale.US);
+        String bar = call.getString("bar", "");
         String style = call.getString("style", STYLE_DEFAULT);
 
         getBridge().executeOnMainThread(() -> {
-            setStyle(style, inset);
+            setStyle(style, bar);
             call.resolve();
         });
     }
 
     @PluginMethod
     public void show(final PluginCall call) {
-        String inset = call.getString("inset", "").toUpperCase(Locale.US);
+        String bar = call.getString("bar", "");
 
         getBridge().executeOnMainThread(() -> {
-            setHidden(false, inset);
+            setHidden(false, bar);
             call.resolve();
         });
     }
 
     @PluginMethod
     public void hide(final PluginCall call) {
-        String inset = call.getString("inset", "").toUpperCase(Locale.US);
+        String bar = call.getString("bar", "");
 
         getBridge().executeOnMainThread(() -> {
-            setHidden(true, inset);
+            setHidden(true, bar);
             call.resolve();
         });
     }
@@ -161,40 +161,40 @@ public class SystemBars extends Plugin {
         });
     }
 
-    private void setStyle(String style, String inset) {
+    private void setStyle(String style, String bar) {
         if (style.equals(STYLE_DEFAULT)) {
             style = getStyleForTheme();
         }
 
         Window window = getActivity().getWindow();
         WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
-        if (inset.isEmpty() || inset.equals(INSET_TOP)) {
+        if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
             windowInsetsControllerCompat.setAppearanceLightStatusBars(!style.equals(STYLE_DARK));
         }
 
-        if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
+        if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
             windowInsetsControllerCompat.setAppearanceLightNavigationBars(!style.equals(STYLE_DARK));
         }
     }
 
-    private void setHidden(boolean hide, String inset) {
+    private void setHidden(boolean hide, String bar) {
         Window window = getActivity().getWindow();
         WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
 
         if (hide) {
-            if (inset.isEmpty() || inset.equals(INSET_TOP)) {
+            if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
                 windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
             }
-            if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
+            if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
                 windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
             }
             return;
         }
 
-        if (inset.isEmpty() || inset.equals(INSET_TOP)) {
+        if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
             windowInsetsControllerCompat.show(WindowInsetsCompat.Type.systemBars());
         }
-        if (inset.isEmpty() || inset.equals(INSET_BOTTOM)) {
+        if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
             windowInsetsControllerCompat.show(WindowInsetsCompat.Type.navigationBars());
         }
     }
