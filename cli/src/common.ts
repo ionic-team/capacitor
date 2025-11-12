@@ -409,11 +409,13 @@ export async function promptForPlatformTarget(
   const targetID = selectedTarget.trim();
   const target = targets.find((t) => {
     if (selectByName === true) {
+      const name = t.name ?? t.model;
+
       if (selectedTargetSdkVersion) {
-        return t.name === targetID && t.sdkVersion === selectedTargetSdkVersion;
+        return name === targetID && t.sdkVersion === selectedTargetSdkVersion;
       }
 
-      return t.name === targetID;
+      return name === targetID;
     }
 
     return t.id === targetID;
