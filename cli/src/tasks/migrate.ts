@@ -598,7 +598,7 @@ async function updateAndroidManifest(filename: string) {
     );
 
   if (!replaced.includes('|density')) {
-    throw new Error(`Unable to add 'density' to 'android:configChanges' in ${filename}. Try adding it manually`);
+    logger.error(`Unable to add 'density' to 'android:configChanges' in ${filename}. Try adding it manually`);
   } else {
     writeFileSync(filename, replaced, 'utf-8');
   }
