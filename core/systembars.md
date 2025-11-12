@@ -4,10 +4,10 @@ The SystemBars API provides methods for configuring the style and visibility of 
 
 | Feature | System Bars | Status Bar |
 | ------- | ----------- | ---------- |
-| Config `overlaysWebView` | No | Yes |
-| Config `backgroundColor` | No | Yes |
-| `setStyle()` | Yes | Yes (top Status Bar only) |
-| `hide()/show()` | Yes | Yes (top Status Bar only) |
+| `setOverlaysWebView()` | Unsupported | Supported on iOS and Android <= 14 (or 15 if edge to edge opt-out is enabled) |
+| `setBackgroundColor()` | Unsupported | Supported |
+| `setStyle()` | Supported | Supported - top Status Bar only |
+| `hide()/show()` | Supported | Supported - top Status Bar only |
 
 ## iOS Note
 
