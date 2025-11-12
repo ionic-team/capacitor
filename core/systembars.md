@@ -72,7 +72,7 @@ const setStatusBarAnimation = async () => {
 ## Configuration
 | Prop          | Type                 | Description                                                               | Default            |
 | ------------- | -------------------- | ------------------------------------------------------------------------- | ------------------ |
-| **`disableInsets`** | <code>boolean</code> | Enables the injection of device css insets into the webview.  This option is only supported on Android. | <code>false</code> |
+| **`disableInsets`** | <code>boolean</code> | Disables the injection of device css insets into the webview.  This option is only supported on Android. | <code>false</code> |
 | **`style`** | <code>string</code> | The style of the text and icons of the system bars. | <code>DEFAULT</code> |
 | **`hidden`** | <code>boolean</code> | Hide the system bars on start. | <code>false</code> |
 | **`animation`** | <code>string</code> | The type of status bar animation used when showing or hiding.  This option is only supported on iOS. | <code>FADE</code> |
