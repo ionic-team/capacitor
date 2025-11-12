@@ -83,7 +83,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
   };
 
   const monorepoWarning =
-    'Please note this tool is not intended for use in a mono-repo environment, please check out the Ionic vscode extension for this functionality.';
+    'Please note this tool is not intended for use in a mono-repo environment, you should migrate manually instead. Refer to https://capacitorjs.com/docs/next/updating/8-0';
 
   logger.info(monorepoWarning);
 
