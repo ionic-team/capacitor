@@ -426,8 +426,12 @@ export async function promptForPlatformTarget(
 
   if (!target) {
     if (selectByName) {
+      let invalidTargetName = targetID;
+      if (selectedTargetSdkVersion) {
+        invalidTargetName += ` [${selectedTargetSdkVersion}]`;
+      }
       fatal(
-        `Invalid target name: ${c.input(targetID)}.\n` +
+        `Invalid target name: ${c.input(invalidTargetName)}.\n` +
           `Valid targets are:\n ${targets.map((t) => `${t.name} [${t.sdkVersion}]`).join('\n')}`,
       );
     }
