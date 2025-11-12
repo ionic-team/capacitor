@@ -171,9 +171,10 @@
     return nil;
 }
 
-- (PluginURLAuthChallenge* _Nullable)handleWKWebViewURLAuthenticationChallenge:(NSURLAuthenticationChallenge* _Nonnull)challenge {
-    return nil;
+- (BOOL)handleWKWebViewURLAuthenticationChallenge:(NSURLAuthenticationChallenge* _Nonnull)challenge completionHandler:(void (^_Nonnull)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler {
+    return NO;
 }
+
 
 @end
 

@@ -169,10 +169,9 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
         for pluginObject in bridge.plugins {
             let plugin = pluginObject.value
-            let selector = NSSelectorFromString("handleWKWebViewURLAuthenticationChallenge:")
+            let selector = NSSelectorFromString("handleWKWebViewURLAuthenticationChallenge:completionHandler:")
             if plugin.responds(to: selector) {
-                if let response = plugin.handleWKWebViewURLAuthenticationChallenge(challenge) {
-                    completionHandler(response.disposition, response.credential)
+                if plugin.handleWKWebViewURLAuthenticationChallenge(challenge, completionHandler: completionHandler) {
                     return
                 }
             }
