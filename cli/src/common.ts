@@ -411,6 +411,8 @@ export async function promptForPlatformTarget(
     if (selectByName === true) {
       let name = t.name ?? t.model;
       if (name) {
+        // Apple device names may have "smart quotes" in the name,
+        // strip them and replace them with the "straight" versions
         name = name.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
       }
 
@@ -432,7 +434,7 @@ export async function promptForPlatformTarget(
       }
       fatal(
         `Invalid target name: ${c.input(invalidTargetName)}.\n` +
-          `Valid targets are:\n ${targets.map((t) => `${t.name} [${t.sdkVersion}]`).join('\n')}`,
+          `Valid targets are:\n ${targets.map((t) => `${t.name ?? t.model} [${t.sdkVersion}]`).join('\n')}`,
       );
     }
     fatal(`Invalid target ID: ${c.input(targetID)}.\n` + `Valid targets are:\n ${targets.map((t) => t.id).join('\n')}`);
