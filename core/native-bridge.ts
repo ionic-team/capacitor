@@ -330,7 +330,7 @@ const initBridge = (w: any): void => {
         if (result.success === false) {
           c.error(result.error);
         } else {
-          c.dir(result.data);
+          c.dir(JSON.stringify(result.data));
         }
         c.groupEnd();
       } else {
