@@ -409,7 +409,10 @@ export async function promptForPlatformTarget(
   const targetID = selectedTarget.trim();
   const target = targets.find((t) => {
     if (selectByName === true) {
-      const name = t.name ?? t.model;
+      let name = t.name ?? t.model;
+      if (name) {
+        name = name.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+      }
 
       if (selectedTargetSdkVersion) {
         return name === targetID && t.sdkVersion === selectedTargetSdkVersion;
