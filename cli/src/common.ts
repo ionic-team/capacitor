@@ -423,10 +423,10 @@ export async function promptForPlatformTarget(
     if (selectByName) {
       fatal(
         `Invalid target name: ${c.input(targetID)}.\n` +
-          `Valid targets are: ${targets.map((t) => `${t.name} [${t.sdkVersion}]`).join(', ')}`,
+          `Valid targets are:\n ${targets.map((t) => `${t.name} [${t.sdkVersion}]`).join('\n')}`,
       );
     }
-    fatal(`Invalid target ID: ${c.input(targetID)}.\n` + `Valid targets are: ${targets.map((t) => t.id).join(', ')}`);
+    fatal(`Invalid target ID: ${c.input(targetID)}.\n` + `Valid targets are:\n ${targets.map((t) => t.id).join('\n')}`);
   }
 
   return target;
