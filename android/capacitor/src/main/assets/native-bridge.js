@@ -326,7 +326,7 @@ var nativeBridge = (function (exports) {
                         c.error(result.error);
                     }
                     else {
-                        c.dir(result.data);
+                        c.dir(JSON.stringify(result.data));
                     }
                     c.groupEnd();
                 }
