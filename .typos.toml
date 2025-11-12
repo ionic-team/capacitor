@@ -1,0 +1,30 @@
+[default]
+# Ignore patterns that match commit hashes and Git-related identifiers
+extend-ignore-re = [
+  # Git commit hashes in parentheses: (7553ede), (88d0ded), etc.
+  "\\([a-f0-9]{7,40}\\)",
+  # Git commit hashes in square brackets: [7553ede], [88d0ded], etc.
+  "\\[[a-f0-9]{7,40}\\]",
+  # Full GitHub commit URLs
+  "github\\.com/[^/]+/[^/]+/commit/[a-f0-9]{7,40}",
+  # Commit hash at end of markdown links: ...commit/abcd123)
+  "commit/[a-f0-9]{7,40}\\)",
+]
+
+[files]
+extend-exclude = [
+  # Exclude lock files
+  "package-lock.json",
+  "yarn.lock",
+  "pnpm-lock.yaml",
+  # Exclude build artifacts
+  "dist/",
+  "build/",
+  "*.min.js",
+  # Exclude node_modules
+  "node_modules/",
+]
+
+[default.extend-words]
+# Add any custom words that should not be corrected
+# Format: incorrectword = "incorrectword"
