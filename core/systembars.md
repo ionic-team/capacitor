@@ -33,7 +33,7 @@ html {
 }
 ```
 
-To disable the inset variable injections, set the configuration setting `enableInsets` to `false`.
+To disable the inset variable injections, set the configuration setting `disableInsets` to `true`.
 
 ## Example
 
@@ -56,10 +56,9 @@ const showSystemBars = async () => {
   await SystemBars.show();
 };
 
-// Hide the bottom navigation bar, only on Android
 const hideNavigationBar = async () => {
   await SystemBars.hide({
-    inset: "BOTTOM"
+    bar: SystemBarType.NavigationBar
   })
 }
 
@@ -207,17 +206,17 @@ Only available on iOS.
 
 #### SystemBarsStyleOptions
 
-| Prop        | Type                                                                                                         | Description                                     | Default                | Since |
-| ----------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | ---------------------- | ----- |
-| **`style`** | <code><a href="#systembarsstyle">SystemBarsStyle</a></code>                                                  | Style of the text and icons of the system bars. | <code>'DEFAULT'</code> | 8.0.0 |
-| **`inset`** | <code><a href="#omit">Omit</a>&lt;<a href="#systembarsinsets">SystemBarsInsets</a>, 'LEFT, RIGHT'&gt;</code> | The inset edge for which to apply the style.    | <code>null</code>      | 8.0.0 |
+| Prop        | Type                                                        | Description                                     | Default                | Since |
+| ----------- | ----------------------------------------------------------- | ----------------------------------------------- | ---------------------- | ----- |
+| **`style`** | <code><a href="#systembarsstyle">SystemBarsStyle</a></code> | Style of the text and icons of the system bars. | <code>'DEFAULT'</code> | 8.0.0 |
+| **`bar`**   | <code><a href="#systembartype">SystemBarType</a></code>     | The system bar to which to apply the style.     | <code>null</code>      | 8.0.0 |
 
 
 #### SystemBarsVisibilityOptions
 
 | Prop            | Type                                                                | Description                                                                                         | Default             | Since |
 | --------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
-| **`inset`**     | <code><a href="#systembarsinsets">SystemBarsInsets</a></code>       | The inset edge for which to hide.                                                                   | <code>null</code>   | 8.0.0 |
+| **`bar`**       | <code><a href="#systembartype">SystemBarType</a></code>             | The system bar to hide or show.                                                                     | <code>null</code>   | 8.0.0 |
 | **`animation`** | <code><a href="#systembarsanimation">SystemBarsAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
 
 
@@ -229,34 +228,6 @@ Only available on iOS.
 
 
 ### Type Aliases
-
-
-#### Omit
-
-Construct a type with the properties of T except for those in type K.
-
-<code><a href="#pick">Pick</a>&lt;T, <a href="#exclude">Exclude</a>&lt;keyof T, K&gt;&gt;</code>
-
-
-#### Pick
-
-From T, pick a set of properties whose keys are in the union K
-
-<code>{ [P in K]: T[P]; }</code>
-
-
-#### Exclude
-
-<a href="#exclude">Exclude</a> from T those types that are assignable to U
-
-<code>T extends U ? never : T</code>
-
-
-#### SystemBarsInsets
-
-Available inset edges.
-
-<code>'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT'</code>
 
 
 #### SystemBarsAnimation
@@ -276,5 +247,13 @@ Available status bar animations.  iOS only.
 | **`Dark`**    | <code>'DARK'</code>    | Light system bar content on a dark background.                                                                                                                                                                           | 8.0.0 |
 | **`Light`**   | <code>'LIGHT'</code>   | For dark system bar content on a light background.                                                                                                                                                                       | 8.0.0 |
 | **`Default`** | <code>'DEFAULT'</code> | The style is based on the device appearance or the underlying content. If the device is using Dark mode, the system bars content will be light. If the device is using Light mode, the system bars content will be dark. | 8.0.0 |
+
+
+#### SystemBarType
+
+| Members             | Value                        | Description                                                         | Since |
+| ------------------- | ---------------------------- | ------------------------------------------------------------------- | ----- |
+| **`StatusBar`**     | <code>'StatusBar'</code>     | The top status bar on both Android and iOS.                         | 8.0.0 |
+| **`NavigationBar`** | <code>'NavigationBar'</code> | The navigation bar (or gesture bar on iOS) on both Android and iOS. | 8.0.0 |
 
 </docgen-api>
