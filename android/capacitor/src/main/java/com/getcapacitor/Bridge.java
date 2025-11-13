@@ -655,6 +655,7 @@ public class Bridge {
         this.registerPlugin(com.getcapacitor.plugin.CapacitorCookies.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
         this.registerPlugin(com.getcapacitor.plugin.CapacitorHttp.class);
+        this.registerPlugin(com.getcapacitor.plugin.SystemBars.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
             this.registerPlugin(pluginClass);
@@ -1610,7 +1611,6 @@ public class Bridge {
 
             if (webView instanceof CapacitorWebView capacitorWebView) {
                 capacitorWebView.setBridge(bridge);
-                capacitorWebView.edgeToEdgeHandler(bridge);
             }
 
             bridge.setCordovaWebView(mockWebView);
