@@ -23,8 +23,18 @@ extend-exclude = [
   "*.min.js",
   # Exclude node_modules
   "node_modules/",
+  # Exclude Xcode project files that contain hex identifiers - these files have
+  # automatically generated hex IDs that look like typos but must not be changed
+  "**/project.pbxproj",
+  "**/*.xcscheme",
+  "**/*.storyboard",
+  # Exclude all CHANGELOG files - they contain commit hashes and historical text
+  # that should not be modified by typo fixes
+  "CHANGELOG.md",
+  "*/CHANGELOG.md",
 ]
 
 [default.extend-words]
 # Add any custom words that should not be corrected
 # Format: incorrectword = "incorrectword"
+thn = "thn"
