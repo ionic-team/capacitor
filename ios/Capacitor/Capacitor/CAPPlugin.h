@@ -5,7 +5,6 @@
 @class CAPPluginCall;
 
 @class PluginConfig;
-@class PluginURLAuthChallenge;
 
 @interface CAPPlugin : NSObject
 
