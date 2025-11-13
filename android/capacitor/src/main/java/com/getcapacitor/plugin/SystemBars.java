@@ -123,7 +123,17 @@ public class SystemBars extends Plugin {
             }
 
             Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-            injectSafeAreaCSS(safeArea.top, safeArea.right, safeArea.bottom, safeArea.left);
+            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
+            boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+
+            int bottomInsets = safeArea.bottom;
+
+            if (keyboardVisible) {
+              // Remove when https://issues.chromium.org/issues/457682720 is fixed
+              bottomInsets = imeInsets.bottom - bottomInsets;
+            }
+
+            injectSafeAreaCSS(safeArea.top, safeArea.right, bottomInsets, safeArea.left);
 
             return WindowInsetsCompat.CONSUMED;
         });
