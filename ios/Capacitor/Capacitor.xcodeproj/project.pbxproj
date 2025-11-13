@@ -81,6 +81,7 @@
 		62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */; };
 		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
 		95116A122EC242F5004FC93B /* PluginURLAuthChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95116A112EC242E0004FC93B /* PluginURLAuthChallenge.swift */; };
+		957BD9402E78A4A50056874C /* SystemBars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957BD93E2E78A4A20056874C /* SystemBars.swift */; };
 		A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */; };
 		A327E6B728DB8B2900CA8B0A /* CapacitorHttp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */; };
 		A327E6B828DB8B2900CA8B0A /* CapacitorUrlRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */; };
@@ -239,6 +240,7 @@
 		62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgedTypesTests.m; sourceTree = "<group>"; };
 		62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesHelper.swift; sourceTree = "<group>"; };
 		95116A112EC242E0004FC93B /* PluginURLAuthChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginURLAuthChallenge.swift; sourceTree = "<group>"; };
+		957BD93E2E78A4A20056874C /* SystemBars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemBars.swift; sourceTree = "<group>"; };
 		A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
 		A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorHttp.swift; sourceTree = "<group>"; };
 		A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorUrlRequest.swift; sourceTree = "<group>"; };
@@ -423,6 +425,7 @@
 		62959AEA2524DA7700A3D7F1 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				957BD93E2E78A4A20056874C /* SystemBars.swift */,
 				A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */,
 				A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */,
 				A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */,
@@ -739,6 +742,7 @@
 				62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */,
 				62959B392524DA7800A3D7F1 /* CapacitorExtension.swift in Sources */,
 				A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */,
+				957BD9402E78A4A50056874C /* SystemBars.swift in Sources */,
 				62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */,
 				62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */,
 				A7BE62CC2B486A5400165ACB /* KeyValueStore.swift in Sources */,
