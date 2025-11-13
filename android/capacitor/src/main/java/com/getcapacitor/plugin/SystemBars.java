@@ -129,8 +129,8 @@ public class SystemBars extends Plugin {
             int bottomInsets = safeArea.bottom;
 
             if (keyboardVisible) {
-              // Remove when https://issues.chromium.org/issues/457682720 is fixed
-              bottomInsets = imeInsets.bottom - bottomInsets;
+                // Remove when https://issues.chromium.org/issues/457682720 is fixed
+                bottomInsets = imeInsets.bottom - bottomInsets;
             }
 
             injectSafeAreaCSS(safeArea.top, safeArea.right, bottomInsets, safeArea.left);
