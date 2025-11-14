@@ -47,6 +47,7 @@ const coreVersion = 'next';
 const pluginVersion = 'next';
 const gradleVersion = '8.14.3';
 const iOSVersion = '15';
+const kotlinVersion = '2.2.20';
 let installFailed = false;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
@@ -491,10 +492,9 @@ async function updateBuildGradle(
   }
 
   if (replaced.includes('kotlin_version') || replaced.includes('org.jetbrains.kotlin:kotlin')) {
-    const kotlinVersionString = '2.2.20';
-    replaced = replaced.replace(/(ext\.kotlin_version\s*=\s*['"])([^'"]+)(['"])/, `$1${kotlinVersionString}$3`);
-    replaced = replaced.replace(/(org\.jetbrains\.kotlin:kotlin-gradle-plugin:)([\d.]+)/, `$1${kotlinVersionString}`);
-    logger.info(`Set Kotlin version to ${kotlinVersionString}`);
+    replaced = replaced.replace(/(ext\.kotlin_version\s*=\s*['"])([^'"]+)(['"])/, `$1${kotlinVersion}$3`);
+    replaced = replaced.replace(/(org\.jetbrains\.kotlin:kotlin-gradle-plugin:)([\d.]+)/, `$1${kotlinVersion}`);
+    logger.info(`Set Kotlin version to ${kotlinVersion}`);
   }
   writeFileSync(filename, replaced, 'utf-8');
 }
