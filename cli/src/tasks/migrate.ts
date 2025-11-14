@@ -491,12 +491,23 @@ async function updateBuildGradle(
     }
   }
 
-  if (replaced.includes('kotlin_version') || replaced.includes('org.jetbrains.kotlin:kotlin')) {
-    replaced = replaced.replace(/(ext\.kotlin_version\s*=\s*['"])([^'"]+)(['"])/, `$1${kotlinVersion}$3`);
-    replaced = replaced.replace(/(org\.jetbrains\.kotlin:kotlin-gradle-plugin:)([\d.]+)/, `$1${kotlinVersion}`);
+  const beforeKotlinVersionUpdate = replaced;
+  replaced = replaceVersion(replaced, /(ext\.kotlin_version\s*=\s*['"])([^'"]+)(['"])/, kotlinVersion);
+  replaced = replaceVersion(replaced, /(org\.jetbrains\.kotlin:kotlin[^:]*:)([\d.]+)(['"])/, kotlinVersion);
+  if (beforeKotlinVersionUpdate !== replaced) {
     logger.info(`Set Kotlin version to ${kotlinVersion}`);
   }
   writeFileSync(filename, replaced, 'utf-8');
+}
+
+function replaceVersion(text: string, regex: RegExp, newVersion: string): string {
+  return text.replace(regex, (match, prefix, currentVersion, suffix) => {
+    const semVer = coerce(currentVersion)?.version;
+    if (gte(newVersion, semVer ? semVer : '0.0.0')) {
+      return `${prefix || ''}${newVersion}${suffix || ''}`;
+    }
+    return match;
+  });
 }
 
 async function updateAppBuildGradle(filename: string) {
