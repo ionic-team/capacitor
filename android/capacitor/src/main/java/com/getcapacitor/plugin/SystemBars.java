@@ -129,7 +129,8 @@ public class SystemBars extends Plugin {
             int bottomInsets = safeArea.bottom;
 
             if (keyboardVisible) {
-                // Remove when https://issues.chromium.org/issues/457682720 is fixed
+                // When https://issues.chromium.org/issues/457682720 is fixed and released,
+                // add behind a WebView version check
                 bottomInsets = imeInsets.bottom - bottomInsets;
             }
 
