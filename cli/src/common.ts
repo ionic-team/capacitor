@@ -378,6 +378,8 @@ export interface PlatformTarget {
 export async function promptForPlatformTarget(
   targets: PlatformTarget[],
   selectedTarget?: string,
+  selectedTargetSdkVersion?: string,
+  selectByName?: boolean,
 ): Promise<PlatformTarget> {
   const { prompt } = await import('prompts');
   const validTargets = targets.filter((t) => t.id !== undefined);
@@ -405,10 +407,37 @@ export async function promptForPlatformTarget(
   }
 
   const targetID = selectedTarget.trim();
-  const target = targets.find((t) => t.id === targetID);
+  const target = targets.find((t) => {
+    if (selectByName === true) {
+      let name = t.name ?? t.model;
+      if (name) {
+        // Apple device names may have "smart quotes" in the name,
+        // strip them and replace them with the "straight" versions
+        name = name.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+      }
+
+      if (selectedTargetSdkVersion) {
+        return name === targetID && t.sdkVersion === selectedTargetSdkVersion;
+      }
+
+      return name === targetID;
+    }
+
+    return t.id === targetID;
+  });
 
   if (!target) {
-    fatal(`Invalid target ID: ${c.input(targetID)}.\n` + `Valid targets are: ${targets.map((t) => t.id).join(', ')}`);
+    if (selectByName) {
+      let invalidTargetName = targetID;
+      if (selectedTargetSdkVersion) {
+        invalidTargetName += ` [${selectedTargetSdkVersion}]`;
+      }
+      fatal(
+        `Invalid target name: ${c.input(invalidTargetName)}.\n` +
+          `Valid targets are:\n ${targets.map((t) => `${t.name ?? t.model} [${t.sdkVersion}]`).join('\n')}`,
+      );
+    }
+    fatal(`Invalid target ID: ${c.input(targetID)}.\n` + `Valid targets are:\n ${targets.map((t) => t.id).join('\n')}`);
   }
 
   return target;
