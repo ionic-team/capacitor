@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.3...8.0.0-beta.0) (2025-11-14)
+
+### Bug Fixes
+
+- **android-template:** replace deprecated Gradle property name syntax ([#8204](https://github.com/ionic-team/capacitor/issues/8204)) ([e48694b](https://github.com/ionic-team/capacitor/commit/e48694b9e1ff1d3f2de2f8b140cbbeb280d6a21d))
+- **android:** add command not changing namespace ([#8224](https://github.com/ionic-team/capacitor/issues/8224)) ([60cf666](https://github.com/ionic-team/capacitor/commit/60cf66675159fb09cd41c94ce657202d01e05c74))
+- **android:** remove kotlin-bom dependency ([#8237](https://github.com/ionic-team/capacitor/issues/8237)) ([a894749](https://github.com/ionic-team/capacitor/commit/a89474920569d404e3b19e22e782e656d5b59bdd))
+- **android:** replace deprecated Gradle property name syntax ([b68ac9e](https://github.com/ionic-team/capacitor/commit/b68ac9e2dfc3ed292b7879bd7aeaab3d05ac84d5))
+- **cli:** fix cap run command for yarn pnp mode ([#7754](https://github.com/ionic-team/capacitor/issues/7754)) ([79ace5c](https://github.com/ionic-team/capacitor/commit/79ace5c7054d86d5b33ce325751ff738c63d4b0c))
+- **cli:** replace deprecated Gradle property name syntax ([#8207](https://github.com/ionic-team/capacitor/issues/8207)) ([3912030](https://github.com/ionic-team/capacitor/commit/3912030491a4b252bfd344eb708409dc1a3737e6))
+- **ios:** use ReturnPromise for SystemBars returnType ([#8239](https://github.com/ionic-team/capacitor/issues/8239)) ([eb51288](https://github.com/ionic-team/capacitor/commit/eb5128866953281dc7bed88bd734fc3804b3a702))
+- make Plugin.resolve act consistently ([#8225](https://github.com/ionic-team/capacitor/issues/8225)) ([06aeb9e](https://github.com/ionic-team/capacitor/commit/06aeb9e85d162d6be9d96820edcb2008cd74da84))
+
+### Features
+
+- **android-template:** Update com.google.gms:google-service version ([#8195](https://github.com/ionic-team/capacitor/issues/8195)) ([ba05dd3](https://github.com/ionic-team/capacitor/commit/ba05dd3da26dbe807e7405f98f4160ba6aea73ce))
+- **cli:** Select a cap run target by target name ([#8199](https://github.com/ionic-team/capacitor/issues/8199)) ([b30c472](https://github.com/ionic-team/capacitor/commit/b30c472490117a5dbb14a9556ef1b6ca6e39b45b))
+- **iOS:** Allow plugins to hook into handling WebView URL authentication challenges ([#8216](https://github.com/ionic-team/capacitor/issues/8216)) ([e8507cf](https://github.com/ionic-team/capacitor/commit/e8507cfe4d93337ddee8ab6597aab5209ebb4858))
+- System Bars Plugin ([#8180](https://github.com/ionic-team/capacitor/issues/8180)) ([a32216a](https://github.com/ionic-team/capacitor/commit/a32216ac0607172a3a9c7ae5cdbfc598769294a6))
+
 # [8.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.2...8.0.0-alpha.3) (2025-10-22)
 
 ### Bug Fixes

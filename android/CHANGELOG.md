@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.3...8.0.0-beta.0) (2025-11-14)
+
+### Bug Fixes
+
+- **android:** remove kotlin-bom dependency ([#8237](https://github.com/ionic-team/capacitor/issues/8237)) ([a894749](https://github.com/ionic-team/capacitor/commit/a89474920569d404e3b19e22e782e656d5b59bdd))
+- **android:** replace deprecated Gradle property name syntax ([b68ac9e](https://github.com/ionic-team/capacitor/commit/b68ac9e2dfc3ed292b7879bd7aeaab3d05ac84d5))
+- make Plugin.resolve act consistently ([#8225](https://github.com/ionic-team/capacitor/issues/8225)) ([06aeb9e](https://github.com/ionic-team/capacitor/commit/06aeb9e85d162d6be9d96820edcb2008cd74da84))
+
+### Features
+
+- System Bars Plugin ([#8180](https://github.com/ionic-team/capacitor/issues/8180)) ([a32216a](https://github.com/ionic-team/capacitor/commit/a32216ac0607172a3a9c7ae5cdbfc598769294a6))
+
 # [8.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.2...8.0.0-alpha.3) (2025-10-22)
 
 **Note:** Version bump only for package @capacitor/android
