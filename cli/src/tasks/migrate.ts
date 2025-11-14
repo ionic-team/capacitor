@@ -489,6 +489,13 @@ async function updateBuildGradle(
       }
     }
   }
+
+  if (replaced.includes('kotlin_version') || replaced.includes('org.jetbrains.kotlin:kotlin')) {
+    const kotlinVersionString = '2.2.20';
+    replaced = replaced.replace(/(ext\.kotlin_version\s*=\s*['"])([^'"]+)(['"])/, `$1${kotlinVersionString}$3`);
+    replaced = replaced.replace(/(org\.jetbrains\.kotlin:kotlin-gradle-plugin:)([\d.]+)/, `$1${kotlinVersionString}`);
+    logger.info(`Set Kotlin version to ${kotlinVersionString}`);
+  }
   writeFileSync(filename, replaced, 'utf-8');
 }
 
