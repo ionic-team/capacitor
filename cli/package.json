@@ -31,6 +31,10 @@
   },
   "main": "dist/index.js",
   "types": "dist/declarations.d.ts",
+  "exports": {
+    "types": "dist/declarations.d.ts",
+    "default": "dist/index.js"
+  },
   "bin": {
     "capacitor": "./bin/capacitor",
     "cap": "./bin/capacitor"
