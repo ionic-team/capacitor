@@ -2,14 +2,14 @@ import { prettyPath } from '@ionic/utils-terminal';
 import { readJSON, pathExists } from 'fs-extra';
 import { dirname, join } from 'path';
 
-import c from './colors';
-import type { Config, PackageJson } from './definitions';
-import { fatal } from './errors';
-import { output, logger } from './log';
-import { getPlugins } from './plugin';
-import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools';
-import { resolveNode } from './util/node';
-import { runCommand } from './util/subprocess';
+import c from './colors.js';
+import type { Config, PackageJson } from './definitions.js';
+import { fatal } from './errors.js';
+import { output, logger } from './log.js';
+import { getPlugins } from './plugin.js';
+import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools.js';
+import { resolveNode } from './util/node.js';
+import { runCommand } from './util/subprocess.js';
 
 export type CheckFunction = () => Promise<string | null>;
 

@@ -2,9 +2,9 @@ import Debug from 'debug';
 import { pathExists } from 'fs-extra';
 import open from 'open';
 
-import c from '../colors';
-import type { Config } from '../definitions';
-import { logger } from '../log';
+import c from '../colors.js';
+import type { Config } from '../definitions.js';
+import { logger } from '../log.js';
 
 const debug = Debug('capacitor:android:open');
 

@@ -1,11 +1,11 @@
-import { check, checkPackage, checkWebDir, selectPlatforms, isValidPlatform, runHooks } from '../common';
-import type { Config } from '../definitions';
-import { fatal, isFatal } from '../errors';
-import { logger } from '../log';
-import { allSerial } from '../util/promise';
+import { check, checkPackage, checkWebDir, selectPlatforms, isValidPlatform, runHooks } from '../common.js';
+import type { Config } from '../definitions.js';
+import { fatal, isFatal } from '../errors.js';
+import { logger } from '../log.js';
+import { allSerial } from '../util/promise.js';
 
-import { copy, copyCommand } from './copy';
-import { update, updateChecks, updateCommand } from './update';
+import { copy, copyCommand } from './copy.js';
+import { update, updateChecks, updateCommand } from './update.js';
 
 /**
  * Sync is a copy and an update in one.

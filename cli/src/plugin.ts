@@ -1,12 +1,12 @@
 import { readJSON } from 'fs-extra';
 import { dirname, join } from 'path';
 
-import c from './colors';
-import type { Config } from './definitions';
-import { fatal } from './errors';
-import { logger } from './log';
-import { resolveNode } from './util/node';
-import { readXML } from './util/xml';
+import c from './colors.js';
+import type { Config } from './definitions.js';
+import { fatal } from './errors.js';
+import { logger } from './log.js';
+import { resolveNode } from './util/node.js';
+import { readXML } from './util/xml.js';
 
 export const enum PluginType {
   Core,

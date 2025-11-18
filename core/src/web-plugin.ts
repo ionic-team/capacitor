@@ -1,7 +1,7 @@
-import type { PluginListenerHandle, Plugin } from './definitions';
-import { Capacitor } from './global';
-import { ExceptionCode } from './util';
-import type { CapacitorException } from './util';
+import type { PluginListenerHandle, Plugin } from './definitions.js';
+import { Capacitor } from './global.js';
+import { ExceptionCode } from './util.js';
+import type { CapacitorException } from './util.js';
 
 /**
  * Base class web plugins should extend.

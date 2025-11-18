@@ -4,12 +4,12 @@ import plist from 'plist';
 import type { PlistObject } from 'plist';
 import prompts from 'prompts';
 
-import { getAndroidPlugins } from './android/common';
-import c from './colors';
-import type { Config } from './definitions';
-import { fatal } from './errors';
-import { getIOSPlugins } from './ios/common';
-import { logger, logPrompt } from './log';
+import { getAndroidPlugins } from './android/common.js';
+import c from './colors.js';
+import type { Config } from './definitions.js';
+import { fatal } from './errors.js';
+import { getIOSPlugins } from './ios/common.js';
+import { logger, logPrompt } from './log.js';
 import {
   PluginType,
   getAllElements,
@@ -20,11 +20,11 @@ import {
   getPluginType,
   getPlugins,
   printPlugins,
-} from './plugin';
-import type { Plugin } from './plugin';
-import { resolveNode } from './util/node';
-import { isInteractive } from './util/term';
-import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
+} from './plugin.js';
+import type { Plugin } from './plugin.js';
+import { resolveNode } from './util/node.js';
+import { isInteractive } from './util/term.js';
+import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml.js';
 
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.

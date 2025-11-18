@@ -1,11 +1,11 @@
 import { join } from 'path';
 
-import c from '../colors';
-import { runTask } from '../common';
-import type { Config } from '../definitions';
-import { logSuccess } from '../log';
-import type { BuildCommandOptions } from '../tasks/build';
-import { runCommand } from '../util/subprocess';
+import c from '../colors.js';
+import { runTask } from '../common.js';
+import type { Config } from '../definitions.js';
+import { logSuccess } from '../log.js';
+import type { BuildCommandOptions } from '../tasks/build.js';
+import { runCommand } from '../util/subprocess.js';
 
 export async function buildAndroid(config: Config, buildOptions: BuildCommandOptions): Promise<void> {
   const releaseType = buildOptions.androidreleasetype ?? 'AAB';

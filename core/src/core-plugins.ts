@@ -1,6 +1,6 @@
-import type { Plugin } from './definitions';
-import { registerPlugin } from './global';
-import { WebPlugin } from './web-plugin';
+import type { Plugin } from './definitions.js';
+import { registerPlugin } from './global.js';
+import { WebPlugin } from './web-plugin.js';
 
 /******** WEB VIEW PLUGIN ********/
 export interface WebViewPlugin extends Plugin {

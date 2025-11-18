@@ -2,12 +2,12 @@ import { writeFileSync, unlinkSync } from 'fs-extra';
 import { basename, join } from 'path';
 import { rimraf } from 'rimraf';
 
-import { runTask } from '../common';
-import { XcodeExportMethod, type Config } from '../definitions';
-import { logSuccess } from '../log';
-import { type BuildCommandOptions } from '../tasks/build';
-import { checkPackageManager } from '../util/spm';
-import { runCommand } from '../util/subprocess';
+import { runTask } from '../common.js';
+import { XcodeExportMethod, type Config } from '../definitions.js';
+import { logSuccess } from '../log.js';
+import { type BuildCommandOptions } from '../tasks/build.js';
+import { checkPackageManager } from '../util/spm.js';
+import { runCommand } from '../util/subprocess.js';
 
 export async function buildiOS(config: Config, buildOptions: BuildCommandOptions): Promise<void> {
   const theScheme = buildOptions.scheme ?? 'App';

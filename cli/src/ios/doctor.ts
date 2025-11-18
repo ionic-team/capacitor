@@ -1,10 +1,10 @@
-import { check, checkWebDir } from '../common';
-import type { Config } from '../definitions';
-import { fatal } from '../errors';
-import { logSuccess } from '../log';
-import { isInstalled } from '../util/subprocess';
+import { check, checkWebDir } from '../common.js';
+import type { Config } from '../definitions.js';
+import { fatal } from '../errors.js';
+import { logSuccess } from '../log.js';
+import { isInstalled } from '../util/subprocess.js';
 
-import { checkBundler, checkCocoaPods } from './common';
+import { checkBundler, checkCocoaPods } from './common.js';
 
 export async function doctorIOS(config: Config): Promise<void> {
   // DOCTOR ideas for iOS:
