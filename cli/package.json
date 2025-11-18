@@ -29,6 +29,7 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/declarations.d.ts",
   "exports": {
