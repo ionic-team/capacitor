@@ -1,7 +1,7 @@
 import { TERMINAL_INFO } from '@ionic/utils-terminal';
 
-import c from '../colors';
-import { logger } from '../log';
+import c from '../colors.js';
+import { logger } from '../log.js';
 
 // Given input variables to a command, make sure all are provided if the terminal
 // is not interactive (because we won't be able to prompt the user)

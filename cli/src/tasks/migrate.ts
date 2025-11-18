@@ -3,16 +3,16 @@ import { join } from 'path';
 import { rimraf } from 'rimraf';
 import { coerce, gte, lt } from 'semver';
 
-import c from '../colors';
-import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common';
-import type { Config } from '../definitions';
-import { fatal } from '../errors';
-import { getMajoriOSVersion } from '../ios/common';
-import { logger, logPrompt, logSuccess } from '../log';
-import { deleteFolderRecursive } from '../util/fs';
-import { checkPackageManager } from '../util/spm';
-import { runCommand } from '../util/subprocess';
-import { extractTemplate } from '../util/template';
+import c from '../colors.js';
+import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common.js';
+import type { Config } from '../definitions.js';
+import { fatal } from '../errors.js';
+import { getMajoriOSVersion } from '../ios/common.js';
+import { logger, logPrompt, logSuccess } from '../log.js';
+import { deleteFolderRecursive } from '../util/fs.js';
+import { checkPackageManager } from '../util/spm.js';
+import { runCommand } from '../util/subprocess.js';
+import { extractTemplate } from '../util/template.js';
 
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};

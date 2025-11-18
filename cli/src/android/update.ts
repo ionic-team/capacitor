@@ -2,11 +2,11 @@ import Debug from 'debug';
 import { copy, remove, pathExists, readFile, writeFile, writeJSON } from 'fs-extra';
 import { dirname, extname, join, relative, resolve } from 'path';
 
-import c from '../colors';
-import { checkPlatformVersions, runTask } from '../common';
-import { checkPluginDependencies, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova';
-import type { Config } from '../definitions';
-import { fatal } from '../errors';
+import c from '../colors.js';
+import { checkPlatformVersions, runTask } from '../common.js';
+import { checkPluginDependencies, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova.js';
+import type { Config } from '../definitions.js';
+import { fatal } from '../errors.js';
 import {
   PluginType,
   getAllElements,
@@ -16,14 +16,14 @@ import {
   getPluginType,
   getPlugins,
   printPlugins,
-} from '../plugin';
-import type { Plugin } from '../plugin';
-import { copy as copyTask } from '../tasks/copy';
-import { readdirp, convertToUnixPath } from '../util/fs';
-import { resolveNode } from '../util/node';
-import { extractTemplate } from '../util/template';
+} from '../plugin.js';
+import type { Plugin } from '../plugin.js';
+import { copy as copyTask } from '../tasks/copy.js';
+import { readdirp, convertToUnixPath } from '../util/fs.js';
+import { resolveNode } from '../util/node.js';
+import { extractTemplate } from '../util/template.js';
 
-import { getAndroidPlugins } from './common';
+import { getAndroidPlugins } from './common.js';
 
 const platform = 'android';
 const debug = Debug('capacitor:android:update');

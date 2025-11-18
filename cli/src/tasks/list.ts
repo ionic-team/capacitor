@@ -1,13 +1,13 @@
-import { getAndroidPlugins } from '../android/common';
-import c from '../colors';
-import { selectPlatforms } from '../common';
-import type { Config } from '../definitions';
-import { isFatal } from '../errors';
-import { getIOSPlugins } from '../ios/common';
-import { logger } from '../log';
-import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
-import type { Plugin } from '../plugin';
-import { allSerial } from '../util/promise';
+import { getAndroidPlugins } from '../android/common.js';
+import c from '../colors.js';
+import { selectPlatforms } from '../common.js';
+import type { Config } from '../definitions.js';
+import { isFatal } from '../errors.js';
+import { getIOSPlugins } from '../ios/common.js';
+import { logger } from '../log.js';
+import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin.js';
+import type { Plugin } from '../plugin.js';
+import { allSerial } from '../util/promise.js';
 
 export async function listCommand(config: Config, selectedPlatformName: string): Promise<void> {
   const platforms = await selectPlatforms(config, selectedPlatformName);

@@ -1,15 +1,15 @@
 import { Option, program } from 'commander';
 import { resolve } from 'path';
 
-import c from './colors';
-import { loadConfig } from './config';
-import type { Config } from './definitions';
-import { fatal, isFatal } from './errors';
-import { receive } from './ipc';
-import { logger, output } from './log';
-import { telemetryAction } from './telemetry';
-import { wrapAction } from './util/cli';
-import { emoji as _e } from './util/emoji';
+import c from './colors.js';
+import { loadConfig } from './config.js';
+import type { Config } from './definitions.js';
+import { fatal, isFatal } from './errors.js';
+import { receive } from './ipc.js';
+import { logger, output } from './log.js';
+import { telemetryAction } from './telemetry.js';
+import { wrapAction } from './util/cli.js';
+import { emoji as _e } from './util/emoji.js';
 
 type Writable<T> = T extends object ? { -readonly [K in keyof T]: Writable<T[K]> } : T;
 

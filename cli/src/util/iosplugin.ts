@@ -1,13 +1,13 @@
 import { readFileSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { resolve } from 'path';
 
-import { getCordovaPlugins } from '../cordova';
-import type { Config } from '../definitions';
-import type { Plugin } from '../plugin';
-import { getPluginType, PluginType } from '../plugin';
+import { getCordovaPlugins } from '../cordova.js';
+import type { Config } from '../definitions.js';
+import type { Plugin } from '../plugin.js';
+import { getPluginType, PluginType } from '../plugin.js';
 
-import type { ReaddirPOptions } from './fs';
-import { readdirp } from './fs';
+import type { ReaddirPOptions } from './fs.js';
+import { readdirp } from './fs.js';
 
 export async function getPluginFiles(plugins: Plugin[]): Promise<string[]> {
   let filenameList: string[] = [];

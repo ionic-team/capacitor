@@ -1,13 +1,13 @@
 import { pathExists, readFile } from 'fs-extra';
 import { join, extname, parse } from 'path';
 
-import c from '../colors';
-import { check } from '../common';
-import type { Config } from '../definitions';
-import { fatal, isFatal } from '../errors';
-import { logSuccess } from '../log';
-import { readdirp } from '../util/fs';
-import { readXML } from '../util/xml';
+import c from '../colors.js';
+import { check } from '../common.js';
+import type { Config } from '../definitions.js';
+import { fatal, isFatal } from '../errors.js';
+import { logSuccess } from '../log.js';
+import { readdirp } from '../util/fs.js';
+import { readXML } from '../util/xml.js';
 
 export async function doctorAndroid(config: Config): Promise<void> {
   try {

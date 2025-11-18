@@ -1,7 +1,7 @@
 import { copy as fsCopy, pathExists, remove, writeJSON } from 'fs-extra';
 import { basename, join, relative, resolve } from 'path';
 
-import c from '../colors';
+import c from '../colors.js';
 import {
   checkWebDir,
   resolvePlatform,
@@ -10,17 +10,17 @@ import {
   runTask,
   isValidPlatform,
   selectPlatforms,
-} from '../common';
-import { getCordovaPlugins, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova';
-import type { Config } from '../definitions';
-import { isFatal } from '../errors';
-import { getIOSPlugins } from '../ios/common';
-import { logger } from '../log';
-import { getPlugins } from '../plugin';
-import { generateIOSPackageJSON } from '../util/iosplugin';
-import { allSerial } from '../util/promise';
+} from '../common.js';
+import { getCordovaPlugins, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova.js';
+import type { Config } from '../definitions.js';
+import { isFatal } from '../errors.js';
+import { getIOSPlugins } from '../ios/common.js';
+import { logger } from '../log.js';
+import { getPlugins } from '../plugin.js';
+import { generateIOSPackageJSON } from '../util/iosplugin.js';
+import { allSerial } from '../util/promise.js';
 
-import { inlineSourceMaps } from './sourcemaps';
+import { inlineSourceMaps } from './sourcemaps.js';
 
 export async function copyCommand(config: Config, selectedPlatformName: string, inline = false): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
@@ -284,7 +284,7 @@ interface FederatedCapacitor {
   liveUpdatesKey?: string;
 }
 
-declare module '../declarations' {
+declare module '../declarations.js' {
   interface PluginsConfig {
     LiveUpdates?: LiveUpdateConfig;
     FederatedCapacitor?: FederatedCapacitor;

@@ -2,8 +2,8 @@ import Debug from 'debug';
 import { pathExists, readFile, readJSON, writeFile, writeJSON } from 'fs-extra';
 import { dirname, extname, join, relative, resolve } from 'path';
 
-import c from './colors';
-import { parseApkNameFromFlavor } from './common';
+import c from './colors.js';
+import { parseApkNameFromFlavor } from './common.js';
 import type {
   AndroidConfig,
   AppConfig,
@@ -13,16 +13,16 @@ import type {
   IOSConfig,
   WebConfig,
   XcodeExportMethod,
-} from './definitions';
-import { OS } from './definitions';
-import { fatal, isFatal } from './errors';
-import { logger } from './log';
-import { tryFn } from './util/fn';
-import { formatJSObject } from './util/js';
-import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools';
-import { requireTS, resolveNode } from './util/node';
-import { lazy } from './util/promise';
-import { getCommandOutput } from './util/subprocess';
+} from './definitions.js';
+import { OS } from './definitions.js';
+import { fatal, isFatal } from './errors.js';
+import { logger } from './log.js';
+import { tryFn } from './util/fn.js';
+import { formatJSObject } from './util/js.js';
+import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools.js';
+import { requireTS, resolveNode } from './util/node.js';
+import { lazy } from './util/promise.js';
+import { getCommandOutput } from './util/subprocess.js';
 
 const debug = Debug('capacitor:config');
 

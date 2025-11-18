@@ -1,5 +1,5 @@
-import { updateAndroid } from '../android/update';
-import c from '../colors';
+import { updateAndroid } from '../android/update.js';
+import c from '../colors.js';
 import {
   check,
   checkPackage,
@@ -9,14 +9,14 @@ import {
   runTask,
   selectPlatforms,
   isValidPlatform,
-} from '../common';
-import type { CheckFunction } from '../common';
-import type { Config } from '../definitions';
-import { fatal, isFatal } from '../errors';
-import { checkBundler, checkCocoaPods } from '../ios/common';
-import { updateIOS } from '../ios/update';
-import { logger } from '../log';
-import { allSerial } from '../util/promise';
+} from '../common.js';
+import type { CheckFunction } from '../common.js';
+import type { Config } from '../definitions.js';
+import { fatal, isFatal } from '../errors.js';
+import { checkBundler, checkCocoaPods } from '../ios/common.js';
+import { updateIOS } from '../ios/update.js';
+import { logger } from '../log.js';
+import { allSerial } from '../util/promise.js';
 
 export async function updateCommand(config: Config, selectedPlatformName: string, deployment: boolean): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {

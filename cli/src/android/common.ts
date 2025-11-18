@@ -1,12 +1,12 @@
 import { copy, remove, mkdirp, readFile, pathExists, writeFile } from 'fs-extra';
 import { join, resolve } from 'path';
 
-import { checkCapacitorPlatform } from '../common';
-import { getIncompatibleCordovaPlugins } from '../cordova';
-import type { Config } from '../definitions';
-import { PluginType, getPluginPlatform } from '../plugin';
-import type { Plugin } from '../plugin';
-import { convertToUnixPath } from '../util/fs';
+import { checkCapacitorPlatform } from '../common.js';
+import { getIncompatibleCordovaPlugins } from '../cordova.js';
+import type { Config } from '../definitions.js';
+import { PluginType, getPluginPlatform } from '../plugin.js';
+import type { Plugin } from '../plugin.js';
+import { convertToUnixPath } from '../util/fs.js';
 
 export async function checkAndroidPackage(config: Config): Promise<string | null> {
   return checkCapacitorPlatform(config, 'android');

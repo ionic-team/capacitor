@@ -1,17 +1,17 @@
 import open from 'open';
 import { basename, dirname, resolve } from 'path';
 
-import c from '../colors';
-import { check, checkAppId, checkAppName, runTask } from '../common';
-import { CONFIG_FILE_NAME_JSON, CONFIG_FILE_NAME_TS, writeConfig } from '../config';
-import { getCordovaPreferences } from '../cordova';
-import type { Config, ExternalConfig } from '../definitions';
-import { fatal, isFatal } from '../errors';
-import { detectFramework } from '../framework-configs';
-import { output, logSuccess, logPrompt } from '../log';
-import { readConfig, writeConfig as sysWriteConfig } from '../sysconfig';
-import { resolveNode } from '../util/node';
-import { checkInteractive, isInteractive } from '../util/term';
+import c from '../colors.js';
+import { check, checkAppId, checkAppName, runTask } from '../common.js';
+import { CONFIG_FILE_NAME_JSON, CONFIG_FILE_NAME_TS, writeConfig } from '../config.js';
+import { getCordovaPreferences } from '../cordova.js';
+import type { Config, ExternalConfig } from '../definitions.js';
+import { fatal, isFatal } from '../errors.js';
+import { detectFramework } from '../framework-configs.js';
+import { output, logSuccess, logPrompt } from '../log.js';
+import { readConfig, writeConfig as sysWriteConfig } from '../sysconfig.js';
+import { resolveNode } from '../util/node.js';
+import { checkInteractive, isInteractive } from '../util/term.js';
 
 export async function initCommand(
   config: Config,

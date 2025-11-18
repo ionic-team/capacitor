@@ -1,8 +1,8 @@
 import open from 'open';
 
-import { wait } from '../common';
-import type { Config } from '../definitions';
-import { checkPackageManager } from '../util/spm';
+import { wait } from '../common.js';
+import type { Config } from '../definitions.js';
+import { checkPackageManager } from '../util/spm.js';
 
 export async function openIOS(config: Config): Promise<void> {
   if ((await checkPackageManager(config)) == 'SPM') {
