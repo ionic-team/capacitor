@@ -25,6 +25,12 @@
   "module": "dist/index.js",
   "types": "types/index.d.ts",
   "unpkg": "dist/capacitor.cjs",
+  "exports": {
+    "types": "types/index.d.ts",
+    "import": "dist/index.js",
+    "module-sync": "dist/index.js",
+    "default": "dist/index.cjs"
+  },
   "scripts": {
     "build": "npm run clean && npm run docgen && npm run transpile && npm run rollup",
     "build:nativebridge": "tsc native-bridge.ts --target es2017 --moduleResolution node --outDir build && rollup --config rollup.bridge.config.js",
