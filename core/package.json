@@ -26,10 +26,13 @@
   "types": "types/index.d.ts",
   "unpkg": "dist/capacitor.cjs",
   "exports": {
-    "types": "types/index.d.ts",
-    "import": "dist/index.js",
-    "module-sync": "dist/index.js",
-    "default": "dist/index.cjs"
+    ".": {
+      "types": "types/index.d.ts",
+      "import": "dist/index.js",
+      "module-sync": "dist/index.js",
+      "default": "dist/index.cjs"
+    },
+    "./cordova": "./cordova.cjs"
   },
   "scripts": {
     "build": "npm run clean && npm run docgen && npm run transpile && npm run rollup",
