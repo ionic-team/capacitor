@@ -25,7 +25,7 @@ export interface ExceptionData {
 
 export class CapacitorException extends Error {
   constructor(
-    readonly message: string,
+    override readonly message: string,
     readonly code?: ExceptionCode,
     readonly data?: ExceptionData,
   ) {
