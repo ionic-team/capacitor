@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { initBridge } from '../../native-bridge';
-import type { CapacitorInstance, PluginResult, WindowCapacitor } from '../definitions-internal';
-import { createCapacitor } from '../runtime';
+import { initBridge } from '../../native-bridge.js';
+import type { CapacitorInstance, PluginResult, WindowCapacitor } from '../definitions-internal.js';
+import { createCapacitor } from '../runtime.js';
 
 describe('bridge', () => {
   let win: WindowCapacitor;

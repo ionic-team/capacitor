@@ -1,4 +1,4 @@
-import type { WindowCapacitor } from './definitions-internal';
+import type { WindowCapacitor } from './definitions-internal.js';
 
 export enum ExceptionCode {
   /**

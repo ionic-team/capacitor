@@ -1,4 +1,4 @@
-import type { CapacitorException } from './util';
+import type { CapacitorException } from './util.js';
 
 export interface CapacitorGlobal {
   /**
