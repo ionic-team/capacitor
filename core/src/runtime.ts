@@ -89,12 +89,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         }
       } else if (impl) {
         return impl[prop]?.bind(impl);
-      } else {
-        throw new CapacitorException(
-          `"${pluginName}" plugin is not implemented on ${platform}`,
-          ExceptionCode.Unimplemented,
-        );
       }
+      throw new CapacitorException(
+        `"${pluginName}" plugin is not implemented on ${platform}`,
+        ExceptionCode.Unimplemented,
+      );
     };
 
     const createPluginMethodWrapper = (prop: PropertyKey) => {
