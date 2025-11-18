@@ -7,7 +7,7 @@ export default {
   input: 'build/index.js',
   output: [
     {
-      file: 'dist/capacitor.js',
+      file: 'dist/capacitor.cjs',
       format: 'iife',
       name: 'capacitorExports',
       preferConst: true,
@@ -23,7 +23,7 @@ export default {
       sourcemap: true,
     },
     {
-      file: 'dist/index.cjs.js',
+      file: 'dist/index.cjs',
       format: 'cjs',
       banner,
       sourcemap: true,

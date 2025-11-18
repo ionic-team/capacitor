@@ -20,10 +20,11 @@
     "http.md",
     "system-bars.md"
   ],
-  "main": "dist/index.cjs.js",
+  "type": "module",
+  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "types/index.d.ts",
-  "unpkg": "dist/capacitor.js",
+  "unpkg": "dist/capacitor.cjs",
   "scripts": {
     "build": "npm run clean && npm run docgen && npm run transpile && npm run rollup",
     "build:nativebridge": "tsc native-bridge.ts --target es2017 --moduleResolution node --outDir build && rollup --config rollup.bridge.config.js",
