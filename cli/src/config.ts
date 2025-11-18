@@ -371,7 +371,7 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
     case OS.Mac:
       return '/Applications/Android Studio.app';
     case OS.Windows: {
-      const { runCommand } = await import('./util/subprocess');
+      const { runCommand } = await import('./util/subprocess.js');
 
       let p = 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe';
 
