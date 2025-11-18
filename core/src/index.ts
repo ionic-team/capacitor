@@ -14,14 +14,14 @@ export type {
 export { Capacitor, registerPlugin } from './global.js';
 
 // Base WebPlugin
-export { WebPlugin, ListenerCallback } from './web-plugin.js';
+export { WebPlugin, type ListenerCallback } from './web-plugin.js';
 
 // Core Plugins APIs
 export {
   SystemBars,
   SystemBarType,
   SystemBarsStyle,
-  SystemBarsAnimation,
+  type SystemBarsAnimation,
   CapacitorCookies,
   CapacitorHttp,
   WebView,
