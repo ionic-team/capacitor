@@ -20,7 +20,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "noUncheckedIndexedAccess": false,
-    "verbatimModuleSyntax": false,
+    "verbatimModuleSyntax": true,
     "sourceMap": true,
     "outDir": "dist",
     "pretty": true,
