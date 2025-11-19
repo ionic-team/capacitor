@@ -56,7 +56,7 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
 
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
 
-    await generatePackageFile(config, validSPMPackages);
+    await generatePackageFile(config, validSPMPackages.concat(cordovaPlugins));
   } else {
     await generateCordovaPodspecs(cordovaPlugins, config);
     await installCocoaPodsPlugins(config, plugins, deployment);

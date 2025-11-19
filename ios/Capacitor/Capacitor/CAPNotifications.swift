@@ -16,6 +16,8 @@ extension Notification.Name {
     public static let capacitorDecidePolicyForNavigationAction =
         Notification.Name(rawValue: "CapacitorDecidePolicyForNavigationActionNotification")
     public static let capacitorStatusBarTapped = Notification.Name(rawValue: "CapacitorStatusBarTappedNotification")
+    public static let capacitorViewDidAppear = Notification.Name(rawValue: "CapacitorViewDidAppear")
+    public static let capacitorViewWillTransition = Notification.Name(rawValue: "CapacitorViewWillTransition")
 }
 
 @objc extension NSNotification {
@@ -26,6 +28,8 @@ extension Notification.Name {
     public static let capacitorDidFailToRegisterForRemoteNotifications = Notification.Name.capacitorDidFailToRegisterForRemoteNotifications
     public static let capacitorDecidePolicyForNavigationAction = Notification.Name.capacitorDecidePolicyForNavigationAction
     public static let capacitorStatusBarTapped = Notification.Name.capacitorStatusBarTapped
+    public static let capacitorViewDidAppear = Notification.Name.capacitorViewDidAppear
+    public static let capacitorViewWillTransition = Notification.Name.capacitorViewWillTransition
 }
 
 /**

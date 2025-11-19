@@ -173,7 +173,7 @@ async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
 async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
   const assetsDir = 'assets';
   const assetsDirAbs = join(rootDir, assetsDir);
-  const iosPlatformTemplateArchive = 'ios-pods-template.tar.gz';
+  const iosPlatformTemplateArchive = 'ios-spm-template.tar.gz';
   const iosCordovaPluginsTemplateArchive = 'capacitor-cordova-ios-plugins.tar.gz';
   const androidPlatformTemplateArchive = 'android-template.tar.gz';
   const androidCordovaPluginsTemplateArchive = 'capacitor-cordova-android-plugins.tar.gz';
@@ -235,7 +235,7 @@ async function loadAndroidConfig(
 
   return {
     name,
-    minVersion: '23',
+    minVersion: '24',
     studioPath,
     platformDir,
     platformDirAbs,
@@ -284,7 +284,7 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
   };
   return {
     name,
-    minVersion: '14.0',
+    minVersion: '15.0',
     platformDir,
     platformDirAbs,
     scheme,
@@ -396,8 +396,20 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
 
       return p;
     }
-    case OS.Linux:
-      return '/usr/local/android-studio/bin/studio.sh';
+    case OS.Linux: {
+      const studioExecPath = '/usr/local/android-studio/bin/studio';
+      const studioShPath = '/usr/local/android-studio/bin/studio.sh';
+
+      try {
+        if (await pathExists(studioExecPath)) {
+          return studioExecPath;
+        }
+      } catch (e) {
+        debug(`Error checking for studio executable: %O`, e);
+      }
+
+      return studioShPath;
+    }
   }
 
   return '';

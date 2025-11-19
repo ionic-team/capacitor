@@ -54,7 +54,7 @@ export async function checkPluginsForPackageSwift(config: Config, plugins: Plugi
     logger.debug(`Found ${plugins.length} iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`);
     logger.info('All plugins have a Package.swift file and will be included in Package.swift');
   } else {
-    logger.warn('Some installed packages my not be compatable with SPM');
+    logger.warn('Some installed packages are not compatable with SPM');
   }
 
   return packageSwiftPluginList;

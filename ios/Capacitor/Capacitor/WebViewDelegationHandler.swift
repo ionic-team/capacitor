@@ -47,7 +47,6 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
         bridge?.reset()
     }
 
-    @available(iOS 15, *)
     open func webView(
         _ webView: WKWebView,
         requestMediaCapturePermissionFor origin: WKSecurityOrigin,
@@ -58,7 +57,6 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
         decisionHandler(.grant)
     }
 
-    @available(iOS 15, *)
     open func webView(_ webView: WKWebView,
                       requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin,
                       initiatedByFrame frame: WKFrameInfo,
@@ -159,7 +157,28 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
     open func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         CAPLog.print("⚡️  WebView process terminated")
+        bridge?.reset()
         webView.reload()
+    }
+
+    open func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        guard let bridge = bridge else {
+            completionHandler(.rejectProtectionSpace, nil)
+            return
+        }
+
+        for pluginObject in bridge.plugins {
+            let plugin = pluginObject.value
+            let selector = NSSelectorFromString("handleWKWebViewURLAuthenticationChallenge:completionHandler:")
+            if plugin.responds(to: selector) {
+                if plugin.handleWKWebViewURLAuthenticationChallenge(challenge, completionHandler: completionHandler) {
+                    return
+                }
+            }
+        }
+
+        completionHandler(.rejectProtectionSpace, nil)
+        return
     }
 
     // MARK: - WKScriptMessageHandler
