@@ -43,8 +43,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = 'next';
-const pluginVersion = 'next';
+const coreVersion = '^8.0.0';
+const pluginVersion = '^8.0.0';
 const gradleVersion = '8.14.3';
 const iOSVersion = '15';
 const kotlinVersion = '2.2.20';
