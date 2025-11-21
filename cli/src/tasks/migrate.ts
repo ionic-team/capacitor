@@ -371,6 +371,7 @@ async function writeBreakingChanges() {
     '@capacitor/barcode-scanner',
     '@capacitor/browser',
     '@capacitor/camera',
+    '@capacitor/geolocation',
     '@capacitor/google-maps',
     '@capacitor/push-notifications',
     '@capacitor/screen-orientation',
