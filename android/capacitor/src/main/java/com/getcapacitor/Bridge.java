@@ -466,9 +466,9 @@ public class Bridge {
         if (ex instanceof SocketTimeoutException) {
             Logger.error(
                 "Unable to load app. Ensure the server is running at " +
-                appUrl +
-                ", or modify the " +
-                "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).",
+                    appUrl +
+                    ", or modify the " +
+                    "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).",
                 ex
             );
         }
@@ -752,9 +752,9 @@ public class Bridge {
     private void logInvalidPluginException(Class<? extends Plugin> clazz) {
         Logger.error(
             "NativePlugin " +
-            clazz.getName() +
-            " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
-            " the class extends Plugin"
+                clazz.getName() +
+                " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
+                " the class extends Plugin"
         );
     }
 
@@ -829,13 +829,13 @@ public class Bridge {
             if (Logger.shouldLog()) {
                 Logger.verbose(
                     "callback: " +
-                    call.getCallbackId() +
-                    ", pluginId: " +
-                    plugin.getId() +
-                    ", methodName: " +
-                    methodName +
-                    ", methodData: " +
-                    call.getData().toString()
+                        call.getCallbackId() +
+                        ", pluginId: " +
+                        plugin.getId() +
+                        ", methodName: " +
+                        methodName +
+                        ", methodData: " +
+                        call.getData().toString()
                 );
             }
 
