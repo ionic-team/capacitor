@@ -276,7 +276,7 @@ export interface HttpResponse {
    */
   headers: HttpHeaders;
   /**
-   * The response URL recieved from the Http response.
+   * The response URL received from the Http response.
    */
   url: string;
 }
