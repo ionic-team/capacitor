@@ -1,5 +1,5 @@
-import { readJSON, pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
+import { readJSON, pathExists } from 'fs-extra';
 import { dirname, join } from 'path';
 
 import c from './colors';
@@ -14,8 +14,8 @@ import { runCommand } from './util/subprocess';
 export type CheckFunction = () => Promise<string | null>;
 
 export async function check(checks: CheckFunction[]): Promise<void> {
-  const results = await Promise.all(checks.map(f => f()));
-  const errors = results.filter(r => r != null) as string[];
+  const results = await Promise.all(checks.map((f) => f()));
+  const errors = results.filter((r) => r != null) as string[];
   if (errors.length > 0) {
     throw errors.join('\n');
   }
@@ -33,20 +33,14 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   }
   if (!(await pathExists(config.app.webDirAbs))) {
     return (
-      `Could not find the web assets directory: ${c.strong(
-        prettyPath(config.app.webDirAbs),
-      )}.\n` +
+      `Could not find the web assets directory: ${c.strong(prettyPath(config.app.webDirAbs))}.\n` +
       `Please create it and make sure it has an ${c.strong(
         'index.html',
-      )} file. You can change the path of this directory in ${c.strong(
-        config.app.extConfigName,
-      )} (${c.input(
+      )} file. You can change the path of this directory in ${c.strong(config.app.extConfigName)} (${c.input(
         'webDir',
       )} option). You may need to compile the web assets for your app (typically ${c.input(
         'npm run build',
-      )}). More info: ${c.strong(
-        'https://capacitorjs.com/docs/basics/workflow#sync-your-project',
-      )}`
+      )}). More info: ${c.strong('https://capacitorjs.com/docs/basics/workflow#sync-your-project')}`
     );
   }
 
@@ -76,18 +70,13 @@ export async function checkPackage(): Promise<string | null> {
   return null;
 }
 
-export async function checkCapacitorPlatform(
-  config: Config,
-  platform: string,
-): Promise<string | null> {
+export async function checkCapacitorPlatform(config: Config, platform: string): Promise<string | null> {
   const pkg = await getCapacitorPackage(config, platform);
 
   if (!pkg) {
     return (
       `Could not find the ${c.input(platform)} platform.\n` +
-      `You must install it in your project first, e.g. w/ ${c.input(
-        `npm install @capacitor/${platform}`,
-      )}`
+      `You must install it in your project first, e.g. w/ ${c.input(`npm install @capacitor/${platform}`)}`
     );
   }
 
@@ -98,17 +87,13 @@ export async function checkAppConfig(config: Config): Promise<string | null> {
   if (!config.app.appId) {
     return (
       `Missing ${c.input('appId')} for new platform.\n` +
-      `Please add it in ${config.app.extConfigName} or run ${c.input(
-        'npx cap init',
-      )}.`
+      `Please add it in ${config.app.extConfigName} or run ${c.input('npx cap init')}.`
     );
   }
   if (!config.app.appName) {
     return (
       `Missing ${c.input('appName')} for new platform.\n` +
-      `Please add it in ${config.app.extConfigName} or run ${c.input(
-        'npx cap init',
-      )}.`
+      `Please add it in ${config.app.extConfigName} or run ${c.input('npx cap init')}.`
     );
   }
 
@@ -125,33 +110,32 @@ export async function checkAppConfig(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkAppDir(
-  config: Config,
-  dir: string,
-): Promise<string | null> {
+export async function checkAppDir(config: Config, dir: string): Promise<string | null> {
   if (!/^\S*$/.test(dir)) {
     return `Your app directory should not contain spaces`;
   }
   return null;
 }
 
-export async function checkAppId(
-  config: Config,
-  id: string,
-): Promise<string | null> {
+export async function checkAppId(config: Config, id: string): Promise<string | null> {
   if (!id) {
-    return `Invalid App ID. Must be in Java package form with no dashes (ex: com.example.app)`;
+    return `Invalid App ID. App ID is required and cannot be blank.`;
   }
-  if (/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(id.toLowerCase())) {
+  if (/^[a-zA-Z][\w]*(?:\.[a-zA-Z][\w]*)+$/.test(id.toLowerCase())) {
     return null;
   }
-  return `Invalid App ID "${id}". Must be in Java package form with no dashes (ex: com.example.app)`;
+  return `
+    Invalid App ID "${id}". Your App ID must meet the following requirements to be valid on both iOS and Android:
+    - Must be in Java package form with no dashes (ex: com.example.app)
+    - It must have at least two segments (one or more dots).
+    - Each segment must start with a letter.
+    - All characters must be alphanumeric or an underscore [a-zA-Z][a-zA-Z0-9]+.
+
+    If you would like to skip validation, run "cap init" with the "--skip-appid-validation" flag.
+  `;
 }
 
-export async function checkAppName(
-  config: Config,
-  name: string,
-): Promise<string | null> {
+export async function checkAppName(config: Config, name: string): Promise<string | null> {
   // We allow pretty much anything right now, have fun
   if (!name?.length) {
     return `Must provide an app name. For example: 'Spacebook'`;
@@ -160,21 +144,17 @@ export async function checkAppName(
 }
 
 export async function wait(time: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, time));
+  return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-export async function runHooks(
-  config: Config,
-  platformName: string,
-  dir: string,
-  hook: string,
-): Promise<void> {
+export async function runHooks(config: Config, platformName: string, dir: string, hook: string): Promise<void> {
   await runPlatformHook(config, platformName, dir, hook);
 
   const allPlugins = await getPlugins(config, platformName);
-  allPlugins.forEach(async p => {
+
+  for (const p of allPlugins) {
     await runPlatformHook(config, platformName, p.rootPath, hook);
-  });
+  }
 }
 
 export async function runPlatformHook(
@@ -210,10 +190,16 @@ export async function runPlatformHook(
         ...process.env,
       },
     });
-    p.on('close', () => {
-      resolve();
+    p.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(
+          new Error(`${hook} hook on ${platformName} failed with error code: ${code} while running command: ${cmd}`),
+        );
+      }
     });
-    p.on('error', err => {
+    p.on('error', (err) => {
       reject(err);
     });
   });
@@ -223,10 +209,7 @@ export interface RunTaskOptions {
   spinner?: boolean;
 }
 
-export async function runTask<T>(
-  title: string,
-  fn: () => Promise<T>,
-): Promise<T> {
+export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T> {
   const chain = output.createTaskChain();
   chain.next(title);
 
@@ -240,15 +223,8 @@ export async function runTask<T>(
   }
 }
 
-export async function getCapacitorPackage(
-  config: Config,
-  name: string,
-): Promise<PackageJson | null> {
-  const packagePath = resolveNode(
-    config.app.rootDir,
-    `@capacitor/${name}`,
-    'package.json',
-  );
+export async function getCapacitorPackage(config: Config, name: string): Promise<PackageJson | null> {
+  const packagePath = resolveNode(config.app.rootDir, `@capacitor/${name}`, 'package.json');
 
   if (!packagePath) {
     return null;
@@ -257,10 +233,7 @@ export async function getCapacitorPackage(
   return readJSON(packagePath);
 }
 
-export async function requireCapacitorPackage(
-  config: Config,
-  name: string,
-): Promise<PackageJson> {
+export async function requireCapacitorPackage(config: Config, name: string): Promise<PackageJson> {
   const pkg = await getCapacitorPackage(config, name);
 
   if (!pkg) {
@@ -272,10 +245,7 @@ export async function requireCapacitorPackage(
   return pkg;
 }
 
-export async function getCapacitorPackageVersion(
-  config: Config,
-  platform: string,
-): Promise<string> {
+export async function getCapacitorPackageVersion(config: Config, platform: string): Promise<string> {
   return (await requireCapacitorPackage(config, platform)).version;
 }
 
@@ -300,10 +270,7 @@ function getPlatformDirectory(config: Config, platform: string): string | null {
   return null;
 }
 
-export async function getProjectPlatformDirectory(
-  config: Config,
-  platform: string,
-): Promise<string | null> {
+export async function getProjectPlatformDirectory(config: Config, platform: string): Promise<string | null> {
   const platformPath = getPlatformDirectory(config, platform);
 
   if (platformPath && (await pathExists(platformPath))) {
@@ -313,10 +280,7 @@ export async function getProjectPlatformDirectory(
   return null;
 }
 
-export async function selectPlatforms(
-  config: Config,
-  selectedPlatformName?: string,
-): Promise<string[]> {
+export async function selectPlatforms(config: Config, selectedPlatformName?: string): Promise<string[]> {
   if (selectedPlatformName) {
     // already passed in a platform name
     const platformName = selectedPlatformName.toLowerCase().trim();
@@ -325,16 +289,11 @@ export async function selectPlatforms(
       fatal(`Invalid platform: ${c.input(platformName)}`);
     } else if (!(await getProjectPlatformDirectory(config, platformName))) {
       if (platformName === 'web') {
-        fatal(
-          `Could not find the web platform directory.\n` +
-            `Make sure ${c.strong(config.app.webDir)} exists.`,
-        );
+        fatal(`Could not find the web platform directory.\n` + `Make sure ${c.strong(config.app.webDir)} exists.`);
       }
       fatal(
         `${c.strong(platformName)} platform has not been added yet.\n` +
-          `See the docs for adding the ${c.strong(
-            platformName,
-          )} platform: ${c.strong(
+          `See the docs for adding the ${c.strong(platformName)} platform: ${c.strong(
             `https://capacitorjs.com/docs/${platformName}#adding-the-${platformName}-platform`,
           )}`,
       );
@@ -361,9 +320,7 @@ export async function getKnownCommunityPlatforms(): Promise<string[]> {
   return ['electron'];
 }
 
-export async function isValidCommunityPlatform(
-  platform: string,
-): Promise<boolean> {
+export async function isValidCommunityPlatform(platform: string): Promise<boolean> {
   return (await getKnownCommunityPlatforms()).includes(platform);
 }
 
@@ -371,9 +328,7 @@ export async function getKnownEnterprisePlatforms(): Promise<string[]> {
   return ['windows'];
 }
 
-export async function isValidEnterprisePlatform(
-  platform: string,
-): Promise<boolean> {
+export async function isValidEnterprisePlatform(platform: string): Promise<boolean> {
   return (await getKnownEnterprisePlatforms()).includes(platform);
 }
 
@@ -391,7 +346,7 @@ export async function promptForPlatform(
           type: 'select',
           name: 'mode',
           message: promptMessage,
-          choices: platforms.map(p => ({ title: p, value: p })),
+          choices: platforms.map((p) => ({ title: p, value: p })),
         },
       ],
       { onCancel: () => process.exit(1) },
@@ -405,10 +360,7 @@ export async function promptForPlatform(
   if (!(await isValidPlatform(platformName))) {
     const knownPlatforms = await getKnownPlatforms();
 
-    fatal(
-      `Invalid platform: ${c.input(platformName)}.\n` +
-        `Valid platforms include: ${knownPlatforms.join(', ')}`,
-    );
+    fatal(`Invalid platform: ${c.input(platformName)}.\n` + `Valid platforms include: ${knownPlatforms.join(', ')}`);
   }
 
   return platformName;
@@ -426,9 +378,11 @@ export interface PlatformTarget {
 export async function promptForPlatformTarget(
   targets: PlatformTarget[],
   selectedTarget?: string,
+  selectedTargetSdkVersion?: string,
+  selectByName?: boolean,
 ): Promise<PlatformTarget> {
   const { prompt } = await import('prompts');
-  const validTargets = targets.filter(t => t.id !== undefined);
+  const validTargets = targets.filter((t) => t.id !== undefined);
   if (!selectedTarget) {
     if (validTargets.length === 1) {
       return validTargets[0];
@@ -439,7 +393,7 @@ export async function promptForPlatformTarget(
             type: 'select',
             name: 'target',
             message: 'Please choose a target device:',
-            choices: validTargets.map(t => ({
+            choices: validTargets.map((t) => ({
               title: `${getPlatformTargetName(t)} (${t.id})`,
               value: t,
             })),
@@ -453,13 +407,37 @@ export async function promptForPlatformTarget(
   }
 
   const targetID = selectedTarget.trim();
-  const target = targets.find(t => t.id === targetID);
+  const target = targets.find((t) => {
+    if (selectByName === true) {
+      let name = t.name ?? t.model;
+      if (name) {
+        // Apple device names may have "smart quotes" in the name,
+        // strip them and replace them with the "straight" versions
+        name = name.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+      }
+
+      if (selectedTargetSdkVersion) {
+        return name === targetID && t.sdkVersion === selectedTargetSdkVersion;
+      }
+
+      return name === targetID;
+    }
+
+    return t.id === targetID;
+  });
 
   if (!target) {
-    fatal(
-      `Invalid target ID: ${c.input(targetID)}.\n` +
-        `Valid targets are: ${targets.map(t => t.id).join(', ')}`,
-    );
+    if (selectByName) {
+      let invalidTargetName = targetID;
+      if (selectedTargetSdkVersion) {
+        invalidTargetName += ` [${selectedTargetSdkVersion}]`;
+      }
+      fatal(
+        `Invalid target name: ${c.input(invalidTargetName)}.\n` +
+          `Valid targets are:\n ${targets.map((t) => `${t.name ?? t.model} [${t.sdkVersion}]`).join('\n')}`,
+      );
+    }
+    fatal(`Invalid target ID: ${c.input(targetID)}.\n` + `Valid targets are:\n ${targets.map((t) => t.id).join('\n')}`);
   }
 
   return target;
@@ -467,9 +445,7 @@ export async function promptForPlatformTarget(
 
 export function getPlatformTargetName(target: PlatformTarget): string {
   return `${target.name ?? target.model ?? target.id ?? '?'}${
-    target.virtual
-      ? ` (${target.platform === 'ios' ? 'simulator' : 'emulator'})`
-      : ''
+    target.virtual ? ` (${target.platform === 'ios' ? 'simulator' : 'emulator'})` : ''
   }`;
 }
 
@@ -489,61 +465,36 @@ export async function getAddedPlatforms(config: Config): Promise<string[]> {
   return platforms;
 }
 
-export async function checkPlatformVersions(
-  config: Config,
-  platform: string,
-): Promise<void> {
+export async function checkPlatformVersions(config: Config, platform: string): Promise<void> {
   const semver = await import('semver');
   const coreVersion = await getCoreVersion(config);
   const platformVersion = await getCapacitorPackageVersion(config, platform);
 
-  if (
-    semver.diff(coreVersion, platformVersion) === 'minor' ||
-    semver.diff(coreVersion, platformVersion) === 'major'
-  ) {
+  if (semver.diff(coreVersion, platformVersion) === 'minor' || semver.diff(coreVersion, platformVersion) === 'major') {
     logger.warn(
       `${c.strong('@capacitor/core')}${c.weak(
         `@${coreVersion}`,
-      )} version doesn't match ${c.strong(`@capacitor/${platform}`)}${c.weak(
-        `@${platformVersion}`,
-      )} version.\n` +
-        `Consider updating to a matching version, e.g. w/ ${c.input(
-          `npm install @capacitor/core@${platformVersion}`,
-        )}`,
+      )} version doesn't match ${c.strong(`@capacitor/${platform}`)}${c.weak(`@${platformVersion}`)} version.\n` +
+        `Consider updating to a matching version, e.g. w/ ${c.input(`npm install @capacitor/core@${platformVersion}`)}`,
     );
   }
 }
 
-export function resolvePlatform(
-  config: Config,
-  platform: string,
-): string | null {
+export function resolvePlatform(config: Config, platform: string): string | null {
   if (platform[0] !== '@') {
-    const core = resolveNode(
-      config.app.rootDir,
-      `@capacitor/${platform}`,
-      'package.json',
-    );
+    const core = resolveNode(config.app.rootDir, `@capacitor/${platform}`, 'package.json');
 
     if (core) {
       return dirname(core);
     }
 
-    const community = resolveNode(
-      config.app.rootDir,
-      `@capacitor-community/${platform}`,
-      'package.json',
-    );
+    const community = resolveNode(config.app.rootDir, `@capacitor-community/${platform}`, 'package.json');
 
     if (community) {
       return dirname(community);
     }
 
-    const enterprise = resolveNode(
-      config.app.rootDir,
-      `@ionic-enterprise/capacitor-${platform}`,
-      'package.json',
-    );
+    const enterprise = resolveNode(config.app.rootDir, `@ionic-enterprise/capacitor-${platform}`, 'package.json');
 
     if (enterprise) {
       return dirname(enterprise);
@@ -575,11 +526,7 @@ export async function checkJDKMajorVersion(): Promise<number> {
 
     if (typeof firstVersionNumber === 'number' && firstVersionNumber != 1) {
       return firstVersionNumber;
-    } else if (
-      typeof secondVersionNumber === 'number' &&
-      firstVersionNumber == 1 &&
-      secondVersionNumber < 9
-    ) {
+    } else if (typeof secondVersionNumber === 'number' && firstVersionNumber == 1 && secondVersionNumber < 9) {
       return secondVersionNumber;
     } else {
       return -1;

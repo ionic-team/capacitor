@@ -1,11 +1,5 @@
-import {
-  pathExists,
-  readFile,
-  readJSON,
-  writeFile,
-  writeJSON,
-} from '@ionic/utils-fs';
 import Debug from 'debug';
+import { pathExists, readFile, readJSON, writeFile, writeJSON } from 'fs-extra';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
@@ -18,6 +12,7 @@ import type {
   ExternalConfig,
   IOSConfig,
   WebConfig,
+  XcodeExportMethod,
 } from './definitions';
 import { OS } from './definitions';
 import { fatal, isFatal } from './errors';
@@ -40,15 +35,10 @@ export async function loadConfig(): Promise<Config> {
   const cliRootDir = dirname(__dirname);
   const conf = await loadExtConfig(appRootDir);
 
-  const depsForNx = await (async (): Promise<
-    { devDependencies: any; dependencies: any } | object
-  > => {
+  const depsForNx = await (async (): Promise<{ devDependencies: any; dependencies: any } | object> => {
     if (isNXMonorepo(appRootDir)) {
       const rootOfNXMonorepo = findNXMonorepoRoot(appRootDir);
-      const pkgJSONOfMonorepoRoot: any = await tryFn(
-        readJSON,
-        resolve(rootOfNXMonorepo, 'package.json'),
-      );
+      const pkgJSONOfMonorepoRoot: any = await tryFn(readJSON, resolve(rootOfNXMonorepo, 'package.json'));
       const devDependencies = pkgJSONOfMonorepoRoot?.devDependencies ?? {};
       const dependencies = pkgJSONOfMonorepoRoot?.dependencies ?? {};
       return {
@@ -89,10 +79,7 @@ export async function loadConfig(): Promise<Config> {
   return config;
 }
 
-export async function writeConfig(
-  extConfig: ExternalConfig,
-  extConfigFilePath: string,
-): Promise<void> {
+export async function writeConfig(extConfig: ExternalConfig, extConfigFilePath: string): Promise<void> {
   switch (extname(extConfigFilePath)) {
     case '.json': {
       await writeJSON(extConfigFilePath, extConfig, { spaces: 2 });
@@ -105,10 +92,7 @@ export async function writeConfig(
   }
 }
 
-type ExtConfigPairs = Pick<
-  AppConfig,
-  'extConfigType' | 'extConfigName' | 'extConfigFilePath' | 'extConfig'
->;
+type ExtConfigPairs = Pick<AppConfig, 'extConfigType' | 'extConfigName' | 'extConfigFilePath' | 'extConfig'>;
 
 async function loadExtConfigTS(
   rootDir: string,
@@ -121,9 +105,7 @@ async function loadExtConfigTS(
     if (!tsPath) {
       fatal(
         'Could not find installation of TypeScript.\n' +
-          `To use ${c.strong(
-            extConfigName,
-          )} files, you must install TypeScript in your project, e.g. w/ ${c.input(
+          `To use ${c.strong(extConfigName)} files, you must install TypeScript in your project, e.g. w/ ${c.input(
             'npm install -D typescript',
           )}`,
       );
@@ -131,9 +113,7 @@ async function loadExtConfigTS(
 
     const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
     const extConfigObject = requireTS(ts, extConfigFilePath) as any;
-    const extConfig = extConfigObject.default
-      ? await extConfigObject.default
-      : extConfigObject;
+    const extConfig = extConfigObject.default ? await extConfigObject.default : extConfigObject;
 
     return {
       extConfigType: 'ts',
@@ -193,12 +173,10 @@ async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
 async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
   const assetsDir = 'assets';
   const assetsDirAbs = join(rootDir, assetsDir);
-  const iosPlatformTemplateArchive = 'ios-pods-template.tar.gz';
-  const iosCordovaPluginsTemplateArchive =
-    'capacitor-cordova-ios-plugins.tar.gz';
+  const iosPlatformTemplateArchive = 'ios-spm-template.tar.gz';
+  const iosCordovaPluginsTemplateArchive = 'capacitor-cordova-ios-plugins.tar.gz';
   const androidPlatformTemplateArchive = 'android-template.tar.gz';
-  const androidCordovaPluginsTemplateArchive =
-    'capacitor-cordova-android-plugins.tar.gz';
+  const androidCordovaPluginsTemplateArchive = 'capacitor-cordova-android-plugins.tar.gz';
 
   return {
     rootDir,
@@ -207,27 +185,15 @@ async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
     assets: {
       ios: {
         platformTemplateArchive: iosPlatformTemplateArchive,
-        platformTemplateArchiveAbs: resolve(
-          assetsDirAbs,
-          iosPlatformTemplateArchive,
-        ),
+        platformTemplateArchiveAbs: resolve(assetsDirAbs, iosPlatformTemplateArchive),
         cordovaPluginsTemplateArchive: iosCordovaPluginsTemplateArchive,
-        cordovaPluginsTemplateArchiveAbs: resolve(
-          assetsDirAbs,
-          iosCordovaPluginsTemplateArchive,
-        ),
+        cordovaPluginsTemplateArchiveAbs: resolve(assetsDirAbs, iosCordovaPluginsTemplateArchive),
       },
       android: {
         platformTemplateArchive: androidPlatformTemplateArchive,
-        platformTemplateArchiveAbs: resolve(
-          assetsDirAbs,
-          androidPlatformTemplateArchive,
-        ),
+        platformTemplateArchiveAbs: resolve(assetsDirAbs, androidPlatformTemplateArchive),
         cordovaPluginsTemplateArchive: androidCordovaPluginsTemplateArchive,
-        cordovaPluginsTemplateArchiveAbs: resolve(
-          assetsDirAbs,
-          androidCordovaPluginsTemplateArchive,
-        ),
+        cordovaPluginsTemplateArchiveAbs: resolve(assetsDirAbs, androidCordovaPluginsTemplateArchive),
       },
     },
     package: await readJSON(resolve(rootDir, 'package.json')),
@@ -262,15 +228,14 @@ async function loadAndroidConfig(
     keystorePath: extConfig.android?.buildOptions?.keystorePath,
     keystorePassword: extConfig.android?.buildOptions?.keystorePassword,
     keystoreAlias: extConfig.android?.buildOptions?.keystoreAlias,
-    keystoreAliasPassword:
-      extConfig.android?.buildOptions?.keystoreAliasPassword,
+    keystoreAliasPassword: extConfig.android?.buildOptions?.keystoreAliasPassword,
     signingType: extConfig.android?.buildOptions?.signingType,
     releaseType: extConfig.android?.buildOptions?.releaseType,
   };
 
   return {
     name,
-    minVersion: '22',
+    minVersion: '24',
     studioPath,
     platformDir,
     platformDirAbs,
@@ -296,10 +261,7 @@ async function loadAndroidConfig(
   };
 }
 
-async function loadIOSConfig(
-  rootDir: string,
-  extConfig: ExternalConfig,
-): Promise<IOSConfig> {
+async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promise<IOSConfig> {
   const name = 'ios';
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
@@ -310,28 +272,19 @@ async function loadIOSConfig(
   const nativeTargetDirAbs = resolve(platformDirAbs, nativeTargetDir);
   const nativeXcodeProjDir = `${nativeProjectDir}/App.xcodeproj`;
   const nativeXcodeProjDirAbs = resolve(platformDirAbs, nativeXcodeProjDir);
-  const nativeXcodeWorkspaceDirAbs = lazy(() =>
-    determineXcodeWorkspaceDirAbs(nativeProjectDirAbs),
-  );
-  const podPath = lazy(() =>
-    determineGemfileOrCocoapodPath(
-      rootDir,
-      platformDirAbs,
-      nativeProjectDirAbs,
-    ),
-  );
-  const webDirAbs = lazy(() =>
-    determineIOSWebDirAbs(
-      nativeProjectDirAbs,
-      nativeTargetDirAbs,
-      nativeXcodeProjDirAbs,
-    ),
-  );
+  const nativeXcodeWorkspaceDirAbs = lazy(() => determineXcodeWorkspaceDirAbs(nativeProjectDirAbs));
+  const podPath = lazy(() => determineGemfileOrCocoapodPath(rootDir, platformDirAbs, nativeProjectDirAbs));
+  const webDirAbs = lazy(() => determineIOSWebDirAbs(nativeProjectDirAbs, nativeTargetDirAbs, nativeXcodeProjDirAbs));
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
-
+  const buildOptions = {
+    exportMethod: extConfig.ios?.buildOptions?.exportMethod as XcodeExportMethod,
+    xcodeSigningStyle: extConfig.ios?.buildOptions?.signingStyle,
+    signingCertificate: extConfig.ios?.buildOptions?.signingCertificate,
+    provisioningProfile: extConfig.ios?.buildOptions?.provisioningProfile,
+  };
   return {
     name,
-    minVersion: '13.0',
+    minVersion: '15.0',
     platformDir,
     platformDirAbs,
     scheme,
@@ -343,20 +296,16 @@ async function loadIOSConfig(
     nativeTargetDirAbs,
     nativeXcodeProjDir,
     nativeXcodeProjDirAbs,
-    nativeXcodeWorkspaceDir: lazy(async () =>
-      relative(platformDirAbs, await nativeXcodeWorkspaceDirAbs),
-    ),
+    nativeXcodeWorkspaceDir: lazy(async () => relative(platformDirAbs, await nativeXcodeWorkspaceDirAbs)),
     nativeXcodeWorkspaceDirAbs,
     webDir: lazy(async () => relative(platformDirAbs, await webDirAbs)),
     webDirAbs,
     podPath,
+    buildOptions,
   };
 }
 
-async function loadWebConfig(
-  rootDir: string,
-  webDir: string,
-): Promise<WebConfig> {
+async function loadWebConfig(rootDir: string, webDir: string): Promise<WebConfig> {
   const platformDir = webDir;
   const platformDirAbs = resolve(rootDir, platformDir);
 
@@ -380,9 +329,7 @@ function determineOS(os: NodeJS.Platform): OS {
   return OS.Unknown;
 }
 
-async function determineXcodeWorkspaceDirAbs(
-  nativeProjectDirAbs: string,
-): Promise<string> {
+async function determineXcodeWorkspaceDirAbs(nativeProjectDirAbs: string): Promise<string> {
   return resolve(nativeProjectDirAbs, 'App.xcworkspace');
 }
 
@@ -400,12 +347,8 @@ async function determineIOSWebDirAbs(
 
     if (m && m[1] === 'SOURCE_ROOT') {
       logger.warn(
-        `Using the iOS project root for the ${c.strong(
-          'public',
-        )} directory is deprecated.\n` +
-          `Please follow the Upgrade Guide to move ${c.strong(
-            'public',
-          )} inside the iOS target directory: ${c.strong(
+        `Using the iOS project root for the ${c.strong('public')} directory is deprecated.\n` +
+          `Please follow the Upgrade Guide to move ${c.strong('public')} inside the iOS target directory: ${c.strong(
             'https://capacitorjs.com/docs/updating/3-0#move-public-into-the-ios-target-directory',
           )}`,
       );
@@ -453,8 +396,20 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
 
       return p;
     }
-    case OS.Linux:
-      return '/usr/local/android-studio/bin/studio.sh';
+    case OS.Linux: {
+      const studioExecPath = '/usr/local/android-studio/bin/studio';
+      const studioShPath = '/usr/local/android-studio/bin/studio.sh';
+
+      try {
+        if (await pathExists(studioExecPath)) {
+          return studioExecPath;
+        }
+      } catch (e) {
+        debug(`Error checking for studio executable: %O`, e);
+      }
+
+      return studioShPath;
+    }
   }
 
   return '';
@@ -483,11 +438,7 @@ async function determineGemfileOrCocoapodPath(
   // Multi-app projects might share a single global 'Gemfile' at the Git repository root directory.
   if (!appSpecificGemfileExists) {
     try {
-      const output = await getCommandOutput(
-        'git',
-        ['rev-parse', '--show-toplevel'],
-        { cwd: rootDir },
-      );
+      const output = await getCommandOutput('git', ['rev-parse', '--show-toplevel'], { cwd: rootDir });
       if (output != null) {
         gemfilePath = resolve(output, 'Gemfile');
       }
@@ -501,9 +452,7 @@ async function determineGemfileOrCocoapodPath(
     if (!gemfileText) {
       return 'pod';
     }
-    const cocoapodsInGemfile = new RegExp(/gem\s+['"]cocoapods/).test(
-      gemfileText,
-    );
+    const cocoapodsInGemfile = new RegExp(/gem\s+['"]cocoapods/).test(gemfileText);
 
     if (cocoapodsInGemfile) {
       return 'bundle exec pod';
@@ -522,18 +471,4 @@ function formatConfigTS(extConfig: ExternalConfig): string {
 const config: CapacitorConfig = ${formatJSObject(extConfig)};
 
 export default config;\n`;
-}
-
-export function checkExternalConfig(config: ExtConfigPairs): void {
-  if (typeof config.extConfig.bundledWebRuntime !== 'undefined') {
-    let actionMessage = `Can be safely deleted.`;
-    if (config.extConfig.bundledWebRuntime === true) {
-      actionMessage = `Please, use a bundler to bundle Capacitor and its plugins.`;
-    }
-    logger.warn(
-      `The ${c.strong(
-        'bundledWebRuntime',
-      )} configuration option has been deprecated. ${actionMessage}`,
-    );
-  }
 }

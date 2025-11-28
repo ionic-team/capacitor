@@ -30,21 +30,6 @@ export interface CapacitorConfig {
   webDir?: string;
 
   /**
-   * Whether to copy the Capacitor runtime bundle or not.
-   *
-   * If your app is not using a bundler, set this to `true`, then Capacitor
-   * will create a `capacitor.js` file that you'll need to add as a script in
-   * your `index.html` file.
-   *
-   * It's deprecated and will be removed in Capacitor 6
-   *
-   * @since 1.0.0
-   * @deprecated 5.0.0
-   * @default false
-   */
-  bundledWebRuntime?: boolean;
-
-  /**
    * The build configuration (as defined by the native app) under which Capacitor
    * will send statements to the log system. This applies to log statements in
    * native code as well as statements redirected from JavaScript (`console.debug`,
@@ -91,6 +76,14 @@ export interface CapacitorConfig {
    * @since 6.0.0
    */
   zoomEnabled?: boolean;
+
+  /**
+   * Whether to give the webview initial focus.
+   *
+   * @since 7.0.0
+   * @default true
+   */
+  initialFocus?: boolean;
 
   android?: {
     /**
@@ -206,6 +199,8 @@ export interface CapacitorConfig {
     /**
      * Whether to give the webview initial focus.
      *
+     * Overrides global `initialFocus` option.
+     *
      * @since 3.5.1
      * @default true
      */
@@ -293,6 +288,15 @@ export interface CapacitorConfig {
      * @default false
      */
     useLegacyBridge?: boolean;
+
+    /**
+     * Make service worker requests go through Capacitor bridge.
+     * Set it to false to use your own handling.
+     *
+     * @since 7.0.0
+     * @default true
+     */
+    resolveServiceWorkerRequests?: boolean;
   };
 
   ios?: {
@@ -464,6 +468,45 @@ export interface CapacitorConfig {
      * @default false
      */
     webContentsDebuggingEnabled?: boolean;
+
+    /**
+     * Whether to give the webview initial focus.
+     *
+     * Overrides global `initialFocus` option.
+     *
+     * @since 7.0.0
+     * @default true
+     */
+    initialFocus?: boolean;
+
+    buildOptions?: {
+      /**
+       * The signing style to use when building the app for distribution.
+       *
+       * @since 7.1.0
+       * @default 'automatic'
+       */
+      signingStyle?: 'automatic' | 'manual';
+      /**
+       * The method used by xcodebuild to export the archive
+       *
+       * @since 7.1.0
+       * @default 'app-store-connect'
+       */
+      exportMethod?: string;
+      /**
+       * A certificate name, SHA-1 hash, or automatic selector to use for signing for iOS builds.
+       *
+       * @since 7.1.0
+       */
+      signingCertificate?: string;
+      /**
+       * A provisioning profile name or UUID for iOS builds.
+       *
+       * @since 7.1.0
+       */
+      provisioningProfile?: string;
+    };
   };
 
   server?: {
@@ -556,6 +599,15 @@ export interface CapacitorConfig {
      * @default null
      */
     errorPath?: string;
+
+    /**
+     * Append a path to the app URL.
+     *
+     * Allows loading from other paths than the default `/index.html`.
+     * @since 7.3.0
+     * @default null
+     */
+    appStartPath?: string;
   };
 
   cordova?: {
@@ -577,15 +629,13 @@ export interface CapacitorConfig {
     preferences?: { [key: string]: string | undefined };
 
     /**
-     * List of Cordova plugins that need to be static but are not
-     * already in the static plugin list.
+     * Fail on cap update/sync if the CLI detects that a cordova plugin
+     * has uninstalled dependencies.
      *
-     * It's deprecated and will be removed in Capacitor 7
-     *
-     * @since 3.3.0
-     * @deprecated 6.1.1
+     * @default false
+     * @since 7.4.0
      */
-    staticPlugins?: string[];
+    failOnUninstalledPlugins?: boolean;
   };
 
   /**
@@ -648,5 +698,44 @@ export interface PluginsConfig {
      * @default false
      */
     enabled?: boolean;
+  };
+
+  /**
+   * System Bars plugin configuration
+   *
+   * @since 8.0.0
+   */
+  SystemBars?: {
+    /**
+     * Disables the injection of device css insets into the web view.
+     *
+     * @default false
+     */
+    disableInsets?: boolean;
+    /**
+     * The style of the text and icons of the system bars.
+     *
+     * This option is only supported on Android.
+     *
+     * @default `DEFAULT`
+     */
+    style?: string;
+
+    /**
+     * Hide the system bars on start.
+     *
+     * @default false
+     */
+    hidden?: boolean;
+
+    /**
+     * The type of status bar animation used when showing or hiding.
+     *
+     * This option is only supported on iOS.
+     *
+     * @default 'FADE'
+     *
+     */
+    animation?: 'FADE' | 'NONE';
   };
 }

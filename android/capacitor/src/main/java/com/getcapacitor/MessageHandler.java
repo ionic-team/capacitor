@@ -69,13 +69,13 @@ public class MessageHandler {
                 Logger.verbose(
                     Logger.tags("Plugin"),
                     "To native (Cordova plugin): callbackId: " +
-                    callbackId +
-                    ", service: " +
-                    service +
-                    ", action: " +
-                    action +
-                    ", actionArgs: " +
-                    actionArgs
+                        callbackId +
+                        ", service: " +
+                        service +
+                        ", action: " +
+                        action +
+                        ", actionArgs: " +
+                        actionArgs
                 );
 
                 this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
@@ -150,10 +150,8 @@ public class MessageHandler {
     }
 
     private void callCordovaPluginMethod(String callbackId, String service, String action, String actionArgs) {
-        bridge.execute(
-            () -> {
-                cordovaPluginManager.exec(service, action, callbackId, actionArgs);
-            }
-        );
+        bridge.execute(() -> {
+            cordovaPluginManager.exec(service, action, callbackId, actionArgs);
+        });
     }
 }

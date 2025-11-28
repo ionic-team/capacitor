@@ -21,6 +21,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly) BOOL allowLinkPreviews;
 @property (nonatomic, readonly) BOOL handleApplicationNotifications;
 @property (nonatomic, readonly) BOOL isWebDebuggable;
+@property (nonatomic, readonly) BOOL hasInitialFocus;
 @property (nonatomic, readonly) BOOL cordovaDeployDisabled;
 @property (nonatomic, readonly) UIScrollViewContentInsetAdjustmentBehavior contentInsetAdjustmentBehavior;
 @property (nonatomic, readonly, nonnull) NSURL *appLocation;

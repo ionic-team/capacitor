@@ -1,10 +1,4 @@
-import type {
-  CapacitorGlobal,
-  PluginCallback,
-  PluginResultData,
-  PluginResultError,
-} from './definitions';
-import type { CapacitorPlatformsInstance } from './platforms';
+import type { CapacitorGlobal, PluginCallback, PluginResultData, PluginResultError } from './definitions';
 
 export interface PluginHeaderMethod {
   readonly name: string;
@@ -47,34 +41,20 @@ export interface CapacitorInstance extends CapacitorGlobal {
    * Prefer using `nativeCallback()` or `nativePromise()` instead.
    * Returns the Callback Id.
    */
-  toNative?: (
-    pluginName: string,
-    methodName: string,
-    options: any,
-    storedCallback?: StoredCallback,
-  ) => string;
+  toNative?: (pluginName: string, methodName: string, options: any, storedCallback?: StoredCallback) => string;
 
   /**
    * Sends data over the bridge to the native layer.
    * Returns the Callback Id.
    */
-  nativeCallback: <O>(
-    pluginName: string,
-    methodName: string,
-    options?: O,
-    callback?: PluginCallback,
-  ) => string;
+  nativeCallback: <O>(pluginName: string, methodName: string, options?: O, callback?: PluginCallback) => string;
 
   /**
    * Sends data over the bridge to the native layer and
    * resolves the promise when it receives the data from
    * the native implementation.
    */
-  nativePromise: <O, R>(
-    pluginName: string,
-    methodName: string,
-    options?: O,
-  ) => Promise<R>;
+  nativePromise: <O, R>(pluginName: string, methodName: string, options?: O) => Promise<R>;
 
   /**
    * Low-level API used by the native layers to send
@@ -90,21 +70,11 @@ export interface CapacitorInstance extends CapacitorGlobal {
   /**
    * Low-level API triggered from native implementations.
    */
-  triggerEvent?: (
-    eventName: string,
-    target: string,
-    eventData?: any,
-  ) => boolean;
+  triggerEvent?: (eventName: string, target: string, eventData?: any) => boolean;
 
   handleError: (err: Error) => void;
 
-  handleWindowError: (
-    msg: string | Event,
-    url: string,
-    lineNo: number,
-    columnNo: number,
-    err: Error,
-  ) => void;
+  handleWindowError: (msg: string | Event, url: string, lineNo: number, columnNo: number, err: Error) => void;
 
   /**
    * Low-level API used by the native bridge to log messages.
@@ -177,10 +147,6 @@ export interface WindowCapacitor {
   CapacitorHttpAndroidInterface?: any;
   CapacitorWebFetch?: any;
   CapacitorWebXMLHttpRequest?: any;
-  /**
-   * @deprecated Use `CapacitorCustomPlatform` instead
-   */
-  CapacitorPlatforms?: CapacitorPlatformsInstance;
   CapacitorCustomPlatform?: CapacitorCustomPlatformInstance;
   Ionic?: {
     WebView?: {

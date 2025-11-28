@@ -2,11 +2,7 @@ import Debug from 'debug';
 import { resolve } from 'path';
 
 import c from '../colors';
-import {
-  parseApkNameFromFlavor,
-  promptForPlatformTarget,
-  runTask,
-} from '../common';
+import { parseApkNameFromFlavor, promptForPlatformTarget, runTask } from '../common';
 import type { Config } from '../definitions';
 import type { RunCommandOptions } from '../tasks/run';
 import { runNativeRun, getPlatformTargets } from '../util/native-run';
@@ -18,13 +14,17 @@ export async function runAndroid(
   config: Config,
   {
     target: selectedTarget,
+    targetName: selectedTargetName,
+    targetNameSdkVersion: selectedTargetSdkVersion,
     flavor: selectedFlavor,
     forwardPorts: selectedPorts,
   }: RunCommandOptions,
 ): Promise<void> {
   const target = await promptForPlatformTarget(
     await getPlatformTargets('android'),
-    selectedTarget,
+    selectedTarget ?? selectedTargetName,
+    selectedTargetSdkVersion,
+    selectedTargetName !== undefined,
   );
 
   const runFlavor = selectedFlavor || config.android?.flavor || '';
@@ -65,8 +65,5 @@ export async function runAndroid(
 
   debug('Invoking native-run with args: %O', nativeRunArgs);
 
-  await runTask(
-    `Deploying ${c.strong(apkName)} to ${c.input(target.id)}`,
-    async () => runNativeRun(nativeRunArgs),
-  );
+  await runTask(`Deploying ${c.strong(apkName)} to ${c.input(target.id)}`, async () => runNativeRun(nativeRunArgs));
 }

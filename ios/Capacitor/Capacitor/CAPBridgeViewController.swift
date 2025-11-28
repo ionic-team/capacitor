@@ -59,8 +59,20 @@ import Cordova
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-        self.becomeFirstResponder()
         loadWebView()
+    }
+
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        NotificationCenter.default.post(Notification(name: .capacitorViewDidAppear))
+        if bridge?.config.hasInitialFocus ?? true {
+            self.webView?.becomeFirstResponder()
+        }
+    }
+
+    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        NotificationCenter.default.post(Notification(name: .capacitorViewWillTransition))
     }
 
     override open func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
@@ -111,12 +123,13 @@ import Cordova
         webViewConfiguration.suppressesIncrementalRendering = false
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
         webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
-        if #available(iOS 14.0, *) {
-            webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
+        webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
+        if #available(iOS 15.4, *) {
+            webViewConfiguration.preferences.isElementFullscreenEnabled = true
         }
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
-                webViewConfiguration.applicationNameForUserAgent = "\(appName)  \(appendUserAgent)"
+                webViewConfiguration.applicationNameForUserAgent = "\(appName) \(appendUserAgent)"
             } else {
                 webViewConfiguration.applicationNameForUserAgent = appendUserAgent
             }

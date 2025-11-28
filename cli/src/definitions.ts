@@ -62,12 +62,6 @@ export interface AppConfig {
   readonly extConfigName: string;
   readonly extConfigFilePath: string;
   readonly extConfig: ExternalConfig;
-  /**
-   * Whether to use a bundled web runtime instead of relying on a bundler/module
-   * loader. If you're not using something like rollup or webpack or dynamic ES
-   * module imports, set this to "true" and import "capacitor.js" manually.
-   */
-  readonly bundledWebRuntime?: boolean;
 }
 
 export interface AndroidConfig extends PlatformConfig {
@@ -107,6 +101,16 @@ export interface AndroidConfig extends PlatformConfig {
   };
 }
 
+export enum XcodeExportMethod {
+  AppStoreConnect = 'app-store-connect',
+  ReleaseTesting = 'release-testing',
+  Enterprise = 'enterprise',
+  Debugging = 'debugging',
+  DeveloperID = 'developer-id',
+  MacApplication = 'mac-application',
+  Validation = 'validation',
+}
+
 export interface IOSConfig extends PlatformConfig {
   readonly cordovaPluginsDir: string;
   readonly cordovaPluginsDirAbs: string;
@@ -123,6 +127,13 @@ export interface IOSConfig extends PlatformConfig {
   readonly nativeXcodeProjDirAbs: string;
   readonly nativeXcodeWorkspaceDir: Promise<string>;
   readonly nativeXcodeWorkspaceDirAbs: Promise<string>;
+  readonly buildOptions: {
+    teamId?: string;
+    exportMethod?: XcodeExportMethod;
+    xcodeSigningStyle?: 'automatic' | 'manual';
+    signingCertificate?: string;
+    provisioningProfile?: string;
+  };
 }
 
 export type WebConfig = PlatformConfig;

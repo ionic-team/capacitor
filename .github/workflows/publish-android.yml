@@ -27,15 +27,15 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: 'main'
           token: ${{ secrets.CAP_GH_RELEASE_TOKEN }}
-      - name: set up JDK 17
-        uses: actions/setup-java@v4
+      - name: set up JDK 21
+        uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'zulu'
       - name: Grant execute permission for gradlew
         run: chmod +x ./android/gradlew

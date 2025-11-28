@@ -3,31 +3,27 @@ import { dirname } from 'path';
 import c from '../colors';
 import type { PlatformTarget } from '../common';
 import { fatal } from '../errors';
+import { logger } from '../log';
 
 import { resolveNode } from './node';
 import { runCommand } from './subprocess';
 import type { RunCommandOptions } from './subprocess';
 
-export async function runNativeRun(
-  args: readonly string[],
-  options: RunCommandOptions = {},
-): Promise<string> {
-  const p = resolveNode(
-    __dirname,
-    dirname('native-run/package'),
-    'bin/native-run',
-  );
+export async function runNativeRun(args: readonly string[], options: RunCommandOptions = {}): Promise<string> {
+  const p = resolveNode(__dirname, dirname('native-run/package'), 'bin/native-run');
 
   if (!p) {
     fatal(`${c.input('native-run')} not found.`);
   }
 
-  return await runCommand(p, args, options);
+  if (process.versions.pnp) {
+    return await runCommand('yarn', ['node', p, ...args], options);
+  } else {
+    return await runCommand(p, args, options);
+  }
 }
 
-export async function getPlatformTargets(
-  platformName: string,
-): Promise<PlatformTarget[]> {
+export async function getPlatformTargets(platformName: string): Promise<PlatformTarget[]> {
   const errors = [];
   try {
     const output = await runNativeRun([platformName, '--list', '--json']);
@@ -49,6 +45,12 @@ export async function getPlatformTargets(
     const err = JSON.parse(e);
     errors.push(err);
   }
+
+  if (errors.length === 0) {
+    logger.info('No devices found.');
+    return [];
+  }
+
   const plural = errors.length > 1 ? 's' : '';
   const errMsg = `${c.strong('native-run')} failed with error${plural}\n
   ${errors
