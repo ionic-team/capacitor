@@ -6,6 +6,7 @@ import MobileCoreServices
 open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
+    private var routeWithFallback: Bool = false
 
     public init(router: Router) {
         self.router = router
@@ -18,6 +19,10 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     open func setServerUrl(_ serverUrl: URL?) {
         self.serverUrl = serverUrl
+    }
+    
+    open func setRouteWithFallback(_ routeWithFallback: Bool) {
+        self.routeWithFallback = routeWithFallback
     }
 
     private func isUsingLiveReload(_ localUrl: URL) -> Bool {
@@ -94,6 +99,27 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             }
             urlSchemeTask.didReceive(data)
         } catch let error as NSError {
+            // If routeWithFallback is enabled and the original request was for a file with an extension,
+            // try to serve index.html as a fallback for SPA routing
+            if routeWithFallback && stringToLoad.contains(".") && !stringToLoad.hasSuffix("/index.html") {
+                do {
+                    let indexPath = router.basePath + "/index.html"
+                    let indexUrl = URL(fileURLWithPath: indexPath)
+                    let indexData = try Data(contentsOf: indexUrl)
+                    let indexMimeType = "text/html"
+                    let indexHeaders = [
+                        "Content-Type": indexMimeType,
+                        "Cache-Control": "no-cache"
+                    ]
+                    let indexResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: indexHeaders)
+                    urlSchemeTask.didReceive(indexResponse!)
+                    urlSchemeTask.didReceive(indexData)
+                    urlSchemeTask.didFinish()
+                    return
+                } catch {
+                    // If index.html also fails, fall through to original error
+                }
+            }
             urlSchemeTask.didFailWithError(error)
             return
         }
