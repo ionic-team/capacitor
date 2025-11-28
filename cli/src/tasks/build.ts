@@ -1,9 +1,9 @@
-import { buildAndroid } from '../android/build';
-import { selectPlatforms, promptForPlatform } from '../common';
-import type { Config } from '../definitions';
-import { XcodeExportMethod } from '../definitions';
-import { fatal, isFatal } from '../errors';
-import { buildiOS } from '../ios/build';
+import { buildAndroid } from '../android/build.js';
+import { selectPlatforms, promptForPlatform } from '../common.js';
+import type { Config } from '../definitions.js';
+import { XcodeExportMethod } from '../definitions.js';
+import { fatal, isFatal } from '../errors.js';
+import { buildiOS } from '../ios/build.js';
 
 export interface BuildCommandOptions {
   scheme?: string;

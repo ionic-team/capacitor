@@ -2,8 +2,8 @@ import Debug from 'debug';
 import { readJSON, writeJSON, mkdirp } from 'fs-extra';
 import { dirname, resolve } from 'path';
 
-import { ENV_PATHS } from './util/cli';
-import { uuidv4 } from './util/uuid';
+import { ENV_PATHS } from './util/cli.js';
+import { uuidv4 } from './util/uuid.js';
 
 const debug = Debug('capacitor:sysconfig');
 

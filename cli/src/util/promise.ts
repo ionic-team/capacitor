@@ -23,7 +23,7 @@ export class LazyPromise<T> extends Promise<T> {
     this._executor = executor;
   }
 
-  then<TResult1 = T, TResult2 = never>(
+  override then<TResult1 = T, TResult2 = never>(
     onfulfilled?: PromiseOnFulfilled<T, TResult1>,
     onrejected?: PromiseOnRejected<TResult2>,
   ): Promise<TResult1 | TResult2> {
@@ -31,7 +31,7 @@ export class LazyPromise<T> extends Promise<T> {
     return this._promise.then(onfulfilled, onrejected);
   }
 
-  catch<TResult = never>(onrejected?: PromiseOnRejected<TResult>): Promise<T | TResult> {
+  override catch<TResult = never>(onrejected?: PromiseOnRejected<TResult>): Promise<T | TResult> {
     this._promise = this._promise || new Promise(this._executor);
     return this._promise.catch(onrejected);
   }

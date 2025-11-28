@@ -1,4 +1,4 @@
-import type { Config, FrameworkConfig } from './definitions';
+import type { Config, FrameworkConfig } from './definitions.js';
 
 const FRAMEWORK_CONFIGS: FrameworkConfig[] = [
   {
