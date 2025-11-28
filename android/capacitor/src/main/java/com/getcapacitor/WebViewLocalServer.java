@@ -63,6 +63,7 @@ public class WebViewLocalServer {
     private final boolean html5mode;
     private final JSInjector jsInjector;
     private final Bridge bridge;
+    private final boolean jsProfilingEnabled;
 
     /**
      * A handler that produces responses for paths on the virtual asset server.
@@ -133,13 +134,14 @@ public class WebViewLocalServer {
         }
     }
 
-    WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, ArrayList<String> authorities, boolean html5mode) {
+    WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, ArrayList<String> authorities, boolean html5mode, boolean jsProfilingEnabled) {
         uriMatcher = new UriMatcher(null);
         this.html5mode = html5mode;
         this.protocolHandler = new AndroidProtocolHandler(context.getApplicationContext());
         this.authorities = authorities;
         this.bridge = bridge;
         this.jsInjector = jsInjector;
+        this.jsProfilingEnabled = jsProfilingEnabled;
     }
 
     private static Uri parseAndVerifyUrl(String url) {
@@ -619,7 +621,13 @@ public class WebViewLocalServer {
             throw new IllegalArgumentException("assetPath cannot contain the '*' character.");
         }
 
-        PathHandler handler = new PathHandler() {
+        Map<String, String> customHeaders = null;
+        if (jsProfilingEnabled) {
+            customHeaders = new HashMap<>();
+            customHeaders.put("Document-Policy", "js-profiling");
+        }
+
+        PathHandler handler = new PathHandler(null, null, 200, "OK", customHeaders) {
             @Override
             public InputStream handle(Uri url) {
                 InputStream stream = null;
