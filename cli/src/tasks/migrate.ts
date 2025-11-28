@@ -403,12 +403,12 @@ async function getAndroidVariablesAndClasspaths(config: Config) {
   }
   deleteFolderRecursive(tempAndroidTemplateFolder);
 
-  const firstIndxOfCATBGV = buildGradleFile.indexOf(`classpath 'com.android.tools.build:gradle:`) + 42;
-  const firstIndxOfCGGGS = buildGradleFile.indexOf(`com.google.gms:google-services:`) + 31;
+  const firstIndexOfCATBGV = buildGradleFile.indexOf(`classpath 'com.android.tools.build:gradle:`) + 42;
+  const firstIndexOfCGGGS = buildGradleFile.indexOf(`com.google.gms:google-services:`) + 31;
   const comAndroidToolsBuildGradleVersion =
-    '' + buildGradleFile.substring(firstIndxOfCATBGV, buildGradleFile.indexOf("'", firstIndxOfCATBGV));
+    '' + buildGradleFile.substring(firstIndexOfCATBGV, buildGradleFile.indexOf("'", firstIndexOfCATBGV));
   const comGoogleGmsGoogleServices =
-    '' + buildGradleFile.substring(firstIndxOfCGGGS, buildGradleFile.indexOf("'", firstIndxOfCGGGS));
+    '' + buildGradleFile.substring(firstIndexOfCGGGS, buildGradleFile.indexOf("'", firstIndexOfCGGGS));
 
   const variablesGradleAsJSON = JSON.parse(
     variablesGradleFile
