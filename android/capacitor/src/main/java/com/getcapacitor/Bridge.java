@@ -280,7 +280,7 @@ public class Bridge {
         webView.setWebChromeClient(new BridgeWebChromeClient(this));
         webView.setWebViewClient(this.webViewClient);
 
-        if (Build.VERSION.SDK_INT >= 24 && config.isResolveServiceWorkerRequests()) {
+        if (config.isResolveServiceWorkerRequests()) {
             ServiceWorkerController swController = ServiceWorkerController.getInstance();
             swController.setServiceWorkerClient(
                 new ServiceWorkerClient() {
@@ -348,11 +348,7 @@ public class Bridge {
 
         // Otherwise manually check WebView versions
         try {
-            String webViewPackage = "com.google.android.webview";
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                webViewPackage = "com.android.chrome";
-            }
-            PackageInfo info = InternalUtils.getPackageInfo(pm, webViewPackage);
+            PackageInfo info = InternalUtils.getPackageInfo(pm, "com.android.chrome");
             String majorVersionStr = info.versionName.split("\\.")[0];
             int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
@@ -466,9 +462,9 @@ public class Bridge {
         if (ex instanceof SocketTimeoutException) {
             Logger.error(
                 "Unable to load app. Ensure the server is running at " +
-                appUrl +
-                ", or modify the " +
-                "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).",
+                    appUrl +
+                    ", or modify the " +
+                    "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).",
                 ex
             );
         }
@@ -659,6 +655,7 @@ public class Bridge {
         this.registerPlugin(com.getcapacitor.plugin.CapacitorCookies.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
         this.registerPlugin(com.getcapacitor.plugin.CapacitorHttp.class);
+        this.registerPlugin(com.getcapacitor.plugin.SystemBars.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
             this.registerPlugin(pluginClass);
@@ -752,9 +749,9 @@ public class Bridge {
     private void logInvalidPluginException(Class<? extends Plugin> clazz) {
         Logger.error(
             "NativePlugin " +
-            clazz.getName() +
-            " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
-            " the class extends Plugin"
+                clazz.getName() +
+                " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
+                " the class extends Plugin"
         );
     }
 
@@ -829,13 +826,13 @@ public class Bridge {
             if (Logger.shouldLog()) {
                 Logger.verbose(
                     "callback: " +
-                    call.getCallbackId() +
-                    ", pluginId: " +
-                    plugin.getId() +
-                    ", methodName: " +
-                    methodName +
-                    ", methodData: " +
-                    call.getData().toString()
+                        call.getCallbackId() +
+                        ", pluginId: " +
+                        plugin.getId() +
+                        ", methodName: " +
+                        methodName +
+                        ", methodData: " +
+                        call.getData().toString()
                 );
             }
 
@@ -1614,7 +1611,6 @@ public class Bridge {
 
             if (webView instanceof CapacitorWebView capacitorWebView) {
                 capacitorWebView.setBridge(bridge);
-                capacitorWebView.edgeToEdgeHandler(bridge);
             }
 
             bridge.setCordovaWebView(mockWebView);

@@ -3,16 +3,13 @@ import { join } from 'path';
 import { rimraf } from 'rimraf';
 import { coerce, gte, lt } from 'semver';
 
-import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
 import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
-import { getPlugins } from '../plugin';
 import { deleteFolderRecursive } from '../util/fs';
-import { resolveNode } from '../util/node';
 import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
@@ -46,10 +43,11 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^7.0.0';
-const pluginVersion = '^7.0.0';
-const gradleVersion = '8.11.1';
-const iOSVersion = '14';
+const coreVersion = '^8.0.0';
+const pluginVersion = '^8.0.0';
+const gradleVersion = '8.14.3';
+const iOSVersion = '15';
+const kotlinVersion = '2.2.20';
 let installFailed = false;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
@@ -58,14 +56,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
   }
 
   const capMajor = await checkCapacitorMajorVersion(config);
-  if (capMajor < 6) {
-    fatal('Migrate can only be used on Capacitor 6, please use the CLI in Capacitor 6 to upgrade to 6 first');
+  if (capMajor < 7) {
+    fatal('Migrate can only be used on Capacitor 7, please use the CLI in Capacitor 7 to upgrade to 7 first');
   }
 
   const jdkMajor = await checkJDKMajorVersion();
 
   if (jdkMajor < 21) {
-    logger.warn('Capacitor 7 requires JDK 21 or higher. Some steps may fail.');
+    logger.warn('Capacitor 8 requires JDK 21 or higher. Some steps may fail.');
   }
 
   const variablesAndClasspaths:
@@ -86,13 +84,13 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
   };
 
   const monorepoWarning =
-    'Please note this tool is not intended for use in a mono-repo environment, please check out the Ionic vscode extension for this functionality.';
+    'Please note this tool is not intended for use in a mono-repo environment, you should migrate manually instead. Refer to https://capacitorjs.com/docs/next/updating/8-0';
 
   logger.info(monorepoWarning);
 
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
-    : await logPrompt(`Capacitor 7 sets a deployment target of iOS ${iOSVersion} and Android 15 (SDK 35). \n`, {
+    : await logPrompt(`Capacitor 8 sets a deployment target of iOS ${iOSVersion} and Android 16 (SDK 36). \n`, {
         type: 'text',
         name: 'migrateconfirm',
         message: `Are you sure you want to migrate? (Y/n)`,
@@ -188,8 +186,8 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
       }
 
       if (allDependencies['@capacitor/android'] && existsSync(config.android.platformDirAbs)) {
-        // AndroidManifest.xml add navigation"
-        await runTask(`Migrating AndroidManifest.xml by adding navigation to Activity configChanges.`, () => {
+        // AndroidManifest.xml add "density"
+        await runTask(`Migrating AndroidManifest.xml by adding density to Activity configChanges.`, () => {
           return updateAndroidManifest(join(config.android.srcMainDirAbs, 'AndroidManifest.xml'));
         });
 
@@ -222,8 +220,12 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         } else {
           logger.warn('Skipped upgrading gradle wrapper files');
         }
-        await runTask(`Migrating build.gradle file.`, () => {
+        await runTask(`Migrating root build.gradle file.`, () => {
           return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
+        });
+
+        await runTask(`Migrating app build.gradle file.`, () => {
+          return updateAppBuildGradle(join(config.android.appDirAbs, 'build.gradle'));
         });
 
         // Variables gradle
@@ -274,18 +276,18 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               }
             }
             const pluginVariables: { [key: string]: string } = {
-              firebaseMessagingVersion: '24.1.0',
+              firebaseMessagingVersion: '25.0.1',
               playServicesLocationVersion: '21.3.0',
-              androidxBrowserVersion: '1.8.0',
-              androidxMaterialVersion: '1.12.0',
-              androidxExifInterfaceVersion: '1.3.7',
-              androidxCoreKTXVersion: '1.12.0',
-              googleMapsPlayServicesVersion: '18.2.0',
-              googleMapsUtilsVersion: '3.8.2',
-              googleMapsKtxVersion: '5.0.0',
-              googleMapsUtilsKtxVersion: '5.0.0',
-              kotlinxCoroutinesVersion: '1.7.3',
-              coreSplashScreenVersion: '1.0.1',
+              androidxBrowserVersion: '1.9.0',
+              androidxMaterialVersion: '1.13.0',
+              androidxExifInterfaceVersion: '1.4.1',
+              androidxCoreKTXVersion: '1.17.0',
+              googleMapsPlayServicesVersion: '19.2.0',
+              googleMapsUtilsVersion: '3.19.1',
+              googleMapsKtxVersion: '5.2.1',
+              googleMapsUtilsKtxVersion: '5.2.1',
+              kotlinxCoroutinesVersion: '1.10.2',
+              coreSplashScreenVersion: '1.2.0',
             };
             for (const variable of Object.keys(pluginVariables)) {
               await updateFile(config, variablesPath, `${variable} = '`, `'`, pluginVariables[variable], true);
@@ -294,14 +296,6 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         });
 
         rimraf.sync(join(config.android.appDirAbs, 'build'));
-
-        if (!installFailed) {
-          await runTask('Migrating package from Manifest to build.gradle in Capacitor plugins', () => {
-            return patchOldCapacitorPlugins(config);
-          });
-        } else {
-          logger.warn('Skipped migrating package from Manifest to build.gradle in Capacitor plugins');
-        }
       }
 
       // Write all breaking changes
@@ -373,11 +367,16 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
 
 async function writeBreakingChanges() {
   const breaking = [
-    '@capacitor/app',
-    '@capacitor/device',
-    '@capacitor/haptics',
+    '@capacitor/action-sheet',
+    '@capacitor/barcode-scanner',
+    '@capacitor/browser',
+    '@capacitor/camera',
+    '@capacitor/geolocation',
+    '@capacitor/google-maps',
+    '@capacitor/push-notifications',
+    '@capacitor/screen-orientation',
     '@capacitor/splash-screen',
-    '@capacitor/statusbar',
+    '@capacitor/status-bar',
   ];
   const broken = [];
   for (const lib of breaking) {
@@ -387,7 +386,7 @@ async function writeBreakingChanges() {
   }
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/7-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/8-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
@@ -464,59 +463,6 @@ async function updateGradleWrapperFiles(platformDir: string) {
   );
 }
 
-async function movePackageFromManifestToBuildGradle(manifestFilename: string, buildGradleFilename: string) {
-  const manifestText = readFile(manifestFilename);
-  const buildGradleText = readFile(buildGradleFilename);
-
-  if (!manifestText) {
-    logger.error(`Could not read ${manifestFilename}. Check its permissions and if it exists.`);
-    return;
-  }
-
-  if (!buildGradleText) {
-    logger.error(`Could not read ${buildGradleFilename}. Check its permissions and if it exists.`);
-    return;
-  }
-
-  const namespaceExists = new RegExp(/\s+namespace\s+/).test(buildGradleText);
-  if (namespaceExists) {
-    logger.error('Found namespace in build.gradle already, skipping migration');
-    return;
-  }
-
-  let packageName: string;
-  const manifestRegEx = new RegExp(/package="([^"]+)"/);
-  const manifestResults = manifestRegEx.exec(manifestText);
-
-  if (manifestResults === null) {
-    logger.error(`Unable to update Android Manifest. Package not found.`);
-    return;
-  } else {
-    packageName = manifestResults[1];
-  }
-
-  let manifestReplaced = manifestText;
-
-  manifestReplaced = manifestReplaced.replace(manifestRegEx, '');
-
-  if (manifestText == manifestReplaced) {
-    logger.error(`Unable to update Android Manifest: no changes were detected in Android Manifest file`);
-    return;
-  }
-
-  let buildGradleReplaced = buildGradleText;
-
-  buildGradleReplaced = setAllStringIn(buildGradleText, 'android {', '\n', `\n    namespace "${packageName}"`);
-
-  if (buildGradleText == buildGradleReplaced) {
-    logger.error(`Unable to update buildGradleText: no changes were detected in Android Manifest file`);
-    return;
-  }
-
-  writeFileSync(manifestFilename, manifestReplaced, 'utf-8');
-  writeFileSync(buildGradleFilename, buildGradleReplaced, 'utf-8');
-}
-
 async function updateBuildGradle(
   filename: string,
   variablesAndClasspaths: {
@@ -544,6 +490,41 @@ async function updateBuildGradle(
         logger.info(`Set ${dep} = ${neededDeps[dep]}.`);
       }
     }
+  }
+
+  const beforeKotlinVersionUpdate = replaced;
+  replaced = replaceVersion(replaced, /(ext\.kotlin_version\s*=\s*['"])([^'"]+)(['"])/, kotlinVersion);
+  replaced = replaceVersion(replaced, /(org\.jetbrains\.kotlin:kotlin[^:]*:)([\d.]+)(['"])/, kotlinVersion);
+  if (beforeKotlinVersionUpdate !== replaced) {
+    logger.info(`Set Kotlin version to ${kotlinVersion}`);
+  }
+  writeFileSync(filename, replaced, 'utf-8');
+}
+
+function replaceVersion(text: string, regex: RegExp, newVersion: string): string {
+  return text.replace(regex, (match, prefix, currentVersion, suffix) => {
+    const semVer = coerce(currentVersion)?.version;
+    if (gte(newVersion, semVer ? semVer : '0.0.0')) {
+      return `${prefix || ''}${newVersion}${suffix || ''}`;
+    }
+    return match;
+  });
+}
+
+async function updateAppBuildGradle(filename: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+  let replaced = txt;
+
+  const gradlePproperties = ['compileSdk', 'namespace', 'ignoreAssetsPattern'];
+  for (const prop of gradlePproperties) {
+    // Use updated Groovy DSL syntax with " = " assignment
+    const regex = new RegExp(`(^\\s*${prop})\\s+(?!=)(.+)$`, 'gm');
+    replaced = replaced.replace(regex, (_match, key, value) => {
+      return `${key} = ${value.trim()}`;
+    });
   }
   writeFileSync(filename, replaced, 'utf-8');
 }
@@ -621,48 +602,23 @@ async function updateAndroidManifest(filename: string) {
     return;
   }
 
-  if (txt.includes('navigation')) {
+  if (txt.includes('|density') || txt.includes('density|')) {
     return; // Probably already updated
   }
-  const replaced = txt.replace(
-    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"',
-    'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"',
-  );
+  // Since navigation was an optional change in Capacitor 7, attempting to add density and/or navigation
+  const replaced = txt
+    .replace(
+      'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"',
+      'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"',
+    )
+    .replace(
+      'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"',
+      'android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"',
+    );
 
-  writeFileSync(filename, replaced, 'utf-8');
-}
-
-export async function patchOldCapacitorPlugins(config: Config): Promise<void[]> {
-  const allPlugins = await getPlugins(config, 'android');
-  const androidPlugins = await getAndroidPlugins(allPlugins);
-  return await Promise.all(
-    androidPlugins.map(async (p) => {
-      if (p.manifest?.android?.src) {
-        const buildGradlePath = resolveNode(config.app.rootDir, p.id, p.manifest.android.src, 'build.gradle');
-        const manifestPath = resolveNode(
-          config.app.rootDir,
-          p.id,
-          p.manifest.android.src,
-          'src',
-          'main',
-          'AndroidManifest.xml',
-        );
-        if (buildGradlePath && manifestPath) {
-          const gradleContent = readFile(buildGradlePath);
-          if (!gradleContent?.includes('namespace')) {
-            if (plugins.includes(p.id)) {
-              logger.warn(
-                `You are using an outdated version of ${p.id}, update the plugin to version ${pluginVersion}`,
-              );
-            } else {
-              logger.warn(
-                `${p.id}@${p.version} doesn't officially support Capacitor ${coreVersion} yet, doing our best moving it's package to build.gradle so it builds`,
-              );
-            }
-            movePackageFromManifestToBuildGradle(manifestPath, buildGradlePath);
-          }
-        }
-      }
-    }),
-  );
+  if (!replaced.includes('|density')) {
+    logger.error(`Unable to add 'density' to 'android:configChanges' in ${filename}. Try adding it manually`);
+  } else {
+    writeFileSync(filename, replaced, 'utf-8');
+  }
 }
