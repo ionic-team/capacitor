@@ -17,6 +17,11 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
     private let handlerName = "bridge"
 
+    var didStartProvisionalNavigationCallback: (() -> Void)? = nil
+    var didFinishCallback: (() -> Void)? = nil
+    var didFailCallback: (() -> Void)? = nil
+    var didFailProvisionalNavigationCallback: (() -> Void)? = nil
+
     override public init() {
         super.init()
         contentController.add(self, name: handlerName)
@@ -45,6 +50,9 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
     open func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         // Reset the bridge on each navigation
         bridge?.reset()
+        if let callback = didStartProvisionalNavigationCallback {
+            callback()
+        }
     }
 
     open func webView(
@@ -126,6 +134,9 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             webViewLoadingState = .subsequentLoad
         }
         CAPLog.print("⚡️  WebView loaded")
+        if let callback = didFinishCallback {
+            callback()
+        }
     }
 
     // The force unwrap is part of the protocol declaration, so we should keep it.
@@ -142,6 +153,9 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
         CAPLog.print("⚡️  WebView failed to load")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
+        if let callback = didFailCallback {
+            callback()
+        }
     }
 
     // The force unwrap is part of the protocol declaration, so we should keep it.
@@ -153,6 +167,9 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
         CAPLog.print("⚡️  WebView failed provisional navigation")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
+        if let callback = didFailProvisionalNavigationCallback {
+            callback()
+        }
     }
 
     open func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
