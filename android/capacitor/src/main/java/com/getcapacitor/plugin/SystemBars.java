@@ -71,6 +71,7 @@ public class SystemBars extends Plugin {
             boolean hasMetaViewportCover = res.equals("true");
             if (!disableCSSInsets) {
                 setupSafeAreaInsets(this.hasFixedWebView(), hasMetaViewportCover);
+                initSafeAreaInsets();
             }
         });
 
@@ -116,25 +117,34 @@ public class SystemBars extends Plugin {
         call.resolve();
     }
 
+    private void initSafeAreaInsets() {
+        WindowInsetsCompat insets = ViewCompat.getRootWindowInsets((View)this.getBridge().getWebView().getParent());
+        calcSafeAreaInsets(insets);
+    }
+
+    private void calcSafeAreaInsets(WindowInsetsCompat insets) {
+        Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+        Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
+        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+
+        int bottomInsets = safeArea.bottom;
+
+        if (keyboardVisible) {
+            // When https://issues.chromium.org/issues/457682720 is fixed and released,
+            // add behind a WebView version check
+            bottomInsets = imeInsets.bottom - bottomInsets;
+        }
+
+        injectSafeAreaCSS(safeArea.top, safeArea.right, bottomInsets, safeArea.left);
+    }
+
     private void setupSafeAreaInsets(boolean hasFixedWebView, boolean hasMetaViewportCover) {
         ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
             if (hasFixedWebView && hasMetaViewportCover) {
                 return insets;
             }
 
-            Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
-            boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
-
-            int bottomInsets = safeArea.bottom;
-
-            if (keyboardVisible) {
-                // When https://issues.chromium.org/issues/457682720 is fixed and released,
-                // add behind a WebView version check
-                bottomInsets = imeInsets.bottom - bottomInsets;
-            }
-
-            injectSafeAreaCSS(safeArea.top, safeArea.right, bottomInsets, safeArea.left);
+            calcSafeAreaInsets(insets);
 
             return WindowInsetsCompat.CONSUMED;
         });
