@@ -77,14 +77,15 @@ public class SystemBars extends Plugin {
             }
         }
 
-        this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
-            boolean hasMetaViewportCover = res.equals("true");
+        getBridge().getWebView().post(() -> {
+            this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
+                boolean hasMetaViewportCover = res.equals("true");
 
-            useViewMargins = !hasMetaViewportCover && useViewMargins;
+                useViewMargins = !hasMetaViewportCover && useViewMargins;
 
-            initWindowInsetsListener();
-            initSafeAreaInsets();
-
+                initWindowInsetsListener();
+                initSafeAreaInsets();
+            });
         });
 
         getBridge().executeOnMainThread(() -> {
