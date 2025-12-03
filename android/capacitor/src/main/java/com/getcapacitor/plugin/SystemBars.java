@@ -1,6 +1,5 @@
 package com.getcapacitor.plugin;
 
-import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.view.View;
@@ -11,14 +10,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
-import androidx.webkit.WebViewCompat;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @CapacitorPlugin
 public class SystemBars extends Plugin {
@@ -55,21 +51,6 @@ public class SystemBars extends Plugin {
     public void load() {
         super.load();
         initSystemBars();
-    }
-
-    private boolean hasFixedWebView() {
-        PackageInfo packageInfo = WebViewCompat.getCurrentWebViewPackage(bridge.getContext());
-        Pattern pattern = Pattern.compile("(\\d+)");
-        Matcher matcher = pattern.matcher(packageInfo.versionName);
-
-        if (!matcher.find()) {
-            return false;
-        }
-
-        String majorVersionStr = matcher.group(0);
-        int majorVersion = Integer.parseInt(majorVersionStr);
-
-        return majorVersion >= 140;
     }
 
     private void initSystemBars() {
