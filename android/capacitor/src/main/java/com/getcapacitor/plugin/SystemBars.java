@@ -2,7 +2,9 @@ package com.getcapacitor.plugin;
 
 import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -41,6 +43,9 @@ public class SystemBars extends Plugin {
         capacitorSystemBarsCheckMetaViewport();
         """;
 
+    private boolean useCSSVariables = true;
+    private boolean useViewMargins = false;
+
     @Override
     public void load() {
         super.load();
@@ -65,14 +70,18 @@ public class SystemBars extends Plugin {
     private void initSystemBars() {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
-        boolean disableCSSInsets = getConfig().getBoolean("disableInsets", false);
+
+        useCSSVariables = !getConfig().getBoolean("disableInsets", false);
+        useViewMargins = !getConfig().getBoolean("disableMargins", true);
 
         this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
             boolean hasMetaViewportCover = res.equals("true");
-            if (!disableCSSInsets) {
-                setupSafeAreaInsets(this.hasFixedWebView(), hasMetaViewportCover);
-                initSafeAreaInsets();
-            }
+
+            useViewMargins = !hasMetaViewportCover && useViewMargins;
+
+            initWindowInsetsListener();
+            initSafeAreaInsets();
+
         });
 
         getBridge().executeOnMainThread(() -> {
@@ -117,12 +126,7 @@ public class SystemBars extends Plugin {
         call.resolve();
     }
 
-    private void initSafeAreaInsets() {
-        WindowInsetsCompat insets = ViewCompat.getRootWindowInsets((View)this.getBridge().getWebView().getParent());
-        calcSafeAreaInsets(insets);
-    }
-
-    private void calcSafeAreaInsets(WindowInsetsCompat insets) {
+    private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
         Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
         Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
         boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
@@ -135,19 +139,47 @@ public class SystemBars extends Plugin {
             bottomInsets = imeInsets.bottom - bottomInsets;
         }
 
-        injectSafeAreaCSS(safeArea.top, safeArea.right, bottomInsets, safeArea.left);
+        return Insets.of(safeArea.left, safeArea.top, safeArea.right, bottomInsets);
     }
 
-    private void setupSafeAreaInsets(boolean hasFixedWebView, boolean hasMetaViewportCover) {
+    private void initSafeAreaInsets() {
+        View v = (View)this.getBridge().getWebView().getParent();
+        WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
+        Insets safeAreaInsets = calcSafeAreaInsets(insets);
+
+        if (useCSSVariables) {
+            injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && useViewMargins) {
+            setSafeAreaMargins(v, safeAreaInsets);
+        }
+    }
+
+    private void initWindowInsetsListener() {
         ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
-            if (hasFixedWebView && hasMetaViewportCover) {
-                return insets;
+            Insets safeAreaInsets = calcSafeAreaInsets(insets);
+
+            if (useCSSVariables) {
+                injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
             }
 
-            calcSafeAreaInsets(insets);
+            if (useViewMargins) {
+                setSafeAreaMargins(v, safeAreaInsets);
+                return WindowInsetsCompat.CONSUMED;
+            }
 
-            return WindowInsetsCompat.CONSUMED;
+            return insets;
         });
+    }
+
+    private  void setSafeAreaMargins(View v, Insets insets) {
+        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        mlp.leftMargin = insets.left;
+        mlp.bottomMargin = insets.bottom;
+        mlp.rightMargin = insets.right;
+        mlp.topMargin = insets.top;
+        v.setLayoutParams(mlp);
     }
 
     private void injectSafeAreaCSS(int top, int right, int bottom, int left) {
