@@ -32,8 +32,7 @@ html {
   padding-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
 }
 ```
-
-To disable the inset variable injections, set the configuration setting `disableInsets` to `true`.
+In Android 15+'s default edge-to-edge environment, if your web application does not opt-in to safe area handling via the meta viewport tag (`viewport-fit=cover`), this plugin will automatically apply native padding to the WebView. This ensures your application fits within the safe areas without being obscured by system bars. To control this behavior, use the `insetsHandling` configuration setting.
 
 ## Example
 
@@ -72,7 +71,7 @@ const setStatusBarAnimation = async () => {
 ## Configuration
 | Prop          | Type                 | Description                                                               | Default            |
 | ------------- | -------------------- | ------------------------------------------------------------------------- | ------------------ |
-| **`disableInsets`** | <code>boolean</code> | Disables the injection of device css insets into the webview.  This option is only supported on Android. | <code>false</code> |
+| **`insetsHandling`** | <code>string</code> | Specifies how to handle problematic insets on Android.  This option is only supported on Android.<br>`both` = Injects CSS variables (`--safe-area-inset-*`) into the document in addition to shrinking the webview into the device safe areas.  The margin shrinking is ignored if the document has a meta viewport tag with viewport-fit=cover.<br>`css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.<br>`margins` = Shrinks the webview into the device safe area using view margins.  This is ignored if the document has a meta viewport tag with viewport-fit=cover.<br>`disable` = Disable all inset handling. | <code>both</code> |
 | **`style`** | <code>string</code> | The style of the text and icons of the system bars. | <code>DEFAULT</code> |
 | **`hidden`** | <code>boolean</code> | Hide the system bars on start. | <code>false</code> |
 | **`animation`** | <code>string</code> | The type of status bar animation used when showing or hiding.  This option is only supported on iOS. | <code>FADE</code> |
@@ -86,7 +85,7 @@ In `capacitor.config.json`:
 {
   "plugins": {
     "SystemBars": {
-      "disableInsets": true,
+      "insetsHandling": "margins",
       "style": "DARK",
       "hidden": false,
       "animation": "NONE"
@@ -103,7 +102,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   plugins: {
     SystemBars: {
-      disableInsets: true,
+      insetsHandling: "margins",
       style: "DARK",
       hidden: false,
       animation: "NONE"
