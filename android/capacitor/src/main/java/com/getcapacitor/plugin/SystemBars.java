@@ -77,16 +77,18 @@ public class SystemBars extends Plugin {
             }
         }
 
-        getBridge().getWebView().post(() -> {
-            this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
-                boolean hasMetaViewportCover = res.equals("true");
+        getBridge()
+            .getWebView()
+            .post(() -> {
+                this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
+                    boolean hasMetaViewportCover = res.equals("true");
 
-                useViewMargins = !hasMetaViewportCover && useViewMargins;
+                    useViewMargins = !hasMetaViewportCover && useViewMargins;
 
-                initWindowInsetsListener();
-                initSafeAreaInsets();
+                    initWindowInsetsListener();
+                    initSafeAreaInsets();
+                });
             });
-        });
 
         getBridge().executeOnMainThread(() -> {
             setStyle(style, "");
@@ -147,7 +149,7 @@ public class SystemBars extends Plugin {
     }
 
     private void initSafeAreaInsets() {
-        View v = (View)this.getBridge().getWebView().getParent();
+        View v = (View) this.getBridge().getWebView().getParent();
         WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
         Insets safeAreaInsets = calcSafeAreaInsets(insets);
 
@@ -177,7 +179,7 @@ public class SystemBars extends Plugin {
         });
     }
 
-    private  void setSafeAreaMargins(View v, Insets insets) {
+    private void setSafeAreaMargins(View v, Insets insets) {
         ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
         mlp.leftMargin = insets.left;
         mlp.bottomMargin = insets.bottom;
