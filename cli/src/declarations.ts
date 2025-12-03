@@ -660,6 +660,29 @@ export interface CapacitorConfig {
   includePlugins?: string[];
 }
 
+export enum SystemBarsInsetHandlingOption {
+  /**
+   * Injects CSS variables (`--safe-area-inset-*`) into the document in addition to shrinking the webview into the device safe areas.
+   *
+   * The margin shrinking is ignored if the document has a meta viewport tag with `viewport-fit=cover`.
+   */
+  Both = 'both',
+  /**
+   * Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
+   */
+  CSS = 'css',
+  /**
+   * Shrinks the webview into the device safe area using view margins.
+   *
+   * This is ignored if the document has a meta viewport tag with `viewport-fit=cover`.
+   */
+  Margins = 'margins',
+  /**
+   * Disable all inset handling.
+   */
+  Disable = 'disable',
+}
+
 export interface PluginsConfig {
   /**
    * Plugin configuration by class name.
@@ -707,11 +730,13 @@ export interface PluginsConfig {
    */
   SystemBars?: {
     /**
-     * Disables the injection of device css insets into the web view.
+     * Specifies how to handle problematic insets on Android.
      *
-     * @default false
+     * This option is only supported on Android.
+     *
+     * @default "both"
      */
-    disableInsets?: boolean;
+    insetsHandling?: SystemBarsInsetHandlingOption;
     /**
      * The style of the text and icons of the system bars.
      *

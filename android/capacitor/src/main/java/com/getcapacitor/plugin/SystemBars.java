@@ -29,6 +29,11 @@ public class SystemBars extends Plugin {
     static final String BAR_STATUS_BAR = "StatusBar";
     static final String BAR_GESTURE_BAR = "NavigationBar";
 
+    static final String INSETS_HANDLING_BOTH = "both";
+    static final String INSETS_HANDLING_CSS = "css";
+    static final String INSETS_HANDLING_MARGINS = "margins";
+    static final String INSETS_HANDLING_DISABLE = "disable";
+
     static final String viewportMetaJSFunction = """
         function capacitorSystemBarsCheckMetaViewport() {
             const meta = document.querySelectorAll("meta[name=viewport]");
@@ -44,7 +49,7 @@ public class SystemBars extends Plugin {
         """;
 
     private boolean useCSSVariables = true;
-    private boolean useViewMargins = false;
+    private boolean useViewMargins = true;
 
     @Override
     public void load() {
@@ -71,8 +76,25 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        useCSSVariables = !getConfig().getBoolean("disableInsets", false);
-        useViewMargins = !getConfig().getBoolean("disableMargins", true);
+        String insetsHandling = getConfig().getString("insetsHandling", "both");
+        switch (insetsHandling) {
+            case INSETS_HANDLING_BOTH -> {
+                useViewMargins = true;
+                useCSSVariables = true;
+            }
+            case INSETS_HANDLING_CSS -> {
+                useViewMargins = false;
+                useCSSVariables = true;
+            }
+            case INSETS_HANDLING_MARGINS -> {
+                useViewMargins = true;
+                useCSSVariables = false;
+            }
+            case INSETS_HANDLING_DISABLE -> {
+                useViewMargins = false;
+                useCSSVariables = false;
+            }
+        }
 
         this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
             boolean hasMetaViewportCover = res.equals("true");
@@ -147,7 +169,7 @@ public class SystemBars extends Plugin {
         WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
         Insets safeAreaInsets = calcSafeAreaInsets(insets);
 
-        if (useCSSVariables) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && useCSSVariables) {
             injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
         }
 
