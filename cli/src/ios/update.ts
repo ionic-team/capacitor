@@ -68,9 +68,11 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
 }
 
 async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config) {
-  cordovaPlugins.map((plugin: any) => {
-    generateCordovaPackageFile(plugin, config);
-  });
+  await Promise.all(
+    cordovaPlugins.map(async (plugin) => {
+      await generateCordovaPackageFile(plugin, config);
+    }),
+  );
 }
 
 async function generateCordovaPackageFile(p: Plugin, config: Config) {
