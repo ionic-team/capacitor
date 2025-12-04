@@ -2,15 +2,15 @@ import { execSync } from 'child_process';
 import { readFile, readFileSync, writeFile } from 'fs-extra';
 import { join, resolve } from 'path';
 
-import c from '../colors';
-import { checkCapacitorPlatform } from '../common';
-import { getIncompatibleCordovaPlugins } from '../cordova';
-import { OS } from '../definitions';
-import type { Config } from '../definitions';
-import { logger } from '../log';
-import { PluginType, getPluginPlatform } from '../plugin';
-import type { Plugin } from '../plugin';
-import { isInstalled, runCommand } from '../util/subprocess';
+import c from '../colors.js';
+import { checkCapacitorPlatform } from '../common.js';
+import { getIncompatibleCordovaPlugins } from '../cordova.js';
+import { OS } from '../definitions.js';
+import type { Config } from '../definitions.js';
+import { logger } from '../log.js';
+import { PluginType, getPluginPlatform } from '../plugin.js';
+import type { Plugin } from '../plugin.js';
+import { isInstalled, runCommand } from '../util/subprocess.js';
 
 export async function checkIOSPackage(config: Config): Promise<string | null> {
   return checkCapacitorPlatform(config, 'ios');

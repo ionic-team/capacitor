@@ -2,8 +2,8 @@ import { readJSONSync, writeJSONSync } from 'fs-extra';
 import { networkInterfaces } from 'os';
 import { join } from 'path';
 
-import type { Config } from '../definitions';
-import type { RunCommandOptions } from '../tasks/run';
+import type { Config } from '../definitions.js';
+import type { RunCommandOptions } from '../tasks/run.js';
 
 class CapLiveReload {
   configJsonToRevertTo: {

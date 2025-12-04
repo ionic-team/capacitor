@@ -1,14 +1,14 @@
 import { readJSON } from 'fs-extra';
 
-import { doctorAndroid } from '../android/doctor';
-import c from '../colors';
-import { selectPlatforms } from '../common';
-import type { Config } from '../definitions';
-import { doctorIOS } from '../ios/doctor';
-import { output } from '../log';
-import { emoji as _e } from '../util/emoji';
-import { resolveNode } from '../util/node';
-import { getCommandOutput } from '../util/subprocess';
+import { doctorAndroid } from '../android/doctor.js';
+import c from '../colors.js';
+import { selectPlatforms } from '../common.js';
+import type { Config } from '../definitions.js';
+import { doctorIOS } from '../ios/doctor.js';
+import { output } from '../log.js';
+import { emoji as _e } from '../util/emoji.js';
+import { resolveNode } from '../util/node.js';
+import { getCommandOutput } from '../util/subprocess.js';
 
 export async function doctorCommand(config: Config, selectedPlatformName: string): Promise<void> {
   output.write(`${_e('💊', '')}   ${c.strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`);

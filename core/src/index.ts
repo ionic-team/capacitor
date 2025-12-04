@@ -8,25 +8,25 @@ export type {
   PluginListenerHandle,
   PluginResultData,
   PluginResultError,
-} from './definitions';
+} from './definitions.js';
 
 // Global APIs
-export { Capacitor, registerPlugin } from './global';
+export { Capacitor, registerPlugin } from './global.js';
 
 // Base WebPlugin
-export { WebPlugin, ListenerCallback } from './web-plugin';
+export { WebPlugin, type ListenerCallback } from './web-plugin.js';
 
 // Core Plugins APIs
 export {
   SystemBars,
   SystemBarType,
   SystemBarsStyle,
-  SystemBarsAnimation,
+  type SystemBarsAnimation,
   CapacitorCookies,
   CapacitorHttp,
   WebView,
   buildRequestInit,
-} from './core-plugins';
+} from './core-plugins.js';
 
 // Core Plugin definitions
 export type {
@@ -42,7 +42,7 @@ export type {
   WebViewPlugin,
   SystemBarsVisibilityOptions,
   SystemBarsStyleOptions,
-} from './core-plugins';
+} from './core-plugins.js';
 
 // Constants
-export { CapacitorException, ExceptionCode } from './util';
+export { CapacitorException, ExceptionCode } from './util.js';

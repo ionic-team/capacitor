@@ -1,4 +1,4 @@
-import type { CapacitorConfig, PluginsConfig } from './declarations';
+import type { CapacitorConfig, PluginsConfig } from './declarations.js';
 
 type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
 

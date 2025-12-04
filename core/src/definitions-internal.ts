@@ -1,4 +1,4 @@
-import type { CapacitorGlobal, PluginCallback, PluginResultData, PluginResultError } from './definitions';
+import type { CapacitorGlobal, PluginCallback, PluginResultData, PluginResultError } from './definitions.js';
 
 export interface PluginHeaderMethod {
   readonly name: string;

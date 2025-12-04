@@ -1,5 +1,5 @@
-import { openAndroid } from '../android/open';
-import c from '../colors';
+import { openAndroid } from '../android/open.js';
+import c from '../colors.js';
 import {
   resolvePlatform,
   runPlatformHook,
@@ -7,11 +7,11 @@ import {
   isValidPlatform,
   selectPlatforms,
   promptForPlatform,
-} from '../common';
-import type { Config } from '../definitions';
-import { fatal, isFatal } from '../errors';
-import { openIOS } from '../ios/open';
-import { logger } from '../log';
+} from '../common.js';
+import type { Config } from '../definitions.js';
+import { fatal, isFatal } from '../errors.js';
+import { openIOS } from '../ios/open.js';
+import { logger } from '../log.js';
 
 export async function openCommand(config: Config, selectedPlatformName: string): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {

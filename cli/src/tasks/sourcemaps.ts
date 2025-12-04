@@ -1,8 +1,8 @@
 import { readdirSync, existsSync, readFileSync, writeFileSync, unlinkSync, lstatSync } from 'fs-extra';
 import { join, extname } from 'path';
 
-import type { Config } from '../definitions';
-import { logger } from '../log';
+import type { Config } from '../definitions.js';
+import { logger } from '../log.js';
 
 function walkDirectory(dirPath: string) {
   const files = readdirSync(dirPath);

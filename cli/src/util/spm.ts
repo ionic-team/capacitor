@@ -5,14 +5,14 @@ import type { PlistObject } from 'plist';
 import { build, parse } from 'plist';
 import { extract } from 'tar';
 
-import { getCapacitorPackageVersion } from '../common';
-import type { Config } from '../definitions';
-import { fatal } from '../errors';
-import { getMajoriOSVersion } from '../ios/common';
-import { logger } from '../log';
-import type { Plugin } from '../plugin';
-import { getPluginType, PluginType } from '../plugin';
-import { runCommand, isInstalled } from '../util/subprocess';
+import { getCapacitorPackageVersion } from '../common.js';
+import type { Config } from '../definitions.js';
+import { fatal } from '../errors.js';
+import { getMajoriOSVersion } from '../ios/common.js';
+import { logger } from '../log.js';
+import type { Plugin } from '../plugin.js';
+import { getPluginType, PluginType } from '../plugin.js';
+import { runCommand, isInstalled } from '../util/subprocess.js';
 
 export interface SwiftPlugin {
   name: string;

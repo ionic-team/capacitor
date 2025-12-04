@@ -1,7 +1,7 @@
 import envPaths from 'env-paths';
 
-import { isFatal } from '../errors';
-import { logger } from '../log';
+import { isFatal } from '../errors.js';
+import { logger } from '../log.js';
 
 export const ENV_PATHS = envPaths('capacitor', { suffix: '' });
 
