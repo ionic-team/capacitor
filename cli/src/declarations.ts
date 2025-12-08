@@ -711,17 +711,13 @@ export interface PluginsConfig {
      *
      * This option is only supported on Android.
      *
-     * `both` = Injects CSS variables (`--safe-area-inset-*`) into the document in addition to shrinking the webview into the device safe areas.  The margin shrinking is ignored if the document has a meta viewport tag with `viewport-fit=cover`.
-     *
      * `css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
-     *
-     * `margins` = Shrinks the webview into the device safe area using view margins.  This is ignored if the document has a meta viewport tag with `viewport-fit=cover`.
      *
      * `disable` = Disable all inset handling.
      *
-     * @default "both"
+     * @default "css"
      */
-    insetsHandling?: 'both' | 'css' | 'margins' | 'disable';
+    insetsHandling?: 'css' | 'disable';
     /**
      * The style of the text and icons of the system bars.
      *

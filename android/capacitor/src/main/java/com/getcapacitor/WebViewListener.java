@@ -54,4 +54,14 @@ public abstract class WebViewListener {
         // Override me to add behavior to the web view render process gone event
         return false;
     }
+
+    /**
+     * Callback for page start event.
+     *
+     * @param view The WebView for which the navigation occurred.
+     * @param url The URL corresponding to the page navigation that triggered this callback.
+     */
+    public void onPageCommitVisible(WebView view, String url) {
+        // Override me to add behavior to handle the onPageCommitVisible event
+    }
 }
