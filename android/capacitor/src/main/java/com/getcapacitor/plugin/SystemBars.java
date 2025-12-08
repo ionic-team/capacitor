@@ -53,6 +53,12 @@ public class SystemBars extends Plugin {
         initSystemBars();
     }
 
+    @Override
+    protected void handleOnConfigurationChanged(Configuration newConfig) {
+        super.handleOnConfigurationChanged(newConfig);
+        setStyle(STYLE_DEFAULT, "");
+    }
+
     private void initSystemBars() {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
