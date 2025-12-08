@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/ionic-team/capacitor/compare/8.0.0-beta.0...8.0.0) (2025-12-08)
+
+### Features
+
+- **android:** Improving SystemBars inset handling ([#8268](https://github.com/ionic-team/capacitor/issues/8268)) ([81ae30a](https://github.com/ionic-team/capacitor/commit/81ae30a503797e417dd125b06262dabc4696c88a))
+
 # [8.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.3...8.0.0-beta.0) (2025-11-14)
 
 ### Bug Fixes
