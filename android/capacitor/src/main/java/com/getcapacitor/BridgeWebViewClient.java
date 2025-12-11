@@ -102,4 +102,16 @@ public class BridgeWebViewClient extends WebViewClient {
 
         return result;
     }
+
+    @Override
+    public void onPageCommitVisible(WebView view, String url) {
+        super.onPageCommitVisible(view, url);
+
+        List<WebViewListener> webViewListeners = bridge.getWebViewListeners();
+        if (webViewListeners != null) {
+            for (WebViewListener listener : bridge.getWebViewListeners()) {
+                listener.onPageCommitVisible(view, url);
+            }
+        }
+    }
 }

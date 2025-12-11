@@ -326,7 +326,7 @@ var nativeBridge = (function (exports) {
                         c.error(result.error);
                     }
                     else {
-                        c.dir(result.data);
+                        c.dir(JSON.stringify(result.data));
                     }
                     c.groupEnd();
                 }
@@ -367,6 +367,12 @@ var nativeBridge = (function (exports) {
                 }
             };
             const platform = getPlatformId(win);
+            if (platform == 'android' && typeof win.CapacitorSystemBarsAndroidInterface !== 'undefined') {
+                // add DOM ready listener for System Bars
+                document.addEventListener('DOMContentLoaded', function () {
+                    win.CapacitorSystemBarsAndroidInterface.onDOMReady();
+                });
+            }
             if (platform == 'android' || platform == 'ios') {
                 // patch document.cookie on Android/iOS
                 win.CapacitorCookiesDescriptor =

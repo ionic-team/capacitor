@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/ionic-team/capacitor/compare/8.0.0-beta.0...8.0.0) (2025-12-08)
+
+### Bug Fixes
+
+- **cli:** Android apk name multi flavor dimensions parsing ([#7598](https://github.com/ionic-team/capacitor/issues/7598)) ([2dc20ee](https://github.com/ionic-team/capacitor/commit/2dc20ee894c2f5761431caa8269e9f418fc222b6))
+- **cli:** make migrate update to 8.0.0 ([#8250](https://github.com/ionic-team/capacitor/issues/8250)) ([ee8ba7b](https://github.com/ionic-team/capacitor/commit/ee8ba7bbeeeef6db0461f7a59c91095fd7cbd78b))
+
+### Features
+
+- **android:** Improving SystemBars inset handling ([#8268](https://github.com/ionic-team/capacitor/issues/8268)) ([81ae30a](https://github.com/ionic-team/capacitor/commit/81ae30a503797e417dd125b06262dabc4696c88a))
+
+# [8.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.3...8.0.0-beta.0) (2025-11-14)
+
+### Bug Fixes
+
+- **android:** add command not changing namespace ([#8224](https://github.com/ionic-team/capacitor/issues/8224)) ([60cf666](https://github.com/ionic-team/capacitor/commit/60cf66675159fb09cd41c94ce657202d01e05c74))
+- **cli:** fix cap run command for yarn pnp mode ([#7754](https://github.com/ionic-team/capacitor/issues/7754)) ([79ace5c](https://github.com/ionic-team/capacitor/commit/79ace5c7054d86d5b33ce325751ff738c63d4b0c))
+
+### Features
+
+- **cli:** Select a cap run target by target name ([#8199](https://github.com/ionic-team/capacitor/issues/8199)) ([b30c472](https://github.com/ionic-team/capacitor/commit/b30c472490117a5dbb14a9556ef1b6ca6e39b45b))
+- **iOS:** Allow plugins to hook into handling WebView URL authentication challenges ([#8216](https://github.com/ionic-team/capacitor/issues/8216)) ([e8507cf](https://github.com/ionic-team/capacitor/commit/e8507cfe4d93337ddee8ab6597aab5209ebb4858))
+- System Bars Plugin ([#8180](https://github.com/ionic-team/capacitor/issues/8180)) ([a32216a](https://github.com/ionic-team/capacitor/commit/a32216ac0607172a3a9c7ae5cdbfc598769294a6))
+
 # [8.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.2...8.0.0-alpha.3) (2025-10-22)
 
 ### Bug Fixes

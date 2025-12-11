@@ -234,6 +234,11 @@ export function runProgram(config: Config): void {
     .option('--list', 'list targets, then quit')
     .addOption(new Option('--json').hideHelp())
     .option('--target <id>', 'use a specific target')
+    .option('--target-name <name>', 'use a specific target by name')
+    .option(
+      '--target-name-sdk-version <version>',
+      'use a specific sdk version when using --target-name, ex: 26.0 (for iOS 26) or 35 (for Android API 35)',
+    )
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .option('--forwardPorts <port:port>', 'Automatically run "adb reverse" for better live-reloading support')
     .option('-l, --live-reload', 'Enable Live Reload')
@@ -247,8 +252,22 @@ export function runProgram(config: Config): void {
           config,
           async (
             platform,
-            { scheme, flavor, list, json, target, sync, forwardPorts, liveReload, host, port, configuration, https },
-          ) => {
+            {
+              scheme,
+              flavor,
+              list,
+              json,
+              target,
+              targetName,
+              targetNameSdkVersion,
+              sync,
+              forwardPorts,
+              liveReload,
+              host,
+              port,
+              configuration,
+              https
+            }) => {
             const { runCommand } = await import('./tasks/run');
             await runCommand(config, platform, {
               scheme,
@@ -256,6 +275,8 @@ export function runProgram(config: Config): void {
               list,
               json,
               target,
+              targetName,
+              targetNameSdkVersion,
               sync,
               forwardPorts,
               liveReload,
