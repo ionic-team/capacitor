@@ -165,6 +165,8 @@ public class SystemBars extends Plugin {
                     boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
                     if (keyboardVisible) {
+                        safeAreaInsets = Insets.of(safeAreaInsets.left, safeAreaInsets.top, safeAreaInsets.right, 0);
+
                         Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
                         setViewMargins(v, Insets.of(0, 0, 0, imeInsets.bottom));
                     } else {
