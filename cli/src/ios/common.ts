@@ -125,13 +125,14 @@ export function getMajorMinoriOSVersion(config: Config): string {
   // Extract until semicolon or newline (typical end of value in pbxproj)
   const endIndex = pbx.indexOf(';', valueStart);
   const newlineIndex = pbx.indexOf('\n', valueStart);
-  const actualEnd = endIndex !== -1 && newlineIndex !== -1 
-    ? Math.min(endIndex, newlineIndex)
-    : endIndex !== -1 
-      ? endIndex 
-      : newlineIndex !== -1 
-        ? newlineIndex 
-        : pbx.length;
+  const actualEnd =
+    endIndex !== -1 && newlineIndex !== -1
+      ? Math.min(endIndex, newlineIndex)
+      : endIndex !== -1
+        ? endIndex
+        : newlineIndex !== -1
+          ? newlineIndex
+          : pbx.length;
   let iosVersion = pbx.substring(valueStart, actualEnd).trim();
   // Remove trailing .0 if present
   if (iosVersion.endsWith('.0')) {
