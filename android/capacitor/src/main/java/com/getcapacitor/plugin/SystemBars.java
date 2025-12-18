@@ -12,7 +12,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
-
 import com.getcapacitor.CapConfig;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -276,11 +275,11 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style");
 
         if (style == null) {
+            style = STYLE_DEFAULT;
+
             // try to get the StatusBar config instead if its installed
             PluginConfig statusBarConfig = getBridge().getConfig().getPluginConfiguration("StatusBar");
-            if (statusBarConfig == null) {
-                style = STYLE_DEFAULT;
-            } else {
+            if (statusBarConfig != null) {
                 style = statusBarConfig.getString("style", STYLE_DEFAULT);
             }
         }
