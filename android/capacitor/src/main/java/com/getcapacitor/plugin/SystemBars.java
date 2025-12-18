@@ -12,8 +12,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+
+import com.getcapacitor.CapConfig;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
+import com.getcapacitor.PluginConfig;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.WebViewListener;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -77,8 +80,8 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
-        String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
-        boolean hidden = getConfig().getBoolean("hidden", false);
+        String style = getStyleConfig().toUpperCase(Locale.US);
+        boolean hidden = getHiddenConfig();
 
         String insetsHandling = getConfig().getString("insetsHandling", "css");
         if (insetsHandling.equals(INSETS_HANDLING_DISABLE)) {
@@ -267,5 +270,35 @@ public class SystemBars extends Plugin {
             return STYLE_LIGHT;
         }
         return STYLE_DARK;
+    }
+
+    private String getStyleConfig() {
+        String style = getConfig().getString("style");
+
+        if (style == null) {
+            // try to get the StatusBar config instead if its installed
+            PluginConfig statusBarConfig = getBridge().getConfig().getPluginConfiguration("StatusBar");
+            if (statusBarConfig == null) {
+                style = STYLE_DEFAULT;
+            } else {
+                style = statusBarConfig.getString("style", STYLE_DEFAULT);
+            }
+        }
+
+        return style;
+    }
+
+    private boolean getHiddenConfig() {
+        if (getConfig().getConfigJSON().has("hidden")) {
+            return getConfig().getBoolean("hidden", false);
+        }
+
+        // try to get the StatusBar config instead if its installed
+        PluginConfig statusBarConfig = getBridge().getConfig().getPluginConfiguration("StatusBar");
+        if (statusBarConfig == null) {
+            return false;
+        } else {
+            return statusBarConfig.getBoolean("hidden", false);
+        }
     }
 }
