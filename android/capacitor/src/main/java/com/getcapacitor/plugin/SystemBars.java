@@ -276,12 +276,6 @@ public class SystemBars extends Plugin {
 
         if (style == null) {
             style = STYLE_DEFAULT;
-
-            // try to get the StatusBar config instead if its installed
-            PluginConfig statusBarConfig = getBridge().getConfig().getPluginConfiguration("StatusBar");
-            if (statusBarConfig != null) {
-                style = statusBarConfig.getString("style", STYLE_DEFAULT);
-            }
         }
 
         return style;
@@ -292,12 +286,6 @@ public class SystemBars extends Plugin {
             return getConfig().getBoolean("hidden", false);
         }
 
-        // try to get the StatusBar config instead if its installed
-        PluginConfig statusBarConfig = getBridge().getConfig().getPluginConfiguration("StatusBar");
-        if (statusBarConfig == null) {
-            return false;
-        } else {
-            return statusBarConfig.getBoolean("hidden", false);
-        }
+        return false;
     }
 }
