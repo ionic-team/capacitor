@@ -73,7 +73,7 @@ public class SystemBars extends Plugin {
     @Override
     protected void handleOnConfigurationChanged(Configuration newConfig) {
         super.handleOnConfigurationChanged(newConfig);
-        setStyle(getStyleConfig(), "");
+        setStyle(getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US), "");
     }
 
     private void initSystemBars() {
