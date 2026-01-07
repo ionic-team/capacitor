@@ -77,8 +77,8 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
-        String style = getStyleConfig().toUpperCase(Locale.US);
-        boolean hidden = getHiddenConfig();
+        String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
+        boolean hidden = getConfig().getBoolean("hidden", false);
 
         String insetsHandling = getConfig().getString("insetsHandling", "css");
         if (insetsHandling.equals(INSETS_HANDLING_DISABLE)) {
@@ -267,23 +267,5 @@ public class SystemBars extends Plugin {
             return STYLE_LIGHT;
         }
         return STYLE_DARK;
-    }
-
-    private String getStyleConfig() {
-        String style = getConfig().getString("style");
-
-        if (style == null) {
-            style = STYLE_DEFAULT;
-        }
-
-        return style;
-    }
-
-    private boolean getHiddenConfig() {
-        if (getConfig().getConfigJSON().has("hidden")) {
-            return getConfig().getBoolean("hidden", false);
-        }
-
-        return false;
     }
 }
