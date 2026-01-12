@@ -230,7 +230,7 @@ open class HttpRequestHandler {
     
                 let type = ResponseType(rawValue: responseType) ?? .default
                 call.resolve(self.buildResponse(data, response as! HTTPURLResponse, responseType: type))
-            } else {
+            } else if response != nil {
                 var headers = [:] as [String: Any]
                 headers["Content-Type"] = response?.mimeType
                 
