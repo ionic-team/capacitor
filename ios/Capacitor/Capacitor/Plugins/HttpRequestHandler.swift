@@ -230,7 +230,8 @@ open class HttpRequestHandler {
     
                 let type = ResponseType(rawValue: responseType) ?? .default
                 call.resolve(self.buildResponse(data, response as! HTTPURLResponse, responseType: type))
-            } else if response != nil {
+            } else if response is NSURLResponse {
+                // applicable to data: URI requests
                 var headers = [:] as [String: Any]
                 headers["Content-Type"] = response?.mimeType
                 
@@ -239,6 +240,10 @@ open class HttpRequestHandler {
                 output["headers"] = headers
                 output["data"] = String(data: data!, encoding: .utf8)
                 call.resolve(output);
+            } else {
+                call.reject("Unknown response kind")
+                return
+            }
         }
 
         task.resume()
