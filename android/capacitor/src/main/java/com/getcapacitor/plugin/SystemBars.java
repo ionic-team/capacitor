@@ -47,6 +47,8 @@ public class SystemBars extends Plugin {
     private boolean insetHandlingEnabled = true;
     private boolean hasViewportCover = false;
 
+    private String currentStyle = STYLE_DEFAULT;
+
     @Override
     public void load() {
         getBridge().getWebView().addJavascriptInterface(this, "CapacitorSystemBarsAndroidInterface");
@@ -73,7 +75,7 @@ public class SystemBars extends Plugin {
     @Override
     protected void handleOnConfigurationChanged(Configuration newConfig) {
         super.handleOnConfigurationChanged(newConfig);
-        setStyle(getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US), "");
+        setStyle(currentStyle, "");
     }
 
     private void initSystemBars() {
@@ -224,6 +226,8 @@ public class SystemBars extends Plugin {
     }
 
     private void setStyle(String style, String bar) {
+        currentStyle = style;
+
         if (style.equals(STYLE_DEFAULT)) {
             style = getStyleForTheme();
         }
