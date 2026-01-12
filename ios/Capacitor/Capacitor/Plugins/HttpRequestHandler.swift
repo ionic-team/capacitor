@@ -224,11 +224,21 @@ open class HttpRequestHandler {
                 call.reject(error.localizedDescription, (error as NSError).domain, error, nil)
                 return
             }
-
-            setCookiesFromResponse(response as! HTTPURLResponse, config)
-
-            let type = ResponseType(rawValue: responseType) ?? .default
-            call.resolve(self.buildResponse(data, response as! HTTPURLResponse, responseType: type))
+                                                          
+            if response is HTTPURLResponse {
+                setCookiesFromResponse(response as! HTTPURLResponse, config)
+    
+                let type = ResponseType(rawValue: responseType) ?? .default
+                call.resolve(self.buildResponse(data, response as! HTTPURLResponse, responseType: type))
+            } else {
+                var headers = [:] as [String: Any]
+                headers["Content-Type"] = response?.mimeType
+                
+                var output = [:] as [String: Any]
+                output["status"] = 200
+                output["headers"] = headers
+                output["data"] = String(data: data!, encoding: .utf8)
+                call.resolve(output);
         }
 
         task.resume()
