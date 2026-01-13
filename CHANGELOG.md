@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.1](https://github.com/ionic-team/capacitor/compare/8.0.0...8.0.1) (2026-01-13)
+
+### Bug Fixes
+
+- **android:** Remove calculated bottom inset if keyboard is visible ([#8280](https://github.com/ionic-team/capacitor/issues/8280)) ([196b642](https://github.com/ionic-team/capacitor/commit/196b642236d293a5012e3c307fcd942766e56cce))
+- **cli:** Support wireless iOS devices in `cap run` ([#8301](https://github.com/ionic-team/capacitor/issues/8301)) ([dcb368c](https://github.com/ionic-team/capacitor/commit/dcb368c33555487f1b6f46a6d8e30736bdd78955))
+- **cli:** use latest native-run ([#8296](https://github.com/ionic-team/capacitor/issues/8296)) ([121d830](https://github.com/ionic-team/capacitor/commit/121d83013f39e25009121533a2c3ad86e428d6b2))
+
 # [8.0.0](https://github.com/ionic-team/capacitor/compare/8.0.0-beta.0...8.0.0) (2025-12-08)
 
 ### Bug Fixes
