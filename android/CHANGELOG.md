@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.1](https://github.com/ionic-team/capacitor/compare/8.0.0...8.0.1) (2026-01-13)
+
+### Bug Fixes
+
+- **android:** Remove calculated bottom inset if keyboard is visible ([#8280](https://github.com/ionic-team/capacitor/issues/8280)) ([196b642](https://github.com/ionic-team/capacitor/commit/196b642236d293a5012e3c307fcd942766e56cce))
+
 # [8.0.0](https://github.com/ionic-team/capacitor/compare/8.0.0-beta.0...8.0.0) (2025-12-08)
 
 ### Features
