@@ -62,7 +62,6 @@ internal extension WKWebView {
             method_setImplementation(method, imp)
         }
 
-        // iOS 13+
         let selectorMkIV: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:")
 
         if let method = class_getInstanceMethod(targetClass, selectorMkIV) {

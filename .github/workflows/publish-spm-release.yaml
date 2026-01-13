@@ -14,4 +14,4 @@ jobs:
       - name: Dispatch Release Workflow on ionic-team/capacitor-swift-pm
         run: gh workflow run dispatch-release.yaml -f release-version=${{ env.RELEASE_VERSION }} --repo ionic-team/capacitor-swift-pm
         env:
-          GITHUB_TOKEN: ${{ secrets.CAPICTOR_PUBLISH_XCFRAMEWORK }}
+          GITHUB_TOKEN: ${{ secrets.CAP_GH_RELEASE_TOKEN }}

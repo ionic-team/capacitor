@@ -78,7 +78,7 @@ const doPost = () => {
 
 ## Large File Support
 
-Due to the nature of the bridge, parsing and transferring large amount of data from native to the web can cause issues. Support for downloading and uploading files to the native device is planned to be added to the `@capacitor/filesystem` plugin in the near future. One way to potentially circumvent the issue of running out of memory in the meantime (specifically on Android) is to edit the `AndroidManifest.xml` and add `android:largeHeap="true"` to the `application` element. Most apps should not need this and should instead focus on reducing their overall memory usage for improved performance. Enabling this also does not guarantee a fixed increase in available memory, because some devices are constrained by their total available memory.
+Due to the nature of the bridge, parsing and transferring large amount of data from native to the web can cause issues. Support for downloading and uploading files has been added to the [`@capacitor/file-transfer`](https://capacitorjs.com/docs/apis/file-transfer) plugin. In many cases, you may also need [`@capacitor/filesystem`](https://capacitorjs.com/docs/apis/filesystem) to generate a valid [file URI](https://capacitorjs.com/docs/apis/filesystem#geturi).
 
 ## API
 
@@ -212,7 +212,7 @@ Make a Http DELETE Request to a server using native libraries.
 | **`data`**    | <code>any</code>                                    | Additional data received with the Http response.  |
 | **`status`**  | <code>number</code>                                 | The status code received from the Http response.  |
 | **`headers`** | <code><a href="#httpheaders">HttpHeaders</a></code> | The headers received from the Http response.      |
-| **`url`**     | <code>string</code>                                 | The response URL recieved from the Http response. |
+| **`url`**     | <code>string</code>                                 | The response URL received from the Http response. |
 
 
 #### HttpHeaders

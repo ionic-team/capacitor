@@ -15,12 +15,12 @@ Pod::Spec.new do |s|
   s.license      = 'MIT'
   s.authors      = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source       = { git: 'https://github.com/ionic-team/capacitor', tag: s.version.to_s }
-  s.platform     = :ios, 14.0
+  s.platform     = :ios, 15.0
   s.source_files = "#{prefix}CapacitorCordova/CapacitorCordova/**/*.{h,m}"
   s.public_header_files = "#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/*.h",
                           "#{prefix}CapacitorCordova/CapacitorCordova/CapacitorCordova.h"
   s.module_map = "#{prefix}CapacitorCordova/CapacitorCordova/CapacitorCordova.modulemap"
-  s.resources = ["#{prefix}CapacitorCordova/CapacitorCordova/PrivacyInfo.xcprivacy"]
+  s.resource_bundles = { 'CapacitorCordova' => ["#{prefix}CapacitorCordova/CapacitorCordova/PrivacyInfo.xcprivacy"] }
   s.requires_arc = true
   s.framework    = 'WebKit'
 end
