@@ -225,21 +225,21 @@ open class HttpRequestHandler {
                 return
             }
                                                           
-            if response is HTTPURLResponse {
-                setCookiesFromResponse(response as! HTTPURLResponse, config)
+            if let response = response as? HTTPURLResponse {
+                setCookiesFromResponse(response, config)
     
                 let type = ResponseType(rawValue: responseType) ?? .default
-                call.resolve(self.buildResponse(data, response as! HTTPURLResponse, responseType: type))
-            } else if response is NSURLResponse {
+                call.resolve(self.buildResponse(data, response, responseType: type))
+            } else if let response = response as? NSURLResponse {
                 // applicable to data: URI requests
                 var headers = [:] as [String: Any]
-                headers["Content-Type"] = response?.mimeType
+                headers["Content-Type"] = response.mimeType
                 
                 var output = [:] as [String: Any]
                 output["status"] = 200
                 output["headers"] = headers
                 output["data"] = String(data: data!, encoding: .utf8)
-                call.resolve(output);
+                call.resolve(output)
             } else {
                 call.reject("Unknown response kind")
                 return
