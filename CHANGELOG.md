@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.4.5](https://github.com/ionic-team/capacitor/compare/7.4.4...7.4.5) (2026-01-13)
+
+### Bug Fixes
+
+- **cli:** Support wireless iOS devices in `cap run` ([#8301](https://github.com/ionic-team/capacitor/issues/8301)) ([a6accb1](https://github.com/ionic-team/capacitor/commit/a6accb1185ac8d75ba95a2cf0af60ea6d73b43c2))
+- **cli:** use latest native-run ([#8297](https://github.com/ionic-team/capacitor/issues/8297)) ([496f33e](https://github.com/ionic-team/capacitor/commit/496f33ea0af57dc7a5a3e523085741a1f5f96d17))
+
 ## [7.4.4](https://github.com/ionic-team/capacitor/compare/7.4.3...7.4.4) (2025-10-22)
 
 ### Bug Fixes
