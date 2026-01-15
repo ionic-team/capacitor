@@ -1,7 +1,10 @@
 package com.getcapacitor.plugin;
 
+import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -75,6 +78,7 @@ public class SystemBars extends Plugin {
     @Override
     protected void handleOnConfigurationChanged(Configuration newConfig) {
         super.handleOnConfigurationChanged(newConfig);
+
         setStyle(currentStyle, "");
     }
 
@@ -241,6 +245,8 @@ public class SystemBars extends Plugin {
         if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
             windowInsetsControllerCompat.setAppearanceLightNavigationBars(!style.equals(STYLE_DARK));
         }
+
+        getActivity().getWindow().getDecorView().setBackgroundColor(getThemeColor(getContext(), android.R.attr.windowBackground));
     }
 
     private void setHidden(boolean hide, String bar) {
@@ -271,5 +277,13 @@ public class SystemBars extends Plugin {
             return STYLE_LIGHT;
         }
         return STYLE_DARK;
+    }
+
+    public int getThemeColor(Context context, int attrRes) {
+        TypedValue typedValue = new TypedValue();
+
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(attrRes, typedValue, true);
+        return typedValue.data;
     }
 }
