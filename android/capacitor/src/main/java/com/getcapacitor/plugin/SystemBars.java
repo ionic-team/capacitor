@@ -137,7 +137,6 @@ public class SystemBars extends Plugin {
         getActivity().runOnUiThread(() -> {
             this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
                 hasViewportCover = res.equals("true");
-
                 getBridge().getWebView().requestApplyInsets();
             });
         });
@@ -162,7 +161,7 @@ public class SystemBars extends Plugin {
     private void initWindowInsetsListener() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && insetHandlingEnabled) {
             ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
-                if (hasViewportCover) {
+                if (hasViewportCover && v.hasWindowFocus()) {
                     Insets safeAreaInsets = calcSafeAreaInsets(insets);
                     boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
