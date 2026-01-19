@@ -162,9 +162,7 @@ public class SystemBars extends Plugin {
     private void initWindowInsetsListener() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && insetHandlingEnabled) {
             ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
-                boolean hasSplashScreen = getActivity().getSplashScreen() != null;
-
-                if (hasViewportCover && v.hasWindowFocus() && !hasSplashScreen) {
+                if (hasViewportCover && v.hasWindowFocus() && v.isShown()) {
                     Insets safeAreaInsets = calcSafeAreaInsets(insets);
                     boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
