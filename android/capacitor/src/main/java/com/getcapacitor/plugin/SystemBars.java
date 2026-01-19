@@ -137,6 +137,7 @@ public class SystemBars extends Plugin {
         getActivity().runOnUiThread(() -> {
             this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
                 hasViewportCover = res.equals("true");
+                
                 getBridge().getWebView().requestApplyInsets();
             });
         });
