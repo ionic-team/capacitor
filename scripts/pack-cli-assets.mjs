@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import tar from 'tar';
+import { create } from 'tar';
 
 import { execute } from './lib/cli.mjs';
 import { mkdir } from './lib/fs.mjs';
@@ -25,7 +25,7 @@ execute(async () => {
 
     const files = await lsfiles(templatePath, { cwd: templatePath });
 
-    await tar.create({ gzip: true, file: dest, cwd: templatePath }, files);
+    await create({ gzip: true, file: dest, cwd: templatePath }, files);
 
     console.log(`Packed ${dest}!`);
   }
