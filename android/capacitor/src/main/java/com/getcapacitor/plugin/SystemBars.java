@@ -14,7 +14,6 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.webkit.WebViewCompat;
-
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -140,7 +139,7 @@ public class SystemBars extends Plugin {
         getActivity().runOnUiThread(() -> {
             this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
                 hasViewportCover = res.equals("true");
-                
+
                 getBridge().getWebView().requestApplyInsets();
             });
         });
@@ -148,7 +147,7 @@ public class SystemBars extends Plugin {
 
     private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
         Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-        if(insets.isVisible(WindowInsetsCompat.Type.ime())) {
+        if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
             return Insets.of(safeArea.left, safeArea.top, safeArea.right, 0);
         }
         return Insets.of(safeArea.left, safeArea.top, safeArea.right, safeArea.bottom);
