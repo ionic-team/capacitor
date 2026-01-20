@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin;
 
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.view.View;
@@ -12,6 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.webkit.WebViewCompat;
+
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -271,5 +274,15 @@ public class SystemBars extends Plugin {
             return STYLE_LIGHT;
         }
         return STYLE_DARK;
+    }
+
+    private Integer getWebViewMajorVersion() {
+        PackageInfo info = WebViewCompat.getCurrentWebViewPackage(getContext());
+        if (info != null && info.versionName != null) {
+            String[] versionSegments = info.versionName.split("\\.");
+            return Integer.valueOf(versionSegments[0]);
+        }
+
+        return 0;
     }
 }
