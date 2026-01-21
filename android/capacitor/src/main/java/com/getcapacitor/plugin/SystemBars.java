@@ -167,7 +167,7 @@ public class SystemBars extends Plugin {
     private void initWindowInsetsListener() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && insetHandlingEnabled) {
             ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
-                boolean hasBrokenWebViewVersion = getWebViewMajorVersion() <= 130;
+                boolean hasBrokenWebViewVersion = getWebViewMajorVersion() <= 139;
 
                 if (hasViewportCover) {
                     Insets safeAreaInsets = calcSafeAreaInsets(insets);
