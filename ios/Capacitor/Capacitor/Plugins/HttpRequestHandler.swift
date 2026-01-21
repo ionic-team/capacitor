@@ -238,7 +238,13 @@ open class HttpRequestHandler {
                 var output = [:] as [String: Any]
                 output["status"] = 200
                 output["headers"] = headers
-                output["data"] = String(data: data!, encoding: .utf8)
+
+                if let data = data {
+                    output["data"] = String(data: data, encoding: .utf8)
+                } else {
+                    output["data"] = ""
+                }
+
                 call.resolve(output)
             } else {
                 call.reject("Unknown response kind")
