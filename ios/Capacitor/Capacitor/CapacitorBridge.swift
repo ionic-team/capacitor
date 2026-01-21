@@ -750,21 +750,13 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if viewControllerToPresent.modalPresentationStyle == .popover {
             self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
         } else {
-            if #available(iOS 13.0, *) {
-                let windowScene = UIApplication.shared.connectedScenes
+            let windowScene = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first(where: { $0.activationState == .foregroundActive })
+                ?? UIApplication.shared.connectedScenes
                     .compactMap { $0 as? UIWindowScene }
-                    .first(where: { $0.activationState == .foregroundActive })
-                    ?? UIApplication.shared.connectedScenes
-                        .compactMap { $0 as? UIWindowScene }
-                        .first
-                if let windowScene = windowScene {
-                    self.tmpWindow = UIWindow(windowScene: windowScene)
-                } else {
-                    self.tmpWindow = UIWindow(frame: UIScreen.main.bounds)
-                }
-            } else {
-                self.tmpWindow = UIWindow(frame: UIScreen.main.bounds)
-            }
+                    .first
+            self.tmpWindow = windowScene.map { UIWindow(windowScene: $0) } ?? UIWindow(frame: UIScreen.main.bounds)
             self.tmpWindow?.rootViewController = TmpViewController.init()
             self.tmpWindow?.makeKeyAndVisible()
             self.tmpWindow?.rootViewController?.present(viewControllerToPresent, animated: flag, completion: completion)
