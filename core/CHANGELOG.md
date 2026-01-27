@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.2](https://github.com/ionic-team/capacitor/compare/8.0.1...8.0.2) (2026-01-27)
+
+### Bug Fixes
+
+- **core:** make SystemBars hide and show options optional ([#8305](https://github.com/ionic-team/capacitor/issues/8305)) ([95dc7d8](https://github.com/ionic-team/capacitor/commit/95dc7d8ace3aabdda7e325c4a8ef7d1432ad37e9))
+
 ## [8.0.1](https://github.com/ionic-team/capacitor/compare/8.0.0...8.0.1) (2026-01-13)
 
 **Note:** Version bump only for package @capacitor/core

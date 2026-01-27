@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.2](https://github.com/ionic-team/capacitor/compare/8.0.1...8.0.2) (2026-01-27)
+
+### Bug Fixes
+
+- **cli:** Update tar package ([#8311](https://github.com/ionic-team/capacitor/issues/8311)) ([0969c5c](https://github.com/ionic-team/capacitor/commit/0969c5cd0b16cf23d2489a85a3b8fa1bee2ebf3b))
+
 ## [8.0.1](https://github.com/ionic-team/capacitor/compare/8.0.0...8.0.1) (2026-01-13)
 
 ### Bug Fixes
