@@ -11,6 +11,6 @@
       "tagVersionPrefix": ""
     }
   },
-  "version": "8.0.2",
+  "version": "9.0.0-dev.0",
   "$schema": "node_modules/lerna/schemas/lerna-schema.json"
 }
