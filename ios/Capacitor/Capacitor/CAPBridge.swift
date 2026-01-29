@@ -10,6 +10,10 @@ import Foundation
     public static func getLastUrl() -> URL? {
         return ApplicationDelegateProxy.shared.lastURL
     }
+    
+    public static func getReferrerUrl() -> URL? {
+        return ApplicationDelegateProxy.shared.referrerUrl
+    }
 
     public static func handleOpenUrl(_ url: URL, _ options: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {
         return ApplicationDelegateProxy.shared.application(UIApplication.shared, open: url, options: options)
