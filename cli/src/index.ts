@@ -3,15 +3,13 @@ import { resolve } from 'path';
 
 import c from './colors';
 import { loadConfig } from './config';
-import type { Config } from './definitions';
+import type { Config, Writable } from './definitions';
 import { fatal, isFatal } from './errors';
 import { receive } from './ipc';
 import { logger, output } from './log';
 import { telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
-
-type Writable<T> = T extends object ? { -readonly [K in keyof T]: Writable<T[K]> } : T;
 
 process.on('unhandledRejection', (error) => {
   console.error(c.failure('[fatal]'), error);
@@ -27,6 +25,16 @@ export async function run(): Promise<void> {
     process.exitCode = isFatal(e) ? e.exitCode : 1;
     logger.error(e.message ? e.message : String(e));
   }
+}
+
+async function getPackageManager(config: Config, packageManager: any): Promise<string> {
+  if (packageManager === 'cocoapods') {
+    if ((await config.ios.packageManager) === 'bundler') {
+      return 'bundler';
+    }
+    return 'Cocoapods';
+  }
+  return 'SPM';
 }
 
 export function runProgram(config: Config): void {
@@ -313,6 +321,7 @@ export function runProgram(config: Config): void {
           const { addCommand } = await import('./tasks/add');
 
           const configWritable: Writable<Config> = config as Writable<Config>;
+          configWritable.ios.packageManager = getPackageManager(config, packagemanager?.toLowerCase());
           if (packagemanager?.toLowerCase() === 'CocoaPods'.toLowerCase()) {
             configWritable.cli.assets.ios.platformTemplateArchive = 'ios-pods-template.tar.gz';
             configWritable.cli.assets.ios.platformTemplateArchiveAbs = resolve(

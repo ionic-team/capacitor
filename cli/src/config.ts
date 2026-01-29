@@ -1,5 +1,5 @@
 import Debug from 'debug';
-import { pathExists, readFile, readJSON, writeFile, writeJSON } from 'fs-extra';
+import { existsSync, pathExists, readFile, readJSON, writeFile, writeJSON } from 'fs-extra';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
@@ -22,7 +22,7 @@ import { formatJSObject } from './util/js';
 import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools';
 import { requireTS, resolveNode } from './util/node';
 import { lazy } from './util/promise';
-import { getCommandOutput } from './util/subprocess';
+import { getCommandOutput, isInstalled } from './util/subprocess';
 
 const debug = Debug('capacitor:config');
 
@@ -273,7 +273,8 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
   const nativeXcodeProjDir = `${nativeProjectDir}/App.xcodeproj`;
   const nativeXcodeProjDirAbs = resolve(platformDirAbs, nativeXcodeProjDir);
   const nativeXcodeWorkspaceDirAbs = lazy(() => determineXcodeWorkspaceDirAbs(nativeProjectDirAbs));
-  const podPath = lazy(() => determineGemfileOrCocoapodPath(rootDir, platformDirAbs, nativeProjectDirAbs));
+  const podPath = lazy(() => determineCocoapodPath());
+  const packageManager = lazy(() => determinePackageManager(rootDir, platformDirAbs, nativeProjectDirAbs));
   const webDirAbs = lazy(() => determineIOSWebDirAbs(nativeProjectDirAbs, nativeTargetDirAbs, nativeXcodeProjDirAbs));
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
   const buildOptions = {
@@ -301,6 +302,7 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
     webDir: lazy(async () => relative(platformDirAbs, await webDirAbs)),
     webDirAbs,
     podPath,
+    packageManager,
     buildOptions,
   };
 }
@@ -415,13 +417,20 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
   return '';
 }
 
-async function determineGemfileOrCocoapodPath(
+async function determineCocoapodPath(): Promise<string> {
+  if (process.env.CAPACITOR_COCOAPODS_PATH) {
+    return process.env.CAPACITOR_COCOAPODS_PATH;
+  }
+  return 'pod';
+}
+
+async function determinePackageManager(
   rootDir: string,
   platformDir: any,
   nativeProjectDirAbs: string,
-): Promise<string> {
-  if (process.env.CAPACITOR_COCOAPODS_PATH) {
-    return process.env.CAPACITOR_COCOAPODS_PATH;
+): Promise<'Cocoapods' | 'bundler' | 'SPM'> {
+  if (existsSync(resolve(nativeProjectDirAbs, 'CapApp-SPM'))) {
+    return 'SPM';
   }
 
   let gemfilePath = '';
@@ -450,17 +459,17 @@ async function determineGemfileOrCocoapodPath(
   try {
     const gemfileText = (await readFile(gemfilePath)).toString();
     if (!gemfileText) {
-      return 'pod';
+      return 'Cocoapods';
     }
     const cocoapodsInGemfile = new RegExp(/gem\s+['"]cocoapods/).test(gemfileText);
 
-    if (cocoapodsInGemfile) {
-      return 'bundle exec pod';
+    if (cocoapodsInGemfile && (await isInstalled('bundle'))) {
+      return 'bundler';
     } else {
-      return 'pod';
+      return 'Cocoapods';
     }
   } catch {
-    return 'pod';
+    return 'Cocoapods';
   }
 }
 

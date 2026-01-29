@@ -3,6 +3,7 @@ import type { CapacitorConfig, PluginsConfig } from './declarations';
 type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
 
 export type ExternalConfig = DeepReadonly<CapacitorConfig>;
+export type Writable<T> = T extends object ? { -readonly [K in keyof T]: Writable<T[K]> } : T;
 
 export const enum OS {
   Unknown = 'unknown',
@@ -116,6 +117,7 @@ export interface IOSConfig extends PlatformConfig {
   readonly cordovaPluginsDirAbs: string;
   readonly minVersion: string;
   readonly podPath: Promise<string>;
+  readonly packageManager: Promise<'Cocoapods' | 'bundler' | 'SPM'>;
   readonly scheme: string;
   readonly webDir: Promise<string>;
   readonly webDirAbs: Promise<string>;
