@@ -46,6 +46,8 @@ jobs:
       - run: npm install
       - run: brew install swiftlint
       - run: npm run lint
+      - name: Check for typos
+        uses: crate-ci/typos@v1.39.0
   test-cli:
     runs-on: macos-15
     timeout-minutes: 30
