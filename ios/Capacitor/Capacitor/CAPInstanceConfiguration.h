@@ -8,7 +8,7 @@
 NS_SWIFT_NAME(InstanceConfiguration)
 @interface CAPInstanceConfiguration: NSObject
 @property (nonatomic, readonly, nullable) NSString *appendedUserAgentString;
-@property (nonatomic, readonly, nullable) NSString *overridenUserAgentString;
+@property (nonatomic, readonly, nullable) NSString *overriddenUserAgentString;
 @property (nonatomic, readonly, nullable) UIColor *backgroundColor;
 @property (nonatomic, readonly, nonnull) NSArray<NSString*> *allowedNavigationHostnames;
 @property (nonatomic, readonly, nonnull) NSURL *localURL;

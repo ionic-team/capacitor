@@ -302,7 +302,7 @@ extension CAPBridgeViewController {
         aWebView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
         aWebView.allowsLinkPreview = configuration.allowLinkPreviews
         aWebView.scrollView.isScrollEnabled = configuration.scrollingEnabled
-        if let overrideUserAgent = configuration.overridenUserAgentString {
+        if let overrideUserAgent = configuration.overriddenUserAgentString {
             aWebView.customUserAgent = overrideUserAgent
         }
         if let backgroundColor = configuration.backgroundColor {
