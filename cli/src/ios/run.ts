@@ -1,13 +1,13 @@
 import Debug from 'debug';
 import { basename, resolve } from 'path';
 
-import c from '../colors';
-import { promptForPlatformTarget, runTask } from '../common';
-import type { Config } from '../definitions';
-import type { RunCommandOptions } from '../tasks/run';
-import { runNativeRun, getPlatformTargets } from '../util/native-run';
-import { checkPackageManager } from '../util/spm';
-import { runCommand } from '../util/subprocess';
+import c from '../colors.js';
+import { promptForPlatformTarget, runTask } from '../common.js';
+import type { Config } from '../definitions.js';
+import type { RunCommandOptions } from '../tasks/run.js';
+import { runNativeRun, getPlatformTargets } from '../util/native-run.js';
+import { checkPackageManager } from '../util/spm.js';
+import { runCommand } from '../util/subprocess.js';
 
 const debug = Debug('capacitor:ios:run');
 

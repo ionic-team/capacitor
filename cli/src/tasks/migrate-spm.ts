@@ -1,15 +1,15 @@
-import type { Config } from '../definitions';
-import { fatal } from '../errors';
-import { logger } from '../log';
+import type { Config } from '../definitions.js';
+import { fatal } from '../errors.js';
+import { logger } from '../log.js';
 import {
   checkPackageManager,
   extractSPMPackageDirectory,
   removeCocoapodsFiles,
   runCocoapodsDeintegrate,
   addInfoPlistDebugIfNeeded,
-} from '../util/spm';
+} from '../util/spm.js';
 
-import { update } from './update';
+import { update } from './update.js';
 
 export async function migrateToSPM(config: Config): Promise<void> {
   if ((await checkPackageManager(config)) == 'SPM') {

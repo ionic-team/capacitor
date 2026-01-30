@@ -1,12 +1,12 @@
 import { copy, remove, pathExists, readFile, realpath, writeFile } from 'fs-extra';
 import { basename, dirname, join, relative } from 'path';
 
-import c from '../colors';
-import { checkPlatformVersions, getCapacitorPackageVersion, runTask } from '../common';
-import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps, needsStaticPod } from '../cordova';
-import type { Config } from '../definitions';
-import { fatal } from '../errors';
-import { logger } from '../log';
+import c from '../colors.js';
+import { checkPlatformVersions, getCapacitorPackageVersion, runTask } from '../common.js';
+import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps, needsStaticPod } from '../cordova.js';
+import type { Config } from '../definitions.js';
+import { fatal } from '../errors.js';
+import { logger } from '../log.js';
 import {
   PluginType,
   getAllElements,
@@ -15,17 +15,17 @@ import {
   getPluginType,
   getPlugins,
   printPlugins,
-} from '../plugin';
-import type { Plugin } from '../plugin';
-import { copy as copyTask } from '../tasks/copy';
-import { convertToUnixPath } from '../util/fs';
-import { generateIOSPackageJSON } from '../util/iosplugin';
-import { resolveNode } from '../util/node';
-import { checkPackageManager, generatePackageFile, checkPluginsForPackageSwift } from '../util/spm';
-import { runCommand, isInstalled } from '../util/subprocess';
-import { extractTemplate } from '../util/template';
+} from '../plugin.js';
+import type { Plugin } from '../plugin.js';
+import { copy as copyTask } from '../tasks/copy.js';
+import { convertToUnixPath } from '../util/fs.js';
+import { generateIOSPackageJSON } from '../util/iosplugin.js';
+import { resolveNode } from '../util/node.js';
+import { checkPackageManager, generatePackageFile, checkPluginsForPackageSwift } from '../util/spm.js';
+import { runCommand, isInstalled } from '../util/subprocess.js';
+import { extractTemplate } from '../util/template.js';
 
-import { getIOSPlugins, getMajoriOSVersion } from './common';
+import { getIOSPlugins, getMajoriOSVersion } from './common.js';
 
 const platform = 'ios';
 

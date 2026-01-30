@@ -1,4 +1,4 @@
-import { initCapacitorGlobal } from './runtime';
+import { initCapacitorGlobal } from './runtime.js';
 
 export const Capacitor = /*#__PURE__*/ initCapacitorGlobal(
   typeof globalThis !== 'undefined'

@@ -1,7 +1,7 @@
 import { columnar } from '@ionic/utils-terminal';
 
-import { runAndroid } from '../android/run';
-import c from '../colors';
+import { runAndroid } from '../android/run.js';
+import c from '../colors.js';
 import {
   isValidPlatform,
   resolvePlatform,
@@ -9,16 +9,16 @@ import {
   selectPlatforms,
   promptForPlatform,
   getPlatformTargetName,
-} from '../common';
-import { getCordovaPlugins, writeCordovaAndroidManifest } from '../cordova';
-import type { Config } from '../definitions';
-import { fatal, isFatal } from '../errors';
-import { runIOS } from '../ios/run';
-import { logger, output } from '../log';
-import { CapLiveReloadHelper } from '../util/livereload';
-import { getPlatformTargets } from '../util/native-run';
+} from '../common.js';
+import { getCordovaPlugins, writeCordovaAndroidManifest } from '../cordova.js';
+import type { Config } from '../definitions.js';
+import { fatal, isFatal } from '../errors.js';
+import { runIOS } from '../ios/run.js';
+import { logger, output } from '../log.js';
+import { CapLiveReloadHelper } from '../util/livereload.js';
+import { getPlatformTargets } from '../util/native-run.js';
 
-import { sync } from './sync';
+import { sync } from './sync.js';
 
 export interface RunCommandOptions {
   scheme?: string;

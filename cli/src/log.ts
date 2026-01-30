@@ -7,8 +7,8 @@ import {
 import type { LoggerLevelWeight } from '@ionic/cli-framework-output';
 import type { Answers, PromptObject } from 'prompts';
 
-import c from './colors';
-import { isInteractive } from './util/term';
+import c from './colors.js';
+import { isInteractive } from './util/term.js';
 
 const options = {
   colors: c,

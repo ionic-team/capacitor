@@ -1,14 +1,14 @@
 import { Command } from 'commander';
 import Debug from 'debug';
 
-import c from './colors';
-import type { Config } from './definitions';
-import { send } from './ipc';
-import { output } from './log';
-import { readConfig, writeConfig } from './sysconfig';
-import type { SystemConfig } from './sysconfig';
-import { getCommandOutput } from './util/subprocess';
-import { isInteractive } from './util/term';
+import c from './colors.js';
+import type { Config } from './definitions.js';
+import { send } from './ipc.js';
+import { output } from './log.js';
+import { readConfig, writeConfig } from './sysconfig.js';
+import type { SystemConfig } from './sysconfig.js';
+import { getCommandOutput } from './util/subprocess.js';
+import { isInteractive } from './util/term.js';
 
 const debug = Debug('capacitor:telemetry');
 

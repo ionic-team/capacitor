@@ -1,13 +1,13 @@
 import { dirname } from 'path';
 
-import c from '../colors';
-import type { PlatformTarget } from '../common';
-import { fatal } from '../errors';
-import { logger } from '../log';
+import c from '../colors.js';
+import type { PlatformTarget } from '../common.js';
+import { fatal } from '../errors.js';
+import { logger } from '../log.js';
 
-import { resolveNode } from './node';
-import { runCommand } from './subprocess';
-import type { RunCommandOptions } from './subprocess';
+import { resolveNode } from './node.js';
+import { runCommand } from './subprocess.js';
+import type { RunCommandOptions } from './subprocess.js';
 
 export async function runNativeRun(args: readonly string[], options: RunCommandOptions = {}): Promise<string> {
   const p = resolveNode(__dirname, dirname('native-run/package'), 'bin/native-run');

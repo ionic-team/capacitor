@@ -4,8 +4,8 @@ import { open, mkdirp } from 'fs-extra';
 import { request } from 'https';
 import { resolve } from 'path';
 
-import type { Metric } from './telemetry';
-import { ENV_PATHS } from './util/cli';
+import type { Metric } from './telemetry.js';
+import { ENV_PATHS } from './util/cli.js';
 
 const debug = Debug('capacitor:ipc');
 

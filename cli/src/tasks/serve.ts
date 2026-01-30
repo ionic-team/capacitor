@@ -1,5 +1,5 @@
-import c from '../colors';
-import { fatal } from '../errors';
+import c from '../colors.js';
+import { fatal } from '../errors.js';
 
 export async function serveCommand(): Promise<void> {
   fatal(

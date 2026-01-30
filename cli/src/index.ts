@@ -1,15 +1,15 @@
 import { Option, program } from 'commander';
 import { resolve } from 'path';
 
-import c from './colors';
-import { loadConfig } from './config';
-import type { Config } from './definitions';
-import { fatal, isFatal } from './errors';
-import { receive } from './ipc';
-import { logger, output } from './log';
-import { telemetryAction } from './telemetry';
-import { wrapAction } from './util/cli';
-import { emoji as _e } from './util/emoji';
+import c from './colors.js';
+import { loadConfig } from './config.js';
+import type { Config } from './definitions.js';
+import { fatal, isFatal } from './errors.js';
+import { receive } from './ipc.js';
+import { logger, output } from './log.js';
+import { telemetryAction } from './telemetry.js';
+import { wrapAction } from './util/cli.js';
+import { emoji as _e } from './util/emoji.js';
 
 type Writable<T> = T extends object ? { -readonly [K in keyof T]: Writable<T[K]> } : T;
 
@@ -38,7 +38,7 @@ export function runProgram(config: Config): void {
     .option('--json', 'Print in JSON format')
     .action(
       wrapAction(async ({ json }) => {
-        const { configCommand } = await import('./tasks/config');
+        const { configCommand } = await import('./tasks/config.js');
         await configCommand(config, json);
       }),
     );
@@ -48,7 +48,7 @@ export function runProgram(config: Config): void {
     .description('Creates a new Capacitor project')
     .action(
       wrapAction(async () => {
-        const { createCommand } = await import('./tasks/create');
+        const { createCommand } = await import('./tasks/create.js');
         await createCommand();
       }),
     );
@@ -61,7 +61,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (appName, appId, { webDir, skipAppidValidation }) => {
-          const { initCommand } = await import('./tasks/init');
+          const { initCommand } = await import('./tasks/init.js');
           await initCommand(config, appName, appId, webDir, skipAppidValidation);
         }),
       ),
@@ -72,7 +72,7 @@ export function runProgram(config: Config): void {
     .description('Serves a Capacitor Progressive Web App in the browser')
     .action(
       wrapAction(async () => {
-        const { serveCommand } = await import('./tasks/serve');
+        const { serveCommand } = await import('./tasks/serve.js');
         await serveCommand();
       }),
     );
@@ -89,7 +89,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { deployment, inline }) => {
-          const { syncCommand } = await import('./tasks/sync');
+          const { syncCommand } = await import('./tasks/sync.js');
           await syncCommand(config, platform, deployment, inline);
         }),
       ),
@@ -102,7 +102,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { deployment }) => {
-          const { updateCommand } = await import('./tasks/update');
+          const { updateCommand } = await import('./tasks/update.js');
           await updateCommand(config, platform, deployment);
         }),
       ),
@@ -119,7 +119,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { inline }) => {
-          const { copyCommand } = await import('./tasks/copy');
+          const { copyCommand } = await import('./tasks/copy.js');
           await copyCommand(config, platform, inline);
         }),
       ),
@@ -205,7 +205,7 @@ export function runProgram(config: Config): void {
               xcodeProvisioningProfile,
             },
           ) => {
-            const { buildCommand } = await import('./tasks/build');
+            const { buildCommand } = await import('./tasks/build.js');
             await buildCommand(config, platform, {
               scheme,
               flavor,
@@ -267,7 +267,7 @@ export function runProgram(config: Config): void {
               configuration,
             },
           ) => {
-            const { runCommand } = await import('./tasks/run');
+            const { runCommand } = await import('./tasks/run.js');
             await runCommand(config, platform, {
               scheme,
               flavor,
@@ -294,7 +294,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform) => {
-          const { openCommand } = await import('./tasks/open');
+          const { openCommand } = await import('./tasks/open.js');
           await openCommand(config, platform);
         }),
       ),
@@ -310,7 +310,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform, { packagemanager }) => {
-          const { addCommand } = await import('./tasks/add');
+          const { addCommand } = await import('./tasks/add.js');
 
           const configWritable: Writable<Config> = config as Writable<Config>;
           if (packagemanager?.toLowerCase() === 'CocoaPods'.toLowerCase()) {
@@ -332,7 +332,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform) => {
-          const { listCommand } = await import('./tasks/list');
+          const { listCommand } = await import('./tasks/list.js');
           await listCommand(config, platform);
         }),
       ),
@@ -344,7 +344,7 @@ export function runProgram(config: Config): void {
     .action(
       wrapAction(
         telemetryAction(config, async (platform) => {
-          const { doctorCommand } = await import('./tasks/doctor');
+          const { doctorCommand } = await import('./tasks/doctor.js');
           await doctorCommand(config, platform);
         }),
       ),
@@ -355,7 +355,7 @@ export function runProgram(config: Config): void {
     .description('enable or disable telemetry')
     .action(
       wrapAction(async (onOrOff) => {
-        const { telemetryCommand } = await import('./tasks/telemetry');
+        const { telemetryCommand } = await import('./tasks/telemetry.js');
         await telemetryCommand(onOrOff);
       }),
     );
@@ -372,7 +372,7 @@ export function runProgram(config: Config): void {
     .description('start a new Capacitor plugin')
     .action(
       wrapAction(async () => {
-        const { newPluginCommand } = await import('./tasks/new-plugin');
+        const { newPluginCommand } = await import('./tasks/new-plugin.js');
         await newPluginCommand();
       }),
     );
@@ -384,7 +384,7 @@ export function runProgram(config: Config): void {
     .description('Migrate your current Capacitor app to the latest major version of Capacitor.')
     .action(
       wrapAction(async ({ noprompt, packagemanager }) => {
-        const { migrateCommand } = await import('./tasks/migrate');
+        const { migrateCommand } = await import('./tasks/migrate.js');
         await migrateCommand(config, noprompt, packagemanager);
       }),
     );
@@ -394,7 +394,7 @@ export function runProgram(config: Config): void {
     .description('Remove Cocoapods from project and switch to Swift Package Manager')
     .action(
       wrapAction(async () => {
-        const { migrateToSPM } = await import('./tasks/migrate-spm');
+        const { migrateToSPM } = await import('./tasks/migrate-spm.js');
         await migrateToSPM(config);
       }),
     );

@@ -1,7 +1,7 @@
-import c from '../colors';
-import { fatal } from '../errors';
-import { logger, logSuccess, output } from '../log';
-import { readConfig, writeConfig } from '../sysconfig';
+import c from '../colors.js';
+import { fatal } from '../errors.js';
+import { logger, logSuccess, output } from '../log.js';
+import { readConfig, writeConfig } from '../sysconfig.js';
 
 const THANK_YOU =
   `\nThank you for helping to make Capacitor better! 💖` +

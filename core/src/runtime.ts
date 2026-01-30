@@ -1,11 +1,11 @@
-import type { CapacitorGlobal, PluginImplementations } from './definitions';
+import type { CapacitorGlobal, PluginImplementations } from './definitions.js';
 import type {
   CapacitorCustomPlatformInstance,
   CapacitorInstance,
   PluginHeader,
   WindowCapacitor,
-} from './definitions-internal';
-import { CapacitorException, getPlatformId, ExceptionCode } from './util';
+} from './definitions-internal.js';
+import { CapacitorException, getPlatformId, ExceptionCode } from './util.js';
 
 export interface RegisteredPlugin {
   readonly name: string;
@@ -89,12 +89,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         }
       } else if (impl) {
         return impl[prop]?.bind(impl);
-      } else {
-        throw new CapacitorException(
-          `"${pluginName}" plugin is not implemented on ${platform}`,
-          ExceptionCode.Unimplemented,
-        );
       }
+      throw new CapacitorException(
+        `"${pluginName}" plugin is not implemented on ${platform}`,
+        ExceptionCode.Unimplemented,
+      );
     };
 
     const createPluginMethodWrapper = (prop: PropertyKey) => {

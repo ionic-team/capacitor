@@ -1,7 +1,7 @@
 import util from 'util';
 
-import type { Config } from '../definitions';
-import { output } from '../log';
+import type { Config } from '../definitions.js';
+import { output } from '../log.js';
 
 export async function configCommand(config: Config, json: boolean): Promise<void> {
   const evaluatedConfig = await deepAwait(config);

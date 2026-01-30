@@ -1,9 +1,9 @@
 import { prettyPath } from '@ionic/utils-terminal';
 import { pathExists } from 'fs-extra';
 
-import { addAndroid, createLocalProperties } from '../android/add';
-import { editProjectSettingsAndroid, checkAndroidPackage } from '../android/common';
-import c from '../colors';
+import { addAndroid, createLocalProperties } from '../android/add.js';
+import { editProjectSettingsAndroid, checkAndroidPackage } from '../android/common.js';
+import c from '../colors.js';
 import {
   getKnownPlatforms,
   check,
@@ -17,15 +17,15 @@ import {
   promptForPlatform,
   getProjectPlatformDirectory,
   isValidEnterprisePlatform,
-} from '../common';
-import type { CheckFunction } from '../common';
-import type { Config } from '../definitions';
-import { fatal, isFatal } from '../errors';
-import { addIOS } from '../ios/add';
-import { editProjectSettingsIOS, checkBundler, checkCocoaPods, checkIOSPackage } from '../ios/common';
-import { logger, logSuccess, output } from '../log';
+} from '../common.js';
+import type { CheckFunction } from '../common.js';
+import type { Config } from '../definitions.js';
+import { fatal, isFatal } from '../errors.js';
+import { addIOS } from '../ios/add.js';
+import { editProjectSettingsIOS, checkBundler, checkCocoaPods, checkIOSPackage } from '../ios/common.js';
+import { logger, logSuccess, output } from '../log.js';
 
-import { sync } from './sync';
+import { sync } from './sync.js';
 
 export async function addCommand(config: Config, selectedPlatformName: string): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {

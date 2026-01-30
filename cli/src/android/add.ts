@@ -2,11 +2,11 @@ import { pathExists, writeFile } from 'fs-extra';
 import { homedir } from 'os';
 import { join } from 'path';
 
-import c from '../colors';
-import { runTask } from '../common';
-import type { Config } from '../definitions';
-import { runCommand } from '../util/subprocess';
-import { extractTemplate } from '../util/template';
+import c from '../colors.js';
+import { runTask } from '../common.js';
+import type { Config } from '../definitions.js';
+import { runCommand } from '../util/subprocess.js';
+import { extractTemplate } from '../util/template.js';
 
 export async function addAndroid(config: Config): Promise<void> {
   await runTask(`Adding native android project in ${c.strong(config.android.platformDir)}`, async () => {
