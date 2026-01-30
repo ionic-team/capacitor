@@ -112,7 +112,7 @@ function printNextSteps(platformName: string) {
 
 function addChecks(config: Config, platformName: string): CheckFunction[] {
   if (platformName === config.ios.name) {
-    return [() => checkIOSPackage(config), () => checkBundler(config) || checkCocoaPods(config)];
+    return [() => checkIOSPackage(config), () => checkBundler(config), () => checkCocoaPods(config)];
   } else if (platformName === config.android.name) {
     return [() => checkAndroidPackage(config)];
   } else if (platformName === config.web.name) {

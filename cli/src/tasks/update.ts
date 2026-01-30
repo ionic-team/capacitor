@@ -50,7 +50,8 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
   const checks: CheckFunction[] = [];
   for (const platformName of platforms) {
     if (platformName === config.ios.name) {
-      checks.push(() => checkBundler(config) || checkCocoaPods(config));
+      checks.push(() => checkBundler(config));
+      checks.push(() => checkCocoaPods(config));
     } else if (platformName === config.android.name) {
       continue;
     } else if (platformName === config.web.name) {
