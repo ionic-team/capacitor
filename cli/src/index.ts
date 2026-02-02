@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 import c from './colors';
 import { loadConfig } from './config';
-import type { Config, Writable } from './definitions';
+import type { Config, PackageManager, Writable } from './definitions';
 import { fatal, isFatal } from './errors';
 import { receive } from './ipc';
 import { logger, output } from './log';
@@ -27,7 +27,7 @@ export async function run(): Promise<void> {
   }
 }
 
-async function getPackageManager(config: Config, packageManager: any): Promise<string> {
+async function getPackageManager(config: Config, packageManager: any): Promise<PackageManager> {
   if (packageManager === 'cocoapods') {
     if ((await config.ios.packageManager) === 'bundler') {
       return 'bundler';

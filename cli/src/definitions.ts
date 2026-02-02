@@ -12,6 +12,8 @@ export const enum OS {
   Linux = 'linux',
 }
 
+export type PackageManager = 'Cocoapods' | 'bundler' | 'SPM';
+
 export interface PackageJson {
   readonly name: string;
   readonly version: string;
@@ -117,7 +119,7 @@ export interface IOSConfig extends PlatformConfig {
   readonly cordovaPluginsDirAbs: string;
   readonly minVersion: string;
   readonly podPath: Promise<string>;
-  readonly packageManager: Promise<'Cocoapods' | 'bundler' | 'SPM'>;
+  readonly packageManager: Promise<PackageManager>;
   readonly scheme: string;
   readonly webDir: Promise<string>;
   readonly webDirAbs: Promise<string>;

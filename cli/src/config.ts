@@ -13,6 +13,7 @@ import type {
   IOSConfig,
   WebConfig,
   XcodeExportMethod,
+  PackageManager,
 } from './definitions';
 import { OS } from './definitions';
 import { fatal, isFatal } from './errors';
@@ -428,7 +429,7 @@ async function determinePackageManager(
   rootDir: string,
   platformDir: any,
   nativeProjectDirAbs: string,
-): Promise<'Cocoapods' | 'bundler' | 'SPM'> {
+): Promise<PackageManager> {
   if (existsSync(resolve(nativeProjectDirAbs, 'CapApp-SPM'))) {
     return 'SPM';
   }
