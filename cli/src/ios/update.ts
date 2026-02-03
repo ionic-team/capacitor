@@ -43,8 +43,6 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
 
   const enableCordova = cordovaPlugins.length > 0;
 
-  logger.info(`enableCordova is: ${enableCordova}`)
-
   if (enableCordova) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
@@ -66,7 +64,6 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
       await generateCordovaPodspecs(cordovaPlugins, config);
     }
 
-    logger.info("installCocoaPodsPlugins updatePluginFiles")
     await installCocoaPodsPlugins(config, plugins, deployment, enableCordova);
 
     if (enableCordova) {
@@ -126,7 +123,6 @@ export async function installCocoaPodsPlugins(
   deployment: boolean,
   enableCordova: boolean,
 ): Promise<void> {
-  logger.info("installCocoaPodsPlugins")
   await runTask(`Updating iOS native dependencies with ${c.input(`${await config.ios.podPath} install`)}`, () => {
     return updatePodfile(config, plugins, deployment, enableCordova);
   });
