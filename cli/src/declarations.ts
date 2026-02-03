@@ -707,11 +707,17 @@ export interface PluginsConfig {
    */
   SystemBars?: {
     /**
-     * Disables the injection of device css insets into the web view.
+     * Specifies how to handle problematic insets on Android.
      *
-     * @default false
+     * This option is only supported on Android.
+     *
+     * `css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
+     *
+     * `disable` = Disable all inset handling.
+     *
+     * @default "css"
      */
-    disableInsets?: boolean;
+    insetsHandling?: 'css' | 'disable';
     /**
      * The style of the text and icons of the system bars.
      *
