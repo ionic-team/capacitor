@@ -43,6 +43,8 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
 
   const enableCordova = cordovaPlugins.length > 0;
 
+  logger.info(`enableCordova is: ${enableCordova}`)
+
   if (enableCordova) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
@@ -59,11 +61,12 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
 
     await generatePackageFile(config, validSPMPackages.concat(cordovaPlugins));
-
+  } else {
     if (enableCordova) {
       await generateCordovaPodspecs(cordovaPlugins, config);
     }
 
+    logger.info("installCocoaPodsPlugins updatePluginFiles")
     await installCocoaPodsPlugins(config, plugins, deployment, enableCordova);
 
     if (enableCordova) {
@@ -81,12 +84,12 @@ async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Con
 async function generateCordovaPackageFile(p: Plugin, config: Config) {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
-  await logCordovaManualSteps(cordovaPlugins, config, platform);
+  //await logCordovaManualSteps(cordovaPlugins, config, platform);
   let headersText = '';
-  if (headerFiles.length > 0) {
-    headersText = `,
-            publicHeadersPath: "."`;
-  }
+  // if (headerFiles.length > 0) {
+  //   headersText = `,
+  //           publicHeadersPath: "."`;
+  // }
 
   const content = `// swift-tools-version: 5.9
 
@@ -123,6 +126,7 @@ export async function installCocoaPodsPlugins(
   deployment: boolean,
   enableCordova: boolean,
 ): Promise<void> {
+  logger.info("installCocoaPodsPlugins")
   await runTask(`Updating iOS native dependencies with ${c.input(`${await config.ios.podPath} install`)}`, () => {
     return updatePodfile(config, plugins, deployment, enableCordova);
   });
@@ -146,14 +150,18 @@ async function updatePodfile(
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
   const podPath = await config.ios.podPath;
-  const useBundler = podPath.startsWith('bundle') && (await isInstalled('bundle'));
-  const podCommandExists = await isInstalled('pod');
+  // const useBundler = podPath.startsWith('bundle') && (await isInstalled('bundle'));
+  // const podCommandExists = await isInstalled('pod');
+  const useBundler = false
+  const podCommandExists = true
+  logger.info("updatePodfile")
   if (useBundler || podCommandExists) {
     if (useBundler) {
       await runCommand('bundle', ['exec', 'pod', 'install', ...(deployment ? ['--deployment'] : [])], {
         cwd: config.ios.nativeProjectDirAbs,
       });
     } else {
+      logger.info("run pod")
       await runCommand(podPath, ['install', ...(deployment ? ['--deployment'] : [])], {
         cwd: config.ios.nativeProjectDirAbs,
       });
