@@ -276,7 +276,7 @@ export interface HttpResponse {
    */
   headers: HttpHeaders;
   /**
-   * The response URL recieved from the Http response.
+   * The response URL received from the Http response.
    */
   url: string;
 }
@@ -617,14 +617,14 @@ export interface SystemBarsPlugin {
    *
    * @since 8.0.0
    */
-  show(options: SystemBarsVisibilityOptions): Promise<void>;
+  show(options?: SystemBarsVisibilityOptions): Promise<void>;
 
   /**
    * Hide the system bars.
    *
    * @since 8.0.0
    */
-  hide(options: SystemBarsVisibilityOptions): Promise<void>;
+  hide(options?: SystemBarsVisibilityOptions): Promise<void>;
 
   /**
    * Set the animation to use when showing / hiding the status bar.
