@@ -19,7 +19,7 @@ import {
 import { convertToUnixPath } from '../util/fs';
 import { generateIOSPackageJSON } from '../util/iosplugin';
 import { resolveNode } from '../util/node';
-import { checkPackageManager, generatePackageFile, checkPluginsForPackageSwift } from '../util/spm';
+import { generatePackageFile, checkPluginsForPackageSwift } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 
 import { getIOSPlugins, getMajoriOSVersion } from './common';
@@ -55,7 +55,7 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
 
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await checkPluginDependencies(plugins, platform, config.app.extConfig.cordova?.failOnUninstalledPlugins);
-  if ((await checkPackageManager(config)) === 'SPM') {
+  if ((await config.ios.packageManager) === 'SPM') {
     await generateCordovaPackageFiles(cordovaPlugins, config);
 
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
@@ -150,24 +150,15 @@ async function updatePodfile(
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
 
   const podPath = await config.ios.podPath;
-  // const useBundler = podPath.startsWith('bundle') && (await isInstalled('bundle'));
-  // const podCommandExists = await isInstalled('pod');
-  const useBundler = false
-  const podCommandExists = true
-  logger.info("updatePodfile")
-  if (useBundler || podCommandExists) {
-    if (useBundler) {
-      await runCommand('bundle', ['exec', 'pod', 'install', ...(deployment ? ['--deployment'] : [])], {
-        cwd: config.ios.nativeProjectDirAbs,
-      });
-    } else {
-      logger.info("run pod")
-      await runCommand(podPath, ['install', ...(deployment ? ['--deployment'] : [])], {
-        cwd: config.ios.nativeProjectDirAbs,
-      });
-    }
+  const useBundler = (await config.ios.packageManager) === 'bundler';
+  if (useBundler) {
+    await runCommand('bundle', ['exec', 'pod', 'install', ...(deployment ? ['--deployment'] : [])], {
+      cwd: config.ios.nativeProjectDirAbs,
+    });
   } else {
-    logger.warn('Skipping pod install because CocoaPods is not installed');
+    await runCommand(podPath, ['install', ...(deployment ? ['--deployment'] : [])], {
+      cwd: config.ios.nativeProjectDirAbs,
+    });
   }
 
   const isXcodebuildAvailable = await isInstalled('xcodebuild');
