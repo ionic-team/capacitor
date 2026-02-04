@@ -8,7 +8,7 @@ import { extract } from 'tar';
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
-import { getMajoriOSVersion } from '../ios/common';
+import { getMajorMinoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
 import { getPluginType, PluginType } from '../plugin';
@@ -97,7 +97,7 @@ export async function removeCocoapodsFiles(config: Config): Promise<void> {
 
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
-  const iosVersion = getMajoriOSVersion(config);
+  const iosVersion = getMajorMinoriOSVersion(config);
 
   let packageSwiftText = `// swift-tools-version: 5.9
 import PackageDescription
@@ -105,7 +105,7 @@ import PackageDescription
 // DO NOT MODIFY THIS FILE - managed by Capacitor CLI commands
 let package = Package(
     name: "CapApp-SPM",
-    platforms: [.iOS(.v${iosVersion})],
+    platforms: [.iOS(${iosVersion.includes('.') ? `"${iosVersion}"` : `.v${iosVersion}`})],
     products: [
         .library(
             name: "CapApp-SPM",
