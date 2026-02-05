@@ -6,7 +6,6 @@ import { promptForPlatformTarget, runTask } from '../common';
 import type { Config } from '../definitions';
 import type { RunCommandOptions } from '../tasks/run';
 import { runNativeRun, getPlatformTargets } from '../util/native-run';
-import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
 const debug = Debug('capacitor:ios:run');
@@ -22,12 +21,12 @@ export async function runIOS(
 
   const derivedDataPath = resolve(config.ios.platformDirAbs, 'DerivedData', target.id);
 
-  const packageManager = await checkPackageManager(config);
+  const packageManager = await config.ios.packageManager;
 
   let typeOfBuild: string;
   let projectName: string;
 
-  if (packageManager == 'Cocoapods') {
+  if (packageManager !== 'SPM') {
     typeOfBuild = '-workspace';
     projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs);
   } else {
