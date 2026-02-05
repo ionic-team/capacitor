@@ -28,13 +28,13 @@ export async function run(): Promise<void> {
 }
 
 async function getPackageManager(config: Config, packageManager: any): Promise<PackageManager> {
-  if (packageManager === 'cocoapods') {
-    if ((await config.ios.packageManager) === 'bundler') {
-      return 'bundler';
-    }
-    return 'Cocoapods';
+  if (packageManager === 'SPM') {
+    return 'SPM';
   }
-  return 'SPM';
+  if ((await config.ios.packageManager) === 'bundler') {
+    return 'bundler';
+  }
+  return 'Cocoapods';
 }
 
 export function runProgram(config: Config): void {
