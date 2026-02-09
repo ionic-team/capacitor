@@ -54,8 +54,10 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await checkPluginDependencies(plugins, platform, config.app.extConfig.cordova?.failOnUninstalledPlugins);
   if ((await config.ios.packageManager) === 'SPM') {
-    await generateCordovaPackageFiles(cordovaPlugins, config);
-
+    if (enableCordova) {
+      await generateCordovaPackageFiles(cordovaPlugins, config);
+    }
+    
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
 
     await generatePackageFile(config, validSPMPackages.concat(cordovaPlugins));

@@ -5,6 +5,7 @@ import type { PlistObject } from 'plist';
 import { build, parse } from 'plist';
 import { extract } from 'tar';
 
+import { getCordovaPlugins } from '../cordova';
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
@@ -98,6 +99,8 @@ export async function removeCocoapodsFiles(config: Config): Promise<void> {
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
+  const cordovaPlugins = await getCordovaPlugins(config, 'ios');
+  const enableCordova = cordovaPlugins.length > 0;
 
   let packageSwiftText = `// swift-tools-version: 5.9
 import PackageDescription
@@ -129,9 +132,12 @@ let package = Package(
         .target(
             name: "CapApp-SPM",
             dependencies: [
-                .product(name: "Capacitor", package: "capacitor-swift-pm"),
-                .product(name: "Cordova", package: "capacitor-swift-pm")`;
+                .product(name: "Capacitor", package: "capacitor-swift-pm"),`;
 
+  if (enableCordova) {
+    packageSwiftText += `                .product(name: "Cordova", package: "capacitor-swift-pm")`;
+  }
+  
   for (const plugin of plugins) {
     packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
   }
