@@ -1,7 +1,11 @@
 package com.getcapacitor.plugin;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -12,6 +16,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.webkit.WebViewCompat;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -75,6 +80,7 @@ public class SystemBars extends Plugin {
     @Override
     protected void handleOnConfigurationChanged(Configuration newConfig) {
         super.handleOnConfigurationChanged(newConfig);
+
         setStyle(currentStyle, "");
     }
 
@@ -145,6 +151,9 @@ public class SystemBars extends Plugin {
 
     private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
         Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+        if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
+            return Insets.of(safeArea.left, safeArea.top, safeArea.right, 0);
+        }
         return Insets.of(safeArea.left, safeArea.top, safeArea.right, safeArea.bottom);
     }
 
@@ -162,21 +171,25 @@ public class SystemBars extends Plugin {
     private void initWindowInsetsListener() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && insetHandlingEnabled) {
             ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
+                boolean hasBrokenWebViewVersion = getWebViewMajorVersion() <= 139;
+
                 if (hasViewportCover) {
                     Insets safeAreaInsets = calcSafeAreaInsets(insets);
-                    boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
-
-                    if (keyboardVisible) {
-                        safeAreaInsets = Insets.of(safeAreaInsets.left, safeAreaInsets.top, safeAreaInsets.right, 0);
-
-                        Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
-                        setViewMargins(v, Insets.of(0, 0, 0, imeInsets.bottom));
-                    } else {
-                        setViewMargins(v, Insets.NONE);
-                    }
-
                     injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-                    return WindowInsetsCompat.CONSUMED;
+                }
+
+                if (hasBrokenWebViewVersion) {
+                    if (hasViewportCover && v.hasWindowFocus() && v.isShown()) {
+                        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+                        if (keyboardVisible) {
+                            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
+                            setViewMargins(v, Insets.of(0, 0, 0, imeInsets.bottom));
+                        } else {
+                            setViewMargins(v, Insets.NONE);
+                        }
+
+                        return WindowInsetsCompat.CONSUMED;
+                    }
                 }
 
                 return insets;
@@ -241,6 +254,8 @@ public class SystemBars extends Plugin {
         if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
             windowInsetsControllerCompat.setAppearanceLightNavigationBars(!style.equals(STYLE_DARK));
         }
+
+        getActivity().getWindow().getDecorView().setBackgroundColor(getThemeColor(getContext(), android.R.attr.windowBackground));
     }
 
     private void setHidden(boolean hide, String bar) {
@@ -271,5 +286,23 @@ public class SystemBars extends Plugin {
             return STYLE_LIGHT;
         }
         return STYLE_DARK;
+    }
+
+    public int getThemeColor(Context context, int attrRes) {
+        TypedValue typedValue = new TypedValue();
+
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(attrRes, typedValue, true);
+        return typedValue.data;
+    }
+
+    private Integer getWebViewMajorVersion() {
+        PackageInfo info = WebViewCompat.getCurrentWebViewPackage(getContext());
+        if (info != null && info.versionName != null) {
+            String[] versionSegments = info.versionName.split("\\.");
+            return Integer.valueOf(versionSegments[0]);
+        }
+
+        return 0;
     }
 }
