@@ -228,6 +228,25 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
     }
 
     #endif
+    open func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        guard let bridge = bridge else {
+            completionHandler(.rejectProtectionSpace, nil)
+            return
+        }
+
+        for pluginObject in bridge.plugins {
+            let plugin = pluginObject.value
+            let selector = NSSelectorFromString("handleWKWebViewURLAuthenticationChallenge:completionHandler:")
+            if plugin.responds(to: selector) {
+                if plugin.handleWKWebViewURLAuthenticationChallenge(challenge, completionHandler: completionHandler) {
+                    return
+                }
+            }
+        }
+
+        completionHandler(.rejectProtectionSpace, nil)
+        return
+    }
 
     // MARK: - WKScriptMessageHandler
 
