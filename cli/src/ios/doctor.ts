@@ -4,7 +4,7 @@ import { fatal } from '../errors';
 import { logSuccess } from '../log';
 import { isInstalled } from '../util/subprocess';
 
-import { checkBundler, checkCocoaPods } from './common';
+import { getCommonChecks } from './common';
 
 export async function doctorIOS(config: Config): Promise<void> {
   // DOCTOR ideas for iOS:
@@ -19,7 +19,7 @@ export async function doctorIOS(config: Config): Promise<void> {
   // check online database of common errors
   // check if www folder is empty (index.html does not exist)
   try {
-    await check([() => checkBundler(config) || checkCocoaPods(config), () => checkWebDir(config), checkXcode]);
+    await check([() => checkWebDir(config), checkXcode, ...(await getCommonChecks(config))]);
     logSuccess('iOS looking great! 👌');
   } catch (e: any) {
     fatal(e.stack ?? e);

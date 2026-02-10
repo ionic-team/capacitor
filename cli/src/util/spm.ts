@@ -12,13 +12,18 @@ import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
 import { getPluginType, PluginType } from '../plugin';
-import { runCommand, isInstalled } from '../util/subprocess';
+import { runCommand } from '../util/subprocess';
 
 export interface SwiftPlugin {
   name: string;
   path: string;
 }
 
+/**
+ * @deprecated use config.ios.packageManager
+ * @param config
+ * @returns 'Cocoapods' | 'SPM'
+ */
 export async function checkPackageManager(config: Config): Promise<'Cocoapods' | 'SPM'> {
   const iosDirectory = config.ios.nativeProjectDirAbs;
   if (existsSync(resolve(iosDirectory, 'CapApp-SPM'))) {
@@ -144,25 +149,19 @@ let package = Package(
 export async function runCocoapodsDeintegrate(config: Config): Promise<void> {
   const podPath = await config.ios.podPath;
   const projectFileName = config.ios.nativeXcodeProjDirAbs;
-  const useBundler = podPath.startsWith('bundle') && (await isInstalled('bundle'));
-  const podCommandExists = await isInstalled('pod');
-
-  if (useBundler) logger.info('Found bundler, using it to run CocoaPods.');
+  const useBundler = (await config.ios.packageManager) === 'bundler';
 
   logger.info('Running pod deintegrate on project ' + projectFileName);
 
-  if (useBundler || podCommandExists) {
-    if (useBundler) {
-      await runCommand('bundle', ['exec', 'pod', 'deintegrate', projectFileName], {
-        cwd: config.ios.nativeProjectDirAbs,
-      });
-    } else {
-      await runCommand(podPath, ['deintegrate', projectFileName], {
-        cwd: config.ios.nativeProjectDirAbs,
-      });
-    }
+  if (useBundler) {
+    logger.info('Found bundler, using it to run CocoaPods.');
+    await runCommand('bundle', ['exec', 'pod', 'deintegrate', projectFileName], {
+      cwd: config.ios.nativeProjectDirAbs,
+    });
   } else {
-    logger.warn('Skipping pod deintegrate because CocoaPods is not installed - migration will be incomplete');
+    await runCommand(podPath, ['deintegrate', projectFileName], {
+      cwd: config.ios.nativeProjectDirAbs,
+    });
   }
 }
 
