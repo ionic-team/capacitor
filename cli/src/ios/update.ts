@@ -7,7 +7,7 @@ import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps,
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
-import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
+import { PluginType, getPlatformElement, getPluginType, getPlugins, printPlugins } from '../plugin';
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import {
@@ -83,7 +83,7 @@ async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Con
 async function generateCordovaPackageFile(p: Plugin, config: Config) {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
-  await logCordovaManualSteps(cordovaPlugins, config, platform);
+  const headerFiles = getPlatformElement(p, platform, 'header-file');
   let headersText = '';
   if (headerFiles.length > 0) {
     headersText = `,
