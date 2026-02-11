@@ -5,8 +5,8 @@ import type { PlistObject } from 'plist';
 import { build, parse } from 'plist';
 import { extract } from 'tar';
 
-import { getCordovaPlugins } from '../cordova';
 import { getCapacitorPackageVersion } from '../common';
+import { getCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
@@ -137,7 +137,7 @@ let package = Package(
   if (enableCordova) {
     packageSwiftText += `                .product(name: "Cordova", package: "capacitor-swift-pm")`;
   }
-  
+
   for (const plugin of plugins) {
     packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
   }
