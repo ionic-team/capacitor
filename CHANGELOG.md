@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.5.0](https://github.com/ionic-team/capacitor/compare/7.4.5...7.5.0) (2026-02-11)
+
+### Bug Fixes
+
+- **android:** AGP 9.0 no longer supports `proguard-android.txt` ([#8315](https://github.com/ionic-team/capacitor/issues/8315)) ([d716e41](https://github.com/ionic-team/capacitor/commit/d716e41312dd8f6884d89bd20c2d829a255ed7d7))
+- **cli:** Update tar package ([#8311](https://github.com/ionic-team/capacitor/issues/8311)) ([#8313](https://github.com/ionic-team/capacitor/issues/8313)) ([f62bf77](https://github.com/ionic-team/capacitor/commit/f62bf777c776e361871fdcf0950ba96eaa4da227))
+- **cookies:** only send expires param on web if a date is set ([259202b](https://github.com/ionic-team/capacitor/commit/259202bd19c8a7859da3d921ff9b0fd419f787af))
+
+### Features
+
+- **cli:** Add packageManager to iOS config ([#8321](https://github.com/ionic-team/capacitor/issues/8321)) ([#8332](https://github.com/ionic-team/capacitor/issues/8332)) ([521d163](https://github.com/ionic-team/capacitor/commit/521d163e95a4e186459e024cbbdca5da40355b97))
+
 ## [7.4.5](https://github.com/ionic-team/capacitor/compare/7.4.4...7.4.5) (2026-01-13)
 
 ### Bug Fixes

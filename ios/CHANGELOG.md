@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.5.0](https://github.com/ionic-team/capacitor/compare/7.4.5...7.5.0) (2026-02-11)
+
+**Note:** Version bump only for package @capacitor/ios
+
 ## [7.4.5](https://github.com/ionic-team/capacitor/compare/7.4.4...7.4.5) (2026-01-13)
 
 **Note:** Version bump only for package @capacitor/ios

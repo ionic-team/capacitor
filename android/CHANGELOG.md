@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.5.0](https://github.com/ionic-team/capacitor/compare/7.4.5...7.5.0) (2026-02-11)
+
+### Bug Fixes
+
+- **android:** AGP 9.0 no longer supports `proguard-android.txt` ([#8315](https://github.com/ionic-team/capacitor/issues/8315)) ([d716e41](https://github.com/ionic-team/capacitor/commit/d716e41312dd8f6884d89bd20c2d829a255ed7d7))
+
 ## [7.4.5](https://github.com/ionic-team/capacitor/compare/7.4.4...7.4.5) (2026-01-13)
 
 **Note:** Version bump only for package @capacitor/android
