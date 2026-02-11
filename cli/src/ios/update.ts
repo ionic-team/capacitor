@@ -61,7 +61,7 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
 
     await generatePackageFile(config, validSPMPackages.concat(cordovaPlugins));
-  } else {
+
     if (enableCordova) {
       await generateCordovaPodspecs(cordovaPlugins, config);
     }
@@ -83,12 +83,12 @@ async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Con
 async function generateCordovaPackageFile(p: Plugin, config: Config) {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
-  //await logCordovaManualSteps(cordovaPlugins, config, platform);
-  const headersText = '';
-  // if (headerFiles.length > 0) {
-  //   headersText = `,
-  //           publicHeadersPath: "."`;
-  // }
+  await logCordovaManualSteps(cordovaPlugins, config, platform);
+  let headersText = '';
+  if (headerFiles.length > 0) {
+    headersText = `,
+            publicHeadersPath: "."`;
+  }
 
   const content = `// swift-tools-version: 5.9
 
