@@ -31,7 +31,8 @@ public class BridgeActivity extends AppCompatActivity {
             return;
         }
 
-        PluginManager loader = new PluginManager(getAssets());
+        // TODO: Undo this
+        PluginLoader loader = new PluginLoader(getAssets());
 
         try {
             bridgeBuilder.addPlugins(loader.loadPluginClasses());

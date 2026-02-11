@@ -79,6 +79,9 @@ import WebKit
     func registerPluginType(_ pluginType: CAPPlugin.Type)
     func registerPluginInstance(_ pluginInstance: CAPPlugin)
 
+    // MARK: - Interceptors
+    func registerCallInterceptor(_ name: String, handler: @escaping ([String: Any]) -> Void)
+
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
