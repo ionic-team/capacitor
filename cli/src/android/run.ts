@@ -54,7 +54,7 @@ export async function runAndroid(
     config.android.appDir
   }/build/outputs/apk${runFlavor !== '' ? '/' + runFlavor : ''}/debug`;
 
-  const apkName = parseApkNameFromFlavor(runFlavor);
+  const apkName = await parseApkNameFromFlavor(runFlavor, pathToApk);
   const apkPath = resolve(pathToApk, apkName);
 
   const nativeRunArgs = ['android', '--app', apkPath, '--target', target.id];
