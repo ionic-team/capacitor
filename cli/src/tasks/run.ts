@@ -34,6 +34,7 @@ export interface RunCommandOptions {
   host?: string;
   port?: string;
   configuration?: string;
+  https?: boolean;
 }
 
 export async function runCommand(
@@ -92,7 +93,7 @@ export async function runCommand(
       }
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       if (options.liveReload) {
-        await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options);
+        await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options, false, options.https);
         if (platformName === config.android.name) {
           await await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, true);
         }
@@ -108,7 +109,7 @@ export async function runCommand(
           })
           .then(() => process.exit());
         logger.info(
-          `App running with live reload listing for: http://${options.host}:${options.port}. Press Ctrl+C to quit.`,
+          `App running with live reload listing for: ${options.https ? 'https' : 'http'}://${options.host}:${options.port}. Press Ctrl+C to quit.`,
         );
         await sleepForever();
       }
