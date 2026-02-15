@@ -747,6 +747,7 @@ const initBridge = (w: any): void => {
                   .nativePromise('CapacitorHttp', 'request', {
                     url: this._url,
                     method: this._method,
+                    responseType: this.responseType,
                     data: data !== null ? data : undefined,
                     headers: {
                       ...headers,
