@@ -136,10 +136,12 @@ async function updatePodfile(config: Config, plugins: Plugin[], deployment: bool
     await runCommand('bundle', ['exec', 'pod', 'install', ...(deployment ? ['--deployment'] : [])], {
       cwd: config.ios.nativeProjectDirAbs,
     });
-  } else {
+  } else if (await isInstalled('pod')) {
     await runCommand(podPath, ['install', ...(deployment ? ['--deployment'] : [])], {
       cwd: config.ios.nativeProjectDirAbs,
     });
+  } else {
+    logger.warn('Skipping pod install because CocoaPods is not installed');
   }
 
   const isXcodebuildAvailable = await isInstalled('xcodebuild');
