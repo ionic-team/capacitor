@@ -29,7 +29,7 @@ extern NSString * _Nonnull const CAPInstanceDescriptorDefaultHostname NS_SWIFT_U
 NS_SWIFT_NAME(InstanceDescriptor)
 @interface CAPInstanceDescriptor : NSObject
 /**
- @brief A value to append to the @c User-Agent string. Ignored if @c overridenUserAgentString is set.
+ @brief A value to append to the @c User-Agent string. Ignored if @c overriddenUserAgentString is set.
  @discussion Set by @c appendUserAgent in the configuration file.
  */
 @property (nonatomic, copy, nullable) NSString *appendedUserAgentString;
@@ -37,7 +37,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @brief A value that will completely replace the @c User-Agent string. Overrides @c appendedUserAgentString.
  @discussion Set by @c overrideUserAgent in the configuration file.
  */
-@property (nonatomic, copy, nullable) NSString *overridenUserAgentString;
+@property (nonatomic, copy, nullable) NSString *overriddenUserAgentString;
+/**
+ @brief Deprecated, misspelled alias for @c overriddenUserAgentString.
+ */
+@property (nonatomic, copy, nullable) NSString *overridenUserAgentString __attribute__((deprecated("Use overriddenUserAgentString instead")));
 /**
  @brief The background color to set on the web view where content is not visible.
  @discussion Set by @c backgroundColor in the configuration file.
@@ -120,7 +124,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nonnull) NSURL *appLocation;
 /**
- @brief The path (relative to @c appLocation) which Capacitor will use for the inital URL at launch.
+ @brief The path (relative to @c appLocation) which Capacitor will use for the initial URL at launch.
  @discussion Defaults to nil, in which case Capacitor will attempt to load @c index.html.
  */
 @property (nonatomic, copy, nullable) NSString *appStartPath;
@@ -135,7 +139,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *preferredContentMode;
 /**
- @brief The parser used to load the cofiguration for Cordova plugins.
+ @brief The parser used to load the configuration for Cordova plugins.
  */
 @property (nonatomic, copy, nonnull) CDVConfigParser *cordovaConfiguration;
 /**
