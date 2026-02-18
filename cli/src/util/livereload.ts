@@ -112,11 +112,7 @@ class CapLiveReload {
     return !all.length ? loopback(family) : all[0];
   }
 
-  async editCapConfigForLiveReload(
-    config: Config,
-    platformName: string,
-    options: RunCommandOptions,
-  ): Promise<void> {
+  async editCapConfigForLiveReload(config: Config, platformName: string, options: RunCommandOptions): Promise<void> {
     const platformAbsPath =
       platformName == config.ios.name
         ? config.ios.nativeTargetDirAbs
