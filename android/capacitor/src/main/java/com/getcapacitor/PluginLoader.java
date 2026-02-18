@@ -10,11 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PluginManager {
+// TODO: Undo this rename
+public class PluginLoader {
 
     private final AssetManager assetManager;
 
-    public PluginManager(AssetManager assetManager) {
+    public PluginLoader(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
 
