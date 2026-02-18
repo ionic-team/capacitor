@@ -112,40 +112,10 @@ class CapLiveReload {
     return !all.length ? loopback(family) : all[0];
   }
 
-  // TODO remove on next major as it's unused
-  async editExtConfigForLiveReload(
-    config: Config,
-    platformName: string,
-    options: RunCommandOptions,
-    rootConfigChange = false,
-  ): Promise<any> {
-    const platformAbsPath =
-      platformName == config.ios.name
-        ? config.ios.nativeTargetDirAbs
-        : platformName == config.android.name
-          ? config.android.assetsDirAbs
-          : null;
-    if (platformAbsPath == null) throw new Error('Platform not found.');
-    const capConfigPath = rootConfigChange
-      ? config.app.extConfigFilePath
-      : join(platformAbsPath, 'capacitor.config.json');
-
-    const configJson = { ...config.app.extConfig };
-    this.configJsonToRevertTo.json = JSON.stringify(configJson, null, 2);
-    this.configJsonToRevertTo.platformPath = capConfigPath;
-    const url = `http://${options.host}:${options.port}`;
-    configJson.server = {
-      url,
-    };
-    return configJson;
-  }
-
-  // TODO remove rootConfigChange param on next major as it's unused
   async editCapConfigForLiveReload(
     config: Config,
     platformName: string,
     options: RunCommandOptions,
-    rootConfigChange = false,
   ): Promise<void> {
     const platformAbsPath =
       platformName == config.ios.name
@@ -154,9 +124,7 @@ class CapLiveReload {
           ? config.android.assetsDirAbs
           : null;
     if (platformAbsPath == null) throw new Error('Platform not found.');
-    const capConfigPath = rootConfigChange
-      ? config.app.extConfigFilePath
-      : join(platformAbsPath, 'capacitor.config.json');
+    const capConfigPath = join(platformAbsPath, 'capacitor.config.json');
 
     const configJson = readJSONSync(capConfigPath);
     this.configJsonToRevertTo.json = JSON.stringify(configJson, null, 2);
