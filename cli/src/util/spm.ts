@@ -98,8 +98,11 @@ export async function removeCocoapodsFiles(config: Config): Promise<void> {
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
+  const packageTraits = config.app.extConfig.ios?.spm?.packageTraits ?? {};
+  const hasTraits = Object.keys(packageTraits).length > 0;
+  const swiftToolsVersion = hasTraits ? '6.1' : '5.9';
 
-  let packageSwiftText = `// swift-tools-version: 5.9
+  let packageSwiftText = `// swift-tools-version: ${swiftToolsVersion}
 import PackageDescription
 
 // DO NOT MODIFY THIS FILE - managed by Capacitor CLI commands
@@ -119,7 +122,9 @@ let package = Package(
       packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
     } else {
       const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
-      packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}")`;
+      const traits = packageTraits[plugin.id];
+      const traitsSuffix = traits?.length ? `, traits: [${traits.map((t) => `"${t}"`).join(', ')}]` : '';
+      packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}"${traitsSuffix})`;
     }
   }
 
