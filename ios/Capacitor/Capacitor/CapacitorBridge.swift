@@ -92,8 +92,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-
+    @available(*, deprecated, message: "obsolete")
     var tmpWindow: UIWindow?
+    @available(*, deprecated, message: "obsolete")
     static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
@@ -707,22 +708,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     @objc open func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
-        if viewControllerToPresent.modalPresentationStyle == .popover {
-            self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
-        } else {
-            self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
-            self.tmpWindow?.rootViewController = TmpViewController.init()
-            self.tmpWindow?.makeKeyAndVisible()
-            self.tmpWindow?.rootViewController?.present(viewControllerToPresent, animated: flag, completion: completion)
-        }
+        self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
     }
 
     @objc open func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
-        if self.tmpWindow == nil {
-            self.viewController?.dismiss(animated: flag, completion: completion)
-        } else {
-            self.tmpWindow?.rootViewController?.dismiss(animated: flag, completion: completion)
-            self.tmpWindow = nil
-        }
+        self.viewController?.dismiss(animated: flag, completion: completion)
     }
 }

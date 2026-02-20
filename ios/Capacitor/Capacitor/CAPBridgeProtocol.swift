@@ -84,7 +84,9 @@ import WebKit
 
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
+    @available(*, deprecated, message: "Use self?.bridge?.viewController?.present")
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
+    @available(*, deprecated, message: "Use self?.bridge?.viewController?.dismiss")
     func dismissVC(animated flag: Bool, completion: (() -> Void)?)
 }
 
