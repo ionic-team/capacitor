@@ -515,7 +515,7 @@ export interface CapacitorConfig {
        * The key is the plugin ID (e.g. `@capacitor-firebase/analytics`)
        * and the value is an array of trait names.
        *
-       * @since 8.1.0
+       * @since 8.2.0
        */
       packageTraits?: { [pluginId: string]: string[] };
     };
