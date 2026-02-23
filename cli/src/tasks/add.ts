@@ -1,11 +1,8 @@
-import { pathExists } from '@ionic/utils-fs';
 import { prettyPath } from '@ionic/utils-terminal';
+import { pathExists } from 'fs-extra';
 
 import { addAndroid, createLocalProperties } from '../android/add';
-import {
-  editProjectSettingsAndroid,
-  checkAndroidPackage,
-} from '../android/common';
+import { editProjectSettingsAndroid, checkAndroidPackage } from '../android/common';
 import c from '../colors';
 import {
   getKnownPlatforms,
@@ -25,29 +22,16 @@ import type { CheckFunction } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
-import {
-  editProjectSettingsIOS,
-  checkBundler,
-  checkCocoaPods,
-  checkIOSPackage,
-} from '../ios/common';
+import { editProjectSettingsIOS, checkIOSPackage, getCommonChecks } from '../ios/common';
 import { logger, logSuccess, output } from '../log';
 
 import { sync } from './sync';
 
-export async function addCommand(
-  config: Config,
-  selectedPlatformName: string,
-): Promise<void> {
+export async function addCommand(config: Config, selectedPlatformName: string): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(
-        config,
-        selectedPlatformName,
-        platformDir,
-        'capacitor:add',
-      );
+      await runPlatformHook(config, selectedPlatformName, platformDir, 'capacitor:add');
     } else {
       let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
 
@@ -78,10 +62,7 @@ export async function addCommand(
       return;
     }
 
-    const existingPlatformDir = await getProjectPlatformDirectory(
-      config,
-      platformName,
-    );
+    const existingPlatformDir = await getProjectPlatformDirectory(config, platformName);
 
     if (existingPlatformDir) {
       fatal(
@@ -89,18 +70,12 @@ export async function addCommand(
           `To re-add this platform, first remove ${c.strong(
             prettyPath(existingPlatformDir),
           )}, then run this command again.\n` +
-          `${c.strong(
-            'WARNING',
-          )}: Your native project will be completely removed.`,
+          `${c.strong('WARNING')}: Your native project will be completely removed.`,
       );
     }
 
     try {
-      await check([
-        () => checkPackage(),
-        () => checkAppConfig(config),
-        ...addChecks(config, platformName),
-      ]);
+      await check([() => checkPackage(), () => checkAppConfig(config), ...(await getAddChecks(config, platformName))]);
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
@@ -112,11 +87,7 @@ export async function addCommand(
           });
         }
       } else {
-        logger.warn(
-          `${c.success(c.strong('sync'))} could not run--missing ${c.strong(
-            config.app.webDir,
-          )} directory.`,
-        );
+        logger.warn(`${c.success(c.strong('sync'))} could not run--missing ${c.strong(config.app.webDir)} directory.`);
       }
 
       printNextSteps(platformName);
@@ -139,12 +110,9 @@ function printNextSteps(platformName: string) {
   );
 }
 
-function addChecks(config: Config, platformName: string): CheckFunction[] {
+async function getAddChecks(config: Config, platformName: string): Promise<CheckFunction[]> {
   if (platformName === config.ios.name) {
-    return [
-      () => checkIOSPackage(config),
-      () => checkBundler(config) || checkCocoaPods(config),
-    ];
+    return [() => checkIOSPackage(config), ...(await getCommonChecks(config))];
   } else if (platformName === config.android.name) {
     return [() => checkAndroidPackage(config)];
   } else if (platformName === config.web.name) {

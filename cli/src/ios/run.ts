@@ -6,7 +6,6 @@ import { promptForPlatformTarget, runTask } from '../common';
 import type { Config } from '../definitions';
 import type { RunCommandOptions } from '../tasks/run';
 import { runNativeRun, getPlatformTargets } from '../util/native-run';
-import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
 const debug = Debug('capacitor:ios:run');
@@ -15,30 +14,30 @@ export async function runIOS(
   config: Config,
   {
     target: selectedTarget,
+    targetName: selectedTargetName,
+    targetNameSdkVersion: selectedTargetSdkVersion,
     scheme: selectedScheme,
     configuration: selectedConfiguration,
   }: RunCommandOptions,
 ): Promise<void> {
   const target = await promptForPlatformTarget(
     await getPlatformTargets('ios'),
-    selectedTarget,
+    selectedTarget ?? selectedTargetName,
+    selectedTargetSdkVersion,
+    selectedTargetName !== undefined,
   );
 
   const runScheme = selectedScheme || config.ios.scheme;
   const configuration = selectedConfiguration || 'Debug';
 
-  const derivedDataPath = resolve(
-    config.ios.platformDirAbs,
-    'DerivedData',
-    target.id,
-  );
+  const derivedDataPath = resolve(config.ios.platformDirAbs, 'DerivedData', target.id);
 
-  const packageManager = await checkPackageManager(config);
+  const packageManager = await config.ios.packageManager;
 
   let typeOfBuild: string;
   let projectName: string;
 
-  if (packageManager == 'Cocoapods') {
+  if (packageManager !== 'SPM') {
     typeOfBuild = '-workspace';
     projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs);
   } else {
@@ -71,9 +70,7 @@ export async function runIOS(
   const appPath = resolve(
     derivedDataPath,
     'Build/Products',
-    target.virtual
-      ? `${configuration}-iphonesimulator`
-      : `${configuration}-iphoneos`,
+    target.virtual ? `${configuration}-iphonesimulator` : `${configuration}-iphoneos`,
     appName,
   );
 
@@ -81,8 +78,5 @@ export async function runIOS(
 
   debug('Invoking native-run with args: %O', nativeRunArgs);
 
-  await runTask(
-    `Deploying ${c.strong(appName)} to ${c.input(target.id)}`,
-    async () => runNativeRun(nativeRunArgs),
-  );
+  await runTask(`Deploying ${c.strong(appName)} to ${c.input(target.id)}`, async () => runNativeRun(nativeRunArgs));
 }

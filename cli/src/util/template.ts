@@ -1,7 +1,7 @@
-import { mkdirp } from '@ionic/utils-fs';
-import tar from 'tar';
+import { mkdirp } from 'fs-extra';
+import { extract } from 'tar';
 
 export async function extractTemplate(src: string, dir: string): Promise<void> {
   await mkdirp(dir);
-  await tar.extract({ file: src, cwd: dir });
+  await extract({ file: src, cwd: dir });
 }

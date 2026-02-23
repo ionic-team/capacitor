@@ -1,11 +1,4 @@
-import {
-  copy,
-  remove,
-  mkdirp,
-  readFile,
-  pathExists,
-  writeFile,
-} from '@ionic/utils-fs';
+import { copy, remove, mkdirp, readFile, pathExists, writeFile } from 'fs-extra';
 import { join, resolve } from 'path';
 
 import { checkCapacitorPlatform } from '../common';
@@ -15,27 +8,19 @@ import { PluginType, getPluginPlatform } from '../plugin';
 import type { Plugin } from '../plugin';
 import { convertToUnixPath } from '../util/fs';
 
-export async function checkAndroidPackage(
-  config: Config,
-): Promise<string | null> {
+export async function checkAndroidPackage(config: Config): Promise<string | null> {
   return checkCapacitorPlatform(config, 'android');
 }
 
-export async function getAndroidPlugins(
-  allPlugins: Plugin[],
-): Promise<Plugin[]> {
-  const resolved = await Promise.all(
-    allPlugins.map(async plugin => await resolvePlugin(plugin)),
-  );
+export async function getAndroidPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
+  const resolved = await Promise.all(allPlugins.map(async (plugin) => await resolvePlugin(plugin)));
   return resolved.filter((plugin): plugin is Plugin => !!plugin);
 }
 
 export async function resolvePlugin(plugin: Plugin): Promise<Plugin | null> {
   const platform = 'android';
   if (plugin.manifest?.android) {
-    let pluginFilesPath = plugin.manifest.android.src
-      ? plugin.manifest.android.src
-      : platform;
+    let pluginFilesPath = plugin.manifest.android.src ? plugin.manifest.android.src : platform;
     const absolutePath = join(plugin.rootPath, pluginFilesPath, plugin.id);
     // Android folder shouldn't have subfolders, but they used to, so search for them for compatibility reasons
     if (await pathExists(absolutePath)) {
@@ -50,10 +35,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin | null> {
       type: PluginType.Cordova,
       path: 'src/' + platform,
     };
-    if (
-      getIncompatibleCordovaPlugins(platform).includes(plugin.id) ||
-      !getPluginPlatform(plugin, platform)
-    ) {
+    if (getIncompatibleCordovaPlugins(platform).includes(plugin.id) || !getPluginPlatform(plugin, platform)) {
       plugin.android.type = PluginType.Incompatible;
     }
   } else {
@@ -67,9 +49,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin | null> {
  * This is a little trickier for Android because the appId becomes
  * the package name.
  */
-export async function editProjectSettingsAndroid(
-  config: Config,
-): Promise<void> {
+export async function editProjectSettingsAndroid(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName
     .replace(/&/g, '&amp;')
@@ -81,27 +61,19 @@ export async function editProjectSettingsAndroid(
 
   const domainPath = appId.split('.').join('/');
   // Make the package source path to the new plugin Java file
-  const newJavaPath = resolve(
-    config.android.srcMainDirAbs,
-    `java/${domainPath}`,
-  );
+  const newJavaPath = resolve(config.android.srcMainDirAbs, `java/${domainPath}`);
 
   if (!(await pathExists(newJavaPath))) {
     await mkdirp(newJavaPath);
   }
 
   await copy(
-    resolve(
-      config.android.srcMainDirAbs,
-      'java/com/getcapacitor/myapp/MainActivity.java',
-    ),
+    resolve(config.android.srcMainDirAbs, 'java/com/getcapacitor/myapp/MainActivity.java'),
     resolve(newJavaPath, 'MainActivity.java'),
   );
 
   if (appId.split('.')[1] !== 'getcapacitor') {
-    await remove(
-      resolve(config.android.srcMainDirAbs, 'java/com/getcapacitor'),
-    );
+    await remove(resolve(config.android.srcMainDirAbs, 'java/com/getcapacitor'));
   }
 
   // Remove our template 'com' folder if their ID doesn't have it
@@ -113,23 +85,14 @@ export async function editProjectSettingsAndroid(
   const activityPath = resolve(newJavaPath, 'MainActivity.java');
   let activityContent = await readFile(activityPath, { encoding: 'utf-8' });
 
-  activityContent = activityContent.replace(
-    /package ([^;]*)/,
-    `package ${appId}`,
-  );
+  activityContent = activityContent.replace(/package ([^;]*)/, `package ${appId}`);
   await writeFile(activityPath, activityContent, { encoding: 'utf-8' });
 
   // Update the applicationId in build.gradle
   let gradleContent = await readFile(buildGradlePath, { encoding: 'utf-8' });
-  gradleContent = gradleContent.replace(
-    /applicationId "[^"]+"/,
-    `applicationId "${appId}"`,
-  );
+  gradleContent = gradleContent.replace(/applicationId "[^"]+"/, `applicationId "${appId}"`);
   // Update the namespace in build.gradle
-  gradleContent = gradleContent.replace(
-    /namespace "[^"]+"/,
-    `namespace "${appId}"`,
-  );
+  gradleContent = gradleContent.replace(/namespace = "[^"]+"/, `namespace = "${appId}"`);
 
   await writeFile(buildGradlePath, gradleContent, { encoding: 'utf-8' });
 

@@ -53,6 +53,20 @@ internal class JSExport {
         }
     }
 
+    static func exportMiscFileJS(paths: [String], userContentController: WKUserContentController) {
+        for path in paths {
+            if let miscJSFilePath = Bundle.main.url(forResource: "public/\(path.replacingOccurrences(of: ".js", with: ""))", withExtension: "js") {
+                do {
+                    try self.injectFile(fileURL: miscJSFilePath, userContentController: userContentController)
+                } catch {
+                    CAPLog.print("WARNING: Unable to inject js from path \(miscJSFilePath)")
+                }
+            } else {
+                CAPLog.print("WARNING: Unable to inject js from path \(path)")
+            }
+        }
+    }
+
     /**
      Export the JS required to implement the given plugin.
      */
@@ -66,6 +80,9 @@ internal class JSExport {
                     var t = (p['\(plugin.jsName)'] = {});
                     t.addListener = function(eventName, callback) {
                     return w.Capacitor.addListener('\(plugin.jsName)', eventName, callback);
+                    }
+                    t.removeAllListeners = function() {
+                    return w.Capacitor.nativePromise('\(plugin.jsName)', 'removeAllListeners');
                     }
                     """)
 

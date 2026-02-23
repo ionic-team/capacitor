@@ -3,6 +3,7 @@ import type { CapacitorConfig, PluginsConfig } from './declarations';
 type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
 
 export type ExternalConfig = DeepReadonly<CapacitorConfig>;
+export type Writable<T> = T extends object ? { -readonly [K in keyof T]: Writable<T[K]> } : T;
 
 export const enum OS {
   Unknown = 'unknown',
@@ -10,6 +11,8 @@ export const enum OS {
   Windows = 'windows',
   Linux = 'linux',
 }
+
+export type PackageManager = 'Cocoapods' | 'bundler' | 'SPM';
 
 export interface PackageJson {
   readonly name: string;
@@ -62,12 +65,6 @@ export interface AppConfig {
   readonly extConfigName: string;
   readonly extConfigFilePath: string;
   readonly extConfig: ExternalConfig;
-  /**
-   * Whether to use a bundled web runtime instead of relying on a bundler/module
-   * loader. If you're not using something like rollup or webpack or dynamic ES
-   * module imports, set this to "true" and import "capacitor.js" manually.
-   */
-  readonly bundledWebRuntime?: boolean;
 }
 
 export interface AndroidConfig extends PlatformConfig {
@@ -107,11 +104,22 @@ export interface AndroidConfig extends PlatformConfig {
   };
 }
 
+export enum XcodeExportMethod {
+  AppStoreConnect = 'app-store-connect',
+  ReleaseTesting = 'release-testing',
+  Enterprise = 'enterprise',
+  Debugging = 'debugging',
+  DeveloperID = 'developer-id',
+  MacApplication = 'mac-application',
+  Validation = 'validation',
+}
+
 export interface IOSConfig extends PlatformConfig {
   readonly cordovaPluginsDir: string;
   readonly cordovaPluginsDirAbs: string;
   readonly minVersion: string;
   readonly podPath: Promise<string>;
+  readonly packageManager: Promise<PackageManager>;
   readonly scheme: string;
   readonly webDir: Promise<string>;
   readonly webDirAbs: Promise<string>;
@@ -123,6 +131,13 @@ export interface IOSConfig extends PlatformConfig {
   readonly nativeXcodeProjDirAbs: string;
   readonly nativeXcodeWorkspaceDir: Promise<string>;
   readonly nativeXcodeWorkspaceDirAbs: Promise<string>;
+  readonly buildOptions: {
+    teamId?: string;
+    exportMethod?: XcodeExportMethod;
+    xcodeSigningStyle?: 'automatic' | 'manual';
+    signingCertificate?: string;
+    provisioningProfile?: string;
+  };
 }
 
 export type WebConfig = PlatformConfig;

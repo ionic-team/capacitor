@@ -248,7 +248,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             while (keys.hasNext()) {
                 String key = keys.next();
                 Object d = object.get(key);
-                os.writeBytes(key);
+                os.writeBytes(URLEncoder.encode(key, "UTF-8"));
                 os.writeBytes("=");
                 os.writeBytes(URLEncoder.encode(d.toString(), "UTF-8"));
 
@@ -289,6 +289,8 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             os.write(Base64.getDecoder().decode(value));
+                        } else {
+                            os.write(android.util.Base64.decode(value, android.util.Base64.DEFAULT));
                         }
 
                         os.writeBytes(lineEnd);
@@ -440,12 +442,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
      * Builds and returns a locale string describing the device's current locale preferences.
      */
     private String buildDefaultAcceptLanguageProperty() {
-        Locale locale;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            locale = LocaleList.getDefault().get(0);
-        } else {
-            locale = Locale.getDefault();
-        }
+        Locale locale = LocaleList.getDefault().get(0);
         String result = "";
         String lang = locale.getLanguage();
         String country = locale.getCountry();

@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/ios",
-  "version": "6.1.0",
+  "version": "8.1.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -21,12 +21,11 @@
   ],
   "scripts": {
     "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova",
-    "xc:build:Capacitor": "cd Capacitor && xcodebuild -workspace Capacitor.xcworkspace -scheme Capacitor && cd ..",
-    "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd ..",
-    "xc:build:xcframework": "scripts/build.sh xcframework"
+    "xc:build:Capacitor": "cd Capacitor && xcodebuild clean test -workspace Capacitor.xcworkspace -scheme Capacitor -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.0.1' && cd ..",
+    "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd .."
   },
   "peerDependencies": {
-    "@capacitor/core": "^6.1.0"
+    "@capacitor/core": "^8.1.0"
   },
   "publishConfig": {
     "access": "public"

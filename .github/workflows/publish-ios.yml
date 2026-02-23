@@ -9,16 +9,16 @@ on:
 
 jobs:
   publish-ios:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_15.0.1.app
-      - uses: actions/setup-node@v4
+      - run: sudo xcode-select --switch /Applications/Xcode_26.0.app
+      - run: xcrun simctl list > /dev/null
+      - run: xcodebuild -downloadPlatform iOS
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18.x
-      - name: NPM ^9.5.0
-        run: npm i -g npm@^9.5.0 --registry=https://registry.npmjs.org
-      - uses: actions/checkout@v4
+          node-version: 22.x
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: 'main'

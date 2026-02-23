@@ -27,6 +27,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         #if DEBUG
         return true
         #else
+        // this is needed for SPM xcframework Capacitor.  Can eventually be removed when the SPM package moves to being source-based.
+        if let debugValue = Bundle.main.object(forInfoDictionaryKey: "CAPACITOR_DEBUG") as? String, debugValue == "true" {
+            return true
+        }
         return false
         #endif
     }
@@ -89,13 +93,16 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-
+    @available(*, deprecated, message: "obsolete")
     var tmpWindow: UIWindow?
+    @available(*, deprecated, message: "obsolete")
     static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
+    @available(*, deprecated, message: "`httpsInterceptorStartIdentifier` is no longer required. All proxied requests are handled via `httpInterceptorStartIdentifier` instead")
     public static let httpsInterceptorStartIdentifier = "/_capacitor_https_interceptor_"
+    public static let httpInterceptorUrlParam = "u"
     public static let defaultScheme = "capacitor"
 
     public private(set) var webViewAssetHandler: WebViewAssetHandler
@@ -117,6 +124,8 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // Whether to inject the Cordova files
     private var injectCordovaFiles = false
     private var cordovaParser: CDVConfigParser?
+    private var injectMiscFiles: [String] = []
+    private var canInjectJS: Bool = true
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
@@ -212,6 +221,8 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
         setupCordovaCompatibility()
+        exportMiscJS()
+        canInjectJS = false
         observers.append(NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
             self?.tmpWindow = nil
         })
@@ -241,6 +252,14 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         } catch {
             type(of: self).fatalError(error, error)
         }
+    }
+
+    /**
+     Export misc JavaScript to the webview
+     */
+    func exportMiscJS() {
+        JSExport.exportMiscFileJS(paths: injectMiscFiles, userContentController: webViewDelegationHandler.contentController)
+        injectMiscFiles.removeAll()
     }
 
     /**
@@ -277,13 +296,14 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func reset() {
         storedCalls.withLock { $0.removeAll() }
+        removeAllPluginListeners()
     }
 
     /**
      Register all plugins that have been declared
      */
     func registerPlugins() {
-        var pluginList: [AnyClass] = [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self]
+        var pluginList: [AnyClass] = [CAPHttpPlugin.self, CAPConsolePlugin.self, CAPWebViewPlugin.self, CAPCookiesPlugin.self, CAPSystemBarsPlugin.self]
 
         if autoRegisterPlugins {
             do {
@@ -386,7 +406,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     @objc public func releaseCall(withID: String) {
-        let _ = storedCalls.withLock { $0.removeValue(forKey: withID) }
+        _ = storedCalls.withLock { $0.removeValue(forKey: withID) }
     }
 
     // MARK: - Deprecated Versions
@@ -487,16 +507,16 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         dispatchQueue.async { [weak self] in
             // let startTime = CFAbsoluteTimeGetCurrent()
 
-            let pluginCall = CAPPluginCall(callbackId: call.callbackId,
+            let pluginCall = CAPPluginCall(callbackId: call.callbackId, methodName: call.method,
                                            options: JSTypes.coerceDictionaryToJSObject(call.options,
                                                                                        formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
-                                           success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
+                                           success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) in
                                             if let result = result {
                                                 self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.keepAlive ?? false)
                                             } else {
                                                 self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.keepAlive ?? false)
                                             }
-                                           }, error: {(error: CAPPluginCallError?) -> Void in
+                                           }, error: {(error: CAPPluginCallError?) in
                                             if let error = error {
                                                 self?.toJsError(error: JSResultError(call: call, callError: error))
                                             } else {
@@ -548,6 +568,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
+    func removeAllPluginListeners() {
+        for plugin in plugins.values {
+            plugin.perform(#selector(CAPPlugin.removeAllListeners(_:)), with: nil)
+        }
+    }
+
     /**
      Send a successful result to the JavaScript layer.
      */
@@ -587,6 +613,17 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     // MARK: - CAPBridgeProtocol: JavaScript Handling
+
+    /**
+     Inject JavaScript from an external file before the WebView loads.
+
+     `path` is relative to the public folder
+     */
+    public func injectScriptBeforeLoad(path: String) {
+        if canInjectJS {
+            injectMiscFiles.append(path)
+        }
+    }
 
     /**
      Eval JS for a specific plugin.
@@ -711,22 +748,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     @objc open func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
-        if viewControllerToPresent.modalPresentationStyle == .popover {
-            self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
-        } else {
-            self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
-            self.tmpWindow?.rootViewController = TmpViewController.init()
-            self.tmpWindow?.makeKeyAndVisible()
-            self.tmpWindow?.rootViewController?.present(viewControllerToPresent, animated: flag, completion: completion)
-        }
+        self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
     }
 
     @objc open func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
-        if self.tmpWindow == nil {
-            self.viewController?.dismiss(animated: flag, completion: completion)
-        } else {
-            self.tmpWindow?.rootViewController?.dismiss(animated: flag, completion: completion)
-            self.tmpWindow = nil
-        }
+        self.viewController?.dismiss(animated: flag, completion: completion)
     }
 }

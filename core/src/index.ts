@@ -10,17 +10,18 @@ export type {
   PluginResultError,
 } from './definitions';
 
-// Platforms Map
-export { CapacitorPlatforms, addPlatform, setPlatform } from './platforms';
-
 // Global APIs
 export { Capacitor, registerPlugin } from './global';
 
 // Base WebPlugin
-export { WebPlugin, WebPluginConfig, ListenerCallback } from './web-plugin';
+export { WebPlugin, ListenerCallback } from './web-plugin';
 
 // Core Plugins APIs
 export {
+  SystemBars,
+  SystemBarType,
+  SystemBarsStyle,
+  SystemBarsAnimation,
   CapacitorCookies,
   CapacitorHttp,
   WebView,
@@ -39,19 +40,9 @@ export type {
   HttpResponseType,
   WebViewPath,
   WebViewPlugin,
+  SystemBarsVisibilityOptions,
+  SystemBarsStyleOptions,
 } from './core-plugins';
 
 // Constants
 export { CapacitorException, ExceptionCode } from './util';
-
-// Legacy Global APIs
-export { Plugins, registerWebPlugin } from './global';
-
-// Legacy Type Definitions
-export type {
-  CallbackID,
-  CancellableCallback,
-  ISODateString,
-  PluginConfig,
-  PluginRegistry,
-} from './legacy/legacy-definitions';

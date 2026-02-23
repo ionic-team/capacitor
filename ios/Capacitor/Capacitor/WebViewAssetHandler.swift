@@ -1,5 +1,5 @@
 import Foundation
-import MobileCoreServices
+import UniformTypeIdentifiers
 
 @objc(CAPWebViewAssetHandler)
 // swiftlint:disable type_body_length
@@ -35,11 +35,6 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             return
         }
 
-        if url.path.starts(with: CapacitorBridge.httpsInterceptorStartIdentifier) {
-            handleCapacitorHttpRequest(urlSchemeTask, localUrl, true)
-            return
-        }
-
         if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
             startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
         } else {
@@ -63,8 +58,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             }
 
             if let rangeString = urlSchemeTask.request.value(forHTTPHeaderField: "Range"),
-               let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize,
-               isMediaExtension(pathExtension: url.pathExtension) {
+               let totalSize = try fileUrl.resourceValues(forKeys: [.fileSizeKey]).fileSize {
                 let fileHandle = try FileHandle(forReadingFrom: fileUrl)
                 let parts = rangeString.components(separatedBy: "=")
                 let streamParts = parts[1].components(separatedBy: "-")
@@ -112,12 +106,12 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     open func mimeTypeForExtension(pathExtension: String) -> String {
         if !pathExtension.isEmpty {
-            if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as NSString, nil)?.takeRetainedValue() {
-                if let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() {
-                    return mimetype as String
+            if let uti = UTType(filenameExtension: pathExtension) {
+                if let mimetype = uti.preferredMIMEType {
+                    return mimetype
                 }
             }
-            // TODO: Remove in the future if Apple fixes the issue
+            // TODO: Remove when deployment target is set to iOS 17
             if let mimeType = mimeTypes[pathExtension] {
                 return mimeType
             }
@@ -138,20 +132,12 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     func handleCapacitorHttpRequest(_ urlSchemeTask: WKURLSchemeTask, _ localUrl: URL, _ isHttpsRequest: Bool) {
         var urlRequest = urlSchemeTask.request
         guard let url = urlRequest.url else { return }
-        var targetUrl = url.absoluteString
-            .replacingOccurrences(of: CapacitorBridge.httpInterceptorStartIdentifier, with: "")
-            .replacingOccurrences(of: CapacitorBridge.httpsInterceptorStartIdentifier, with: "")
-        // Only replace first occurrence of the scheme
-        if let range = targetUrl.range(of: localUrl.scheme ?? InstanceDescriptorDefaults.scheme) {
-            targetUrl = targetUrl.replacingCharacters(in: range, with: isHttpsRequest ? "https" : "http")
-        }
 
-        // Only replace first occurrence of the hostname
-        if let range = targetUrl.range(of: (localUrl.host ?? InstanceDescriptorDefaults.hostname) + "/") {
-            targetUrl = targetUrl.replacingCharacters(in: range, with: "")
+        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        if let targetUrl = urlComponents?.queryItems?.first(where: { $0.name == CapacitorBridge.httpInterceptorUrlParam })?.value,
+           !targetUrl.isEmpty {
+            urlRequest.url = URL(string: targetUrl)
         }
-
-        urlRequest.url = URL(string: targetUrl.removingPercentEncoding ?? targetUrl)
 
         let urlSession = URLSession.shared
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in

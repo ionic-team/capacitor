@@ -1,9 +1,10 @@
-import { readFile, writeFile } from '@ionic/utils-fs';
 import { execSync } from 'child_process';
-import { resolve } from 'path';
+import { readFile, readFileSync, writeFile } from 'fs-extra';
+import { join, resolve } from 'path';
 
 import c from '../colors';
 import { checkCapacitorPlatform } from '../common';
+import type { CheckFunction } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import { OS } from '../definitions';
 import type { Config } from '../definitions';
@@ -25,6 +26,16 @@ function execBundler() {
   }
 }
 
+export async function getCommonChecks(config: Config): Promise<CheckFunction[]> {
+  const checks: CheckFunction[] = [];
+  if ((await config.ios.packageManager) === 'bundler') {
+    checks.push(() => checkBundler(config));
+  } else if ((await config.ios.packageManager) === 'Cocoapods') {
+    checks.push(() => checkCocoaPods(config));
+  }
+  return checks;
+}
+
 export async function checkBundler(config: Config): Promise<string | null> {
   if (config.cli.os === OS.Mac) {
     let bundlerResult = execBundler();
@@ -43,24 +54,17 @@ export async function checkBundler(config: Config): Promise<string | null> {
 }
 
 export async function checkCocoaPods(config: Config): Promise<string | null> {
-  if (
-    !(await isInstalled(await config.ios.podPath)) &&
-    config.cli.os === OS.Mac
-  ) {
+  if (!(await isInstalled(await config.ios.podPath)) && config.cli.os === OS.Mac) {
     return (
       `CocoaPods is not installed.\n` +
-      `See this install guide: ${c.strong(
-        'https://capacitorjs.com/docs/getting-started/environment-setup#homebrew',
-      )}`
+      `See this install guide: ${c.strong('https://capacitorjs.com/docs/getting-started/environment-setup#homebrew')}`
     );
   }
   return null;
 }
 
 export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
-  const resolved = await Promise.all(
-    allPlugins.map(async plugin => await resolvePlugin(plugin)),
-  );
+  const resolved = await Promise.all(allPlugins.map(async (plugin) => await resolvePlugin(plugin)));
   return resolved.filter((plugin): plugin is Plugin => !!plugin);
 }
 
@@ -78,10 +82,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin | null> {
       type: PluginType.Cordova,
       path: 'src/' + platform,
     };
-    if (
-      getIncompatibleCordovaPlugins(platform).includes(plugin.id) ||
-      !getPluginPlatform(plugin, platform)
-    ) {
+    if (getIncompatibleCordovaPlugins(platform).includes(plugin.id) || !getPluginPlatform(plugin, platform)) {
       plugin.ios.type = PluginType.Incompatible;
     }
   } else {
@@ -95,10 +96,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin | null> {
  */
 export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
-  const appName = config.app.appName
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  const appName = config.app.appName.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   const pbxPath = `${config.ios.nativeXcodeProjDirAbs}/project.pbxproj`;
   const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
@@ -111,11 +109,18 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   );
 
   let pbxContent = await readFile(pbxPath, { encoding: 'utf-8' });
-  pbxContent = pbxContent.replace(
-    /PRODUCT_BUNDLE_IDENTIFIER = ([^;]+)/g,
-    `PRODUCT_BUNDLE_IDENTIFIER = ${appId}`,
-  );
+  pbxContent = pbxContent.replace(/PRODUCT_BUNDLE_IDENTIFIER = ([^;]+)/g, `PRODUCT_BUNDLE_IDENTIFIER = ${appId}`);
 
   await writeFile(plistPath, plistContent, { encoding: 'utf-8' });
   await writeFile(pbxPath, pbxContent, { encoding: 'utf-8' });
+}
+
+export function getMajoriOSVersion(config: Config): string {
+  const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
+  const searchString = 'IPHONEOS_DEPLOYMENT_TARGET = ';
+  const iosVersion = pbx.substring(
+    pbx.indexOf(searchString) + searchString.length,
+    pbx.indexOf(searchString) + searchString.length + 2,
+  );
+  return iosVersion;
 }

@@ -24,12 +24,6 @@
 #import "CDVAvailability.h"
 #import <WebKit/WebKit.h>
 
-@interface UIView (org_apache_cordova_UIView_Extension)
-
-@property (nonatomic, weak) UIScrollView* scrollView;
-
-@end
-
 extern NSString* const CDVPageDidLoadNotification;
 extern NSString* const CDVPluginHandleOpenURLNotification;
 extern NSString* const CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification;
@@ -54,7 +48,7 @@ extern NSString* const CDVViewWillTransitionToSizeNotification;
 @interface CDVPlugin : NSObject {}
 
 - (instancetype)initWithWebViewEngine:(WKWebView *)theWebViewEngine;
-@property (nonatomic, weak) UIView* webView;
+@property (nonatomic, weak) WKWebView* webView;
 @property (nonatomic, weak) WKWebView * webViewEngine;
 @property (nonatomic, strong) NSString * className;
 
