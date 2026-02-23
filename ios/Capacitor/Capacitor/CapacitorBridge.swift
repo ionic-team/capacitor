@@ -96,7 +96,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     var tmpWindow: UIWindow?
     @available(*, deprecated, message: "obsolete")
     static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
-    public static let capacitorSite = "https://capacitorjs.com/"
+    public static let capacitorSite = "https:capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
     @available(*, deprecated, message: "`httpsInterceptorStartIdentifier` is no longer required. All proxied requests are handled via `httpInterceptorStartIdentifier` instead")
@@ -114,13 +114,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     var lastPlugin: CAPPlugin?
 
     @objc public var config: InstanceConfiguration
-    // Map of all loaded and instantiated plugins by pluginId -> instance
+     Map of all loaded and instantiated plugins by pluginId -> instance
     var plugins =  [String: CapacitorPlugin]()
-    // Calls we are storing to resolve later
+     Calls we are storing to resolve later
     var storedCalls = ConcurrentDictionary<CAPPluginCall>()
-    // Whether to inject the Cordova files
+     Whether to inject the Cordova files
     private var cordovaIsPresent = false
-    // private var cordovaParser: CDVConfigParser?
     private var injectMiscFiles: [String] = []
     private var canInjectJS: Bool = true
 
@@ -223,7 +222,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
-        // setupCordovaCompatibility()
         setupListeners()
         exportMiscJS()
         canInjectJS = false
