@@ -1574,15 +1574,7 @@ public class Bridge {
             WebView webView = this.fragment != null ? fragment.getView().findViewById(R.id.webview) : activity.findViewById(R.id.webview);
 
             // Bridge initialization
-            Bridge bridge = new Bridge(
-                activity,
-                serverPath,
-                fragment,
-                webView,
-                plugins,
-                pluginInstances,
-                config
-            );
+            Bridge bridge = new Bridge(activity, serverPath, fragment, webView, plugins, pluginInstances, config);
 
             if (webView instanceof CapacitorWebView capacitorWebView) {
                 capacitorWebView.setBridge(bridge);
