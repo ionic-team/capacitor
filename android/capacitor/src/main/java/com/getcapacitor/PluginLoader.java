@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-// TODO: Undo this rename
 public class PluginLoader {
 
     private final AssetManager assetManager;

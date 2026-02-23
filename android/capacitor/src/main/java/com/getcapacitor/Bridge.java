@@ -1581,9 +1581,6 @@ public class Bridge {
                 webView,
                 plugins,
                 pluginInstances,
-                //                cordovaInterface,
-                //                pluginManager,
-                //                preferences,
                 config
             );
 
@@ -1591,7 +1588,6 @@ public class Bridge {
                 capacitorWebView.setBridge(bridge);
             }
 
-            //            bridge.setCordovaWebView(mockWebView);
             bridge.setWebViewListeners(webViewListeners);
             bridge.setRouteProcessor(routeProcessor);
 

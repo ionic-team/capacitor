@@ -7,8 +7,6 @@ import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewFeature;
 import java.util.function.Function;
 
-//import org.apache.cordova.PluginManager;
-
 /**
  * MessageHandler handles messages from the WebView, dispatching them
  * to plugins.
