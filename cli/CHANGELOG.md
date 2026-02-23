@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/ionic-team/capacitor/compare/8.0.2...8.1.0) (2026-02-11)
+
+### Features
+
+- **cli:** Add packageManager to iOS config ([#8321](https://github.com/ionic-team/capacitor/issues/8321)) ([a125498](https://github.com/ionic-team/capacitor/commit/a1254983bbb9dcb273d93f3c5f639b792e516406))
+
+### Reverts
+
+- revert version bump from [#8319](https://github.com/ionic-team/capacitor/issues/8319) and [#8320](https://github.com/ionic-team/capacitor/issues/8320) ([a48ebb6](https://github.com/ionic-team/capacitor/commit/a48ebb622ea4ebe92927bf1756a4d8ac6012884b))
+
+## [8.0.2](https://github.com/ionic-team/capacitor/compare/8.0.1...8.0.2) (2026-01-27)
+
+### Bug Fixes
+
+- **cli:** Update tar package ([#8311](https://github.com/ionic-team/capacitor/issues/8311)) ([0969c5c](https://github.com/ionic-team/capacitor/commit/0969c5cd0b16cf23d2489a85a3b8fa1bee2ebf3b))
+
+## [8.0.1](https://github.com/ionic-team/capacitor/compare/8.0.0...8.0.1) (2026-01-13)
+
+### Bug Fixes
+
+- **cli:** Support wireless iOS devices in `cap run` ([#8301](https://github.com/ionic-team/capacitor/issues/8301)) ([dcb368c](https://github.com/ionic-team/capacitor/commit/dcb368c33555487f1b6f46a6d8e30736bdd78955))
+- **cli:** use latest native-run ([#8296](https://github.com/ionic-team/capacitor/issues/8296)) ([121d830](https://github.com/ionic-team/capacitor/commit/121d83013f39e25009121533a2c3ad86e428d6b2))
+
 # [8.0.0](https://github.com/ionic-team/capacitor/compare/8.0.0-beta.0...8.0.0) (2025-12-08)
 
 ### Bug Fixes

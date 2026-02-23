@@ -1,6 +1,8 @@
 # SystemBars
 
-The SystemBars API provides methods for configuring the style and visibility of the device System Bars / Status Bar.  This API differs from the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin in that it is only intended to support modern edge to edge use cases moving forward.  For legacy functionality, use the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin.
+The SystemBars API provides methods for configuring the style and visibility of the device System Bars / Status Bar. This plugin is bundled with `@capacitor/core`.
+
+This API differs from the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin in that it is only intended to support modern edge to edge use cases moving forward.  For legacy functionality, use the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin.
 
 | Feature | System Bars | Status Bar |
 | ------- | ----------- | ---------- |
@@ -37,7 +39,7 @@ To control this behavior, use the `insetsHandling` configuration setting.
 ## Example
 
 ```typescript
-import { SystemBars, SystemBarsStyle } from '@capacitor/core';
+import { SystemBars, SystemBarsStyle, SystemBarType } from '@capacitor/core';
 
 const setSystemBarStyleDark = async () => {
   await SystemBars.setStyle({ style: SystemBarsStyle.Dark });
@@ -150,7 +152,7 @@ Set the current style of the system bars.
 ### show(...)
 
 ```typescript
-show(options: SystemBarsVisibilityOptions) => Promise<void>
+show(options?: SystemBarsVisibilityOptions) => Promise<void>
 ```
 
 Show the system bars.
@@ -167,7 +169,7 @@ Show the system bars.
 ### hide(...)
 
 ```typescript
-hide(options: SystemBarsVisibilityOptions) => Promise<void>
+hide(options?: SystemBarsVisibilityOptions) => Promise<void>
 ```
 
 Hide the system bars.
