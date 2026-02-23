@@ -124,11 +124,13 @@ let package = Package(
       const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
       const traits = packageTraits[plugin.id];
       const traitsSuffix = traits?.length
-        ? `, traits: [${traits.map((t) => {
-            // Any trait is written with quotes, with the exception of .defaults
-            return /^\.?defaults?$/i.test(t) ? ".defaults" : `"${t}"`;
-          }).join(", ")}]`
-        : "";
+        ? `, traits: [${traits
+            .map((t) => {
+              // Any trait is written with quotes, with the exception of .defaults
+              return /^\.?defaults?$/i.test(t) ? '.defaults' : `"${t}"`;
+            })
+            .join(', ')}]`
+        : '';
       packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}"${traitsSuffix})`;
     }
   }
