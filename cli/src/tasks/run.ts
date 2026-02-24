@@ -43,7 +43,7 @@ export async function runCommand(
   options: RunCommandOptions,
 ): Promise<void> {
   options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
-  options.port = options.port ?? '3000';
+  options.port = options.port ??  '3000';
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -93,7 +93,7 @@ export async function runCommand(
       }
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       if (options.liveReload) {
-        await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options, false, options.https);
+        await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options, false);
         if (platformName === config.android.name) {
           await await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, true);
         }

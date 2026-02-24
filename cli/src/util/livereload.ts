@@ -146,7 +146,6 @@ class CapLiveReload {
     platformName: string,
     options: RunCommandOptions,
     rootConfigChange = false,
-    useHttps = false,
   ): Promise<void> {
     const platformAbsPath =
       platformName == config.ios.name
@@ -162,7 +161,7 @@ class CapLiveReload {
     const configJson = readJSONSync(capConfigPath);
     this.configJsonToRevertTo.json = JSON.stringify(configJson, null, 2);
     this.configJsonToRevertTo.platformPath = capConfigPath;
-    const url = `${useHttps ? 'https' : 'http'}://${options.host}:${options.port}`;
+    const url = `${options.https ? 'https' : 'http'}://${options.host}:${options.port}`;
     configJson.server = {
       url,
     };
