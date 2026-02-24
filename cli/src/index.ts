@@ -274,8 +274,9 @@ export function runProgram(config: Config): void {
               host,
               port,
               configuration,
-              https
-            }) => {
+              https,
+            },
+          ) => {
             const { runCommand } = await import('./tasks/run');
             await runCommand(config, platform, {
               scheme,
