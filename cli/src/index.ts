@@ -253,7 +253,7 @@ export function runProgram(config: Config): void {
     .option('--host <host>', 'Host used for live reload')
     .option('--port <port>', 'Port used for live reload')
     .option('--configuration <name>', 'Configuration name of the iOS Scheme')
-    .option('--https', 'Enable HTTPS for live reload server')
+    .option('--https', 'Use https:// instead of http:// for the live reload server')
     .action(
       wrapAction(
         telemetryAction(
