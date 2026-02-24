@@ -41,8 +41,6 @@ export async function runCommand(
   selectedPlatformName: string,
   options: RunCommandOptions,
 ): Promise<void> {
-  options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
-  options.port = options.port ?? '3000';
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -108,7 +106,7 @@ export async function runCommand(
           })
           .then(() => process.exit());
         logger.info(
-          `App running with live reload listing for: http://${options.host}:${options.port}. Press Ctrl+C to quit.`,
+          `App running with live reload listing for: ${CapLiveReloadHelper.liveReloadServerUrl}. Press Ctrl+C to quit.`,
         );
         await sleepForever();
       }

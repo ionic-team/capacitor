@@ -13,6 +13,7 @@ class CapLiveReload {
     json: null,
     platformPath: null,
   };
+  liveReloadServerUrl: string = '';
 
   constructor() {
     // nothing to do
@@ -161,7 +162,17 @@ class CapLiveReload {
     const configJson = readJSONSync(capConfigPath);
     this.configJsonToRevertTo.json = JSON.stringify(configJson, null, 2);
     this.configJsonToRevertTo.platformPath = capConfigPath;
-    const url = `http://${options.host}:${options.port}`;
+    let url = '';
+    if (options.host || options.port || !(configJson.server && configJson.server.url)) {
+      // build url from provided cap run options with defaults
+      options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
+      options.port = options.port ?? '3000';
+      url = `http://${options.host}:${options.port}`;
+    } else {
+      // use existing url in capacitor config json
+      url = configJson.server.url;
+    }
+    this.liveReloadServerUrl = url;
     configJson.server = {
       url,
     };
