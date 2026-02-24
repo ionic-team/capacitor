@@ -3,11 +3,11 @@ import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
 import { checkPlatformVersions, runTask } from '../common';
-import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps, needsStaticPod } from '../cordova';
+import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
-import { PluginType, getPlatformElement, getPluginType, getPlugins, printPlugins } from '../plugin';
+import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import {
@@ -68,9 +68,8 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     }
 
     await installCocoaPodsPlugins(config, plugins, deployment, enableCordova);
-
   }
-  
+
   if (enableCordova) {
     await logCordovaManualSteps(cordovaPlugins, config, platform);
   }

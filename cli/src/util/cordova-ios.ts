@@ -2,9 +2,9 @@ import { copy, readFile, writeFile, remove } from 'fs-extra';
 import { join } from 'path';
 
 import { getCapacitorPackageVersion } from '../common';
-import { getMajoriOSVersion } from '../ios/common';
 import { needsStaticPod } from '../cordova';
 import type { Config } from '../definitions';
+import { getMajoriOSVersion } from '../ios/common';
 import { PluginType, getPlatformElement, getPluginType, getAllElements, getFilePath } from '../plugin';
 import type { Plugin } from '../plugin';
 import { extractTemplate } from '../util/template';
@@ -319,13 +319,13 @@ function filterResources(plugin: Plugin) {
   return resources.length > 0;
 }
 
-export async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config) {
+export async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config): Promise<void> {
   cordovaPlugins.map((plugin: any) => {
     generateCordovaPackageFile(plugin, config);
   });
 }
 
-export async function generateCordovaPackageFile(p: Plugin, config: Config) {
+export async function generateCordovaPackageFile(p: Plugin, config: Config): Promise<void> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
   const headerFiles = getPlatformElement(p, platform, 'header-file');

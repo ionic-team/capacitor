@@ -114,11 +114,11 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     var lastPlugin: CAPPlugin?
 
     @objc public var config: InstanceConfiguration
-     Map of all loaded and instantiated plugins by pluginId -> instance
+    Map of all loaded and instantiated plugins by pluginId -> instance
     var plugins =  [String: CapacitorPlugin]()
-     Calls we are storing to resolve later
+    Calls we are storing to resolve later
     var storedCalls = ConcurrentDictionary<CAPPluginCall>()
-     Whether to inject the Cordova files
+    Whether to inject the Cordova files
     private var cordovaIsPresent = false
     private var injectMiscFiles: [String] = []
     private var canInjectJS: Bool = true
