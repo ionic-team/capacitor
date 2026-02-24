@@ -93,7 +93,7 @@ export async function runCommand(
       }
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       if (options.liveReload) {
-        await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options, false);
+        await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options);
         if (platformName === config.android.name) {
           await await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, true);
         }
