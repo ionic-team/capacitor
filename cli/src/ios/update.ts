@@ -2,7 +2,7 @@ import { pathExists, readFile, realpath, writeFile } from 'fs-extra';
 import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
-import { checkPlatformVersions, getCapacitorPackageVersion, runTask } from '../common';
+import { checkPlatformVersions, runTask } from '../common';
 import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps, needsStaticPod } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
@@ -12,6 +12,7 @@ import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import {
   generateCordovaPodspecs,
+  generateCordovaPackageFiles,
   copyPluginsNativeFiles,
   removePluginsNativeFiles,
   cordovaPodfileLines,
@@ -22,7 +23,7 @@ import { resolveNode } from '../util/node';
 import { generatePackageFile, checkPluginsForPackageSwift } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 
-import { getIOSPlugins, getMajoriOSVersion } from './common';
+import { getIOSPlugins } from './common';
 
 const platform = 'ios';
 
@@ -61,62 +62,18 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
 
     await generatePackageFile(config, validSPMPackages.concat(cordovaPlugins));
-
+  } else {
     if (enableCordova) {
       await generateCordovaPodspecs(cordovaPlugins, config);
     }
 
     await installCocoaPodsPlugins(config, plugins, deployment, enableCordova);
 
-    if (enableCordova) {
-      await logCordovaManualSteps(cordovaPlugins, config, platform);
-    }
   }
-}
-
-async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config) {
-  cordovaPlugins.map((plugin: any) => {
-    generateCordovaPackageFile(plugin, config);
-  });
-}
-
-async function generateCordovaPackageFile(p: Plugin, config: Config) {
-  const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
-  const iosVersion = getMajoriOSVersion(config);
-  const headerFiles = getPlatformElement(p, platform, 'header-file');
-  let headersText = '';
-  if (headerFiles.length > 0) {
-    headersText = `,
-            publicHeadersPath: "."`;
+  
+  if (enableCordova) {
+    await logCordovaManualSteps(cordovaPlugins, config, platform);
   }
-
-  const content = `// swift-tools-version: 5.9
-
-import PackageDescription
-
-let package = Package(
-    name: "${p.name}",
-    platforms: [.iOS(.v${iosVersion})],
-    products: [
-        .library(
-            name: "${p.name}",
-            targets: ["${p.name}"]
-        )
-    ],
-    dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")
-    ],
-    targets: [
-        .target(
-            name: "${p.name}",
-            dependencies: [
-                .product(name: "Cordova", package: "capacitor-swift-pm")
-            ],
-            path: "."${headersText}
-        )
-    ]
-)`;
-  await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
 }
 
 export async function installCocoaPodsPlugins(

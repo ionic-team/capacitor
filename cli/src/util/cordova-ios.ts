@@ -1,6 +1,8 @@
 import { copy, readFile, writeFile, remove } from 'fs-extra';
 import { join } from 'path';
 
+import { getCapacitorPackageVersion } from '../common';
+import { getMajoriOSVersion } from '../ios/common';
 import { needsStaticPod } from '../cordova';
 import type { Config } from '../definitions';
 import { PluginType, getPlatformElement, getPluginType, getAllElements, getFilePath } from '../plugin';
@@ -315,4 +317,49 @@ export function cordovaPodfileLines(config: Config, plugins: Plugin[]): string[]
 function filterResources(plugin: Plugin) {
   const resources = getPlatformElement(plugin, platform, 'resource-file');
   return resources.length > 0;
+}
+
+export async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config) {
+  cordovaPlugins.map((plugin: any) => {
+    generateCordovaPackageFile(plugin, config);
+  });
+}
+
+export async function generateCordovaPackageFile(p: Plugin, config: Config) {
+  const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
+  const iosVersion = getMajoriOSVersion(config);
+  const headerFiles = getPlatformElement(p, platform, 'header-file');
+  let headersText = '';
+  if (headerFiles.length > 0) {
+    headersText = `,
+            publicHeadersPath: "."`;
+  }
+
+  const content = `// swift-tools-version: 5.9
+
+import PackageDescription
+
+let package = Package(
+    name: "${p.name}",
+    platforms: [.iOS(.v${iosVersion})],
+    products: [
+        .library(
+            name: "${p.name}",
+            targets: ["${p.name}"]
+        )
+    ],
+    dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")
+    ],
+    targets: [
+        .target(
+            name: "${p.name}",
+            dependencies: [
+                .product(name: "Cordova", package: "capacitor-swift-pm")
+            ],
+            path: "."${headersText}
+        )
+    ]
+)`;
+  await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
 }
