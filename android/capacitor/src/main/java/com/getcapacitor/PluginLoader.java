@@ -10,11 +10,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PluginLoader {
+public class PluginManager {
 
     private final AssetManager assetManager;
 
-    public PluginLoader(AssetManager assetManager) {
+    public PluginManager(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
 
