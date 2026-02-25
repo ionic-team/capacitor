@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/ionic-team/capacitor/compare/8.0.2...8.1.0) (2026-02-11)
+
+### Features
+
+- **cli:** Add packageManager to iOS config ([#8321](https://github.com/ionic-team/capacitor/issues/8321)) ([a125498](https://github.com/ionic-team/capacitor/commit/a1254983bbb9dcb273d93f3c5f639b792e516406))
+
+### Reverts
+
+- revert version bump from [#8319](https://github.com/ionic-team/capacitor/issues/8319) and [#8320](https://github.com/ionic-team/capacitor/issues/8320) ([a48ebb6](https://github.com/ionic-team/capacitor/commit/a48ebb622ea4ebe92927bf1756a4d8ac6012884b))
+
 ## [8.0.2](https://github.com/ionic-team/capacitor/compare/8.0.1...8.0.2) (2026-01-27)
 
 ### Bug Fixes
