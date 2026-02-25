@@ -521,7 +521,7 @@ public class WebViewLocalServer {
                             handler.getEncoding(),
                             handler.getStatusCode(),
                             handler.getReasonPhrase(),
-                            handler.getResponseHeaders(),
+                            handler.buildDefaultResponseHeaders(),
                             responseStream
                         );
                     }
