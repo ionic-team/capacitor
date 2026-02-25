@@ -4,6 +4,7 @@ import { join, resolve } from 'path';
 
 import c from '../colors';
 import { checkCapacitorPlatform } from '../common';
+import type { CheckFunction } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import { OS } from '../definitions';
 import type { Config } from '../definitions';
@@ -23,6 +24,16 @@ function execBundler() {
   } catch (e: any) {
     return -1;
   }
+}
+
+export async function getCommonChecks(config: Config): Promise<CheckFunction[]> {
+  const checks: CheckFunction[] = [];
+  if ((await config.ios.packageManager) === 'bundler') {
+    checks.push(() => checkBundler(config));
+  } else if ((await config.ios.packageManager) === 'Cocoapods') {
+    checks.push(() => checkCocoaPods(config));
+  }
+  return checks;
 }
 
 export async function checkBundler(config: Config): Promise<string | null> {
