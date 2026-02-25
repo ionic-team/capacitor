@@ -66,7 +66,9 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        bridge.saveInstanceState(outState);
+        if (bridge != null) {
+            bridge.saveInstanceState(outState);
+        }
     }
 
     @Override
@@ -82,8 +84,10 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onRestart() {
         super.onRestart();
-        this.bridge.onRestart();
-        Logger.debug("App restarted");
+        if (this.bridge != null) {
+            this.bridge.onRestart();
+            Logger.debug("App restarted");
+        }
     }
 
     @Override
@@ -131,7 +135,9 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        this.bridge.onDetachedFromWindow();
+        if (this.bridge != null) {
+            this.bridge.onDetachedFromWindow();
+        }
     }
 
     /**
