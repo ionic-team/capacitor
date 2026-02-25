@@ -3,6 +3,49 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/ionic-team/capacitor/compare/8.0.2...8.1.0) (2026-02-11)
+
+### Reverts
+
+- revert version bump from [#8319](https://github.com/ionic-team/capacitor/issues/8319) and [#8320](https://github.com/ionic-team/capacitor/issues/8320) ([a48ebb6](https://github.com/ionic-team/capacitor/commit/a48ebb622ea4ebe92927bf1756a4d8ac6012884b))
+
+## [8.0.2](https://github.com/ionic-team/capacitor/compare/8.0.1...8.0.2) (2026-01-27)
+
+### Bug Fixes
+
+- **android:** AGP 9.0 no longer supports `proguard-android.txt` ([#8315](https://github.com/ionic-team/capacitor/issues/8315)) ([dcc76c3](https://github.com/ionic-team/capacitor/commit/dcc76c37508a9b71fb36d95707748c2dd115cf52))
+- **SystemBars:** get correct style on handleOnConfigurationChanged ([#8295](https://github.com/ionic-team/capacitor/issues/8295)) ([2a66b44](https://github.com/ionic-team/capacitor/commit/2a66b44915895f971e4a26a8612798aa2f95ea11))
+- **SystemBars:** Set window background color according to theme ([#8306](https://github.com/ionic-team/capacitor/issues/8306)) ([6037e38](https://github.com/ionic-team/capacitor/commit/6037e3836ec24c9ddf26e74e5fbec20ab506adfd))
+- **SystemBars:** Skipping margin manipulation when on a fixed WebView ([#8309](https://github.com/ionic-team/capacitor/issues/8309)) ([53c33b6](https://github.com/ionic-team/capacitor/commit/53c33b614218bf635322fbdf9a38038a7964e3d4))
+
+## [8.0.1](https://github.com/ionic-team/capacitor/compare/8.0.0...8.0.1) (2026-01-13)
+
+### Bug Fixes
+
+- **android:** Remove calculated bottom inset if keyboard is visible ([#8280](https://github.com/ionic-team/capacitor/issues/8280)) ([196b642](https://github.com/ionic-team/capacitor/commit/196b642236d293a5012e3c307fcd942766e56cce))
+
+# [8.0.0](https://github.com/ionic-team/capacitor/compare/8.0.0-beta.0...8.0.0) (2025-12-08)
+
+### Features
+
+- **android:** Improving SystemBars inset handling ([#8268](https://github.com/ionic-team/capacitor/issues/8268)) ([81ae30a](https://github.com/ionic-team/capacitor/commit/81ae30a503797e417dd125b06262dabc4696c88a))
+
+# [8.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.3...8.0.0-beta.0) (2025-11-14)
+
+### Bug Fixes
+
+- **android:** remove kotlin-bom dependency ([#8237](https://github.com/ionic-team/capacitor/issues/8237)) ([a894749](https://github.com/ionic-team/capacitor/commit/a89474920569d404e3b19e22e782e656d5b59bdd))
+- **android:** replace deprecated Gradle property name syntax ([b68ac9e](https://github.com/ionic-team/capacitor/commit/b68ac9e2dfc3ed292b7879bd7aeaab3d05ac84d5))
+- make Plugin.resolve act consistently ([#8225](https://github.com/ionic-team/capacitor/issues/8225)) ([06aeb9e](https://github.com/ionic-team/capacitor/commit/06aeb9e85d162d6be9d96820edcb2008cd74da84))
+
+### Features
+
+- System Bars Plugin ([#8180](https://github.com/ionic-team/capacitor/issues/8180)) ([a32216a](https://github.com/ionic-team/capacitor/commit/a32216ac0607172a3a9c7ae5cdbfc598769294a6))
+
+# [8.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.2...8.0.0-alpha.3) (2025-10-22)
+
+**Note:** Version bump only for package @capacitor/android
+
 # [8.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.1...8.0.0-alpha.2) (2025-08-20)
 
 **Note:** Version bump only for package @capacitor/android

@@ -447,12 +447,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     public boolean isValidMsg(String msg) {
-        return !(
-            msg.contains("%cresult %c") ||
-            (msg.contains("%cnative %c")) ||
-            msg.equalsIgnoreCase("[object Object]") ||
-            msg.equalsIgnoreCase("console.groupEnd")
-        );
+        return !(msg.contains("%cresult %c") || (msg.contains("%cnative %c")) || msg.equalsIgnoreCase("console.groupEnd"));
     }
 
     private Uri createImageFileUri() throws IOException {
