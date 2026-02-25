@@ -110,7 +110,7 @@ export class CapacitorCookiesPluginWeb extends WebPlugin implements CapacitorCoo
       const encodedValue = encode(options.value);
 
       // Clean & sanitize options
-      const expires = `; expires=${(options.expires || '').replace('expires=', '')}`; // Default is "; expires="
+      const expires = options.expires ? `; expires=${options.expires.replace('expires=', '')}` : '';
 
       const path = (options.path || '/').replace('path=', ''); // Default is "path=/"
       const domain = options.url != null && options.url.length > 0 ? `domain=${options.url}` : '';
@@ -617,14 +617,14 @@ export interface SystemBarsPlugin {
    *
    * @since 8.0.0
    */
-  show(options: SystemBarsVisibilityOptions): Promise<void>;
+  show(options?: SystemBarsVisibilityOptions): Promise<void>;
 
   /**
    * Hide the system bars.
    *
    * @since 8.0.0
    */
-  hide(options: SystemBarsVisibilityOptions): Promise<void>;
+  hide(options?: SystemBarsVisibilityOptions): Promise<void>;
 
   /**
    * Set the animation to use when showing / hiding the status bar.

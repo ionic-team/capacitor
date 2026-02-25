@@ -1,6 +1,8 @@
 # SystemBars
 
-The SystemBars API provides methods for configuring the style and visibility of the device System Bars / Status Bar.  This API differs from the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin in that it is only intended to support modern edge to edge use cases moving forward.  For legacy functionality, use the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin.
+The SystemBars API provides methods for configuring the style and visibility of the device System Bars / Status Bar. This plugin is bundled with `@capacitor/core`.
+
+This API differs from the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin in that it is only intended to support modern edge to edge use cases moving forward.  For legacy functionality, use the [Status Bar](https://capacitorjs.com/docs/apis/status-bar) plugin.
 
 | Feature | System Bars | Status Bar |
 | ------- | ----------- | ---------- |
@@ -32,13 +34,12 @@ html {
   padding-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
 }
 ```
-
-To disable the inset variable injections, set the configuration setting `disableInsets` to `true`.
+To control this behavior, use the `insetsHandling` configuration setting.
 
 ## Example
 
 ```typescript
-import { SystemBars, SystemBarsStyle } from '@capacitor/core';
+import { SystemBars, SystemBarsStyle, SystemBarType } from '@capacitor/core';
 
 const setSystemBarStyleDark = async () => {
   await SystemBars.setStyle({ style: SystemBarsStyle.Dark });
@@ -72,7 +73,7 @@ const setStatusBarAnimation = async () => {
 ## Configuration
 | Prop          | Type                 | Description                                                               | Default            |
 | ------------- | -------------------- | ------------------------------------------------------------------------- | ------------------ |
-| **`disableInsets`** | <code>boolean</code> | Disables the injection of device css insets into the webview.  This option is only supported on Android. | <code>false</code> |
+| **`insetsHandling`** | <code>string</code> | Specifies how to handle problematic insets on Android.  This option is only supported on Android.<br>`css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.<br>`disable` = Disable all inset handling. | <code>css</code> |
 | **`style`** | <code>string</code> | The style of the text and icons of the system bars. | <code>DEFAULT</code> |
 | **`hidden`** | <code>boolean</code> | Hide the system bars on start. | <code>false</code> |
 | **`animation`** | <code>string</code> | The type of status bar animation used when showing or hiding.  This option is only supported on iOS. | <code>FADE</code> |
@@ -86,7 +87,7 @@ In `capacitor.config.json`:
 {
   "plugins": {
     "SystemBars": {
-      "disableInsets": true,
+      "insetsHandling": "css",
       "style": "DARK",
       "hidden": false,
       "animation": "NONE"
@@ -103,7 +104,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   plugins: {
     SystemBars: {
-      disableInsets: true,
+      insetsHandling: "css",
       style: "DARK",
       hidden: false,
       animation: "NONE"
@@ -151,7 +152,7 @@ Set the current style of the system bars.
 ### show(...)
 
 ```typescript
-show(options: SystemBarsVisibilityOptions) => Promise<void>
+show(options?: SystemBarsVisibilityOptions) => Promise<void>
 ```
 
 Show the system bars.
@@ -168,7 +169,7 @@ Show the system bars.
 ### hide(...)
 
 ```typescript
-hide(options: SystemBarsVisibilityOptions) => Promise<void>
+hide(options?: SystemBarsVisibilityOptions) => Promise<void>
 ```
 
 Hide the system bars.

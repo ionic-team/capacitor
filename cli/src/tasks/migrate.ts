@@ -10,7 +10,6 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
-import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -28,6 +27,7 @@ const plugins = [
   '@capacitor/dialog',
   '@capacitor/filesystem',
   '@capacitor/geolocation',
+  '@capacitor/google-maps',
   '@capacitor/haptics',
   '@capacitor/keyboard',
   '@capacitor/local-notifications',
@@ -35,8 +35,8 @@ const plugins = [
   '@capacitor/network',
   '@capacitor/preferences',
   '@capacitor/push-notifications',
-  '@capacitor/screen-reader',
   '@capacitor/screen-orientation',
+  '@capacitor/screen-reader',
   '@capacitor/share',
   '@capacitor/splash-screen',
   '@capacitor/status-bar',
@@ -160,7 +160,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
             );
           });
 
-          if ((await checkPackageManager(config)) === 'Cocoapods') {
+          if ((await config.ios.packageManager) !== 'SPM') {
             // Update Podfile
             await runTask(`Migrating Podfile to ${iOSVersion}.0.`, () => {
               return updateFile(
