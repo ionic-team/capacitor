@@ -18,24 +18,6 @@
  */
 
 #import "CDVPlugin.h"
-#include <objc/message.h>
-
-@implementation UIView (org_apache_cordova_UIView_Extension)
-
-@dynamic scrollView;
-
-- (UIScrollView*)scrollView
-{
-    SEL scrollViewSelector = NSSelectorFromString(@"scrollView");
-
-    if ([self respondsToSelector:scrollViewSelector]) {
-        return ((id (*)(id, SEL))objc_msgSend)(self, scrollViewSelector);
-    }
-
-    return nil;
-}
-
-@end
 
 NSString* const CDVPageDidLoadNotification = @"CDVPageDidLoadNotification";
 NSString* const CDVPluginHandleOpenURLNotification = @"CDVPluginHandleOpenURLNotification";
