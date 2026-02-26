@@ -129,7 +129,7 @@ public class WebViewLocalServer {
         }
 
         public Map<String, String> buildDefaultResponseHeaders() {
-            return new HashMap(responseHeaders);
+            return new HashMap<>(responseHeaders);
         }
     }
 
