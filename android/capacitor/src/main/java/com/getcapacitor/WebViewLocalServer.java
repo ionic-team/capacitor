@@ -128,6 +128,19 @@ public class WebViewLocalServer {
             return reasonPhrase;
         }
 
+        /**
+         * @deprecated This method may return incorrect headers in concurrent range requests.
+         * <p>
+         * Use {@link #buildDefaultResponseHeaders()} instead, which returns a copy of the map.
+         * </p>
+         * This method will be removed in a future major version of Capacitor.
+         * </p>
+         */
+        @Deprecated(forRemoval = true) // adjust version as appropriate
+        public Map<String, String> getResponseHeaders() {
+            return responseHeaders;
+        }
+
         public Map<String, String> buildDefaultResponseHeaders() {
             return new HashMap<>(responseHeaders);
         }
