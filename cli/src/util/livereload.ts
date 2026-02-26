@@ -161,7 +161,7 @@ class CapLiveReload {
     const configJson = readJSONSync(capConfigPath);
     this.configJsonToRevertTo.json = JSON.stringify(configJson, null, 2);
     this.configJsonToRevertTo.platformPath = capConfigPath;
-    const url = `http://${options.host}:${options.port}`;
+    const url = `${options.https ? 'https' : 'http'}://${options.host}${options.port ? `:${options.port}` : ''}`;
     configJson.server = {
       ...configJson.server,
       url,
