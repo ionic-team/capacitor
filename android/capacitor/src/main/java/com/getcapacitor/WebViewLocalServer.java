@@ -337,10 +337,13 @@ public class WebViewLocalServer {
                 String[] parts = rangeString.split("=");
                 String[] streamParts = parts[1].split("-");
                 String fromRange = streamParts[0];
-                int bytesToSkip = Integer.parseInt(fromRange);
-                if (bytesToSkip > 0) {
-                    responseStream.skip(bytesToSkip);
-                }
+                int bytesToSkip;
+                try {
+                    bytesToSkip = Integer.parseInt(fromRange);
+                    if (bytesToSkip > 0) {
+                        responseStream.skip(bytesToSkip);
+                    }
+                } catch (NumberFormatException ignored) {}
                 int range = totalRange - 1;
                 if (streamParts.length > 1) {
                     range = Integer.parseInt(streamParts[1]);
