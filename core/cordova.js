@@ -1014,7 +1014,7 @@
     }
 
     capacitorExec.nativeFetchMessages = function () {
-      // Stop listing for window detatch once native side confirms poke.
+      // Stop listening for window detach once native side confirms poke.
       if (failSafeTimerId) {
         clearTimeout(failSafeTimerId);
         failSafeTimerId = 0;

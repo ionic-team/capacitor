@@ -81,7 +81,7 @@ class ConfigurationTests: XCTestCase {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.flat], cordovaConfiguration: nil)
         XCTAssertEqual(descriptor.backgroundColor, UIColor(red: 1, green: 1, blue: 1, alpha: 1))
-        XCTAssertEqual(descriptor.overridenUserAgentString, "level 1 override")
+        XCTAssertEqual(descriptor.overriddenUserAgentString, "level 1 override")
         XCTAssertEqual(descriptor.appendedUserAgentString, "level 1 append")
         XCTAssertEqual(descriptor.loggingBehavior, .debug)
     }
@@ -90,7 +90,7 @@ class ConfigurationTests: XCTestCase {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.nested], cordovaConfiguration: nil)
         XCTAssertEqual(descriptor.backgroundColor, UIColor(red: 0, green: 0, blue: 0, alpha: 1))
-        XCTAssertEqual(descriptor.overridenUserAgentString, "level 2 override")
+        XCTAssertEqual(descriptor.overriddenUserAgentString, "level 2 override")
         XCTAssertEqual(descriptor.appendedUserAgentString, "level 2 append")
         XCTAssertEqual(descriptor.loggingBehavior, .none)
         XCTAssertFalse(descriptor.scrollingEnabled)

@@ -27,7 +27,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
     }
 
     open func willLoadWebview(_ webView: WKWebView?) {
-        // Set the webview to be not opaque on the inital load. This prevents
+        // Set the webview to be not opaque on the initial load. This prevents
         // the webview from showing a white background, which is its default
         // loading display, as that can appear as a screen flash. The opacity
         // might have been set by something else, like a plugin, so we want
