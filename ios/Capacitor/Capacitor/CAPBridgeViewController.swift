@@ -1,6 +1,5 @@
 import UIKit
 import WebKit
-import Cordova
 
 @objc open class CAPBridgeViewController: UIViewController {
     private var capacitorBridge: CapacitorBridge?
@@ -47,10 +46,10 @@ import Cordova
         // create the bridge
         capacitorBridge = CapacitorBridge(with: configuration,
                                           delegate: self,
-                                          cordovaConfiguration: configDescriptor.cordovaConfiguration,
                                           assetHandler: assetHandler,
                                           delegationHandler: delegationHandler)
         capacitorDidLoad()
+        updateAppLocationIfNeeded()
 
         if configDescriptor.instanceType == .fixed {
             updateBinaryVersion()
@@ -89,18 +88,25 @@ import Cordova
      - Note: This is called early in the View Controller's lifecycle. Not all properties will be set at invocation.
      */
     open func instanceDescriptor() -> InstanceDescriptor {
-        let descriptor = InstanceDescriptor.init()
-        if !isNewBinary && !descriptor.cordovaDeployDisabled {
+        return InstanceDescriptor()
+    }
+
+    /// This function must be called after plugins are loaded or it will have no effect.
+    open func updateAppLocationIfNeeded() {
+        let cordovaPlugin = bridge?.plugin(withName: "__CordovaPlugin")
+        let cordovaDeployDisabled = cordovaPlugin?.perform(Selector(("cordovaDeployDisabled"))).takeUnretainedValue() as? Bool ?? false
+
+        if !isNewBinary && !cordovaDeployDisabled {
             if let persistedPath = KeyValueStore.standard["serverBasePath", as: String.self], !persistedPath.isEmpty {
                 if let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first {
-                    descriptor.appLocation = URL(fileURLWithPath: libPath, isDirectory: true)
+                    let serverBasePath = URL(fileURLWithPath: libPath, isDirectory: true)
                         .appendingPathComponent("NoCloud")
                         .appendingPathComponent("ionic_built_snapshots")
                         .appendingPathComponent(URL(fileURLWithPath: persistedPath, isDirectory: true).lastPathComponent)
+                    setServerBasePath(path: serverBasePath.path)
                 }
             }
         }
-        return descriptor
     }
 
     open func router() -> Router {

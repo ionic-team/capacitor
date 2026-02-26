@@ -1,6 +1,6 @@
 import { writeFileSync, readFileSync, existsSync } from 'fs-extra';
 import { join } from 'path';
-import { rimraf } from 'rimraf';
+import rimraf from 'rimraf';
 import { coerce, gte, lt } from 'semver';
 
 import c from '../colors';

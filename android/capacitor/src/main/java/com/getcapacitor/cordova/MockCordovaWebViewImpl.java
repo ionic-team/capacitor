@@ -20,7 +20,7 @@ import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
 
-public class MockCordovaWebViewImpl implements CordovaWebView {
+class MockCordovaWebViewImpl implements CordovaWebView {
 
     private Context context;
     private PluginManager pluginManager;
@@ -32,7 +32,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
     private WebView webView;
     private boolean hasPausedEver;
 
-    public MockCordovaWebViewImpl(Context context) {
+    MockCordovaWebViewImpl(Context context) {
         this.context = context;
     }
 
