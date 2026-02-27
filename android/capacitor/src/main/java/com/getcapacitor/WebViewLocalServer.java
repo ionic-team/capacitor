@@ -652,8 +652,20 @@ public class WebViewLocalServer {
                         stream = protocolHandler.openAsset(assetPath + path);
                     }
                 } catch (IOException e) {
-                    Logger.error("Unable to open asset URL: " + url);
-                    return null;
+                    // If routeWithFallback is enabled and the path has an extension (contains a dot)
+                    // fallback to index.html for SPA routing
+                    if (bridge.getConfig().isRouteWithFallback() && path.contains(".")) {
+                        try {
+                            String indexPath = isAsset ? assetPath + "/index.html" : basePath + "/index.html";
+                            stream = isAsset ? protocolHandler.openAsset(indexPath) : protocolHandler.openFile(indexPath);
+                        } catch (IOException indexException) {
+                            Logger.error("Unable to open asset URL: " + url);
+                            return null;
+                        }
+                    } else {
+                        Logger.error("Unable to open asset URL: " + url);
+                        return null;
+                    }
                 }
 
                 return stream;

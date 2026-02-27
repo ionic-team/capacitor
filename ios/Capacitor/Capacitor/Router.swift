@@ -16,6 +16,7 @@ public protocol Router {
 public struct CapacitorRouter: Router {
     public init() {}
     public var basePath: String = ""
+    
     public func route(for path: String) -> String {
         let pathUrl = URL(fileURLWithPath: path)
 
