@@ -349,14 +349,7 @@ public class WebViewLocalServer {
                 String rangeString = request.getRequestHeaders().get("Range");
                 String[] parts = rangeString.split("=");
                 String[] streamParts = parts[1].split("-");
-                String fromRange = streamParts[0];
-                int bytesToSkip;
-                try {
-                    bytesToSkip = Integer.parseInt(fromRange);
-                    if (bytesToSkip > 0) {
-                        responseStream.skip(bytesToSkip);
-                    }
-                } catch (NumberFormatException ignored) {}
+                String fromRange = streamParts[0];               
                 int range = totalRange - 1;
                 if (streamParts.length > 1) {
                     range = Integer.parseInt(streamParts[1]);
