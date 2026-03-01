@@ -41,6 +41,7 @@ export async function updateAndroid(config: Config): Promise<void> {
   if (cordovaPlugins.length > 0) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
+  await copyPluginsNativeFiles(config, capacitorPlugins);
   if (!(await pathExists(config.android.webDirAbs))) {
     await copyTask(config, platform);
   }
@@ -139,7 +140,7 @@ export async function installGradlePlugins(
   if (!capacitorAndroidPackagePath) {
     fatal(
       `Unable to find ${c.strong('node_modules/@capacitor/android')}.\n` +
-        `Are you sure ${c.strong('@capacitor/android')} is installed?`,
+      `Are you sure ${c.strong('@capacitor/android')} is installed?`,
     );
   }
 
@@ -152,19 +153,19 @@ export async function installGradlePlugins(
 include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('${relativeCapcitorAndroidPath}')
 ${capacitorPlugins
-  .map((p) => {
-    if (!p.android) {
-      return '';
-    }
+      .map((p) => {
+        if (!p.android) {
+          return '';
+        }
 
-    const relativePluginPath = convertToUnixPath(relative(settingsPath, p.rootPath));
+        const relativePluginPath = convertToUnixPath(relative(settingsPath, p.rootPath));
 
-    return `
+        return `
 include ':${getGradlePackageName(p.id)}'
 project(':${getGradlePackageName(p.id)}').projectDir = new File('${relativePluginPath}/${p.android.path}')
 `;
-  })
-  .join('')}`;
+      })
+      .join('')}`;
 
   const applyArray: any[] = [];
   const frameworksArray: any[] = [];
@@ -204,10 +205,10 @@ android {
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
 ${capacitorPlugins
-  .map((p) => {
-    return `    implementation project(':${getGradlePackageName(p.id)}')`;
-  })
-  .join('\n')}
+      .map((p) => {
+        return `    implementation project(':${getGradlePackageName(p.id)}')`;
+      })
+      .join('\n')}
 ${frameworkString}
 }
 ${applyArray.join('\n')}
