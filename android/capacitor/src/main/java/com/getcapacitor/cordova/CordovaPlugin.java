@@ -66,8 +66,6 @@ public class CordovaPlugin extends Plugin {
             });
         });
     }
-
-    // TODO: How to we ensure this gets called? Should we punt and use reflection?
     @Override
     protected void restoreState(Bundle state) {
         if (state != null) {
