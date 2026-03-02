@@ -340,10 +340,8 @@ public class WebViewLocalServer {
         String path = request.getUrl().getPath();
 
         Map<String, String> requestHeaders = request.getRequestHeaders();
-        String rangeString = requestHeaders.get("Range") != null 
-            ? requestHeaders.get("Range") 
-            : requestHeaders.get("range");
-            
+        String rangeString = requestHeaders.get("Range") != null ? requestHeaders.get("Range") : requestHeaders.get("range");
+
         if (rangeString != null) {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
             String mimeType = getMimeType(path, responseStream);
