@@ -66,6 +66,7 @@ public class CordovaPlugin extends Plugin {
             });
         });
     }
+
     @Override
     protected void restoreState(Bundle state) {
         if (state != null) {

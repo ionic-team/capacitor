@@ -68,7 +68,7 @@ export async function generateIOSPackageJSON(config: Config, plugins: Plugin[]):
   const cordovaPlugins = await getCordovaPlugins(config, 'ios');
   if (cordovaPlugins.length > 0) {
     classList.push('CDVPlugin');
-    classList.push('CordovaPlugin')
+    classList.push('CordovaPlugin');
   }
   writePluginJSON(config, classList);
 }
