@@ -163,7 +163,7 @@ class CapLiveReload {
     this.configJsonToRevertTo.json = JSON.stringify(configJson, null, 2);
     this.configJsonToRevertTo.platformPath = capConfigPath;
     let url = '';
-    if (options.host || options.port || !(configJson.server && configJson.server.url)) {
+    if (options.host || options.port || !configJson.server?.url) {
       // build url from provided cap run options with defaults
       options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
       if (!options.https && !options.port) {
