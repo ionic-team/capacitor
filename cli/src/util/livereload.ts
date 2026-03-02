@@ -169,7 +169,7 @@ class CapLiveReload {
       if (!options.https && !options.port) {
         options.port = '3000';
       }
-      url = `http://${options.host}:${options.port ? `:${options.port}` : ''}`;
+      url = `http://${options.host}${options.port ? `:${options.port}` : ''}`;
     } else {
       // use existing url in capacitor config json
       url = configJson.server.url;
