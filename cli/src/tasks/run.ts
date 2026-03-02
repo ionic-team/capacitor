@@ -34,6 +34,7 @@ export interface RunCommandOptions {
   host?: string;
   port?: string;
   configuration?: string;
+  https?: boolean;
 }
 
 export async function runCommand(

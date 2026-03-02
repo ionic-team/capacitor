@@ -13,7 +13,7 @@ class CapLiveReload {
     json: null,
     platformPath: null,
   };
-  liveReloadServerUrl: string = '';
+  liveReloadServerUrl = '';
 
   constructor() {
     // nothing to do
@@ -166,14 +166,20 @@ class CapLiveReload {
     if (options.host || options.port || !(configJson.server && configJson.server.url)) {
       // build url from provided cap run options with defaults
       options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
-      options.port = options.port ?? '3000';
-      url = `http://${options.host}:${options.port}`;
+      if (!options.https && !options.port) {
+        options.port = '3000';
+      }
+      url = `http://${options.host}:${options.port ? `:${options.port}` : ''}`;
     } else {
       // use existing url in capacitor config json
       url = configJson.server.url;
     }
+    if (options.https) {
+      url = url.replace('http://', 'https://');
+    }
     this.liveReloadServerUrl = url;
     configJson.server = {
+      ...configJson.server,
       url,
     };
     writeJSONSync(capConfigPath, configJson, { spaces: '\t' });
