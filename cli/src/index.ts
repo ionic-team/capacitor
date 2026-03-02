@@ -253,6 +253,7 @@ export function runProgram(config: Config): void {
     .option('--host <host>', 'Host used for live reload')
     .option('--port <port>', 'Port used for live reload')
     .option('--configuration <name>', 'Configuration name of the iOS Scheme')
+    .option('--https', 'Use https:// instead of http:// for the live reload server')
     .action(
       wrapAction(
         telemetryAction(
@@ -273,6 +274,7 @@ export function runProgram(config: Config): void {
               host,
               port,
               configuration,
+              https,
             },
           ) => {
             const { runCommand } = await import('./tasks/run');
@@ -290,6 +292,7 @@ export function runProgram(config: Config): void {
               host,
               port,
               configuration,
+              https,
             });
           },
         ),
