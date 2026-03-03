@@ -249,11 +249,11 @@ export function runProgram(config: Config): void {
     )
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .option('--forwardPorts <port:port>', 'Automatically run "adb reverse" for better live-reloading support')
-    .option('-l, --live-reload', 'Enable Live Reload')
-    .option('--host <host>', 'Host used for live reload')
-    .option('--port <port>', 'Port used for live reload')
+    .option('-l, --live-reload', 'Set live-reload server URL via CLI (uses defaults, overrides server.url config)')
+    .option('--host <host>', 'Change default host for live-reload server (used with --live-reload)')
+    .option('--port <port>', 'Change default port for live-reload server (used with --live-reload)')
     .option('--configuration <name>', 'Configuration name of the iOS Scheme')
-    .option('--https', 'Use https:// instead of http:// for the live reload server')
+    .option('--https', 'Use https:// instead of http:// for live-reload server (used with --live-reload)')
     .action(
       wrapAction(
         telemetryAction(
