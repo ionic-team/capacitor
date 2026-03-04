@@ -161,7 +161,7 @@ public class Bridge {
 
     // A pre-determined path to load the bridge
     private ServerPath serverPath;
-    
+
     private Bridge(
         AppCompatActivity context,
         ServerPath serverPath,
