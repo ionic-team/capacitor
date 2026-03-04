@@ -161,27 +161,7 @@ public class Bridge {
 
     // A pre-determined path to load the bridge
     private ServerPath serverPath;
-
-    /**
-     * Create the Bridge with a reference to the main {@link Activity} for the
-     * app, and a reference to the {@link WebView} our app will use.
-     * @param context
-     * @param webView
-     * @deprecated Use {@link Bridge.Builder} to create Bridge instances
-     */
-    @Deprecated
-    public Bridge(
-        AppCompatActivity context,
-        WebView webView,
-        List<Class<? extends Plugin>> initialPlugins,
-        Object cordovaInterface,
-        Object pluginManager,
-        Object preferences,
-        CapConfig config
-    ) {
-        this(context, (ServerPath) null, (Fragment) null, webView, initialPlugins, new ArrayList<>(), config);
-    }
-
+    
     private Bridge(
         AppCompatActivity context,
         ServerPath serverPath,
