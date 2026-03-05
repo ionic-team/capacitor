@@ -339,24 +339,19 @@ public class WebViewLocalServer {
     private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
         String path = request.getUrl().getPath();
 
-        if (request.getRequestHeaders().get("Range") != null) {
+        Map<String, String> requestHeaders = request.getRequestHeaders();
+        String rangeString = requestHeaders.get("Range") != null ? requestHeaders.get("Range") : requestHeaders.get("range");
+
+        if (rangeString != null) {
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
             String mimeType = getMimeType(path, responseStream);
             Map<String, String> tempResponseHeaders = handler.buildDefaultResponseHeaders();
             int statusCode = 206;
             try {
                 int totalRange = responseStream.available();
-                String rangeString = request.getRequestHeaders().get("Range");
                 String[] parts = rangeString.split("=");
                 String[] streamParts = parts[1].split("-");
                 String fromRange = streamParts[0];
-                int bytesToSkip;
-                try {
-                    bytesToSkip = Integer.parseInt(fromRange);
-                    if (bytesToSkip > 0) {
-                        responseStream.skip(bytesToSkip);
-                    }
-                } catch (NumberFormatException ignored) {}
                 int range = totalRange - 1;
                 if (streamParts.length > 1) {
                     range = Integer.parseInt(streamParts[1]);
