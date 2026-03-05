@@ -124,3 +124,30 @@ export function getMajoriOSVersion(config: Config): string {
   );
   return iosVersion;
 }
+
+export function getMajorMinoriOSVersion(config: Config): string {
+  const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
+  const searchString = 'IPHONEOS_DEPLOYMENT_TARGET = ';
+  const startIndex = pbx.indexOf(searchString);
+  if (startIndex === -1) {
+    return '';
+  }
+  const valueStart = startIndex + searchString.length;
+  // Extract until semicolon or newline (typical end of value in pbxproj)
+  const endIndex = pbx.indexOf(';', valueStart);
+  const newlineIndex = pbx.indexOf('\n', valueStart);
+  const actualEnd =
+    endIndex !== -1 && newlineIndex !== -1
+      ? Math.min(endIndex, newlineIndex)
+      : endIndex !== -1
+        ? endIndex
+        : newlineIndex !== -1
+          ? newlineIndex
+          : pbx.length;
+  let iosVersion = pbx.substring(valueStart, actualEnd).trim();
+  // Remove trailing .0 if present
+  if (iosVersion.endsWith('.0')) {
+    iosVersion = iosVersion.slice(0, -2);
+  }
+  return iosVersion;
+}
