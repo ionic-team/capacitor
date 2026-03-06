@@ -5,10 +5,10 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
     public let identifier = "CAPSystemBarsPlugin"
     public let jsName = "SystemBars"
     public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "setStyle", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "setAnimation", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "show", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "hide", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "setStyle", returnType: CAPPluginReturnNone),
+        CAPPluginMethod(name: "setAnimation", returnType: CAPPluginReturnNone),
+        CAPPluginMethod(name: "show", returnType: CAPPluginReturnNone),
+        CAPPluginMethod(name: "hide", returnType: CAPPluginReturnNone)
     ]
 
     public private(set) var hideHomeIndicator: Bool = false
