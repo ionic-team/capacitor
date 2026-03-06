@@ -133,9 +133,13 @@ class CapLiveReload {
     const configJson = { ...config.app.extConfig };
     this.configJsonToRevertTo.json = JSON.stringify(configJson, null, 2);
     this.configJsonToRevertTo.platformPath = capConfigPath;
-    const url = `http://${options.host}:${options.port}`;
+    const protocol = options.https ? 'https' : 'http';
+    const host = options.host ?? config.app.extConfig.server?.hostname ?? 'localhost';
+    const port = options.port ?? config.app.extConfig.server?.port?.toString() ?? '3000';
+    const serverUrl = `${protocol}://${host}:${port}`;
     configJson.server = {
-      url,
+      ...configJson.server,
+      url: serverUrl,
     };
     return configJson;
   }
@@ -161,10 +165,13 @@ class CapLiveReload {
     const configJson = readJSONSync(capConfigPath);
     this.configJsonToRevertTo.json = JSON.stringify(configJson, null, 2);
     this.configJsonToRevertTo.platformPath = capConfigPath;
-    const url = `${options.https ? 'https' : 'http'}://${options.host}${options.port ? `:${options.port}` : ''}`;
+    const protocol = options.https ? 'https' : 'http';
+    const host = options.host ?? config.app.extConfig.server?.hostname ?? 'localhost';
+    const port = options.port ?? config.app.extConfig.server?.port?.toString() ?? '3000';
+    const serverUrl = `${protocol}://${host}:${port}`;
     configJson.server = {
       ...configJson.server,
-      url,
+      url: serverUrl,
     };
     writeJSONSync(capConfigPath, configJson, { spaces: '\t' });
   }
