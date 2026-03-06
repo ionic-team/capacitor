@@ -30,6 +30,13 @@ import Foundation
         return defaultValue
     }
 
+    @objc public func getDouble(_ configKey: String, _ defaultValue: Double) -> Double {
+        if let val = (self.config)[keyPath: KeyPath(configKey)] as? Double {
+            return val
+        }
+        return defaultValue
+    }
+
     public func getArray(_ configKey: String, _ defaultValue: JSArray? = nil) -> JSArray? {
         if let val = (self.config)[keyPath: KeyPath(configKey)] as? JSArray {
             return val
