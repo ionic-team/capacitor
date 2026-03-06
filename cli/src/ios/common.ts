@@ -11,6 +11,7 @@ import type { Config } from '../definitions';
 import { logger } from '../log';
 import { PluginType, getPluginPlatform } from '../plugin';
 import type { Plugin } from '../plugin';
+import { checkSwiftToolsVersion } from '../util/spm';
 import { isInstalled, runCommand } from '../util/subprocess';
 
 export async function checkIOSPackage(config: Config): Promise<string | null> {
@@ -32,6 +33,11 @@ export async function getCommonChecks(config: Config): Promise<CheckFunction[]> 
     checks.push(() => checkBundler(config));
   } else if ((await config.ios.packageManager) === 'Cocoapods') {
     checks.push(() => checkCocoaPods(config));
+  } else if ((await config.ios.packageManager) === 'SPM') {
+    const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion;
+    if (swiftToolsVersion) {
+      checks.push(() => checkSwiftToolsVersion(config, swiftToolsVersion));
+    }
   }
   return checks;
 }
