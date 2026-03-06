@@ -608,6 +608,14 @@ export interface CapacitorConfig {
      * @default null
      */
     appStartPath?: string;
+
+    /**
+     * The port the local web server should listen on.
+     *
+     * @since 8.2.0
+     * @default 3000
+     */
+    port?: number;
   };
 
   cordova?: {
