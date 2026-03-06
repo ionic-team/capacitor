@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.6.0](https://github.com/ionic-team/capacitor/compare/7.5.0...7.6.0) (2026-03-06)
+
+### Bug Fixes
+
+- **android:** Add missing null checks in BridgeActivity ([#8185](https://github.com/ionic-team/capacitor/issues/8185)) ([48b1a33](https://github.com/ionic-team/capacitor/commit/48b1a335fa04f5594e6828c4f79f6821d00b72e5))
+- **android:** Concurrent Range Requests for assets ([#8357](https://github.com/ionic-team/capacitor/issues/8357)) ([87cfc86](https://github.com/ionic-team/capacitor/commit/87cfc867ac6fd82838979e7c9409772fdc95232b))
+- **android:** handle lowercase range header ([#8368](https://github.com/ionic-team/capacitor/issues/8368)) ([634ee64](https://github.com/ionic-team/capacitor/commit/634ee64b3fe5734964bb2ff352b484b2cc53ae0c))
+- **android:** invalid http range seeking ([#8369](https://github.com/ionic-team/capacitor/issues/8369)) ([1357a34](https://github.com/ionic-team/capacitor/commit/1357a34225256423803e4ffacda8cd62b6b8869a))
+- **cli:** Allow to run update on non macOS ([#8344](https://github.com/ionic-team/capacitor/issues/8344)) ([#8345](https://github.com/ionic-team/capacitor/issues/8345)) ([0579499](https://github.com/ionic-team/capacitor/commit/057949990cffbe691cf79c07c4718dcf970a45e0))
+- **cli:** Don't overwrite config.server section with `--live-reload` ([#7528](https://github.com/ionic-team/capacitor/issues/7528)) ([bf5e07f](https://github.com/ionic-team/capacitor/commit/bf5e07fe4e0edda81fadac7c571a8b0d3613ea6b))
+
+### Features
+
+- **cli:** Add --https option for --live-reload ([#8194](https://github.com/ionic-team/capacitor/issues/8194)) ([de47d79](https://github.com/ionic-team/capacitor/commit/de47d79a65b2f7dec0a53f0ba2c6974042eb4f85))
+
 # [7.5.0](https://github.com/ionic-team/capacitor/compare/7.4.5...7.5.0) (2026-02-11)
 
 ### Bug Fixes

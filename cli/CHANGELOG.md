@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.6.0](https://github.com/ionic-team/capacitor/compare/7.5.0...7.6.0) (2026-03-06)
+
+### Bug Fixes
+
+- **cli:** Allow to run update on non macOS ([#8344](https://github.com/ionic-team/capacitor/issues/8344)) ([#8345](https://github.com/ionic-team/capacitor/issues/8345)) ([0579499](https://github.com/ionic-team/capacitor/commit/057949990cffbe691cf79c07c4718dcf970a45e0))
+- **cli:** Don't overwrite config.server section with `--live-reload` ([#7528](https://github.com/ionic-team/capacitor/issues/7528)) ([bf5e07f](https://github.com/ionic-team/capacitor/commit/bf5e07fe4e0edda81fadac7c571a8b0d3613ea6b))
+
+### Features
+
+- **cli:** Add --https option for --live-reload ([#8194](https://github.com/ionic-team/capacitor/issues/8194)) ([de47d79](https://github.com/ionic-team/capacitor/commit/de47d79a65b2f7dec0a53f0ba2c6974042eb4f85))
+
 # [7.5.0](https://github.com/ionic-team/capacitor/compare/7.4.5...7.5.0) (2026-02-11)
 
 ### Bug Fixes
