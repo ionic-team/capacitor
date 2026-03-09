@@ -73,8 +73,8 @@ public class SystemBars extends Plugin {
             new WebViewListener() {
                 @Override
                 public void onPageCommitVisible(WebView view, String url) {
-                super.onPageCommitVisible(view, url);
-                getBridge().getWebView().requestApplyInsets();
+                    super.onPageCommitVisible(view, url);
+                    getBridge().getWebView().requestApplyInsets();
                 }
             }
         );
@@ -194,24 +194,30 @@ public class SystemBars extends Plugin {
                 // We need to correct for a possible shown IME
                 v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
 
-                return new WindowInsetsCompat.Builder(insets).setInsets(
-                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
-                    Insets.of(
-                        systemBarsInsets.left,
-                        systemBarsInsets.top,
-                        systemBarsInsets.right,
-                        getBottomInset(systemBarsInsets, keyboardVisible)
+                return new WindowInsetsCompat.Builder(insets)
+                    .setInsets(
+                        WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
+                        Insets.of(
+                            systemBarsInsets.left,
+                            systemBarsInsets.top,
+                            systemBarsInsets.right,
+                            getBottomInset(systemBarsInsets, keyboardVisible)
+                        )
                     )
-                ).build();
+                    .build();
             }
 
             // We need to correct for a possible shown IME
-            v.setPadding(systemBarsInsets.left, systemBarsInsets.top, systemBarsInsets.right, keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom);
+            v.setPadding(
+                systemBarsInsets.left,
+                systemBarsInsets.top,
+                systemBarsInsets.right,
+                keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
+            );
 
-            return new WindowInsetsCompat.Builder(insets).setInsets(
-                WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
-                Insets.of(0, 0, 0, 0)
-            ).build();
+            return new WindowInsetsCompat.Builder(insets)
+                .setInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(), Insets.of(0, 0, 0, 0))
+                .build();
         });
     }
 
