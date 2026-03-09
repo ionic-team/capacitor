@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Locale;
 
 /**
  * Custom WebChromeClient handler, required for showing dialogs, confirms, etc. in our
@@ -52,6 +53,12 @@ public class BridgeWebChromeClient extends WebChromeClient {
     private ActivityResultListener activityListener;
 
     private Bridge bridge;
+
+    // Security fix: track granted permissions per origin
+    private final Map<String, Set<String>> grantedPermissionsByOrigin = new HashMap<>();
+    private static final String ORIGIN_PERMISSION_CAMERA = "camera";
+    private static final String ORIGIN_PERMISSION_MICROPHONE = "microphone";
+    private static final String ORIGIN_PERMISSION_GEOLOCATION = "geolocation";
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
@@ -100,27 +107,67 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
     @Override
     public void onPermissionRequest(final PermissionRequest request) {
-        List<String> permissionList = new ArrayList<>();
-        if (Arrays.asList(request.getResources()).contains("android.webkit.resource.VIDEO_CAPTURE")) {
-            permissionList.add(Manifest.permission.CAMERA);
+        String origin = normalizeOrigin(request.getOrigin());
+        Set<String> requestedOriginPerms = getRequestedMediaOriginPermissions(request.getResources());
+        Set<String> missingOriginPerms = getMissingOriginPermissions(origin, requestedOriginPerms);
+
+        if (missingOriginPerms.isEmpty()) {
+            // This origin already has these permissions — just check Android-level grants
+            launchAndroidPermissionRequest(request, requestedOriginPerms, origin);
+            return;
         }
-        if (Arrays.asList(request.getResources()).contains("android.webkit.resource.AUDIO_CAPTURE")) {
-            permissionList.add(Manifest.permission.MODIFY_AUDIO_SETTINGS);
-            permissionList.add(Manifest.permission.RECORD_AUDIO);
+
+        // New origin or new permission type — show dialog first
+        Activity activity = bridge.getActivity();
+        if (activity == null || activity.isFinishing()) {
+            safeGrant(request, request.getResources());
+            return;
         }
-        if (!permissionList.isEmpty()) {
-            String[] permissions = permissionList.toArray(new String[0]);
-            permissionListener = (isGranted) -> {
-                if (isGranted) {
-                    request.grant(request.getResources());
-                } else {
-                    request.deny();
-                }
-            };
-            permissionLauncher.launch(permissions);
-        } else {
-            request.grant(request.getResources());
+
+        String originName = getOriginDisplayName(origin, bridge.getContext());
+        String permLabel = buildPermissionLabel(missingOriginPerms, bridge.getContext());
+        String message = getResString(bridge.getContext(), "web_permission_prompt", originName, permLabel);
+        String allowLabel = getResString(bridge.getContext(), "web_permission_allow");
+        String denyLabel = getResString(bridge.getContext(), "web_permission_deny");
+
+        activity.runOnUiThread(() -> {
+            if (activity.isFinishing()) { safeDeny(request); return; }
+            new androidx.appcompat.app.AlertDialog.Builder(activity)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(allowLabel, (d, w) -> launchAndroidPermissionRequest(request, requestedOriginPerms, origin))
+                .setNegativeButton(denyLabel, (d, w) -> safeDeny(request))
+                .show();
+        });
+    }
+
+    private void launchAndroidPermissionRequest(
+        PermissionRequest request,
+        Set<String> requestedOriginPerms,
+        String origin
+    ) {
+        List<String> androidPerms = new ArrayList<>();
+        List<String> resources = Arrays.asList(request.getResources());
+        if (resources.contains(PermissionRequest.RESOURCE_VIDEO_CAPTURE)) {
+            androidPerms.add(Manifest.permission.CAMERA);
         }
+        if (resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)) {
+            androidPerms.add(Manifest.permission.MODIFY_AUDIO_SETTINGS);
+            androidPerms.add(Manifest.permission.RECORD_AUDIO);
+        }
+        if (androidPerms.isEmpty()) {
+            safeGrant(request, request.getResources());
+            return;
+        }
+        permissionListener = isGranted -> {
+            if (isGranted) {
+                grantOriginPermissions(origin, requestedOriginPerms);
+                safeGrant(request, request.getResources());
+            } else {
+                safeDeny(request);
+            }
+        };
+        permissionLauncher.launch(androidPerms.toArray(new String[0]));
     }
 
     /**
@@ -246,11 +293,46 @@ public class BridgeWebChromeClient extends WebChromeClient {
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
+
+        String normalizedOrigin = normalizeOrigin(origin);
+
+        if (hasOriginPermission(normalizedOrigin, ORIGIN_PERMISSION_GEOLOCATION)) {
+            // Already allowed for this origin — just request Android-level if needed
+            launchGeoAndroidPermission(origin, normalizedOrigin, callback);
+            return;
+        }
+
+        Activity activity = bridge.getActivity();
+        if (activity == null || activity.isFinishing()) {
+            launchGeoAndroidPermission(origin, normalizedOrigin, callback);
+            return;
+        }
+
+        String originName = getOriginDisplayName(normalizedOrigin, bridge.getContext());
+        Set<String> geoSet = Collections.singleton(ORIGIN_PERMISSION_GEOLOCATION);
+        String permLabel = buildPermissionLabel(geoSet, bridge.getContext());
+        String message = getResString(bridge.getContext(), "web_permission_prompt", originName, permLabel);
+        String allowLabel = getResString(bridge.getContext(), "web_permission_allow");
+        String denyLabel = getResString(bridge.getContext(), "web_permission_deny");
+
+        activity.runOnUiThread(() -> {
+            if (activity.isFinishing()) { callback.invoke(origin, false, false); return; }
+            new androidx.appcompat.app.AlertDialog.Builder(activity)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(allowLabel, (d, w) -> launchGeoAndroidPermission(origin, normalizedOrigin, callback))
+                .setNegativeButton(denyLabel, (d, w) -> callback.invoke(origin, false, false))
+                .show();
+        });
+    }
+
+    private void launchGeoAndroidPermission(String origin, String normalizedOrigin, GeolocationPermissions.Callback callback) {
         final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
         if (!PermissionHelper.hasPermissions(bridge.getContext(), geoPermissions)) {
             permissionListener = (isGranted) -> {
                 if (isGranted) {
+                    grantOriginPermissions(normalizedOrigin, Collections.singleton(ORIGIN_PERMISSION_GEOLOCATION));
                     callback.invoke(origin, true, false);
                 } else {
                     final String[] coarsePermission = { Manifest.permission.ACCESS_COARSE_LOCATION };
@@ -258,6 +340,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
                         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                         PermissionHelper.hasPermissions(bridge.getContext(), coarsePermission)
                     ) {
+                        grantOriginPermissions(normalizedOrigin, Collections.singleton(ORIGIN_PERMISSION_GEOLOCATION));
                         callback.invoke(origin, true, false);
                     } else {
                         callback.invoke(origin, false, false);
@@ -266,7 +349,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
             };
             permissionLauncher.launch(geoPermissions);
         } else {
-            // permission is already granted
+            grantOriginPermissions(normalizedOrigin, Collections.singleton(ORIGIN_PERMISSION_GEOLOCATION));
             callback.invoke(origin, true, false);
             Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
         }
@@ -463,5 +546,94 @@ public class BridgeWebChromeClient extends WebChromeClient {
         File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         return File.createTempFile(imageFileName, ".jpg", storageDir);
+    }
+
+    // ---- Per-origin permission tracking ----
+
+    private Set<String> getRequestedMediaOriginPermissions(String[] resources) {
+        Set<String> perms = new HashSet<>();
+        for (String r : resources) {
+            if (PermissionRequest.RESOURCE_VIDEO_CAPTURE.equals(r)) perms.add(ORIGIN_PERMISSION_CAMERA);
+            else if (PermissionRequest.RESOURCE_AUDIO_CAPTURE.equals(r)) perms.add(ORIGIN_PERMISSION_MICROPHONE);
+        }
+        return perms;
+    }
+
+    private Set<String> getMissingOriginPermissions(String origin, Set<String> requested) {
+        Set<String> missing = new HashSet<>();
+        for (String p : requested) {
+            if (!hasOriginPermission(origin, p)) missing.add(p);
+        }
+        return missing;
+    }
+
+    private boolean hasOriginPermission(String origin, String key) {
+        Set<String> perms = grantedPermissionsByOrigin.get(origin);
+        return perms != null && perms.contains(key);
+    }
+
+    private void grantOriginPermissions(String origin, Set<String> keys) {
+        if (keys.isEmpty()) return;
+        Set<String> perms = grantedPermissionsByOrigin.get(origin);
+        if (perms == null) { perms = new HashSet<>(); grantedPermissionsByOrigin.put(origin, perms); }
+        perms.addAll(keys);
+    }
+
+    private String normalizeOrigin(Uri uri) {
+        if (uri == null) return "";
+        String scheme = uri.getScheme(), host = uri.getHost();
+        if (scheme == null || host == null) return uri.toString();
+        StringBuilder sb = new StringBuilder()
+            .append(scheme.toLowerCase(Locale.US)).append("://").append(host.toLowerCase(Locale.US));
+        if (uri.getPort() != -1) sb.append(":").append(uri.getPort());
+        return sb.toString();
+    }
+
+    private String normalizeOrigin(String origin) {
+        if (origin == null || origin.isEmpty()) return "";
+        try { return normalizeOrigin(Uri.parse(origin)); } catch (Exception e) { return origin; }
+    }
+
+    private String buildPermissionLabel(Set<String> perms, android.content.Context ctx) {
+        List<String> labels = new ArrayList<>();
+        if (perms.contains(ORIGIN_PERMISSION_CAMERA))       labels.add(getResString(ctx, "web_permission_camera"));
+        if (perms.contains(ORIGIN_PERMISSION_MICROPHONE))   labels.add(getResString(ctx, "web_permission_microphone"));
+        if (perms.contains(ORIGIN_PERMISSION_GEOLOCATION))  labels.add(getResString(ctx, "web_permission_location"));
+        if (labels.isEmpty()) return getResString(ctx, "web_permission_device_features");
+        if (labels.size() == 1) return labels.get(0);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < labels.size(); i++) {
+            if (i > 0) sb.append(i == labels.size() - 1 ? " and " : ", ");
+            sb.append(labels.get(i));
+        }
+        return sb.toString();
+    }
+
+    private String getOriginDisplayName(String origin, android.content.Context ctx) {
+        if (origin == null || origin.isEmpty()) return getResString(ctx, "web_permission_this_site");
+        try {
+            String host = Uri.parse(origin).getHost();
+            return (host != null && !host.isEmpty()) ? host : origin;
+        } catch (Exception e) { return origin; }
+    }
+
+    private String getResString(android.content.Context ctx, String name) {
+        int id = ctx.getResources().getIdentifier(name, "string", ctx.getPackageName());
+        return id != 0 ? ctx.getString(id) : name;
+    }
+
+    private String getResString(android.content.Context ctx, String name, Object... args) {
+        int id = ctx.getResources().getIdentifier(name, "string", ctx.getPackageName());
+        return id != 0 ? ctx.getString(id, args) : name;
+    }
+
+    private void safeGrant(PermissionRequest request, String[] resources) {
+        try { request.grant(resources); }
+        catch (IllegalStateException e) { Logger.warn("BridgeWebChromeClient", "Permission request already processed: " + e.getMessage()); }
+    }
+
+    private void safeDeny(PermissionRequest request) {
+        try { request.deny(); }
+        catch (IllegalStateException e) { Logger.warn("BridgeWebChromeClient", "Permission request already processed: " + e.getMessage()); }
     }
 }

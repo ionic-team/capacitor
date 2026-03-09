@@ -1,3 +1,13 @@
 <resources>
     <string name="no_webview_text">This app requires a WebView to work</string>
+
+    <!-- Web permission origin isolation dialog (BridgeWebChromeClient) -->
+    <string name="web_permission_prompt">%1$s wants to access: %2$s</string>
+    <string name="web_permission_allow">Allow</string>
+    <string name="web_permission_deny">Deny</string>
+    <string name="web_permission_camera">Camera</string>
+    <string name="web_permission_microphone">Microphone</string>
+    <string name="web_permission_location">Location</string>
+    <string name="web_permission_device_features">Device features</string>
+    <string name="web_permission_this_site">This site</string>
 </resources>
