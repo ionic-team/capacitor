@@ -20,7 +20,8 @@
     "capacitor/src/main/"
   ],
   "scripts": {
-    "verify": "./gradlew clean lint build test -b capacitor/build.gradle"
+    "verify": "./gradlew clean lint build test -b capacitor/build.gradle",
+    "pack": "npm pack --pack-destination . && mv capacitor-android-*.tgz dist.tgz"
   },
   "peerDependencies": {
     "@capacitor/core": "^8.2.0"
