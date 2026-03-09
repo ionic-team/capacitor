@@ -213,41 +213,6 @@ public class SystemBars extends Plugin {
                 Insets.of(0, 0, 0, 0)
             ).build();
         });
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && insetHandlingEnabled) {
-//            ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
-//                boolean hasBrokenWebViewVersion = getWebViewMajorVersion() <= 139;
-//
-//                if (hasViewportCover) {
-//                    Insets safeAreaInsets = calcSafeAreaInsets(insets);
-//                    injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-//                }
-//
-//                if (hasBrokenWebViewVersion) {
-//                    if (hasViewportCover && v.hasWindowFocus() && v.isShown()) {
-//                        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
-//                        if (keyboardVisible) {
-//                            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
-//                            setViewMargins(v, Insets.of(0, 0, 0, imeInsets.bottom));
-//                        } else {
-//                            setViewMargins(v, Insets.NONE);
-//                        }
-//
-//                        return WindowInsetsCompat.CONSUMED;
-//                    }
-//                }
-//
-//                return insets;
-//            });
-//        }
-    }
-
-    private void setViewMargins(View v, Insets insets) {
-        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-        mlp.leftMargin = insets.left;
-        mlp.bottomMargin = insets.bottom;
-        mlp.rightMargin = insets.right;
-        mlp.topMargin = insets.top;
-        v.setLayoutParams(mlp);
     }
 
     private void injectSafeAreaCSS(int top, int right, int bottom, int left) {
