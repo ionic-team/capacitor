@@ -28,7 +28,9 @@ import java.util.Locale;
 public class SystemBars extends Plugin {
 
     private static final int MIN_INSETS_VERSION = Build.VERSION_CODES.LOLLIPOP;
-    private static final int BROKEN_WEBVIEW_VERSION = 140;
+
+    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
+    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX = 144;
 
     static final String STYLE_LIGHT = "LIGHT";
     static final String STYLE_DARK = "DARK";
@@ -42,7 +44,10 @@ public class SystemBars extends Plugin {
     static final String VIEWPORT_META_JS = """
         function capacitorSystemBarsCheckMetaViewport() {
             const meta = document.querySelectorAll("meta[name=viewport]");
-            if (meta.length == 0) return false;
+            if (meta.length == 0) {
+                return false;
+            }
+            // get the last found meta viewport tag
             const metaContent = meta[meta.length - 1].content;
             return metaContent.includes("viewport-fit=cover");
         }
@@ -87,6 +92,7 @@ public class SystemBars extends Plugin {
     protected void handleOnResume() {
         super.handleOnResume();
         getBridge().executeOnMainThread(() -> {
+            // Ensure insets are requested when resuming
             WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
             getBridge().getWebView().requestApplyInsets();
         });
@@ -192,14 +198,14 @@ public class SystemBars extends Plugin {
     }
 
     private WindowInsetsCompat applyInsets(View v, WindowInsetsCompat insets) {
-        boolean hasBrokenWebViewVersion = getWebViewMajorVersion() < BROKEN_WEBVIEW_VERSION;
+        int webViewVersion = getWebViewMajorVersion();
+        boolean hasBrokenWebViewVersion = webViewVersion < WEBVIEW_VERSION_WITH_SAFE_AREA_FIX;
+        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
         Insets stableInsets = insets.getInsetsIgnoringVisibility(
-            WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout()
-        );
-        Insets currentInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-
-        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+                WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+        Insets currentInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
 
         if (hasViewportCover) {
             int topInset = stableInsets.top;
@@ -208,6 +214,7 @@ public class SystemBars extends Plugin {
             injectSafeAreaCSSWithBottom(topInset, currentInsets.right, bottomInset, currentInsets.left);
         }
 
+        // Branch for Legacy/Broken WebViews: Uses setViewMargins and CONSUMED to avoid double space
         if (hasBrokenWebViewVersion && hasViewportCover && v.hasWindowFocus() && v.isShown()) {
             if (keyboardVisible) {
                 Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
@@ -219,6 +226,15 @@ public class SystemBars extends Plugin {
         }
 
         resetViewBottomMargin(v);
+
+        // Workaround for Chromium bug #457682720 on modern WebViews
+        if (hasViewportCover && webViewVersion < WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX && keyboardVisible) {
+            return new WindowInsetsCompat.Builder(insets)
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
+                    Insets.of(currentInsets.left, currentInsets.top, currentInsets.right, 0)
+                ).build();
+        }
 
         return insets;
     }
@@ -253,19 +269,19 @@ public class SystemBars extends Plugin {
         getBridge().executeOnMainThread(() -> {
             if (bridge != null && bridge.getWebView() != null) {
                 String script = String.format(
-                    Locale.US,
-                    """
-                    try {
-                      document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
-                      document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
-                      document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
-                      document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
-                    } catch(e) { console.error('Error injecting safe area CSS:', e); }
-                    """,
-                    (int) topPx,
-                    (int) rightPx,
-                    (int) bottomPx,
-                    (int) leftPx
+                        Locale.US,
+                        """
+                        try {
+                          document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
+                          document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
+                          document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
+                          document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
+                        } catch(e) { console.error('Error injecting safe area CSS:', e); }
+                        """,
+                        (int) topPx,
+                        (int) rightPx,
+                        (int) bottomPx,
+                        (int) leftPx
                 );
 
                 bridge.getWebView().evaluateJavascript(script, null);
@@ -297,10 +313,10 @@ public class SystemBars extends Plugin {
                     Locale.US,
                     """
                     try {
-                        document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
-                        document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
-                        document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
-                        document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
+                      document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
+                      document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
+                      document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
+                      document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
                     } catch(e) { console.error('Error injecting safe area CSS:', e); }
                     """,
                     (int) topPx,
