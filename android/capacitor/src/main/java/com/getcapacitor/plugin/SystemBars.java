@@ -103,7 +103,7 @@ public class SystemBars extends Plugin {
         }
 
         initWindowInsetsListener();
-        initSafeAreaInsets();
+        initSafeAreaCSSVariables();
 
         getBridge().executeOnMainThread(() -> {
             setStyle(style, "");
@@ -166,7 +166,7 @@ public class SystemBars extends Plugin {
         return Insets.of(safeArea.left, safeArea.top, safeArea.right, safeArea.bottom);
     }
 
-    private void initSafeAreaInsets() {
+    private void initSafeAreaCSSVariables() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && insetHandlingEnabled) {
             View v = (View) this.getBridge().getWebView().getParent();
             WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
@@ -185,7 +185,7 @@ public class SystemBars extends Plugin {
             Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
             boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
-            if (hasViewportCover) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && hasViewportCover && insetHandlingEnabled) {
                 Insets safeAreaInsets = calcSafeAreaInsets(insets);
                 injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
             }
