@@ -41,10 +41,10 @@ export async function updateIOS(config: Config, deployment: boolean): Promise<vo
 async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: boolean) {
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
-
   const enableCordova = cordovaPlugins.length > 0;
 
   if (enableCordova) {
+    logger.info("Found Cordova Plugins: Including Cordova Support")
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
 
@@ -63,10 +63,6 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
 
     await generatePackageFile(config, validSPMPackages.concat(cordovaPlugins));
   } else {
-    if (enableCordova) {
-      await generateCordovaPodspecs(cordovaPlugins, config);
-    }
-
     await installCocoaPodsPlugins(config, plugins, deployment, enableCordova);
   }
 
@@ -81,6 +77,12 @@ export async function installCocoaPodsPlugins(
   deployment: boolean,
   enableCordova: boolean,
 ): Promise<void> {
+   if (enableCordova) {
+    logger.info("Found Cocoapods with enableCordova=True")
+    const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
+    await generateCordovaPodspecs(cordovaPlugins, config);
+   }
+
   await runTask(`Updating iOS native dependencies with ${c.input(`${await config.ios.podPath} install`)}`, () => {
     return updatePodfile(config, plugins, deployment, enableCordova);
   });
@@ -144,6 +146,8 @@ async function generatePodFile(config: Config, plugins: Plugin[], enableCordova:
   const relativeCapacitoriOSPath = await getRelativeCapacitoriOSPath(config);
 
   const capacitorPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Core);
+  const cordovaPodlines = cordovaPodfileLines(config, plugins);
+
   const pods = await Promise.all(
     capacitorPlugins.map(async (p) => {
       if (!p.ios) {
@@ -155,14 +159,13 @@ async function generatePodFile(config: Config, plugins: Plugin[], enableCordova:
       )}'\n`;
     }),
   );
-  const cordovaPodlines = cordovaPodfileLines(config, plugins);
-  pods.concat(cordovaPodlines);
 
   let podfileString = '\n';
   podfileString += `  pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'\n`;
 
   if (enableCordova) {
     podfileString += `  pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'\n`;
+    podfileString += cordovaPodlines.join('').trimEnd() + '\n';
   }
 
   podfileString += pods.join('').trimEnd();
