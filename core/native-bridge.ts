@@ -125,11 +125,9 @@ const convertBody = async (
 const CAPACITOR_HTTP_INTERCEPTOR = '/_capacitor_http_interceptor_';
 const CAPACITOR_HTTP_INTERCEPTOR_URL_PARAM = 'u';
 
-// TODO: export as Cap function
 const isRelativeOrProxyUrl = (url: string | undefined): boolean =>
   !url || !(url.startsWith('http:') || url.startsWith('https:')) || url.indexOf(CAPACITOR_HTTP_INTERCEPTOR) > -1;
 
-// TODO: export as Cap function
 const createProxyUrl = (url: string, win: WindowCapacitor): string => {
   if (isRelativeOrProxyUrl(url)) return url;
   const bridgeUrl = new URL(win.Capacitor?.getServerUrl() ?? '');
@@ -236,6 +234,9 @@ const initBridge = (w: any): void => {
       }
       return false;
     };
+
+    cap.isRelativeOrProxyUrl = isRelativeOrProxyUrl;
+    cap.createProxyUrl = createProxyUrl;
 
     win.Capacitor = cap;
   };
@@ -611,7 +612,7 @@ const initBridge = (w: any): void => {
 
         // XHR patch
         interface PatchedXMLHttpRequestConstructor extends XMLHttpRequest {
-          new (): XMLHttpRequest;
+          new(): XMLHttpRequest;
         }
 
         window.XMLHttpRequest = function () {
