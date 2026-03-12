@@ -44,7 +44,7 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
   const enableCordova = cordovaPlugins.length > 0;
 
   if (enableCordova) {
-    logger.info("Found Cordova Plugins: Including Cordova Support")
+    logger.info('Found Cordova Plugins: Including Cordova Support');
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
 
@@ -77,11 +77,10 @@ export async function installCocoaPodsPlugins(
   deployment: boolean,
   enableCordova: boolean,
 ): Promise<void> {
-   if (enableCordova) {
-    logger.info("Found Cocoapods with enableCordova=True")
+  if (enableCordova) {
     const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
     await generateCordovaPodspecs(cordovaPlugins, config);
-   }
+  }
 
   await runTask(`Updating iOS native dependencies with ${c.input(`${await config.ios.podPath} install`)}`, () => {
     return updatePodfile(config, plugins, deployment, enableCordova);
