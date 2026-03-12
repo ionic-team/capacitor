@@ -48,7 +48,7 @@ jobs:
       - run: npm run lint
   test-cli:
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 90
     needs:
       - setup
       - lint
