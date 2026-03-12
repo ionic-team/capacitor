@@ -185,14 +185,14 @@ public class SystemBars extends Plugin {
             Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
             boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && hasViewportCover && insetHandlingEnabled) {
-                Insets safeAreaInsets = calcSafeAreaInsets(insets);
-                injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-            }
-
             if (shouldPassthroughInsets) {
                 // We need to correct for a possible shown IME
                 v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && hasViewportCover && insetHandlingEnabled) {
+                    Insets safeAreaInsets = calcSafeAreaInsets(insets);
+                    injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+                }
 
                 return new WindowInsetsCompat.Builder(insets)
                     .setInsets(
@@ -215,9 +215,16 @@ public class SystemBars extends Plugin {
                 keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
             );
 
-            return new WindowInsetsCompat.Builder(insets)
+            WindowInsetsCompat newInsets = new WindowInsetsCompat.Builder(insets)
                 .setInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(), Insets.of(0, 0, 0, 0))
                 .build();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && hasViewportCover && insetHandlingEnabled) {
+                Insets safeAreaInsets = calcSafeAreaInsets(newInsets);
+                injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+            }
+
+            return newInsets;
         });
     }
 
