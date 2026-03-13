@@ -507,6 +507,21 @@ export interface CapacitorConfig {
        */
       provisioningProfile?: string;
     };
+
+    spm?: {
+      /**
+       * Define package traits for SPM plugin dependencies.
+       *
+       * The key is the plugin ID (e.g. `@capacitor-firebase/analytics`)
+       * and the value is an array of trait names.
+       *
+       * Packages can have default traits. If you use this property, and
+       * want to preserve the defaults, include ".defaults" in the array.
+       *
+       * @since 8.2.0
+       */
+      packageTraits?: { [pluginId: string]: string[] };
+    };
   };
 
   server?: {
