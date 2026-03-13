@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -36,7 +35,9 @@ public class SystemBars extends Plugin {
     static final String INSETS_HANDLING_CSS = "css";
     static final String INSETS_HANDLING_DISABLE = "disable";
 
+    // https://issues.chromium.org/issues/40699457
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
+    // https://issues.chromium.org/issues/457682720
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX = 144;
 
     static final String viewportMetaJSFunction = """
@@ -215,6 +216,9 @@ public class SystemBars extends Plugin {
                 keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
             );
 
+            // Returning `WindowInsetsCompat.CONSUMED` breaks recalculation of safe area insets
+            // So we have to explicitly set insets to `0`
+            // See: https://issues.chromium.org/issues/461332423
             WindowInsetsCompat newInsets = new WindowInsetsCompat.Builder(insets)
                 .setInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(), Insets.of(0, 0, 0, 0))
                 .build();
