@@ -508,7 +508,7 @@ const initBridge = (w: any): void => {
             options.headers = headers;
           }
           const request = new Request(resource, options);
-          if (request.url.startsWith(`${cap.getServerUrl()}/`)) {
+          if (request.url.startsWith(`${cap.getServerUrl()}/`) || request.url.startsWith('data:')) {
             return win.CapacitorWebFetch(resource, options);
           }
           const { method } = request;
