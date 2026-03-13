@@ -82,12 +82,6 @@ public class SystemBars extends Plugin {
     }
 
     @Override
-    protected void handleOnResume() {
-        super.handleOnResume();
-        getBridge().executeOnMainThread(() -> getBridge().getWebView().requestApplyInsets());
-    }
-
-    @Override
     protected void handleOnConfigurationChanged(Configuration newConfig) {
         super.handleOnConfigurationChanged(newConfig);
 
