@@ -27,6 +27,11 @@ import java.util.Locale;
 @CapacitorPlugin
 public class SystemBars extends Plugin {
 
+    private static final int MIN_INSETS_VERSION = Build.VERSION_CODES.LOLLIPOP;
+
+    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
+    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX = 144;
+
     static final String STYLE_LIGHT = "LIGHT";
     static final String STYLE_DARK = "DARK";
     static final String STYLE_DEFAULT = "DEFAULT";
@@ -36,7 +41,7 @@ public class SystemBars extends Plugin {
     static final String INSETS_HANDLING_CSS = "css";
     static final String INSETS_HANDLING_DISABLE = "disable";
 
-    static final String viewportMetaJSFunction = """
+    static final String VIEWPORT_META_JS = """
         function capacitorSystemBarsCheckMetaViewport() {
             const meta = document.querySelectorAll("meta[name=viewport]");
             if (meta.length == 0) {
@@ -51,6 +56,7 @@ public class SystemBars extends Plugin {
 
     private boolean insetHandlingEnabled = true;
     private boolean hasViewportCover = false;
+    private Integer cachedWebViewMajorVersion;
 
     private String currentStyle = STYLE_DEFAULT;
 
@@ -60,6 +66,11 @@ public class SystemBars extends Plugin {
         super.load();
 
         initSystemBars();
+
+        getBridge().executeOnMainThread(() -> {
+            WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
+            getBridge().getWebView().requestApplyInsets();
+        });
     }
 
     @Override
@@ -78,6 +89,16 @@ public class SystemBars extends Plugin {
     }
 
     @Override
+    protected void handleOnResume() {
+        super.handleOnResume();
+        getBridge().executeOnMainThread(() -> {
+            // Ensure insets are requested when resuming
+            WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
+            getBridge().getWebView().requestApplyInsets();
+        });
+    }
+
+    @Override
     protected void handleOnConfigurationChanged(Configuration newConfig) {
         super.handleOnConfigurationChanged(newConfig);
 
@@ -89,7 +110,7 @@ public class SystemBars extends Plugin {
         boolean hidden = getConfig().getBoolean("hidden", false);
 
         String insetsHandling = getConfig().getString("insetsHandling", "css");
-        if (insetsHandling.equals(INSETS_HANDLING_DISABLE)) {
+        if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
             insetHandlingEnabled = false;
         }
 
@@ -108,7 +129,7 @@ public class SystemBars extends Plugin {
         String style = call.getString("style", STYLE_DEFAULT);
 
         getBridge().executeOnMainThread(() -> {
-            setStyle(style, bar);
+            setStyle(style != null ? style : STYLE_DEFAULT, bar);
             call.resolve();
         });
     }
@@ -140,13 +161,14 @@ public class SystemBars extends Plugin {
 
     @JavascriptInterface
     public void onDOMReady() {
-        getActivity().runOnUiThread(() -> {
-            this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
+        getActivity().runOnUiThread(() ->
+            this.bridge.getWebView().evaluateJavascript(VIEWPORT_META_JS, (res) -> {
                 hasViewportCover = res.equals("true");
 
+                WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
                 getBridge().getWebView().requestApplyInsets();
-            });
-        });
+            })
+        );
     }
 
     private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
@@ -158,7 +180,7 @@ public class SystemBars extends Plugin {
     }
 
     private void initSafeAreaInsets() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && insetHandlingEnabled) {
+        if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION && insetHandlingEnabled) {
             View v = (View) this.getBridge().getWebView().getParent();
             WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
             if (insets != null) {
@@ -169,32 +191,102 @@ public class SystemBars extends Plugin {
     }
 
     private void initWindowInsetsListener() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && insetHandlingEnabled) {
-            ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
-                boolean hasBrokenWebViewVersion = getWebViewMajorVersion() <= 139;
-
-                if (hasViewportCover) {
-                    Insets safeAreaInsets = calcSafeAreaInsets(insets);
-                    injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-                }
-
-                if (hasBrokenWebViewVersion) {
-                    if (hasViewportCover && v.hasWindowFocus() && v.isShown()) {
-                        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
-                        if (keyboardVisible) {
-                            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
-                            setViewMargins(v, Insets.of(0, 0, 0, imeInsets.bottom));
-                        } else {
-                            setViewMargins(v, Insets.NONE);
-                        }
-
-                        return WindowInsetsCompat.CONSUMED;
-                    }
-                }
-
-                return insets;
-            });
+        if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION && insetHandlingEnabled) {
+            View parentView = (View) getBridge().getWebView().getParent();
+            ViewCompat.setOnApplyWindowInsetsListener(parentView, this::applyInsets);
         }
+    }
+
+    private WindowInsetsCompat applyInsets(View v, WindowInsetsCompat insets) {
+        int webViewVersion = getWebViewMajorVersion();
+        boolean hasBrokenWebViewVersion = webViewVersion < WEBVIEW_VERSION_WITH_SAFE_AREA_FIX;
+        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+
+        Insets stableInsets = insets.getInsetsIgnoringVisibility(
+                WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+        Insets currentInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+
+        if (hasViewportCover) {
+            int topInset = stableInsets.top;
+            int bottomInset = keyboardVisible ? 0 : currentInsets.bottom;
+
+            injectSafeAreaCSSWithBottom(topInset, currentInsets.right, bottomInset, currentInsets.left);
+        }
+
+        // Branch for Legacy/Broken WebViews: Uses setViewMargins and CONSUMED to avoid double space
+        if (hasBrokenWebViewVersion && hasViewportCover && v.hasWindowFocus() && v.isShown()) {
+            if (keyboardVisible) {
+                Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
+                setViewMargins(v, Insets.of(0, 0, 0, imeInsets.bottom));
+            } else {
+                setViewMargins(v, Insets.NONE);
+            }
+            return WindowInsetsCompat.CONSUMED;
+        }
+
+        resetViewBottomMargin(v);
+
+        // Workaround for Chromium bug #457682720 on modern WebViews
+        if (hasViewportCover && webViewVersion < WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX && keyboardVisible) {
+            return new WindowInsetsCompat.Builder(insets)
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
+                    Insets.of(currentInsets.left, currentInsets.top, currentInsets.right, 0)
+                ).build();
+        }
+
+        return insets;
+    }
+
+    private void setViewBottomMargin(View v, int bottom) {
+        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        mlp.leftMargin = 0;
+        mlp.bottomMargin = bottom;
+        mlp.rightMargin = 0;
+        mlp.topMargin = 0;
+        v.setLayoutParams(mlp);
+    }
+
+    private void resetViewBottomMargin(View v) {
+        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        if (mlp.leftMargin != 0 || mlp.topMargin != 0 || mlp.rightMargin != 0 || mlp.bottomMargin != 0) {
+            mlp.leftMargin = 0;
+            mlp.topMargin = 0;
+            mlp.rightMargin = 0;
+            mlp.bottomMargin = 0;
+            v.setLayoutParams(mlp);
+        }
+    }
+
+    private void injectSafeAreaCSSWithBottom(int top, int right, int bottom, int left) {
+        float density = getActivity().getResources().getDisplayMetrics().density;
+        float topPx = top / density;
+        float rightPx = right / density;
+        float bottomPx = bottom / density;
+        float leftPx = left / density;
+
+        getBridge().executeOnMainThread(() -> {
+            if (bridge != null && bridge.getWebView() != null) {
+                String script = String.format(
+                        Locale.US,
+                        """
+                        try {
+                          document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
+                          document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
+                          document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
+                          document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
+                        } catch(e) { console.error('Error injecting safe area CSS:', e); }
+                        """,
+                        (int) topPx,
+                        (int) rightPx,
+                        (int) bottomPx,
+                        (int) leftPx
+                );
+
+                bridge.getWebView().evaluateJavascript(script, null);
+            }
+        });
     }
 
     private void setViewMargins(View v, Insets insets) {
@@ -296,13 +388,21 @@ public class SystemBars extends Plugin {
         return typedValue.data;
     }
 
-    private Integer getWebViewMajorVersion() {
+    private int getWebViewMajorVersion() {
+        if (cachedWebViewMajorVersion != null) {
+            return cachedWebViewMajorVersion;
+        }
+
         PackageInfo info = WebViewCompat.getCurrentWebViewPackage(getContext());
         if (info != null && info.versionName != null) {
             String[] versionSegments = info.versionName.split("\\.");
-            return Integer.valueOf(versionSegments[0]);
+            try {
+                cachedWebViewMajorVersion = Integer.valueOf(versionSegments[0]);
+                return cachedWebViewMajorVersion;
+            } catch (NumberFormatException ignored) {}
         }
 
+        cachedWebViewMajorVersion = 0;
         return 0;
     }
 }
