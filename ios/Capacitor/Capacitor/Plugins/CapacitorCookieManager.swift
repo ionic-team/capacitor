@@ -46,14 +46,6 @@ public class CapacitorCookieManager {
         return url
     }
 
-    public func encode(_ value: String) -> String {
-        return value.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
-    }
-
-    public func decode(_ value: String) -> String {
-        return value.removingPercentEncoding!
-    }
-
     public func setCookie(_ domain: String, _ action: String) {
         let url = getServerUrl(domain)!
         let jar = HTTPCookieStorage.shared
