@@ -499,6 +499,10 @@ var nativeBridge = (function (exports) {
                             if (typeof resource === 'string') {
                                 return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
                             }
+                            else if (resource instanceof URL) {
+                                const modifiedURL = new URL(createProxyUrl(resource.toString(), win));
+                                return await win.CapacitorWebFetch(modifiedURL, options);
+                            }
                             else if (resource instanceof Request) {
                                 const modifiedRequest = new Request(createProxyUrl(resource.url, win), resource);
                                 return await win.CapacitorWebFetch(modifiedRequest, options);
