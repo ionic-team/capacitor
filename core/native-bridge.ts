@@ -532,6 +532,8 @@ const initBridge = (w: any): void => {
 
             if (typeof resource === 'string') {
               return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
+            } else if (resource instanceof URL) {
+              return await win.CapacitorWebFetch(createProxyUrl(resource.toString(), win), options);
             } else if (resource instanceof Request) {
               const modifiedRequest = new Request(createProxyUrl(resource.url, win), resource);
               return await win.CapacitorWebFetch(modifiedRequest, options);
