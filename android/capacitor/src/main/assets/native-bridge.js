@@ -506,7 +506,8 @@ var nativeBridge = (function (exports) {
                                 return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
                             }
                             else if (resource instanceof URL) {
-                                return await win.CapacitorWebFetch(createProxyUrl(resource.toString(), win), options);
+                                const modifiedURL = new URL(createProxyUrl(resource.toString(), win));
+                                return await win.CapacitorWebFetch(modifiedURL, options);
                             }
                             else if (resource instanceof Request) {
                                 const modifiedRequest = new Request(createProxyUrl(resource.url, win), resource);
