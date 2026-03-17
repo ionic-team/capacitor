@@ -724,7 +724,7 @@ export interface PluginsConfig {
      *
      * `css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
      *
-     * `disable` = Disable all inset handling.
+     * `disable` = Disable CSS variables injection.
      *
      * @default "css"
      */

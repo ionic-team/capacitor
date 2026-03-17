@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.2.0](https://github.com/ionic-team/capacitor/compare/8.1.0...8.2.0) (2026-03-06)
+
+### Bug Fixes
+
+- **android:** Add missing null checks in BridgeActivity ([#8185](https://github.com/ionic-team/capacitor/issues/8185)) ([bd29b99](https://github.com/ionic-team/capacitor/commit/bd29b9913a9279de26fc21c6cb0b93b8f5e5433a))
+- **android:** Concurrent Range Requests for assets ([#8357](https://github.com/ionic-team/capacitor/issues/8357)) ([5e82c89](https://github.com/ionic-team/capacitor/commit/5e82c89f1bff6d0e9ccea2554007aacb920d4c58))
+- **android:** handle lowercase range header ([#8368](https://github.com/ionic-team/capacitor/issues/8368)) ([ae0e2dd](https://github.com/ionic-team/capacitor/commit/ae0e2ddccb2904ee4b3d47d4be1f7556ac7000a1))
+- **android:** invalid http range seeking ([#8369](https://github.com/ionic-team/capacitor/issues/8369)) ([3109d22](https://github.com/ionic-team/capacitor/commit/3109d22547253ed44293777c60652f14cf83e416))
+- **cli:** Allow to run update on non macOS ([#8344](https://github.com/ionic-team/capacitor/issues/8344)) ([a441280](https://github.com/ionic-team/capacitor/commit/a441280d7c6b310ca516d6fb2736c09525987774))
+- **cli:** Don't overwrite config.server section with `--live-reload` ([#7528](https://github.com/ionic-team/capacitor/issues/7528)) ([782b9d9](https://github.com/ionic-team/capacitor/commit/782b9d9c26dcf1282b918996becb0224c0baca1d))
+- **cli:** use 8.0.0 as default Capacitor SPM dependency version ([#8341](https://github.com/ionic-team/capacitor/issues/8341)) ([a55dc5e](https://github.com/ionic-team/capacitor/commit/a55dc5ee4dfeab861cde1e11c9063aefea91006b))
+- **docs:** fix typo in CapApp-SPM README ([#8348](https://github.com/ionic-team/capacitor/issues/8348)) ([7d001ac](https://github.com/ionic-team/capacitor/commit/7d001ac4c58757fba922ea50f5bf5233ce217490))
+- **ios:** remove tmpWindow usages on presentVC/dismissVC ([#8338](https://github.com/ionic-team/capacitor/issues/8338)) ([fc9647f](https://github.com/ionic-team/capacitor/commit/fc9647f26f08ff64f53b32c79fb19f153e3b0a24))
+
+### Features
+
+- **cli:** Add --https option for --live-reload ([#8194](https://github.com/ionic-team/capacitor/issues/8194)) ([5db81e6](https://github.com/ionic-team/capacitor/commit/5db81e68c67652e9d2b29d7ad30629b423d2ad30))
+
+# [8.1.0](https://github.com/ionic-team/capacitor/compare/8.0.2...8.1.0) (2026-02-11)
+
+### Bug Fixes
+
+- **cookies:** only send expires param on web if a date is set ([b10cd7f](https://github.com/ionic-team/capacitor/commit/b10cd7ff15b010a76802374214f4e0cbd04abdab))
+
+### Features
+
+- **cli:** Add packageManager to iOS config ([#8321](https://github.com/ionic-team/capacitor/issues/8321)) ([a125498](https://github.com/ionic-team/capacitor/commit/a1254983bbb9dcb273d93f3c5f639b792e516406))
+
+### Reverts
+
+- revert version bump from [#8319](https://github.com/ionic-team/capacitor/issues/8319) and [#8320](https://github.com/ionic-team/capacitor/issues/8320) ([a48ebb6](https://github.com/ionic-team/capacitor/commit/a48ebb622ea4ebe92927bf1756a4d8ac6012884b))
+
 ## [8.0.2](https://github.com/ionic-team/capacitor/compare/8.0.1...8.0.2) (2026-01-27)
 
 ### Bug Fixes
