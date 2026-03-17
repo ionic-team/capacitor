@@ -7,6 +7,7 @@ import { checkPlatformVersions, runTask } from '../common';
 import { checkPluginDependencies, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
+import { logger } from '../log';
 import {
   PluginType,
   getAllElements,
@@ -22,7 +23,6 @@ import { copy as copyTask } from '../tasks/copy';
 import { readdirp, convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
-import { logger } from '../log';
 
 import { getAndroidPlugins } from './common';
 
