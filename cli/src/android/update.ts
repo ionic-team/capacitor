@@ -22,6 +22,7 @@ import { copy as copyTask } from '../tasks/copy';
 import { readdirp, convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
+import { logger } from '../log';
 
 import { getAndroidPlugins } from './common';
 
@@ -39,6 +40,7 @@ export async function updateAndroid(config: Config): Promise<void> {
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
   if (cordovaPlugins.length > 0) {
+    logger.info('Found Cordova Plugins: Including Android Cordova Support');
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
   if (!(await pathExists(config.android.webDirAbs))) {

@@ -44,7 +44,7 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
   const enableCordova = cordovaPlugins.length > 0;
 
   if (enableCordova) {
-    logger.info('Found Cordova Plugins: Including Cordova Support');
+    logger.info('Found Cordova Plugins: Including iOS Cordova Support');
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
 
