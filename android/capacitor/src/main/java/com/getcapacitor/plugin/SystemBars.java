@@ -29,9 +29,6 @@ public class SystemBars extends Plugin {
 
     private static final int MIN_INSETS_VERSION = Build.VERSION_CODES.LOLLIPOP;
 
-    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
-    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX = 144;
-
     static final String STYLE_LIGHT = "LIGHT";
     static final String STYLE_DARK = "DARK";
     static final String STYLE_DEFAULT = "DEFAULT";
@@ -40,6 +37,11 @@ public class SystemBars extends Plugin {
 
     static final String INSETS_HANDLING_CSS = "css";
     static final String INSETS_HANDLING_DISABLE = "disable";
+
+    // https://issues.chromium.org/issues/40699457
+    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
+    // https://issues.chromium.org/issues/457682720
+    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX = 144;
 
     static final String VIEWPORT_META_JS = """
         function capacitorSystemBarsCheckMetaViewport() {
@@ -92,7 +94,6 @@ public class SystemBars extends Plugin {
     protected void handleOnResume() {
         super.handleOnResume();
         getBridge().executeOnMainThread(() -> {
-            // Ensure insets are requested when resuming
             WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
             getBridge().getWebView().requestApplyInsets();
         });
@@ -109,7 +110,7 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        String insetsHandling = getConfig().getString("insetsHandling", "css");
+        String insetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
         if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
             insetHandlingEnabled = false;
         }
@@ -214,7 +215,6 @@ public class SystemBars extends Plugin {
             injectSafeAreaCSSWithBottom(topInset, currentInsets.right, bottomInset, currentInsets.left);
         }
 
-        // Branch for Legacy/Broken WebViews: Uses setViewMargins and CONSUMED to avoid double space
         if (hasBrokenWebViewVersion && hasViewportCover && v.hasWindowFocus() && v.isShown()) {
             if (keyboardVisible) {
                 Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
@@ -227,7 +227,6 @@ public class SystemBars extends Plugin {
 
         resetViewBottomMargin(v);
 
-        // Workaround for Chromium bug #457682720 on modern WebViews
         if (hasViewportCover && webViewVersion < WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX && keyboardVisible) {
             return new WindowInsetsCompat.Builder(insets)
                 .setInsets(
@@ -239,15 +238,6 @@ public class SystemBars extends Plugin {
         return insets;
     }
 
-    private void setViewBottomMargin(View v, int bottom) {
-        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-        mlp.leftMargin = 0;
-        mlp.bottomMargin = bottom;
-        mlp.rightMargin = 0;
-        mlp.topMargin = 0;
-        v.setLayoutParams(mlp);
-    }
-
     private void resetViewBottomMargin(View v) {
         ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
         if (mlp.leftMargin != 0 || mlp.topMargin != 0 || mlp.rightMargin != 0 || mlp.bottomMargin != 0) {
@@ -257,6 +247,15 @@ public class SystemBars extends Plugin {
             mlp.bottomMargin = 0;
             v.setLayoutParams(mlp);
         }
+    }
+
+    private void setViewMargins(View v, Insets insets) {
+        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        mlp.leftMargin = insets.left;
+        mlp.bottomMargin = insets.bottom;
+        mlp.rightMargin = insets.right;
+        mlp.topMargin = insets.top;
+        v.setLayoutParams(mlp);
     }
 
     private void injectSafeAreaCSSWithBottom(int top, int right, int bottom, int left) {
@@ -289,24 +288,13 @@ public class SystemBars extends Plugin {
         });
     }
 
-    private void setViewMargins(View v, Insets insets) {
-        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-        mlp.leftMargin = insets.left;
-        mlp.bottomMargin = insets.bottom;
-        mlp.rightMargin = insets.right;
-        mlp.topMargin = insets.top;
-        v.setLayoutParams(mlp);
-    }
-
     private void injectSafeAreaCSS(int top, int right, int bottom, int left) {
-        // Convert pixels to density-independent pixels
         float density = getActivity().getResources().getDisplayMetrics().density;
         float topPx = top / density;
         float rightPx = right / density;
         float bottomPx = bottom / density;
         float leftPx = left / density;
 
-        // Execute JavaScript to inject the CSS
         getBridge().executeOnMainThread(() -> {
             if (bridge != null && bridge.getWebView() != null) {
                 String script = String.format(
