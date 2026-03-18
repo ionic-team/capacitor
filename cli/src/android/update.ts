@@ -36,10 +36,12 @@ export async function updateAndroid(config: Config): Promise<void> {
 
   printPlugins(capacitorPlugins, 'android');
 
-  await writePluginsJson(config, capacitorPlugins);
-  await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
-  if (cordovaPlugins.length > 0) {
+  const enableCordova = cordovaPlugins.length > 0;
+
+  await writePluginsJson(config, capacitorPlugins, enableCordova);
+  await removePluginsNativeFiles(config);
+  if (enableCordova) {
     logger.info('Found Cordova Plugins: Including Android Cordova Support');
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
@@ -66,8 +68,16 @@ interface PluginsJsonEntry {
   classpath: string;
 }
 
-async function writePluginsJson(config: Config, plugins: Plugin[]): Promise<void> {
+async function writePluginsJson(config: Config, plugins: Plugin[], includeCordova: boolean): Promise<void> {
   const classes = await findAndroidPluginClasses(plugins);
+
+  if (includeCordova) {
+    classes.push({
+      pkg: '@capacitor/android',
+      classpath: 'com.getcapacitor.cordova.CordovaPlugin',
+    });
+  }
+
   const pluginsJsonPath = resolve(config.android.assetsDirAbs, 'capacitor.plugins.json');
 
   await writeJSON(pluginsJsonPath, classes, { spaces: '\t' });
