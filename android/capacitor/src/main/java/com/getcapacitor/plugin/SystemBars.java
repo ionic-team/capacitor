@@ -116,7 +116,7 @@ public class SystemBars extends Plugin {
         }
 
         initWindowInsetsListener();
-        initSafeAreaInsets();
+        initSafeAreaCSSVariables();
 
         getBridge().executeOnMainThread(() -> {
             setStyle(style, "");
@@ -180,7 +180,7 @@ public class SystemBars extends Plugin {
         return Insets.of(safeArea.left, safeArea.top, safeArea.right, safeArea.bottom);
     }
 
-    private void initSafeAreaInsets() {
+    private void initSafeAreaCSSVariables() {
         if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION && insetHandlingEnabled) {
             View v = (View) this.getBridge().getWebView().getParent();
             WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
