@@ -10,6 +10,7 @@
 - (NSString * _Nullable)getString:(NSString * _Nonnull)key defaultValue:(NSString * _Nullable)defaultValue;
 - (NSDate * _Nullable)getDate:(NSString * _Nonnull)key defaultValue:(NSDate * _Nullable)defaultValue;
 - (NSDictionary * _Nullable)getObject:(NSString * _Nonnull)key defaultValue:(NSDictionary * _Nullable)defaultValue;
+- (NSArray * _Nullable)getArray:(NSString * _Nonnull)key defaultValue:(NSArray * _Nullable)defaultValue;
 - (NSNumber * _Nullable)getNumber:(NSString * _Nonnull)key defaultValue:(NSNumber * _Nullable)defaultValue;
 - (BOOL)getBool:(NSString * _Nonnull)key defaultValue:(BOOL)defaultValue;
 @end
