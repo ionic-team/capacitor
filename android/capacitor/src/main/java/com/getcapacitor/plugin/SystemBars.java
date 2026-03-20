@@ -201,7 +201,8 @@ public class SystemBars extends Plugin {
     private WindowInsetsCompat applyInsets(View v, WindowInsetsCompat insets) {
         int webViewVersion = getWebViewMajorVersion();
         boolean hasBrokenWebViewVersion = webViewVersion < WEBVIEW_VERSION_WITH_SAFE_AREA_FIX;
-        boolean shouldUseLegacyFallback = hasBrokenWebViewVersion && Build.VERSION.SDK_INT < Build.VERSION_CODES.R;
+        boolean hasModernWebView = !hasBrokenWebViewVersion;
+        boolean isApiLowerThan30 = Build.VERSION.SDK_INT < Build.VERSION_CODES.R;
         boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
         Insets stableInsets = insets.getInsetsIgnoringVisibility(
@@ -209,16 +210,23 @@ public class SystemBars extends Plugin {
         Insets currentInsets = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
 
+        if (isApiLowerThan30 && hasBrokenWebViewVersion && hasViewportCover && v.hasWindowFocus() && v.isShown()) {
+            setViewMargins(v, Insets.NONE);
+            injectSafeAreaCSSWithBottom(0, 0, 0, 0);
+            return WindowInsetsCompat.CONSUMED;
+        }
+
+        if (isApiLowerThan30 && hasModernWebView && hasViewportCover) {
+            resetViewBottomMargin(v);
+            injectSafeAreaCSSWithBottom(0, 0, 0, 0);
+            return insets;
+        }
+
         if (hasViewportCover) {
             int topInset = stableInsets.top;
             int bottomInset = keyboardVisible ? 0 : currentInsets.bottom;
 
             injectSafeAreaCSSWithBottom(topInset, currentInsets.right, bottomInset, currentInsets.left);
-        }
-
-        if (shouldUseLegacyFallback && hasViewportCover && v.hasWindowFocus() && v.isShown()) {
-            injectSafeAreaCSSWithBottom(0, 0, 0, 0);
-            return WindowInsetsCompat.CONSUMED;
         }
 
         if (hasBrokenWebViewVersion && hasViewportCover && v.hasWindowFocus() && v.isShown()) {
