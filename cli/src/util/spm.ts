@@ -98,8 +98,7 @@ export async function removeCocoapodsFiles(config: Config): Promise<void> {
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
-  const packageTraits = config.app.extConfig.ios?.spm?.packageTraits ?? {};
-  const hasTraits = Object.keys(packageTraits).length > 0;
+  const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits ?? {};
   const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '5.9';
 
   let packageSwiftText = `// swift-tools-version: ${swiftToolsVersion}
