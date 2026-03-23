@@ -100,7 +100,7 @@ export async function generatePackageText(config: Config, plugins: Plugin[]): Pr
   const iosVersion = getMajoriOSVersion(config);
   const packageTraits = config.app.extConfig.ios?.spm?.packageTraits ?? {};
   const hasTraits = Object.keys(packageTraits).length > 0;
-  const swiftToolsVersion = hasTraits ? '6.1' : '5.9';
+  const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '5.9';
 
   let packageSwiftText = `// swift-tools-version: ${swiftToolsVersion}
 import PackageDescription
@@ -198,6 +198,23 @@ export async function addInfoPlistDebugIfNeeded(config: Config): Promise<void> {
   } else {
     logger.warn(infoPlist + ' not found.');
   }
+}
+
+export async function checkSwiftToolsVersion(config: Config, version: string | undefined): Promise<string | null> {
+  if (!version) {
+    return null;
+  }
+
+  const swiftToolsVersionRegex = /^[0-9]+\.[0-9]+(\.[0-9]+)?$/;
+
+  if (!swiftToolsVersionRegex.test(version)) {
+    return (
+      `Invalid Swift tools version: "${version}".\n` +
+      `The Swift tools version must be in major.minor or major.minor.patch format (e.g., "5.9", "6.0", "5.9.2").`
+    );
+  }
+
+  return null;
 }
 
 // Private Functions
