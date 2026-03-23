@@ -509,6 +509,42 @@ export interface CapacitorConfig {
     };
   };
 
+  experimental?: {
+    /**
+     * Experimental iOS-specific configuration.
+     *
+     * These options may change or be removed in future versions.
+     *
+     * @since 8.2.0
+     */
+    ios?: {
+      /**
+       * Swift Package Manager (SPM) specific configuration.
+       *
+       * @since 8.2.0
+       */
+      spm?: {
+        /**
+         * Swift tools version to use in Package.swift header.
+         *
+         * Defines the minimum version of the Swift compiler version required to build your app.
+         * For more information check the [swift documentation](https://docs.swift.org/swiftpm/documentation/packagemanagerdocs/settingswifttoolsversion/)
+         *
+         * Warning: Capacitor does not officially support Swift 6 yet.
+         * Setting this property to 6.0 or higher may cause issues.
+         * If you need to set this property to 6.0 or higher, make sure to throughrouly test your iOS app.
+         *
+         * This setting may graduate to `ios.spm.swiftToolsVersion` in a future major release.
+         *
+         * @since 8.2.0
+         * @default '5.9'
+         * @example '6.1'
+         */
+        swiftToolsVersion?: string;
+      };
+    };
+  };
+
   server?: {
     /**
      * Configure the local hostname of the device.
@@ -713,7 +749,7 @@ export interface PluginsConfig {
      *
      * `css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
      *
-     * `disable` = Disable all inset handling.
+     * `disable` = Disable CSS variables injection.
      *
      * @default "css"
      */

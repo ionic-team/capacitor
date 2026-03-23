@@ -628,11 +628,11 @@ public class Bridge {
             try {
                 URL appUrlObject = new URL(appUrlConfig);
                 authorities.add(appUrlObject.getAuthority());
+                localUrl = appUrlObject.getProtocol() + "://" + appUrlObject.getAuthority();
             } catch (Exception ex) {
                 Logger.error("Provided server url is invalid: " + ex.getMessage());
                 return;
             }
-            localUrl = appUrlConfig;
             appUrl = appUrlConfig;
         } else {
             appUrl = localUrl;
