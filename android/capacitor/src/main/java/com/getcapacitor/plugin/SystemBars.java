@@ -186,7 +186,13 @@ public class SystemBars extends Plugin {
             WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
             if (insets != null) {
                 Insets safeAreaInsets = calcSafeAreaInsets(insets);
-                injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+                boolean isApiLowerThan30 = Build.VERSION.SDK_INT < Build.VERSION_CODES.R;
+
+                if (isApiLowerThan30) {
+                    injectSafeAreaCSSWithBottom(0, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+                } else {
+                    injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+                }
             }
         }
     }
@@ -212,31 +218,23 @@ public class SystemBars extends Plugin {
 
         if (isApiLowerThan30 && hasBrokenWebViewVersion && hasViewportCover && v.hasWindowFocus() && v.isShown()) {
             setViewMargins(v, Insets.NONE);
-            injectSafeAreaCSSWithBottom(0, 0, 0, 0);
+            int bottomInset = keyboardVisible ? 0 : stableInsets.bottom;
+            injectSafeAreaCSSWithBottom(0, currentInsets.right, bottomInset, currentInsets.left);
             return WindowInsetsCompat.CONSUMED;
         }
 
         if (isApiLowerThan30 && hasModernWebView && hasViewportCover) {
             resetViewBottomMargin(v);
-            injectSafeAreaCSSWithBottom(0, 0, 0, 0);
+            int bottomInset = keyboardVisible ? 0 : stableInsets.bottom;
+            injectSafeAreaCSSWithBottom(0, stableInsets.right, bottomInset, stableInsets.left);
             return insets;
         }
 
-        if (hasViewportCover) {
+        if (hasViewportCover && !(isApiLowerThan30 && hasBrokenWebViewVersion)) {
             int topInset = stableInsets.top;
             int bottomInset = keyboardVisible ? 0 : currentInsets.bottom;
 
             injectSafeAreaCSSWithBottom(topInset, currentInsets.right, bottomInset, currentInsets.left);
-        }
-
-        if (hasBrokenWebViewVersion && hasViewportCover && v.hasWindowFocus() && v.isShown()) {
-            if (keyboardVisible) {
-                Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
-                setViewMargins(v, Insets.of(0, 0, 0, imeInsets.bottom));
-            } else {
-                setViewMargins(v, Insets.NONE);
-            }
-            return WindowInsetsCompat.CONSUMED;
         }
 
         resetViewBottomMargin(v);
@@ -274,58 +272,44 @@ public class SystemBars extends Plugin {
 
     private void injectSafeAreaCSSWithBottom(int top, int right, int bottom, int left) {
         float density = getActivity().getResources().getDisplayMetrics().density;
-        float topPx = top / density;
-        float rightPx = right / density;
-        float bottomPx = bottom / density;
-        float leftPx = left / density;
-
-        getBridge().executeOnMainThread(() -> {
-            if (bridge != null && bridge.getWebView() != null) {
-                String script = String.format(
-                        Locale.US,
-                        """
-                        try {
-                          document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
-                          document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
-                          document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
-                          document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
-                        } catch(e) { console.error('Error injecting safe area CSS:', e); }
-                        """,
-                        (int) topPx,
-                        (int) rightPx,
-                        (int) bottomPx,
-                        (int) leftPx
-                );
-
-                bridge.getWebView().evaluateJavascript(script, null);
-            }
-        });
+        int topPx = (int) (top / density);
+        int rightPx = (int) (right / density);
+        int bottomPx = (int) (bottom / density);
+        int leftPx = (int) (left / density);
+        injectSafeAreaCSSPixels(topPx, rightPx, bottomPx, leftPx);
     }
 
     private void injectSafeAreaCSS(int top, int right, int bottom, int left) {
         float density = getActivity().getResources().getDisplayMetrics().density;
-        float topPx = top / density;
-        float rightPx = right / density;
-        float bottomPx = bottom / density;
-        float leftPx = left / density;
+        int topPx = (int) (top / density);
+        int rightPx = (int) (right / density);
+        int bottomPx = (int) (bottom / density);
+        int leftPx = (int) (left / density);
 
+        injectSafeAreaCSSPixels(topPx, rightPx, bottomPx, leftPx);
+    }
+
+    private void injectSafeAreaCSSPixels(int topPx, int rightPx, int bottomPx, int leftPx) {
         getBridge().executeOnMainThread(() -> {
             if (bridge != null && bridge.getWebView() != null) {
-                String script = String.format(
-                    Locale.US,
-                    """
-                    try {
-                      document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
-                      document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
-                      document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
-                      document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
-                    } catch(e) { console.error('Error injecting safe area CSS:', e); }
-                    """,
-                    (int) topPx,
-                    (int) rightPx,
-                    (int) bottomPx,
-                    (int) leftPx
-                );
+                String script =
+                    "try {" +
+                    "const style = document.documentElement.style;" +
+                    "style.removeProperty('--safe-area-inset-top');" +
+                    "style.removeProperty('--safe-area-inset-right');" +
+                    "style.removeProperty('--safe-area-inset-bottom');" +
+                    "style.removeProperty('--safe-area-inset-left');" +
+                    "for (const name of Array.from(style)) {" +
+                    "  if (name.startsWith('--safe-area-inset-top') && name !== '--safe-area-inset-top') style.removeProperty(name);" +
+                    "  if (name.startsWith('--safe-area-inset-right') && name !== '--safe-area-inset-right') style.removeProperty(name);" +
+                    "  if (name.startsWith('--safe-area-inset-bottom') && name !== '--safe-area-inset-bottom') style.removeProperty(name);" +
+                    "  if (name.startsWith('--safe-area-inset-left') && name !== '--safe-area-inset-left') style.removeProperty(name);" +
+                    "}" +
+                    "style.setProperty('--safe-area-inset-top', '" + topPx + "px');" +
+                    "style.setProperty('--safe-area-inset-right', '" + rightPx + "px');" +
+                    "style.setProperty('--safe-area-inset-bottom', '" + bottomPx + "px');" +
+                    "style.setProperty('--safe-area-inset-left', '" + leftPx + "px');" +
+                    "} catch (e) {}";
 
                 bridge.getWebView().evaluateJavascript(script, null);
             }
