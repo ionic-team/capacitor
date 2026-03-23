@@ -216,6 +216,37 @@ export async function checkSwiftToolsVersion(config: Config, version: string | u
   return null;
 }
 
+export async function checkPackageTraitsRequirements(config: Config): Promise<string | null> {
+  const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits;
+  const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion;
+
+  const hasPackageTraits = packageTraits && Object.keys(packageTraits).some((key) => packageTraits[key]?.length > 0);
+
+  if (!hasPackageTraits) {
+    return null;
+  }
+
+  if (!swiftToolsVersion) {
+    return (
+      `Package traits require an explicit Swift tools version of 6.1 or higher.\n` +
+      `Set experimental.ios.spm.swiftToolsVersion to '6.1' or higher in your Capacitor configuration.`
+    );
+  }
+
+  const versionParts = swiftToolsVersion.split('.').map((part) => parseInt(part, 10));
+  const major = versionParts[0] || 0;
+  const minor = versionParts[1] || 0;
+
+  if (major < 6 || (major === 6 && minor < 1)) {
+    return (
+      `Package traits require Swift tools version 6.1 or higher, but "${swiftToolsVersion}" was specified.\n` +
+      `Update experimental.ios.spm.swiftToolsVersion to '6.1' or higher in your Capacitor configuration.`
+    );
+  }
+
+  return null;
+}
+
 // Private Functions
 
 async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
