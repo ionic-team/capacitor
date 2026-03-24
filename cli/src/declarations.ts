@@ -536,11 +536,29 @@ export interface CapacitorConfig {
          *
          * This setting may graduate to `ios.spm.swiftToolsVersion` in a future major release.
          *
-         * @since 8.2.0
+         * @since 8.3.0
          * @default '5.9'
          * @example '6.1'
          */
         swiftToolsVersion?: string;
+
+        /**
+         * Define package traits for SPM plugin dependencies.
+         *
+         * This requires explicitly setting experimental.ios.spm.swiftToolsVersion
+         * to '6.1' or higher.
+         *
+         * The key is the plugin ID (e.g. `@capacitor-firebase/analytics`)
+         * and the value is an array of trait names.
+         *
+         * Packages can have default traits. If you use this property, and
+         * want to preserve the defaults, include ".defaults" in the array.
+         *
+         * This setting may graduate to `ios.spm.packageTraits` in a future major release.
+         *
+         * @since 8.3.0
+         */
+        packageTraits?: { [pluginId: string]: string[] };
       };
     };
   };
