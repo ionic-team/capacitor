@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.3.0](https://github.com/ionic-team/capacitor/compare/8.2.0...8.3.0) (2026-03-25)
+
+### Bug Fixes
+
+- **android:** correctly parsing `server.url` when they include paths ([#8391](https://github.com/ionic-team/capacitor/issues/8391)) ([a9f2181](https://github.com/ionic-team/capacitor/commit/a9f218179b60555d86b44bf2b33354da3e64e98c))
+- **cli:** inline CSS sourcemaps in addition to JS sourcemaps ([#8377](https://github.com/ionic-team/capacitor/issues/8377)) ([69476ab](https://github.com/ionic-team/capacitor/commit/69476ab9c0b47911a14d2482cab53a877a5ae784))
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([003099a](https://github.com/ionic-team/capacitor/commit/003099aef246adfd76d890074d46b1484951824b))
+- **ios:** make getArray accesible on Objective-C plugins ([#8392](https://github.com/ionic-team/capacitor/issues/8392)) ([afb80f2](https://github.com/ionic-team/capacitor/commit/afb80f2fecb4bf85dbebe25e815de2a5564264d6))
+- **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([4e99598](https://github.com/ionic-team/capacitor/commit/4e99598a2a57ee97e82be1aaa09492744622fa60))
+
+### Features
+
+- **cli:** Experimental config for swift-tools-version in SPM apps ([#8372](https://github.com/ionic-team/capacitor/issues/8372)) ([d2ee84f](https://github.com/ionic-team/capacitor/commit/d2ee84f8186909b142b418c02fc19f79d3c6a6ed))
+- **cli:** support SPM package traits in generated Package.swift ([#8351](https://github.com/ionic-team/capacitor/issues/8351)) ([27e6aa8](https://github.com/ionic-team/capacitor/commit/27e6aa89cf22e0b1a6d46710faed9aa8899600b0))
+
 # [8.2.0](https://github.com/ionic-team/capacitor/compare/8.1.0...8.2.0) (2026-03-06)
 
 ### Bug Fixes
