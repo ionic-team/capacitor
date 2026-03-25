@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.1](https://github.com/ionic-team/capacitor/compare/7.6.0...7.6.1) (2026-03-25)
+
+### Bug Fixes
+
+- **cli:** inline CSS sourcemaps in addition to JS sourcemaps ([#8377](https://github.com/ionic-team/capacitor/issues/8377)) ([#8401](https://github.com/ionic-team/capacitor/issues/8401)) ([52e4eac](https://github.com/ionic-team/capacitor/commit/52e4eacda9cd140a904801f296644fe98c7c2c46))
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([#8387](https://github.com/ionic-team/capacitor/issues/8387)) ([22545da](https://github.com/ionic-team/capacitor/commit/22545da9871e38082b790cfd42e1774b0ed20085))
+- **ios:** make getArray accesible on Objective-C plugins ([#8392](https://github.com/ionic-team/capacitor/issues/8392)) ([#8393](https://github.com/ionic-team/capacitor/issues/8393)) ([fa4602f](https://github.com/ionic-team/capacitor/commit/fa4602f627d505b1d1d3652b0872169c63ac367b))
+
 # [7.6.0](https://github.com/ionic-team/capacitor/compare/7.5.0...7.6.0) (2026-03-06)
 
 ### Bug Fixes

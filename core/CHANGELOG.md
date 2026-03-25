@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.1](https://github.com/ionic-team/capacitor/compare/7.6.0...7.6.1) (2026-03-25)
+
+### Bug Fixes
+
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([#8387](https://github.com/ionic-team/capacitor/issues/8387)) ([22545da](https://github.com/ionic-team/capacitor/commit/22545da9871e38082b790cfd42e1774b0ed20085))
+
 # [7.6.0](https://github.com/ionic-team/capacitor/compare/7.5.0...7.6.0) (2026-03-06)
 
 **Note:** Version bump only for package @capacitor/core

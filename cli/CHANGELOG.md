@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.1](https://github.com/ionic-team/capacitor/compare/7.6.0...7.6.1) (2026-03-25)
+
+### Bug Fixes
+
+- **cli:** inline CSS sourcemaps in addition to JS sourcemaps ([#8377](https://github.com/ionic-team/capacitor/issues/8377)) ([#8401](https://github.com/ionic-team/capacitor/issues/8401)) ([52e4eac](https://github.com/ionic-team/capacitor/commit/52e4eacda9cd140a904801f296644fe98c7c2c46))
+
 # [7.6.0](https://github.com/ionic-team/capacitor/compare/7.5.0...7.6.0) (2026-03-06)
 
 ### Bug Fixes
