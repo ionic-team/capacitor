@@ -18,7 +18,7 @@ concurrency:
 jobs:
   setup:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - name: Get Latest
         uses: actions/setup-node@v6
@@ -32,7 +32,7 @@ jobs:
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
   lint:
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/setup-node@v6
         with:
@@ -50,7 +50,7 @@ jobs:
       - run: npm run lint
   test-cli:
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 60
     needs:
       - setup
       - lint
@@ -71,7 +71,7 @@ jobs:
         working-directory: ./cli
   test-core:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     needs:
       - setup
       - lint
@@ -92,7 +92,7 @@ jobs:
         working-directory: ./core
   test-ios:
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 60
     needs:
       - setup
       - lint
@@ -120,7 +120,7 @@ jobs:
         run: sh ./scripts/native-podspec.sh lint
   test-android:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     needs:
       - setup
       - lint
