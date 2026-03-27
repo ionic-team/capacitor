@@ -194,7 +194,7 @@ open class HttpRequestHandler {
             .openConnection()
             .build()
 
-        if let userAgentString = config?.overridenUserAgentString, headers["User-Agent"] == nil, headers["user-agent"] == nil {
+        if let userAgentString = config?.overriddenUserAgentString, headers["User-Agent"] == nil, headers["user-agent"] == nil {
             headers["User-Agent"] = userAgentString
         }
 
