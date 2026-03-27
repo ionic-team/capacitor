@@ -26,6 +26,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly) UIScrollViewContentInsetAdjustmentBehavior contentInsetAdjustmentBehavior;
 @property (nonatomic, readonly, nonnull) NSURL *appLocation;
 @property (nonatomic, readonly, nullable) NSString *appStartPath;
+@property (nonatomic, readonly) BOOL routeWithFallback;
 @property (nonatomic, readonly) BOOL limitsNavigationsToAppBoundDomains;
 @property (nonatomic, readonly, nullable) NSString *preferredContentMode;
 
