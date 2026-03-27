@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.3.0](https://github.com/ionic-team/capacitor/compare/8.2.0...8.3.0) (2026-03-25)
+
+### Bug Fixes
+
+- **cli:** inline CSS sourcemaps in addition to JS sourcemaps ([#8377](https://github.com/ionic-team/capacitor/issues/8377)) ([69476ab](https://github.com/ionic-team/capacitor/commit/69476ab9c0b47911a14d2482cab53a877a5ae784))
+- **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([4e99598](https://github.com/ionic-team/capacitor/commit/4e99598a2a57ee97e82be1aaa09492744622fa60))
+
+### Features
+
+- **cli:** Experimental config for swift-tools-version in SPM apps ([#8372](https://github.com/ionic-team/capacitor/issues/8372)) ([d2ee84f](https://github.com/ionic-team/capacitor/commit/d2ee84f8186909b142b418c02fc19f79d3c6a6ed))
+- **cli:** support SPM package traits in generated Package.swift ([#8351](https://github.com/ionic-team/capacitor/issues/8351)) ([27e6aa8](https://github.com/ionic-team/capacitor/commit/27e6aa89cf22e0b1a6d46710faed9aa8899600b0))
+
+# [8.2.0](https://github.com/ionic-team/capacitor/compare/8.1.0...8.2.0) (2026-03-06)
+
+### Bug Fixes
+
+- **cli:** Allow to run update on non macOS ([#8344](https://github.com/ionic-team/capacitor/issues/8344)) ([a441280](https://github.com/ionic-team/capacitor/commit/a441280d7c6b310ca516d6fb2736c09525987774))
+- **cli:** Don't overwrite config.server section with `--live-reload` ([#7528](https://github.com/ionic-team/capacitor/issues/7528)) ([782b9d9](https://github.com/ionic-team/capacitor/commit/782b9d9c26dcf1282b918996becb0224c0baca1d))
+
+### Features
+
+- **cli:** Add --https option for --live-reload ([#8194](https://github.com/ionic-team/capacitor/issues/8194)) ([5db81e6](https://github.com/ionic-team/capacitor/commit/5db81e68c67652e9d2b29d7ad30629b423d2ad30))
+
+# [8.1.0](https://github.com/ionic-team/capacitor/compare/8.0.2...8.1.0) (2026-02-11)
+
+### Features
+
+- **cli:** Add packageManager to iOS config ([#8321](https://github.com/ionic-team/capacitor/issues/8321)) ([a125498](https://github.com/ionic-team/capacitor/commit/a1254983bbb9dcb273d93f3c5f639b792e516406))
+
+### Reverts
+
+- revert version bump from [#8319](https://github.com/ionic-team/capacitor/issues/8319) and [#8320](https://github.com/ionic-team/capacitor/issues/8320) ([a48ebb6](https://github.com/ionic-team/capacitor/commit/a48ebb622ea4ebe92927bf1756a4d8ac6012884b))
+
 ## [8.0.2](https://github.com/ionic-team/capacitor/compare/8.0.1...8.0.2) (2026-01-27)
 
 ### Bug Fixes

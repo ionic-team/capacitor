@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.3.0](https://github.com/ionic-team/capacitor/compare/8.2.0...8.3.0) (2026-03-25)
+
+### Bug Fixes
+
+- **android:** correctly parsing `server.url` when they include paths ([#8391](https://github.com/ionic-team/capacitor/issues/8391)) ([a9f2181](https://github.com/ionic-team/capacitor/commit/a9f218179b60555d86b44bf2b33354da3e64e98c))
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([003099a](https://github.com/ionic-team/capacitor/commit/003099aef246adfd76d890074d46b1484951824b))
+- **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([4e99598](https://github.com/ionic-team/capacitor/commit/4e99598a2a57ee97e82be1aaa09492744622fa60))
+
+# [8.2.0](https://github.com/ionic-team/capacitor/compare/8.1.0...8.2.0) (2026-03-06)
+
+### Bug Fixes
+
+- **android:** Add missing null checks in BridgeActivity ([#8185](https://github.com/ionic-team/capacitor/issues/8185)) ([bd29b99](https://github.com/ionic-team/capacitor/commit/bd29b9913a9279de26fc21c6cb0b93b8f5e5433a))
+- **android:** Concurrent Range Requests for assets ([#8357](https://github.com/ionic-team/capacitor/issues/8357)) ([5e82c89](https://github.com/ionic-team/capacitor/commit/5e82c89f1bff6d0e9ccea2554007aacb920d4c58))
+- **android:** handle lowercase range header ([#8368](https://github.com/ionic-team/capacitor/issues/8368)) ([ae0e2dd](https://github.com/ionic-team/capacitor/commit/ae0e2ddccb2904ee4b3d47d4be1f7556ac7000a1))
+- **android:** invalid http range seeking ([#8369](https://github.com/ionic-team/capacitor/issues/8369)) ([3109d22](https://github.com/ionic-team/capacitor/commit/3109d22547253ed44293777c60652f14cf83e416))
+
+# [8.1.0](https://github.com/ionic-team/capacitor/compare/8.0.2...8.1.0) (2026-02-11)
+
+### Reverts
+
+- revert version bump from [#8319](https://github.com/ionic-team/capacitor/issues/8319) and [#8320](https://github.com/ionic-team/capacitor/issues/8320) ([a48ebb6](https://github.com/ionic-team/capacitor/commit/a48ebb622ea4ebe92927bf1756a4d8ac6012884b))
+
 ## [8.0.2](https://github.com/ionic-team/capacitor/compare/8.0.1...8.0.2) (2026-01-27)
 
 ### Bug Fixes
