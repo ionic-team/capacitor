@@ -19,7 +19,7 @@ describe('Init', () => {
     FS = new MappedFS(appDir);
   });
 
-  afterAll(() => {
+  after all(() => {
     appDirObj.cleanupCallback();
   });
 

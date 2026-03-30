@@ -120,7 +120,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nonnull) NSURL *appLocation;
 /**
- @brief The path (relative to @c appLocation) which Capacitor will use for the inital URL at launch.
+ @brief The path (relative to @c appLocation) which Capacitor will use for the initial URL at launch.
  @discussion Defaults to nil, in which case Capacitor will attempt to load @c index.html.
  */
 @property (nonatomic, copy, nullable) NSString *appStartPath;
@@ -135,7 +135,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *preferredContentMode;
 /**
- @brief The parser used to load the cofiguration for Cordova plugins.
+ @brief The parser used to load the configuration for Cordova plugins.
  */
 @property (nonatomic, copy, nonnull) CDVConfigParser *cordovaConfiguration;
 /**

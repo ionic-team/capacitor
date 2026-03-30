@@ -17,7 +17,7 @@ describe.each([false, true])('Update: iOS (monoRepoLike: %p)', (monoRepoLike) =>
     FS = new MappedFS(appDir);
   });
 
-  afterAll(() => {
+  after all(() => {
     //appDirObj.cleanupCallback();
   });
 
