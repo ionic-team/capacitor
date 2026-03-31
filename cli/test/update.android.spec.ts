@@ -17,7 +17,7 @@ describe.each([false, true])('Update: Android (monoRepoLike: %p)', (monoRepoLike
     FS = new MappedFS(appDir);
   });
 
-  afterAll(() => {
+  after all(() => {
     //appDirObj.cleanupCallback();
   });
 

@@ -10,7 +10,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **android:** correctly parsing `server.url` when they include paths ([#8391](https://github.com/ionic-team/capacitor/issues/8391)) ([a9f2181](https://github.com/ionic-team/capacitor/commit/a9f218179b60555d86b44bf2b33354da3e64e98c))
 - **cli:** inline CSS sourcemaps in addition to JS sourcemaps ([#8377](https://github.com/ionic-team/capacitor/issues/8377)) ([69476ab](https://github.com/ionic-team/capacitor/commit/69476ab9c0b47911a14d2482cab53a877a5ae784))
 - **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([003099a](https://github.com/ionic-team/capacitor/commit/003099aef246adfd76d890074d46b1484951824b))
-- **ios:** make getArray accesible on Objective-C plugins ([#8392](https://github.com/ionic-team/capacitor/issues/8392)) ([afb80f2](https://github.com/ionic-team/capacitor/commit/afb80f2fecb4bf85dbebe25e815de2a5564264d6))
+- **ios:** make getArray accessible on Objective-C plugins ([#8392](https://github.com/ionic-team/capacitor/issues/8392)) ([afb80f2](https://github.com/ionic-team/capacitor/commit/afb80f2fecb4bf85dbebe25e815de2a5564264d6))
 - **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([4e99598](https://github.com/ionic-team/capacitor/commit/4e99598a2a57ee97e82be1aaa09492744622fa60))
 
 ### Features
@@ -238,7 +238,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-- **android-template:** prevent app restart on bluetooh keyboard changes ([#7652](https://github.com/ionic-team/capacitor/issues/7652)) ([200c7cb](https://github.com/ionic-team/capacitor/commit/200c7cb911898fbfb12b0b25e8cfd1982e0a6bf0))
+- **android-template:** prevent app restart on bluetooth keyboard changes ([#7652](https://github.com/ionic-team/capacitor/issues/7652)) ([200c7cb](https://github.com/ionic-team/capacitor/commit/200c7cb911898fbfb12b0b25e8cfd1982e0a6bf0))
 - **cli:** replace app-store deprecated method on build ([#7637](https://github.com/ionic-team/capacitor/issues/7637)) ([942b108](https://github.com/ionic-team/capacitor/commit/942b108c1d506539c0c53276ed4ec35eed36634e))
 - **ios:** fix retain cycle caused by CDVPluginManager ([#7692](https://github.com/ionic-team/capacitor/issues/7692)) ([02bdb3d](https://github.com/ionic-team/capacitor/commit/02bdb3d1d15907dcc577f16b7f2e22050e54ffef))
 
@@ -831,7 +831,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **android:** Use addWebMessageListener where available ([#5427](https://github.com/ionic-team/capacitor/issues/5427)) ([c2dfe80](https://github.com/ionic-team/capacitor/commit/c2dfe808446717412b35e82713d123b7a052f264))
 - **android-template:** Use Android 12 splash API ([#5777](https://github.com/ionic-team/capacitor/issues/5777)) ([f3ab951](https://github.com/ionic-team/capacitor/commit/f3ab9519e1f08d5dfeb2db61b6939725be92b4f3))
 - **cli:** add migrator for cap3 to cap4 ([#5762](https://github.com/ionic-team/capacitor/issues/5762)) ([7cb660a](https://github.com/ionic-team/capacitor/commit/7cb660a34d9a87274761d4492d0d77c9ef44ace8))
-- **ios:** Add overrideable router var for CAPWebView. ([#5743](https://github.com/ionic-team/capacitor/issues/5743)) ([c1de1c0](https://github.com/ionic-team/capacitor/commit/c1de1c0138aad188a760118e35983d10d257f8e7))
+- **ios:** Add overridable router var for CAPWebView. ([#5743](https://github.com/ionic-team/capacitor/issues/5743)) ([c1de1c0](https://github.com/ionic-team/capacitor/commit/c1de1c0138aad188a760118e35983d10d257f8e7))
 - **iOS:** post install script for deployment target ([#5783](https://github.com/ionic-team/capacitor/issues/5783)) ([f5afa94](https://github.com/ionic-team/capacitor/commit/f5afa94b3b9c246d87b2af03359840f503bace90))
 - Add option for custom error page ([#5723](https://github.com/ionic-team/capacitor/issues/5723)) ([e8bdef3](https://github.com/ionic-team/capacitor/commit/e8bdef3b4634e4ad45fa8fc34c7c0ab8dfa383f3))
 
@@ -927,7 +927,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 - **android:** Add overridable routing for WebViewLocalServer ([#5553](https://github.com/ionic-team/capacitor/issues/5553)) ([3bb288e](https://github.com/ionic-team/capacitor/commit/3bb288e848c5c0e49c1e58c0782e0b1ffd7b1f31))
 - **cli:** support capacitor portals plugin changes needed ([#5558](https://github.com/ionic-team/capacitor/issues/5558)) ([6810a19](https://github.com/ionic-team/capacitor/commit/6810a19ae2bbda1f4b2afad61d37ca822ca157f5))
-- **ios:** Add overrideable routing for CAPBridgeViewController subclasses ([#5546](https://github.com/ionic-team/capacitor/issues/5546)) ([8875d5e](https://github.com/ionic-team/capacitor/commit/8875d5e2721e8a8ee763ce70cb672db383f36efa))
+- **ios:** Add overridable routing for CAPBridgeViewController subclasses ([#5546](https://github.com/ionic-team/capacitor/issues/5546)) ([8875d5e](https://github.com/ionic-team/capacitor/commit/8875d5e2721e8a8ee763ce70cb672db383f36efa))
 
 # [4.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/3.4.1...4.0.0-alpha.1) (2022-03-25)
 

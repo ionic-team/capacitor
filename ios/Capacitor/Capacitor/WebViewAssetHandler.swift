@@ -450,7 +450,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         "texinfo": "application/x-texinfo",
         "tgz": "application/x-compressed",
         "thmx": "application/vnd.ms-officetheme",
-        "thn": "application/octet-stream",
+        "then": "application/octet-stream",
         "tif": "image/tiff",
         "tiff": "image/tiff",
         "toc": "application/octet-stream",
