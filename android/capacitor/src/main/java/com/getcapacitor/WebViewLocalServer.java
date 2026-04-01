@@ -348,16 +348,22 @@ public class WebViewLocalServer {
             Map<String, String> tempResponseHeaders = handler.buildDefaultResponseHeaders();
             int statusCode = 206;
             try {
-                int totalRange = responseStream.available();
+                int totalSize = responseStream.available();
                 String[] parts = rangeString.split("=");
                 String[] streamParts = parts[1].split("-");
-                String fromRange = streamParts[0];
-                int range = totalRange - 1;
-                if (streamParts.length > 1) {
-                    range = Integer.parseInt(streamParts[1]);
+                int fromRange = Integer.parseInt(streamParts[0]);
+                int endRange = totalSize - 1;
+                if (streamParts.length > 1 && !streamParts[1].isEmpty()) {
+                    endRange = Integer.parseInt(streamParts[1]);
                 }
+
+                // Truncate the stream at the end of the requested range.
+                // Somewhere in the request pipeline, the stream gets automatically
+                // seeked to the correct start position, so we don't need to skip to the fromRange position here.
+                responseStream = new BoundedInputStream(responseStream, endRange + 1);
+
                 tempResponseHeaders.put("Accept-Ranges", "bytes");
-                tempResponseHeaders.put("Content-Range", "bytes " + fromRange + "-" + range + "/" + totalRange);
+                tempResponseHeaders.put("Content-Range", "bytes " + fromRange + "-" + endRange + "/" + totalSize);
             } catch (IOException e) {
                 statusCode = 404;
             }
@@ -747,6 +753,48 @@ public class WebViewLocalServer {
         public long skip(long n) throws IOException {
             InputStream is = getInputStream();
             return (is != null) ? is.skip(n) : 0;
+        }
+    }
+
+    /**
+     * An InputStream wrapper that limits the number of bytes that can be read.
+     */
+    static class BoundedInputStream extends InputStream {
+
+        private final InputStream in;
+        private long remaining;
+
+        public BoundedInputStream(InputStream in, long limit) {
+            this.in = in;
+            this.remaining = limit;
+        }
+
+        @Override
+        public int available() throws IOException {
+            int available = in.available();
+            return (int) Math.min(available, remaining);
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (remaining <= 0) return -1;
+            int result = in.read();
+            if (result != -1) remaining--;
+            return result;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            if (remaining <= 0) return -1;
+            int toRead = (int) Math.min(len, remaining);
+            int result = in.read(b, off, toRead);
+            if (result > 0) remaining -= result;
+            return result;
+        }
+
+        @Override
+        public void close() throws IOException {
+            in.close();
         }
     }
 
