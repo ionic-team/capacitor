@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
+    private var requestConfiguration: InstanceConfiguration?
 
     public init(router: Router) {
         self.router = router
@@ -18,6 +19,10 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     open func setServerUrl(_ serverUrl: URL?) {
         self.serverUrl = serverUrl
+    }
+
+    open func setRequestConfiguration(_ config: InstanceConfiguration?) {
+        self.requestConfiguration = config
     }
 
     private func isUsingLiveReload(_ localUrl: URL) -> Bool {
@@ -138,6 +143,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
            !targetUrl.isEmpty {
             urlRequest.url = URL(string: targetUrl)
         }
+        applyCapacitorDefaultRequestHeaders(&urlRequest, requestConfiguration)
 
         let urlSession = URLSession.shared
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
