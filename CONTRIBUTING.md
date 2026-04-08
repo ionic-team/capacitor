@@ -73,7 +73,7 @@ On web, this means do not add any third party libraries such as Firebase or Loda
 
 ### Branches
 
-* [`main`](https://github.com/ionic-team/capacitor/tree/main): Latest Stable Capacitor branch. In general PRs containing bugfixes and non-breaking features should be pointed to `main`. 
+* [`main`](https://github.com/ionic-team/capacitor/tree/main): Latest stable Capacitor branch. In general PRs containing bugfixes and non-breaking features should be pointed to `main`. 
 * [`next`](https://github.com/ionic-team/capacitor/tree/next): Future major version functionality. Any PRs that contain breaking changes should be pointed to `next`.
 * [`7.x`](https://github.com/ionic-team/capacitor/tree/7.x): Capacitor 7
 * [`6.x`](https://github.com/ionic-team/capacitor/tree/6.x): Capacitor 6 (not maintained)
