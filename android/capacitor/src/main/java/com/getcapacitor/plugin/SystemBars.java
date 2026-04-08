@@ -184,10 +184,8 @@ public class SystemBars extends Plugin {
                 // We need to correct for a possible shown IME
                 v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
 
-
                 Insets safeAreaInsets = calcSafeAreaInsets(insets);
                 injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-
 
                 return new WindowInsetsCompat.Builder(insets)
                     .setInsets(
@@ -217,10 +215,8 @@ public class SystemBars extends Plugin {
                 .setInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(), Insets.of(0, 0, 0, 0))
                 .build();
 
-
             Insets safeAreaInsets = calcSafeAreaInsets(newInsets);
             injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-
 
             return newInsets;
         });
