@@ -91,6 +91,8 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
+        WindowCompat.setDecorFitsSystemWindows(this.getActivity().getWindow(), false);
+
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
