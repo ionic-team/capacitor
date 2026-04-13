@@ -434,6 +434,10 @@ async function determinePackageManager(
     return 'SPM';
   }
 
+  if (process.env.CAPACITOR_COCOAPODS_PATH) {
+    return 'Cocoapods';
+  }
+
   let gemfilePath = '';
   if (await pathExists(resolve(rootDir, 'Gemfile'))) {
     gemfilePath = resolve(rootDir, 'Gemfile');
