@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.2](https://github.com/ionic-team/capacitor/compare/7.6.1...7.6.2) (2026-04-16)
+
+### Bug Fixes
+
+- **android:** handle null versionName in isNewBinary() ([#8397](https://github.com/ionic-team/capacitor/issues/8397)) ([b060290](https://github.com/ionic-team/capacitor/commit/b0602902106bd8d8c39a08f9061573a143be2f67))
+- boundary value extraction for form-data requests ([#7518](https://github.com/ionic-team/capacitor/issues/7518)) ([b9f7ecf](https://github.com/ionic-team/capacitor/commit/b9f7ecfbfad8033700f1ca6d44461c1dd50fc0cd))
+- **cli:** check CAPACITOR_COCOAPODS_PATH in determinePackageManager ([#8410](https://github.com/ionic-team/capacitor/issues/8410)) ([5dcecc4](https://github.com/ionic-team/capacitor/commit/5dcecc41b5e5e6e9df6d15d45a6667b11bc52949))
+
 ## [7.6.1](https://github.com/ionic-team/capacitor/compare/7.6.0...7.6.1) (2026-03-25)
 
 ### Bug Fixes
