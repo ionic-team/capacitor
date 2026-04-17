@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.3.1](https://github.com/ionic-team/capacitor/compare/8.3.0...8.3.1) (2026-04-16)
+
+### Bug Fixes
+
+- **android:** handle null versionName in isNewBinary() ([#8397](https://github.com/ionic-team/capacitor/issues/8397)) ([aa1a660](https://github.com/ionic-team/capacitor/commit/aa1a660f364f9b5f5a1e350e279c8864b04dd13b))
+- boundary value extraction for form-data requests ([#7518](https://github.com/ionic-team/capacitor/issues/7518)) ([64ab854](https://github.com/ionic-team/capacitor/commit/64ab854c12330804c24275d88d3a9f7c8e52a73d))
+- **system-bars:** use separate current styles ([#8409](https://github.com/ionic-team/capacitor/issues/8409)) ([3d1f8d1](https://github.com/ionic-team/capacitor/commit/3d1f8d1b61480187375f5cd4de7ba999db007542))
+
+# [8.3.0](https://github.com/ionic-team/capacitor/compare/8.2.0...8.3.0) (2026-03-25)
+
+### Bug Fixes
+
+- **android:** correctly parsing `server.url` when they include paths ([#8391](https://github.com/ionic-team/capacitor/issues/8391)) ([a9f2181](https://github.com/ionic-team/capacitor/commit/a9f218179b60555d86b44bf2b33354da3e64e98c))
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([003099a](https://github.com/ionic-team/capacitor/commit/003099aef246adfd76d890074d46b1484951824b))
+- **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([4e99598](https://github.com/ionic-team/capacitor/commit/4e99598a2a57ee97e82be1aaa09492744622fa60))
+
 # [8.2.0](https://github.com/ionic-team/capacitor/compare/8.1.0...8.2.0) (2026-03-06)
 
 ### Bug Fixes
