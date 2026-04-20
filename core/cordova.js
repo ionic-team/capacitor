@@ -621,7 +621,7 @@
     };
     var channel = {
       /**
-       * Calls the provided function only after all of the channels specified
+       * Calls the provided function only afterAll of the channels specified
        * have been fired. All channels must be sticky channels.
        */
       join: function (h, c) {
