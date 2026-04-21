@@ -91,8 +91,6 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
-        WindowCompat.setDecorFitsSystemWindows(this.getActivity().getWindow(), false);
-
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
@@ -166,8 +164,15 @@ public class SystemBars extends Plugin {
     }
 
     private void initSafeAreaCSSVariables() {
-        View v = (View) this.getBridge().getWebView().getParent();
-        WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
+        WindowInsetsCompat insets;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            View v = (View) this.getBridge().getWebView().getParent();
+            insets = ViewCompat.getRootWindowInsets(v);
+        } else {
+            insets = WindowInsetsCompat.CONSUMED;
+        }
+
         if (insets != null) {
             Insets safeAreaInsets = calcSafeAreaInsets(insets);
             injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
