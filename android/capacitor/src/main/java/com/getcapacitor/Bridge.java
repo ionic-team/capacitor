@@ -1270,6 +1270,7 @@ public class Bridge {
                 // This is a bit hacky but required to return the boolean out of the cordova interface
                 return cordovaPlugin.hasRequiredPermissions();
             }
+            return false;
         }
 
         // deprecated, to be removed
