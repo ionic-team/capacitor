@@ -12,12 +12,14 @@ import {
   getAllElements,
   getFilePath,
   getPlatformElement,
+  getPluginPlatform,
   getPluginType,
   getPlugins,
   printPlugins,
 } from '../plugin';
 import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
+import { setAllStringIn } from '../tasks/migrate';
 import { convertToUnixPath } from '../util/fs';
 import { generateIOSPackageJSON } from '../util/iosplugin';
 import { resolveNode } from '../util/node';
@@ -83,7 +85,20 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
             publicHeadersPath: "."`;
   }
 
-  const content = `// swift-tools-version: 5.9
+  const platformTag = getPluginPlatform(p, platform);
+  if (platformTag.$.package) {
+    const packageSwiftPath = join(p.rootPath, 'Package.swift');
+    let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
+    content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, `capacitor-swift-pm`);
+    content = setAllStringIn(
+      content,
+      `url: "https://github.com/ionic-team/capacitor-swift-pm.git",`,
+      `)`,
+      ` from: "${iosPlatformVersion}"`,
+    );
+    await writeFile(packageSwiftPath, content);
+  } else {
+    const content = `// swift-tools-version: 5.9
 
 import PackageDescription
 
@@ -109,7 +124,9 @@ let package = Package(
         )
     ]
 )`;
-  await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
+
+    await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
+  }
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {
@@ -388,12 +405,16 @@ function getLinkerFlags(config: Config) {
 
 async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
   for (const p of cordovaPlugins) {
+    const platformTag = getPluginPlatform(p, platform);
+    if (platformTag.$.package) {
+      continue;
+    }
     const sourceFiles = getPlatformElement(p, platform, 'source-file');
     const headerFiles = getPlatformElement(p, platform, 'header-file');
     const codeFiles = sourceFiles.concat(headerFiles);
     const frameworks = getPlatformElement(p, platform, 'framework');
     let sourcesFolderName = 'sources';
-    if (needsStaticPod(p)) {
+    if ((await config.ios.packageManager) !== 'SPM' && needsStaticPod(p)) {
       sourcesFolderName += 'static';
     }
     const sourcesFolder = join(config.ios.cordovaPluginsDirAbs, sourcesFolderName, p.name);

@@ -11,7 +11,7 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
-import { getPluginType, PluginType } from '../plugin';
+import { getPluginPlatform, getPluginType, PluginType } from '../plugin';
 import { runCommand } from '../util/subprocess';
 
 export interface SwiftPlugin {
@@ -118,7 +118,13 @@ let package = Package(
 
   for (const plugin of plugins) {
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
-      packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
+      const platformTag = getPluginPlatform(plugin, config.ios.name);
+      if (platformTag.$.package) {
+        const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+        packageSwiftText += `,\n        .package(name: "${plugin.id}", path: "${relPath}")`;
+      } else {
+        packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
+      }
     } else {
       const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
       const traits = packageTraits[plugin.id];
@@ -144,7 +150,14 @@ let package = Package(
                 .product(name: "Cordova", package: "capacitor-swift-pm")`;
 
   for (const plugin of plugins) {
-    packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+    let pluginText = `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+    if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
+      const platformTag = getPluginPlatform(plugin, config.ios.name);
+      if (platformTag.$.package) {
+        pluginText = `,\n                .product(name: "${plugin.id}", package: "${plugin.id}")`;
+      }
+    }
+    packageSwiftText += pluginText;
   }
 
   packageSwiftText += `
