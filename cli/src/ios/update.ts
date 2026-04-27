@@ -86,7 +86,7 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
   }
 
   const platformTag = getPluginPlatform(p, platform);
-  if (platformTag.$.package) {
+  if (platformTag.$?.package) {
     const packageSwiftPath = join(p.rootPath, 'Package.swift');
     let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
     content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, `capacitor-swift-pm`);
@@ -406,7 +406,7 @@ function getLinkerFlags(config: Config) {
 async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
   for (const p of cordovaPlugins) {
     const platformTag = getPluginPlatform(p, platform);
-    if (platformTag.$.package) {
+    if (platformTag.$?.package) {
       continue;
     }
     const sourceFiles = getPlatformElement(p, platform, 'source-file');

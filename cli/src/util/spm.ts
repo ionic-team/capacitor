@@ -52,7 +52,6 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
 
 export async function checkPluginsForPackageSwift(config: Config, plugins: Plugin[]): Promise<Plugin[]> {
   const iOSCapacitorPlugins = plugins.filter((p) => getPluginType(p, 'ios') === PluginType.Core);
-
   const packageSwiftPluginList = await pluginsWithPackageSwift(iOSCapacitorPlugins);
 
   if (plugins.length == packageSwiftPluginList.length) {
@@ -119,7 +118,7 @@ let package = Package(
   for (const plugin of plugins) {
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
       const platformTag = getPluginPlatform(plugin, config.ios.name);
-      if (platformTag.$.package) {
+      if (platformTag.$?.package) {
         const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
         packageSwiftText += `,\n        .package(name: "${plugin.id}", path: "${relPath}")`;
       } else {
@@ -153,7 +152,7 @@ let package = Package(
     let pluginText = `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
       const platformTag = getPluginPlatform(plugin, config.ios.name);
-      if (platformTag.$.package) {
+      if (platformTag.$?.package) {
         pluginText = `,\n                .product(name: "${plugin.id}", package: "${plugin.id}")`;
       }
     }
