@@ -154,7 +154,7 @@ export function getPluginPlatform(p: Plugin, platform: string): any {
     });
     return platforms[0];
   }
-  return [];
+  return undefined;
 }
 
 export function getPlatformElement(p: Plugin, platform: string, elementName: string): any {
