@@ -54,11 +54,13 @@ export async function checkPluginsForPackageSwift(config: Config, plugins: Plugi
   const iOSCapacitorPlugins = plugins.filter((p) => getPluginType(p, 'ios') === PluginType.Core);
   const packageSwiftPluginList = await pluginsWithPackageSwift(iOSCapacitorPlugins);
 
-  if (plugins.length == packageSwiftPluginList.length) {
-    logger.debug(`Found ${plugins.length} iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`);
-    logger.info('All plugins have a Package.swift file and will be included in Package.swift');
+  if (iOSCapacitorPlugins.length == packageSwiftPluginList.length) {
+    logger.debug(
+      `Found ${iOSCapacitorPlugins.length} Capacitor iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`,
+    );
+    logger.info('All Capacitor plugins have a Package.swift file and will be included in Package.swift');
   } else {
-    logger.warn('Some installed packages are not compatable with SPM');
+    logger.warn('Some installed Capacitor plugins are not compatible with SPM');
   }
 
   return packageSwiftPluginList;
