@@ -98,6 +98,25 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     );
     await writeFile(packageSwiftPath, content);
   } else {
+    const frameworks = getPlatformElement(p, platform, 'framework');
+    const customXcframeworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.xcframework'));
+    const binaryTargetsText = customXcframeworks
+      .map((f: any) => {
+        const name = f.$.src.split('/').pop().replace('.xcframework', '');
+        return `,
+        .binaryTarget(
+            name: "${name}",
+            path: "${f.$.src}"
+        )`;
+      })
+      .join('');
+    const binaryDepsText = customXcframeworks
+      .map((f: any) => {
+        const name = f.$.src.split('/').pop().replace('.xcframework', '');
+        return `,\n                .target(name: "${name}")`;
+      })
+      .join('');
+
     const content = `// swift-tools-version: 5.9
 
 import PackageDescription
@@ -118,10 +137,10 @@ let package = Package(
         .target(
             name: "${p.name}",
             dependencies: [
-                .product(name: "Cordova", package: "capacitor-swift-pm")
+                .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}
             ],
             path: "."${headersText}
-        )
+        )${binaryTargetsText}
     ]
 )`;
 
