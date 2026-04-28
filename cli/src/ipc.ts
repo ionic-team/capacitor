@@ -24,7 +24,7 @@ export async function send(msg: IPCMessage): Promise<void> {
   await mkdirp(dir);
   const logPath = resolve(dir, 'ipc.log');
 
-  debug('Sending %O IPC message to forked process (logs: %O)', msg.type, logPath);
+  debug('Sending %O IPC message to forked process ahahah (logs: %O)', msg.type, logPath);
 
   const fd = await open(logPath, 'a');
   const p = fork(process.argv[1], ['📡'], { stdio: ['ignore', fd, fd, 'ipc'] });
@@ -49,9 +49,9 @@ export async function receive(msg: IPCMessage): Promise<void> {
     // This request is only made if telemetry is on.
     const req = request(
       {
-        hostname: 'api.ionicjs.com',
+        hostname: 'enmobile11-dev.outsystemsenterprise.com',
         port: 443,
-        path: '/events/metrics',
+        path: '/TestCapacitorTelemetry/rest/TelemetryAPI/PostMetrics',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
