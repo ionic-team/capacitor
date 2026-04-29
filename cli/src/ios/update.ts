@@ -152,7 +152,7 @@ async function writeGeneratedPackageSwift(
   iosPlatformVersion: string,
   headersText: string,
   binaryTargetsText: string,
-  binaryDepsText: string
+  binaryDepsText: string,
 ) {
   const content = `// swift-tools-version: 5.9
 
