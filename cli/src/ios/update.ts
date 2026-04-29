@@ -98,6 +98,9 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     );
     await writeFile(packageSwiftPath, content);
   } else {
+    const sourceFiles = getPlatformElement(p, platform, 'source-file');
+    const cSettingsText = buildCSettingsText(sourceFiles);
+
     const content = `// swift-tools-version: 5.9
 
 import PackageDescription
@@ -120,13 +123,52 @@ let package = Package(
             dependencies: [
                 .product(name: "Cordova", package: "capacitor-swift-pm")
             ],
-            path: "."${headersText}
+            path: "."${headersText}${cSettingsText}
         )
     ]
 )`;
 
     await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
   }
+}
+
+function buildCSettingsText(sourceFiles: any[]): string {
+  const allFlags = new Set<string>();
+  for (const sourceFile of sourceFiles) {
+    const flags = sourceFile.$?.['compiler-flags'];
+    if (flags) {
+      flags
+        .split(/\s+/)
+        .map((f: string) => f.trim())
+        .filter((f: string) => f.length > 0)
+        .forEach((f: string) => allFlags.add(f));
+    }
+  }
+
+  if (allFlags.size === 0) {
+    return '';
+  }
+
+  const entries: string[] = [];
+
+  for (const flag of allFlags) {
+    if (flag.startsWith('-D')) {
+      const definition = flag.slice(2);
+      const eqIndex = definition.indexOf('=');
+      if (eqIndex !== -1) {
+        const name = definition.slice(0, eqIndex);
+        const value = definition.slice(eqIndex + 1);
+        entries.push(`                .define("${name}", to: "${value}")`);
+      } else {
+        entries.push(`                .define("${definition}")`);
+      }
+    }
+  }
+
+  return `,
+            cSettings: [
+${entries.join(',\n')}
+            ]`;
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {
