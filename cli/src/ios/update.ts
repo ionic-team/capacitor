@@ -145,7 +145,15 @@ function buildBinaryTargetEntries(p: Plugin, frameworks: any[]): { binaryTargets
   return { binaryTargetsText, binaryDepsText };
 }
 
-async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosVersion: string, iosPlatformVersion: string, headersText: string, binaryTargetsText: string, binaryDepsText: string) {
+async function writeGeneratedPackageSwift(
+  p: Plugin,
+  config: Config,
+  iosVersion: string,
+  iosPlatformVersion: string,
+  headersText: string,
+  binaryTargetsText: string,
+  binaryDepsText: string
+) {
   const content = `// swift-tools-version: 5.9
 
 import PackageDescription
