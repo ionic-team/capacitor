@@ -99,32 +99,54 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     await writeFile(packageSwiftPath, content);
   } else {
     const frameworks = getPlatformElement(p, platform, 'framework');
-    const customXcframeworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.xcframework'));
-    const customFrameworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.framework'));
-    if (customFrameworks.length > 0) {
-      customFrameworks.forEach((f: any) => {
-        logger.warn(
-          `${p.id}: custom .framework files are not supported as binaryTarget in SPM (${f.$.src}). Convert to .xcframework for SPM compatibility.`,
-        );
-      });
-    }
-    const binaryTargetsText = customXcframeworks
-      .map((f: any) => {
-        const name = f.$.src.split('/').pop().replace('.xcframework', '');
-        return `,
+    const { binaryTargetsText, binaryDepsText } = buildBinaryTargetEntries(p, frameworks);
+    await writeGeneratedPackageSwift(
+      p,
+      config,
+      iosVersion,
+      iosPlatformVersion,
+      headersText,
+      binaryTargetsText,
+      binaryDepsText,
+    );
+  }
+}
+
+function buildBinaryTargetEntries(p: Plugin, frameworks: any[]): { binaryTargetsText: string; binaryDepsText: string } {
+  const customXcframeworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.xcframework'));
+  const customFrameworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.framework'));
+
+  if (customFrameworks.length > 0) {
+    customFrameworks.forEach((f: any) => {
+      logger.warn(
+        `${p.id}: custom .framework files are not supported as binaryTarget in SPM (${f.$.src}). Convert to .xcframework for SPM compatibility.`,
+      );
+    });
+  }
+
+  const binaryTargetsText = customXcframeworks
+    .map((f: any) => {
+      const name = f.$.src.split('/').pop().replace('.xcframework', '');
+      return `,
         .binaryTarget(
             name: "${name}",
             path: "${f.$.src}"
         )`;
-      })
-      .join('');
-    const binaryDepsText = customXcframeworks
-      .map((f: any) => {
-        const name = f.$.src.split('/').pop().replace('.xcframework', '');
-        return `,\n                .target(name: "${name}")`;
-      })
-      .join('');
-    const content = `// swift-tools-version: 5.9
+    })
+    .join('');
+
+  const binaryDepsText = customXcframeworks
+    .map((f: any) => {
+      const name = f.$.src.split('/').pop().replace('.xcframework', '');
+      return `,\n                .target(name: "${name}")`;
+    })
+    .join('');
+
+  return { binaryTargetsText, binaryDepsText };
+}
+
+async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosVersion: string, iosPlatformVersion: string, headersText: string, binaryTargetsText: string, binaryDepsText: string) {
+  const content = `// swift-tools-version: 5.9
 
 import PackageDescription
 
@@ -151,8 +173,7 @@ let package = Package(
     ]
 )`;
 
-    await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
-  }
+  await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {
