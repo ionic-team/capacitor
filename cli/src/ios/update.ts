@@ -108,12 +108,6 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
         );
       });
     }
-    const systemFrameworks = frameworks.filter((f: any) => !f.$.custom && f.$.src.endsWith('.framework'));
-    const hasWeakFrameworks = systemFrameworks.some((f: any) => f.$.weak === 'true');
-    const requiredSystemFrameworks = systemFrameworks.filter((f: any) => f.$.weak !== 'true');
-
-    const libraryTypeText = hasWeakFrameworks ? `\n            type: .dynamic,` : '';
-
     const binaryTargetsText = customXcframeworks
       .map((f: any) => {
         const name = f.$.src.split('/').pop().replace('.xcframework', '');
@@ -130,14 +124,6 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
         return `,\n                .target(name: "${name}")`;
       })
       .join('');
-    const linkerSettingsText =
-      requiredSystemFrameworks.length > 0
-        ? `,
-            linkerSettings: [
-${requiredSystemFrameworks.map((f: any) => `                .linkedFramework("${f.$.src.replace('.framework', '')}")`).join(',\n')}
-            ]`
-        : '';
-
     const content = `// swift-tools-version: 5.9
 
 import PackageDescription
@@ -147,7 +133,7 @@ let package = Package(
     platforms: [.iOS(.v${iosVersion})],
     products: [
         .library(
-            name: "${p.name}",${libraryTypeText}
+            name: "${p.name}",
             targets: ["${p.name}"]
         )
     ],
@@ -160,7 +146,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}
             ],
-            path: "."${headersText}${linkerSettingsText}
+            path: "."${headersText}
         )${binaryTargetsText}
     ]
 )`;
