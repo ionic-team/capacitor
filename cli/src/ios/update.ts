@@ -100,6 +100,20 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
   } else {
     const frameworks = getPlatformElement(p, platform, 'framework');
     const customXcframeworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.xcframework'));
+    const customFrameworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.framework'));
+    if (customFrameworks.length > 0) {
+      customFrameworks.forEach((f: any) => {
+        logger.warn(
+          `${p.id}: custom .framework files are not supported as binaryTarget in SPM (${f.$.src}). Convert to .xcframework for SPM compatibility.`,
+        );
+      });
+    }
+    const systemFrameworks = frameworks.filter((f: any) => !f.$.custom && f.$.src.endsWith('.framework'));
+    const hasWeakFrameworks = systemFrameworks.some((f: any) => f.$.weak === 'true');
+    const requiredSystemFrameworks = systemFrameworks.filter((f: any) => f.$.weak !== 'true');
+
+    const libraryTypeText = hasWeakFrameworks ? `\n            type: .dynamic,` : '';
+
     const binaryTargetsText = customXcframeworks
       .map((f: any) => {
         const name = f.$.src.split('/').pop().replace('.xcframework', '');
@@ -116,6 +130,13 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
         return `,\n                .target(name: "${name}")`;
       })
       .join('');
+    const linkerSettingsText =
+      requiredSystemFrameworks.length > 0
+        ? `,
+            linkerSettings: [
+${requiredSystemFrameworks.map((f: any) => `                .linkedFramework("${f.$.src.replace('.framework', '')}")`).join(',\n')}
+            ]`
+        : '';
 
     const content = `// swift-tools-version: 5.9
 
@@ -126,7 +147,7 @@ let package = Package(
     platforms: [.iOS(.v${iosVersion})],
     products: [
         .library(
-            name: "${p.name}",
+            name: "${p.name}",${libraryTypeText}
             targets: ["${p.name}"]
         )
     ],
@@ -139,7 +160,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}
             ],
-            path: "."${headersText}
+            path: "."${headersText}${linkerSettingsText}
         )${binaryTargetsText}
     ]
 )`;
