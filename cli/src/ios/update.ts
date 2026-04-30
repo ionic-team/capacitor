@@ -77,13 +77,6 @@ async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Con
 
 async function generateCordovaPackageFile(p: Plugin, config: Config) {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
-  const iosVersion = getMajoriOSVersion(config);
-  const headerFiles = getPlatformElement(p, platform, 'header-file');
-  let headersText = '';
-  if (headerFiles.length > 0) {
-    headersText = `,
-            publicHeadersPath: "."`;
-  }
 
   const platformTag = getPluginPlatform(p, platform);
   if (platformTag.$?.package) {
@@ -98,7 +91,76 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     );
     await writeFile(packageSwiftPath, content);
   } else {
-    const content = `// swift-tools-version: 5.9
+    await writeGeneratedPackageSwift(p, config, iosPlatformVersion);
+  }
+}
+
+function buildCSettingsText(p: Plugin, sourceFiles: any[]): string {
+  const pluginId = p.id;
+  const allFlags = new Set<string>();
+  for (const sourceFile of sourceFiles) {
+    const flags = sourceFile.$?.['compiler-flags'];
+    if (flags) {
+      flags
+        .split(/\s+/)
+        .map((f: string) => f.trim())
+        .filter((f: string) => f.length > 0)
+        .forEach((f: string) => allFlags.add(f));
+    }
+  }
+
+  if (allFlags.size === 0) {
+    return '';
+  }
+
+  const entries: string[] = [];
+  const unsupportedFlags: string[] = [];
+
+  for (const flag of allFlags) {
+    if (flag.startsWith('-D')) {
+      const definition = flag.slice(2);
+      const eqIndex = definition.indexOf('=');
+      if (eqIndex !== -1) {
+        const name = definition.slice(0, eqIndex);
+        const value = definition.slice(eqIndex + 1);
+        entries.push(`                .define("${name}", to: "${value}")`);
+      } else {
+        entries.push(`                .define("${definition}")`);
+      }
+    } else {
+      unsupportedFlags.push(flag);
+    }
+  }
+
+  if (unsupportedFlags.length > 0) {
+    logger.warn(
+      `${pluginId}: the following compiler flags are not supported in SPM and were ignored: ${unsupportedFlags.join(', ')}. ` +
+        `This might cause the plugin to fail to compile.`,
+    );
+  }
+
+  if (entries.length === 0) {
+    return '';
+  }
+
+  return `,
+            cSettings: [
+${entries.join(',\n')}
+            ]`;
+}
+
+async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosPlatformVersion: string) {
+  const iosVersion = getMajoriOSVersion(config);
+  const headerFiles = getPlatformElement(p, platform, 'header-file');
+  const headersText =
+    headerFiles.length > 0
+      ? `,
+            publicHeadersPath: "."`
+      : '';
+  const sourceFiles = getPlatformElement(p, platform, 'source-file');
+  const cSettingsText = buildCSettingsText(p, sourceFiles);
+
+  const content = `// swift-tools-version: 5.9
 
 import PackageDescription
 
@@ -120,13 +182,12 @@ let package = Package(
             dependencies: [
                 .product(name: "Cordova", package: "capacitor-swift-pm")
             ],
-            path: "."${headersText}
+            path: "."${headersText}${cSettingsText}
         )
     ]
 )`;
 
-    await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
-  }
+  await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {
@@ -404,6 +465,7 @@ function getLinkerFlags(config: Config) {
 }
 
 async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
+  const isSPM = (await config.ios.packageManager) === 'SPM';
   for (const p of cordovaPlugins) {
     const platformTag = getPluginPlatform(p, platform);
     if (platformTag.$?.package) {
@@ -414,7 +476,7 @@ async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) 
     const codeFiles = sourceFiles.concat(headerFiles);
     const frameworks = getPlatformElement(p, platform, 'framework');
     let sourcesFolderName = 'sources';
-    if ((await config.ios.packageManager) !== 'SPM' && needsStaticPod(p)) {
+    if (!isSPM && needsStaticPod(p)) {
       sourcesFolderName += 'static';
     }
     const sourcesFolder = join(config.ios.cordovaPluginsDirAbs, sourcesFolderName, p.name);
@@ -425,7 +487,7 @@ async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) 
         fileName = 'lib' + fileName;
       }
       let destFolder = sourcesFolderName;
-      if (codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
+      if (!isSPM && codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
         destFolder = 'noarc';
       }
       const filePath = getFilePath(config, p, codeFile.$.src);
