@@ -98,17 +98,7 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     );
     await writeFile(packageSwiftPath, content);
   } else {
-    const frameworks = getPlatformElement(p, platform, 'framework');
-    const { binaryTargetsText, binaryDepsText } = buildBinaryTargetEntries(p, frameworks);
-    await writeGeneratedPackageSwift(
-      p,
-      config,
-      iosVersion,
-      iosPlatformVersion,
-      headersText,
-      binaryTargetsText,
-      binaryDepsText,
-    );
+    await writeGeneratedPackageSwift(p, config, iosVersion, iosPlatformVersion, headersText);
   }
 }
 
@@ -151,9 +141,9 @@ async function writeGeneratedPackageSwift(
   iosVersion: string,
   iosPlatformVersion: string,
   headersText: string,
-  binaryTargetsText: string,
-  binaryDepsText: string,
 ) {
+  const frameworks = getPlatformElement(p, platform, 'framework');
+  const { binaryTargetsText, binaryDepsText } = buildBinaryTargetEntries(p, frameworks);
   const content = `// swift-tools-version: 5.9
 
 import PackageDescription
