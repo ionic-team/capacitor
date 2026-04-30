@@ -35,6 +35,7 @@ public class CapConfig {
     // Server Config
     private boolean html5mode = true;
     private String serverUrl;
+    private String requestReferer;
     private String hostname = "localhost";
     private String androidScheme = CAPACITOR_HTTPS_SCHEME;
     private String[] allowNavigation;
@@ -158,6 +159,7 @@ public class CapConfig {
         // Server Config
         this.html5mode = builder.html5mode;
         this.serverUrl = builder.serverUrl;
+        this.requestReferer = builder.requestReferer;
         this.hostname = builder.hostname;
 
         if (this.validateScheme(builder.androidScheme)) {
@@ -247,6 +249,7 @@ public class CapConfig {
         // Server
         html5mode = JSONUtils.getBoolean(configJSON, "server.html5mode", html5mode);
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
+        requestReferer = JSONUtils.getString(configJSON, "server.referer", null);
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
         errorPath = JSONUtils.getString(configJSON, "server.errorPath", null);
         startPath = JSONUtils.getString(configJSON, "server.appStartPath", null);
@@ -340,6 +343,10 @@ public class CapConfig {
 
     public String getErrorPath() {
         return errorPath;
+    }
+
+    public String getRequestReferer() {
+        return requestReferer;
     }
 
     public String getHostname() {
@@ -563,6 +570,7 @@ public class CapConfig {
         // Server Config Values
         private boolean html5mode = true;
         private String serverUrl;
+        private String requestReferer;
         private String errorPath;
         private String hostname = "localhost";
         private String androidScheme = CAPACITOR_HTTPS_SCHEME;
@@ -623,6 +631,11 @@ public class CapConfig {
 
         public Builder setServerUrl(String serverUrl) {
             this.serverUrl = serverUrl;
+            return this;
+        }
+
+        public Builder setRequestReferer(String requestReferer) {
+            this.requestReferer = requestReferer;
             return this;
         }
 
