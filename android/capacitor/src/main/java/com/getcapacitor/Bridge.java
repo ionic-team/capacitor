@@ -1214,42 +1214,44 @@ public class Bridge {
     protected Map<String, PermissionState> getPermissionStates(Plugin plugin) {
         Map<String, PermissionState> permissionsResults = new HashMap<>();
         CapacitorPlugin annotation = plugin.getPluginHandle().getPluginAnnotation();
-        for (Permission perm : annotation.permissions()) {
-            // If a permission is defined with no permission constants, return GRANTED for it.
-            // Otherwise, get its true state.
-            if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
-                String key = perm.alias();
-                if (!key.isEmpty()) {
-                    PermissionState existingResult = permissionsResults.get(key);
+        if (annotation != null) {
+            for (Permission perm : annotation.permissions()) {
+                // If a permission is defined with no permission constants, return GRANTED for it.
+                // Otherwise, get its true state.
+                if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
+                    String key = perm.alias();
+                    if (!key.isEmpty()) {
+                        PermissionState existingResult = permissionsResults.get(key);
 
-                    // auto set permission state to GRANTED if the alias is empty.
-                    if (existingResult == null) {
-                        permissionsResults.put(key, PermissionState.GRANTED);
-                    }
-                }
-            } else {
-                for (String permString : perm.strings()) {
-                    String key = perm.alias().isEmpty() ? permString : perm.alias();
-                    PermissionState permissionStatus;
-                    if (ActivityCompat.checkSelfPermission(this.getContext(), permString) == PackageManager.PERMISSION_GRANTED) {
-                        permissionStatus = PermissionState.GRANTED;
-                    } else {
-                        permissionStatus = PermissionState.PROMPT;
-
-                        // Check if there is a cached permission state for the "Never ask again" state
-                        SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS_NAME, Activity.MODE_PRIVATE);
-                        String state = prefs.getString(permString, null);
-
-                        if (state != null) {
-                            permissionStatus = PermissionState.byState(state);
+                        // auto set permission state to GRANTED if the alias is empty.
+                        if (existingResult == null) {
+                            permissionsResults.put(key, PermissionState.GRANTED);
                         }
                     }
+                } else {
+                    for (String permString : perm.strings()) {
+                        String key = perm.alias().isEmpty() ? permString : perm.alias();
+                        PermissionState permissionStatus;
+                        if (ActivityCompat.checkSelfPermission(this.getContext(), permString) == PackageManager.PERMISSION_GRANTED) {
+                            permissionStatus = PermissionState.GRANTED;
+                        } else {
+                            permissionStatus = PermissionState.PROMPT;
 
-                    PermissionState existingResult = permissionsResults.get(key);
+                            // Check if there is a cached permission state for the "Never ask again" state
+                            SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS_NAME, Activity.MODE_PRIVATE);
+                            String state = prefs.getString(permString, null);
 
-                    // multiple permissions with the same alias must all be true, otherwise all false.
-                    if (existingResult == null || existingResult == PermissionState.GRANTED) {
-                        permissionsResults.put(key, permissionStatus);
+                            if (state != null) {
+                                permissionStatus = PermissionState.byState(state);
+                            }
+                        }
+
+                        PermissionState existingResult = permissionsResults.get(key);
+
+                        // multiple permissions with the same alias must all be true, otherwise all false.
+                        if (existingResult == null || existingResult == PermissionState.GRANTED) {
+                            permissionsResults.put(key, permissionStatus);
+                        }
                     }
                 }
             }
