@@ -17,6 +17,9 @@ export const enum PluginType {
 export interface PluginManifest {
   readonly ios?: {
     readonly src?: string;
+    readonly spm?: {
+      readonly path?: string;
+    };
   };
   readonly android?: {
     readonly src?: string;

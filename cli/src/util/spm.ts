@@ -1,6 +1,6 @@
 import { pathExists, existsSync, readFileSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
 import { tmpdir } from 'os';
-import { join, relative, resolve } from 'path';
+import { isAbsolute, join, relative, resolve } from 'path';
 import type { PlistObject } from 'plist';
 import { build, parse } from 'plist';
 import { extract } from 'tar';
@@ -127,7 +127,7 @@ let package = Package(
         packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
       }
     } else {
-      const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+      const relPath = relative(config.ios.nativeXcodeProjDirAbs, getPluginPackageDir(plugin));
       const traits = packageTraits[plugin.id];
       const traitsSuffix = traits?.length
         ? `, traits: [${traits
@@ -263,10 +263,23 @@ export async function checkPackageTraitsRequirements(config: Config): Promise<st
 
 // Private Functions
 
+function getPluginPackageDir(plugin: Plugin): string {
+  const spmPath = plugin.manifest?.ios?.spm?.path;
+  if (!spmPath) {
+    return plugin.rootPath;
+  }
+  if (isAbsolute(spmPath) || spmPath.split(/[\\/]/).includes('..')) {
+    fatal(
+      `Invalid ${plugin.id} manifest: capacitor.ios.spm.path must be a relative path within the plugin and cannot contain "..".`,
+    );
+  }
+  return join(plugin.rootPath, spmPath);
+}
+
 async function pluginsWithPackageSwift(plugins: Plugin[]): Promise<Plugin[]> {
   const pluginList: Plugin[] = [];
   for (const plugin of plugins) {
-    const packageSwiftFound = await pathExists(join(plugin.rootPath, 'Package.swift'));
+    const packageSwiftFound = await pathExists(join(getPluginPackageDir(plugin), 'Package.swift'));
     if (packageSwiftFound) {
       pluginList.push(plugin);
     } else {
