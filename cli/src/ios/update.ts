@@ -99,7 +99,7 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     await writeFile(packageSwiftPath, content);
   } else {
     const sourceFiles = getPlatformElement(p, platform, 'source-file');
-    const cSettingsText = buildCSettingsText(sourceFiles);
+    const cSettingsText = buildCSettingsText(p, sourceFiles);
 
     const content = `// swift-tools-version: 5.9
 
@@ -132,7 +132,8 @@ let package = Package(
   }
 }
 
-function buildCSettingsText(sourceFiles: any[]): string {
+function buildCSettingsText(p: Plugin, sourceFiles: any[]): string {
+  const pluginId = p.id;
   const allFlags = new Set<string>();
   for (const sourceFile of sourceFiles) {
     const flags = sourceFile.$?.['compiler-flags'];
@@ -150,6 +151,7 @@ function buildCSettingsText(sourceFiles: any[]): string {
   }
 
   const entries: string[] = [];
+  const unsupportedFlags: string[] = [];
 
   for (const flag of allFlags) {
     if (flag.startsWith('-D')) {
@@ -162,7 +164,16 @@ function buildCSettingsText(sourceFiles: any[]): string {
       } else {
         entries.push(`                .define("${definition}")`);
       }
+    } else {
+      unsupportedFlags.push(flag);
     }
+  }
+
+  if (unsupportedFlags.length > 0) {
+    logger.warn(
+      `${pluginId}: the following compiler flags are not supported in SPM and were ignored: ${unsupportedFlags.join(', ')}. ` +
+        `This may cause the plugin to fail to compile.`,
+    );
   }
 
   return `,
