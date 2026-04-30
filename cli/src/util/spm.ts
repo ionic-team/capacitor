@@ -156,21 +156,20 @@ let package = Package(
                 .product(name: "Cordova", package: "capacitor-swift-pm")`;
 
   for (const plugin of plugins) {
+    let pluginText = `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
       const platformTag = getPluginPlatform(plugin, config.ios.name);
       if (platformTag.$?.package) {
-        packageSwiftText += `,\n                .product(name: "${plugin.id}", package: "${plugin.id}")`;
+        pluginText = `,\n                .product(name: "${plugin.id}", package: "${plugin.id}")`;
       } else {
         const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
         const headerFiles = getPlatformElement(plugin, config.ios.name, 'header-file');
         if (sourceFiles.length === 0 && headerFiles.length === 0) {
-          continue;
+          pluginText = '';
         }
-        packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
       }
-    } else {
-      packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
     }
+    packageSwiftText += pluginText;
   }
 
   packageSwiftText += `
