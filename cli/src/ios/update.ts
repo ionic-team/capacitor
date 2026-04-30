@@ -98,37 +98,7 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     );
     await writeFile(packageSwiftPath, content);
   } else {
-    const sourceFiles = getPlatformElement(p, platform, 'source-file');
-    const cSettingsText = buildCSettingsText(p, sourceFiles);
-
-    const content = `// swift-tools-version: 5.9
-
-import PackageDescription
-
-let package = Package(
-    name: "${p.name}",
-    platforms: [.iOS(.v${iosVersion})],
-    products: [
-        .library(
-            name: "${p.name}",
-            targets: ["${p.name}"]
-        )
-    ],
-    dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")
-    ],
-    targets: [
-        .target(
-            name: "${p.name}",
-            dependencies: [
-                .product(name: "Cordova", package: "capacitor-swift-pm")
-            ],
-            path: "."${headersText}${cSettingsText}
-        )
-    ]
-)`;
-
-    await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
+    await writeGeneratedPackageSwift(p, config, iosVersion, iosPlatformVersion, headersText);
   }
 }
 
@@ -180,6 +150,46 @@ function buildCSettingsText(p: Plugin, sourceFiles: any[]): string {
             cSettings: [
 ${entries.join(',\n')}
             ]`;
+}
+
+async function writeGeneratedPackageSwift(
+  p: Plugin,
+  config: Config,
+  iosVersion: string,
+  iosPlatformVersion: string,
+  headersText: string,
+) {
+  const sourceFiles = getPlatformElement(p, platform, 'source-file');
+  const cSettingsText = buildCSettingsText(p, sourceFiles);
+
+  const content = `// swift-tools-version: 5.9
+
+import PackageDescription
+
+let package = Package(
+    name: "${p.name}",
+    platforms: [.iOS(.v${iosVersion})],
+    products: [
+        .library(
+            name: "${p.name}",
+            targets: ["${p.name}"]
+        )
+    ],
+    dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")
+    ],
+    targets: [
+        .target(
+            name: "${p.name}",
+            dependencies: [
+                .product(name: "Cordova", package: "capacitor-swift-pm")
+            ],
+            path: "."${headersText}${cSettingsText}
+        )
+    ]
+)`;
+
+  await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {
