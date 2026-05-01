@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.webkit.WebView;
 import com.getcapacitor.Logger;
 import com.getcapacitor.Plugin;
-import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import java.util.List;
 import org.apache.cordova.ConfigXmlParser;

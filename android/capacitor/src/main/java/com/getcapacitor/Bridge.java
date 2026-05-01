@@ -418,7 +418,7 @@ public class Bridge {
     }
 
     private Plugin cordova() {
-        PluginHandle handle = getPlugin("__CordovaHandle");
+        PluginHandle handle = getPlugin("__CordovaPlugin");
         if (handle != null) {
             return handle.getInstance();
         }
