@@ -465,6 +465,7 @@ function getLinkerFlags(config: Config) {
 }
 
 async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
+  const isSPM = (await config.ios.packageManager) === 'SPM';
   for (const p of cordovaPlugins) {
     const platformTag = getPluginPlatform(p, platform);
     if (platformTag.$?.package) {
@@ -475,7 +476,7 @@ async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) 
     const codeFiles = sourceFiles.concat(headerFiles);
     const frameworks = getPlatformElement(p, platform, 'framework');
     let sourcesFolderName = 'sources';
-    if ((await config.ios.packageManager) !== 'SPM' && needsStaticPod(p)) {
+    if (!isSPM && needsStaticPod(p)) {
       sourcesFolderName += 'static';
     }
     const sourcesFolder = join(config.ios.cordovaPluginsDirAbs, sourcesFolderName, p.name);
@@ -486,7 +487,7 @@ async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) 
         fileName = 'lib' + fileName;
       }
       let destFolder = sourcesFolderName;
-      if (codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
+      if (!isSPM && codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
         destFolder = 'noarc';
       }
       const filePath = getFilePath(config, p, codeFile.$.src);
