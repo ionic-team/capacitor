@@ -197,6 +197,19 @@ async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosPlatform
   const frameworks = getPlatformElement(p, platform, 'framework');
   const { binaryTargetsText, binaryDepsText } = buildBinaryTargetEntries(p, frameworks);
   const cSettingsText = buildCSettingsText(p, sourceFiles);
+  const systemFrameworks = frameworks.filter((f: any) => !f.$.custom && f.$.src.endsWith('.framework'));
+  const hasWeakFrameworks = systemFrameworks.some((f: any) => f.$.weak === 'true');
+  const requiredSystemFrameworks = systemFrameworks.filter((f: any) => f.$.weak !== 'true');
+
+  const libraryTypeText = hasWeakFrameworks ? `\n            type: .dynamic,` : '';
+  const linkerSettingsText =
+    requiredSystemFrameworks.length > 0
+      ? `,
+            linkerSettings: [
+${requiredSystemFrameworks.map((f: any) => `                .linkedFramework("${f.$.src.replace('.framework', '')}")`).join(',\n')}
+            ]`
+      : '';
+
   const content = `// swift-tools-version: 5.9
 
 import PackageDescription
@@ -206,7 +219,7 @@ let package = Package(
     platforms: [.iOS(.v${iosVersion})],
     products: [
         .library(
-            name: "${p.name}",
+            name: "${p.name}",${libraryTypeText}
             targets: ["${p.name}"]
         )
     ],
@@ -219,7 +232,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}
             ],
-            path: "."${headersText}${cSettingsText}
+            path: "."${headersText}${cSettingsText}${linkerSettingsText}
         )${binaryTargetsText}
     ]
 )`;
