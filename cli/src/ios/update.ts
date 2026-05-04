@@ -77,13 +77,6 @@ async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Con
 
 async function generateCordovaPackageFile(p: Plugin, config: Config) {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
-  const iosVersion = getMajoriOSVersion(config);
-  const headerFiles = getPlatformElement(p, platform, 'header-file');
-  let headersText = '';
-  if (headerFiles.length > 0) {
-    headersText = `,
-            publicHeadersPath: "."`;
-  }
 
   const platformTag = getPluginPlatform(p, platform);
   if (platformTag.$?.package) {
@@ -98,25 +91,92 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     );
     await writeFile(packageSwiftPath, content);
   } else {
-    const sourceFiles = getPlatformElement(p, platform, 'source-file');
-    if (sourceFiles.length === 0 && headerFiles.length === 0) {
-      return;
-    }
-    const frameworks = getPlatformElement(p, platform, 'framework');
-    const systemFrameworks = frameworks.filter((f: any) => !f.$.custom && f.$.src.endsWith('.framework'));
-    const hasWeakFrameworks = systemFrameworks.some((f: any) => f.$.weak === 'true');
-    const requiredSystemFrameworks = systemFrameworks.filter((f: any) => f.$.weak !== 'true');
+    await writeGeneratedPackageSwift(p, config, iosPlatformVersion);
+  }
+}
 
-    const libraryTypeText = hasWeakFrameworks ? `\n            type: .dynamic,` : '';
-    const linkerSettingsText =
-      requiredSystemFrameworks.length > 0
-        ? `,
+function buildCSettingsText(p: Plugin, sourceFiles: any[]): string {
+  const pluginId = p.id;
+  const allFlags = new Set<string>();
+  for (const sourceFile of sourceFiles) {
+    const flags = sourceFile.$?.['compiler-flags'];
+    if (flags) {
+      flags
+        .split(/\s+/)
+        .map((f: string) => f.trim())
+        .filter((f: string) => f.length > 0)
+        .forEach((f: string) => allFlags.add(f));
+    }
+  }
+
+  if (allFlags.size === 0) {
+    return '';
+  }
+
+  const entries: string[] = [];
+  const unsupportedFlags: string[] = [];
+
+  for (const flag of allFlags) {
+    if (flag.startsWith('-D')) {
+      const definition = flag.slice(2);
+      const eqIndex = definition.indexOf('=');
+      if (eqIndex !== -1) {
+        const name = definition.slice(0, eqIndex);
+        const value = definition.slice(eqIndex + 1);
+        entries.push(`                .define("${name}", to: "${value}")`);
+      } else {
+        entries.push(`                .define("${definition}")`);
+      }
+    } else {
+      unsupportedFlags.push(flag);
+    }
+  }
+
+  if (unsupportedFlags.length > 0) {
+    logger.warn(
+      `${pluginId}: the following compiler flags are not supported in SPM and were ignored: ${unsupportedFlags.join(', ')}. ` +
+        `This might cause the plugin to fail to compile.`,
+    );
+  }
+
+  if (entries.length === 0) {
+    return '';
+  }
+
+  return `,
+            cSettings: [
+${entries.join(',\n')}
+            ]`;
+}
+
+async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosPlatformVersion: string) {
+  const iosVersion = getMajoriOSVersion(config);
+  const headerFiles = getPlatformElement(p, platform, 'header-file');
+  const headersText =
+    headerFiles.length > 0
+      ? `,
+            publicHeadersPath: "."`
+      : '';
+  const sourceFiles = getPlatformElement(p, platform, 'source-file');
+  if (sourceFiles.length === 0 && headerFiles.length === 0) {
+    return;
+  }
+  const cSettingsText = buildCSettingsText(p, sourceFiles);
+  const frameworks = getPlatformElement(p, platform, 'framework');
+  const systemFrameworks = frameworks.filter((f: any) => !f.$.custom && f.$.src.endsWith('.framework'));
+  const hasWeakFrameworks = systemFrameworks.some((f: any) => f.$.weak === 'true');
+  const requiredSystemFrameworks = systemFrameworks.filter((f: any) => f.$.weak !== 'true');
+
+  const libraryTypeText = hasWeakFrameworks ? `\n            type: .dynamic,` : '';
+  const linkerSettingsText =
+    requiredSystemFrameworks.length > 0
+      ? `,
             linkerSettings: [
 ${requiredSystemFrameworks.map((f: any) => `                .linkedFramework("${f.$.src.replace('.framework', '')}")`).join(',\n')}
             ]`
-        : '';
+      : '';
 
-    const content = `// swift-tools-version: 5.9
+  const content = `// swift-tools-version: 5.9
 
 import PackageDescription
 
@@ -138,13 +198,12 @@ let package = Package(
             dependencies: [
                 .product(name: "Cordova", package: "capacitor-swift-pm")
             ],
-            path: "."${headersText}${linkerSettingsText}
+            path: "."${headersText}${cSettingsText}${linkerSettingsText}
         )
     ]
 )`;
 
-    await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
-  }
+  await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean): Promise<void> {
@@ -422,6 +481,7 @@ function getLinkerFlags(config: Config) {
 }
 
 async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
+  const isSPM = (await config.ios.packageManager) === 'SPM';
   for (const p of cordovaPlugins) {
     const platformTag = getPluginPlatform(p, platform);
     if (platformTag.$?.package) {
@@ -432,7 +492,7 @@ async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) 
     const codeFiles = sourceFiles.concat(headerFiles);
     const frameworks = getPlatformElement(p, platform, 'framework');
     let sourcesFolderName = 'sources';
-    if ((await config.ios.packageManager) !== 'SPM' && needsStaticPod(p)) {
+    if (!isSPM && needsStaticPod(p)) {
       sourcesFolderName += 'static';
     }
     const sourcesFolder = join(config.ios.cordovaPluginsDirAbs, sourcesFolderName, p.name);
@@ -443,7 +503,7 @@ async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) 
         fileName = 'lib' + fileName;
       }
       let destFolder = sourcesFolderName;
-      if (codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
+      if (!isSPM && codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
         destFolder = 'noarc';
       }
       const filePath = getFilePath(config, p, codeFile.$.src);
