@@ -98,6 +98,10 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     );
     await writeFile(packageSwiftPath, content);
   } else {
+    const sourceFiles = getPlatformElement(p, platform, 'source-file');
+    if (sourceFiles.length === 0 && headerFiles.length === 0) {
+      return;
+    }
     const frameworks = getPlatformElement(p, platform, 'framework');
     const systemFrameworks = frameworks.filter((f: any) => !f.$.custom && f.$.src.endsWith('.framework'));
     const hasWeakFrameworks = systemFrameworks.some((f: any) => f.$.weak === 'true');
