@@ -11,7 +11,7 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
-import { getPluginPlatform, getPluginType, PluginType } from '../plugin';
+import { getPlatformElement, getPluginPlatform, getPluginType, PluginType } from '../plugin';
 import { runCommand } from '../util/subprocess';
 
 export interface SwiftPlugin {
@@ -122,6 +122,11 @@ let package = Package(
         const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
         packageSwiftText += `,\n        .package(name: "${plugin.id}", path: "${relPath}")`;
       } else {
+        const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
+        const headerFiles = getPlatformElement(plugin, config.ios.name, 'header-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0) {
+          continue;
+        }
         packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
       }
     } else {
@@ -145,6 +150,12 @@ let package = Package(
       const platformTag = getPluginPlatform(plugin, config.ios.name);
       if (platformTag.$?.package) {
         pluginText = `,\n                .product(name: "${plugin.id}", package: "${plugin.id}")`;
+      } else {
+        const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
+        const headerFiles = getPlatformElement(plugin, config.ios.name, 'header-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0) {
+          pluginText = '';
+        }
       }
     }
     packageSwiftText += pluginText;
