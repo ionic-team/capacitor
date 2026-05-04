@@ -158,6 +158,9 @@ async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosPlatform
             publicHeadersPath: "."`
       : '';
   const sourceFiles = getPlatformElement(p, platform, 'source-file');
+  if (sourceFiles.length === 0 && headerFiles.length === 0) {
+    return;
+  }
   const cSettingsText = buildCSettingsText(p, sourceFiles);
 
   const content = `// swift-tools-version: 5.9
