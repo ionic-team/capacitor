@@ -98,6 +98,10 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
     );
     await writeFile(packageSwiftPath, content);
   } else {
+    const sourceFiles = getPlatformElement(p, platform, 'source-file');
+    if (sourceFiles.length === 0 && headerFiles.length === 0) {
+      return;
+    }
     const content = `// swift-tools-version: 5.9
 
 import PackageDescription
