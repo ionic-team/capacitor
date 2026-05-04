@@ -95,6 +95,39 @@ async function generateCordovaPackageFile(p: Plugin, config: Config) {
   }
 }
 
+function buildBinaryTargetEntries(p: Plugin, frameworks: any[]): { binaryTargetsText: string; binaryDepsText: string } {
+  const customXcframeworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.xcframework'));
+  const customFrameworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.framework'));
+
+  if (customFrameworks.length > 0) {
+    customFrameworks.forEach((f: any) => {
+      logger.warn(
+        `${p.id}: custom .framework files are not supported as binaryTarget in SPM (${f.$.src}). Convert to .xcframework for SPM compatibility.`,
+      );
+    });
+  }
+
+  const binaryTargetsText = customXcframeworks
+    .map((f: any) => {
+      const name = f.$.src.split('/').pop().replace('.xcframework', '');
+      return `,
+        .binaryTarget(
+            name: "${name}",
+            path: "${f.$.src}"
+        )`;
+    })
+    .join('');
+
+  const binaryDepsText = customXcframeworks
+    .map((f: any) => {
+      const name = f.$.src.split('/').pop().replace('.xcframework', '');
+      return `,\n                .target(name: "${name}")`;
+    })
+    .join('');
+
+  return { binaryTargetsText, binaryDepsText };
+}
+
 function buildCSettingsText(p: Plugin, sourceFiles: any[]): string {
   const pluginId = p.id;
   const allFlags = new Set<string>();
@@ -161,8 +194,9 @@ async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosPlatform
   if (sourceFiles.length === 0 && headerFiles.length === 0) {
     return;
   }
-  const cSettingsText = buildCSettingsText(p, sourceFiles);
   const frameworks = getPlatformElement(p, platform, 'framework');
+  const { binaryTargetsText, binaryDepsText } = buildBinaryTargetEntries(p, frameworks);
+  const cSettingsText = buildCSettingsText(p, sourceFiles);
   const systemFrameworks = frameworks.filter((f: any) => !f.$.custom && f.$.src.endsWith('.framework'));
   const hasWeakFrameworks = systemFrameworks.some((f: any) => f.$.weak === 'true');
   const requiredSystemFrameworks = systemFrameworks.filter((f: any) => f.$.weak !== 'true');
@@ -196,10 +230,10 @@ let package = Package(
         .target(
             name: "${p.name}",
             dependencies: [
-                .product(name: "Cordova", package: "capacitor-swift-pm")
+                .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}
             ],
             path: "."${headersText}${cSettingsText}${linkerSettingsText}
-        )
+        )${binaryTargetsText}
     ]
 )`;
 
