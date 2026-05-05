@@ -136,7 +136,7 @@ function buildResourcesText(resources: any[]) {
   return resources.length > 0
     ? `,
             resources: [
-                ${resourceEntry.join(',')}
+                ${resourceEntry.join(',\n                ')}
             ]`
     : '';
 }
