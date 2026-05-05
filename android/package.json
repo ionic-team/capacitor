@@ -17,7 +17,10 @@
     "capacitor/lint-baseline.xml",
     "capacitor/lint.xml",
     "capacitor/proguard-rules.pro",
-    "capacitor/src/main/"
+    "capacitor/src/main/",
+    "capacitor-cordova/build.gradle",
+    "capacitor-cordova/proguard-rules.pro",
+    "capacitor-cordova/src/main/"
   ],
   "scripts": {
     "verify": "./gradlew clean lint build test -b capacitor/build.gradle"
