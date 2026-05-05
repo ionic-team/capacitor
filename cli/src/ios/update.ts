@@ -128,6 +128,19 @@ function buildBinaryTargetEntries(p: Plugin, frameworks: any[]): { binaryTargets
   return { binaryTargetsText, binaryDepsText };
 }
 
+function buildResourcesText(resources: any[]) {
+  const resourceEntry = [];
+  for (const resource of resources) {
+    resourceEntry.push(`.copy("resources/${resource.$.src.split('/').pop()}")`);
+  }
+  return resources.length > 0
+    ? `,
+            resources: [
+                ${resourceEntry.join(',\n                ')}
+            ]`
+    : '';
+}
+
 function buildCSettingsText(p: Plugin, sourceFiles: any[]): string {
   const pluginId = p.id;
   const allFlags = new Set<string>();
@@ -190,8 +203,9 @@ async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosPlatform
       ? `,
             publicHeadersPath: "."`
       : '';
+  const resources = getPlatformElement(p, platform, 'resource-file');
   const sourceFiles = getPlatformElement(p, platform, 'source-file');
-  if (sourceFiles.length === 0 && headerFiles.length === 0) {
+  if (sourceFiles.length === 0 && headerFiles.length === 0 && resources.length === 0) {
     return;
   }
   const frameworks = getPlatformElement(p, platform, 'framework');
@@ -200,6 +214,7 @@ async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosPlatform
   const systemFrameworks = frameworks.filter((f: any) => !f.$.custom && f.$.src.endsWith('.framework'));
   const hasWeakFrameworks = systemFrameworks.some((f: any) => f.$.weak === 'true');
   const requiredSystemFrameworks = systemFrameworks.filter((f: any) => f.$.weak !== 'true');
+  const resourcesText = buildResourcesText(resources);
 
   const libraryTypeText = hasWeakFrameworks ? `\n            type: .dynamic,` : '';
   const linkerSettingsText =
@@ -232,7 +247,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}
             ],
-            path: "."${headersText}${cSettingsText}${linkerSettingsText}
+            path: "."${resourcesText}${headersText}${cSettingsText}${linkerSettingsText}
         )${binaryTargetsText}
     ]
 )`;
@@ -557,8 +572,16 @@ async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) 
             fileContent.includes('[NSBundle bundleForClass:[self class]]') ||
             fileContent.includes('[NSBundle bundleForClass:[CDVCapture class]]')
           ) {
-            fileContent = fileContent.replace('[NSBundle bundleForClass:[self class]]', '[NSBundle mainBundle]');
-            fileContent = fileContent.replace('[NSBundle bundleForClass:[CDVCapture class]]', '[NSBundle mainBundle]');
+            const bundleName = isSPM ? 'SWIFTPM_MODULE_BUNDLE' : '[NSBundle mainBundle]';
+            fileContent = fileContent.replace('[NSBundle bundleForClass:[self class]]', bundleName);
+            fileContent = fileContent.replace('[NSBundle bundleForClass:[CDVCapture class]]', bundleName);
+            await writeFile(fileDest, fileContent, { encoding: 'utf-8' });
+          }
+          if (isSPM && fileContent.includes('[NSBundle mainBundle] URLForResource')) {
+            fileContent = fileContent.replace(
+              '[NSBundle mainBundle] URLForResource',
+              'SWIFTPM_MODULE_BUNDLE URLForResource',
+            );
             await writeFile(fileDest, fileContent, { encoding: 'utf-8' });
           }
           if (fileContent.includes('[self.webView superview]') || fileContent.includes('self.webView.superview')) {
@@ -572,10 +595,8 @@ async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) 
     const resourceFiles = getPlatformElement(p, platform, 'resource-file');
     for (const resourceFile of resourceFiles) {
       const fileName = resourceFile.$.src.split('/').pop();
-      await copy(
-        getFilePath(config, p, resourceFile.$.src),
-        join(config.ios.cordovaPluginsDirAbs, 'resources', fileName),
-      );
+      const rootResFolder = isSPM ? sourcesFolder : config.ios.cordovaPluginsDirAbs;
+      await copy(getFilePath(config, p, resourceFile.$.src), join(rootResFolder, 'resources', fileName));
     }
     for (const framework of frameworks) {
       if (framework.$.custom && framework.$.custom === 'true') {
