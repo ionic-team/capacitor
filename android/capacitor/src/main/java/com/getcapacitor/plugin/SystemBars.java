@@ -163,6 +163,24 @@ public class SystemBars extends Plugin {
         call.resolve();
     }
 
+    @Override
+    protected void handleOnResume() {
+        super.handleOnResume();
+        getBridge().executeOnMainThread(() -> {
+            Window window = getActivity().getWindow();
+            WindowCompat.setDecorFitsSystemWindows(window, false);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                window.setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    window.setNavigationBarContrastEnforced(false);
+                }
+            }
+            setStyle(currentGestureBarStyle, BAR_GESTURE_BAR);
+            setStyle(currentStatusBarStyle, BAR_STATUS_BAR);
+            ViewCompat.requestApplyInsets((View) getBridge().getWebView().getParent());
+        });
+    }
+
     @JavascriptInterface
     public void onDOMReady() {
         getActivity().runOnUiThread(() -> {
