@@ -7,6 +7,7 @@ import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps,
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
+import type { Plugin } from '../plugin';
 import {
   PluginType,
   getAllElements,
@@ -16,9 +17,8 @@ import {
   getPluginType,
   getPlugins,
   printPlugins,
+  resolvePlugin,
 } from '../plugin';
-import type { Plugin } from '../plugin';
-import { resolvePlugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { setAllStringIn } from '../tasks/migrate';
 import { convertToUnixPath } from '../util/fs';
@@ -142,30 +142,32 @@ function buildResourcesText(resources: any[]) {
     : '';
 }
 
-async function buildDependencyTexts(p: Plugin, config: Config,) {
+async function buildDependencyTexts(p: Plugin, config: Config) {
   let allDependencies: string[] = getPlatformElement(p, platform, 'dependency');
   if (p.xml['dependency']) {
     allDependencies = allDependencies.concat(p.xml['dependency']);
   }
   let packageText = '';
   let productText = '';
-  await Promise.all(allDependencies.map(async (dep: any) => {
-    let plugin = dep.$.id;
-    if (plugin.includes('@') && plugin.indexOf('@') !== 0) {
+  await Promise.all(
+    allDependencies.map(async (dep: any) => {
+      let plugin = dep.$.id;
+      if (plugin.includes('@') && plugin.indexOf('@') !== 0) {
         [plugin] = plugin.split('@');
-    }
-    const depPlugin = await resolvePlugin(config, plugin);
-    if (depPlugin) {
-      const headerFiles = getPlatformElement(depPlugin, platform, 'header-file');
-      const resources = getPlatformElement(depPlugin, platform, 'resource-file');
-      const sourceFiles = getPlatformElement(depPlugin, platform, 'source-file');
-      if (sourceFiles.length === 0 && headerFiles.length === 0 && resources.length === 0) {
-        return;
       }
-      packageText += `,\n        .package(name: "${depPlugin.name}", path: "../${depPlugin.name}")`;
-      productText += `,\n                .product(name: "${depPlugin.name}", package: "${depPlugin.name}")`;
-    }
-  }));
+      const depPlugin = await resolvePlugin(config, plugin);
+      if (depPlugin) {
+        const headerFiles = getPlatformElement(depPlugin, platform, 'header-file');
+        const resources = getPlatformElement(depPlugin, platform, 'resource-file');
+        const sourceFiles = getPlatformElement(depPlugin, platform, 'source-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0 && resources.length === 0) {
+          return;
+        }
+        packageText += `,\n        .package(name: "${depPlugin.name}", path: "../${depPlugin.name}")`;
+        productText += `,\n                .product(name: "${depPlugin.name}", package: "${depPlugin.name}")`;
+      }
+    }),
+  );
   return { packageText, productText };
 }
 
