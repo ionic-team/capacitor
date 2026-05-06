@@ -7,6 +7,7 @@ import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps,
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
+import type { Plugin } from '../plugin';
 import {
   PluginType,
   getAllElements,
@@ -16,8 +17,8 @@ import {
   getPluginType,
   getPlugins,
   printPlugins,
+  resolvePlugin,
 } from '../plugin';
-import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { setAllStringIn } from '../tasks/migrate';
 import { convertToUnixPath } from '../util/fs';
@@ -141,6 +142,35 @@ function buildResourcesText(resources: any[]) {
     : '';
 }
 
+async function buildDependencyTexts(p: Plugin, config: Config) {
+  let allDependencies: string[] = getPlatformElement(p, platform, 'dependency');
+  if (p.xml['dependency']) {
+    allDependencies = allDependencies.concat(p.xml['dependency']);
+  }
+  let packageText = '';
+  let productText = '';
+  await Promise.all(
+    allDependencies.map(async (dep: any) => {
+      let plugin = dep.$.id;
+      if (plugin.includes('@') && plugin.indexOf('@') !== 0) {
+        [plugin] = plugin.split('@');
+      }
+      const depPlugin = await resolvePlugin(config, plugin);
+      if (depPlugin) {
+        const headerFiles = getPlatformElement(depPlugin, platform, 'header-file');
+        const resources = getPlatformElement(depPlugin, platform, 'resource-file');
+        const sourceFiles = getPlatformElement(depPlugin, platform, 'source-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0 && resources.length === 0) {
+          return;
+        }
+        packageText += `,\n        .package(name: "${depPlugin.name}", path: "../${depPlugin.name}")`;
+        productText += `,\n                .product(name: "${depPlugin.name}", package: "${depPlugin.name}")`;
+      }
+    }),
+  );
+  return { packageText, productText };
+}
+
 function buildCSettingsText(p: Plugin, sourceFiles: any[]): string {
   const pluginId = p.id;
   const allFlags = new Set<string>();
@@ -224,6 +254,7 @@ async function writeGeneratedPackageSwift(p: Plugin, config: Config, iosPlatform
 ${requiredSystemFrameworks.map((f: any) => `                .linkedFramework("${f.$.src.replace('.framework', '')}")`).join(',\n')}
             ]`
       : '';
+  const { packageText, productText } = await buildDependencyTexts(p, config);
 
   const content = `// swift-tools-version: 5.9
 
@@ -239,13 +270,13 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")${packageText}
     ],
     targets: [
         .target(
             name: "${p.name}",
             dependencies: [
-                .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}
+                .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}${productText}
             ],
             path: "."${resourcesText}${headersText}${cSettingsText}${linkerSettingsText}
         )${binaryTargetsText}
