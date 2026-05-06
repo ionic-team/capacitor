@@ -204,13 +204,15 @@ public class SystemBars extends Plugin {
                     .build();
             }
 
-            // We need to correct for a possible shown IME
-            v.setPadding(
-                systemBarsInsets.left,
-                systemBarsInsets.top,
-                systemBarsInsets.right,
-                keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
-            );
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                // We need to correct for a possible shown IME
+                v.setPadding(
+                    systemBarsInsets.left,
+                    systemBarsInsets.top,
+                    systemBarsInsets.right,
+                    keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
+                );
+            }
 
             // Returning `WindowInsetsCompat.CONSUMED` breaks recalculation of safe area insets
             // So we have to explicitly set insets to `0`
