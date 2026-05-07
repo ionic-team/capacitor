@@ -11,14 +11,19 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
-import { getPluginType, PluginType } from '../plugin';
-import { runCommand, isInstalled } from '../util/subprocess';
+import { getPlatformElement, getPluginPlatform, getPluginType, PluginType } from '../plugin';
+import { runCommand } from '../util/subprocess';
 
 export interface SwiftPlugin {
   name: string;
   path: string;
 }
 
+/**
+ * @deprecated use config.ios.packageManager
+ * @param config
+ * @returns 'Cocoapods' | 'SPM'
+ */
 export async function checkPackageManager(config: Config): Promise<'Cocoapods' | 'SPM'> {
   const iosDirectory = config.ios.nativeProjectDirAbs;
   if (existsSync(resolve(iosDirectory, 'CapApp-SPM'))) {
@@ -47,14 +52,15 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
 
 export async function checkPluginsForPackageSwift(config: Config, plugins: Plugin[]): Promise<Plugin[]> {
   const iOSCapacitorPlugins = plugins.filter((p) => getPluginType(p, 'ios') === PluginType.Core);
-
   const packageSwiftPluginList = await pluginsWithPackageSwift(iOSCapacitorPlugins);
 
-  if (plugins.length == packageSwiftPluginList.length) {
-    logger.debug(`Found ${plugins.length} iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`);
-    logger.info('All plugins have a Package.swift file and will be included in Package.swift');
+  if (iOSCapacitorPlugins.length == packageSwiftPluginList.length) {
+    logger.debug(
+      `Found ${iOSCapacitorPlugins.length} Capacitor iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`,
+    );
+    logger.info('All Capacitor plugins have a Package.swift file and will be included in Package.swift');
   } else {
-    logger.warn('Some installed packages are not compatable with SPM');
+    logger.warn('Some installed Capacitor plugins are not compatible with SPM');
   }
 
   return packageSwiftPluginList;
@@ -93,8 +99,10 @@ export async function removeCocoapodsFiles(config: Config): Promise<void> {
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
+  const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits ?? {};
+  const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '5.9';
 
-  let packageSwiftText = `// swift-tools-version: 5.9
+  let packageSwiftText = `// swift-tools-version: ${swiftToolsVersion}
 import PackageDescription
 
 // DO NOT MODIFY THIS FILE - managed by Capacitor CLI commands
@@ -111,10 +119,30 @@ let package = Package(
 
   for (const plugin of plugins) {
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
-      packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
+      const platformTag = getPluginPlatform(plugin, config.ios.name);
+      if (platformTag.$?.package) {
+        const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+        packageSwiftText += `,\n        .package(name: "${plugin.id}", path: "${relPath}")`;
+      } else {
+        const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
+        const headerFiles = getPlatformElement(plugin, config.ios.name, 'header-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0) {
+          continue;
+        }
+        packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
+      }
     } else {
       const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
-      packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}")`;
+      const traits = packageTraits[plugin.id];
+      const traitsSuffix = traits?.length
+        ? `, traits: [${traits
+            .map((t) => {
+              // Any trait is written with quotes, with the exception of .defaults
+              return /^\.?defaults?$/i.test(t) ? '.defaults' : `"${t}"`;
+            })
+            .join(', ')}]`
+        : '';
+      packageSwiftText += `,\n        .package(name: "${plugin.ios?.name}", path: "${relPath}"${traitsSuffix})`;
     }
   }
 
@@ -128,7 +156,20 @@ let package = Package(
                 .product(name: "Cordova", package: "capacitor-swift-pm")`;
 
   for (const plugin of plugins) {
-    packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+    let pluginText = `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+    if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
+      const platformTag = getPluginPlatform(plugin, config.ios.name);
+      if (platformTag.$?.package) {
+        pluginText = `,\n                .product(name: "${plugin.id}", package: "${plugin.id}")`;
+      } else {
+        const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
+        const headerFiles = getPlatformElement(plugin, config.ios.name, 'header-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0) {
+          pluginText = '';
+        }
+      }
+    }
+    packageSwiftText += pluginText;
   }
 
   packageSwiftText += `
@@ -144,25 +185,19 @@ let package = Package(
 export async function runCocoapodsDeintegrate(config: Config): Promise<void> {
   const podPath = await config.ios.podPath;
   const projectFileName = config.ios.nativeXcodeProjDirAbs;
-  const useBundler = podPath.startsWith('bundle') && (await isInstalled('bundle'));
-  const podCommandExists = await isInstalled('pod');
-
-  if (useBundler) logger.info('Found bundler, using it to run CocoaPods.');
+  const useBundler = (await config.ios.packageManager) === 'bundler';
 
   logger.info('Running pod deintegrate on project ' + projectFileName);
 
-  if (useBundler || podCommandExists) {
-    if (useBundler) {
-      await runCommand('bundle', ['exec', 'pod', 'deintegrate', projectFileName], {
-        cwd: config.ios.nativeProjectDirAbs,
-      });
-    } else {
-      await runCommand(podPath, ['deintegrate', projectFileName], {
-        cwd: config.ios.nativeProjectDirAbs,
-      });
-    }
+  if (useBundler) {
+    logger.info('Found bundler, using it to run CocoaPods.');
+    await runCommand('bundle', ['exec', 'pod', 'deintegrate', projectFileName], {
+      cwd: config.ios.nativeProjectDirAbs,
+    });
   } else {
-    logger.warn('Skipping pod deintegrate because CocoaPods is not installed - migration will be incomplete');
+    await runCommand(podPath, ['deintegrate', projectFileName], {
+      cwd: config.ios.nativeProjectDirAbs,
+    });
   }
 }
 
@@ -187,6 +222,54 @@ export async function addInfoPlistDebugIfNeeded(config: Config): Promise<void> {
   } else {
     logger.warn(infoPlist + ' not found.');
   }
+}
+
+export async function checkSwiftToolsVersion(config: Config, version: string | undefined): Promise<string | null> {
+  if (!version) {
+    return null;
+  }
+
+  const swiftToolsVersionRegex = /^[0-9]+\.[0-9]+(\.[0-9]+)?$/;
+
+  if (!swiftToolsVersionRegex.test(version)) {
+    return (
+      `Invalid Swift tools version: "${version}".\n` +
+      `The Swift tools version must be in major.minor or major.minor.patch format (e.g., "5.9", "6.0", "5.9.2").`
+    );
+  }
+
+  return null;
+}
+
+export async function checkPackageTraitsRequirements(config: Config): Promise<string | null> {
+  const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits;
+  const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion;
+
+  const hasPackageTraits = packageTraits && Object.keys(packageTraits).some((key) => packageTraits[key]?.length > 0);
+
+  if (!hasPackageTraits) {
+    return null;
+  }
+
+  if (!swiftToolsVersion) {
+    return (
+      `Package traits require an explicit Swift tools version of 6.1 or higher.\n` +
+      `Set experimental.ios.spm.swiftToolsVersion to '6.1' or higher in your Capacitor configuration.`
+    );
+  }
+
+  const versionParts = swiftToolsVersion.split('.').map((part) => parseInt(part, 10));
+  const major = versionParts[0] || 0;
+  const minor = versionParts[1] || 0;
+
+  if (major < 6 || (major === 6 && minor < 1)) {
+    return (
+      `Package traits require Swift tools version 6.1 or higher, but "${swiftToolsVersion}" was specified.\n` +
+      `Update experimental.ios.spm.swiftToolsVersion to '6.1' or higher in your Capacitor configuration.`
+    );
+  }
+
+  return null;
 }
 
 // Private Functions

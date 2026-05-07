@@ -22,7 +22,7 @@ import type { CheckFunction } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { addIOS } from '../ios/add';
-import { editProjectSettingsIOS, checkBundler, checkCocoaPods, checkIOSPackage } from '../ios/common';
+import { editProjectSettingsIOS, checkIOSPackage, getCommonChecks } from '../ios/common';
 import { logger, logSuccess, output } from '../log';
 
 import { sync } from './sync';
@@ -75,7 +75,7 @@ export async function addCommand(config: Config, selectedPlatformName: string): 
     }
 
     try {
-      await check([() => checkPackage(), () => checkAppConfig(config), ...addChecks(config, platformName)]);
+      await check([() => checkPackage(), () => checkAppConfig(config), ...(await getAddChecks(config, platformName))]);
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
@@ -110,9 +110,9 @@ function printNextSteps(platformName: string) {
   );
 }
 
-function addChecks(config: Config, platformName: string): CheckFunction[] {
+async function getAddChecks(config: Config, platformName: string): Promise<CheckFunction[]> {
   if (platformName === config.ios.name) {
-    return [() => checkIOSPackage(config), () => checkBundler(config) || checkCocoaPods(config)];
+    return [() => checkIOSPackage(config), ...(await getCommonChecks(config))];
   } else if (platformName === config.android.name) {
     return [() => checkAndroidPackage(config)];
   } else if (platformName === config.web.name) {

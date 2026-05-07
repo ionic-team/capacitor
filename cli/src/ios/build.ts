@@ -6,18 +6,15 @@ import { runTask } from '../common';
 import { XcodeExportMethod, type Config } from '../definitions';
 import { logSuccess } from '../log';
 import { type BuildCommandOptions } from '../tasks/build';
-import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 
 export async function buildiOS(config: Config, buildOptions: BuildCommandOptions): Promise<void> {
   const theScheme = buildOptions.scheme ?? 'App';
 
-  const packageManager = await checkPackageManager(config);
-
   let typeOfBuild: string;
   let projectName: string;
 
-  if (packageManager == 'Cocoapods') {
+  if ((await config.ios.packageManager) !== 'SPM') {
     typeOfBuild = '-workspace';
     projectName = basename(await config.ios.nativeXcodeWorkspaceDirAbs);
   } else {
