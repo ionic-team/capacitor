@@ -8,12 +8,7 @@ import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
-import {
-  PluginType,
-  getPluginType,
-  getPlugins,
-  printPlugins,
-} from '../plugin';
+import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import {
   generateCordovaPodspecs,
@@ -22,8 +17,6 @@ import {
   removePluginsNativeFiles,
   cordovaPodfileLines,
 } from '../util/cordova-ios';
-
-import { setAllStringIn } from '../tasks/migrate';
 import { convertToUnixPath } from '../util/fs';
 import { generateIOSPackageJSON } from '../util/iosplugin';
 import { resolveNode } from '../util/node';
@@ -186,5 +179,3 @@ async function getPluginsTask(config: Config) {
     return iosPlugins;
   });
 }
-
-

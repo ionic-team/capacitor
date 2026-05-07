@@ -169,10 +169,10 @@ function getLinkerFlags(config: Config) {
   return '';
 }
 
-export async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
+export async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]): Promise<void> {
   const isSPM = (await config.ios.packageManager) === 'SPM';
   for (const p of cordovaPlugins) {
-    const platformTag = getPluginPla tform(p, platform);
+    const platformTag = getPluginPlatform(p, platform);
     if (platformTag.$?.package) {
       continue;
     }
@@ -245,6 +245,7 @@ export async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plu
     }
   }
 }
+
 export async function removePluginsNativeFiles(config: Config): Promise<void> {
   await remove(config.ios.cordovaPluginsDirAbs);
   await extractTemplate(config.cli.assets.ios.cordovaPluginsTemplateArchiveAbs, config.ios.cordovaPluginsDirAbs);
