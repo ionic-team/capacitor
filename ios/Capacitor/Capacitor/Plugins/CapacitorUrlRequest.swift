@@ -66,7 +66,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
 
         var data = Data()
         var boundary = UUID().uuidString
-        if contentType.contains("boundary="), let contentBoundary = extractBoundary(from: contentType)  {
+        if contentType.contains("boundary="), let contentBoundary = extractBoundary(from: contentType) {
             boundary = contentBoundary
         } else {
             overrideContentType(boundary)
@@ -86,7 +86,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
         headers["Content-Type"] = contentType
     }
-    
+
     /**
      Extracts the boundary value of the `content-type` header for multiplart/form-data requests, if provided
      The boundary value might be surrounded by double quotes (") which will be stripped away.
@@ -97,14 +97,14 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
             if let endRange = boundary.range(of: ";") {
                 boundary = boundary[..<endRange.lowerBound]
             }
-            
+
             if boundary.hasPrefix("\"") && boundary.hasSuffix("\"") {
                 return String(boundary.dropFirst().dropLast())
             } else {
                 return String(boundary)
             }
         }
-        
+
         return nil
     }
 
@@ -131,7 +131,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         }
         var data = Data()
         var boundary = UUID().uuidString
-        if contentType.contains("boundary="), let contentBoundary = extractBoundary(from: contentType) {    
+        if contentType.contains("boundary="), let contentBoundary = extractBoundary(from: contentType) {
             boundary = contentBoundary
         } else {
             overrideContentType(boundary)

@@ -7,8 +7,13 @@ import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps 
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 import { logger } from '../log';
-import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
 import type { Plugin } from '../plugin';
+import {
+  PluginType,
+  getPluginType,
+  getPlugins,
+  printPlugins,
+} from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import {
   generateCordovaPodspecs,
@@ -17,6 +22,8 @@ import {
   removePluginsNativeFiles,
   cordovaPodfileLines,
 } from '../util/cordova-ios';
+
+import { setAllStringIn } from '../tasks/migrate';
 import { convertToUnixPath } from '../util/fs';
 import { generateIOSPackageJSON } from '../util/iosplugin';
 import { resolveNode } from '../util/node';
@@ -68,6 +75,8 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
 
   if (enableCordova) {
     await logCordovaManualSteps(cordovaPlugins, config, platform);
+    const incompatibleCordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);
+    printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
   }
 }
 
@@ -81,7 +90,6 @@ export async function installCocoaPodsPlugins(
     const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
     await generateCordovaPodspecs(cordovaPlugins, config);
   }
-
   await runTask(`Updating iOS native dependencies with ${c.input(`${await config.ios.podPath} install`)}`, () => {
     return updatePodfile(config, plugins, deployment, enableCordova);
   });
@@ -168,7 +176,6 @@ async function generatePodFile(config: Config, plugins: Plugin[], enableCordova:
   }
 
   podfileString += pods.join('').trimEnd();
-
   return podfileString;
 }
 
@@ -179,3 +186,5 @@ async function getPluginsTask(config: Config) {
     return iosPlugins;
   });
 }
+
+

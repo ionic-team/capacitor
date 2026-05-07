@@ -12,7 +12,7 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
-import { getPluginType, PluginType } from '../plugin';
+import { getPlatformElement, getPluginPlatform, getPluginType, PluginType } from '../plugin';
 import { runCommand } from '../util/subprocess';
 
 export interface SwiftPlugin {
@@ -53,14 +53,15 @@ export async function generatePackageFile(config: Config, plugins: Plugin[]): Pr
 
 export async function checkPluginsForPackageSwift(config: Config, plugins: Plugin[]): Promise<Plugin[]> {
   const iOSCapacitorPlugins = plugins.filter((p) => getPluginType(p, 'ios') === PluginType.Core);
-
   const packageSwiftPluginList = await pluginsWithPackageSwift(iOSCapacitorPlugins);
 
-  if (plugins.length == packageSwiftPluginList.length) {
-    logger.debug(`Found ${plugins.length} iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`);
-    logger.info('All plugins have a Package.swift file and will be included in Package.swift');
+  if (iOSCapacitorPlugins.length == packageSwiftPluginList.length) {
+    logger.debug(
+      `Found ${iOSCapacitorPlugins.length} Capacitor iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`,
+    );
+    logger.info('All Capacitor plugins have a Package.swift file and will be included in Package.swift');
   } else {
-    logger.warn('Some installed packages are not compatable with SPM');
+    logger.warn('Some installed Capacitor plugins are not compatible with SPM');
   }
 
   return packageSwiftPluginList;
@@ -121,7 +122,18 @@ let package = Package(
 
   for (const plugin of plugins) {
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
-      packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
+      const platformTag = getPluginPlatform(plugin, config.ios.name);
+      if (platformTag.$?.package) {
+        const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+        packageSwiftText += `,\n        .package(name: "${plugin.id}", path: "${relPath}")`;
+      } else {
+        const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
+        const headerFiles = getPlatformElement(plugin, config.ios.name, 'header-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0) {
+          continue;
+        }
+        packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
+      }
     } else {
       const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
       const traits = packageTraits[plugin.id];
@@ -150,7 +162,20 @@ let package = Package(
   }
 
   for (const plugin of plugins) {
-    packageSwiftText += `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+    let pluginText = `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+    if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
+      const platformTag = getPluginPlatform(plugin, config.ios.name);
+      if (platformTag.$?.package) {
+        pluginText = `,\n                .product(name: "${plugin.id}", package: "${plugin.id}")`;
+      } else {
+        const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
+        const headerFiles = getPlatformElement(plugin, config.ios.name, 'header-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0) {
+          pluginText = '';
+        }
+      }
+    }
+    packageSwiftText += pluginText;
   }
 
   packageSwiftText += `
