@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.3](https://github.com/ionic-team/capacitor/compare/7.6.2...7.6.3) (2026-05-07)
+
+### Bug Fixes
+
+- **cli:** add cSettings support for compiler flags in generated Package.swift ([#8448](https://github.com/ionic-team/capacitor/issues/8448)) ([bdcbf4a](https://github.com/ionic-team/capacitor/commit/bdcbf4ac34d779055cacad8c59abd7765ab7f7da))
+- **cli:** add system framework and weak framework support in SPM Package.swift ([#8447](https://github.com/ionic-team/capacitor/issues/8447)) ([017eef5](https://github.com/ionic-team/capacitor/commit/017eef545c8c9e23fc8861adbb0da0f00630ce1d))
+- **cli:** correct Capacitor plugin SPM compat check ([#8440](https://github.com/ionic-team/capacitor/issues/8440)) ([#8442](https://github.com/ionic-team/capacitor/issues/8442)) ([10e191a](https://github.com/ionic-team/capacitor/commit/10e191af88580f156e82ff97c38cb594a3fa129a))
+- **cli:** generate binaryTarget entries for custom xcframeworks in Package.swift ([#8445](https://github.com/ionic-team/capacitor/issues/8445)) ([8f7931a](https://github.com/ionic-team/capacitor/commit/8f7931a12b6a9ecda80222b4ad26c7eab2bd757a))
+- **cli:** generate resource entries in Package.swift ([#8455](https://github.com/ionic-team/capacitor/issues/8455)) ([#8461](https://github.com/ionic-team/capacitor/issues/8461)) ([efddf9a](https://github.com/ionic-team/capacitor/commit/efddf9ae2c287e08d57057d388386061a636a131))
+- **cli:** handle Cordova plugins without iOS source files ([#8443](https://github.com/ionic-team/capacitor/issues/8443)) ([89a45a2](https://github.com/ionic-team/capacitor/commit/89a45a22659b90409a6ffe2730452b45f99a4000))
+- **cli:** link plugin dependencies in Package.swift ([#8457](https://github.com/ionic-team/capacitor/issues/8457)) ([#8462](https://github.com/ionic-team/capacitor/issues/8462)) ([9dd7290](https://github.com/ionic-team/capacitor/commit/9dd7290e93324719d8ad9b4d0d0c0b6f768d62ed))
+- **ios:** support Cordova plugins with Package.swift ([#8438](https://github.com/ionic-team/capacitor/issues/8438)) ([#8441](https://github.com/ionic-team/capacitor/issues/8441)) ([35afad9](https://github.com/ionic-team/capacitor/commit/35afad9e4ee6322f149b60e47467be23aa9c9431))
+
 ## [7.6.2](https://github.com/ionic-team/capacitor/compare/7.6.1...7.6.2) (2026-04-16)
 
 ### Bug Fixes
