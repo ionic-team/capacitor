@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/8.3.2...9.0.0-alpha.0) (2026-05-07)
+
+### Bug Fixes
+
+- **android:** conditionally add Cordova ([#8453](https://github.com/ionic-team/capacitor/issues/8453)) ([e136b3f](https://github.com/ionic-team/capacitor/commit/e136b3f0cdd1437cac5234576301ed388edf85e7))
+- **android:** Handle activity result without plugin handle ([#8436](https://github.com/ionic-team/capacitor/issues/8436)) ([65ad1fd](https://github.com/ionic-team/capacitor/commit/65ad1fd55b9793a3e078e4a837a00e2f28c75c17))
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([0aac1f0](https://github.com/ionic-team/capacitor/commit/0aac1f0aee8083dc5013f0d8e3c180eb02f21141))
+- **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([d55f4f8](https://github.com/ionic-team/capacitor/commit/d55f4f859bd88fa5617699e874c48c451bcb5e5f))
+
 ## [8.3.2](https://github.com/ionic-team/capacitor/compare/8.3.1...8.3.2) (2026-05-07)
 
 ### Bug Fixes

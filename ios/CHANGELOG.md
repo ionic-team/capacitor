@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/8.3.2...9.0.0-alpha.0) (2026-05-07)
+
+### Bug Fixes
+
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([0aac1f0](https://github.com/ionic-team/capacitor/commit/0aac1f0aee8083dc5013f0d8e3c180eb02f21141))
+- **ios:** make getArray accesible on Objective-C plugins ([#8392](https://github.com/ionic-team/capacitor/issues/8392)) ([ef57c77](https://github.com/ionic-team/capacitor/commit/ef57c773e70af6b94685a2dc0f808db3ed4cda6e))
+
 ## [8.3.2](https://github.com/ionic-team/capacitor/compare/8.3.1...8.3.2) (2026-05-07)
 
 **Note:** Version bump only for package @capacitor/ios
