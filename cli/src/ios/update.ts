@@ -44,8 +44,14 @@ export async function updateIOS(config: Config, deployment: boolean): Promise<vo
 }
 
 async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: boolean) {
+  const isSPM = (await config.ios.packageManager) === 'SPM';
   await removePluginsNativeFiles(config);
-  const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
+  let cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
+  let incompatibleCordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);
+  if (isSPM) {
+    incompatibleCordovaPlugins = incompatibleCordovaPlugins.concat(cordovaPlugins.filter((p) => needsSPMDep(p)));
+    cordovaPlugins = cordovaPlugins.filter((p) => !needsSPMDep(p));
+  }
   if (cordovaPlugins.length > 0) {
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
@@ -54,7 +60,7 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await checkPluginDependencies(plugins, platform, config.app.extConfig.cordova?.failOnUninstalledPlugins);
-  if ((await config.ios.packageManager) === 'SPM') {
+  if (isSPM) {
     await generateCordovaPackageFiles(cordovaPlugins, config);
 
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
@@ -66,7 +72,6 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
   }
   await logCordovaManualSteps(cordovaPlugins, config, platform);
 
-  const incompatibleCordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
 }
 
@@ -676,4 +681,10 @@ async function replaceFrameworkVariables(config: Config, prefsArray: any[], fram
     );
   });
   return frameworkString;
+}
+
+function needsSPMDep(plugin: Plugin): boolean {
+  const podspecs = getPlatformElement(plugin, 'ios', 'podspec');
+  const platformTag = getPluginPlatform(plugin, platform);
+  return podspecs.length > 0 && !platformTag.$?.package;
 }
