@@ -173,7 +173,7 @@ export async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plu
   const isSPM = (await config.ios.packageManager) === 'SPM';
   for (const p of cordovaPlugins) {
     const platformTag = getPluginPlatform(p, platform);
-    if (platformTag.$?.package) {
+    if (isSPM && platformTag.$?.package) {
       continue;
     }
     const sourceFiles = getPlatformElement(p, platform, 'source-file');
