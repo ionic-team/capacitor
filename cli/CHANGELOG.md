@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.4](https://github.com/ionic-team/capacitor/compare/7.6.3...7.6.4) (2026-05-08)
+
+### Bug Fixes
+
+- **cli:** copy plugin files in CocoaPods projects ([#8467](https://github.com/ionic-team/capacitor/issues/8467)) ([0510bd4](https://github.com/ionic-team/capacitor/commit/0510bd400a06717aff90615de9e43cb80f9a978a))
+
 ## [7.6.3](https://github.com/ionic-team/capacitor/compare/7.6.2...7.6.3) (2026-05-07)
 
 ### Bug Fixes
