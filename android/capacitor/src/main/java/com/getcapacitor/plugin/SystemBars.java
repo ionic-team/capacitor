@@ -56,7 +56,8 @@ public class SystemBars extends Plugin {
     private boolean insetHandlingEnabled = true;
     private boolean hasViewportCover = false;
 
-    private String currentStyle = STYLE_DEFAULT;
+    private String currentStatusBarStyle = STYLE_DEFAULT;
+    private String currentGestureBarStyle = STYLE_DEFAULT;
 
     @Override
     public void load() {
@@ -85,7 +86,8 @@ public class SystemBars extends Plugin {
     protected void handleOnConfigurationChanged(Configuration newConfig) {
         super.handleOnConfigurationChanged(newConfig);
 
-        setStyle(currentStyle, "");
+        setStyle(currentGestureBarStyle, BAR_GESTURE_BAR);
+        setStyle(currentStatusBarStyle, BAR_STATUS_BAR);
     }
 
     private void initSystemBars() {
@@ -202,13 +204,15 @@ public class SystemBars extends Plugin {
                     .build();
             }
 
-            // We need to correct for a possible shown IME
-            v.setPadding(
-                systemBarsInsets.left,
-                systemBarsInsets.top,
-                systemBarsInsets.right,
-                keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
-            );
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                // We need to correct for a possible shown IME
+                v.setPadding(
+                    systemBarsInsets.left,
+                    systemBarsInsets.top,
+                    systemBarsInsets.right,
+                    keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
+                );
+            }
 
             // Returning `WindowInsetsCompat.CONSUMED` breaks recalculation of safe area insets
             // So we have to explicitly set insets to `0`
@@ -259,8 +263,6 @@ public class SystemBars extends Plugin {
     }
 
     private void setStyle(String style, String bar) {
-        currentStyle = style;
-
         if (style.equals(STYLE_DEFAULT)) {
             style = getStyleForTheme();
         }
@@ -268,10 +270,12 @@ public class SystemBars extends Plugin {
         Window window = getActivity().getWindow();
         WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
         if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
+            currentStatusBarStyle = style;
             windowInsetsControllerCompat.setAppearanceLightStatusBars(!style.equals(STYLE_DARK));
         }
 
         if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
+            currentGestureBarStyle = style;
             windowInsetsControllerCompat.setAppearanceLightNavigationBars(!style.equals(STYLE_DARK));
         }
 

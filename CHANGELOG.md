@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.3.3](https://github.com/ionic-team/capacitor/compare/8.3.2...8.3.3) (2026-05-08)
+
+### Bug Fixes
+
+- **cli:** copy plugin files in CocoaPods projects ([#8467](https://github.com/ionic-team/capacitor/issues/8467)) ([b2d7719](https://github.com/ionic-team/capacitor/commit/b2d771926a180e60deea31992d7d4abcd5ca3bc7))
+
+## [8.3.2](https://github.com/ionic-team/capacitor/compare/8.3.1...8.3.2) (2026-05-07)
+
+### Bug Fixes
+
+- **cli:** add cSettings support for compiler flags in generated Package.swift ([#8448](https://github.com/ionic-team/capacitor/issues/8448)) ([0bd0676](https://github.com/ionic-team/capacitor/commit/0bd0676315c5fd77e50312dd7b5bf4990dcbd7d0))
+- **cli:** add system framework and weak framework support in SPM Package.swift ([#8447](https://github.com/ionic-team/capacitor/issues/8447)) ([3232f0f](https://github.com/ionic-team/capacitor/commit/3232f0fe1d9811b0b5c500e3dc05cb8a250177f8))
+- **cli:** correct Capacitor plugin SPM compat check ([#8440](https://github.com/ionic-team/capacitor/issues/8440)) ([e5ccc45](https://github.com/ionic-team/capacitor/commit/e5ccc451dda27d56bca824ed644bd20fe4d988cb))
+- **cli:** generate binaryTarget entries for custom xcframeworks in Package.swift ([#8445](https://github.com/ionic-team/capacitor/issues/8445)) ([1f7e33f](https://github.com/ionic-team/capacitor/commit/1f7e33fca43d183332ec19d22b0d75ef81d8cc6d))
+- **cli:** generate resource entries in Package.swift ([#8455](https://github.com/ionic-team/capacitor/issues/8455)) ([790bd27](https://github.com/ionic-team/capacitor/commit/790bd27123497111984227010c3162cec94a108e))
+- **cli:** handle Cordova plugins without iOS source files ([#8443](https://github.com/ionic-team/capacitor/issues/8443)) ([0da130e](https://github.com/ionic-team/capacitor/commit/0da130eb7a861bee4e2c35bc0aac53ba9c983fc3))
+- **cli:** link plugin dependencies in Package.swift ([#8457](https://github.com/ionic-team/capacitor/issues/8457)) ([b3c769e](https://github.com/ionic-team/capacitor/commit/b3c769e856c826b1174518877cf86ac7ce73bf09))
+- **ios:** support Cordova plugins with Package.swift ([#8438](https://github.com/ionic-team/capacitor/issues/8438)) ([139943b](https://github.com/ionic-team/capacitor/commit/139943b0c05fddb2d1ce2d6f468800fddf17b4cf))
+- **SystemBars:** avoid extra view padding on API <= 34 ([#8439](https://github.com/ionic-team/capacitor/issues/8439)) ([5b135a7](https://github.com/ionic-team/capacitor/commit/5b135a70217be560e7176c8d5b514cc92ed3e4e4))
+
+## [8.3.1](https://github.com/ionic-team/capacitor/compare/8.3.0...8.3.1) (2026-04-16)
+
+### Bug Fixes
+
+- **android:** handle null versionName in isNewBinary() ([#8397](https://github.com/ionic-team/capacitor/issues/8397)) ([aa1a660](https://github.com/ionic-team/capacitor/commit/aa1a660f364f9b5f5a1e350e279c8864b04dd13b))
+- boundary value extraction for form-data requests ([#7518](https://github.com/ionic-team/capacitor/issues/7518)) ([64ab854](https://github.com/ionic-team/capacitor/commit/64ab854c12330804c24275d88d3a9f7c8e52a73d))
+- **cli:** check CAPACITOR_COCOAPODS_PATH in determinePackageManager ([#8407](https://github.com/ionic-team/capacitor/issues/8407)) ([acb64ab](https://github.com/ionic-team/capacitor/commit/acb64ab92a37ff53701cde453558e272e2e11eb6))
+- **system-bars:** use separate current styles ([#8409](https://github.com/ionic-team/capacitor/issues/8409)) ([3d1f8d1](https://github.com/ionic-team/capacitor/commit/3d1f8d1b61480187375f5cd4de7ba999db007542))
+
+# [8.3.0](https://github.com/ionic-team/capacitor/compare/8.2.0...8.3.0) (2026-03-25)
+
+### Bug Fixes
+
+- **android:** correctly parsing `server.url` when they include paths ([#8391](https://github.com/ionic-team/capacitor/issues/8391)) ([a9f2181](https://github.com/ionic-team/capacitor/commit/a9f218179b60555d86b44bf2b33354da3e64e98c))
+- **cli:** inline CSS sourcemaps in addition to JS sourcemaps ([#8377](https://github.com/ionic-team/capacitor/issues/8377)) ([69476ab](https://github.com/ionic-team/capacitor/commit/69476ab9c0b47911a14d2482cab53a877a5ae784))
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([003099a](https://github.com/ionic-team/capacitor/commit/003099aef246adfd76d890074d46b1484951824b))
+- **ios:** make getArray accesible on Objective-C plugins ([#8392](https://github.com/ionic-team/capacitor/issues/8392)) ([afb80f2](https://github.com/ionic-team/capacitor/commit/afb80f2fecb4bf85dbebe25e815de2a5564264d6))
+- **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([4e99598](https://github.com/ionic-team/capacitor/commit/4e99598a2a57ee97e82be1aaa09492744622fa60))
+
+### Features
+
+- **cli:** Experimental config for swift-tools-version in SPM apps ([#8372](https://github.com/ionic-team/capacitor/issues/8372)) ([d2ee84f](https://github.com/ionic-team/capacitor/commit/d2ee84f8186909b142b418c02fc19f79d3c6a6ed))
+- **cli:** support SPM package traits in generated Package.swift ([#8351](https://github.com/ionic-team/capacitor/issues/8351)) ([27e6aa8](https://github.com/ionic-team/capacitor/commit/27e6aa89cf22e0b1a6d46710faed9aa8899600b0))
+
 # [8.2.0](https://github.com/ionic-team/capacitor/compare/8.1.0...8.2.0) (2026-03-06)
 
 ### Bug Fixes
