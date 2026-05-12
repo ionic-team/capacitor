@@ -49,9 +49,9 @@ export async function receive(msg: IPCMessage): Promise<void> {
     // This request is only made if telemetry is on.
     const req = request(
       {
-        hostname: 'api.ionicjs.com',
+        hostname: 'metrics-capacitor.outsystems.com',
         port: 443,
-        path: '/events/metrics',
+        path: '/metrics',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export async function receive(msg: IPCMessage): Promise<void> {
       (response) => {
         debug('Sent %O metric to events service (status: %O)', data.name, response.statusCode);
 
-        if (response.statusCode !== 204) {
+        if (response.statusCode !== 202) {
           response.on('data', (chunk) => {
             debug('Bad response from events service. Request body: %O', chunk.toString());
           });
