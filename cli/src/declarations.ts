@@ -618,6 +618,21 @@ export interface CapacitorConfig {
     url?: string;
 
     /**
+     * Set a default HTTP `Referer` header for Capacitor's native HTTP requests.
+     *
+     * This is only applied when a request does not already define its own
+     * `Referer` header, and the configured value must be a valid `http://` or
+     * `https://` URL.
+     *
+     * This can be useful on platforms that use a custom app scheme, where some
+     * backends require an HTTP(S) referrer instead of `capacitor://localhost`.
+     *
+     * @since 8.4.0
+     * @default undefined
+     */
+    referer?: string;
+
+    /**
      * Allow cleartext traffic in the Web View.
      *
      * On Android, all cleartext traffic is disabled by default as of API 28.

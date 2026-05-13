@@ -49,6 +49,36 @@ private func lowerCaseHeaderDictionary(_ headers: [AnyHashable: Any]) -> [String
     }))
 }
 
+private func isValidHttpReferer(_ referer: String?) -> Bool {
+    guard
+        let referer,
+        let url = URL(string: referer),
+        url.host != nil,
+        let scheme = url.scheme?.lowercased(),
+        scheme == "http" || scheme == "https"
+    else {
+        return false
+    }
+
+    return true
+}
+
+func applyCapacitorDefaultRequestHeaders(_ headers: inout [String: Any], _ config: InstanceConfiguration?) {
+    if let userAgentString = config?.overridenUserAgentString, headers["User-Agent"] == nil, headers["user-agent"] == nil {
+        headers["User-Agent"] = userAgentString
+    }
+
+    if headers["Referer"] == nil, headers["referer"] == nil, let referer = config?.requestReferer, isValidHttpReferer(referer) {
+        headers["Referer"] = referer
+    }
+}
+
+func applyCapacitorDefaultRequestHeaders(_ request: inout URLRequest, _ config: InstanceConfiguration?) {
+    if request.value(forHTTPHeaderField: "Referer") == nil, let referer = config?.requestReferer, isValidHttpReferer(referer) {
+        request.setValue(referer, forHTTPHeaderField: "Referer")
+    }
+}
+
 open class HttpRequestHandler {
     open class CapacitorHttpRequestBuilder {
         public var url: URL?
@@ -194,9 +224,7 @@ open class HttpRequestHandler {
             .openConnection()
             .build()
 
-        if let userAgentString = config?.overridenUserAgentString, headers["User-Agent"] == nil, headers["user-agent"] == nil {
-            headers["User-Agent"] = userAgentString
-        }
+        applyCapacitorDefaultRequestHeaders(&headers, config)
 
         request.setRequestHeaders(headers)
 

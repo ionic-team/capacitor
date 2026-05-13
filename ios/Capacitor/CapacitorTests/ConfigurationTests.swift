@@ -102,6 +102,7 @@ class ConfigurationTests: XCTestCase {
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.server], cordovaConfiguration: nil)
         XCTAssertEqual(descriptor.urlScheme, "override")
         XCTAssertEqual(descriptor.urlHostname, "myhost")
+        XCTAssertEqual(descriptor.requestReferer, "https://example.com/app")
         XCTAssertEqual(descriptor.serverURL, "http://192.168.100.1:2057")
     }
     
@@ -129,6 +130,40 @@ class ConfigurationTests: XCTestCase {
         let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         XCTAssertEqual(configuration.serverURL, URL(string: "http://192.168.100.1:2057"))
         XCTAssertEqual(configuration.localURL, URL(string: "override://myhost"))
+        XCTAssertEqual(configuration.requestReferer, "https://example.com/app")
+    }
+
+    func testApplyDefaultRequestHeadersAddsRefererWhenMissing() throws {
+        let descriptor = InstanceDescriptor.init()
+        descriptor.requestReferer = "https://example.com/app"
+        let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
+        var headers: [String: Any] = [:]
+
+        applyCapacitorDefaultRequestHeaders(&headers, configuration)
+
+        XCTAssertEqual(headers["Referer"] as? String, "https://example.com/app")
+    }
+
+    func testApplyDefaultRequestHeadersDoesNotOverrideReferer() throws {
+        let descriptor = InstanceDescriptor.init()
+        descriptor.requestReferer = "https://example.com/app"
+        let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
+        var headers: [String: Any] = ["Referer": "https://request.example/app"]
+
+        applyCapacitorDefaultRequestHeaders(&headers, configuration)
+
+        XCTAssertEqual(headers["Referer"] as? String, "https://request.example/app")
+    }
+
+    func testApplyDefaultRequestHeadersIgnoresInvalidReferer() throws {
+        let descriptor = InstanceDescriptor.init()
+        descriptor.requestReferer = "capacitor://localhost"
+        let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
+        var headers: [String: Any] = [:]
+
+        applyCapacitorDefaultRequestHeaders(&headers, configuration)
+
+        XCTAssertNil(headers["Referer"])
     }
     
     func testPluginConfig() throws {
