@@ -30,11 +30,8 @@ export interface RunCommandOptions {
   targetNameSdkVersion?: string;
   sync?: boolean;
   forwardPorts?: string;
-  liveReload?: boolean;
-  host?: string;
-  port?: string;
+  url?: string;
   configuration?: string;
-  https?: boolean;
 }
 
 export async function runCommand(
@@ -42,7 +39,16 @@ export async function runCommand(
   selectedPlatformName: string,
   options: RunCommandOptions,
 ): Promise<void> {
-  options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
+  if (options.url) {
+    try {
+      const parsed = new URL(options.url);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        fatal(`Invalid --url: must use http:// or https:// (got "${parsed.protocol}//")`);
+      }
+    } catch {
+      fatal(`Invalid --url: "${options.url}" is not a valid URL`);
+    }
+  }
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -91,14 +97,14 @@ export async function runCommand(
         await sync(config, platformName, false, true);
       }
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
-      if (options.liveReload) {
+      if (options.url) {
         await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options);
         if (platformName === config.android.name) {
           await await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, true);
         }
       }
       await run(config, platformName, options);
-      if (options.liveReload) {
+      if (options.url) {
         new Promise((resolve) => process.on('SIGINT', resolve))
           .then(async () => {
             await CapLiveReloadHelper.revertCapConfigForLiveReload();
@@ -107,9 +113,7 @@ export async function runCommand(
             }
           })
           .then(() => process.exit());
-        logger.info(
-          `App running with live reload listing for: ${options.https ? 'https' : 'http'}://${options.host}${options.port ? `:${options.port}` : ''}. Press Ctrl+C to quit.`,
-        );
+        logger.info(`App running with live reload listening for: ${options.url}. Press Ctrl+C to quit.`);
         await sleepForever();
       }
     } catch (e: any) {
