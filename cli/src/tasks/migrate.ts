@@ -251,7 +251,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
                 const value = txt.substring(first, txt.indexOf(replaceEnd, first));
                 if (
                   (typeof variablesAndClasspaths.variables[variable] === 'number' &&
-                    value <= variablesAndClasspaths.variables[variable]) ||
+                    Number(value) <= variablesAndClasspaths.variables[variable]) ||
                   (typeof variablesAndClasspaths.variables[variable] === 'string' &&
                     lt(value, variablesAndClasspaths.variables[variable]))
                 ) {
