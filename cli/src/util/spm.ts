@@ -1,4 +1,4 @@
-import { pathExists, existsSync, readFileSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
+import { ensureSymlink, pathExists, existsSync, readFileSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
 import { tmpdir } from 'os';
 import { join, relative, resolve } from 'path';
 import type { PlistObject } from 'plist';
@@ -100,6 +100,7 @@ export async function generatePackageText(config: Config, plugins: Plugin[]): Pr
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
   const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits ?? {};
+  const packageOptions = config.app.extConfig.experimental?.ios?.spm?.packageOptions ?? {};
   const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '5.9';
 
   let packageSwiftText = `// swift-tools-version: ${swiftToolsVersion}
@@ -132,7 +133,13 @@ let package = Package(
         packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
       }
     } else {
-      const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+      const options = packageOptions[plugin.id];
+      const symlink = options?.symlink;
+      const symlinkFolder = join('symlinks', plugin.name);
+      const relPath = symlink ? symlinkFolder : relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+      if (symlink) {
+        await ensureSymlink(plugin.rootPath, resolve(config.ios.nativeProjectDirAbs, 'CapApp-SPM', symlinkFolder));
+      }
       const traits = packageTraits[plugin.id];
       const traitsSuffix = traits?.length
         ? `, traits: [${traits
@@ -156,7 +163,15 @@ let package = Package(
                 .product(name: "Cordova", package: "capacitor-swift-pm")`;
 
   for (const plugin of plugins) {
-    let pluginText = `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+    const aliases = Object.entries(packageOptions[plugin.id]?.moduleAliases ?? {});
+    const aliasText = aliases?.length
+      ? `, moduleAliases:  [${aliases
+          .map(([target, replacement]) => {
+            return `"${target}": "${replacement}"`;
+          })
+          .join(', ')}]`
+      : '';
+    let pluginText = `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}"${aliasText})`;
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
       const platformTag = getPluginPlatform(plugin, config.ios.name);
       if (platformTag.$?.package) {
