@@ -559,6 +559,13 @@ export interface CapacitorConfig {
          * @since 8.3.0
          */
         packageTraits?: { [pluginId: string]: string[] };
+        /**
+         * Define options to apply to the package.
+         * The key is the plugin ID (e.g. `@capacitor-community/device`)
+         *
+         * @since 8.4.0
+         */
+        packageOptions?: { [pluginId: string]: PackageOptions };
       };
     };
   };
@@ -798,4 +805,17 @@ export interface PluginsConfig {
      */
     animation?: 'FADE' | 'NONE';
   };
+}
+
+export interface PackageOptions {
+  /**
+   * Create a symlink to the plugin folder instead of pointing to the plugin path.
+   * Useful when plugin names conflict.
+   */
+  symlink: boolean;
+  /**
+   * Useful to avoid target name conflicts in dependencies
+   * [see](https://docs.swift.org/swiftpm/documentation/packagemanagerdocs/modulealiasing/)
+   */
+  moduleAliases: { [target: string]: string };
 }

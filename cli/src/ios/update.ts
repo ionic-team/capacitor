@@ -639,6 +639,9 @@ async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) 
 
 async function removePluginsNativeFiles(config: Config) {
   await remove(config.ios.cordovaPluginsDirAbs);
+  if ((await config.ios.packageManager) === 'SPM') {
+    await remove(join(config.ios.nativeProjectDirAbs, 'CapApp-SPM', 'symlinks'));
+  }
   await extractTemplate(config.cli.assets.ios.cordovaPluginsTemplateArchiveAbs, config.ios.cordovaPluginsDirAbs);
 }
 
