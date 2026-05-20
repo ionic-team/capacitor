@@ -465,7 +465,7 @@ public class Plugin {
      * @param callbackName the name of the callback to run when the permission request is complete
      */
     protected void requestPermissionForAlias(@NonNull String alias, @NonNull PluginCall call, @NonNull String callbackName) {
-        requestPermissionForAliases(new String[] { alias }, call, callbackName);
+        requestPermissionForAliases(new String[] {alias}, call, callbackName);
     }
 
     /**
@@ -583,7 +583,7 @@ public class Plugin {
      */
     @Deprecated
     public void pluginRequestPermission(String permission, int requestCode) {
-        ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, requestCode);
+        ActivityCompat.requestPermissions(getActivity(), new String[] {permission}, requestCode);
     }
 
     /**
