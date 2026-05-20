@@ -434,7 +434,7 @@ public class Bridge {
             PackageManager pm = getContext().getPackageManager();
             PackageInfo pInfo = InternalUtils.getPackageInfo(pm, getContext().getPackageName());
             versionCode = Integer.toString((int) PackageInfoCompat.getLongVersionCode(pInfo));
-            versionName = pInfo.versionName;
+            versionName = pInfo.versionName != null ? pInfo.versionName : "";
         } catch (Exception ex) {
             Logger.error("Unable to get package info", ex);
         }
@@ -628,11 +628,11 @@ public class Bridge {
             try {
                 URL appUrlObject = new URL(appUrlConfig);
                 authorities.add(appUrlObject.getAuthority());
+                localUrl = appUrlObject.getProtocol() + "://" + appUrlObject.getAuthority();
             } catch (Exception ex) {
                 Logger.error("Provided server url is invalid: " + ex.getMessage());
                 return;
             }
-            localUrl = appUrlConfig;
             appUrl = appUrlConfig;
         } else {
             appUrl = localUrl;

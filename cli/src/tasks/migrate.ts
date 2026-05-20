@@ -579,7 +579,7 @@ async function updateFile(
   return false;
 }
 
-function setAllStringIn(data: string, start: string, end: string, replacement: string): string {
+export function setAllStringIn(data: string, start: string, end: string, replacement: string): string {
   let position = 0;
   let result = data;
   let replaced = true;
