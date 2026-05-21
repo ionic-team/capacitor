@@ -42,7 +42,7 @@ public class ConfigBuildingTest {
 
             config = new CapConfig.Builder(context)
                 .setAllowMixedContent(true)
-                .setAllowNavigation(new String[] {"http://www.google.com"})
+                .setAllowNavigation(new String[] { "http://www.google.com" })
                 .setAndroidScheme("test")
                 .setCaptureInput(true)
                 .setLoggingEnabled(true)
@@ -64,7 +64,7 @@ public class ConfigBuildingTest {
     @Test
     public void getCoreConfigValues() {
         assertTrue(config.isMixedContentAllowed());
-        assertArrayEquals(new String[] {"http://www.google.com"}, config.getAllowNavigation());
+        assertArrayEquals(new String[] { "http://www.google.com" }, config.getAllowNavigation());
         assertEquals("test", config.getAndroidScheme());
         assertTrue(config.isInputCaptured());
         assertTrue(config.isLoggingEnabled());
@@ -97,7 +97,7 @@ public class ConfigBuildingTest {
 
     @Test
     public void getPluginArray() {
-        String[] comparison = new String[] {"5", "6", "7", "8"};
+        String[] comparison = new String[] { "5", "6", "7", "8" };
         String[] testArray = config.getPluginConfiguration(TEST_PLUGIN_NAME).getArray("var5");
         assertArrayEquals(comparison, testArray);
     }

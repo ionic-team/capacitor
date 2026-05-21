@@ -246,14 +246,14 @@ public class BridgeWebChromeClient extends WebChromeClient {
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
-        final String[] geoPermissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+        final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
         if (!PermissionHelper.hasPermissions(bridge.getContext(), geoPermissions)) {
             permissionListener = (isGranted) -> {
                 if (isGranted) {
                     callback.invoke(origin, true, false);
                 } else {
-                    final String[] coarsePermission = {Manifest.permission.ACCESS_COARSE_LOCATION};
+                    final String[] coarsePermission = { Manifest.permission.ACCESS_COARSE_LOCATION };
                     if (
                         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                         PermissionHelper.hasPermissions(bridge.getContext(), coarsePermission)
@@ -294,7 +294,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
                         filePathCallback.onReceiveValue(null);
                     }
                 };
-                final String[] camPermission = {Manifest.permission.CAMERA};
+                final String[] camPermission = { Manifest.permission.CAMERA };
                 permissionLauncher.launch(camPermission);
             }
         } else {
@@ -305,7 +305,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     private boolean isMediaCaptureSupported() {
-        String[] permissions = {Manifest.permission.CAMERA};
+        String[] permissions = { Manifest.permission.CAMERA };
         return (
             PermissionHelper.hasPermissions(bridge.getContext(), permissions) ||
             !PermissionHelper.hasDefinedPermission(bridge.getContext(), Manifest.permission.CAMERA)
@@ -343,7 +343,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         activityListener = (activityResult) -> {
             Uri[] result = null;
             if (activityResult.getResultCode() == Activity.RESULT_OK) {
-                result = new Uri[] {imageFileUri};
+                result = new Uri[] { imageFileUri };
             }
             filePathCallback.onReceiveValue(result);
         };
@@ -362,7 +362,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         activityListener = (activityResult) -> {
             Uri[] result = null;
             if (activityResult.getResultCode() == Activity.RESULT_OK) {
-                result = new Uri[] {activityResult.getData().getData()};
+                result = new Uri[] { activityResult.getData().getData() };
             }
             filePathCallback.onReceiveValue(result);
         };
