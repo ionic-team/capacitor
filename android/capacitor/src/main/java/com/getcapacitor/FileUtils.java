@@ -118,7 +118,7 @@ public class FileUtils {
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] { split[1] };
+                final String[] selectionArgs = new String[] {split[1]};
 
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             }
@@ -195,7 +195,7 @@ public class FileUtils {
         String path = null;
         Cursor cursor = null;
         final String column = "_data";
-        final String[] projection = { column };
+        final String[] projection = {column};
 
         try {
             cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
@@ -292,7 +292,7 @@ public class FileUtils {
     }
 
     private static String sanitizeFilename(String displayName) {
-        String[] badCharacters = new String[] { "..", "/" };
+        String[] badCharacters = new String[] {"..", "/"};
         String[] segments = displayName.split("/");
         String fileName = segments[segments.length - 1];
         for (String suspString : badCharacters) {
