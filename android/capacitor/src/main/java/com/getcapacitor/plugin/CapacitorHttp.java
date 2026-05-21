@@ -18,8 +18,8 @@ import java.util.concurrent.Executors;
 
 @CapacitorPlugin(
     permissions = {
-        @Permission(strings = { Manifest.permission.WRITE_EXTERNAL_STORAGE }, alias = "HttpWrite"),
-        @Permission(strings = { Manifest.permission.READ_EXTERNAL_STORAGE }, alias = "HttpRead")
+        @Permission(strings = {Manifest.permission.WRITE_EXTERNAL_STORAGE}, alias = "HttpWrite"),
+        @Permission(strings = {Manifest.permission.READ_EXTERNAL_STORAGE}, alias = "HttpRead")
     }
 )
 public class CapacitorHttp extends Plugin {
