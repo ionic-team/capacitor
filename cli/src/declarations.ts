@@ -812,10 +812,10 @@ export interface PackageOptions {
    * Create a symlink to the plugin folder instead of pointing to the plugin path.
    * Useful when plugin names conflict.
    */
-  symlink: boolean;
+  symlink?: boolean;
   /**
    * Useful to avoid target name conflicts in dependencies
    * [see](https://docs.swift.org/swiftpm/documentation/packagemanagerdocs/modulealiasing/)
    */
-  moduleAliases: { [target: string]: string };
+  moduleAliases?: { [target: string]: string };
 }
