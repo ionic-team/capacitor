@@ -40,13 +40,14 @@ export async function runCommand(
   options: RunCommandOptions,
 ): Promise<void> {
   if (options.url) {
+    let parsed: URL;
     try {
-      const parsed = new URL(options.url);
-      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-        fatal(`Invalid --url: must use http:// or https:// (got "${parsed.protocol}//")`);
-      }
+      parsed = new URL(options.url);
     } catch {
       fatal(`Invalid --url: "${options.url}" is not a valid URL`);
+    }
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      fatal(`Invalid --url: must use http:// or https:// (got "${parsed.protocol}//")`);
     }
   }
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
