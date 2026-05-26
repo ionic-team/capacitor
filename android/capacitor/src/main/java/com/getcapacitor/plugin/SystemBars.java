@@ -32,6 +32,7 @@ public class SystemBars extends Plugin {
     static final String BAR_STATUS_BAR = "StatusBar";
     static final String BAR_GESTURE_BAR = "NavigationBar";
 
+    // TODO: In Cap 9, add an additional option "full"
     static final String INSETS_HANDLING_CSS = "css";
     static final String INSETS_HANDLING_DISABLE = "disable";
 
@@ -53,7 +54,7 @@ public class SystemBars extends Plugin {
         capacitorSystemBarsCheckMetaViewport();
         """;
 
-    private boolean insetHandlingEnabled = true;
+    private String insetsHandling = INSETS_HANDLING_CSS;
     private boolean hasViewportCover = false;
 
     private String currentStatusBarStyle = STYLE_DEFAULT;
@@ -94,10 +95,7 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        String insetsHandling = getConfig().getString("insetsHandling", "css");
-        if (insetsHandling.equals(INSETS_HANDLING_DISABLE)) {
-            insetHandlingEnabled = false;
-        }
+        insetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
 
         initWindowInsetsListener();
         initSafeAreaCSSVariables();
@@ -146,13 +144,15 @@ public class SystemBars extends Plugin {
 
     @JavascriptInterface
     public void onDOMReady() {
-        getActivity().runOnUiThread(() -> {
-            this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
-                hasViewportCover = res.equals("true");
+        if (insetsHandling.equals(INSETS_HANDLING_CSS)) {
+            getActivity().runOnUiThread(() -> {
+                this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
+                    hasViewportCover = res.equals("true");
 
-                getBridge().getWebView().requestApplyInsets();
+                    getBridge().getWebView().requestApplyInsets();
+                });
             });
-        });
+        }
     }
 
     private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
@@ -164,22 +164,28 @@ public class SystemBars extends Plugin {
     }
 
     private void initSafeAreaCSSVariables() {
-        WindowInsetsCompat insets;
+        if (insetsHandling.equals(INSETS_HANDLING_CSS)) {
+            WindowInsetsCompat insets;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            View v = (View) this.getBridge().getWebView().getParent();
-            insets = ViewCompat.getRootWindowInsets(v);
-        } else {
-            insets = WindowInsetsCompat.CONSUMED;
-        }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                View v = (View) this.getBridge().getWebView().getParent();
+                insets = ViewCompat.getRootWindowInsets(v);
+            } else {
+                insets = WindowInsetsCompat.CONSUMED;
+            }
 
-        if (insets != null) {
-            Insets safeAreaInsets = calcSafeAreaInsets(insets);
-            injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+            if (insets != null) {
+                Insets safeAreaInsets = calcSafeAreaInsets(insets);
+                injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+            }
         }
     }
 
     private void initWindowInsetsListener() {
+        if (insetsHandling.equals(INSETS_HANDLING_DISABLE)) {
+            return;
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
             boolean shouldPassthroughInsets = getWebViewMajorVersion() >= WEBVIEW_VERSION_WITH_SAFE_AREA_FIX && hasViewportCover;
 
