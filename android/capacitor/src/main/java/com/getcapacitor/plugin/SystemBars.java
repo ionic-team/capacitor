@@ -16,6 +16,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.webkit.WebViewCompat;
+import com.getcapacitor.Logger;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -95,7 +96,16 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        insetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
+        String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
+        if (INSETS_HANDLING_CSS.equals(configuredInsetsHandling) || INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling)) {
+            insetsHandling = configuredInsetsHandling;
+        } else {
+            Logger.warn(
+                "SystemBars",
+                "Unknown insetsHandling value '" + configuredInsetsHandling + "'. Falling back to '" + INSETS_HANDLING_CSS + "'."
+            );
+            insetsHandling = INSETS_HANDLING_CSS;
+        }
 
         initWindowInsetsListener();
         initSafeAreaCSSVariables();
@@ -144,7 +154,7 @@ public class SystemBars extends Plugin {
 
     @JavascriptInterface
     public void onDOMReady() {
-        if (insetsHandling.equals(INSETS_HANDLING_CSS)) {
+        if (INSETS_HANDLING_CSS.equals(insetsHandling)) {
             getActivity().runOnUiThread(() -> {
                 this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
                     hasViewportCover = res.equals("true");
@@ -164,7 +174,7 @@ public class SystemBars extends Plugin {
     }
 
     private void initSafeAreaCSSVariables() {
-        if (insetsHandling.equals(INSETS_HANDLING_CSS)) {
+        if (INSETS_HANDLING_CSS.equals(insetsHandling)) {
             WindowInsetsCompat insets;
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
@@ -182,7 +192,7 @@ public class SystemBars extends Plugin {
     }
 
     private void initWindowInsetsListener() {
-        if (insetsHandling.equals(INSETS_HANDLING_DISABLE)) {
+        if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
             return;
         }
 
