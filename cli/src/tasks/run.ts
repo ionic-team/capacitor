@@ -118,6 +118,9 @@ export async function runCommand(
         await sleepForever();
       }
     } catch (e: any) {
+      if (options.liveReload) {
+        await CapLiveReloadHelper.revertCapConfigForLiveReload();
+      }
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }
