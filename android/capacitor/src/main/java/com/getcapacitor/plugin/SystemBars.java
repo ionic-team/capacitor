@@ -16,6 +16,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.webkit.WebViewCompat;
+import com.getcapacitor.Logger;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -32,6 +33,7 @@ public class SystemBars extends Plugin {
     static final String BAR_STATUS_BAR = "StatusBar";
     static final String BAR_GESTURE_BAR = "NavigationBar";
 
+    // TODO: In Cap 9, add an additional option "full"
     static final String INSETS_HANDLING_CSS = "css";
     static final String INSETS_HANDLING_DISABLE = "disable";
 
@@ -53,7 +55,7 @@ public class SystemBars extends Plugin {
         capacitorSystemBarsCheckMetaViewport();
         """;
 
-    private boolean insetHandlingEnabled = true;
+    private String insetsHandling = INSETS_HANDLING_CSS;
     private boolean hasViewportCover = false;
 
     private String currentStatusBarStyle = STYLE_DEFAULT;
@@ -94,9 +96,15 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        String insetsHandling = getConfig().getString("insetsHandling", "css");
-        if (insetsHandling.equals(INSETS_HANDLING_DISABLE)) {
-            insetHandlingEnabled = false;
+        String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
+        if (INSETS_HANDLING_CSS.equals(configuredInsetsHandling) || INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling)) {
+            insetsHandling = configuredInsetsHandling;
+        } else {
+            Logger.warn(
+                "SystemBars",
+                "Unknown insetsHandling value '" + configuredInsetsHandling + "'. Falling back to '" + INSETS_HANDLING_CSS + "'."
+            );
+            insetsHandling = INSETS_HANDLING_CSS;
         }
 
         initWindowInsetsListener();
@@ -146,13 +154,15 @@ public class SystemBars extends Plugin {
 
     @JavascriptInterface
     public void onDOMReady() {
-        getActivity().runOnUiThread(() -> {
-            this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
-                hasViewportCover = res.equals("true");
+        if (INSETS_HANDLING_CSS.equals(insetsHandling)) {
+            getActivity().runOnUiThread(() -> {
+                this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
+                    hasViewportCover = res.equals("true");
 
-                getBridge().getWebView().requestApplyInsets();
+                    getBridge().getWebView().requestApplyInsets();
+                });
             });
-        });
+        }
     }
 
     private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
@@ -164,22 +174,28 @@ public class SystemBars extends Plugin {
     }
 
     private void initSafeAreaCSSVariables() {
-        WindowInsetsCompat insets;
+        if (INSETS_HANDLING_CSS.equals(insetsHandling)) {
+            WindowInsetsCompat insets;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            View v = (View) this.getBridge().getWebView().getParent();
-            insets = ViewCompat.getRootWindowInsets(v);
-        } else {
-            insets = WindowInsetsCompat.CONSUMED;
-        }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                View v = (View) this.getBridge().getWebView().getParent();
+                insets = ViewCompat.getRootWindowInsets(v);
+            } else {
+                insets = WindowInsetsCompat.CONSUMED;
+            }
 
-        if (insets != null) {
-            Insets safeAreaInsets = calcSafeAreaInsets(insets);
-            injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+            if (insets != null) {
+                Insets safeAreaInsets = calcSafeAreaInsets(insets);
+                injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+            }
         }
     }
 
     private void initWindowInsetsListener() {
+        if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
+            return;
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
             boolean shouldPassthroughInsets = getWebViewMajorVersion() >= WEBVIEW_VERSION_WITH_SAFE_AREA_FIX && hasViewportCover;
 
@@ -288,19 +304,21 @@ public class SystemBars extends Plugin {
         WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
 
         if (hide) {
-            if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
+            if (bar.isEmpty()) {
+                windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
+            } else if (bar.equals(BAR_STATUS_BAR)) {
                 windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
-            }
-            if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
+            } else if (bar.equals(BAR_GESTURE_BAR)) {
                 windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
             }
             return;
         }
 
-        if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
+        if (bar.isEmpty()) {
             windowInsetsControllerCompat.show(WindowInsetsCompat.Type.systemBars());
-        }
-        if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
+        } else if (bar.equals(BAR_STATUS_BAR)) {
+            windowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars());
+        } else if (bar.equals(BAR_GESTURE_BAR)) {
             windowInsetsControllerCompat.show(WindowInsetsCompat.Type.navigationBars());
         }
     }
