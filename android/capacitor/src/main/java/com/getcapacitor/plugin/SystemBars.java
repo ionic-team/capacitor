@@ -305,11 +305,11 @@ public class SystemBars extends Plugin {
 
         if (hide) {
             if (bar.isEmpty()) {
-              windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
+                windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
             } else if (bar.equals(BAR_STATUS_BAR)) {
-              windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
+                windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
             } else if (bar.equals(BAR_GESTURE_BAR)) {
-              windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
+                windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
             }
             return;
         }
