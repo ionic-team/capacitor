@@ -304,19 +304,21 @@ public class SystemBars extends Plugin {
         WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
 
         if (hide) {
-            if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
+            if (bar.isEmpty()) {
+                windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
+            } else if (bar.equals(BAR_STATUS_BAR)) {
                 windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
-            }
-            if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
+            } else if (bar.equals(BAR_GESTURE_BAR)) {
                 windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
             }
             return;
         }
 
-        if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
+        if (bar.isEmpty()) {
             windowInsetsControllerCompat.show(WindowInsetsCompat.Type.systemBars());
-        }
-        if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
+        } else if (bar.equals(BAR_STATUS_BAR)) {
+            windowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars());
+        } else if (bar.equals(BAR_GESTURE_BAR)) {
             windowInsetsControllerCompat.show(WindowInsetsCompat.Type.navigationBars());
         }
     }
