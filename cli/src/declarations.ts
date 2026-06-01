@@ -559,6 +559,13 @@ export interface CapacitorConfig {
          * @since 8.3.0
          */
         packageTraits?: { [pluginId: string]: string[] };
+        /**
+         * Define options to apply to the package.
+         * The key is the plugin ID (e.g. `@capacitor-community/device`)
+         *
+         * @since 8.4.0
+         */
+        packageOptions?: { [pluginId: string]: PackageOptions };
       };
     };
   };
@@ -597,7 +604,7 @@ export interface CapacitorConfig {
      * Configure the local scheme on Android.
      *
      * Custom schemes on Android are unable to change the URL path as of Webview 117. Changing this value from anything other than `http` or `https` can result in your
-     * application unable to resolve routing. If you must change this for some reason, consider using a hash-based url strategy, but there are no guarentees that this
+     * application unable to resolve routing. If you must change this for some reason, consider using a hash-based url strategy, but there are no guarantees that this
      * will continue to work long term as allowing non-standard schemes to modify query parameters and url fragments is only allowed for compatibility reasons.
      * https://ionic.io/blog/capacitor-android-customscheme-issue-with-chrome-117
      *
@@ -798,4 +805,17 @@ export interface PluginsConfig {
      */
     animation?: 'FADE' | 'NONE';
   };
+}
+
+export interface PackageOptions {
+  /**
+   * Create a symlink to the plugin folder instead of pointing to the plugin path.
+   * Useful when plugin names conflict.
+   */
+  symlink?: boolean;
+  /**
+   * Useful to avoid target name conflicts in dependencies
+   * [see](https://docs.swift.org/swiftpm/documentation/packagemanagerdocs/modulealiasing/)
+   */
+  moduleAliases?: { [target: string]: string };
 }
