@@ -46,6 +46,17 @@ public class BridgeWebChromeClient extends WebChromeClient {
         void onActivityResult(ActivityResult result);
     }
 
+    // Static variables to store pending file chooser state to survive activity recreation
+    private static ValueCallback<Uri[]> pendingFilePathCallback;
+    private static Uri pendingImageFileUri;
+    private static FileChooserType pendingFileChooserType;
+
+    private enum FileChooserType {
+        IMAGE_CAPTURE,
+        VIDEO_CAPTURE,
+        FILE_PICKER
+    }
+
     private ActivityResultLauncher permissionLauncher;
     private ActivityResultLauncher activityLauncher;
     private PermissionListener permissionListener;
@@ -70,8 +81,68 @@ public class BridgeWebChromeClient extends WebChromeClient {
         activityLauncher = bridge.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), (result) -> {
             if (activityListener != null) {
                 activityListener.onActivityResult(result);
+            } else if (pendingFilePathCallback != null) {
+                // Handle case where activity was recreated and instance callback is null
+                // Use the static callback instead
+                handlePendingFileChooserResult(result);
             }
         });
+    }
+
+    /**
+     * Handle file chooser result when the activity was recreated and instance callbacks were lost.
+     * This uses the static pending callback to deliver the result.
+     */
+    private void handlePendingFileChooserResult(ActivityResult result) {
+        if (pendingFilePathCallback == null) {
+            return;
+        }
+
+        try {
+            Uri[] uriResult = null;
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                switch (pendingFileChooserType) {
+                    case IMAGE_CAPTURE:
+                        if (pendingImageFileUri != null) {
+                            uriResult = new Uri[] { pendingImageFileUri };
+                        }
+                        break;
+                    case VIDEO_CAPTURE:
+                        Intent videoData = result.getData();
+                        if (videoData != null && videoData.getData() != null) {
+                            uriResult = new Uri[] { videoData.getData() };
+                        }
+                        break;
+                    case FILE_PICKER:
+                        Intent fileData = result.getData();
+                        if (fileData != null) {
+                            if (fileData.getClipData() != null) {
+                                final int numFiles = fileData.getClipData().getItemCount();
+                                uriResult = new Uri[numFiles];
+                                for (int i = 0; i < numFiles; i++) {
+                                    uriResult[i] = fileData.getClipData().getItemAt(i).getUri();
+                                }
+                            } else {
+                                uriResult = WebChromeClient.FileChooserParams.parseResult(result.getResultCode(), fileData);
+                            }
+                        }
+                        break;
+                }
+            }
+            pendingFilePathCallback.onReceiveValue(uriResult);
+        } finally {
+            // Clear the static state after handling
+            clearPendingFileChooserState();
+        }
+    }
+
+    /**
+     * Clear the static pending file chooser state.
+     */
+    private static void clearPendingFileChooserState() {
+        pendingFilePathCallback = null;
+        pendingImageFileUri = null;
+        pendingFileChooserType = null;
     }
 
     /**
@@ -340,12 +411,19 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return false;
         }
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
+
+        // Store in static variables to survive activity recreation
+        pendingFilePathCallback = filePathCallback;
+        pendingImageFileUri = imageFileUri;
+        pendingFileChooserType = FileChooserType.IMAGE_CAPTURE;
+
         activityListener = (activityResult) -> {
             Uri[] result = null;
             if (activityResult.getResultCode() == Activity.RESULT_OK) {
                 result = new Uri[] { imageFileUri };
             }
             filePathCallback.onReceiveValue(result);
+            clearPendingFileChooserState();
         };
         activityLauncher.launch(takePictureIntent);
 
@@ -359,12 +437,18 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return false;
         }
 
+        // Store in static variables to survive activity recreation
+        pendingFilePathCallback = filePathCallback;
+        pendingImageFileUri = null;
+        pendingFileChooserType = FileChooserType.VIDEO_CAPTURE;
+
         activityListener = (activityResult) -> {
             Uri[] result = null;
             if (activityResult.getResultCode() == Activity.RESULT_OK) {
                 result = new Uri[] { activityResult.getData().getData() };
             }
             filePathCallback.onReceiveValue(result);
+            clearPendingFileChooserState();
         };
         activityLauncher.launch(takeVideoIntent);
 
@@ -383,6 +467,12 @@ public class BridgeWebChromeClient extends WebChromeClient {
                 intent.setType(validTypes[0]);
             }
         }
+
+        // Store in static variables to survive activity recreation
+        pendingFilePathCallback = filePathCallback;
+        pendingImageFileUri = null;
+        pendingFileChooserType = FileChooserType.FILE_PICKER;
+
         try {
             activityListener = (activityResult) -> {
                 Uri[] result;
@@ -397,10 +487,12 @@ public class BridgeWebChromeClient extends WebChromeClient {
                     result = WebChromeClient.FileChooserParams.parseResult(activityResult.getResultCode(), resultIntent);
                 }
                 filePathCallback.onReceiveValue(result);
+                clearPendingFileChooserState();
             };
             activityLauncher.launch(intent);
         } catch (ActivityNotFoundException e) {
             filePathCallback.onReceiveValue(null);
+            clearPendingFileChooserState();
         }
     }
 
