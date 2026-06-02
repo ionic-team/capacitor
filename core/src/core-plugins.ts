@@ -245,7 +245,7 @@ export interface HttpOptions {
    * This is used if we've had to convert the data from a JS type that needs
    * special handling in the native layer
    */
-  dataType?: 'file' | 'formData';
+  dataType?: 'file' | 'formData' | 'binary';
 }
 
 export interface HttpParams {
