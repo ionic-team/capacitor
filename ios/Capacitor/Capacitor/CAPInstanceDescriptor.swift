@@ -111,6 +111,9 @@ internal extension InstanceDescriptor {
             if let allowPreviews = config[keyPath: "ios.allowsLinkPreview"] as? Bool {
                 allowLinkPreviews = allowPreviews
             }
+            if let allowsNavigationGestures = config[keyPath: "ios.allowsBackForwardNavigationGestures"] as? Bool {
+                allowsBackForwardNavigationGestures = allowsNavigationGestures
+            }
             if let scrollEnabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
                 scrollingEnabled = scrollEnabled
             }
