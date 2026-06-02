@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.6](https://github.com/ionic-team/capacitor/compare/7.6.5...7.6.6) (2026-06-02)
+
+### Bug Fixes
+
+- **cli:** revert live reload config on failure ([#8485](https://github.com/ionic-team/capacitor/issues/8485)) ([#8486](https://github.com/ionic-team/capacitor/issues/8486)) ([1864b06](https://github.com/ionic-team/capacitor/commit/1864b067610204707923f006756dda531b2f0ac5))
+
 ## [7.6.5](https://github.com/ionic-team/capacitor/compare/7.6.4...7.6.5) (2026-05-12)
 
 **Note:** Version bump only for package capacitor
