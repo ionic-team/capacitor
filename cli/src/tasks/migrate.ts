@@ -46,7 +46,7 @@ const plugins = [
 const coreVersion = '^8.0.0';
 const pluginVersion = '^8.0.0';
 const gradleVersion = '8.14.3';
-const iOSVersion = '15';
+const iOSVersion = '16';
 const kotlinVersion = '2.2.20';
 let installFailed = false;
 
