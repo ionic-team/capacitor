@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.4.0](https://github.com/ionic-team/capacitor/compare/8.3.4...8.4.0) (2026-06-02)
+
+### Bug Fixes
+
+- **android:** show only the requested system bar ([#8480](https://github.com/ionic-team/capacitor/issues/8480)) ([4c6c321](https://github.com/ionic-team/capacitor/commit/4c6c3219afb5223211e857457e46283c37eb9424))
+- **cli:** revert live reload config on failure ([#8485](https://github.com/ionic-team/capacitor/issues/8485)) ([1d031a4](https://github.com/ionic-team/capacitor/commit/1d031a4abec2c793079ba8897ad2e40c4cc6c7f9))
+- **SystemBars:** make `safe-area-inset-x` available on API <= 34 ([#8424](https://github.com/ionic-team/capacitor/issues/8424)) ([e456de0](https://github.com/ionic-team/capacitor/commit/e456de083e19644f484bec5a5359cb67960ac8bc))
+- **SystemBars:** respect `insetsHandling` disable ([#8481](https://github.com/ionic-team/capacitor/issues/8481)) ([d4ad7ff](https://github.com/ionic-team/capacitor/commit/d4ad7ffe39daf66e0cfc63af9028d5c05543bde7))
+
+### Features
+
+- add method getDouble to plugin config ([#7638](https://github.com/ionic-team/capacitor/issues/7638)) ([93c72de](https://github.com/ionic-team/capacitor/commit/93c72de40a2ec4c78b33659250cb08340083088e))
+- **cli:** add experimental packageOptions ([#8471](https://github.com/ionic-team/capacitor/issues/8471)) ([258867b](https://github.com/ionic-team/capacitor/commit/258867b7bf37b1837b99b02ec9638e5a6df08d97))
+- **cli:** capture ios_package_manager in telemetry ([#8482](https://github.com/ionic-team/capacitor/issues/8482)) ([b4b297a](https://github.com/ionic-team/capacitor/commit/b4b297a52f8732659662d5e5aaeff81c0f7d9835))
+
 ## [8.3.4](https://github.com/ionic-team/capacitor/compare/8.3.3...8.3.4) (2026-05-12)
 
 **Note:** Version bump only for package capacitor

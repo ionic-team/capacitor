@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.4.0](https://github.com/ionic-team/capacitor/compare/8.3.4...8.4.0) (2026-06-02)
+
+### Bug Fixes
+
+- **cli:** revert live reload config on failure ([#8485](https://github.com/ionic-team/capacitor/issues/8485)) ([1d031a4](https://github.com/ionic-team/capacitor/commit/1d031a4abec2c793079ba8897ad2e40c4cc6c7f9))
+
+### Features
+
+- **cli:** add experimental packageOptions ([#8471](https://github.com/ionic-team/capacitor/issues/8471)) ([258867b](https://github.com/ionic-team/capacitor/commit/258867b7bf37b1837b99b02ec9638e5a6df08d97))
+- **cli:** capture ios_package_manager in telemetry ([#8482](https://github.com/ionic-team/capacitor/issues/8482)) ([b4b297a](https://github.com/ionic-team/capacitor/commit/b4b297a52f8732659662d5e5aaeff81c0f7d9835))
+
 ## [8.3.4](https://github.com/ionic-team/capacitor/compare/8.3.3...8.3.4) (2026-05-12)
 
 **Note:** Version bump only for package @capacitor/cli
