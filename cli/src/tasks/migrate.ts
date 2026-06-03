@@ -90,7 +90,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
-    : await logPrompt(`Capacitor 8 sets a deployment target of iOS ${iOSVersion} and Android 16 (SDK 36). \n`, {
+    : await logPrompt(`Capacitor 8 sets a deployment target of iOS ${iOSVersion} and Android 17 (SDK 37). \n`, {
         type: 'text',
         name: 'migrateconfirm',
         message: `Are you sure you want to migrate? (Y/n)`,
