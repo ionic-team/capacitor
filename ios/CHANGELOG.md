@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.2...9.0.0-alpha.3) (2026-06-02)
+
+### Features
+
+- add method getDouble to plugin config ([#7638](https://github.com/ionic-team/capacitor/issues/7638)) ([93c72de](https://github.com/ionic-team/capacitor/commit/93c72de40a2ec4c78b33659250cb08340083088e))
+
+## [8.3.4](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.1...8.3.4) (2026-05-12)
+
+## [8.3.3](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.0...8.3.3) (2026-05-08)
+
 # [9.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.1...9.0.0-alpha.2) (2026-05-12)
 
 **Note:** Version bump only for package @capacitor/ios

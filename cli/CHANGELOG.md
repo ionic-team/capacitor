@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.2...9.0.0-alpha.3) (2026-06-02)
+
+### Bug Fixes
+
+- **cli:** revert live reload config on failure ([#8485](https://github.com/ionic-team/capacitor/issues/8485)) ([1d031a4](https://github.com/ionic-team/capacitor/commit/1d031a4abec2c793079ba8897ad2e40c4cc6c7f9))
+
+### Features
+
+- **cli:** add experimental packageOptions ([#8471](https://github.com/ionic-team/capacitor/issues/8471)) ([258867b](https://github.com/ionic-team/capacitor/commit/258867b7bf37b1837b99b02ec9638e5a6df08d97))
+- **cli:** capture ios_package_manager in telemetry ([#8482](https://github.com/ionic-team/capacitor/issues/8482)) ([b4b297a](https://github.com/ionic-team/capacitor/commit/b4b297a52f8732659662d5e5aaeff81c0f7d9835))
+
+## [8.3.4](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.1...8.3.4) (2026-05-12)
+
+## [8.3.3](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.0...8.3.3) (2026-05-08)
+
+### Bug Fixes
+
+- **cli:** copy plugin files in CocoaPods projects ([#8467](https://github.com/ionic-team/capacitor/issues/8467)) ([b2d7719](https://github.com/ionic-team/capacitor/commit/b2d771926a180e60deea31992d7d4abcd5ca3bc7))
+
 # [9.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.1...9.0.0-alpha.2) (2026-05-12)
 
 **Note:** Version bump only for package @capacitor/cli
