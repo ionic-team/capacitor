@@ -47,7 +47,7 @@ const coreVersion = '^8.0.0';
 const pluginVersion = '^8.0.0';
 const gradleVersion = '9.5.1';
 const iOSVersion = '16';
-const kotlinVersion = '2.2.20';
+const kotlinVersion = '2.4.0';
 let installFailed = false;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
