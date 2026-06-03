@@ -385,6 +385,99 @@ public class PluginCall {
         return isReleased;
     }
 
+    /**
+     * Resolve with binary data as a blob URL (more efficient than base64)
+     * @param data Binary data to return
+     * @param mimeType MIME type of the data
+     */
+    public void resolveWithBlob(byte[] data, String mimeType) {
+        JSObject blobResponse = BlobStore.getInstance().createBlobResponse(data, mimeType);
+        if (blobResponse == null) {
+            reject("Failed to create blob storage");
+            return;
+        }
+        resolve(blobResponse);
+    }
+
+    /**
+     * Resolve with binary data as a blob URL with additional data fields
+     * @param data Binary data to return
+     * @param mimeType MIME type of the data
+     * @param additionalData Additional fields to include in response
+     */
+    public void resolveWithBlob(byte[] data, String mimeType, JSObject additionalData) {
+        JSObject blobResponse = BlobStore.getInstance().createBlobResponse(data, mimeType);
+        if (blobResponse == null) {
+            reject("Failed to create blob storage");
+            return;
+        }
+
+        // Merge additional data
+        if (additionalData != null) {
+            try {
+                for (java.util.Iterator<String> it = additionalData.keys(); it.hasNext();) {
+                    String key = it.next();
+                    blobResponse.put(key, additionalData.get(key));
+                }
+            } catch (Exception e) {
+                Logger.error(Logger.tags("Plugin"), "Error merging additional data", e);
+            }
+        }
+
+        resolve(blobResponse);
+    }
+
+    /**
+     * Get binary data from a blob URL parameter (from JavaScript blob)
+     * @param key The parameter key containing the blob URL
+     * @param callback Called with the fetched data and mime type
+     */
+    public void getBlobData(String key, BlobDataCallback callback) {
+        String blobUrl = getString(key);
+        if (blobUrl == null) {
+            callback.onError("Missing or invalid blob URL parameter: " + key);
+            return;
+        }
+
+        // Check if this is a Capacitor blob (already in our store)
+        if (blobUrl.startsWith("blob:capacitor://")) {
+            BlobStore.BlobData blobData = BlobStore.getInstance().retrieve(blobUrl);
+            if (blobData != null) {
+                callback.onSuccess(blobData.data, blobData.mimeType);
+            } else {
+                callback.onError("Blob not found in store");
+            }
+            return;
+        }
+
+        // Otherwise, it's a browser blob URL - fetch it from the webview
+        Bridge bridge = msgHandler.getBridge();
+        if (bridge == null || bridge.getWebView() == null) {
+            callback.onError("WebView not available");
+            return;
+        }
+
+        BlobStore.getInstance().fetchWebViewBlob(blobUrl, bridge.getWebView(), new BlobStore.BlobFetchCallback() {
+            @Override
+            public void onSuccess(byte[] data, String mimeType) {
+                callback.onSuccess(data, mimeType);
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
+    }
+
+    /**
+     * Callback interface for getBlobData
+     */
+    public interface BlobDataCallback {
+        void onSuccess(byte[] data, String mimeType);
+        void onError(String error);
+    }
+
     class PluginCallDataTypeException extends Exception {
 
         PluginCallDataTypeException(String m) {
