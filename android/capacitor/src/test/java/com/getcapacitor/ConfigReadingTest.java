@@ -108,6 +108,7 @@ public class ConfigReadingTest {
             CapConfig config = CapConfig.loadDefault(context);
             assertEquals("myhost", config.getHostname());
             assertEquals("http://192.168.100.1:2057", config.getServerUrl());
+            assertEquals("https://example.com/app", config.getRequestReferer());
             assertEquals("override", config.getAndroidScheme());
         } catch (IOException e) {
             fail();
