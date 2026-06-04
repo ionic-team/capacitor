@@ -149,7 +149,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         );
       };
 
-      const p = new Promise((resolve) => call.then(() => resolve({ remove })));
+      const p = call.then(() => ({ remove }));
 
       (p as any).remove = async () => {
         console.warn(`Using addListener() without 'await' is deprecated.`);
