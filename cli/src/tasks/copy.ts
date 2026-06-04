@@ -254,13 +254,13 @@ async function copySSLCert(sslCertPaths: string[], rootDir: string, targetDir: s
           `SSL Certificate does not exist at specified path.`,
       );
 
-      return;
+      continue;
     }
     validCertPaths.push(certAbsFromPath);
   }
   const certsDirAbsToPath = join(targetDir, 'certs');
   const certsDirRelToDir = relative(rootDir, targetDir);
-  await runTask(`Copying SSL Certificates from to ${certsDirRelToDir}`, async () => {
+  await runTask(`Copying SSL Certificates to ${certsDirRelToDir}`, async () => {
     const promises: Promise<void>[] = [];
     for (const certPath of validCertPaths) {
       promises.push(fsCopy(certPath, join(certsDirAbsToPath, basename(certPath))));
