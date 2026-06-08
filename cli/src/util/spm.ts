@@ -162,10 +162,10 @@ let package = Package(
         .target(
             name: "CapApp-SPM",
             dependencies: [
-                .product(name: "Capacitor", package: "capacitor-swift-pm"),`;
+                .product(name: "Capacitor", package: "capacitor-swift-pm")`;
 
   if (enableCordova) {
-    packageSwiftText += `                .product(name: "Cordova", package: "capacitor-swift-pm")`;
+    packageSwiftText += `,\n               .product(name: "Cordova", package: "capacitor-swift-pm")`;
   }
 
   for (const plugin of plugins) {
