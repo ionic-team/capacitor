@@ -165,7 +165,7 @@ let package = Package(
                 .product(name: "Capacitor", package: "capacitor-swift-pm")`;
 
   if (enableCordova) {
-    packageSwiftText += `,\n               .product(name: "Cordova", package: "capacitor-swift-pm")`;
+    packageSwiftText += `,\n                .product(name: "Cordova", package: "capacitor-swift-pm")`;
   }
 
   for (const plugin of plugins) {
