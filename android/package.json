@@ -23,7 +23,7 @@
     "capacitor-cordova/src/main/"
   ],
   "scripts": {
-    "verify": "./gradlew clean lint build test -b capacitor/build.gradle"
+    "verify": "./gradlew :capacitor-android:clean :capacitor-android:lint :capacitor-android:build :capacitor-android:test"
   },
   "peerDependencies": {
     "@capacitor/core": "^9.0.0-alpha.3"
