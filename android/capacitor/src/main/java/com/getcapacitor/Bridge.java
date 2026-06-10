@@ -11,7 +11,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -51,7 +50,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.json.JSONException;
@@ -294,63 +292,19 @@ public class Bridge {
 
     @SuppressLint("WebViewApiAvailability")
     public boolean isMinimumWebViewInstalled() {
-        PackageManager pm = getContext().getPackageManager();
-
-        // Check getCurrentWebViewPackage() directly if above Android 8
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            PackageInfo info = WebView.getCurrentWebViewPackage();
-            Pattern pattern = Pattern.compile("(\\d+)");
-            Matcher matcher = pattern.matcher(info.versionName);
-            if (matcher.find()) {
-                String majorVersionStr = matcher.group(0);
-                int majorVersion = Integer.parseInt(majorVersionStr);
-                if (info.packageName.equals("com.huawei.webview")) {
-                    return majorVersion >= config.getMinHuaweiWebViewVersion();
-                }
-                return majorVersion >= config.getMinWebViewVersion();
-            } else {
-                return false;
+        PackageInfo info = WebView.getCurrentWebViewPackage();
+        Pattern pattern = Pattern.compile("(\\d+)");
+        Matcher matcher = pattern.matcher(info.versionName);
+        if (matcher.find()) {
+            String majorVersionStr = matcher.group(0);
+            int majorVersion = Integer.parseInt(majorVersionStr);
+            if (info.packageName.equals("com.huawei.webview")) {
+                return majorVersion >= config.getMinHuaweiWebViewVersion();
             }
-        }
-
-        // Otherwise manually check WebView versions
-        try {
-            PackageInfo info = InternalUtils.getPackageInfo(pm, "com.android.chrome");
-            String majorVersionStr = info.versionName.split("\\.")[0];
-            int majorVersion = Integer.parseInt(majorVersionStr);
             return majorVersion >= config.getMinWebViewVersion();
-        } catch (Exception ex) {
-            Logger.warn("Unable to get package info for 'com.google.android.webview'" + ex.toString());
+        } else {
+            return false;
         }
-
-        try {
-            PackageInfo info = InternalUtils.getPackageInfo(pm, "com.android.webview");
-            String majorVersionStr = info.versionName.split("\\.")[0];
-            int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion >= config.getMinWebViewVersion();
-        } catch (Exception ex) {
-            Logger.warn("Unable to get package info for 'com.android.webview'" + ex.toString());
-        }
-
-        final int amazonFireMajorWebViewVersion = extractWebViewMajorVersion(pm, "com.amazon.webview.chromium");
-        if (amazonFireMajorWebViewVersion >= config.getMinWebViewVersion()) {
-            return true;
-        }
-
-        // Could not detect any webview, return false
-        return false;
-    }
-
-    private int extractWebViewMajorVersion(final PackageManager pm, final String webViewPackageName) {
-        try {
-            final PackageInfo info = InternalUtils.getPackageInfo(pm, webViewPackageName);
-            final String majorVersionStr = info.versionName.split("\\.")[0];
-            final int majorVersion = Integer.parseInt(majorVersionStr);
-            return majorVersion;
-        } catch (Exception ex) {
-            Logger.warn(String.format("Unable to get package info for '%s' with err '%s'", webViewPackageName, ex));
-        }
-        return 0;
     }
 
     public boolean launchIntent(Uri url) {
