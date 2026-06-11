@@ -43,7 +43,6 @@ android {
     compileSdk = project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 37
     defaultConfig {
         minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 26
-        targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 37
         versionCode 1
         versionName "1.0"
         consumerProguardFiles 'proguard-rules.pro'
