@@ -1,6 +1,6 @@
 import { copy, remove, pathExists, readFile, realpath, writeFile } from 'fs-extra';
 import { basename, dirname, join, relative } from 'path';
-import { major } from 'semver';
+import { major, prerelease } from 'semver';
 
 import c from '../colors';
 import { checkPlatformVersions, getCapacitorPackageVersion, runTask } from '../common';
@@ -70,11 +70,13 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
         const version = content.match(regex)?.[1];
         const majorCapVersion = major(iosPlatformVersion);
         if (version && major(version) != majorCapVersion) {
+          const preCapVersion = prerelease(iosPlatformVersion);
+          const forceVersion = preCapVersion ? iosPlatformVersion : `${majorCapVersion}.0.0`;
           content = setAllStringIn(
             content,
             `url: "https://github.com/ionic-team/capacitor-swift-pm.git",`,
             `)`,
-            ` from: "${majorCapVersion}.0.0"`,
+            ` from: "${forceVersion}"`,
           );
           await writeFile(packageSwiftPath, content);
           logger.warn(`${plugin.id} is built for Capacitor ${major(version)}, it might cause issues`);
