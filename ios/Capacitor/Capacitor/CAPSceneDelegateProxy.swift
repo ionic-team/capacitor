@@ -29,9 +29,17 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
     public func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         for context in URLContexts {
             lastURL = context.url
+            let options = Self.openURLOptions(from: context.options)
+
+            // Capacitor 8 backwards compat
             NotificationCenter.default.post(name: .capacitorOpenURL, object: [
                 "url": context.url,
-                "options": Self.openURLOptions(from: context.options)
+                "options": options
+            ])
+
+            NotificationCenter.default.post(name: .capacitorSceneOpenURL, object: scene, userInfo: [
+                "url": context.url,
+                "options": options
             ])
         }
     }
@@ -42,14 +50,18 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
             return
         }
         lastURL = url
+
+        // Capacitor 8 backwards compat
         NotificationCenter.default.post(name: .capacitorOpenUniversalLink, object: [
+            "url": url
+        ])
+
+        NotificationCenter.default.post(name: .capacitorSceneOpenUniversalLink, object: scene, userInfo: [
             "url": url
         ])
     }
 
-    // Lifecycle hooks are intentionally stubbed until multi-window support lands.
-    // Until then, CapacitorBridge keeps observing the UIApplication.* equivalents,
-    // which still fire in scene-based apps for first-foreground / last-background.
+    // TODO: Not until Phase 2 of the UI modernization project
 
     public func sceneDidDisconnect(_ scene: UIScene) {
         // TODO: multi-window — tear down the bridge associated with this scene.
