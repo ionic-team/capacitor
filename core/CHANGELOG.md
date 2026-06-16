@@ -5,6 +5,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [9.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.2...9.0.0-alpha.3) (2026-06-02)
 
+# [8.4.0](https://github.com/ionic-team/capacitor/compare/8.3.4...8.4.0) (2026-06-02)
+
 ## [8.3.4](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.1...8.3.4) (2026-05-12)
 
 ## [8.3.3](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.0...8.3.3) (2026-05-08)

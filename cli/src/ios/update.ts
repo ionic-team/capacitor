@@ -1,5 +1,6 @@
 import { pathExists, readFile, realpath, writeFile } from 'fs-extra';
 import { basename, dirname, join, relative } from 'path';
+import { major, prerelease } from 'semver';
 
 import c from '../colors';
 import { checkPlatformVersions, runTask } from '../common';
@@ -60,6 +61,30 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     }
 
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
+    await Promise.all(
+      validSPMPackages.map(async (plugin) => {
+        const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
+        const packageSwiftPath = join(plugin.rootPath, 'Package.swift');
+        let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
+        const regex = new RegExp(
+          'url:\\s*"https://github.com/ionic-team/capacitor-swift-pm\\.git",\\s*from:\\s*"([^"]+)"',
+        );
+        const version = content.match(regex)?.[1];
+        const majorCapVersion = major(iosPlatformVersion);
+        if (version && major(version) != majorCapVersion) {
+          const preCapVersion = prerelease(iosPlatformVersion);
+          const forceVersion = preCapVersion ? iosPlatformVersion : `${majorCapVersion}.0.0`;
+          content = setAllStringIn(
+            content,
+            `url: "https://github.com/ionic-team/capacitor-swift-pm.git",`,
+            `)`,
+            ` from: "${forceVersion}"`,
+          );
+          await writeFile(packageSwiftPath, content);
+          logger.warn(`${plugin.id} is built for Capacitor ${major(version)}, it might cause issues`);
+        }
+      }),
+    );
 
     await generatePackageFile(config, validSPMPackages.concat(cordovaPlugins));
   } else {
