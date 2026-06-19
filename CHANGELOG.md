@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.7](https://github.com/ionic-team/capacitor/compare/7.6.6...7.6.7) (2026-06-19)
+
+### Bug Fixes
+
+- **cli:** make SPM dependency patch work on prereleases ([#8508](https://github.com/ionic-team/capacitor/issues/8508)) ([#8509](https://github.com/ionic-team/capacitor/issues/8509)) ([be3bec3](https://github.com/ionic-team/capacitor/commit/be3bec3a729cd714df728b6845c083086381bfa2))
+- **cli:** patch Capacitor SPM dependency version in plugins ([#8492](https://github.com/ionic-team/capacitor/issues/8492)) ([#8503](https://github.com/ionic-team/capacitor/issues/8503)) ([7d43568](https://github.com/ionic-team/capacitor/commit/7d435689098ff8d53b1141dc3de581b0ce9c3765))
+
 ## [7.6.6](https://github.com/ionic-team/capacitor/compare/7.6.5...7.6.6) (2026-06-02)
 
 ### Bug Fixes
