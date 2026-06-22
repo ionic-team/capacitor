@@ -152,6 +152,9 @@ internal extension InstanceDescriptor {
             if let startPath = (config[keyPath: "server.appStartPath"] as? String) {
                 appStartPath = startPath
             }
+            if let fallback = config[keyPath: "server.routeWithFallback"] as? Bool {
+                routeWithFallback = fallback
+            }
         }
     }
     // swiftlint:enable cyclomatic_complexity

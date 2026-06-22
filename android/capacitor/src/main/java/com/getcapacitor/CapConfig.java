@@ -38,6 +38,7 @@ public class CapConfig {
     private String hostname = "localhost";
     private String androidScheme = CAPACITOR_HTTPS_SCHEME;
     private String[] allowNavigation;
+    private boolean routeWithFallback = false;
 
     // Android Config
     private String overriddenUserAgentString;
@@ -166,6 +167,7 @@ public class CapConfig {
         }
 
         this.allowNavigation = builder.allowNavigation;
+        this.routeWithFallback = builder.routeWithFallback;
 
         // Android Config
         this.overriddenUserAgentString = builder.overriddenUserAgentString;
@@ -252,6 +254,7 @@ public class CapConfig {
         hostname = JSONUtils.getString(configJSON, "server.hostname", hostname);
         errorPath = JSONUtils.getString(configJSON, "server.errorPath", null);
         startPath = JSONUtils.getString(configJSON, "server.appStartPath", null);
+        routeWithFallback = JSONUtils.getBoolean(configJSON, "server.routeWithFallback", routeWithFallback);
 
         String configSchema = JSONUtils.getString(configJSON, "server.androidScheme", androidScheme);
         if (this.validateScheme(configSchema)) {
@@ -347,6 +350,10 @@ public class CapConfig {
 
     public String getHostname() {
         return hostname;
+    }
+
+    public boolean isRouteWithFallback() {
+        return routeWithFallback;
     }
 
     public String getStartPath() {
@@ -574,6 +581,7 @@ public class CapConfig {
         private String hostname = "localhost";
         private String androidScheme = CAPACITOR_HTTPS_SCHEME;
         private String[] allowNavigation;
+        private boolean routeWithFallback = false;
 
         // Android Config Values
         private String overriddenUserAgentString;
@@ -641,6 +649,11 @@ public class CapConfig {
 
         public Builder setHostname(String hostname) {
             this.hostname = hostname;
+            return this;
+        }
+
+        public Builder setRouteWithFallback(boolean routeWithFallback) {
+            this.routeWithFallback = routeWithFallback;
             return this;
         }
 
