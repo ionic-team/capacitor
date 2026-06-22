@@ -3,7 +3,7 @@ import { basename, dirname, join, relative } from 'path';
 import { major, prerelease } from 'semver';
 
 import c from '../colors';
-import { checkPlatformVersions, runTask } from '../common';
+import { checkPlatformVersions, getCapacitorPackageVersion, runTask } from '../common';
 import { checkPluginDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
@@ -11,6 +11,7 @@ import { logger } from '../log';
 import type { Plugin } from '../plugin';
 import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
+import { setAllStringIn } from '../tasks/migrate';
 import {
   generateCordovaPodspecs,
   generateCordovaPackageFiles,
