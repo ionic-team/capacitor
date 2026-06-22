@@ -13,8 +13,8 @@ import {
   getPluginPlatform,
   getPluginType,
 } from '../plugin';
-import { setAllStringIn } from '../tasks/migrate';
 import type { Plugin } from '../plugin';
+import { setAllStringIn } from '../tasks/migrate';
 import { extractTemplate } from '../util/template';
 
 const platform = 'ios';
@@ -393,6 +393,6 @@ let package = Package(
         )
     ]
 )`;
-  await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
+    await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
   }
 }
