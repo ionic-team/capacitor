@@ -81,6 +81,7 @@
 		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
 		952707712FD9DD2D0079E5D3 /* CAPSceneDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9527076F2FD9DD260079E5D3 /* CAPSceneDelegateProxy.swift */; };
 		957BD9402E78A4A50056874C /* SystemBars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957BD93E2E78A4A20056874C /* SystemBars.swift */; };
+		9582B6802FE98C910072D4E8 /* CapacitorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B67E2FE98C8D0072D4E8 /* CapacitorView.swift */; };
 		A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */; };
 		A327E6B728DB8B2900CA8B0A /* CapacitorHttp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */; };
 		A327E6B828DB8B2900CA8B0A /* CapacitorUrlRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */; };
@@ -239,6 +240,7 @@
 		62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesHelper.swift; sourceTree = "<group>"; };
 		9527076F2FD9DD260079E5D3 /* CAPSceneDelegateProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPSceneDelegateProxy.swift; sourceTree = "<group>"; };
 		957BD93E2E78A4A20056874C /* SystemBars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemBars.swift; sourceTree = "<group>"; };
+		9582B67E2FE98C8D0072D4E8 /* CapacitorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorView.swift; sourceTree = "<group>"; };
 		A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
 		A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorHttp.swift; sourceTree = "<group>"; };
 		A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorUrlRequest.swift; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 		62959AE12524DA7700A3D7F1 /* Capacitor */ = {
 			isa = PBXGroup;
 			children = (
+				9582B67E2FE98C8D0072D4E8 /* CapacitorView.swift */,
 				9527076F2FD9DD260079E5D3 /* CAPSceneDelegateProxy.swift */,
 				A7D9312C2B2370EF00FF59A2 /* Codable */,
 				0F8F33B127DA980A003F49D6 /* PluginConfig.swift */,
@@ -727,6 +730,7 @@
 				62959B462524DA7800A3D7F1 /* CAPBridge.swift in Sources */,
 				62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */,
 				62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */,
+				9582B6802FE98C910072D4E8 /* CapacitorView.swift in Sources */,
 				62959B1C2524DA7800A3D7F1 /* CAPPluginMethod.m in Sources */,
 				2F81F5CA26FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m in Sources */,
 				62ADC0CA25CB678000E914DE /* PluginCallResult.swift in Sources */,
