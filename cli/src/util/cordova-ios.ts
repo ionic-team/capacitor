@@ -13,6 +13,7 @@ import {
   getPluginPlatform,
   getPluginType,
 } from '../plugin';
+import { setAllStringIn } from '../tasks/migrate';
 import type { Plugin } from '../plugin';
 import { extractTemplate } from '../util/template';
 
@@ -352,7 +353,21 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
             publicHeadersPath: "."`;
   }
 
-  const content = `// swift-tools-version: 5.9
+  const platformTag = getPluginPlatform(p, platform);
+
+  if (platformTag.$?.package) {
+    const packageSwiftPath = join(p.rootPath, 'Package.swift');
+    let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
+    content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, `capacitor-swift-pm`);
+    content = setAllStringIn(
+      content,
+      `url: "https://github.com/ionic-team/capacitor-swift-pm.git",`,
+      `)`,
+      ` from: "${iosPlatformVersion}"`,
+    );
+    await writeFile(packageSwiftPath, content);
+  } else {
+    const content = `// swift-tools-version: 5.9
 
 import PackageDescription
 
@@ -379,4 +394,5 @@ let package = Package(
     ]
 )`;
   await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
+  }
 }
