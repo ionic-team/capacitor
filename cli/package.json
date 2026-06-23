@@ -76,7 +76,7 @@
     "jest-jasmine2": "^29.7.0",
     "tmp": "^0.2.3",
     "ts-jest": "^29.0.5",
-    "typescript": "~5.0.2"
+    "typescript": "~5.9"
   },
   "jest": {
     "preset": "ts-jest",
