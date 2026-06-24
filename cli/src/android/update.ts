@@ -263,7 +263,6 @@ if (hasProperty('postBuildExtras')) {
 
 export async function handleCordovaPluginsGradle(config: Config, cordovaPlugins: Plugin[]): Promise<void> {
   const pluginsGradlePath = join(config.android.cordovaPluginsDirAbs, 'build.gradle');
-  const kotlinVersionString = config.app.extConfig.cordova?.preferences?.GradlePluginKotlinVersion ?? '2.4.0';
   const frameworksArray: any[] = [];
   let prefsArray: any[] = [];
   const applyArray: any[] = [];
