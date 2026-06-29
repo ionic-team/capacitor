@@ -29,6 +29,7 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
     public func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         for context in URLContexts {
             lastURL = context.url
+            ApplicationDelegateProxy.shared.lastURL = context.url
             let options = Self.openURLOptions(from: context.options)
 
             // Capacitor 8 backwards compat
@@ -36,6 +37,8 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
                 "url": context.url,
                 "options": options
             ])
+
+            NotificationCenter.default.post(name: NSNotification.Name.CDVPluginHandleOpenURL, object: context.url)
 
             NotificationCenter.default.post(name: .capacitorSceneOpenURL, object: scene, userInfo: [
                 "url": context.url,
@@ -50,6 +53,7 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
             return
         }
         lastURL = url
+        ApplicationDelegateProxy.shared.lastURL = url
 
         // Capacitor 8 backwards compat
         NotificationCenter.default.post(name: .capacitorOpenUniversalLink, object: [
