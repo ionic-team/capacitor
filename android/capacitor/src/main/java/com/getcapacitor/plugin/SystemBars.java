@@ -206,13 +206,12 @@ public class SystemBars extends Plugin {
 
         int bottom = safeArea.bottom;
 
-        if (bottom == 0
-                && Build.VERSION.SDK_INT < Build.VERSION_CODES.R
-                && safeArea.left == 0 && safeArea.right == 0) {
+        if (bottom == 0 && Build.VERSION.SDK_INT < Build.VERSION_CODES.R && safeArea.left == 0 && safeArea.right == 0) {
             bottom = getNavBarHeightFromResources();
         }
 
-        boolean imeVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        boolean imeVisible =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 ? insets.isVisible(WindowInsetsCompat.Type.ime())
                 : insets.getInsets(WindowInsetsCompat.Type.ime()).bottom > 0;
 
@@ -247,7 +246,7 @@ public class SystemBars extends Plugin {
 
         ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
             WindowInsetsCompat rawInsets = ViewCompat.getRootWindowInsets(v);
-            WindowInsetsCompat safeAreaSource = (rawInsets != null) ? rawInsets : insets;
+            WindowInsetsCompat safeAreaSource = rawInsets != null ? rawInsets : insets;
 
             boolean shouldPassthroughInsets = getWebViewMajorVersion() >= WEBVIEW_VERSION_WITH_SAFE_AREA_FIX && hasViewportCover;
 
