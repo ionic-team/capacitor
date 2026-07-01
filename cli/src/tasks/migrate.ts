@@ -1,6 +1,6 @@
 import { writeFileSync, readFileSync, existsSync } from 'fs-extra';
 import { join } from 'path';
-import rimraf from 'rimraf';
+import { rimraf } from 'rimraf';
 import { coerce, gte, lt } from 'semver';
 
 import c from '../colors';
@@ -43,8 +43,8 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^8.0.0';
-const pluginVersion = '^8.0.0';
+const coreVersion = 'next';
+const pluginVersion = 'next';
 const gradleVersion = '9.5.1';
 const iOSVersion = '16';
 const kotlinVersion = '2.4.0';
@@ -56,14 +56,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
   }
 
   const capMajor = await checkCapacitorMajorVersion(config);
-  if (capMajor < 7) {
-    fatal('Migrate can only be used on Capacitor 7, please use the CLI in Capacitor 7 to upgrade to 7 first');
+  if (capMajor < 8) {
+    fatal('Migrate can only be used on Capacitor 8, please use the CLI in Capacitor 8 to upgrade to 8 first');
   }
 
   const jdkMajor = await checkJDKMajorVersion();
 
   if (jdkMajor < 21) {
-    logger.warn('Capacitor 8 requires JDK 21 or higher. Some steps may fail.');
+    logger.warn('Capacitor 9 requires JDK 21 or higher. Some steps may fail.');
   }
 
   const variablesAndClasspaths:
@@ -84,13 +84,13 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
   };
 
   const monorepoWarning =
-    'Please note this tool is not intended for use in a mono-repo environment, you should migrate manually instead. Refer to https://capacitorjs.com/docs/next/updating/8-0';
+    'Please note this tool is not intended for use in a mono-repo environment, you should migrate manually instead. Refer to https://capacitorjs.com/docs/next/updating/9-0';
 
   logger.info(monorepoWarning);
 
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
-    : await logPrompt(`Capacitor 8 sets a deployment target of iOS ${iOSVersion} and Android 17 (SDK 37). \n`, {
+    : await logPrompt(`Capacitor 9 sets a deployment target of iOS ${iOSVersion} and Android 17 (SDK 37). \n`, {
         type: 'text',
         name: 'migrateconfirm',
         message: `Are you sure you want to migrate? (Y/n)`,
@@ -175,6 +175,10 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         } else {
           logger.warn('Skipped updating deployment target');
         }
+
+        await runTask(`Migrating AppDelegate.swift`, () => {
+          return updateAppDelegate(join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift'));
+        });
       }
 
       if (!installFailed) {
@@ -226,6 +230,23 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
         await runTask(`Migrating app build.gradle file.`, () => {
           return updateAppBuildGradle(join(config.android.appDirAbs, 'build.gradle'));
+        });
+
+        // settings.gradle
+        await runTask(`Migrating settings.gradle file.`, () => {
+          return (async (): Promise<void> => {
+            const settingsPath = join(config.android.platformDirAbs, 'settings.gradle');
+            let txt = readFile(settingsPath);
+            if (!txt) {
+              return;
+            }
+            txt = txt.replace(`include ':capacitor-cordova-android-plugins'\n`, '');
+            txt = txt.replace(
+              `project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')\n`,
+              '',
+            );
+            writeFileSync(settingsPath, txt, { encoding: 'utf-8' });
+          })();
         });
 
         // Variables gradle
@@ -336,14 +357,14 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
   for (const devDepKey of Object.keys(pkgJson['devDependencies'] || {})) {
     if (libs.includes(devDepKey)) {
       pkgJson['devDependencies'][devDepKey] = coreVersion;
-    } else if (plugins.includes(devDepKey)) {
+    } else if (plugins.includes(devDepKey) && !pkgJson['devDependencies'][devDepKey].startsWith('file:')) {
       pkgJson['devDependencies'][devDepKey] = pluginVersion;
     }
   }
   for (const depKey of Object.keys(pkgJson['dependencies'] || {})) {
     if (libs.includes(depKey)) {
       pkgJson['dependencies'][depKey] = coreVersion;
-    } else if (plugins.includes(depKey)) {
+    } else if (plugins.includes(depKey) && !pkgJson['dependencies'][depKey].startsWith('file:')) {
       pkgJson['dependencies'][depKey] = pluginVersion;
     }
   }
@@ -366,18 +387,7 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
 }
 
 async function writeBreakingChanges() {
-  const breaking = [
-    '@capacitor/action-sheet',
-    '@capacitor/barcode-scanner',
-    '@capacitor/browser',
-    '@capacitor/camera',
-    '@capacitor/geolocation',
-    '@capacitor/google-maps',
-    '@capacitor/push-notifications',
-    '@capacitor/screen-orientation',
-    '@capacitor/splash-screen',
-    '@capacitor/status-bar',
-  ];
+  const breaking = ['@capacitor/push-notifications', '@capacitor/splash-screen'];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
@@ -386,7 +396,7 @@ async function writeBreakingChanges() {
   }
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/8-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/9-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
     );
@@ -518,14 +528,19 @@ async function updateAppBuildGradle(filename: string) {
   }
   let replaced = txt;
 
-  const gradlePproperties = ['compileSdk', 'namespace', 'ignoreAssetsPattern'];
-  for (const prop of gradlePproperties) {
-    // Use updated Groovy DSL syntax with " = " assignment
-    const regex = new RegExp(`(^\\s*${prop})\\s+(?!=)(.+)$`, 'gm');
-    replaced = replaced.replace(regex, (_match, key, value) => {
-      return `${key} = ${value.trim()}`;
-    });
-  }
+  replaced = replaced.replace(`proguard-android.txt`, `proguard-android-optimize.txt`);
+  replaced = replaced.replace('        targetSdkVersion rootProject.ext.targetSdkVersion\n', '');
+  replaced = replaced.replace(`    implementation project(':capacitor-cordova-android-plugins')\n`, '');
+  replaced = replaced.replace(
+    `repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+`,
+    '',
+  );
   writeFileSync(filename, replaced, 'utf-8');
 }
 
@@ -618,6 +633,24 @@ async function updateAndroidManifest(filename: string) {
 
   if (!replaced.includes('|density')) {
     logger.error(`Unable to add 'density' to 'android:configChanges' in ${filename}. Try adding it manually`);
+  } else {
+    writeFileSync(filename, replaced, 'utf-8');
+  }
+}
+
+async function updateAppDelegate(filename: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+
+  if (txt.includes('@main')) {
+    return; // Probably already updated
+  }
+  // Since navigation was an optional change in Capacitor 7, attempting to add density and/or navigation
+  const replaced = txt.replace('@UIApplicationMain', '@main');
+  if (!replaced.includes('@main')) {
+    logger.error(`Unable to replace @UIApplicationMain to @main in ${filename}. Try replacing it manually`);
   } else {
     writeFileSync(filename, replaced, 'utf-8');
   }
