@@ -177,9 +177,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         }
 
         await runTask(`Migrating AppDelegate.swift`, () => {
-          return updateAppDelegate(
-            join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift')
-          );
+          return updateAppDelegate(join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift'));
         });
       }
 
@@ -243,7 +241,10 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               return;
             }
             txt = txt.replace(`include ':capacitor-cordova-android-plugins'\n`, '');
-            txt = txt.replace(`project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')\n`, '');
+            txt = txt.replace(
+              `project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')\n`,
+              '',
+            );
             writeFileSync(settingsPath, txt, { encoding: 'utf-8' });
           })();
         });
@@ -386,10 +387,7 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
 }
 
 async function writeBreakingChanges() {
-  const breaking = [
-    '@capacitor/push-notifications',
-    '@capacitor/splash-screen',
-  ];
+  const breaking = ['@capacitor/push-notifications', '@capacitor/splash-screen'];
   const broken = [];
   for (const lib of breaking) {
     if (allDependencies[lib]) {
@@ -533,13 +531,16 @@ async function updateAppBuildGradle(filename: string) {
   replaced = replaced.replace(`proguard-android.txt`, `proguard-android-optimize.txt`);
   replaced = replaced.replace('        targetSdkVersion rootProject.ext.targetSdkVersion\n', '');
   replaced = replaced.replace(`    implementation project(':capacitor-cordova-android-plugins')\n`, '');
-  replaced = replaced.replace(`repositories {
+  replaced = replaced.replace(
+    `repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
     }
 }
 
-`, "");
+`,
+    '',
+  );
   writeFileSync(filename, replaced, 'utf-8');
 }
 
@@ -647,11 +648,7 @@ async function updateAppDelegate(filename: string) {
     return; // Probably already updated
   }
   // Since navigation was an optional change in Capacitor 7, attempting to add density and/or navigation
-  const replaced = txt
-    .replace(
-      '@UIApplicationMain',
-      '@main',
-    )
+  const replaced = txt.replace('@UIApplicationMain', '@main');
   if (!replaced.includes('@main')) {
     logger.error(`Unable to replace @UIApplicationMain to @main in ${filename}. Try replacing it manually`);
   } else {
