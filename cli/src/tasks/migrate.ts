@@ -647,7 +647,6 @@ async function updateAppDelegate(filename: string) {
   if (txt.includes('@main')) {
     return; // Probably already updated
   }
-  // Since navigation was an optional change in Capacitor 7, attempting to add density and/or navigation
   const replaced = txt.replace('@UIApplicationMain', '@main');
   if (!replaced.includes('@main')) {
     logger.error(`Unable to replace @UIApplicationMain to @main in ${filename}. Try replacing it manually`);
