@@ -38,19 +38,19 @@
 		62959B6A252524D700A3D7F1 /* CDVPluginManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959B68252524D700A3D7F1 /* CDVPluginManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B6B252524D700A3D7F1 /* CDVPluginManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959B69252524D700A3D7F1 /* CDVPluginManager.m */; };
 		A76739742B98CC7800795F7B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A76739732B98CC7800795F7B /* PrivacyInfo.xcprivacy */; };
-		D4DA0E972FFD28680031AA74 /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4DA0E962FFD28680031AA74 /* Capacitor.framework */; };
-		D4DA0E982FFD28680031AA74 /* Capacitor.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D4DA0E962FFD28680031AA74 /* Capacitor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D4DA0E9B2FFD28C60031AA74 /* Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DA0E9A2FFD28C60031AA74 /* Plugin.swift */; };
+		D4DA0ED52FFD573E0031AA74 /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4DA0ED42FFD573E0031AA74 /* Capacitor.framework */; };
+		D4DA0ED62FFD573E0031AA74 /* Capacitor.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D4DA0ED42FFD573E0031AA74 /* Capacitor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D4DA0E992FFD28680031AA74 /* Embed Frameworks */ = {
+		D4DA0ED72FFD573E0031AA74 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D4DA0E982FFD28680031AA74 /* Capacitor.framework in Embed Frameworks */,
+				D4DA0ED62FFD573E0031AA74 /* Capacitor.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,6 +94,7 @@
 		A76739732B98CC7800795F7B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		D4DA0E962FFD28680031AA74 /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4DA0E9A2FFD28C60031AA74 /* Plugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plugin.swift; sourceTree = "<group>"; };
+		D4DA0ED42FFD573E0031AA74 /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,7 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4DA0E972FFD28680031AA74 /* Capacitor.framework in Frameworks */,
+				D4DA0ED52FFD573E0031AA74 /* Capacitor.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,6 +186,7 @@
 		D4DA0E952FFD28680031AA74 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D4DA0ED42FFD573E0031AA74 /* Capacitor.framework */,
 				D4DA0E962FFD28680031AA74 /* Capacitor.framework */,
 			);
 			name = Frameworks;
@@ -229,7 +231,7 @@
 				2F5C86D81FE94845004B09C7 /* Frameworks */,
 				2F5C86D91FE94845004B09C7 /* Headers */,
 				2F5C86DA1FE94845004B09C7 /* Resources */,
-				D4DA0E992FFD28680031AA74 /* Embed Frameworks */,
+				D4DA0ED72FFD573E0031AA74 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
