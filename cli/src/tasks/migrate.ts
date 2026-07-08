@@ -357,14 +357,23 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
   for (const devDepKey of Object.keys(pkgJson['devDependencies'] || {})) {
     if (libs.includes(devDepKey)) {
       pkgJson['devDependencies'][devDepKey] = coreVersion;
-    } else if (plugins.includes(devDepKey) && !pkgJson['devDependencies'][devDepKey].startsWith('file:')) {
+    } else if (
+      plugins.includes(devDepKey) &&
+      !(
+        pkgJson['devDependencies'][devDepKey].startsWith('file:') ||
+        pkgJson['devDependencies'][devDepKey].startsWith('workspace:')
+      )
+    ) {
       pkgJson['devDependencies'][devDepKey] = pluginVersion;
     }
   }
   for (const depKey of Object.keys(pkgJson['dependencies'] || {})) {
     if (libs.includes(depKey)) {
       pkgJson['dependencies'][depKey] = coreVersion;
-    } else if (plugins.includes(depKey) && !pkgJson['dependencies'][depKey].startsWith('file:')) {
+    } else if (
+      plugins.includes(depKey) &&
+      !(pkgJson['dependencies'][depKey].startsWith('file:') || pkgJson['dependencies'][depKey].startsWith('workspace:'))
+    ) {
       pkgJson['dependencies'][depKey] = pluginVersion;
     }
   }
