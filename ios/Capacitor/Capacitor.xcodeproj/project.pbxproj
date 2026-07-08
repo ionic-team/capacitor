@@ -56,7 +56,6 @@
 		62959B452524DA7800A3D7F1 /* CAPPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959B132524DA7700A3D7F1 /* CAPPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B462524DA7800A3D7F1 /* CAPBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B142524DA7700A3D7F1 /* CAPBridge.swift */; };
 		62959B472524DA7800A3D7F1 /* CAPNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B152524DA7700A3D7F1 /* CAPNotifications.swift */; };
-		62959BA52526475A00A3D7F1 /* Cordova.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62959BA02526474300A3D7F1 /* Cordova.framework */; };
 		6296A77E253A2E49005A202A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6296A77D253A2E49005A202A /* AppDelegate.swift */; };
 		6296A782253A2E49005A202A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6296A781253A2E49005A202A /* ViewController.swift */; };
 		6296A785253A2E49005A202A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A783253A2E49005A202A /* Main.storyboard */; };
@@ -110,13 +109,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 50503EDE1FC08594003606DC;
 			remoteInfo = Avocado;
-		};
-		62959B9F2526474300A3D7F1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2F5C86DC1FE94845004B09C7;
-			remoteInfo = Cordova;
 		};
 		6296A796253A2EAE005A202A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -206,9 +198,7 @@
 		62959B132524DA7700A3D7F1 /* CAPPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPlugin.h; sourceTree = "<group>"; };
 		62959B142524DA7700A3D7F1 /* CAPBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridge.swift; sourceTree = "<group>"; };
 		62959B152524DA7700A3D7F1 /* CAPNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPNotifications.swift; sourceTree = "<group>"; };
-		62959B56252518FB00A3D7F1 /* Cordova.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Cordova.framework; sourceTree = "<group>"; };
 		62959B8225253A9500A3D7F1 /* Capacitor.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = Capacitor.modulemap; sourceTree = "<group>"; };
-		62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CapacitorCordova.xcodeproj; path = ../CapacitorCordova/CapacitorCordova.xcodeproj; sourceTree = "<group>"; };
 		62959BBD2526510200A3D7F1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6296A77B253A2E49005A202A /* TestsHostApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestsHostApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6296A77D253A2E49005A202A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -264,7 +254,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */,
-				62959BA52526475A00A3D7F1 /* Cordova.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,8 +286,6 @@
 		501CBAA51FC0A723009B0D4D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */,
-				62959B56252518FB00A3D7F1 /* Cordova.framework */,
 				501CBAA61FC0A723009B0D4D /* WebKit.framework */,
 			);
 			name = Frameworks;
@@ -423,14 +410,6 @@
 				A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */,
 			);
 			path = Plugins;
-			sourceTree = "<group>";
-		};
-		62959B9C2526474300A3D7F1 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				62959BA02526474300A3D7F1 /* Cordova.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		6296A77C253A2E49005A202A /* TestsHostApp */ = {
@@ -627,12 +606,6 @@
 			mainGroup = 50503ED51FC08594003606DC;
 			productRefGroup = 50503EE01FC08594003606DC /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 62959B9C2526474300A3D7F1 /* Products */;
-					ProjectRef = 62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				50503EDE1FC08594003606DC /* Capacitor */,
@@ -642,16 +615,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		62959BA02526474300A3D7F1 /* Cordova.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Cordova.framework;
-			remoteRef = 62959B9F2526474300A3D7F1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		50503EDD1FC08594003606DC /* Resources */ = {
