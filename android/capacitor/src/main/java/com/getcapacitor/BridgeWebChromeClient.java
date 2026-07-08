@@ -345,6 +345,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return false;
         }
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
+        takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         activityListener = (activityResult) -> {
             Uri[] result = null;
             if (activityResult.getResultCode() == Activity.RESULT_OK) {
