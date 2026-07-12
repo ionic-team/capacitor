@@ -204,8 +204,12 @@ public class SystemBars extends Plugin {
             boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
             if (shouldPassthroughInsets) {
-                // We need to correct for a possible shown IME
-                v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                    // We need to correct for a possible shown IME
+                    // On API <= 34 the window is not edge-to-edge, so the system already
+                    // resizes it for the IME and extra padding would double the space
+                    v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
+                }
 
                 Insets safeAreaInsets = calcSafeAreaInsets(insets);
                 injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
