@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-alpha.6](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.5...9.0.0-alpha.6) (2026-07-14)
+
+### Bug Fixes
+
+- **ios:** remove Cordova.framework from Capacitor project ([#8524](https://github.com/ionic-team/capacitor/issues/8524)) ([bfae960](https://github.com/ionic-team/capacitor/commit/bfae9602d039cd283b00eceddea246e6aed146b8))
+
 # [9.0.0-alpha.5](https://github.com/ionic-team/capacitor/compare/8.4.1...9.0.0-alpha.5) (2026-06-23)
 
 # [9.0.0-alpha.4](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.3...9.0.0-alpha.4) (2026-06-19)
