@@ -318,7 +318,7 @@ const normalizeHttpHeaders = (headers: HttpHeaders = {}): HttpHeaders => {
  * @param params A map of url parameters
  * @param shouldEncode true if you should encodeURIComponent() the values (true by default)
  */
-const buildUrlParams = (params?: HttpParams, shouldEncode = true): string | null => {
+export const buildUrlParams = (params?: HttpParams, shouldEncode = true): string | null => {
   if (!params) return null;
 
   const output = Object.entries(params).reduce((accumulator, entry) => {
@@ -333,7 +333,7 @@ const buildUrlParams = (params?: HttpParams, shouldEncode = true): string | null
         item += `${key}=${encodedValue}&`;
       });
       // last character will always be "&" so slice it off
-      item.slice(0, -1);
+      item = item.slice(0, -1);
     } else {
       encodedValue = shouldEncode ? encodeURIComponent(value) : value;
       item = `${key}=${encodedValue}`;
@@ -343,7 +343,7 @@ const buildUrlParams = (params?: HttpParams, shouldEncode = true): string | null
   }, '');
 
   // Remove initial "&" from the reduce
-  return output.substr(1);
+  return output.substring(1);
 };
 
 /**
