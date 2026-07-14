@@ -30,6 +30,44 @@ const readFileAsBase64 = (file: File): Promise<string> =>
     reader.readAsBinaryString(file);
   });
 
+const readArrayBufferAsBase64 = (arrayBuffer: ArrayBufferLike): string => {
+  const bytes = new Uint8Array(arrayBuffer);
+  const chunkSize = 0x8000;
+  let binary = '';
+
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+
+  return btoa(binary);
+};
+
+const readBlobAsBase64 = (blob: Blob): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      resolve(result.indexOf(',') >= 0 ? result.split(',')[1] : result);
+    };
+    reader.onerror = reject;
+
+    reader.readAsDataURL(blob);
+  });
+
+const readDataViewAsBase64 = (dataView: ArrayBufferView): string =>
+  readArrayBufferAsBase64(dataView.buffer.slice(dataView.byteOffset, dataView.byteOffset + dataView.byteLength));
+
+const base64StringToArrayBuffer = (base64: string): ArrayBuffer => {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  return bytes.buffer as ArrayBuffer;
+};
+
 const convertFormData = async (formData: FormData): Promise<any> => {
   const newFormData: CapFormDataEntry[] = [];
   for (const pair of formData.entries()) {
@@ -55,11 +93,38 @@ const convertBody = async (
   body: Document | XMLHttpRequestBodyInit | ReadableStream<any> | undefined,
   contentType?: string,
 ): Promise<any> => {
-  if (body instanceof ReadableStream || body instanceof Uint8Array) {
-    let encodedData;
-    if (body instanceof ReadableStream) {
+  if (body instanceof File) {
+    const fileData = await readFileAsBase64(body);
+    return {
+      data: fileData,
+      type: 'file',
+      headers: { 'Content-Type': body.type },
+    };
+  } else if (body instanceof Blob) {
+    return {
+      data: await readBlobAsBase64(body),
+      type: 'binary',
+      headers: { 'Content-Type': contentType || body.type || 'application/octet-stream' },
+    };
+  } else if (body instanceof ArrayBuffer) {
+    return {
+      data: readArrayBufferAsBase64(body),
+      type: 'binary',
+      headers: { 'Content-Type': contentType || 'application/octet-stream' },
+    };
+  } else if (ArrayBuffer.isView(body)) {
+    return {
+      data: readDataViewAsBase64(body),
+      type: 'binary',
+      headers: { 'Content-Type': contentType || 'application/octet-stream' },
+    };
+  }
+
+  if ((typeof ReadableStream !== 'undefined' && body instanceof ReadableStream) || body instanceof Uint8Array) {
+    let encodedData: Uint8Array;
+    if (typeof ReadableStream !== 'undefined' && body instanceof ReadableStream) {
       const reader = body.getReader();
-      const chunks: any[] = [];
+      const chunks: Uint8Array[] = [];
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -73,10 +138,13 @@ const convertBody = async (
       }
       encodedData = concatenated;
     } else {
-      encodedData = body;
+      encodedData = body as Uint8Array;
     }
 
-    let data = new TextDecoder().decode(encodedData);
+    let data =
+      contentType?.startsWith('image') || contentType === 'application/octet-stream'
+        ? readDataViewAsBase64(encodedData)
+        : new TextDecoder().decode(encodedData);
     let type;
     if (contentType === 'application/json') {
       try {
@@ -88,7 +156,7 @@ const convertBody = async (
     } else if (contentType === 'multipart/form-data') {
       type = 'formData';
     } else if (contentType?.startsWith('image')) {
-      type = 'image';
+      type = 'binary';
     } else if (contentType === 'application/octet-stream') {
       type = 'binary';
     } else {
@@ -109,13 +177,6 @@ const convertBody = async (
     return {
       data: await convertFormData(body),
       type: 'formData',
-    };
-  } else if (body instanceof File) {
-    const fileData = await readFileAsBase64(body);
-    return {
-      data: fileData,
-      type: 'file',
-      headers: { 'Content-Type': body.type },
     };
   }
 
@@ -577,17 +638,17 @@ const initBridge = (w: any): void => {
               data: requestData,
               dataType: type,
               headers: nativeHeaders,
+              responseType: 'arraybuffer',
             });
 
             const contentType = nativeResponse.headers['Content-Type'] || nativeResponse.headers['content-type'];
-            let data = contentType?.startsWith('application/json')
-              ? JSON.stringify(nativeResponse.data)
-              : nativeResponse.data;
-
             // use null data for 204 No Content HTTP response
-            if (nativeResponse.status === 204) {
-              data = null;
-            }
+            const data =
+              nativeResponse.status === 204
+                ? null
+                : contentType?.startsWith('application/json')
+                  ? JSON.stringify(nativeResponse.data)
+                  : base64StringToArrayBuffer(nativeResponse.data);
 
             // intercept & parse response before returning
             const response = new Response(data, {
