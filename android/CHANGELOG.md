@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.8](https://github.com/ionic-team/capacitor/compare/7.6.7...7.6.8) (2026-07-14)
+
+### Bug Fixes
+
+- **android:** explicitly grant URI permissions for image capture intent ([#8526](https://github.com/ionic-team/capacitor/issues/8526)) ([9653d27](https://github.com/ionic-team/capacitor/commit/9653d27a8f8701bb1c927e000d05af3cec61565e))
+
 ## [7.6.7](https://github.com/ionic-team/capacitor/compare/7.6.6...7.6.7) (2026-06-19)
 
 **Note:** Version bump only for package @capacitor/android
