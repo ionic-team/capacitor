@@ -8,7 +8,6 @@ import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -33,9 +32,9 @@ public class SystemBars extends Plugin {
     static final String BAR_STATUS_BAR = "StatusBar";
     static final String BAR_GESTURE_BAR = "NavigationBar";
 
-    // TODO: In Cap 9, add an additional option "full"
     static final String INSETS_HANDLING_CSS = "css";
     static final String INSETS_HANDLING_DISABLE = "disable";
+    static final String INSETS_HANDLING_NATIVE = "native";
 
     // https://issues.chromium.org/issues/40699457
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
@@ -61,10 +60,25 @@ public class SystemBars extends Plugin {
     private String currentStatusBarStyle = STYLE_DEFAULT;
     private String currentGestureBarStyle = STYLE_DEFAULT;
 
+    // Declare variable at this scope to help prevent adding multiple listeners.
+    private WebViewListener webViewListener;
+
+    private void warnAboutUnsupportedConfigurationValues() {
+        String systemBarsInsetsHandling = bridge.getConfig().getPluginConfiguration("SystemBars").getConfigJSON().optString("insetsHandling");
+        boolean keyboardResizeOnFullScreen = bridge.getConfig().getPluginConfiguration("Keyboard").getConfigJSON().optBoolean("resizeOnFullScreen", false);
+        if (!systemBarsInsetsHandling.equals("disable") && keyboardResizeOnFullScreen) {
+            Logger.warn("SystemBars", "You should omit `Keyboard.resizeOnFullScreen` in your `capacitor.config.json`. Other values can lead to unexpected behavior.");
+        }
+        if (isSafeAreaPluginPresent()) {
+            Logger.warn("SystemBars", "You should uninstall `@capacitor-community/safe-area`. Having this library installed can lead to unexpected behavior.");
+        }
+    }
+
     @Override
     public void load() {
-        getBridge().getWebView().addJavascriptInterface(this, "CapacitorSystemBarsAndroidInterface");
         super.load();
+
+        warnAboutUnsupportedConfigurationValues();
 
         initSystemBars();
     }
@@ -73,15 +87,25 @@ public class SystemBars extends Plugin {
     protected void handleOnStart() {
         super.handleOnStart();
 
-        this.getBridge().addWebViewListener(
-            new WebViewListener() {
-                @Override
-                public void onPageCommitVisible(WebView view, String url) {
-                    super.onPageCommitVisible(view, url);
-                    getBridge().getWebView().requestApplyInsets();
-                }
+        boolean detectViewportFitCoverChanges = getConfig().getConfigJSON().optBoolean("detectViewportFitCoverChanges", true);
+
+        if (detectViewportFitCoverChanges) {
+            if (webViewListener == null) {
+                webViewListener = new WebViewListener() {
+                    @Override
+                    public void onPageCommitVisible(WebView view, String url) {
+                        super.onPageCommitVisible(view, url);
+                        bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
+                            hasViewportCover = res.equals("true");
+
+                            // Request new execution tree of `setOnApplyWindowInsetsListener`
+                            bridge.getWebView().requestApplyInsets();
+                        });
+                    }
+                };
+                this.getBridge().addWebViewListener(webViewListener);
             }
-        );
+        }
     }
 
     @Override
@@ -93,11 +117,14 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
+        // Setting this value to `true` can help prevent layout shifting if you already know that this value will end up being `true`.
+        hasViewportCover = getConfig().getConfigJSON().optBoolean("initialViewportFitCover", false);
+
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
-        if (INSETS_HANDLING_CSS.equals(configuredInsetsHandling) || INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling)) {
+        String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_NATIVE);
+        if (INSETS_HANDLING_CSS.equals(configuredInsetsHandling) || INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling) || INSETS_HANDLING_NATIVE.equals(configuredInsetsHandling)) {
             insetsHandling = configuredInsetsHandling;
         } else {
             Logger.warn(
@@ -152,19 +179,6 @@ public class SystemBars extends Plugin {
         call.resolve();
     }
 
-    @JavascriptInterface
-    public void onDOMReady() {
-        if (INSETS_HANDLING_CSS.equals(insetsHandling)) {
-            getActivity().runOnUiThread(() -> {
-                this.bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
-                    hasViewportCover = res.equals("true");
-
-                    getBridge().getWebView().requestApplyInsets();
-                });
-            });
-        }
-    }
-
     private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
         Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
         if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
@@ -191,12 +205,23 @@ public class SystemBars extends Plugin {
         }
     }
 
+    private static boolean isSafeAreaPluginPresent() {
+        try {
+            Class.forName("package com.getcapacitor.community.safearea.SafeAreaPlugin");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
     private void initWindowInsetsListener() {
         if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
             return;
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener((View) getBridge().getWebView().getParent(), (v, insets) -> {
+        View view = getActivity().getWindow().getDecorView();
+
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
             boolean shouldPassthroughInsets = getWebViewMajorVersion() >= WEBVIEW_VERSION_WITH_SAFE_AREA_FIX && hasViewportCover;
 
             Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
@@ -223,15 +248,13 @@ public class SystemBars extends Plugin {
                     .build();
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                // We need to correct for a possible shown IME
-                v.setPadding(
-                    systemBarsInsets.left,
-                    systemBarsInsets.top,
-                    systemBarsInsets.right,
-                    keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
-                );
-            }
+            // We need to correct for a possible shown IME
+            v.setPadding(
+                systemBarsInsets.left,
+                systemBarsInsets.top,
+                systemBarsInsets.right,
+                keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
+            );
 
             // Returning `WindowInsetsCompat.CONSUMED` breaks recalculation of safe area insets
             // So we have to explicitly set insets to `0`
