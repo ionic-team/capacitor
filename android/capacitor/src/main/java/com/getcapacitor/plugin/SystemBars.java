@@ -42,17 +42,17 @@ public class SystemBars extends Plugin {
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX = 144;
 
     static final String viewportMetaJSFunction = """
-        function capacitorSystemBarsCheckMetaViewport() {
-            const meta = document.querySelectorAll("meta[name=viewport]");
-            if (meta.length == 0) {
-                return false;
-            }
-            // get the last found meta viewport tag
-            const metaContent = meta[meta.length - 1].content;
-            return metaContent.includes("viewport-fit=cover");
+    function capacitorSystemBarsCheckMetaViewport() {
+        const meta = document.querySelectorAll("meta[name=viewport]");
+        if (meta.length == 0) {
+            return false;
         }
-        capacitorSystemBarsCheckMetaViewport();
-        """;
+        // get the last found meta viewport tag
+        const metaContent = meta[meta.length - 1].content;
+        return metaContent.includes("viewport-fit=cover");
+    }
+    capacitorSystemBarsCheckMetaViewport();
+    """;
 
     private String insetsHandling = INSETS_HANDLING_CSS;
     private boolean hasViewportCover = false;
@@ -64,13 +64,27 @@ public class SystemBars extends Plugin {
     private WebViewListener webViewListener;
 
     private void warnAboutUnsupportedConfigurationValues() {
-        String systemBarsInsetsHandling = bridge.getConfig().getPluginConfiguration("SystemBars").getConfigJSON().optString("insetsHandling");
-        boolean keyboardResizeOnFullScreen = bridge.getConfig().getPluginConfiguration("Keyboard").getConfigJSON().optBoolean("resizeOnFullScreen", false);
+        String systemBarsInsetsHandling = bridge
+            .getConfig()
+            .getPluginConfiguration("SystemBars")
+            .getConfigJSON()
+            .optString("insetsHandling");
+        boolean keyboardResizeOnFullScreen = bridge
+            .getConfig()
+            .getPluginConfiguration("Keyboard")
+            .getConfigJSON()
+            .optBoolean("resizeOnFullScreen", false);
         if (!systemBarsInsetsHandling.equals("disable") && keyboardResizeOnFullScreen) {
-            Logger.warn("SystemBars", "You should omit `Keyboard.resizeOnFullScreen` in your `capacitor.config.json`. Other values can lead to unexpected behavior.");
+            Logger.warn(
+                "SystemBars",
+                "You should omit `Keyboard.resizeOnFullScreen` in your `capacitor.config.json`. Other values can lead to unexpected behavior."
+            );
         }
         if (isSafeAreaPluginPresent()) {
-            Logger.warn("SystemBars", "You should uninstall `@capacitor-community/safe-area`. Having this library installed can lead to unexpected behavior.");
+            Logger.warn(
+                "SystemBars",
+                "You should uninstall `@capacitor-community/safe-area`. Having this library installed can lead to unexpected behavior."
+            );
         }
     }
 
@@ -124,7 +138,11 @@ public class SystemBars extends Plugin {
         boolean hidden = getConfig().getBoolean("hidden", false);
 
         String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_NATIVE);
-        if (INSETS_HANDLING_CSS.equals(configuredInsetsHandling) || INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling) || INSETS_HANDLING_NATIVE.equals(configuredInsetsHandling)) {
+        if (
+            INSETS_HANDLING_CSS.equals(configuredInsetsHandling) ||
+            INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling) ||
+            INSETS_HANDLING_NATIVE.equals(configuredInsetsHandling)
+        ) {
             insetsHandling = configuredInsetsHandling;
         } else {
             Logger.warn(
