@@ -816,7 +816,7 @@ export interface PluginsConfig {
      *
      * This option is only supported on Android.
      *
-     * @default 'css
+     * @default 'css'
      */
     style?: string;
 
