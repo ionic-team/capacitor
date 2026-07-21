@@ -24,17 +24,7 @@ The status bar visibility defaults to visible and the style defaults to
 
 ## Android Note
 
-Due to a [bug](https://issues.chromium.org/issues/40699457) in some older versions of Android WebView (< 140), correct safe area values are not available via the `safe-area-inset-x` CSS `env` variables.  This plugin will inject the correct inset values into a new CSS variable(s) named `--safe-area-inset-x` that you can use as a fallback in your frontend styles:
-
-```css
-html {
-  padding-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
-  padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
-  padding-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
-  padding-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
-}
-```
-To control this behavior, use the `insetsHandling` configuration setting.
+Due to a [bug](https://issues.chromium.org/issues/40699457) in some older versions of Android WebView (< 140), correct safe area values are not available via the `safe-area-inset-x` CSS `env` variables. This plugin has two ways to workaround this. To control this behavior, use the `insetsHandling` configuration setting.
 
 ## Example
 
@@ -73,7 +63,9 @@ const setStatusBarAnimation = async () => {
 ## Configuration
 | Prop          | Type                 | Description                                                               | Default            |
 | ------------- | -------------------- | ------------------------------------------------------------------------- | ------------------ |
-| **`insetsHandling`** | <code>string</code> | Specifies how to handle problematic insets on Android.  This option is only supported on Android.<br>`css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.<br>`disable` = Disable CSS variables injection. | <code>css</code> |
+| **`insetsHandling`** | <code>string</code> | Specifies how to handle problematic insets on Android.  This option is only supported on Android.<br>`native` = (recommended) For older Chromium versions (< v140) this embeds the webview with padding and sets the `env(safe-area-inset-*)` variables to `0px`. For newer Chromium versions (>= 140) this makes sure the webview adheres to the `viewport-fit` meta tag. If set to `viewport-fit="cover"` this will make the webview edge-to-edge and the `env(safe-area-inset-*)` variables will contain the correct values. With those values you could set padding for example so make sure the webview is shown correctly.<br>`css` = This is the same as `native`, but it also injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.<br>`disable` = Disable CSS variables injection. | <code>css</code> |
+| **`detectViewportFitCoverChanges`** | <code>boolean</code> | This plugin detects changes to the `viewport-fit` meta tag. This comes in handy when you do not know for sure if the content loaded into the webview will have `viewport-fit` set to `cover`. For most use cases you do not need to touch this config variable. However if you know for sure you want to always keep the `initialViewportFitCover` value unchanged, you could disable this feature by setting it to `false`. Be aware that this might result in a visually broken UI if the content loaded into the webview does not correctly handle safe area insets. This option is only supported on Android. | <code>true</code> |
+| **`initialViewportFitCover`** | <code>boolean</code> | Set an initial value for the to be detected `viewport-fit=cover`. For most apps that support edge-to-edge this value will eventually be `true`. Therefore you might want to set this value is to `true` to help prevent layout jumps and glitches. If you know (or want) the value to be `true` initially, you can set it here. The value will always end up correctly, no matter what you set here, as long as `detectViewportFitCoverChanges` is set to `true`. It only exists to help prevent layout jumps and glitches. This option is only supported on Android. | <code>false</code> |
 | **`style`** | <code>string</code> | The style of the text and icons of the system bars. | <code>DEFAULT</code> |
 | **`hidden`** | <code>boolean</code> | Hide the system bars on start. | <code>false</code> |
 | **`animation`** | <code>string</code> | The type of status bar animation used when showing or hiding.  This option is only supported on iOS. | <code>FADE</code> |
