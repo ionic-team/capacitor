@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
@@ -153,7 +152,6 @@ public class SystemBars extends Plugin {
         }
 
         initWindowInsetsListener();
-        initSafeAreaCSSVariables();
 
         getBridge().executeOnMainThread(() -> {
             setStyle(style, "");
@@ -197,32 +195,6 @@ public class SystemBars extends Plugin {
         call.resolve();
     }
 
-    private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
-        Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-        if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
-            return Insets.of(safeArea.left, safeArea.top, safeArea.right, 0);
-        }
-        return Insets.of(safeArea.left, safeArea.top, safeArea.right, safeArea.bottom);
-    }
-
-    private void initSafeAreaCSSVariables() {
-        if (INSETS_HANDLING_CSS.equals(insetsHandling)) {
-            WindowInsetsCompat insets;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                View v = (View) this.getBridge().getWebView().getParent();
-                insets = ViewCompat.getRootWindowInsets(v);
-            } else {
-                insets = WindowInsetsCompat.CONSUMED;
-            }
-
-            if (insets != null) {
-                Insets safeAreaInsets = calcSafeAreaInsets(insets);
-                injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-            }
-        }
-    }
-
     private static boolean isSafeAreaPluginPresent() {
         try {
             Class.forName("package com.getcapacitor.community.safearea.SafeAreaPlugin");
@@ -250,10 +222,7 @@ public class SystemBars extends Plugin {
                 // We need to correct for a possible shown IME
                 v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
 
-                Insets safeAreaInsets = calcSafeAreaInsets(insets);
-                injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-
-                return new WindowInsetsCompat.Builder(insets)
+                WindowInsetsCompat newInsets = new WindowInsetsCompat.Builder(insets)
                     .setInsets(
                         WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
                         Insets.of(
@@ -264,6 +233,10 @@ public class SystemBars extends Plugin {
                         )
                     )
                     .build();
+
+                injectSafeAreaCSS(newInsets);
+
+                return newInsets;
             }
 
             // We need to correct for a possible shown IME
@@ -281,20 +254,28 @@ public class SystemBars extends Plugin {
                 .setInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(), Insets.of(0, 0, 0, 0))
                 .build();
 
-            Insets safeAreaInsets = calcSafeAreaInsets(newInsets);
-            injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
+            injectSafeAreaCSS(newInsets);
 
             return newInsets;
         });
     }
 
-    private void injectSafeAreaCSS(int top, int right, int bottom, int left) {
+    private void injectSafeAreaCSS(WindowInsetsCompat insets) {
+        if (!INSETS_HANDLING_CSS.equals(insetsHandling)) {
+            return;
+        }
+
+        Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+
         // Convert pixels to density-independent pixels
         float density = getActivity().getResources().getDisplayMetrics().density;
-        float topPx = top / density;
-        float rightPx = right / density;
-        float bottomPx = bottom / density;
-        float leftPx = left / density;
+        float topPx = systemBarsInsets.top / density;
+        float rightPx = systemBarsInsets.right / density;
+        // For native insets the value gets automatically corrected when the IME is visible (in newer WebView versions),
+        // but for these injected values we have to handle that manually (for all WebView versions).
+        float bottomPx = (keyboardVisible ? 0 : systemBarsInsets.bottom) / density;
+        float leftPx = systemBarsInsets.left / density;
 
         // Execute JavaScript to inject the CSS
         getBridge().executeOnMainThread(() -> {
