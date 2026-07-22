@@ -772,19 +772,51 @@ export interface PluginsConfig {
      *
      * This option is only supported on Android.
      *
-     * `css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
+     * `native` = (recommended) For older Chromium versions (< v140) this embeds the webview with padding and sets the `env(safe-area-inset-*)` variables to `0px`. For newer Chromium versions (>= 140) this makes sure the webview adheres to the `viewport-fit` meta tag. If set to `viewport-fit="cover"` this will make the webview edge-to-edge and the `env(safe-area-inset-*)` variables will contain the correct values. With those values you could set padding for example so make sure the webview is shown correctly.
+     *
+     * `css` = This is the same as `native`, but it also injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
      *
      * `disable` = Disable CSS variables injection.
      *
      * @default "css"
      */
-    insetsHandling?: 'css' | 'disable';
+    insetsHandling?: 'native' | 'css' | 'disable';
+
+    /**
+     * This plugin detects changes to the `viewport-fit` meta tag.
+     * This comes in handy when you do not know for sure if the content loaded into the webview will have `viewport-fit` set to `cover`.
+     * For most use cases you do not need to touch this config variable.
+     * However if you know for sure you want to always keep the `initialViewportFitCover` value unchanged,
+     * you could disable this feature by setting it to `false`.
+     * Be aware that this might result in a visually broken UI if the content loaded into the webview does not correctly handle safe area insets.
+     *
+     * This option is only supported on Android.
+     *
+     * @default true
+     */
+    detectViewportFitCoverChanges?: boolean;
+
+    /**
+     * Set an initial value for the to be detected `viewport-fit=cover`.
+     * For most apps that support edge-to-edge this value will eventually be `true`.
+     * Therefore you might want to set this value is to `true` to help prevent layout jumps and glitches.
+     * If you know (or want) the value to be `true` initially, you can set it here.
+     * The value will always end up correctly, no matter what you set here,
+     * as long as `detectViewportFitCoverChanges` is set to `true`.
+     * It only exists to help prevent layout jumps and glitches.
+     *
+     * This option is only supported on Android.
+     *
+     * @default false
+     */
+    initialViewportFitCover?: boolean;
+
     /**
      * The style of the text and icons of the system bars.
      *
      * This option is only supported on Android.
      *
-     * @default `DEFAULT`
+     * @default 'css'
      */
     style?: string;
 
