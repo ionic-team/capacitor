@@ -70,12 +70,14 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
         @Override
         public void onNativeToJsMessageAvailable(final NativeToJsMessageQueue queue) {
-            cordova.getActivity().runOnUiThread(() -> {
-                String js = queue.popAndEncodeAsJs();
-                if (js != null) {
-                    webView.evaluateJavascript(js, null);
-                }
-            });
+            cordova
+                .getActivity()
+                .runOnUiThread(() -> {
+                    String js = queue.popAndEncodeAsJs();
+                    if (js != null) {
+                        webView.evaluateJavascript(js, null);
+                    }
+                });
         }
     }
 

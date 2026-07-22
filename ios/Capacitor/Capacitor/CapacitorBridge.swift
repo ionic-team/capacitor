@@ -264,15 +264,15 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             registerCordovaPlugins()
         } else {
             observers.append(NotificationCenter.default.addObserver(forName: UIScene.willEnterForegroundNotification, object: nil, queue: OperationQueue.main) { [weak self] notification in
-              if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
-                self?.triggerDocumentJSEvent(eventName: "resume")
-              }
-                
+                if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
+                    self?.triggerDocumentJSEvent(eventName: "resume")
+                }
+
             })
             observers.append(NotificationCenter.default.addObserver(forName: UIScene.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { [weak self] notification in
-              if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
-                self?.triggerDocumentJSEvent(eventName: "pause")
-              }
+                if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
+                    self?.triggerDocumentJSEvent(eventName: "pause")
+                }
             })
         }
     }
