@@ -221,7 +221,7 @@ public class WebViewLocalServer {
     }
 
     private boolean isMainUrl(Uri loadingUrl) {
-        return (bridge.getServerUrl() == null && loadingUrl.getHost().equalsIgnoreCase(bridge.getHost()));
+        return bridge.getServerUrl() == null && loadingUrl.getHost().equalsIgnoreCase(bridge.getHost());
     }
 
     private boolean isAllowedUrl(Uri loadingUrl) {
@@ -722,31 +722,31 @@ public class WebViewLocalServer {
         @Override
         public int available() throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.available() : -1;
+            return is != null ? is.available() : -1;
         }
 
         @Override
         public int read() throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.read() : -1;
+            return is != null ? is.read() : -1;
         }
 
         @Override
         public int read(byte[] b) throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.read(b) : -1;
+            return is != null ? is.read(b) : -1;
         }
 
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.read(b, off, len) : -1;
+            return is != null ? is.read(b, off, len) : -1;
         }
 
         @Override
         public long skip(long n) throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.skip(n) : 0;
+            return is != null ? is.skip(n) : 0;
         }
     }
 

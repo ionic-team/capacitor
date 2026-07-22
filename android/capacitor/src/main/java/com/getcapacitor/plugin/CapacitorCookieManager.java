@@ -192,12 +192,12 @@ public class CapacitorCookieManager extends CookieManager {
     @Override
     public void put(URI uri, Map<String, List<String>> responseHeaders) {
         // make sure our args are valid
-        if ((uri == null) || (responseHeaders == null)) return;
+        if (uri == null || responseHeaders == null) return;
 
         // go over the headers
         for (String headerKey : responseHeaders.keySet()) {
             // ignore headers which aren't cookie related
-            if ((headerKey == null) || !(headerKey.equalsIgnoreCase("Set-Cookie2") || headerKey.equalsIgnoreCase("Set-Cookie"))) continue;
+            if (headerKey == null || !(headerKey.equalsIgnoreCase("Set-Cookie2") || headerKey.equalsIgnoreCase("Set-Cookie"))) continue;
 
             // process each of the headers
             for (String headerValue : Objects.requireNonNull(responseHeaders.get(headerKey))) {
@@ -215,7 +215,7 @@ public class CapacitorCookieManager extends CookieManager {
     @Override
     public Map<String, List<String>> get(URI uri, Map<String, List<String>> requestHeaders) {
         // make sure our args are valid
-        if ((uri == null) || (requestHeaders == null)) throw new IllegalArgumentException("Argument is null");
+        if (uri == null || requestHeaders == null) throw new IllegalArgumentException("Argument is null");
 
         // save our url once
         String url = uri.toString();
