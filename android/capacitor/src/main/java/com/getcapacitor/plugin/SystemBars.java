@@ -84,24 +84,24 @@ public class SystemBars extends Plugin {
     protected void handleOnStart() {
         super.handleOnStart();
 
-        boolean detectViewportFitCoverChanges = getConfig().getConfigJSON().optBoolean("detectViewportFitCoverChanges", true);
+        if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
+            return;
+        }
 
-        if (detectViewportFitCoverChanges) {
-            if (webViewListener == null) {
-                webViewListener = new WebViewListener() {
-                    @Override
-                    public void onPageCommitVisible(WebView view, String url) {
-                        super.onPageCommitVisible(view, url);
-                        bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
-                            hasViewportCover = res.equals("true");
+        if (webViewListener == null) {
+            webViewListener = new WebViewListener() {
+                @Override
+                public void onPageCommitVisible(WebView view, String url) {
+                    super.onPageCommitVisible(view, url);
+                    bridge.getWebView().evaluateJavascript(viewportMetaJSFunction, (res) -> {
+                        hasViewportCover = res.equals("true");
 
-                            // Request new execution tree of `setOnApplyWindowInsetsListener`
-                            bridge.getWebView().requestApplyInsets();
-                        });
-                    }
-                };
-                this.getBridge().addWebViewListener(webViewListener);
-            }
+                        // Request new execution tree of `setOnApplyWindowInsetsListener`
+                        bridge.getWebView().requestApplyInsets();
+                    });
+                }
+            };
+            this.getBridge().addWebViewListener(webViewListener);
         }
     }
 
@@ -114,8 +114,10 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
-        // Setting this value to `true` can help prevent layout shifting if you already know that this value will end up being `true`.
-        hasViewportCover = getConfig().getConfigJSON().optBoolean("initialViewportFitCover", false);
+        // If you already know what the value of the `viewport-fit=` meta tag is going to be,
+        // passing it here through `initialViewportFitValueHint` can help prevent layout shifting.
+        String configuredInitialViewportFitValueHint = getConfig().getString("initialViewportFitValueHint", "");
+        hasViewportCover = "cover".equals(configuredInitialViewportFitValueHint);
 
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
