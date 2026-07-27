@@ -17,12 +17,20 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
     public func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         NotificationCenter.default.post(name: .capacitorSceneWillConnect, object: scene)
 
-        if !connectionOptions.urlContexts.isEmpty {
-            self.scene(scene, openURLContexts: connectionOptions.urlContexts)
-        }
-
-        for userActivity in connectionOptions.userActivities {
-            self.scene(scene, continue: userActivity)
+        // Plugins haven't loaded yet on a cold start, so notifications posted here are
+        // missed. Deliver them on the first capacitorViewDidAppear, once plugins are
+        // registered.
+        var token: NSObjectProtocol?
+        token = NotificationCenter.default.addObserver(forName: .capacitorViewDidAppear, object: nil, queue: .main) { _ in
+            if let token {
+                NotificationCenter.default.removeObserver(token)
+            }
+            if !connectionOptions.urlContexts.isEmpty {
+                self.scene(scene, openURLContexts: connectionOptions.urlContexts)
+            }
+            for userActivity in connectionOptions.userActivities {
+                self.scene(scene, continue: userActivity)
+            }
         }
     }
 
