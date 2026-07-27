@@ -73,28 +73,6 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
         ])
     }
 
-    // TODO: Not until Phase 2 of the UI modernization project
-
-    public func sceneDidDisconnect(_ scene: UIScene) {
-        // TODO: multi-window — tear down the bridge associated with this scene.
-    }
-
-    public func sceneDidBecomeActive(_ scene: UIScene) {
-        // TODO: multi-window — forward per-scene active event to the bridge.
-    }
-
-    public func sceneWillResignActive(_ scene: UIScene) {
-        // TODO: multi-window — forward per-scene resign-active event to the bridge.
-    }
-
-    public func sceneWillEnterForeground(_ scene: UIScene) {
-        // TODO: multi-window — drive JS `resume` from this instead of UIApplication.willEnterForegroundNotification.
-    }
-
-    public func sceneDidEnterBackground(_ scene: UIScene) {
-        // TODO: multi-window — drive JS `pause` from this instead of UIApplication.didEnterBackgroundNotification.
-    }
-
     private static func openURLOptions(from sceneOptions: UIScene.OpenURLOptions) -> [UIApplication.OpenURLOptionsKey: Any] {
         var options: [UIApplication.OpenURLOptionsKey: Any] = [:]
         if let sourceApplication = sceneOptions.sourceApplication {
