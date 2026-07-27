@@ -7,6 +7,7 @@ import { logger } from '../log';
 import { deleteFolderRecursive, readdirp } from '../util/fs';
 import { addSceneManifestIfNeeded, hasSceneManifest } from '../util/spm';
 import { extractTemplate } from '../util/template';
+import { addSwiftFileToAppTarget } from '../util/xcode';
 
 type PreUISceneState = 'eligible' | 'already-migrated' | 'partial' | 'ineligible';
 
@@ -64,7 +65,20 @@ export async function migrateToUIScene(config: Config): Promise<void> {
     }
   });
 
-  logger.info('UIScene migration: Xcode project registration coming in a later stage.');
+  await runTask('Registering SceneDelegate.swift with the Xcode App target.', async () => {
+    const pbxprojPath = join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj');
+    try {
+      const { added } = addSwiftFileToAppTarget(pbxprojPath, 'App', 'SceneDelegate.swift');
+      if (!added) {
+        logger.warn('SceneDelegate.swift is already registered in the App target, skipping.');
+      }
+    } catch (err: any) {
+      logger.warn(
+        `Could not register SceneDelegate.swift automatically: ${err?.message ?? err}. ` +
+          'Add SceneDelegate.swift to the App target in Xcode manually.',
+      );
+    }
+  });
 
   await scanAndWarn(config);
   printNextSteps();
@@ -149,13 +163,7 @@ function hasCustomDelegateBody(source: string, sigRegex: RegExp): boolean {
 function printNextSteps(): void {
   logger.info('');
   logger.info('UIScene migration next steps:');
-  logger.info(
-    '  • The CLI cannot yet register SceneDelegate.swift with the Xcode project. ' +
-      'Open ios/App/App.xcodeproj and add SceneDelegate.swift to the App target if it is missing.',
-  );
-  logger.info(
-    '  • Review any warnings above for legacy API usage or custom AppDelegate URL/activity handlers.',
-  );
+  logger.info('  • Review any warnings above for legacy API usage or custom AppDelegate URL/activity handlers.');
   logger.info('  • Full guide: https://capacitorjs.com/docs/updating/8-5');
 }
 
