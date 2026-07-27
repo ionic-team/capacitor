@@ -1,10 +1,12 @@
-import { existsSync, readFileSync } from 'fs-extra';
+import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
 import { join } from 'path';
 
 import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { logger } from '../log';
-import { addSceneManifest, hasSceneManifest } from '../util/spm';
+import { deleteFolderRecursive } from '../util/fs';
+import { addSceneManifestIfNeeded, hasSceneManifest } from '../util/spm';
+import { extractTemplate } from '../util/template';
 
 type PreUISceneState = 'eligible' | 'already-migrated' | 'partial' | 'ineligible';
 
@@ -12,6 +14,11 @@ interface UISceneDetectionSignals {
   hasManifest: boolean;
   hasSceneDelegate: boolean;
   hasConfigurationForConnecting: boolean;
+}
+
+interface TemplateAssets {
+  sceneDelegate: string;
+  configurationForConnectingSnippet: string;
 }
 
 export async function migrateToUIScene(config: Config): Promise<void> {
@@ -35,27 +42,135 @@ export async function migrateToUIScene(config: Config): Promise<void> {
       break;
   }
 
-  await runTask('Adding UIApplicationSceneManifest to Info.plist.', async () => {
-    const plistPath = join(config.ios.nativeTargetDirAbs, 'Info.plist');
-    const { added } = addSceneManifest(plistPath);
-    if (!added) {
-      logger.warn('UIApplicationSceneManifest already present, skipping.');
+  const assets = await loadTemplateAssets(config);
+  if (!assets) {
+    logger.error('UIScene migration: could not read shipped iOS template assets; skipping.');
+    return;
+  }
+
+  await runTask('Adding UIApplicationSceneManifest to Info.plist.', () => addSceneManifestIfNeeded(config));
+
+  await runTask('Writing SceneDelegate.swift.', async () => {
+    const { written } = writeSceneDelegate(config, assets.sceneDelegate);
+    if (!written) {
+      logger.warn('SceneDelegate.swift already exists, skipping.');
     }
   });
 
-  logger.info('UIScene migration: SceneDelegate.swift write coming in a later stage.');
-  logger.info('UIScene migration: AppDelegate configurationForConnecting patch coming in a later stage.');
+  await runTask('Patching AppDelegate.swift with configurationForConnecting.', async () => {
+    const { patched, reason } = patchAppDelegate(config, assets.configurationForConnectingSnippet);
+    if (!patched && reason) {
+      logger.warn(`AppDelegate.swift not patched: ${reason}`);
+    }
+  });
+
   logger.info('UIScene migration: Xcode project registration coming in a later stage.');
   logger.info('UIScene migration: source scan for legacy APIs coming in a later stage.');
 }
 
+async function loadTemplateAssets(config: Config): Promise<TemplateAssets | null> {
+  const packageManager = await config.ios.packageManager;
+  const archiveName = packageManager === 'SPM' ? 'ios-spm-template.tar.gz' : 'ios-pods-template.tar.gz';
+  const archivePath = join(config.cli.assetsDirAbs, archiveName);
+  const tempDir = join(config.cli.assetsDirAbs, 'tempUISceneTemplate');
+
+  try {
+    await extractTemplate(archivePath, tempDir);
+    const sceneDelegatePath = join(tempDir, 'App', 'App', 'SceneDelegate.swift');
+    const appDelegatePath = join(tempDir, 'App', 'App', 'AppDelegate.swift');
+    if (!existsSync(sceneDelegatePath) || !existsSync(appDelegatePath)) {
+      return null;
+    }
+    const sceneDelegate = readFileSync(sceneDelegatePath, 'utf-8');
+    const appDelegateSource = readFileSync(appDelegatePath, 'utf-8');
+    const configurationForConnectingSnippet = extractConfigurationForConnecting(appDelegateSource);
+    if (!configurationForConnectingSnippet) {
+      return null;
+    }
+    return { sceneDelegate, configurationForConnectingSnippet };
+  } finally {
+    deleteFolderRecursive(tempDir);
+  }
+}
+
+function writeSceneDelegate(config: Config, contents: string): { written: boolean } {
+  const path = join(config.ios.nativeTargetDirAbs, 'SceneDelegate.swift');
+  if (existsSync(path)) {
+    return { written: false };
+  }
+  writeFileSync(path, contents);
+  return { written: true };
+}
+
+function patchAppDelegate(config: Config, snippet: string): { patched: boolean; reason?: string } {
+  const path = join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift');
+  if (!existsSync(path)) {
+    return { patched: false, reason: 'AppDelegate.swift not found.' };
+  }
+  const source = readFileSync(path, 'utf-8');
+  if (source.includes('UISceneConfiguration(name:')) {
+    return { patched: false, reason: 'configurationForConnecting already present.' };
+  }
+  const patched = insertBeforeAppDelegateClassEnd(source, snippet);
+  if (!patched) {
+    return { patched: false, reason: 'could not locate AppDelegate class body.' };
+  }
+  writeFileSync(path, patched);
+  return { patched: true };
+}
+
+function extractConfigurationForConnecting(appDelegateSource: string): string | null {
+  const sigRegex = /^ {4}func application\(_ application: UIApplication,\n {21}configurationForConnecting\b/m;
+  const sigMatch = appDelegateSource.match(sigRegex);
+  if (!sigMatch || sigMatch.index === undefined) {
+    return null;
+  }
+  const openIdx = appDelegateSource.indexOf('{', sigMatch.index);
+  if (openIdx === -1) {
+    return null;
+  }
+  let depth = 1;
+  let i = openIdx + 1;
+  while (i < appDelegateSource.length && depth > 0) {
+    const ch = appDelegateSource[i];
+    if (ch === '{') depth++;
+    else if (ch === '}') depth--;
+    i++;
+  }
+  if (depth !== 0) {
+    return null;
+  }
+  return '\n' + appDelegateSource.slice(sigMatch.index, i) + '\n';
+}
+
+function insertBeforeAppDelegateClassEnd(source: string, snippet: string): string | null {
+  const classDeclRegex = /\bclass\s+AppDelegate\b[^{]*\{/;
+  const match = source.match(classDeclRegex);
+  if (!match || match.index === undefined) {
+    return null;
+  }
+  const openIdx = source.indexOf('{', match.index);
+  let depth = 1;
+  let i = openIdx + 1;
+  while (i < source.length && depth > 0) {
+    const ch = source[i];
+    if (ch === '{') depth++;
+    else if (ch === '}') depth--;
+    i++;
+  }
+  if (depth !== 0) {
+    return null;
+  }
+  const closeIdx = i - 1;
+  return source.slice(0, closeIdx) + snippet + source.slice(closeIdx);
+}
+
 function readDetectionSignals(config: Config): UISceneDetectionSignals {
-  const plistPath = join(config.ios.nativeTargetDirAbs, 'Info.plist');
   const sceneDelegatePath = join(config.ios.nativeTargetDirAbs, 'SceneDelegate.swift');
   const appDelegatePath = join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift');
 
   return {
-    hasManifest: existsSync(plistPath) && hasSceneManifest(plistPath),
+    hasManifest: hasSceneManifest(config),
     hasSceneDelegate: existsSync(sceneDelegatePath),
     hasConfigurationForConnecting:
       existsSync(appDelegatePath) && readFileSync(appDelegatePath, 'utf-8').includes('UISceneConfiguration(name:'),
@@ -70,7 +185,11 @@ function classify(signals: UISceneDetectionSignals): PreUISceneState {
   return 'partial';
 }
 
-function describeSignals({ hasManifest, hasSceneDelegate, hasConfigurationForConnecting }: UISceneDetectionSignals): string {
+function describeSignals({
+  hasManifest,
+  hasSceneDelegate,
+  hasConfigurationForConnecting,
+}: UISceneDetectionSignals): string {
   const present: string[] = [];
   const missing: string[] = [];
   (hasManifest ? present : missing).push('UIApplicationSceneManifest');
@@ -80,4 +199,9 @@ function describeSignals({ hasManifest, hasSceneDelegate, hasConfigurationForCon
 }
 
 // Exported for tests.
-export const __testables = { classify, describeSignals };
+export const __testables = {
+  classify,
+  describeSignals,
+  insertBeforeAppDelegateClassEnd,
+  extractConfigurationForConnecting,
+};

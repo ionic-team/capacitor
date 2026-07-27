@@ -3,7 +3,8 @@ import { join } from 'path';
 import type { PlistObject } from 'plist';
 import { parse } from 'plist';
 
-import { addSceneManifest, hasSceneManifest } from '../src/util/spm';
+import type { Config } from '../src/definitions';
+import { addSceneManifestIfNeeded, hasSceneManifest } from '../src/util/spm';
 
 import { mktmp } from './util';
 
@@ -48,25 +49,30 @@ const POST_UISCENE_INFO_PLIST = `<?xml version="1.0" encoding="UTF-8"?>
 </plist>
 `;
 
-describe('addSceneManifest', () => {
+function makeFakeConfig(nativeTargetDirAbs: string): Config {
+  return { ios: { nativeTargetDirAbs } } as unknown as Config;
+}
+
+describe('addSceneManifestIfNeeded', () => {
   let tmpDir: any;
   let plistPath: string;
+  let config: Config;
 
   beforeEach(async () => {
     tmpDir = await mktmp();
     plistPath = join(tmpDir.path, 'Info.plist');
+    config = makeFakeConfig(tmpDir.path);
   });
 
   afterEach(() => {
     tmpDir.cleanupCallback();
   });
 
-  it('adds the scene manifest when absent', () => {
+  it('adds the scene manifest when absent', async () => {
     writeFileSync(plistPath, PRE_UISCENE_INFO_PLIST);
 
-    const result = addSceneManifest(plistPath);
+    await addSceneManifestIfNeeded(config);
 
-    expect(result.added).toBe(true);
     const parsed = parse(readFileSync(plistPath, 'utf-8')) as PlistObject;
     const manifest = parsed['UIApplicationSceneManifest'] as PlistObject;
     expect(manifest['UIApplicationSupportsMultipleScenes']).toBe(false);
@@ -78,10 +84,10 @@ describe('addSceneManifest', () => {
     expect(roleArray[0]['UISceneStoryboardFile']).toBe('Main');
   });
 
-  it('preserves sibling keys', () => {
+  it('preserves sibling keys', async () => {
     writeFileSync(plistPath, PRE_UISCENE_INFO_PLIST);
 
-    addSceneManifest(plistPath);
+    await addSceneManifestIfNeeded(config);
 
     const parsed = parse(readFileSync(plistPath, 'utf-8')) as PlistObject;
     expect(parsed['CFBundleDisplayName']).toBe('My App');
@@ -89,12 +95,11 @@ describe('addSceneManifest', () => {
     expect(parsed['UIMainStoryboardFile']).toBe('Main');
   });
 
-  it('is a no-op when the manifest already exists and does not overwrite user data', () => {
+  it('is a no-op when the manifest already exists and does not overwrite user data', async () => {
     writeFileSync(plistPath, POST_UISCENE_INFO_PLIST);
 
-    const result = addSceneManifest(plistPath);
+    await addSceneManifestIfNeeded(config);
 
-    expect(result.added).toBe(false);
     const parsed = parse(readFileSync(plistPath, 'utf-8')) as PlistObject;
     const manifest = parsed['UIApplicationSceneManifest'] as PlistObject;
     const configs = manifest['UISceneConfigurations'] as PlistObject;
@@ -103,27 +108,35 @@ describe('addSceneManifest', () => {
     expect(roleArray[0]['UISceneDelegateClassName']).toBe('$(PRODUCT_MODULE_NAME).CustomSceneDelegate');
   });
 
-  it('is idempotent across repeated runs', () => {
+  it('is idempotent across repeated runs', async () => {
     writeFileSync(plistPath, PRE_UISCENE_INFO_PLIST);
 
-    expect(addSceneManifest(plistPath).added).toBe(true);
-    expect(addSceneManifest(plistPath).added).toBe(false);
-    expect(addSceneManifest(plistPath).added).toBe(false);
+    await addSceneManifestIfNeeded(config);
+    const firstOutput = readFileSync(plistPath, 'utf-8');
+    await addSceneManifestIfNeeded(config);
+    const secondOutput = readFileSync(plistPath, 'utf-8');
+    await addSceneManifestIfNeeded(config);
+    const thirdOutput = readFileSync(plistPath, 'utf-8');
+
+    expect(secondOutput).toBe(firstOutput);
+    expect(thirdOutput).toBe(firstOutput);
   });
 
-  it('returns false when the plist does not exist', () => {
-    const missing = join(tmpDir.path, 'DoesNotExist.plist');
-    expect(addSceneManifest(missing).added).toBe(false);
+  it('is a no-op when the plist does not exist', async () => {
+    // No write — plist file is missing.
+    await expect(addSceneManifestIfNeeded(config)).resolves.toBeUndefined();
   });
 });
 
 describe('hasSceneManifest', () => {
   let tmpDir: any;
   let plistPath: string;
+  let config: Config;
 
   beforeEach(async () => {
     tmpDir = await mktmp();
     plistPath = join(tmpDir.path, 'Info.plist');
+    config = makeFakeConfig(tmpDir.path);
   });
 
   afterEach(() => {
@@ -132,15 +145,15 @@ describe('hasSceneManifest', () => {
 
   it('returns false when the manifest key is absent', () => {
     writeFileSync(plistPath, PRE_UISCENE_INFO_PLIST);
-    expect(hasSceneManifest(plistPath)).toBe(false);
+    expect(hasSceneManifest(config)).toBe(false);
   });
 
   it('returns true when the manifest key is present', () => {
     writeFileSync(plistPath, POST_UISCENE_INFO_PLIST);
-    expect(hasSceneManifest(plistPath)).toBe(true);
+    expect(hasSceneManifest(config)).toBe(true);
   });
 
   it('returns false when the plist does not exist', () => {
-    expect(hasSceneManifest(join(tmpDir.path, 'DoesNotExist.plist'))).toBe(false);
+    expect(hasSceneManifest(config)).toBe(false);
   });
 });

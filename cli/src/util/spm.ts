@@ -239,25 +239,30 @@ export async function addInfoPlistDebugIfNeeded(config: Config): Promise<void> {
   }
 }
 
-export function hasSceneManifest(plistPath: string): boolean {
-  if (!existsSync(plistPath)) {
+export function hasSceneManifest(config: Config): boolean {
+  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+  if (!existsSync(infoPlist)) {
     return false;
   }
-  const entries = parse(readFileSync(plistPath, 'utf-8')) as PlistObject;
+  const entries = parse(readFileSync(infoPlist, 'utf-8')) as PlistObject;
   return entries['UIApplicationSceneManifest'] !== undefined;
 }
 
-export function addSceneManifest(plistPath: string): { added: boolean } {
+export async function addSceneManifestIfNeeded(config: Config): Promise<void> {
   type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
-  if (!existsSync(plistPath)) {
-    logger.warn(plistPath + ' not found.');
-    return { added: false };
+  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+
+  if (!existsSync(infoPlist)) {
+    logger.warn(infoPlist + ' not found.');
+    return;
   }
 
-  const entries = parse(readFileSync(plistPath, 'utf-8')) as Mutable<PlistObject>;
+  const entries = parse(readFileSync(infoPlist, 'utf-8')) as Mutable<PlistObject>;
+
   if (entries['UIApplicationSceneManifest'] !== undefined) {
-    return { added: false };
+    logger.warn('Found UIApplicationSceneManifest in ' + infoPlist + ', skipping.');
+    return;
   }
 
   entries['UIApplicationSceneManifest'] = {
@@ -273,8 +278,7 @@ export function addSceneManifest(plistPath: string): { added: boolean } {
     },
   };
 
-  writeFileSync(plistPath, build(entries));
-  return { added: true };
+  writeFileSync(infoPlist, build(entries));
 }
 
 export async function checkSwiftToolsVersion(config: Config, version: string | undefined): Promise<string | null> {
