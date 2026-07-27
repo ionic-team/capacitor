@@ -13,6 +13,8 @@ import { deleteFolderRecursive } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
+import { migrateToUIScene } from './migrate-uiscene';
+
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
 const libs = ['@capacitor/core', '@capacitor/cli', '@capacitor/ios', '@capacitor/android'];
@@ -175,6 +177,8 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         } else {
           logger.warn('Skipped updating deployment target');
         }
+
+        await migrateToUIScene(config);
       }
 
       if (!installFailed) {
