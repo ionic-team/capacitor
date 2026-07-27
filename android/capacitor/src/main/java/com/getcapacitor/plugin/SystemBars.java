@@ -63,26 +63,12 @@ public class SystemBars extends Plugin {
     private WebViewListener webViewListener;
 
     private void warnAboutUnsupportedConfigurationValues() {
-        String systemBarsInsetsHandling = bridge
-            .getConfig()
-            .getPluginConfiguration("SystemBars")
-            .getConfigJSON()
-            .optString("insetsHandling");
-        boolean keyboardResizeOnFullScreen = bridge
-            .getConfig()
-            .getPluginConfiguration("Keyboard")
-            .getConfigJSON()
-            .optBoolean("resizeOnFullScreen", false);
-        if (!systemBarsInsetsHandling.equals("disable") && keyboardResizeOnFullScreen) {
+        boolean keyboardResizeOnFullScreen = bridge.getConfig().getPluginConfiguration("Keyboard").getBoolean("resizeOnFullScreen", false);
+
+        if (!INSETS_HANDLING_DISABLE.equals(insetsHandling) && keyboardResizeOnFullScreen) {
             Logger.warn(
                 "SystemBars",
                 "You should omit `Keyboard.resizeOnFullScreen` in your `capacitor.config.json`. Other values can lead to unexpected behavior."
-            );
-        }
-        if (isSafeAreaPluginPresent()) {
-            Logger.warn(
-                "SystemBars",
-                "You should uninstall `@capacitor-community/safe-area`. Having this library installed can lead to unexpected behavior."
             );
         }
     }
@@ -90,8 +76,6 @@ public class SystemBars extends Plugin {
     @Override
     public void load() {
         super.load();
-
-        warnAboutUnsupportedConfigurationValues();
 
         initSystemBars();
     }
@@ -151,6 +135,8 @@ public class SystemBars extends Plugin {
             insetsHandling = INSETS_HANDLING_CSS;
         }
 
+        warnAboutUnsupportedConfigurationValues();
+
         initWindowInsetsListener();
 
         getBridge().executeOnMainThread(() -> {
@@ -193,15 +179,6 @@ public class SystemBars extends Plugin {
     @PluginMethod
     public void setAnimation(final PluginCall call) {
         call.resolve();
-    }
-
-    private static boolean isSafeAreaPluginPresent() {
-        try {
-            Class.forName("package com.getcapacitor.community.safearea.SafeAreaPlugin");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 
     private void initWindowInsetsListener() {
