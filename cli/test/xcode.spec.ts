@@ -65,9 +65,9 @@ describe('addSwiftFileToAppTarget', () => {
     const objects = project.hash.project.objects;
 
     const fileRefs = Object.entries(objects.PBXFileReference).filter(([k]) => !k.endsWith('_comment'));
-    expect(
-      fileRefs.some(([, ref]) => typeof ref === 'object' && (ref as any).path === '"SceneDelegate.swift"'),
-    ).toBe(true);
+    expect(fileRefs.some(([, ref]) => typeof ref === 'object' && (ref as any).path === '"SceneDelegate.swift"')).toBe(
+      true,
+    );
 
     const buildFiles = Object.entries(objects.PBXBuildFile).filter(([k]) => !k.endsWith('_comment'));
     expect(
@@ -81,9 +81,7 @@ describe('addSwiftFileToAppTarget', () => {
     const sourcesPhase = objects.PBXSourcesBuildPhase!;
     const sourcesEntries = Object.entries(sourcesPhase).filter(([k]) => !k.endsWith('_comment'));
     const [, sourcesObj] = sourcesEntries[0];
-    expect(
-      (sourcesObj as any).files.some((f: any) => f.comment?.includes('SceneDelegate.swift')),
-    ).toBe(true);
+    expect((sourcesObj as any).files.some((f: any) => f.comment?.includes('SceneDelegate.swift'))).toBe(true);
   });
 
   it('is a no-op when the file is already registered', () => {

@@ -2,6 +2,7 @@ import { mkdirp, writeFileSync } from 'fs-extra';
 import { join } from 'path';
 
 import type { Config } from '../src/definitions';
+import { logger } from '../src/log';
 import { __testables } from '../src/tasks/migrate-uiscene';
 
 import { mktmp } from './util';
@@ -93,8 +94,8 @@ describe('scanAndWarn', () => {
     iosDir = join(tmpDir.path, 'ios');
     appDir = join(iosDir, 'App', 'App');
     await mkdirp(appDir);
-    warnSpy = jest.spyOn(require('../src/log').logger, 'warn').mockImplementation(() => undefined);
-    infoSpy = jest.spyOn(require('../src/log').logger, 'info').mockImplementation(() => undefined);
+    warnSpy = jest.spyOn(logger, 'warn').mockImplementation(() => undefined);
+    infoSpy = jest.spyOn(logger, 'info').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
@@ -123,10 +124,7 @@ describe('scanAndWarn', () => {
   });
 
   it('warns on tmpWindow and TmpViewController references', async () => {
-    writeFileSync(
-      join(appDir, 'Legacy.swift'),
-      `let w = tmpWindow\nlet vc: TmpViewController? = nil\n`,
-    );
+    writeFileSync(join(appDir, 'Legacy.swift'), `let w = tmpWindow\nlet vc: TmpViewController? = nil\n`);
 
     await scanAndWarn(makeConfig());
 
@@ -146,10 +144,7 @@ describe('scanAndWarn', () => {
   });
 
   it('is silent on a clean project', async () => {
-    writeFileSync(
-      join(appDir, 'AppDelegate.swift'),
-      VANILLA_OPEN_URL + VANILLA_CONTINUE,
-    );
+    writeFileSync(join(appDir, 'AppDelegate.swift'), VANILLA_OPEN_URL + VANILLA_CONTINUE);
     writeFileSync(join(appDir, 'CleanCode.swift'), `class Clean {}\n`);
 
     await scanAndWarn(makeConfig());
