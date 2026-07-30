@@ -9,7 +9,7 @@ import { addSceneManifestIfNeeded, hasSceneManifest } from '../util/spm';
 import { extractTemplate } from '../util/template';
 import { addSwiftFileToAppTarget } from '../util/xcode';
 
-type PreUISceneState = 'eligible' | 'already-migrated' | 'partial'
+type PreUISceneState = 'eligible' | 'already-migrated' | 'partial';
 
 interface UISceneDetectionSignals {
   hasManifest: boolean;
