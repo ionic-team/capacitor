@@ -9,7 +9,7 @@ import { addSceneManifestIfNeeded, hasSceneManifest } from '../util/spm';
 import { extractTemplate } from '../util/template';
 import { addSwiftFileToAppTarget } from '../util/xcode';
 
-type PreUISceneState = 'eligible' | 'already-migrated' | 'partial' | 'ineligible';
+type PreUISceneState = 'eligible' | 'already-migrated' | 'partial'
 
 interface UISceneDetectionSignals {
   hasManifest: boolean;
@@ -27,9 +27,6 @@ export async function migrateToUIScene(config: Config): Promise<void> {
   const state = classify(signals);
 
   switch (state) {
-    case 'ineligible':
-      logger.info('UIScene migration: no iOS App target detected, skipping.');
-      return;
     case 'already-migrated':
       logger.info('UIScene migration: project already migrated, skipping.');
       return;
