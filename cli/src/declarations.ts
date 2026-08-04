@@ -787,7 +787,7 @@ export interface PluginsConfig {
     /**
      * Set an initial value for the to be detected `viewport-fit=` meta tag value.
      * For most apps that support edge-to-edge this value will eventually be `cover`.
-     * Therefore you might want to set this value is to `cover` to help prevent layout jumps and glitches.
+     * Therefore you might want to set this value to `cover` to help prevent layout jumps and glitches.
      * If you know the value to be `cover` initially, you can set it here.
      * The value will always end up correctly, no matter what you set here,
      * as long as `insetsHandling` is set to `native` or `css`.
@@ -795,7 +795,7 @@ export interface PluginsConfig {
      *
      * This option is only supported on Android.
      *
-     * @default false
+     * @default undefined
      */
     initialViewportFitValueHint?: 'auto' | 'contain' | 'cover';
 

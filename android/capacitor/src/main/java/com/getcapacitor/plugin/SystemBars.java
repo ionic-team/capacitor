@@ -122,7 +122,7 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_NATIVE);
+        String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
         if (
             INSETS_HANDLING_CSS.equals(configuredInsetsHandling) ||
             INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling) ||
