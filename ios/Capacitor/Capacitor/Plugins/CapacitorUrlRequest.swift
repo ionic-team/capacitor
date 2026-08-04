@@ -12,8 +12,8 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         request = URLRequest(url: url)
         request.httpMethod = method
         headers = [:]
-        if let lang = Locale.autoupdatingCurrent.languageCode {
-            if let country = Locale.autoupdatingCurrent.regionCode {
+        if let lang = Locale.autoupdatingCurrent.language.languageCode?.identifier {
+            if let country = Locale.autoupdatingCurrent.region?.identifier {
                 headers["Accept-Language"] = "\(lang)-\(country),\(lang);q=0.5"
             } else {
                 headers["Accept-Language"] = "\(lang);q=0.5"
