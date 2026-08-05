@@ -1,16 +1,5 @@
 import Foundation
 
-public class JSDate {
-    @available(*, deprecated, message: "No longer needed. Dates will be mapped to strings during serialization.")
-    static func toString(_ date: Date) -> String {
-        let formatter = ISO8601DateFormatter()
-        return formatter.string(from: date)
-    }
-}
-
-@available(*, deprecated, renamed: "PluginCallResultData")
-public typealias JSResultBody = [String: Any]
-
 /**
  * A call originating from JavaScript land
  */
