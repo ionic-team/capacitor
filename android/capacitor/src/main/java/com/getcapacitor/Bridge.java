@@ -380,22 +380,6 @@ public class Bridge {
     }
 
 
-    public boolean shouldKeepRunning() {
-        Plugin cordova = this.cordova();
-        if (cordova instanceof CordovaBridgeConfig) {
-            return ((CordovaBridgeConfig) cordova).shouldKeepRunning();
-        }
-        return false;
-    }
-
-    public boolean isDeployDisabled() {
-        Plugin cordova = this.cordova();
-        if (cordova instanceof CordovaBridgeConfig) {
-            return ((CordovaBridgeConfig) cordova).isDeployDisabled();
-        }
-        return false;
-    }
-
     public void handleAppUrlLoadError(Exception ex) {
         if (ex instanceof SocketTimeoutException) {
             Logger.error(
