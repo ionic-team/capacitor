@@ -84,13 +84,13 @@ public class CordovaPlugin extends Plugin implements CordovaBridgeConfig {
     }
 
     @Override
-    public boolean isDeployDisabled() {
-        return preferences.getBoolean("DisableDeploy", false);
-    }
-
-    @Override
     public boolean shouldKeepRunning() {
         return preferences.getBoolean("KeepRunning", true);
+    }
+
+        @Override
+    public boolean isDeployDisabled() {
+        return preferences.getBoolean("DisableDeploy", false);
     }
 
     @Override
