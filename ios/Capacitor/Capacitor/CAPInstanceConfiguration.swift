@@ -23,11 +23,6 @@ extension InstanceConfiguration {
         return localURL.appendingPathComponent(errorPath)
     }
 
-    @available(*, deprecated, message: "Use getPluginConfig")
-    @objc public func getPluginConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
-        return (pluginConfigurations as? JSObject)?[keyPath: KeyPath("\(pluginId).\(configKey)")]
-    }
-
     @objc public func getPluginConfig(_ pluginId: String) -> PluginConfig {
         if let cfg = (pluginConfigurations as? JSObject)?[keyPath: KeyPath("\(pluginId)")] as? JSObject {
             return PluginConfig(config: cfg)
@@ -42,16 +37,6 @@ extension InstanceConfiguration {
             }
         }
         return false
-    }
-
-    @available(*, deprecated, message: "Use direct property accessors")
-    @objc public func getValue(_ key: String) -> Any? {
-        return (legacyConfig as? JSObject)?[keyPath: KeyPath(key)]
-    }
-
-    @available(*, deprecated, message: "Use direct property accessors")
-    @objc public func getString(_ key: String) -> String? {
-        return (legacyConfig as? JSObject)?[keyPath: KeyPath(key)] as? String
     }
 
     // MARK: - Private
