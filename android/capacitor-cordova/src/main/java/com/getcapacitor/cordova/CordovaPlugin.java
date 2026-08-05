@@ -84,13 +84,6 @@ public class CordovaPlugin extends Plugin implements CordovaBridgeConfig {
     }
 
     @Override
-    public boolean hasDefinedRequiredPermissions() {
-        boolean currentPermissionResult = pluginHadPermissionResult;
-        pluginHadPermissionResult = false;
-        return currentPermissionResult;
-    }
-
-    @Override
     public boolean shouldKeepRunning() {
         return preferences.getBoolean("KeepRunning", true);
     }
@@ -98,6 +91,13 @@ public class CordovaPlugin extends Plugin implements CordovaBridgeConfig {
     @Override
     public boolean isDeployDisabled() {
         return preferences.getBoolean("DisableDeploy", false);
+    }
+
+    @Override
+    public boolean hasDefinedRequiredPermissions() {
+        boolean currentPermissionResult = pluginHadPermissionResult;
+        pluginHadPermissionResult = false;
+        return currentPermissionResult;
     }
 
     @Override
