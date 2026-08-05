@@ -95,8 +95,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
-    @available(*, deprecated, message: "`httpsInterceptorStartIdentifier` is no longer required. All proxied requests are handled via `httpInterceptorStartIdentifier` instead")
-    public static let httpsInterceptorStartIdentifier = "/_capacitor_https_interceptor_"
     public static let httpInterceptorUrlParam = "u"
     public static let defaultScheme = "capacitor"
 
@@ -124,47 +122,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     internal private(set) var callInterceptors: [String: ([String: Any]) -> Void] = [:]
     // Array of block based observers
     var observers: [NSObjectProtocol] = []
-
-    // MARK: - CAPBridgeProtocol: Deprecated
-
-    public func getWebView() -> WKWebView? {
-        return webView
-    }
-
-    public func isSimulator() -> Bool {
-        return isSimEnvironment
-    }
-
-    public func isDevMode() -> Bool {
-        return isDevEnvironment
-    }
-
-    public func getStatusBarVisible() -> Bool {
-        return statusBarVisible
-    }
-
-    @nonobjc public func setStatusBarVisible(_ visible: Bool) {
-        statusBarVisible = visible
-    }
-
-    public func getStatusBarStyle() -> UIStatusBarStyle {
-        return statusBarStyle
-    }
-    @nonobjc public func setStatusBarStyle(_ style: UIStatusBarStyle) {
-        statusBarStyle = style
-    }
-
-    public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
-        return userInterfaceStyle
-    }
-
-    public func getLocalUrl() -> String {
-        return config.localURL.absoluteString
-    }
-
-    @nonobjc public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
-        statusBarAnimation = animation
-    }
 
     public func setServerBasePath(_ path: String) {
         let url = URL(fileURLWithPath: path, isDirectory: true)
@@ -197,11 +154,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     // MARK: - Initialization
-
-    @available(*, deprecated, renamed: "init", message: "Use different init")
-    public convenience init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: Any, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler, autoRegisterPlugins: Bool = true) {
-        self.init(with: configuration, delegate: bridgeDelegate, assetHandler: assetHandler, delegationHandler: delegationHandler, autoRegisterPlugins: autoRegisterPlugins)
-    }
 
     public init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler, autoRegisterPlugins: Bool = true) {
 
@@ -403,16 +355,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         _ = storedCalls.withLock { $0.removeValue(forKey: withID) }
     }
 
-    // MARK: - Deprecated Versions
-
-    @objc public func getSavedCall(_ callbackId: String) -> CAPPluginCall? {
-        return savedCall(withID: callbackId)
-    }
-
-    @objc public func releaseCall(callbackId: String) {
-        releaseCall(withID: callbackId)
-    }
-
     // MARK: - Internal
 
     func getDispatchQueue() -> DispatchQueue {
@@ -420,7 +362,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     func reload() {
-        self.getWebView()?.reload()
+        self.webView?.reload()
     }
 
     func docLink(_ url: String) -> String {
@@ -589,7 +531,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         """
 
         DispatchQueue.main.async {
-            self.getWebView()?.evaluateJavaScript(wrappedJs, completionHandler: { (_, error) in
+            self.webView?.evaluateJavaScript(wrappedJs, completionHandler: { (_, error) in
                 if let error = error {
                     CAPLog.print("⚡️  JS Eval error", error.localizedDescription)
                 }
@@ -605,7 +547,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // swiftlint:disable:next identifier_name
     @objc public func eval(js: String) {
         DispatchQueue.main.async {
-            self.getWebView()?.evaluateJavaScript(js, completionHandler: { (_, error) in
+            self.webView?.evaluateJavaScript(js, completionHandler: { (_, error) in
                 if let error = error {
                     CAPLog.print("⚡️  JS Eval error", error.localizedDescription)
                 }
@@ -639,7 +581,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     public func logToJs(_ message: String, _ level: String = "log") {
         DispatchQueue.main.async {
-            self.getWebView()?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
+            self.webView?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
                 if error != nil, let result = result {
                     CAPLog.print(result)
                 }
@@ -694,13 +636,5 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
         self.viewController?.present(alert, animated: true, completion: nil)
-    }
-
-    @objc open func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
-        self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
-    }
-
-    @objc open func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
-        self.viewController?.dismiss(animated: flag, completion: completion)
     }
 }
