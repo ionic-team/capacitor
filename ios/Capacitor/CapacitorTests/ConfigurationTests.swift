@@ -134,19 +134,20 @@ class ConfigurationTests: XCTestCase {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
         let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.flat], cordovaConfiguration: nil)
         let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
-        let value = configuration.getPluginConfigValue("SplashScreen", "launchShowDuration") as? Int
-        XCTAssertNotNil(value)
-        XCTAssertTrue(value == 1)
+        let value = configuration.getPluginConfig("SplashScreen").getInt("launchShowDuration", 0)
+        XCTAssertEqual(value, 1)
     }
-    
+
     func testLegacyConfig() throws {
         let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
-        let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.nested], cordovaConfiguration: nil)
-        let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
-        var value = configuration.getValue("overrideUserAgent") as? String
-        XCTAssertEqual(value, "level 1 override")
-        value = configuration.getValue("ios.overrideUserAgent") as? String
-        XCTAssertEqual(value, "level 2 override")
+        // a top-level legacy key is exposed through the direct property accessor
+        let flatDescriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.flat], cordovaConfiguration: nil)
+        let flatConfiguration = InstanceConfiguration(with: flatDescriptor, isDebug: true)
+        XCTAssertEqual(flatConfiguration.overridenUserAgentString, "level 1 override")
+        // a platform-specific legacy key overrides the top-level one
+        let nestedDescriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.nested], cordovaConfiguration: nil)
+        let nestedConfiguration = InstanceConfiguration(with: nestedDescriptor, isDebug: true)
+        XCTAssertEqual(nestedConfiguration.overridenUserAgentString, "level 2 override")
     }
     
     func testNavigationRules() throws {
