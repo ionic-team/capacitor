@@ -113,7 +113,7 @@ async function loadExtConfigTS(
     }
 
     const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
-    const extConfigObject = requireTS(ts, extConfigFilePath) as any;
+    const extConfigObject = (await requireTS(ts, extConfigFilePath)) as any;
     const extConfig = extConfigObject.default ? await extConfigObject.default : extConfigObject;
 
     return {

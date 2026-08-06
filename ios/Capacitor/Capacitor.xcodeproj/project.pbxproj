@@ -56,6 +56,7 @@
 		62959B472524DA7800A3D7F1 /* CAPNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B152524DA7700A3D7F1 /* CAPNotifications.swift */; };
 		6296A77E253A2E49005A202A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6296A77D253A2E49005A202A /* AppDelegate.swift */; };
 		6296A782253A2E49005A202A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6296A781253A2E49005A202A /* ViewController.swift */; };
+		6296A7A0253A2E49005A202A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6296A7A1253A2E49005A202A /* SceneDelegate.swift */; };
 		6296A785253A2E49005A202A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A783253A2E49005A202A /* Main.storyboard */; };
 		6296A787253A2E49005A202A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6296A786253A2E49005A202A /* Assets.xcassets */; };
 		6296A78A253A2E49005A202A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A788253A2E49005A202A /* LaunchScreen.storyboard */; };
@@ -74,6 +75,7 @@
 		62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */; };
 		62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */; };
 		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
+		952707712FD9DD2D0079E5D3 /* CAPSceneDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9527076F2FD9DD260079E5D3 /* CAPSceneDelegateProxy.swift */; };
 		957BD9402E78A4A50056874C /* SystemBars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957BD93E2E78A4A20056874C /* SystemBars.swift */; };
 		A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */; };
 		A327E6B728DB8B2900CA8B0A /* CapacitorHttp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */; };
@@ -199,6 +201,7 @@
 		6296A77B253A2E49005A202A /* TestsHostApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestsHostApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6296A77D253A2E49005A202A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6296A781253A2E49005A202A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		6296A7A1253A2E49005A202A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		6296A784253A2E49005A202A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6296A786253A2E49005A202A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6296A789253A2E49005A202A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -218,6 +221,7 @@
 		62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Capacitor.swift"; sourceTree = "<group>"; };
 		62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgedTypesTests.m; sourceTree = "<group>"; };
 		62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesHelper.swift; sourceTree = "<group>"; };
+		9527076F2FD9DD260079E5D3 /* CAPSceneDelegateProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPSceneDelegateProxy.swift; sourceTree = "<group>"; };
 		957BD93E2E78A4A20056874C /* SystemBars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemBars.swift; sourceTree = "<group>"; };
 		A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
 		A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorHttp.swift; sourceTree = "<group>"; };
@@ -332,6 +336,7 @@
 		62959AE12524DA7700A3D7F1 /* Capacitor */ = {
 			isa = PBXGroup;
 			children = (
+				9527076F2FD9DD260079E5D3 /* CAPSceneDelegateProxy.swift */,
 				A7D9312C2B2370EF00FF59A2 /* Codable */,
 				0F8F33B127DA980A003F49D6 /* PluginConfig.swift */,
 				A76739782B98E09700795F7B /* PrivacyInfo.xcprivacy */,
@@ -410,6 +415,7 @@
 			isa = PBXGroup;
 			children = (
 				6296A77D253A2E49005A202A /* AppDelegate.swift */,
+				6296A7A1253A2E49005A202A /* SceneDelegate.swift */,
 				6296A781253A2E49005A202A /* ViewController.swift */,
 				62E0735125535E6500BAAADB /* configurations */,
 				6296A783253A2E49005A202A /* Main.storyboard */,
@@ -669,6 +675,7 @@
 				A7D8B3522B238A840003FAD6 /* JSValueEncoder.swift in Sources */,
 				A7F7EDD5292BE8520015B73B /* CAPInstancePlugin.swift in Sources */,
 				A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */,
+				952707712FD9DD2D0079E5D3 /* CAPSceneDelegateProxy.swift in Sources */,
 				62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */,
 				62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */,
 				62959B1C2524DA7800A3D7F1 /* CAPPluginMethod.m in Sources */,
@@ -727,6 +734,7 @@
 			files = (
 				6296A782253A2E49005A202A /* ViewController.swift in Sources */,
 				6296A77E253A2E49005A202A /* AppDelegate.swift in Sources */,
+				6296A7A0253A2E49005A202A /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

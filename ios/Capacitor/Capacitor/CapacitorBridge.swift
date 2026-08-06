@@ -213,21 +213,25 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if !cordovaIsPresent {
             observers.append(
                 NotificationCenter.default.addObserver(
-                    forName: UIApplication.willEnterForegroundNotification,
+                    forName: UIScene.willEnterForegroundNotification,
                     object: nil,
                     queue: .main
-                ) { [weak self] _ in
-                    self?.triggerDocumentJSEvent(eventName: "resume")
+                ) { [weak self] notification in
+                    if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
+                        self?.triggerDocumentJSEvent(eventName: "resume")
+                    }
                 }
             )
 
             observers.append(
                 NotificationCenter.default.addObserver(
-                    forName: UIApplication.didEnterBackgroundNotification,
+                    forName: UIScene.didEnterBackgroundNotification,
                     object: nil,
                     queue: .main
-                ) { [weak self] _ in
-                    self?.triggerDocumentJSEvent(eventName: "pause")
+                ) { [weak self] notification in
+                    if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
+                        self?.triggerDocumentJSEvent(eventName: "pause")
+                    }
                 }
             )
         }
