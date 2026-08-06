@@ -45,11 +45,6 @@ public class MessageHandler {
         }
     }
 
-    @Deprecated
-    public MessageHandler(Bridge bridge, WebView webView, Object cordovaPluginManager) {
-        this(bridge, webView);
-    }
-
     /**
      * The main message handler that will be called from JavaScript
      * to send a message to the native bridge.
