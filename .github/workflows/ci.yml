@@ -21,12 +21,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Get Latest
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24.x
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Restore Dependency Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
@@ -34,12 +34,12 @@ jobs:
     runs-on: macos-15
     timeout-minutes: 30
     steps:
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24.x
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Restore Dependency Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
@@ -53,12 +53,12 @@ jobs:
       - setup
       - lint
     steps:
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24.x
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Restore Dependency Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
@@ -74,12 +74,12 @@ jobs:
       - setup
       - lint
     steps:
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24.x
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Restore Dependency Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
@@ -102,12 +102,12 @@ jobs:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - run: xcrun simctl list > /dev/null
       - run: xcodebuild -downloadPlatform iOS
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24.x
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Restore Dependency Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
@@ -123,7 +123,7 @@ jobs:
       - setup
       - lint
     steps:
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24.x
       - name: set up JDK 21
@@ -131,9 +131,9 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Restore Dependency Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependencies-cache-${{ hashFiles('**/package.json') }}
