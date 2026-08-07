@@ -374,22 +374,20 @@ public class Bridge {
         return null;
     }
 
-    public boolean isDeployDisabled() {
-        Plugin cordova = this.cordova();
-        if (cordova != null) {
-            return cordova.hasPermission("DisableDeploy");
-        } else {
-            return false;
-        }
-    }
-
     public boolean shouldKeepRunning() {
         Plugin cordova = this.cordova();
-        if (cordova != null) {
-            return cordova.hasPermission("KeepRunning");
-        } else {
-            return false;
+        if (cordova instanceof CordovaBridgeConfig) {
+            return ((CordovaBridgeConfig) cordova).shouldKeepRunning();
         }
+        return false;
+    }
+
+    public boolean isDeployDisabled() {
+        Plugin cordova = this.cordova();
+        if (cordova instanceof CordovaBridgeConfig) {
+            return ((CordovaBridgeConfig) cordova).isDeployDisabled();
+        }
+        return false;
     }
 
     public void handleAppUrlLoadError(Exception ex) {

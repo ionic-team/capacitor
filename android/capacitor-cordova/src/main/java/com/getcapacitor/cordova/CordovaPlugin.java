@@ -3,6 +3,7 @@ package com.getcapacitor.cordova;
 import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
+import com.getcapacitor.CordovaBridgeConfig;
 import com.getcapacitor.Logger;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -16,7 +17,7 @@ import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 
 @CapacitorPlugin(name = "__CordovaPlugin")
-public class CordovaPlugin extends Plugin {
+public class CordovaPlugin extends Plugin implements CordovaBridgeConfig {
 
     private MockCordovaInterfaceImpl cordovaInterface;
     private CordovaWebView webView;
@@ -83,16 +84,13 @@ public class CordovaPlugin extends Plugin {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        if (permission.equals("DisableDeploy")) {
-            return preferences.getBoolean(permission, false);
-        }
+    public boolean shouldKeepRunning() {
+        return preferences.getBoolean("KeepRunning", true);
+    }
 
-        if (permission.equals("KeepRunning")) {
-            return preferences.getBoolean(permission, true);
-        }
-
-        return false;
+    @Override
+    public boolean isDeployDisabled() {
+        return preferences.getBoolean("DisableDeploy", false);
     }
 
     @Override
