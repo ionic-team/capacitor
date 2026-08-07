@@ -3,6 +3,8 @@ import Capacitor
 
 @main
 struct CapacitorApp: App {
+  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+  
   var body: some Scene {
     WindowGroup {
       CapacitorView()
