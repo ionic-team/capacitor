@@ -13,6 +13,7 @@ import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
 import { getPlatformElement, getPluginPlatform, getPluginType, PluginType } from '../plugin';
+import { convertToUnixPath } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 
 export interface SwiftPlugin {
@@ -125,7 +126,7 @@ let package = Package(
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
       const platformTag = getPluginPlatform(plugin, config.ios.name);
       if (platformTag.$?.package) {
-        const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+        const relPath = convertToUnixPath(relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath));
         packageSwiftText += `,\n        .package(name: "${plugin.id}", path: "${relPath}")`;
       } else {
         const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
@@ -139,7 +140,9 @@ let package = Package(
       const options = packageOptions[plugin.id];
       const symlink = options?.symlink;
       const symlinkFolder = join('symlinks', plugin.name);
-      const relPath = symlink ? symlinkFolder : relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+      const relPath = symlink
+        ? symlinkFolder
+        : convertToUnixPath(relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath));
       if (symlink) {
         await ensureSymlink(plugin.rootPath, resolve(config.ios.nativeProjectDirAbs, 'CapApp-SPM', symlinkFolder));
       }
@@ -243,6 +246,48 @@ export async function addInfoPlistDebugIfNeeded(config: Config): Promise<void> {
   } else {
     logger.warn(infoPlist + ' not found.');
   }
+}
+
+export function hasSceneManifest(config: Config): boolean {
+  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+  if (!existsSync(infoPlist)) {
+    return false;
+  }
+  const entries = parse(readFileSync(infoPlist, 'utf-8')) as PlistObject;
+  return entries['UIApplicationSceneManifest'] !== undefined;
+}
+
+export async function addSceneManifestIfNeeded(config: Config): Promise<void> {
+  type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+
+  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+
+  if (!existsSync(infoPlist)) {
+    logger.warn(infoPlist + ' not found.');
+    return;
+  }
+
+  const entries = parse(readFileSync(infoPlist, 'utf-8')) as Mutable<PlistObject>;
+
+  if (entries['UIApplicationSceneManifest'] !== undefined) {
+    logger.warn('Found UIApplicationSceneManifest in ' + infoPlist + ', skipping.');
+    return;
+  }
+
+  entries['UIApplicationSceneManifest'] = {
+    UIApplicationSupportsMultipleScenes: false,
+    UISceneConfigurations: {
+      UIWindowSceneSessionRoleApplication: [
+        {
+          UISceneConfigurationName: 'Default Configuration',
+          UISceneDelegateClassName: '$(PRODUCT_MODULE_NAME).SceneDelegate',
+          UISceneStoryboardFile: 'Main',
+        },
+      ],
+    },
+  };
+
+  writeFileSync(infoPlist, build(entries));
 }
 
 export async function checkSwiftToolsVersion(config: Config, version: string | undefined): Promise<string | null> {
