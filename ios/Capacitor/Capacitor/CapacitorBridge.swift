@@ -1,12 +1,11 @@
 import Foundation
 import Dispatch
 import WebKit
-import Cordova
 
 internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
 
 struct RegistrationList: Codable {
-    let packageClassList: Set<String>
+    var packageClassList: Set<String>
 }
 
 /**
@@ -96,8 +95,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
-    @available(*, deprecated, message: "`httpsInterceptorStartIdentifier` is no longer required. All proxied requests are handled via `httpInterceptorStartIdentifier` instead")
-    public static let httpsInterceptorStartIdentifier = "/_capacitor_https_interceptor_"
     public static let httpInterceptorUrlParam = "u"
     public static let defaultScheme = "capacitor"
 
@@ -113,61 +110,18 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     @objc public var config: InstanceConfiguration
     // Map of all loaded and instantiated plugins by pluginId -> instance
     var plugins =  [String: CapacitorPlugin]()
-    // Manager for getting Cordova plugins
-    var cordovaPluginManager: CDVPluginManager?
     // Calls we are storing to resolve later
     var storedCalls = ConcurrentDictionary<CAPPluginCall>()
     // Whether to inject the Cordova files
-    private var injectCordovaFiles = false
-    private var cordovaParser: CDVConfigParser?
+    private var cordovaIsPresent = false
     private var injectMiscFiles: [String] = []
     private var canInjectJS: Bool = true
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
+    internal private(set) var callInterceptors: [String: ([String: Any]) -> Void] = [:]
     // Array of block based observers
     var observers: [NSObjectProtocol] = []
-
-    // MARK: - CAPBridgeProtocol: Deprecated
-
-    public func getWebView() -> WKWebView? {
-        return webView
-    }
-
-    public func isSimulator() -> Bool {
-        return isSimEnvironment
-    }
-
-    public func isDevMode() -> Bool {
-        return isDevEnvironment
-    }
-
-    public func getStatusBarVisible() -> Bool {
-        return statusBarVisible
-    }
-
-    @nonobjc public func setStatusBarVisible(_ visible: Bool) {
-        statusBarVisible = visible
-    }
-
-    public func getStatusBarStyle() -> UIStatusBarStyle {
-        return statusBarStyle
-    }
-    @nonobjc public func setStatusBarStyle(_ style: UIStatusBarStyle) {
-        statusBarStyle = style
-    }
-
-    public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
-        return userInterfaceStyle
-    }
-
-    public func getLocalUrl() -> String {
-        return config.localURL.absoluteString
-    }
-
-    @nonobjc public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
-        statusBarAnimation = animation
-    }
 
     public func setServerBasePath(_ path: String) {
         let url = URL(fileURLWithPath: path, isDirectory: true)
@@ -201,12 +155,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - Initialization
 
-    public init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler, autoRegisterPlugins: Bool = true) {
+    public init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler, autoRegisterPlugins: Bool = true) {
+
         self.bridgeDelegate = bridgeDelegate
         self.webViewAssetHandler = assetHandler
         self.webViewDelegationHandler = delegationHandler
         self.config = configuration
-        self.cordovaParser = cordovaConfiguration
         self.notificationRouter = NotificationRouter()
         self.notificationRouter.handleApplicationNotifications = configuration.handleApplicationNotifications
         self.autoRegisterPlugins = autoRegisterPlugins
@@ -216,7 +170,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
-        setupCordovaCompatibility()
+        setupListeners()
         exportMiscJS()
         canInjectJS = false
 
@@ -255,52 +209,31 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         injectMiscFiles.removeAll()
     }
 
-    /**
-     Set up our Cordova compat by loading all known Cordova plugins and injecting their JS.
-     */
-    func setupCordovaCompatibility() {
-        if injectCordovaFiles {
-            exportCordovaJS()
-            registerCordovaPlugins()
-        } else {
-            observers.append(NotificationCenter.default.addObserver(
-                forName: UIScene.willEnterForegroundNotification,
-                object: nil,
-                queue: OperationQueue.main
-            ) { [weak self] notification in
-                guard self?.notificationMatchesViewScene(notification) == true else { return }
-                self?.triggerDocumentJSEvent(eventName: "resume")
-            })
-            observers.append(NotificationCenter.default.addObserver(
-                forName: UIScene.didEnterBackgroundNotification,
-                object: nil,
-                queue: OperationQueue.main
-            ) { [weak self] notification in
-                guard self?.notificationMatchesViewScene(notification) == true else { return }
-                self?.triggerDocumentJSEvent(eventName: "pause")
-            })
-        }
-    }
+    func setupListeners() {
+        if !cordovaIsPresent {
+            observers.append(
+                NotificationCenter.default.addObserver(
+                    forName: UIScene.willEnterForegroundNotification,
+                    object: nil,
+                    queue: .main
+                ) { [weak self] notification in
+                    if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
+                        self?.triggerDocumentJSEvent(eventName: "resume")
+                    }
+                }
+            )
 
-    /// Returns `true` when the scene attached to the notification is the same
-    /// `UIWindowScene` currently hosting this bridge's view. Returns `false` when the
-    /// notification's scene is not a `UIWindowScene`, when the view is not yet in a
-    /// window (representable-hosting initialization), or when the scenes differ.
-    ///
-    /// Must be called on the main queue — touches `UIView.window`.
-    private func notificationMatchesViewScene(_ notification: Notification) -> Bool {
-        guard let scene = notification.object as? UIWindowScene else { return false }
-        return scene === viewController?.view.window?.windowScene
-    }
-
-    /**
-     Export the core Cordova JS runtime
-     */
-    func exportCordovaJS() {
-        do {
-            try JSExport.exportCordovaJS(userContentController: webViewDelegationHandler.contentController)
-        } catch {
-            type(of: self).fatalError(error, error)
+            observers.append(
+                NotificationCenter.default.addObserver(
+                    forName: UIScene.didEnterBackgroundNotification,
+                    object: nil,
+                    queue: .main
+                ) { [weak self] notification in
+                    if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
+                        self?.triggerDocumentJSEvent(eventName: "pause")
+                    }
+                }
+            )
         }
     }
 
@@ -323,14 +256,13 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             do {
                 if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
                     let pluginData = try Data(contentsOf: pluginJSON)
-                    let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
+                    var registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
 
                     for plugin in registrationList.packageClassList {
-                        if let pluginClass = NSClassFromString(plugin) {
-                            if pluginClass == CDVPlugin.self {
-                                injectCordovaFiles = true
-                            } else {
-                                pluginList.append(pluginClass)
+                        if let pluginClass = NSClassFromString(plugin), pluginClass is CAPPlugin.Type {
+                            pluginList.append(pluginClass)
+                            if plugin == "CordovaPlugin" {
+                                cordovaIsPresent = true
                             }
                         }
                     }
@@ -407,6 +339,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - CAPBridgeProtocol: Call Management
 
+    public func registerCallInterceptor(_ name: String, handler: @escaping ([String: Any]) -> Void) {
+        callInterceptors[name] = handler
+    }
+
     @objc public func saveCall(_ call: CAPPluginCall) {
         storedCalls[call.callbackId] = call
     }
@@ -423,41 +359,14 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         _ = storedCalls.withLock { $0.removeValue(forKey: withID) }
     }
 
-    // MARK: - Deprecated Versions
-
-    @objc public func getSavedCall(_ callbackId: String) -> CAPPluginCall? {
-        return savedCall(withID: callbackId)
-    }
-
-    @objc public func releaseCall(callbackId: String) {
-        releaseCall(withID: callbackId)
-    }
-
     // MARK: - Internal
 
     func getDispatchQueue() -> DispatchQueue {
         return self.dispatchQueue
     }
 
-    func registerCordovaPlugins() {
-        guard let cordovaParser = cordovaParser else {
-            return
-        }
-        cordovaPluginManager = CDVPluginManager.init(parser: cordovaParser, viewController: self.viewController, webView: self.getWebView())
-        if cordovaParser.startupPluginNames.count > 0 {
-            for pluginName in cordovaParser.startupPluginNames {
-                _ = cordovaPluginManager?.getCommandInstance(pluginName as? String)
-            }
-        }
-        do {
-            try JSExport.exportCordovaPluginsJS(userContentController: webViewDelegationHandler.contentController)
-        } catch {
-            type(of: self).fatalError(error, error)
-        }
-    }
-
     func reload() {
-        self.getWebView()?.reload()
+        self.webView?.reload()
     }
 
     func docLink(_ url: String) -> String {
@@ -554,34 +463,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
-    /**
-     Handle a Cordova call from JavaScript. First, find the corresponding plugin,
-     construct a selector, and perform that selector on the plugin instance.
-     */
-    func handleCordovaJSCall(call: JSCall) {
-        // Create a selector to send to the plugin
-
-        if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
-            let selector = NSSelectorFromString("\(call.method):")
-            if !plugin.responds(to: selector) {
-                CAPLog.print("Error: Plugin \(plugin.className ?? "") does not respond to method call \(selector).")
-                CAPLog.print("Ensure plugin method exists and uses @objc in its declaration")
-                return
-            }
-
-            let arguments: [Any] = call.options["options"] as? [Any] ?? []
-            let pluginCall = CDVInvokedUrlCommand(arguments: arguments,
-                                                  callbackId: call.callbackId,
-                                                  className: plugin.className,
-                                                  methodName: call.method)
-            plugin.perform(selector, with: pluginCall)
-
-        } else {
-            CAPLog.print("Error: Cordova Plugin mapping not found")
-            return
-        }
-    }
-
     func removeAllPluginListeners() {
         for plugin in plugins.values {
             plugin.perform(#selector(CAPPlugin.removeAllListeners(_:)), with: nil)
@@ -654,7 +535,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         """
 
         DispatchQueue.main.async {
-            self.getWebView()?.evaluateJavaScript(wrappedJs, completionHandler: { (_, error) in
+            self.webView?.evaluateJavaScript(wrappedJs, completionHandler: { (_, error) in
                 if let error = error {
                     CAPLog.print("⚡️  JS Eval error", error.localizedDescription)
                 }
@@ -670,7 +551,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // swiftlint:disable:next identifier_name
     @objc public func eval(js: String) {
         DispatchQueue.main.async {
-            self.getWebView()?.evaluateJavaScript(js, completionHandler: { (_, error) in
+            self.webView?.evaluateJavaScript(js, completionHandler: { (_, error) in
                 if let error = error {
                     CAPLog.print("⚡️  JS Eval error", error.localizedDescription)
                 }
@@ -704,7 +585,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     public func logToJs(_ message: String, _ level: String = "log") {
         DispatchQueue.main.async {
-            self.getWebView()?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
+            self.webView?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
                 if error != nil, let result = result {
                     CAPLog.print(result)
                 }
@@ -759,13 +640,5 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
         self.viewController?.present(alert, animated: true, completion: nil)
-    }
-
-    @objc open func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
-        self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
-    }
-
-    @objc open func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
-        self.viewController?.dismiss(animated: flag, completion: completion)
     }
 }

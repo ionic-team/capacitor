@@ -12,8 +12,8 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
         request = URLRequest(url: url)
         request.httpMethod = method
         headers = [:]
-        if let lang = Locale.autoupdatingCurrent.languageCode {
-            if let country = Locale.autoupdatingCurrent.regionCode {
+        if let lang = Locale.autoupdatingCurrent.language.languageCode?.identifier {
+            if let country = Locale.autoupdatingCurrent.region?.identifier {
                 headers["Accept-Language"] = "\(lang)-\(country),\(lang);q=0.5"
             } else {
                 headers["Accept-Language"] = "\(lang);q=0.5"
@@ -192,15 +192,6 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
             return try getRequestDataAsMultipartFormData(body, contentType)
         } else {
             throw CapacitorUrlRequestError.serializationError("[ data ] argument could not be parsed for content type [ \(contentType) ]")
-        }
-    }
-
-    @available(*, deprecated, message: "Use newer function with passed headers of type [String: Any]")
-    public func setRequestHeaders(_ headers: [String: String]) {
-        headers.keys.forEach { (key: String) in
-            let value = headers[key]
-            request.addValue(value!, forHTTPHeaderField: key)
-            self.headers[key] = value
         }
     }
 

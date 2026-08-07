@@ -21,7 +21,7 @@
                               @"testDateString": [formatter stringFromDate:date],
                               @"testBoolTrue": @TRUE,
                               @"testBoolFalse": @FALSE};
-    [self setCall:[[CAPPluginCall alloc] initWithCallbackId:@"test" options:options  success:NULL error:NULL]];
+    [self setCall:[[CAPPluginCall alloc] initWithCallbackId:@"test" methodName:@"test" options:options  success:NULL error:NULL]];
 }
 
 - (void)testStringAccessor {

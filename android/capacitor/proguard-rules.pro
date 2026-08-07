@@ -20,9 +20,3 @@
 -keep @com.getcapacitor.NativePlugin public class * {
   @com.getcapacitor.PluginMethod public <methods>;
 }
-
-# Rules for Cordova plugins
--keep public class * extends org.apache.cordova.* {
-  public <methods>;
-  public <fields>;
-}

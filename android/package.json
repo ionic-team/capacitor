@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/android",
-  "version": "8.4.2",
+  "version": "9.0.0-alpha.6",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -17,13 +17,16 @@
     "capacitor/lint-baseline.xml",
     "capacitor/lint.xml",
     "capacitor/proguard-rules.pro",
-    "capacitor/src/main/"
+    "capacitor/src/main/",
+    "capacitor-cordova/build.gradle",
+    "capacitor-cordova/proguard-rules.pro",
+    "capacitor-cordova/src/main/"
   ],
   "scripts": {
-    "verify": "./gradlew clean lint build test -b capacitor/build.gradle"
+    "verify": "./gradlew :capacitor-android:clean :capacitor-android:lint :capacitor-android:build :capacitor-android:test"
   },
   "peerDependencies": {
-    "@capacitor/core": "^8.4.0"
+    "@capacitor/core": "^9.0.0-alpha.6"
   },
   "publishConfig": {
     "access": "public"

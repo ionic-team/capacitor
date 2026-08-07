@@ -2,7 +2,7 @@
 #define CAPInstanceDescriptor_h
 
 @import UIKit;
-@import Cordova;
+
 
 typedef NS_ENUM(NSInteger, CAPInstanceType) {
     CAPInstanceTypeFixed NS_SWIFT_NAME(fixed),
@@ -137,7 +137,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 /**
  @brief The parser used to load the cofiguration for Cordova plugins.
  */
-@property (nonatomic, copy, nonnull) CDVConfigParser *cordovaConfiguration;
+@property (nonatomic, copy, nonnull) NSObject *cordovaConfiguration;
 /**
  @brief Warnings generated during initialization.
  */

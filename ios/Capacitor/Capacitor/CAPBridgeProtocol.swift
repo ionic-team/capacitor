@@ -15,34 +15,6 @@ import WebKit
     var statusBarStyle: UIStatusBarStyle { get set }
     var statusBarAnimation: UIStatusBarAnimation { get set }
 
-    // MARK: - Deprecated
-    @available(*, deprecated, renamed: "webView")
-    func getWebView() -> WKWebView?
-
-    @available(*, deprecated, renamed: "isSimEnvironment")
-    func isSimulator() -> Bool
-
-    @available(*, deprecated, renamed: "isDevEnvironment")
-    func isDevMode() -> Bool
-
-    @available(*, deprecated, renamed: "statusBarVisible")
-    func getStatusBarVisible() -> Bool
-
-    @available(*, deprecated, renamed: "statusBarStyle")
-    func getStatusBarStyle() -> UIStatusBarStyle
-
-    @available(*, deprecated, renamed: "userInterfaceStyle")
-    func getUserInterfaceStyle() -> UIUserInterfaceStyle
-
-    @available(*, deprecated, message: "Moved - equivalent is found on config.localURL")
-    func getLocalUrl() -> String
-
-    @available(*, deprecated, renamed: "savedCall(withID:)")
-    func getSavedCall(_ callbackId: String) -> CAPPluginCall?
-
-    @available(*, deprecated, renamed: "releaseCall(withID:)")
-    func releaseCall(callbackId: String)
-
     // MARK: - Plugin Access
     func plugin(withName: String) -> CAPPlugin?
 
@@ -79,47 +51,21 @@ import WebKit
     func registerPluginType(_ pluginType: CAPPlugin.Type)
     func registerPluginInstance(_ pluginInstance: CAPPlugin)
 
+    // MARK: - Interceptors
+    func registerCallInterceptor(_ name: String, handler: @escaping ([String: Any]) -> Void)
+
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
-    @available(*, deprecated, message: "Use self?.bridge?.viewController?.present")
-    func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
-    @available(*, deprecated, message: "Use self?.bridge?.viewController?.dismiss")
-    func dismissVC(animated flag: Bool, completion: (() -> Void)?)
 }
 
 /*
  Extensions to Obj-C protocols are not exposed to Obj-C code because of limitations in the runtime.
  Therefore these methods are implicitly Swift-only.
-
- The deprecated methods are declared here because they can be defined without colliding with the synthesized Obj-C setters
- for the respective properties (e.g. `setStatusBarVisible:` for 'statusBarVisible`).
  */
 extension CAPBridgeProtocol {
-    // variadic parameters cannot be exposed to Obj-C
-    @available(*, deprecated, message: "Use CAPLog directly")
-    public func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
-        let output = items.map { String(describing: $0) }.joined(separator: " ")
-        CAPLog.print("⚡️ ", plugin.pluginId, "-", output)
-    }
-
     // default arguments are not permitted in protocol declarations
     public func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
         showAlertWith(title: title, message: message, buttonTitle: buttonTitle)
-    }
-
-    @available(*, deprecated, renamed: "statusBarVisible")
-    public func setStatusBarVisible(_ visible: Bool) {
-        statusBarVisible = visible
-    }
-
-    @available(*, deprecated, renamed: "statusBarStyle")
-    public func setStatusBarStyle(_ style: UIStatusBarStyle) {
-        statusBarStyle = style
-    }
-
-    @available(*, deprecated, renamed: "statusBarAnimation")
-    public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
-        statusBarAnimation = animation
     }
 }
 

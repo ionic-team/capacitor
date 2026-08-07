@@ -1,0 +1,5 @@
+include ':capacitor-android'
+project(':capacitor-android').projectDir = new File('capacitor')
+
+include ':capacitor-cordova-android'
+project(':capacitor-cordova-android').projectDir = new File('capacitor-cordova')

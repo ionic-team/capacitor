@@ -23,7 +23,12 @@ class CapacitorTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         let descriptor = InstanceDescriptor.init()
-        bridge = MockBridge(with: InstanceConfiguration(with: descriptor, isDebug: true), delegate: MockBridgeViewController(), cordovaConfiguration: descriptor.cordovaConfiguration, assetHandler: MockAssetHandler(router: CapacitorRouter()), delegationHandler: MockDelegationHandler())
+        bridge = MockBridge(
+            with: InstanceConfiguration(with: descriptor, isDebug: true),
+            delegate: MockBridgeViewController(),
+            assetHandler: MockAssetHandler(router: CapacitorRouter()),
+            delegationHandler: MockDelegationHandler()
+        )
     }
 
     override func tearDown() {

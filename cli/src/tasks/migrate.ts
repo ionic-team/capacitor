@@ -13,6 +13,8 @@ import { deleteFolderRecursive } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
+import { migrateToUIScene } from './migrate-uiscene';
+
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
 const libs = ['@capacitor/core', '@capacitor/cli', '@capacitor/ios', '@capacitor/android'];
@@ -43,11 +45,10 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = '^8.0.0';
-const pluginVersion = '^8.0.0';
-const gradleVersion = '8.14.3';
-const iOSVersion = '15';
-const kotlinVersion = '2.2.20';
+const coreVersion = 'next';
+const pluginVersion = 'next';
+const gradleVersion = '9.5.1';
+const iOSVersion = '16';
 let installFailed = false;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
@@ -56,14 +57,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
   }
 
   const capMajor = await checkCapacitorMajorVersion(config);
-  if (capMajor < 7) {
-    fatal('Migrate can only be used on Capacitor 7, please use the CLI in Capacitor 7 to upgrade to 7 first');
+  if (capMajor < 8) {
+    fatal('Migrate can only be used on Capacitor 8, please use the CLI in Capacitor 8 to upgrade to 8 first');
   }
 
   const jdkMajor = await checkJDKMajorVersion();
 
   if (jdkMajor < 21) {
-    logger.warn('Capacitor 8 requires JDK 21 or higher. Some steps may fail.');
+    logger.warn('Capacitor 9 requires JDK 21 or higher. Some steps may fail.');
   }
 
   const variablesAndClasspaths:
@@ -84,13 +85,13 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
   };
 
   const monorepoWarning =
-    'Please note this tool is not intended for use in a mono-repo environment, you should migrate manually instead. Refer to https://capacitorjs.com/docs/next/updating/8-0';
+    'Please note this tool is not intended for use in a mono-repo environment, you should migrate manually instead. Refer to https://capacitorjs.com/docs/next/updating/9-0';
 
   logger.info(monorepoWarning);
 
   const { migrateconfirm } = noprompt
     ? { migrateconfirm: 'y' }
-    : await logPrompt(`Capacitor 8 sets a deployment target of iOS ${iOSVersion} and Android 16 (SDK 36). \n`, {
+    : await logPrompt(`Capacitor 9 sets a deployment target of iOS ${iOSVersion} and Android 17 (SDK 37). \n`, {
         type: 'text',
         name: 'migrateconfirm',
         message: `Are you sure you want to migrate? (Y/n)`,
@@ -175,6 +176,12 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         } else {
           logger.warn('Skipped updating deployment target');
         }
+
+        await runTask(`Migrating AppDelegate.swift`, () => {
+          return updateAppDelegate(join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift'));
+        });
+
+        await migrateToUIScene(config);
       }
 
       if (!installFailed) {
@@ -195,6 +202,31 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           join(config.android.platformDirAbs, 'gradle', 'wrapper', 'gradle-wrapper.properties'),
         );
 
+        await runTask(`Migrating root build.gradle file.`, () => {
+          return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
+        });
+
+        await runTask(`Migrating app build.gradle file.`, () => {
+          return updateAppBuildGradle(join(config.android.appDirAbs, 'build.gradle'));
+        });
+
+        // settings.gradle
+        await runTask(`Migrating settings.gradle file.`, () => {
+          return (async (): Promise<void> => {
+            const settingsPath = join(config.android.platformDirAbs, 'settings.gradle');
+            let txt = readFile(settingsPath);
+            if (!txt) {
+              return;
+            }
+            txt = txt.replace(`include ':capacitor-cordova-android-plugins'\n`, '');
+            txt = txt.replace(
+              `project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')\n`,
+              '',
+            );
+            writeFileSync(settingsPath, txt, { encoding: 'utf-8' });
+          })();
+        });
+
         if (!installFailed && gte(gradleVersion, gradleWrapperVersion)) {
           try {
             await runTask(`Upgrading gradle wrapper`, () => {
@@ -214,19 +246,12 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
                 )} to update the files manually`,
               );
             } else {
-              logger.error(`gradle wrapper files were not updated`);
+              logger.error(`gradle wrapper files were not updated\n${e}`);
             }
           }
         } else {
           logger.warn('Skipped upgrading gradle wrapper files');
         }
-        await runTask(`Migrating root build.gradle file.`, () => {
-          return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
-        });
-
-        await runTask(`Migrating app build.gradle file.`, () => {
-          return updateAppBuildGradle(join(config.android.appDirAbs, 'build.gradle'));
-        });
 
         // Variables gradle
         await runTask(`Migrating variables.gradle file.`, () => {
@@ -277,16 +302,15 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
             }
             const pluginVariables: { [key: string]: string } = {
               firebaseMessagingVersion: '25.0.1',
-              playServicesLocationVersion: '21.3.0',
-              androidxBrowserVersion: '1.9.0',
-              androidxMaterialVersion: '1.13.0',
-              androidxExifInterfaceVersion: '1.4.1',
-              androidxCoreKTXVersion: '1.17.0',
-              googleMapsPlayServicesVersion: '19.2.0',
-              googleMapsUtilsVersion: '3.19.1',
-              googleMapsKtxVersion: '5.2.1',
-              googleMapsUtilsKtxVersion: '5.2.1',
-              kotlinxCoroutinesVersion: '1.10.2',
+              playServicesLocationVersion: '21.4.0',
+              androidxBrowserVersion: '1.10.0',
+              androidxMaterialVersion: '1.14.0',
+              androidxExifInterfaceVersion: '1.4.2',
+              googleMapsPlayServicesVersion: '20.0.0',
+              googleMapsUtilsVersion: '5.0.0',
+              googleMapsKtxVersion: '6.0.1',
+              googleMapsUtilsKtxVersion: '6.0.1',
+              kotlinxCoroutinesVersion: '1.11.0',
               coreSplashScreenVersion: '1.2.0',
             };
             for (const variable of Object.keys(pluginVariables)) {
@@ -336,14 +360,23 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
   for (const devDepKey of Object.keys(pkgJson['devDependencies'] || {})) {
     if (libs.includes(devDepKey)) {
       pkgJson['devDependencies'][devDepKey] = coreVersion;
-    } else if (plugins.includes(devDepKey)) {
+    } else if (
+      plugins.includes(devDepKey) &&
+      !(
+        pkgJson['devDependencies'][devDepKey].startsWith('file:') ||
+        pkgJson['devDependencies'][devDepKey].startsWith('workspace:')
+      )
+    ) {
       pkgJson['devDependencies'][devDepKey] = pluginVersion;
     }
   }
   for (const depKey of Object.keys(pkgJson['dependencies'] || {})) {
     if (libs.includes(depKey)) {
       pkgJson['dependencies'][depKey] = coreVersion;
-    } else if (plugins.includes(depKey)) {
+    } else if (
+      plugins.includes(depKey) &&
+      !(pkgJson['dependencies'][depKey].startsWith('file:') || pkgJson['dependencies'][depKey].startsWith('workspace:'))
+    ) {
       pkgJson['dependencies'][depKey] = pluginVersion;
     }
   }
@@ -373,10 +406,9 @@ async function writeBreakingChanges() {
     '@capacitor/camera',
     '@capacitor/geolocation',
     '@capacitor/google-maps',
+    '@capacitor/inappbrowser',
     '@capacitor/push-notifications',
-    '@capacitor/screen-orientation',
     '@capacitor/splash-screen',
-    '@capacitor/status-bar',
   ];
   const broken = [];
   for (const lib of breaking) {
@@ -386,9 +418,15 @@ async function writeBreakingChanges() {
   }
   if (broken.length > 0) {
     logger.info(
-      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/8-0#plugins for breaking changes in these plugins that you use: ${broken.join(
+      `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/9-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
+    );
+  }
+  if (allDependencies['@capacitor/ios']) {
+    logger.info(
+      'IMPORTANT: Capacitor 8.5 adopts UIScene on iOS. ' +
+        'See https://capacitorjs.com/docs/updating/8-5 for the full 8.4 → 8.5 migration guide.',
     );
   }
 }
@@ -492,23 +530,7 @@ async function updateBuildGradle(
     }
   }
 
-  const beforeKotlinVersionUpdate = replaced;
-  replaced = replaceVersion(replaced, /(ext\.kotlin_version\s*=\s*['"])([^'"]+)(['"])/, kotlinVersion);
-  replaced = replaceVersion(replaced, /(org\.jetbrains\.kotlin:kotlin[^:]*:)([\d.]+)(['"])/, kotlinVersion);
-  if (beforeKotlinVersionUpdate !== replaced) {
-    logger.info(`Set Kotlin version to ${kotlinVersion}`);
-  }
   writeFileSync(filename, replaced, 'utf-8');
-}
-
-function replaceVersion(text: string, regex: RegExp, newVersion: string): string {
-  return text.replace(regex, (match, prefix, currentVersion, suffix) => {
-    const semVer = coerce(currentVersion)?.version;
-    if (gte(newVersion, semVer ? semVer : '0.0.0')) {
-      return `${prefix || ''}${newVersion}${suffix || ''}`;
-    }
-    return match;
-  });
 }
 
 async function updateAppBuildGradle(filename: string) {
@@ -518,14 +540,19 @@ async function updateAppBuildGradle(filename: string) {
   }
   let replaced = txt;
 
-  const gradlePproperties = ['compileSdk', 'namespace', 'ignoreAssetsPattern'];
-  for (const prop of gradlePproperties) {
-    // Use updated Groovy DSL syntax with " = " assignment
-    const regex = new RegExp(`(^\\s*${prop})\\s+(?!=)(.+)$`, 'gm');
-    replaced = replaced.replace(regex, (_match, key, value) => {
-      return `${key} = ${value.trim()}`;
-    });
-  }
+  replaced = replaced.replace(`proguard-android.txt`, `proguard-android-optimize.txt`);
+  replaced = replaced.replace('        targetSdkVersion rootProject.ext.targetSdkVersion\n', '');
+  replaced = replaced.replace(`    implementation project(':capacitor-cordova-android-plugins')\n`, '');
+  replaced = replaced.replace(
+    `repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+`,
+    '',
+  );
   writeFileSync(filename, replaced, 'utf-8');
 }
 
@@ -618,6 +645,23 @@ async function updateAndroidManifest(filename: string) {
 
   if (!replaced.includes('|density')) {
     logger.error(`Unable to add 'density' to 'android:configChanges' in ${filename}. Try adding it manually`);
+  } else {
+    writeFileSync(filename, replaced, 'utf-8');
+  }
+}
+
+async function updateAppDelegate(filename: string) {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+
+  if (txt.includes('@main')) {
+    return; // Probably already updated
+  }
+  const replaced = txt.replace('@UIApplicationMain', '@main');
+  if (!replaced.includes('@main')) {
+    logger.error(`Unable to replace @UIApplicationMain to @main in ${filename}. Try replacing it manually`);
   } else {
     writeFileSync(filename, replaced, 'utf-8');
   }
