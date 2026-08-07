@@ -297,24 +297,6 @@ public class Plugin {
     }
 
     /**
-     * Get the value for a key on the config for this plugin.
-     * @deprecated use {@link #getConfig()} and access config values using the methods available
-     * depending on the type.
-     *
-     * @param key the key for the config value
-     * @return some object containing the value from the config
-     */
-    @Deprecated
-    public Object getConfigValue(String key) {
-        try {
-            PluginConfig pluginConfig = getConfig();
-            return pluginConfig.getConfigJSON().get(key);
-        } catch (JSONException ex) {
-            return null;
-        }
-    }
-
-    /**
      * Check whether any of the given permissions has been defined in the AndroidManifest.xml
      * @deprecated use {@link #isPermissionDeclared(String)}
      *

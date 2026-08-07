@@ -1,8 +1,7 @@
 /**
  Notificaton types for NotificationCenter and NSNotificationCenter
 
- We want to include `capacitor` in the name(s) to uniquely identify these even though it can make the names long
- and the deprecated notifications are only here for backwards compatibility.
+ We want to include `capacitor` in the name(s) to uniquely identify these even though it can make the names long.
  */
 // swiftlint:disable identifier_name
 extension Notification.Name {
@@ -39,38 +38,4 @@ extension Notification.Name {
     public static let capacitorSceneOpenUniversalLink = Notification.Name.capacitorSceneOpenUniversalLink
 }
 
-/**
- Deprecated, will be removed
- */
-@objc public enum CAPNotifications: Int {
-    @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorOpenURL'")
-    case URLOpen
-    @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorOpenUniversalLink'")
-    case UniversalLinkOpen
-    @available(*, deprecated, message: "Notification.Name.capacitorContinueActivity'")
-    case ContinueActivity
-    @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorDidRegisterForRemoteNotifications'")
-    case DidRegisterForRemoteNotificationsWithDeviceToken
-    @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorDidFailToRegisterForRemoteNotifications'")
-    case DidFailToRegisterForRemoteNotificationsWithError
-    @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorDecidePolicyForNavigationAction'")
-    case DecidePolicyForNavigationAction
-
-    public func name() -> String {
-        switch self {
-        case .URLOpen:
-            return Notification.Name.capacitorOpenURL.rawValue
-        case .UniversalLinkOpen:
-            return Notification.Name.capacitorOpenUniversalLink.rawValue
-        case .ContinueActivity:
-            return Notification.Name.capacitorContinueActivity.rawValue
-        case .DidRegisterForRemoteNotificationsWithDeviceToken:
-            return Notification.Name.capacitorDidRegisterForRemoteNotifications.rawValue
-        case .DidFailToRegisterForRemoteNotificationsWithError:
-            return Notification.Name.capacitorDidFailToRegisterForRemoteNotifications.rawValue
-        case .DecidePolicyForNavigationAction:
-            return Notification.Name.capacitorDecidePolicyForNavigationAction.rawValue
-        }
-    }
-}
 // swiftlint:enable identifier_name

@@ -14,10 +14,7 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
 
     public private(set) var lastURL: URL?
 
-    public func scene(
-        _ scene: UIScene, willConnectTo session: UISceneSession,
-        options connectionOptions: UIScene.ConnectionOptions
-    ) {
+    public func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         NotificationCenter.default.post(name: .capacitorSceneWillConnect, object: scene)
 
         // Plugins haven't loaded yet on a cold start, so notifications posted here are
@@ -44,14 +41,10 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
             let options = Self.openURLOptions(from: context.options)
 
             // Capacitor 8 backwards compat
-            NotificationCenter.default.post(
-                name: .capacitorOpenURL,
-                object: [
-                    "url": context.url,
-                    "options": options
-                ])
-
-            NotificationCenter.default.post(name: NSNotification.Name.CDVPluginHandleOpenURL, object: context.url)
+            NotificationCenter.default.post(name: .capacitorOpenURL, object: [
+                "url": context.url,
+                "options": options
+            ])
 
             NotificationCenter.default.post(name: .capacitorSceneOpenURL, object: scene, userInfo: [
                 "url": context.url,
@@ -62,8 +55,7 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
 
     public func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-              let url = userActivity.webpageURL
-        else {
+              let url = userActivity.webpageURL else {
             return
         }
         lastURL = url
