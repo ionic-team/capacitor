@@ -263,23 +263,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             exportCordovaJS()
             registerCordovaPlugins()
         } else {
-            // Scene-filtered lifecycle observers.
-            //
-            // The bridge is constructed inside `CAPBridgeViewController.loadView()`,
-            // which can happen *before* the view is attached to a window — notably when
-            // the view controller is hosted by a `UIViewControllerRepresentable` rather
-            // than installed as a window-scene's root by `UIWindowSceneDelegate`.
-            //
-            // We deliberately resolve the view's `windowScene` lazily inside each
-            // notification block rather than capturing it at registration time. This
-            // gives the right behavior under both hosting paths:
-            //
-            //   - Before the view has a window: `view.window?.windowScene` is `nil` and
-            //     the identity check against the (non-nil) scene from the notification
-            //     fails, so observers safely no-op. No spurious fires.
-            //   - Once SwiftUI inserts the representable into the hierarchy (or the
-            //     scene delegate installs us as the root), the next foreground/background
-            //     transition resolves the correct scene and the JS event is dispatched.
             observers.append(NotificationCenter.default.addObserver(
                 forName: UIScene.willEnterForegroundNotification,
                 object: nil,
