@@ -7,6 +7,9 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
 
+    // Session used for proxied http(s) requests; overridable for testing.
+    var urlSession: URLSession = .shared
+
     public init(router: Router) {
         self.router = router
         super.init()
@@ -102,6 +105,8 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
         urlSchemeTask.stopped = true
+        urlSchemeTask.dataTask?.cancel()
+        urlSchemeTask.dataTask = nil
     }
 
     open func mimeTypeForExtension(pathExtension: String) -> String {
@@ -139,9 +144,10 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             urlRequest.url = URL(string: targetUrl)
         }
 
-        let urlSession = URLSession.shared
+        let urlSession = self.urlSession
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             DispatchQueue.main.async {
+                urlSchemeTask.dataTask = nil
                 guard !urlSchemeTask.stopped else { return }
                 if let error = error {
                     urlSchemeTask.didFailWithError(error)
@@ -183,6 +189,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             }
         }
 
+        urlSchemeTask.dataTask = task
         task.resume()
     }
 
@@ -537,6 +544,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 }
 
 private var stoppedKey = malloc(1)
+private var dataTaskKey = malloc(1)
 
 private extension WKURLSchemeTask {
     var stopped: Bool {
@@ -545,6 +553,15 @@ private extension WKURLSchemeTask {
         }
         set {
             objc_setAssociatedObject(self, &stoppedKey, newValue, .OBJC_ASSOCIATION_ASSIGN)
+        }
+    }
+
+    var dataTask: URLSessionDataTask? {
+        get {
+            return objc_getAssociatedObject(self, &dataTaskKey) as? URLSessionDataTask
+        }
+        set {
+            objc_setAssociatedObject(self, &dataTaskKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
