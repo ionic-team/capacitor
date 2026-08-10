@@ -3,6 +3,75 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.5.0](https://github.com/ionic-team/capacitor/compare/8.4.2...8.5.0) (2026-07-31)
+
+**Note:** Version bump only for package @capacitor/core
+
+## [8.4.2](https://github.com/ionic-team/capacitor/compare/8.4.1...8.4.2) (2026-07-14)
+
+**Note:** Version bump only for package @capacitor/core
+
+## [8.4.1](https://github.com/ionic-team/capacitor/compare/8.4.0...8.4.1) (2026-06-19)
+
+**Note:** Version bump only for package @capacitor/core
+
+# [8.4.0](https://github.com/ionic-team/capacitor/compare/8.3.4...8.4.0) (2026-06-02)
+
+**Note:** Version bump only for package @capacitor/core
+
+## [8.3.4](https://github.com/ionic-team/capacitor/compare/8.3.3...8.3.4) (2026-05-12)
+
+**Note:** Version bump only for package @capacitor/core
+
+## [8.3.3](https://github.com/ionic-team/capacitor/compare/8.3.2...8.3.3) (2026-05-08)
+
+**Note:** Version bump only for package @capacitor/core
+
+## [8.3.2](https://github.com/ionic-team/capacitor/compare/8.3.1...8.3.2) (2026-05-07)
+
+**Note:** Version bump only for package @capacitor/core
+
+## [8.3.1](https://github.com/ionic-team/capacitor/compare/8.3.0...8.3.1) (2026-04-16)
+
+**Note:** Version bump only for package @capacitor/core
+
+# [8.3.0](https://github.com/ionic-team/capacitor/compare/8.2.0...8.3.0) (2026-03-25)
+
+### Bug Fixes
+
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([003099a](https://github.com/ionic-team/capacitor/commit/003099aef246adfd76d890074d46b1484951824b))
+- **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([4e99598](https://github.com/ionic-team/capacitor/commit/4e99598a2a57ee97e82be1aaa09492744622fa60))
+
+# [8.2.0](https://github.com/ionic-team/capacitor/compare/8.1.0...8.2.0) (2026-03-06)
+
+**Note:** Version bump only for package @capacitor/core
+
+# [8.1.0](https://github.com/ionic-team/capacitor/compare/8.0.2...8.1.0) (2026-02-11)
+
+### Bug Fixes
+
+- **cookies:** only send expires param on web if a date is set ([b10cd7f](https://github.com/ionic-team/capacitor/commit/b10cd7ff15b010a76802374214f4e0cbd04abdab))
+
+### Reverts
+
+- revert version bump from [#8319](https://github.com/ionic-team/capacitor/issues/8319) and [#8320](https://github.com/ionic-team/capacitor/issues/8320) ([a48ebb6](https://github.com/ionic-team/capacitor/commit/a48ebb622ea4ebe92927bf1756a4d8ac6012884b))
+
+## [8.0.2](https://github.com/ionic-team/capacitor/compare/8.0.1...8.0.2) (2026-01-27)
+
+### Bug Fixes
+
+- **core:** make SystemBars hide and show options optional ([#8305](https://github.com/ionic-team/capacitor/issues/8305)) ([95dc7d8](https://github.com/ionic-team/capacitor/commit/95dc7d8ace3aabdda7e325c4a8ef7d1432ad37e9))
+
+## [8.0.1](https://github.com/ionic-team/capacitor/compare/8.0.0...8.0.1) (2026-01-13)
+
+**Note:** Version bump only for package @capacitor/core
+
+# [8.0.0](https://github.com/ionic-team/capacitor/compare/8.0.0-beta.0...8.0.0) (2025-12-08)
+
+### Features
+
+- **android:** Improving SystemBars inset handling ([#8268](https://github.com/ionic-team/capacitor/issues/8268)) ([81ae30a](https://github.com/ionic-team/capacitor/commit/81ae30a503797e417dd125b06262dabc4696c88a))
+
 # [8.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/8.0.0-alpha.3...8.0.0-beta.0) (2025-11-14)
 
 ### Bug Fixes

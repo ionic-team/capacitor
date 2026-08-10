@@ -377,6 +377,13 @@ const initBridge = (w: any): void => {
 
     const platform = getPlatformId(win);
 
+    if (platform == 'android' && typeof win.CapacitorSystemBarsAndroidInterface !== 'undefined') {
+      // add DOM ready listener for System Bars
+      document.addEventListener('DOMContentLoaded', function () {
+        win.CapacitorSystemBarsAndroidInterface.onDOMReady();
+      });
+    }
+
     if (platform == 'android' || platform == 'ios') {
       // patch document.cookie on Android/iOS
       win.CapacitorCookiesDescriptor =
@@ -525,6 +532,9 @@ const initBridge = (w: any): void => {
 
             if (typeof resource === 'string') {
               return await win.CapacitorWebFetch(createProxyUrl(resource, win), options);
+            } else if (resource instanceof URL) {
+              const modifiedURL = new URL(createProxyUrl(resource.toString(), win));
+              return await win.CapacitorWebFetch(modifiedURL, options);
             } else if (resource instanceof Request) {
               const modifiedRequest = new Request(createProxyUrl(resource.url, win), resource);
               return await win.CapacitorWebFetch(modifiedRequest, options);

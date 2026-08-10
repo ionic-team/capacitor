@@ -10,9 +10,10 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
-import { checkPackageManager } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
+
+import { migrateToUIScene } from './migrate-uiscene';
 
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
@@ -28,6 +29,7 @@ const plugins = [
   '@capacitor/dialog',
   '@capacitor/filesystem',
   '@capacitor/geolocation',
+  '@capacitor/google-maps',
   '@capacitor/haptics',
   '@capacitor/keyboard',
   '@capacitor/local-notifications',
@@ -35,8 +37,8 @@ const plugins = [
   '@capacitor/network',
   '@capacitor/preferences',
   '@capacitor/push-notifications',
-  '@capacitor/screen-reader',
   '@capacitor/screen-orientation',
+  '@capacitor/screen-reader',
   '@capacitor/share',
   '@capacitor/splash-screen',
   '@capacitor/status-bar',
@@ -160,7 +162,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
             );
           });
 
-          if ((await checkPackageManager(config)) === 'Cocoapods') {
+          if ((await config.ios.packageManager) !== 'SPM') {
             // Update Podfile
             await runTask(`Migrating Podfile to ${iOSVersion}.0.`, () => {
               return updateFile(
@@ -175,6 +177,8 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         } else {
           logger.warn('Skipped updating deployment target');
         }
+
+        await migrateToUIScene(config);
       }
 
       if (!installFailed) {
@@ -391,6 +395,12 @@ async function writeBreakingChanges() {
       )}.`,
     );
   }
+  if (allDependencies['@capacitor/ios']) {
+    logger.info(
+      'IMPORTANT: Capacitor 8.5 adopts UIScene on iOS. ' +
+        'See https://capacitorjs.com/docs/updating/8-5 for the full 8.4 → 8.5 migration guide.',
+    );
+  }
 }
 
 async function getAndroidVariablesAndClasspaths(config: Config) {
@@ -579,7 +589,7 @@ async function updateFile(
   return false;
 }
 
-function setAllStringIn(data: string, start: string, end: string, replacement: string): string {
+export function setAllStringIn(data: string, start: string, end: string, replacement: string): string {
   let position = 0;
   let result = data;
   let replaced = true;

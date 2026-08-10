@@ -509,6 +509,67 @@ export interface CapacitorConfig {
     };
   };
 
+  experimental?: {
+    /**
+     * Experimental iOS-specific configuration.
+     *
+     * These options may change or be removed in future versions.
+     *
+     * @since 8.2.0
+     */
+    ios?: {
+      /**
+       * Swift Package Manager (SPM) specific configuration.
+       *
+       * @since 8.2.0
+       */
+      spm?: {
+        /**
+         * Swift tools version to use in Package.swift header.
+         *
+         * Defines the minimum version of the Swift compiler version required to build your app.
+         * For more information check the [swift documentation](https://docs.swift.org/swiftpm/documentation/packagemanagerdocs/settingswifttoolsversion/)
+         *
+         * Warning: Capacitor does not officially support Swift 6 yet.
+         * Setting this property to 6.0 or higher may cause issues.
+         * If you need to set this property to 6.0 or higher, make sure to throughrouly test your iOS app.
+         *
+         * This setting may graduate to `ios.spm.swiftToolsVersion` in a future major release.
+         *
+         * @since 8.3.0
+         * @default '5.9'
+         * @example '6.1'
+         */
+        swiftToolsVersion?: string;
+
+        /**
+         * Define package traits for SPM plugin dependencies.
+         *
+         * This requires explicitly setting experimental.ios.spm.swiftToolsVersion
+         * to '6.1' or higher.
+         *
+         * The key is the plugin ID (e.g. `@capacitor-firebase/analytics`)
+         * and the value is an array of trait names.
+         *
+         * Packages can have default traits. If you use this property, and
+         * want to preserve the defaults, include ".defaults" in the array.
+         *
+         * This setting may graduate to `ios.spm.packageTraits` in a future major release.
+         *
+         * @since 8.3.0
+         */
+        packageTraits?: { [pluginId: string]: string[] };
+        /**
+         * Define options to apply to the package.
+         * The key is the plugin ID (e.g. `@capacitor-community/device`)
+         *
+         * @since 8.4.0
+         */
+        packageOptions?: { [pluginId: string]: PackageOptions };
+      };
+    };
+  };
+
   server?: {
     /**
      * Configure the local hostname of the device.
@@ -543,7 +604,7 @@ export interface CapacitorConfig {
      * Configure the local scheme on Android.
      *
      * Custom schemes on Android are unable to change the URL path as of Webview 117. Changing this value from anything other than `http` or `https` can result in your
-     * application unable to resolve routing. If you must change this for some reason, consider using a hash-based url strategy, but there are no guarentees that this
+     * application unable to resolve routing. If you must change this for some reason, consider using a hash-based url strategy, but there are no guarantees that this
      * will continue to work long term as allowing non-standard schemes to modify query parameters and url fragments is only allowed for compatibility reasons.
      * https://ionic.io/blog/capacitor-android-customscheme-issue-with-chrome-117
      *
@@ -707,11 +768,17 @@ export interface PluginsConfig {
    */
   SystemBars?: {
     /**
-     * Disables the injection of device css insets into the web view.
+     * Specifies how to handle problematic insets on Android.
      *
-     * @default false
+     * This option is only supported on Android.
+     *
+     * `css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
+     *
+     * `disable` = Disable CSS variables injection.
+     *
+     * @default "css"
      */
-    disableInsets?: boolean;
+    insetsHandling?: 'css' | 'disable';
     /**
      * The style of the text and icons of the system bars.
      *
@@ -738,4 +805,17 @@ export interface PluginsConfig {
      */
     animation?: 'FADE' | 'NONE';
   };
+}
+
+export interface PackageOptions {
+  /**
+   * Create a symlink to the plugin folder instead of pointing to the plugin path.
+   * Useful when plugin names conflict.
+   */
+  symlink?: boolean;
+  /**
+   * Useful to avoid target name conflicts in dependencies
+   * [see](https://docs.swift.org/swiftpm/documentation/packagemanagerdocs/modulealiasing/)
+   */
+  moduleAliases?: { [target: string]: string };
 }

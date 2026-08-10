@@ -4,12 +4,14 @@ import { join, resolve } from 'path';
 
 import c from '../colors';
 import { checkCapacitorPlatform } from '../common';
+import type { CheckFunction } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import { OS } from '../definitions';
 import type { Config } from '../definitions';
 import { logger } from '../log';
 import { PluginType, getPluginPlatform } from '../plugin';
 import type { Plugin } from '../plugin';
+import { checkPackageTraitsRequirements, checkSwiftToolsVersion } from '../util/spm';
 import { isInstalled, runCommand } from '../util/subprocess';
 
 export async function checkIOSPackage(config: Config): Promise<string | null> {
@@ -23,6 +25,22 @@ function execBundler() {
   } catch (e: any) {
     return -1;
   }
+}
+
+export async function getCommonChecks(config: Config): Promise<CheckFunction[]> {
+  const checks: CheckFunction[] = [];
+  if ((await config.ios.packageManager) === 'bundler') {
+    checks.push(() => checkBundler(config));
+  } else if ((await config.ios.packageManager) === 'Cocoapods') {
+    checks.push(() => checkCocoaPods(config));
+  } else if ((await config.ios.packageManager) === 'SPM') {
+    const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion;
+    if (swiftToolsVersion) {
+      checks.push(() => checkSwiftToolsVersion(config, swiftToolsVersion));
+    }
+    checks.push(() => checkPackageTraitsRequirements(config));
+  }
+  return checks;
 }
 
 export async function checkBundler(config: Config): Promise<string | null> {

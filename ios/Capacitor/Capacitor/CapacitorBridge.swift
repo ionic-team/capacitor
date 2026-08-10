@@ -93,9 +93,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-
-    var tmpWindow: UIWindow?
-    static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
@@ -222,9 +219,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         setupCordovaCompatibility()
         exportMiscJS()
         canInjectJS = false
-        observers.append(NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
-            self?.tmpWindow = nil
-        })
 
         self.setupWebDebugging(configuration: configuration)
     }
@@ -269,11 +263,16 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             exportCordovaJS()
             registerCordovaPlugins()
         } else {
-            observers.append(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
-                self?.triggerDocumentJSEvent(eventName: "resume")
+            observers.append(NotificationCenter.default.addObserver(forName: UIScene.willEnterForegroundNotification, object: nil, queue: OperationQueue.main) { [weak self] notification in
+                if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
+                    self?.triggerDocumentJSEvent(eventName: "resume")
+                }
+
             })
-            observers.append(NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
-                self?.triggerDocumentJSEvent(eventName: "pause")
+            observers.append(NotificationCenter.default.addObserver(forName: UIScene.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { [weak self] notification in
+                if let scene = notification.object as? UIWindowScene, scene === self?.viewController?.view.window?.windowScene {
+                    self?.triggerDocumentJSEvent(eventName: "pause")
+                }
             })
         }
     }
@@ -747,22 +746,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     @objc open func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
-        if viewControllerToPresent.modalPresentationStyle == .popover {
-            self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
-        } else {
-            self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
-            self.tmpWindow?.rootViewController = TmpViewController.init()
-            self.tmpWindow?.makeKeyAndVisible()
-            self.tmpWindow?.rootViewController?.present(viewControllerToPresent, animated: flag, completion: completion)
-        }
+        self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
     }
 
     @objc open func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
-        if self.tmpWindow == nil {
-            self.viewController?.dismiss(animated: flag, completion: completion)
-        } else {
-            self.tmpWindow?.rootViewController?.dismiss(animated: flag, completion: completion)
-            self.tmpWindow = nil
-        }
+        self.viewController?.dismiss(animated: flag, completion: completion)
     }
 }
