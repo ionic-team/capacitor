@@ -686,28 +686,6 @@ public class Bridge {
     }
 
     /**
-     * Find the plugin handle that responds to the given request code. This will
-     * fire after certain Android OS intent results/permission checks/etc.
-     * @param requestCode
-     * @return
-     */
-    @Deprecated
-    public PluginHandle getPluginWithRequestCode(int requestCode) {
-        for (PluginHandle handle : this.plugins.values()) {
-            CapacitorPlugin pluginAnnotation = handle.getPluginAnnotation();
-            if (pluginAnnotation == null) {
-                continue;
-            }
-            for (int rc : pluginAnnotation.requestCodes()) {
-                if (rc == requestCode) {
-                    return handle;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Call a method on a plugin.
      * @param pluginId the plugin id to use to lookup the plugin handle
      * @param methodName the name of the method to call
@@ -1007,7 +985,7 @@ public class Bridge {
     }
 
     /**
-     * Check for legacy Capacitor or Cordova plugins that may have registered to handle a permission
+     * Check for Cordova plugins that may have registered to handle a permission
      * request, and handle them if so. If not handled, false is returned.
      *
      * @param requestCode the code that was requested
@@ -1017,20 +995,13 @@ public class Bridge {
      */
     @SuppressWarnings("deprecation")
     boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        PluginHandle plugin = getPluginWithRequestCode(requestCode);
+        Logger.debug("Trying Cordova plugins for permission requestCode " + requestCode);
+        PluginHandle cordovaHandle = getPlugin("__CordovaPlugin");
 
-        if (plugin == null) {
-            boolean permissionHandled = false;
-            Logger.debug("Unable to find a Capacitor plugin to handle permission requestCode, trying Cordova plugins " + requestCode);
-            PluginHandle cordovaHandle = getPlugin("__CordovaPlugin");
-
-            if (cordovaHandle != null) {
-                Plugin cordovaPlugin = cordovaHandle.getInstance();
-                cordovaPlugin.handleRequestPermissionsResult(requestCode, permissions, grantResults);
-                permissionHandled = cordovaPlugin.hasDefinedRequiredPermissions();
-            }
-
-            return permissionHandled;
+        if (cordovaHandle != null) {
+            Plugin cordovaPlugin = cordovaHandle.getInstance();
+            cordovaPlugin.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+            return cordovaPlugin.hasDefinedRequiredPermissions();
         }
 
         return false;
@@ -1146,31 +1117,22 @@ public class Bridge {
     }
 
     /**
-     * Handle an activity result and pass it to a plugin that has indicated it wants to
-     * handle the result.
+     * Handle an activity result by delegating it to Cordova plugins if any are registered.
      * @param requestCode
      * @param resultCode
      * @param data
      */
     @SuppressWarnings("deprecation")
     boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        PluginHandle plugin = getPluginWithRequestCode(requestCode);
-
-        if (plugin == null || plugin.getInstance() == null) {
-            Logger.debug("Unable to find a Capacitor plugin to handle requestCode, trying Cordova plugins " + requestCode);
-            PluginHandle cordovaHandle = getPlugin("__CordovaPlugin");
-            if (cordovaHandle != null) {
-                Plugin cordovaPlugin = cordovaHandle.getInstance();
-                cordovaPlugin.handleOnActivityResult(requestCode, resultCode, data);
-                // This is a bit hacky but required to return the boolean out of the cordova interface
-                return cordovaPlugin.hasRequiredPermissions();
-            }
-            return false;
+        Logger.debug("Trying Cordova plugins for activity requestCode " + requestCode);
+        PluginHandle cordovaHandle = getPlugin("__CordovaPlugin");
+        if (cordovaHandle != null) {
+            Plugin cordovaPlugin = cordovaHandle.getInstance();
+            cordovaPlugin.handleOnActivityResult(requestCode, resultCode, data);
+            // This is a bit hacky but required to return the boolean out of the cordova interface
+            return cordovaPlugin.hasRequiredPermissions();
         }
-
-        plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
-
-        return true;
+        return false;
     }
 
     /**
