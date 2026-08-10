@@ -6,6 +6,7 @@ import MobileCoreServices
 open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
+    private var configuration: InstanceConfiguration?
 
     public init(router: Router) {
         self.router = router
@@ -20,6 +21,10 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         self.serverUrl = serverUrl
     }
 
+    open func setConfiguration(_ configuration: InstanceConfiguration?) {
+        self.configuration = configuration
+    }
+
     private func isUsingLiveReload(_ localUrl: URL) -> Bool {
         return self.serverUrl != nil && self.serverUrl?.scheme != localUrl.scheme
     }
@@ -31,7 +36,13 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let localUrl = URL.init(string: url.absoluteString)!
 
         if url.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
-            handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
+            // Only serve the proxy when CapacitorHttp is enabled; the JS bridge only routes fetch/XHR
+            // through it in that case. Otherwise refuse, so it can't be used to fetch arbitrary URLs.
+            if configuration?.getPluginConfig("CapacitorHttp").getBoolean("enabled", false) == true {
+                handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
+            } else {
+                urlSchemeTask.didFailWithError(URLError(.unsupportedURL))
+            }
             return
         }
 

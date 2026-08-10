@@ -172,6 +172,12 @@ public class WebViewLocalServer {
         Uri loadingUrl = request.getUrl();
 
         if (null != loadingUrl.getPath() && loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START)) {
+            // Only serve the proxy for XHR/fetch subresources of an enabled CapacitorHttp. A main
+            // frame request would render proxied content at the app origin with full bridge access.
+            boolean httpEnabled = bridge.getConfig().getPluginConfiguration("CapacitorHttp").getBoolean("enabled", false);
+            if (!httpEnabled || request.isForMainFrame()) {
+                return null;
+            }
             Logger.debug("Handling CapacitorHttp request: " + loadingUrl);
             try {
                 return handleCapacitorHttpRequest(request);

@@ -210,6 +210,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         super.init()
 
         self.webViewDelegationHandler.bridge = self
+        self.webViewAssetHandler.setConfiguration(configuration)
 
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
