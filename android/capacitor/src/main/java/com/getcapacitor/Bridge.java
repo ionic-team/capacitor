@@ -404,6 +404,14 @@ public class Bridge {
             return false;
         }
 
+        // The internal HTTP proxy fetches an arbitrary URL and returns its body at the app origin.
+        // It is only meant to be hit as an XHR/fetch subresource, which never reaches this method;
+        // a frame navigation here would render attacker content with full bridge access, so block it.
+        String path = url.getPath();
+        if (path != null && path.startsWith(CAPACITOR_HTTP_INTERCEPTOR_START)) {
+            return true;
+        }
+
         Uri appUri = Uri.parse(appUrl);
         if (
             !(appUri.getHost().equals(url.getHost()) && url.getScheme().equals(appUri.getScheme())) &&
