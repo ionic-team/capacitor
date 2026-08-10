@@ -92,6 +92,14 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             }
         }
 
+        // The internal HTTP proxy fetches an arbitrary URL and returns its body at the app origin.
+        // It is only meant to be hit as an XHR/fetch subresource, which never reaches this method;
+        // a frame navigation here would render attacker content with full bridge access, so block it.
+        if navURL.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
+            decisionHandler(.cancel)
+            return
+        }
+
         // next, check if this is covered by the allowedNavigation configuration
         if let host = navURL.host, bridge.config.shouldAllowNavigation(to: host) {
             decisionHandler(.allow)
