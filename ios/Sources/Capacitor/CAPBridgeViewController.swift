@@ -27,6 +27,12 @@ import WebKit
     }()
 
     override public final func loadView() {
+        // Set up status bar tap handling
+        UIStatusBarManager.ensureSwizzling()
+
+        // Set up keyboard interaction handling
+        WKWebView.ensureKeyboardSwizzling()
+
         // load the configuration and set the logging flag
         let configDescriptor = instanceDescriptor()
         let configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)

@@ -1,4 +1,33 @@
+//
+//  CAPInstanceDescriptor.swift
+//  Capacitor
+//
+//  Copyright © 2024 Drifty Co. All rights reserved.
+//
+
 import Foundation
+
+@objc public enum InstanceType: Int {
+    case fixed = 0
+    case variable = 1
+}
+
+public struct InstanceWarning: OptionSet, Sendable {
+    public let rawValue: UInt
+    public init(rawValue: UInt) { self.rawValue = rawValue }
+
+    public static let missingAppDir = InstanceWarning(rawValue: 1 << 0)
+    public static let missingFile = InstanceWarning(rawValue: 1 << 1)
+    public static let invalidFile = InstanceWarning(rawValue: 1 << 2)
+    public static let missingCordovaFile = InstanceWarning(rawValue: 1 << 3)
+    public static let invalidCordovaFile = InstanceWarning(rawValue: 1 << 4)
+}
+
+@objc public enum InstanceLoggingBehavior: UInt {
+    case none = 1
+    case debug = 2
+    case production = 4
+}
 
 public enum InstanceDescriptorDefaults {
     public static let scheme = "capacitor"

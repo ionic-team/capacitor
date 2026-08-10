@@ -17,9 +17,18 @@ public extension CapacitorExtensionTypeWrapper where T == WKWebView {
     }
 }
 
-private var associatedKeyboardFlagHandle: UInt8 = 0
+nonisolated(unsafe) private var associatedKeyboardFlagHandle: UInt8 = 0
 
 internal extension WKWebView {
+    // Automatically initialize keyboard swizzling at class load time
+    private static let keyboardSwizzleInitializer: Void = {
+        _swizzleKeyboardMethods()
+    }()
+
+    static func ensureKeyboardSwizzling() {
+        _ = keyboardSwizzleInitializer
+    }
+
     // Our lazy property can't be represented in Obj-C so we need this simple wrapper.
     // swiftlint:disable identifier_name
     @objc static func _swizzleKeyboardMethods() {

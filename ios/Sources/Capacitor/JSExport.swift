@@ -1,3 +1,5 @@
+import WebKit
+
 internal struct PluginHeaderMethod: Codable {
     let name: String
     let rtype: String?

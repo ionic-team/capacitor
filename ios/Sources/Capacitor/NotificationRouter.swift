@@ -1,4 +1,5 @@
 import Foundation
+import UserNotifications
 
 @objc(CAPNotificationRouter) public class NotificationRouter: NSObject, UNUserNotificationCenterDelegate {
     var handleApplicationNotifications: Bool {

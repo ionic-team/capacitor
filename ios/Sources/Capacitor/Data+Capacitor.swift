@@ -1,3 +1,5 @@
+import Foundation
+
 extension Data: CapacitorExtension {}
 public extension CapacitorExtensionTypeWrapper where T == Data {
 

@@ -1,4 +1,5 @@
 import Foundation
+import WebKit
 import UniformTypeIdentifiers
 
 @objc(CAPWebViewAssetHandler)

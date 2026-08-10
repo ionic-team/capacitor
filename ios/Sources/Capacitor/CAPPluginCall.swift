@@ -1,0 +1,179 @@
+import Foundation
+
+public typealias CAPPluginCallSuccessHandler = (CAPPluginCallResult, CAPPluginCall) -> Void
+public typealias CAPPluginCallErrorHandler = (CAPPluginCallError) -> Void
+
+@objc open class CAPPluginCall: NSObject {
+    // MARK: - Properties
+
+    @objc public var callbackId: String
+    @objc public var methodName: String
+    @objc public var options: [String: Any]
+    @objc public var successHandler: CAPPluginCallSuccessHandler
+    @objc public var errorHandler: CAPPluginCallErrorHandler
+    @objc public var keepAlive: Bool = false
+
+    // MARK: - Initialization
+
+    @objc public init(
+        callbackId: String,
+        methodName: String,
+        options: [String: Any],
+        success: @escaping CAPPluginCallSuccessHandler,
+        error: @escaping CAPPluginCallErrorHandler
+    ) {
+        self.callbackId = callbackId
+        self.methodName = methodName
+        self.options = options
+        self.successHandler = success
+        self.errorHandler = error
+        super.init()
+    }
+
+    @objc public convenience init(
+        callbackId: String,
+        options: [String: Any],
+        success: @escaping CAPPluginCallSuccessHandler,
+        error: @escaping CAPPluginCallErrorHandler
+    ) {
+        self.init(
+            callbackId: callbackId,
+            methodName: "",
+            options: options,
+            success: success,
+            error: error
+        )
+    }
+
+    // MARK: - Accessors
+
+    @objc public func getString(_ key: String, defaultValue: String? = nil) -> String? {
+        (options[key] as? String) ?? defaultValue
+    }
+
+    @objc public func getNumber(_ key: String, defaultValue: NSNumber? = nil) -> NSNumber? {
+        if let number = options[key] as? NSNumber {
+            return number
+        }
+        if let int = options[key] as? Int {
+            return NSNumber(value: int)
+        }
+        if let double = options[key] as? Double {
+            return NSNumber(value: double)
+        }
+        return defaultValue
+    }
+
+    @objc public func getBool(_ key: String, defaultValue: Bool) -> Bool {
+        guard let number = getNumber(key) else { return defaultValue }
+        return number.boolValue
+    }
+
+    @objc public func getObject(_ key: String) -> [String: Any]? {
+        options[key] as? [String: Any]
+    }
+
+    @objc public func getArray(_ key: String) -> [Any]? {
+        options[key] as? [Any]
+    }
+
+    @objc public func getDate(_ key: String, defaultValue: Date? = nil) -> Date? {
+        guard let value = options[key] else {
+            return defaultValue
+        }
+
+        if let date = value as? Date {
+            return date
+        }
+
+        if let dateString = value as? String {
+            return BridgedJSValueContainer.jsDateFormatter.date(from: dateString)
+        }
+
+        return defaultValue
+    }
+
+    // MARK: - Deprecated
+
+    @objc public var isSaved: Bool {
+        get { keepAlive }
+        set { keepAlive = newValue }
+    }
+
+    @objc public func save() {
+        keepAlive = true
+    }
+}
+
+
+// MARK: - JSValue Representation
+
+extension CAPPluginCall: JSValueContainer {
+    public var jsObjectRepresentation: JSObject {
+        options as? JSObject ?? [:]
+    }
+}
+
+@objc extension CAPPluginCall: BridgedJSValueContainer {
+    public var dictionaryRepresentation: NSDictionary {
+        options as NSDictionary
+    }
+
+    public static var jsDateFormatter: ISO8601DateFormatter {
+        ISO8601DateFormatter()
+    }
+}
+
+// MARK: - Result Handling
+
+@objc public extension CAPPluginCall {
+    func resolve() {
+        successHandler(CAPPluginCallResult(nil), self)
+    }
+
+    func resolve(_ data: PluginCallResultData = [:]) {
+        successHandler(CAPPluginCallResult(data), self)
+    }
+
+    func reject(_ message: String, _ code: String? = nil, _ error: Error? = nil, _ data: PluginCallResultData? = nil) {
+        errorHandler(CAPPluginCallError(message: message, code: code, error: error, data: data))
+    }
+
+    func unimplemented() {
+        unimplemented("not implemented")
+    }
+
+    func unimplemented(_ message: String) {
+        errorHandler(CAPPluginCallError(message: message, code: "UNIMPLEMENTED", error: nil, data: [:]))
+    }
+
+    func unavailable() {
+        unavailable("not available")
+    }
+
+    func unavailable(_ message: String) {
+        errorHandler(CAPPluginCallError(message: message, code: "UNAVAILABLE", error: nil, data: [:]))
+    }
+}
+
+// MARK: - Codable Support
+
+public extension CAPPluginCall {
+    func resolve<T: Encodable>(
+        with data: T,
+        encoder: JSValueEncoder = JSValueEncoder(),
+        messageForRejectionFromError: (Error) -> String = { _ in "Failed encoding response" }
+    ) {
+        do {
+            let encoded = try encoder.encodeJSObject(data)
+            resolve(encoded)
+        } catch {
+            let message = messageForRejectionFromError(error)
+            reject(message, nil, error)
+        }
+    }
+
+    func decode<T: Decodable>(_ type: T.Type, decoder: JSValueDecoder = JSValueDecoder()) throws -> T {
+        try decoder.decode(type, from: options as? JSObject ?? [:])
+    }
+}
