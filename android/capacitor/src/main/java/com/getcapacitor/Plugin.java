@@ -298,21 +298,6 @@ public class Plugin {
     }
 
     /**
-     * Check whether the given permission has been granted by the user
-     * @deprecated use {@link #getPermissionState(String)} and {@link #getPermissionStates()} to get
-     * the states of permissions defined on the Plugin in conjunction with the @CapacitorPlugin
-     * annotation. Use the Android API {@link ActivityCompat#checkSelfPermission(Context, String)}
-     * methods to check permissions with Android permission strings
-     *
-     * @param permission
-     * @return
-     */
-    @Deprecated
-    public boolean hasPermission(String permission) {
-        return ActivityCompat.checkSelfPermission(this.getContext(), permission) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    /**
      * If the plugin annotation specified a set of permissions, this method checks if each is
      * granted
      * @deprecated use {@link #getPermissionState(String)} or {@link #getPermissionStates()} to
