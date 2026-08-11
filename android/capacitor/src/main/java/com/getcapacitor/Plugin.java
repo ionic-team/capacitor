@@ -323,19 +323,15 @@ public class Plugin {
     public boolean hasDefinedRequiredPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
-            // Check for legacy plugin annotation, @NativePlugin
-            NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
-            return hasDefinedPermissions(legacyAnnotation.permissions());
-        } else {
-            for (Permission perm : annotation.permissions()) {
-                for (String permString : perm.strings()) {
-                    if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
-                        return false;
-                    }
+            return false;
+        }
+        for (Permission perm : annotation.permissions()) {
+            for (String permString : perm.strings()) {
+                if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
+                    return false;
                 }
             }
         }
-
         return true;
     }
 
@@ -390,17 +386,8 @@ public class Plugin {
     public boolean hasRequiredPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
-            // Check for legacy plugin annotation, @NativePlugin
-            NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
-            for (String perm : legacyAnnotation.permissions()) {
-                if (ActivityCompat.checkSelfPermission(this.getContext(), perm) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
-            }
-
-            return true;
+            return false;
         }
-
         for (Permission perm : annotation.permissions()) {
             for (String permString : perm.strings()) {
                 if (ActivityCompat.checkSelfPermission(this.getContext(), permString) != PackageManager.PERMISSION_GRANTED) {
@@ -408,7 +395,6 @@ public class Plugin {
                 }
             }
         }
-
         return true;
     }
 
@@ -543,17 +529,6 @@ public class Plugin {
         }
 
         return permissionLauncher;
-    }
-
-    /**
-     * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
-     *
-     * @deprecated use {@link #requestAllPermissions(PluginCall, String)} in conjunction with @CapacitorPlugin
-     */
-    @Deprecated
-    public void pluginRequestAllPermissions() {
-        NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
-        ActivityCompat.requestPermissions(getActivity(), legacyAnnotation.permissions(), legacyAnnotation.permissionRequestCode());
     }
 
     /**
@@ -785,92 +760,73 @@ public class Plugin {
     @PluginMethod
     public void requestPermissions(PluginCall call) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
-        if (annotation == null) {
-            handleLegacyPermission(call);
-        } else {
-            // handle permission requests for plugins defined with @CapacitorPlugin (since 3.0.0)
-            String[] permAliases = null;
-            Set<String> autoGrantPerms = new HashSet<>();
+        String[] permAliases = null;
+        Set<String> autoGrantPerms = new HashSet<>();
 
-            // If call was made with a list of specific permission aliases to request, save them
-            // to be requested
-            JSArray providedPerms = call.getArray("permissions");
-            List<String> providedPermsList = null;
+        // If call was made with a list of specific permission aliases to request, save them
+        // to be requested
+        JSArray providedPerms = call.getArray("permissions");
+        List<String> providedPermsList = null;
 
-            if (providedPerms != null) {
-                try {
-                    providedPermsList = providedPerms.toList();
-                } catch (JSONException ignore) {
-                    // do nothing
-                }
-            }
-
-            // If call was made without any custom permissions, request all from plugin annotation
-            Set<String> aliasSet = new HashSet<>();
-            if (providedPermsList == null || providedPermsList.isEmpty()) {
-                for (Permission perm : annotation.permissions()) {
-                    // If a permission is defined with no permission strings, separate it for auto-granting.
-                    // Otherwise, the alias is added to the list to be requested.
-                    if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
-                        if (!perm.alias().isEmpty()) {
-                            autoGrantPerms.add(perm.alias());
-                        }
-                    } else {
-                        aliasSet.add(perm.alias());
-                    }
-                }
-
-                permAliases = aliasSet.toArray(new String[0]);
-            } else {
-                for (Permission perm : annotation.permissions()) {
-                    if (providedPermsList.contains(perm.alias())) {
-                        aliasSet.add(perm.alias());
-                    }
-                }
-
-                if (aliasSet.isEmpty()) {
-                    call.reject("No valid permission alias was requested of this plugin.");
-                } else {
-                    permAliases = aliasSet.toArray(new String[0]);
-                }
-            }
-
-            if (permAliases != null && permAliases.length > 0) {
-                // request permissions using provided aliases or all defined on the plugin
-                requestPermissionForAliases(permAliases, call, "checkPermissions");
-            } else if (!autoGrantPerms.isEmpty()) {
-                // if the plugin only has auto-grant permissions, return all as GRANTED
-                JSObject permissionsResults = new JSObject();
-
-                for (String perm : autoGrantPerms) {
-                    permissionsResults.put(perm, PermissionState.GRANTED.toString());
-                }
-
-                call.resolve(permissionsResults);
-            } else {
-                // no permissions are defined on the plugin, resolve undefined
-                call.resolve();
+        if (providedPerms != null) {
+            try {
+                providedPermsList = providedPerms.toList();
+            } catch (JSONException ignore) {
+                // do nothing
             }
         }
-    }
 
-    @SuppressWarnings("deprecation")
-    private void handleLegacyPermission(PluginCall call) {
-        // handle permission requests for plugins defined with @NativePlugin (prior to 3.0.0)
-        NativePlugin legacyAnnotation = this.handle.getLegacyPluginAnnotation();
-        String[] perms = legacyAnnotation.permissions();
-        if (perms.length > 0) {
-            saveCall(call);
-            pluginRequestPermissions(perms, legacyAnnotation.permissionRequestCode());
+        // If call was made without any custom permissions, request all from plugin annotation
+        Set<String> aliasSet = new HashSet<>();
+        if (providedPermsList == null || providedPermsList.isEmpty()) {
+            for (Permission perm : annotation.permissions()) {
+                // If a permission is defined with no permission strings, separate it for auto-granting.
+                // Otherwise, the alias is added to the list to be requested.
+                if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
+                    if (!perm.alias().isEmpty()) {
+                        autoGrantPerms.add(perm.alias());
+                    }
+                } else {
+                    aliasSet.add(perm.alias());
+                }
+            }
+
+            permAliases = aliasSet.toArray(new String[0]);
         } else {
+            for (Permission perm : annotation.permissions()) {
+                if (providedPermsList.contains(perm.alias())) {
+                    aliasSet.add(perm.alias());
+                }
+            }
+
+            if (aliasSet.isEmpty()) {
+                call.reject("No valid permission alias was requested of this plugin.");
+            } else {
+                permAliases = aliasSet.toArray(new String[0]);
+            }
+        }
+
+        if (permAliases != null && permAliases.length > 0) {
+            // request permissions using provided aliases or all defined on the plugin
+            requestPermissionForAliases(permAliases, call, "checkPermissions");
+        } else if (!autoGrantPerms.isEmpty()) {
+            // if the plugin only has auto-grant permissions, return all as GRANTED
+            JSObject permissionsResults = new JSObject();
+
+            for (String perm : autoGrantPerms) {
+                permissionsResults.put(perm, PermissionState.GRANTED.toString());
+            }
+
+            call.resolve(permissionsResults);
+        } else {
+            // no permissions are defined on the plugin, resolve undefined
             call.resolve();
         }
     }
 
     /**
-     * Handle request permissions result. A plugin using the deprecated {@link NativePlugin}
-     * should override this to handle the result, or this method will handle the result
-     * for our convenient requestPermissions call.
+     * Handle request permissions result. Subclasses may override this to handle the result,
+     * or the default implementation will handle the result for our convenient requestPermissions call.
      * @deprecated in favor of using callbacks in conjunction with {@link CapacitorPlugin}
      *
      * @param requestCode
