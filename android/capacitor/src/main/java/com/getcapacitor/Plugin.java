@@ -323,7 +323,7 @@ public class Plugin {
     public boolean hasDefinedRequiredPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
-            return false;
+            return true;
         }
         for (Permission perm : annotation.permissions()) {
             for (String permString : perm.strings()) {
@@ -386,7 +386,7 @@ public class Plugin {
     public boolean hasRequiredPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
-            return false;
+            return true;
         }
         for (Permission perm : annotation.permissions()) {
             for (String permString : perm.strings()) {
