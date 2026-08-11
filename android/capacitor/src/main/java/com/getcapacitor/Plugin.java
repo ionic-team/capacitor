@@ -53,18 +53,6 @@ public class Plugin {
     // Reference to the PluginHandle wrapper for this Plugin
     protected PluginHandle handle;
 
-    /**
-     * A way for plugins to quickly save a call that they will need to reference
-     * between activity/permissions starts/requests
-     *
-     * @deprecated store calls on the bridge using the methods
-     * {@link com.getcapacitor.Bridge#saveCall(PluginCall)},
-     * {@link com.getcapacitor.Bridge#getSavedCall(String)} and
-     * {@link com.getcapacitor.Bridge#releaseCall(PluginCall)}
-     */
-    @Deprecated
-    protected PluginCall savedLastCall;
-
     // Stored event listeners
     private final Map<String, List<PluginCall>> eventListeners;
 
@@ -254,39 +242,6 @@ public class Plugin {
     }
 
     /**
-     * Called to save a {@link PluginCall} in order to reference it
-     * later, such as in an activity or permissions result handler
-     * @deprecated use {@link Bridge#saveCall(PluginCall)}
-     *
-     * @param lastCall
-     */
-    @Deprecated
-    public void saveCall(PluginCall lastCall) {
-        this.savedLastCall = lastCall;
-    }
-
-    /**
-     * Set the last saved call to null to free memory
-     * @deprecated use {@link PluginCall#release(Bridge)}
-     */
-    @Deprecated
-    public void freeSavedCall() {
-        this.savedLastCall.release(bridge);
-        this.savedLastCall = null;
-    }
-
-    /**
-     * Get the last saved call, if any
-     * @deprecated use {@link Bridge#getSavedCall(String)}
-     *
-     * @return
-     */
-    @Deprecated
-    public PluginCall getSavedCall() {
-        return this.savedLastCall;
-    }
-
-    /**
      * Get the config options for this plugin.
      *
      * @return a config object representing the plugin config options, or an empty config
@@ -294,23 +249,6 @@ public class Plugin {
      */
     public PluginConfig getConfig() {
         return bridge.getConfig().getPluginConfiguration(handle.getId());
-    }
-
-    /**
-     * Check whether any of the given permissions has been defined in the AndroidManifest.xml
-     * @deprecated use {@link #isPermissionDeclared(String)}
-     *
-     * @param permissions
-     * @return
-     */
-    @Deprecated
-    public boolean hasDefinedPermissions(String[] permissions) {
-        for (String permission : permissions) {
-            if (!PermissionHelper.hasDefinedPermission(getContext(), permission)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -357,21 +295,6 @@ public class Plugin {
 
         Logger.error(String.format("isPermissionDeclared: No alias defined for %s " + "or missing @CapacitorPlugin annotation.", alias));
         return false;
-    }
-
-    /**
-     * Check whether the given permission has been granted by the user
-     * @deprecated use {@link #getPermissionState(String)} and {@link #getPermissionStates()} to get
-     * the states of permissions defined on the Plugin in conjunction with the @CapacitorPlugin
-     * annotation. Use the Android API {@link ActivityCompat#checkSelfPermission(Context, String)}
-     * methods to check permissions with Android permission strings
-     *
-     * @param permission
-     * @return
-     */
-    @Deprecated
-    public boolean hasPermission(String permission) {
-        return ActivityCompat.checkSelfPermission(this.getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
@@ -529,31 +452,6 @@ public class Plugin {
         }
 
         return permissionLauncher;
-    }
-
-    /**
-     * Helper for requesting a specific permission
-     *
-     * @param permission  the permission to request
-     * @param requestCode the requestCode to use to associate the result with the plugin
-     * @deprecated use {@link #requestPermissionForAlias(String, PluginCall, String)} in conjunction with @CapacitorPlugin
-     */
-    @Deprecated
-    public void pluginRequestPermission(String permission, int requestCode) {
-        ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, requestCode);
-    }
-
-    /**
-     * Helper for requesting specific permissions
-     * @deprecated use {@link #requestPermissionForAliases(String[], PluginCall, String)} in conjunction
-     * with @CapacitorPlugin
-     *
-     * @param permissions the set of permissions to request
-     * @param requestCode the requestCode to use to associate the result with the plugin
-     */
-    @Deprecated
-    public void pluginRequestPermissions(String[] permissions, int requestCode) {
-        ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
     }
 
     /**
@@ -825,8 +723,7 @@ public class Plugin {
     }
 
     /**
-     * Handle request permissions result. Subclasses may override this to handle the result,
-     * or the default implementation will handle the result for our convenient requestPermissions call.
+     * Handle request permissions result. Subclasses may override this to handle the result.
      * @deprecated in favor of using callbacks in conjunction with {@link CapacitorPlugin}
      *
      * @param requestCode
@@ -834,18 +731,7 @@ public class Plugin {
      * @param grantResults
      */
     @Deprecated
-    protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (!hasDefinedPermissions(permissions)) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Missing the following permissions in AndroidManifest.xml:\n");
-            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
-            for (String perm : missing) {
-                builder.append(perm + "\n");
-            }
-            savedLastCall.reject(builder.toString());
-            savedLastCall = null;
-        }
-    }
+    protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {}
 
     /**
      * Called before the app is destroyed to give a plugin the chance to
@@ -946,21 +832,6 @@ public class Plugin {
     @SuppressWarnings("unused")
     public Boolean shouldOverrideLoad(Uri url) {
         return null;
-    }
-
-    /**
-     * Start a new Activity.
-     *
-     * Note: This method must be used by all plugins instead of calling
-     * {@link Activity#startActivityForResult} as it associates the plugin with
-     * any resulting data from the new Activity even if this app
-     * is destroyed by the OS (to free up memory, for example).
-     * @param intent
-     * @param resultCode
-     */
-    @Deprecated
-    protected void startActivityForResult(PluginCall call, Intent intent, int resultCode) {
-        bridge.startActivityForPluginWithResult(call, intent, resultCode);
     }
 
     /**
