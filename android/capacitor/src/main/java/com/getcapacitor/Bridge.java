@@ -618,17 +618,6 @@ public class Bridge {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    private String getLegacyPluginName(Class<? extends Plugin> pluginClass) {
-        NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
-        if (legacyPluginAnnotation == null) {
-            Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
-            return null;
-        }
-
-        return legacyPluginAnnotation.name();
-    }
-
     /**
      * Register a plugin class
      * @param pluginClass a class inheriting from Plugin
@@ -671,20 +660,17 @@ public class Bridge {
     }
 
     private String pluginName(Class<? extends Plugin> clazz) {
-        String pluginName;
         CapacitorPlugin pluginAnnotation = clazz.getAnnotation(CapacitorPlugin.class);
         if (pluginAnnotation == null) {
-            pluginName = this.getLegacyPluginName(clazz);
-        } else {
-            pluginName = pluginAnnotation.name();
+            Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+            return null;
         }
-
-        return pluginName;
+        return pluginAnnotation.name();
     }
 
     private void logInvalidPluginException(Class<? extends Plugin> clazz) {
         Logger.error(
-            "NativePlugin " +
+            "Plugin " +
                 clazz.getName() +
                 " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
                 " the class extends Plugin"
@@ -692,7 +678,7 @@ public class Bridge {
     }
 
     private void logPluginLoadException(Class<? extends Plugin> clazz, Exception ex) {
-        Logger.error("NativePlugin " + clazz.getName() + " failed to load", ex);
+        Logger.error("Plugin " + clazz.getName() + " failed to load", ex);
     }
 
     public PluginHandle getPlugin(String pluginId) {
@@ -706,37 +692,15 @@ public class Bridge {
      * @return
      */
     @Deprecated
-    @SuppressWarnings("deprecation")
     public PluginHandle getPluginWithRequestCode(int requestCode) {
         for (PluginHandle handle : this.plugins.values()) {
-            int[] requestCodes;
-
             CapacitorPlugin pluginAnnotation = handle.getPluginAnnotation();
             if (pluginAnnotation == null) {
-                // Check for legacy plugin annotation, @NativePlugin
-                NativePlugin legacyPluginAnnotation = handle.getLegacyPluginAnnotation();
-                if (legacyPluginAnnotation == null) {
-                    continue;
-                }
-
-                if (legacyPluginAnnotation.permissionRequestCode() == requestCode) {
+                continue;
+            }
+            for (int rc : pluginAnnotation.requestCodes()) {
+                if (rc == requestCode) {
                     return handle;
-                }
-
-                requestCodes = legacyPluginAnnotation.requestCodes();
-
-                for (int rc : requestCodes) {
-                    if (rc == requestCode) {
-                        return handle;
-                    }
-                }
-            } else {
-                requestCodes = pluginAnnotation.requestCodes();
-
-                for (int rc : requestCodes) {
-                    if (rc == requestCode) {
-                        return handle;
-                    }
                 }
             }
         }
@@ -1053,7 +1017,7 @@ public class Bridge {
     }
 
     /**
-     * Check for legacy Capacitor or Cordova plugins that may have registered to handle a permission
+     * Check for Cordova plugins that may have registered to handle a permission
      * request, and handle them if so. If not handled, false is returned.
      *
      * @param requestCode the code that was requested
@@ -1077,12 +1041,6 @@ public class Bridge {
             }
 
             return permissionHandled;
-        }
-
-        // Call deprecated method if using deprecated NativePlugin annotation
-        if (plugin.getPluginAnnotation() == null) {
-            plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
-            return true;
         }
 
         return false;
