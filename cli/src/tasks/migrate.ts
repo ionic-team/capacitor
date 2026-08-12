@@ -553,6 +553,23 @@ async function updateAppBuildGradle(filename: string) {
 `,
     '',
   );
+
+  if (!replaced.includes('def androidxAppCompatVersion = rootProject.ext.androidxAppCompatVersion')) {
+    replaced = replaced.replace(
+      `apply plugin: 'com.android.application'\n\n`,
+      `apply plugin: 'com.android.application'
+
+def androidxAppCompatVersion = rootProject.ext.androidxAppCompatVersion
+def androidxCoordinatorLayoutVersion = rootProject.ext.androidxCoordinatorLayoutVersion
+def coreSplashScreenVersion = rootProject.ext.coreSplashScreenVersion
+def junitVersion = rootProject.ext.junitVersion
+def androidxJunitVersion = rootProject.ext.androidxJunitVersion
+def androidxEspressoCoreVersion = rootProject.ext.androidxEspressoCoreVersion
+
+`,
+    );
+  }
+
   writeFileSync(filename, replaced, 'utf-8');
 }
 
