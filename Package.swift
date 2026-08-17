@@ -10,6 +10,10 @@ let package = Package(
       targets: ["Capacitor"]
     ),
     .library(
+      name: "Cordova",
+      targets: ["Cordova"]
+    ),
+    .library(
       name: "CapacitorCordova",
       targets: ["Cordova", "CapacitorCordova"]
     )
