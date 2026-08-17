@@ -17,13 +17,16 @@ let package = Package(
   targets: [
     .target(
       name: "Capacitor",
+      path: "ios/Sources/Capacitor",
       resources: [.copy("assets")],
       swiftSettings: [
         .swiftLanguageMode(.v5)
       ],
+
     ),
     .target(
       name: "Cordova",
+      path: "ios/Sources/Cordova",
       publicHeadersPath: "include",
       cSettings: [
         .headerSearchPath("include"),
@@ -37,13 +40,15 @@ let package = Package(
     ),
     .target(
       name: "CapacitorCordova",
-      dependencies: ["Capacitor", "Cordova"]
+      dependencies: ["Capacitor", "Cordova"],
+      path: "ios/Sources/CapacitorCordova",
     ),
     .testTarget(
       name: "CapacitorTests",
       dependencies: [
         "Capacitor"
       ],
+      path: "ios/Tests/CapacitorTests",
       resources: [
         .copy("Resources/configurations")
       ]
