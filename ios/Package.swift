@@ -14,16 +14,13 @@ let package = Package(
       targets: ["CapacitorCordova"]
     )
   ],
-  dependencies: [
-    .package(url: "https://github.com/swiftlang/swift-testing.git", from: "0.0.0")
-  ],
   targets: [
     .target(
       name: "Capacitor",
       resources: [.copy("assets")],
       swiftSettings: [
         .swiftLanguageMode(.v5)
-      ]
+      ],
     ),
     .target(
       name: "CapacitorCordova",
@@ -42,8 +39,7 @@ let package = Package(
     .testTarget(
       name: "CapacitorTests",
       dependencies: [
-        "Capacitor",
-        .product(name: "Testing", package: "swift-testing")
+        "Capacitor"
       ],
       resources: [
         .copy("Resources/configurations")

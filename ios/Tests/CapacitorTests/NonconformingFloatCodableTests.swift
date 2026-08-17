@@ -1,42 +1,34 @@
-//
-//  NonconformingFloatCodableTests.swift
-//  CodableTests
-//
-//  Created by Steven Sherry on 9/6/24.
-//  Copyright © 2024 Drifty Co. All rights reserved.
-//
-
-import XCTest
+import Testing
 import Capacitor
 
 private struct Foo: Codable, Equatable {
     var number: Double
 }
 
-class JSValueEncoderNonConformingFloatTests: XCTestCase {
-    func testEncode_float__default_root() throws {
+struct JSValueEncoderNonConformingFloatTests {
+    @Test func encodingFloatDefaultRoot() throws {
         let encoder = JSValueEncoder()
         let rawResult = try encoder.encode(Double.infinity)
-        let result = try XCTUnwrap(rawResult as? Double)
-        XCTAssertEqual(result, .infinity)
+        let result = try #require(rawResult as? Double)
+        #expect(result == .infinity)
     }
 
-    func testEncode_float__default_array() throws {
+    @Test func encodingFloatDefaultArray() throws {
         let encoder = JSValueEncoder()
         let rawResult = try encoder.encode([Double.infinity, -.infinity, .nan])
-        let result = try XCTUnwrap(rawResult as? [Double])
-        XCTAssertEqual(result[0...1], [.infinity, -.infinity])
-        XCTAssertTrue(result[2].isNaN)
+        let result = try #require(rawResult as? [Double])
+        #expect(result[0...1] == [.infinity, -.infinity])
+        #expect(result[2].isNaN)
     }
 
-    func testEncode_float__default_struct() throws {
+    @Test func encodingFloatDefaultStruct() throws {
         let encoder = JSValueEncoder()
         let rawResult = try encoder.encode(Foo.init(number: .infinity))
-        let result = try XCTUnwrap(rawResult as? [String: Double])
-        XCTAssertEqual(result, ["number": .infinity])
+        let result = try #require(rawResult as? [String: Double])
+        #expect(result == ["number": .infinity])
     }
 
-    func testEncode_float__convertToString_root() throws {
+    @Test func encodingFloatConvertToStringRoot() throws {
         let encoder = JSValueEncoder(
             nonConformingFloatEncodingStategy: .convertToString(
                 positiveInfinity: "pos",
@@ -46,19 +38,19 @@ class JSValueEncoderNonConformingFloatTests: XCTestCase {
         )
 
         var rawResult = try encoder.encode(Double.infinity)
-        var result = try XCTUnwrap(rawResult as? String)
-        XCTAssertEqual(result, "pos")
+        var result = try #require(rawResult as? String)
+        #expect(result == "pos")
 
         rawResult = try encoder.encode(-Double.infinity)
-        result = try XCTUnwrap(rawResult as? String)
-        XCTAssertEqual(result, "neg")
+        result = try #require(rawResult as? String)
+        #expect(result == "neg")
 
         rawResult = try encoder.encode(Double.nan)
-        result = try XCTUnwrap(rawResult as? String)
-        XCTAssertEqual(result, "nan")
+        result = try #require(rawResult as? String)
+        #expect(result == "nan")
     }
 
-    func testEncode_float__convertToString_array() throws {
+    @Test func encodingFloatConvertToStringArray() throws {
         let encoder = JSValueEncoder(
             nonConformingFloatEncodingStategy: .convertToString(
                 positiveInfinity: "pos",
@@ -68,11 +60,11 @@ class JSValueEncoderNonConformingFloatTests: XCTestCase {
         )
 
         let rawResult = try encoder.encode([Double.infinity, -.infinity, .nan])
-        let result = try XCTUnwrap(rawResult as? [String])
-        XCTAssertEqual(result, ["pos", "neg", "nan"])
+        let result = try #require(rawResult as? [String])
+        #expect(result == ["pos", "neg", "nan"])
     }
 
-    func testEncode_float__convertToString_struct() throws {
+    @Test func encodingFloatConvertToStringStruct() throws {
         let encoder = JSValueEncoder(
             nonConformingFloatEncodingStategy: .convertToString(
                 positiveInfinity: "pos",
@@ -82,92 +74,104 @@ class JSValueEncoderNonConformingFloatTests: XCTestCase {
         )
 
         var rawResult = try encoder.encode(Foo(number: .infinity))
-        var result = try XCTUnwrap(rawResult as? [String: String])
-        XCTAssertEqual(result, ["number": "pos"])
+        var result = try #require(rawResult as? [String: String])
+        #expect(result == ["number": "pos"])
 
         rawResult = try encoder.encode(Foo(number: -.infinity))
-        result = try XCTUnwrap(rawResult as? [String: String])
-        XCTAssertEqual(result, ["number": "neg"])
+        result = try #require(rawResult as? [String: String])
+        #expect(result == ["number": "neg"])
 
         rawResult = try encoder.encode(Foo(number: .nan))
-        result = try XCTUnwrap(rawResult as? [String: String])
-        XCTAssertEqual(result, ["number": "nan"])
+        result = try #require(rawResult as? [String: String])
+        #expect(result == ["number": "nan"])
     }
 
-    func testEncode_float__throw_root() throws {
+    @Test func encodingFloatThrowRoot() throws {
         let encoder = JSValueEncoder(nonConformingFloatEncodingStategy: .throw)
-        XCTAssertThrowsError(try encoder.encode(Double.infinity))
+        #expect(throws: EncodingError.self) {
+            try encoder.encode(Double.infinity)
+        }
     }
 
-    func testEncode_float__throw_array() throws {
+    @Test func encodingFloatThrowArray() throws {
         let encoder = JSValueEncoder(nonConformingFloatEncodingStategy: .throw)
-        XCTAssertThrowsError(try encoder.encode([Double.infinity, -.infinity, .nan]))
+        #expect(throws: EncodingError.self) {
+            try encoder.encode([Double.infinity, -.infinity, .nan])
+        }
     }
 
-    func testEncode_float__throw_struct() throws {
+    @Test func encodingFloatThrowStruct() throws {
         let encoder = JSValueEncoder(nonConformingFloatEncodingStategy: .throw)
-        XCTAssertThrowsError(try encoder.encode(Foo(number: .infinity)))
+        #expect(throws: EncodingError.self) {
+            try encoder.encode(Foo(number: .infinity))
+        }
     }
 }
 
-class JSValueDecoderNonConformingFloatTests: XCTestCase {
-    func testDecode_float__default_root() throws {
+struct JSValueDecoderNonConformingFloatTests {
+    @Test func decodingFloatDefaultRoot() throws {
         let decoder = JSValueDecoder()
         let result = try decoder.decode(Double.self, from: Double.infinity)
-        XCTAssertEqual(result, .infinity)
+        #expect(result == .infinity)
     }
 
-    func testDecode_float__default_array() throws {
+    @Test func decodingFloatDefaultArray() throws {
         let decoder = JSValueDecoder()
         let result = try decoder.decode([Double].self, from: [Double.infinity, Double.infinity])
-        XCTAssertEqual(result, [.infinity, .infinity])
+        #expect(result == [.infinity, .infinity])
     }
 
-    func testDecode_float__default_struct() throws {
+    @Test func decodingFloatDefaultStruct() throws {
         let decoder = JSValueDecoder()
         let result = try decoder.decode(Foo.self, from: ["number": Double.infinity])
-        XCTAssertEqual(result, .init(number: .infinity))
+        #expect(result == .init(number: .infinity))
     }
 
-    func testDecode_float__throw_root() throws {
+    @Test func decodingFloatThrowRoot() throws {
         let decoder = JSValueDecoder(nonConformingFloatDecodingStrategy: .throw)
-        XCTAssertThrowsError(try decoder.decode(Double.self, from: Double.infinity))
+        #expect(throws: DecodingError.self) {
+            try decoder.decode(Double.self, from: Double.infinity)
+        }
     }
 
-    func testDecode_float__throw_array() throws {
+    @Test func decodingFloatThrowArray() throws {
         let decoder = JSValueDecoder(nonConformingFloatDecodingStrategy: .throw)
-        XCTAssertThrowsError(try decoder.decode([Double].self, from: [Double.infinity, Double.infinity]))
+        #expect(throws: DecodingError.self) {
+            try decoder.decode([Double].self, from: [Double.infinity, Double.infinity])
+        }
     }
 
-    func testDecode_float__throw_struct() throws {
+    @Test func decodingFloatThrowStruct() throws {
         let decoder = JSValueDecoder(nonConformingFloatDecodingStrategy: .throw)
-        XCTAssertThrowsError(try decoder.decode(Foo.self, from: ["number": Double.infinity]))
+        #expect(throws: DecodingError.self) {
+            try decoder.decode(Foo.self, from: ["number": Double.infinity])
+        }
     }
 
-    func testDecode_float__convertFromString_root() throws {
+    @Test func decodingFloatConvertFromStringRoot() throws {
         let decoder = JSValueDecoder(nonConformingFloatDecodingStrategy: .convertFromString(positiveInfinity: "pos", negativeInfinity: "neg", nan: "nan"))
         var result = try decoder.decode(Double.self, from: "pos")
-        XCTAssertEqual(result, .infinity)
+        #expect(result == .infinity)
         result = try decoder.decode(Double.self, from: "neg")
-        XCTAssertEqual(result, -.infinity)
+        #expect(result == -.infinity)
         result = try decoder.decode(Double.self, from: "nan")
-        XCTAssertTrue(result.isNaN)
+        #expect(result.isNaN)
     }
 
-    func testDecode_float__convertFromString_array() throws {
+    @Test func decodingFloatConvertFromStringArray() throws {
         let decoder = JSValueDecoder(nonConformingFloatDecodingStrategy: .convertFromString(positiveInfinity: "pos", negativeInfinity: "neg", nan: "nan"))
         let result = try decoder.decode([Double].self, from: ["pos", "neg", "nan"])
-        XCTAssertEqual(result[0...1], [.infinity, -.infinity])
-        XCTAssertTrue(result[2].isNaN)
+        #expect(result[0...1] == [.infinity, -.infinity])
+        #expect(result[2].isNaN)
     }
 
-    func testDecode_float__convertFromString_struct() throws {
+    @Test func decodingFloatConvertFromStringStruct() throws {
         let decoder = JSValueDecoder(nonConformingFloatDecodingStrategy: .convertFromString(positiveInfinity: "pos", negativeInfinity: "neg", nan: "nan"))
         var result = try decoder.decode(Foo.self, from: ["number": "pos"])
-        XCTAssertEqual(result, .init(number: .infinity))
+        #expect(result == .init(number: .infinity))
         result = try decoder.decode(Foo.self, from: ["number": "neg"])
-        XCTAssertEqual(result, .init(number: -.infinity))
+        #expect(result == .init(number: -.infinity))
         result = try decoder.decode(Foo.self, from: ["number": "nan"])
-        XCTAssertTrue(result.number.isNaN)
+        #expect(result.number.isNaN)
     }
 }
