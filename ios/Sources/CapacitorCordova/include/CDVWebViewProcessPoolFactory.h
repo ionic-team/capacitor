@@ -18,7 +18,7 @@
  */
 
 #import <WebKit/WebKit.h>
-#import <Cordova/CDVAvailabilityDeprecated.h>
+#import "CDVAvailabilityDeprecated.h"
 
 /**
  @Metadata {

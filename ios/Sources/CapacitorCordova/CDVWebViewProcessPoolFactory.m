@@ -19,7 +19,7 @@
 
 @import Foundation;
 @import WebKit;
-#import <Cordova/CDVWebViewProcessPoolFactory.h>
+#import "CDVWebViewProcessPoolFactory.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
