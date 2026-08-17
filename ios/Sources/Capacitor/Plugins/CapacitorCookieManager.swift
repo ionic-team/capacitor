@@ -1,4 +1,5 @@
 import Foundation
+import WebKit
 
 public class CapacitorWKCookieObserver: NSObject, WKHTTPCookieStoreObserver {
     // Sync WKWebView Cookies to HTTPCookieStorage

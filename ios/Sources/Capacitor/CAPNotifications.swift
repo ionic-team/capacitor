@@ -1,3 +1,5 @@
+import UserNotifications
+
 /**
  Notificaton types for NotificationCenter and NSNotificationCenter
 

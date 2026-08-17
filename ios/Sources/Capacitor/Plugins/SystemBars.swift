@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 @objc(CAPSystemBarsPlugin)
 public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
@@ -20,13 +21,14 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @objc override public func load() {
-        let hidden = getConfig().getBoolean("hidden", false)
+        let config = getConfig()
+        let hidden = config.getBoolean("hidden", false)
 
-        if let style = getConfig().getString("style", "DEFAULT") {
+        if let style = config.getString("style", "DEFAULT") {
             setStyle(style: style)
         }
 
-        if let animation = getConfig().getString("animation") {
+        if let animation = config.getString("animation") {
             setAnimation(animation: animation)
         }
 

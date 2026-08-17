@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 @objc(CAPApplicationDelegateProxy)
 public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {

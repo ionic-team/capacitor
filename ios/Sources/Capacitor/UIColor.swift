@@ -1,3 +1,5 @@
+import UIKit
+
 extension UIColor: CapacitorExtension {}
 public extension CapacitorExtensionTypeWrapper where T: UIColor {
     // disable linting for the short variable names, since that's the point of the method

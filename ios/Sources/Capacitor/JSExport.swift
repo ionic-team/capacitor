@@ -109,7 +109,7 @@ internal class JSExport {
     }
 
     private static func createPluginHeaderMethod(method: CAPPluginMethod) -> PluginHeaderMethod {
-        var rtype = method.returnType
+        var rtype: String? = method.returnType
         if rtype == "none" {
             rtype = nil
         }
@@ -117,8 +117,8 @@ internal class JSExport {
     }
 
     private static func generateMethod(pluginClassName: String, method: CAPPluginMethod) -> String {
-        let methodName = method.name!
-        let returnType = method.returnType!
+        let methodName = method.name
+        let returnType = method.returnType
         var paramList = [String]()
 
         // add the catch-all
@@ -140,7 +140,7 @@ internal class JSExport {
         var lines = [String]()
 
         // Create the function declaration
-        lines.append("t['\(method.name!)'] = function(\(paramString)) {")
+        lines.append("t['\(methodName)'] = function(\(paramString)) {")
 
         // Create the call to Capacitor ...
         if returnType == CAPPluginReturnNone {

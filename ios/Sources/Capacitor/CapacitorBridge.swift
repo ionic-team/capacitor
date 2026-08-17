@@ -256,7 +256,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             do {
                 if let pluginJSON = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") {
                     let pluginData = try Data(contentsOf: pluginJSON)
-                    var registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
+                    let registrationList = try JSONDecoder().decode(RegistrationList.self, from: pluginData)
 
                     for plugin in registrationList.packageClassList {
                         if let pluginClass = NSClassFromString(plugin), pluginClass is CAPPlugin.Type {
@@ -451,11 +451,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                                             }
                                            })
 
-            if let pluginCall = pluginCall {
-                plugin.perform(selector, with: pluginCall)
-                if pluginCall.keepAlive {
-                    self?.saveCall(pluginCall)
-                }
+            plugin.perform(selector, with: pluginCall)
+            if pluginCall.keepAlive {
+                self?.saveCall(pluginCall)
             }
 
             // let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime

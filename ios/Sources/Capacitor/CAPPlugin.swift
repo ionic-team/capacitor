@@ -22,6 +22,17 @@ import UIKit
         self.shouldStringifyDatesInCalls = true
     }
 
+    @objc required override public init() {
+        super.init()
+        self.bridge = nil
+        self.webView = nil
+        self.pluginId = ""
+        self.pluginName = ""
+        self.eventListeners = NSMutableDictionary()
+        self.retainedEventArguments = NSMutableDictionary()
+        self.shouldStringifyDatesInCalls = true
+    }
+
     @objc public func getId() -> String {
         return pluginName
     }
@@ -35,8 +46,8 @@ import UIKit
         return call.getString(field, defaultValue: defaultValue) ?? defaultValue
     }
 
-    @objc public func getConfig() -> PluginConfig? {
-        guard let bridge = bridge else { return nil }
+    @objc public func getConfig() -> PluginConfig {
+        guard let bridge = bridge else { return PluginConfig(config: [:]) }
         return bridge.config.getPluginConfig(pluginName)
     }
 
@@ -76,7 +87,7 @@ import UIKit
         guard let listenersForEvent = eventListeners.object(forKey: eventName) as? [CAPPluginCall] else {
             if retainUntilConsumed {
                 if retainedEventArguments.object(forKey: eventName) == nil {
-                    retainedEventArguments.setObject(NSMutableArray(), forKey: eventName)
+                    retainedEventArguments.setValue(NSMutableArray(), forKey: eventName)
                 }
                 (retainedEventArguments.object(forKey: eventName) as? NSMutableArray)?.add(data ?? [:])
             }
@@ -177,7 +188,7 @@ import UIKit
     }
 
     @objc public func handleWKWebViewURLAuthenticationChallenge(
-        _ challenge: NSURLAuthenticationChallenge,
+      _ challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) -> Bool {
         return false

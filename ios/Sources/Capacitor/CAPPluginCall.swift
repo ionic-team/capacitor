@@ -47,8 +47,12 @@ public typealias CAPPluginCallErrorHandler = (CAPPluginCallError) -> Void
 
     // MARK: - Accessors
 
+    public func getString(_ key: String) -> String? {
+        options[key] as? String
+    }
+
     @objc public func getString(_ key: String, defaultValue: String? = nil) -> String? {
-        (options[key] as? String) ?? defaultValue
+        getString(key) ?? defaultValue
     }
 
     @objc public func getNumber(_ key: String, defaultValue: NSNumber? = nil) -> NSNumber? {
@@ -77,9 +81,9 @@ public typealias CAPPluginCallErrorHandler = (CAPPluginCallError) -> Void
         options[key] as? [Any]
     }
 
-    @objc public func getDate(_ key: String, defaultValue: Date? = nil) -> Date? {
+    public func getDate(_ key: String) -> Date? {
         guard let value = options[key] else {
-            return defaultValue
+            return nil
         }
 
         if let date = value as? Date {
@@ -87,10 +91,14 @@ public typealias CAPPluginCallErrorHandler = (CAPPluginCallError) -> Void
         }
 
         if let dateString = value as? String {
-            return BridgedJSValueContainer.jsDateFormatter.date(from: dateString)
+            return Self.jsDateFormatter.date(from: dateString)
         }
 
-        return defaultValue
+        return nil
+    }
+
+    @objc public func getDate(_ key: String, defaultValue: Date? = nil) -> Date? {
+        getDate(key) ?? defaultValue
     }
 
     // MARK: - Deprecated

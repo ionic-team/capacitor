@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+import WebKit
 
 @objc public enum InstanceType: Int {
     case fixed = 0
@@ -178,17 +180,13 @@ extension InstanceDescriptor {
     @objc public func normalize() {
         // first, make sure the scheme is valid
         var schemeValid = false
-        if let scheme = urlScheme, WKWebView.handlesURLScheme(scheme) == false,
-           scheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
+        if WKWebView.handlesURLScheme(urlScheme) == false,
+           urlScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
             schemeValid = true
         }
         if !schemeValid {
             // reset to the default
             urlScheme = InstanceDescriptorDefaults.scheme
-        }
-        // make sure we have a hostname
-        if urlHostname == nil {
-            urlHostname = InstanceDescriptorDefaults.hostname
         }
         // now validate the server.url
         var urlValid = false

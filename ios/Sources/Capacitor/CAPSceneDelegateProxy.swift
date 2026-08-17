@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 @objc(CAPSceneDelegateProxy)
 public class SceneDelegateProxy: NSObject, UISceneDelegate {
