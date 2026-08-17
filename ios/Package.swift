@@ -11,7 +11,7 @@ let package = Package(
     ),
     .library(
       name: "CapacitorCordova",
-      targets: ["CapacitorCordova"]
+      targets: ["Cordova", "CapacitorCordova"]
     )
   ],
   targets: [
@@ -23,8 +23,7 @@ let package = Package(
       ],
     ),
     .target(
-      name: "CapacitorCordova",
-      dependencies: ["Capacitor"],
+      name: "Cordova",
       publicHeadersPath: "include",
       cSettings: [
         .headerSearchPath("include"),
@@ -35,6 +34,10 @@ let package = Package(
         .linkedFramework("MobileCoreServices"),
         .linkedFramework("CFNetwork")
       ]
+    ),
+    .target(
+      name: "CapacitorCordova",
+      dependencies: ["Capacitor", "Cordova"]
     ),
     .testTarget(
       name: "CapacitorTests",
