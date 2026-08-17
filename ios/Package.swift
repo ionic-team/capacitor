@@ -7,49 +7,48 @@ let package = Package(
   products: [
     .library(
       name: "Capacitor",
-      targets: ["Capacitor", "CapacitorObjC"]
+      targets: ["Capacitor"]
     ),
     .library(
       name: "CapacitorCordova",
       targets: ["CapacitorCordova"]
     )
   ],
+  dependencies: [
+    .package(url: "https://github.com/swiftlang/swift-testing.git", from: "0.0.0")
+  ],
   targets: [
-    // Pure ObjC core utilities (no dependencies)
-    .target(
-      name: "CapacitorC",
-      publicHeadersPath: "include",
-      cSettings: [
-        .define("_FORTIFY_SOURCE", to: "2")
-      ]
-    ),
-
-    // Pure Swift public API (depends on CapacitorC)
     .target(
       name: "Capacitor",
-      dependencies: ["CapacitorC"],
-      publicHeadersPath: "include"
+      resources: [.copy("assets")],
+      swiftSettings: [
+        .swiftLanguageMode(.v5)
+      ]
     ),
-
-    // Objective-C bridge layer (depends on Capacitor to import Swift headers)
     .target(
-      name: "CapacitorObjC",
+      name: "CapacitorCordova",
       dependencies: ["Capacitor"],
       publicHeadersPath: "include",
       cSettings: [
-        .define("_FORTIFY_SOURCE", to: "2")
+        .headerSearchPath("include"),
+      ],
+      linkerSettings: [
+        .linkedFramework("UIKit"),
+        .linkedFramework("WebKit"),
+        .linkedFramework("MobileCoreServices"),
+        .linkedFramework("CFNetwork")
       ]
     ),
-
-    // Cordova legacy ObjC target
-    .target(
-      name: "CapacitorCordova",
-      publicHeadersPath: "include",
-      cSettings: [
-        .headerSearchPath("include"),
-        .define("_FORTIFY_SOURCE", to: "2")
+    .testTarget(
+      name: "CapacitorTests",
+      dependencies: [
+        "Capacitor",
+        .product(name: "Testing", package: "swift-testing")
+      ],
+      resources: [
+        .copy("Resources/configurations")
       ]
     )
   ],
-  swiftLanguageModes: [.v6]
+  swiftLanguageModes: [.v5]
 )
