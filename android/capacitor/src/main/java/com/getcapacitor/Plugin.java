@@ -1003,7 +1003,8 @@ public class Plugin {
      * Give the plugins a chance to take control when a URL is about to be loaded in the WebView.
      * Returning true causes the WebView to abort loading the URL.
      * Returning false causes the WebView to continue loading the URL.
-     * Returning null will defer to the default Capacitor policy
+     * Returning null will defer to the default Capacitor policy.
+     * Not called for Capacitor's internal HTTP proxy path, which is always blocked.
      */
     @SuppressWarnings("unused")
     public Boolean shouldOverrideLoad(Uri url) {
