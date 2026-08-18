@@ -867,14 +867,30 @@ export async function writeCordovaAndroidManifest(
     });
   });
   const cleartextString = 'android:usesCleartextTraffic="true"';
-  const cleartextValue =
-    (cleartext || config.app.extConfig.server?.cleartext) && !applicationXMLAttributes.includes(cleartextString)
-      ? cleartextString
+  const networkSecurityConfigValue =
+    cleartext || config.app.extConfig.server?.cleartext || applicationXMLAttributes.includes(cleartextString)
+      ? 'android:networkSecurityConfig="@xml/network_security_config"'
       : '';
+  const networkSecurityConfigDir = join(config.android.cordovaPluginsDirAbs, 'src', 'main', 'res', 'xml');
+  const networkSecurityConfigPath = join(networkSecurityConfigDir, 'network_security_config.xml');
+  if (networkSecurityConfigValue) {
+    await ensureDir(networkSecurityConfigDir);
+    await writeFile(
+      networkSecurityConfigPath,
+      `<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
+`,
+    );
+  } else if (await pathExists(networkSecurityConfigPath)) {
+    await remove(networkSecurityConfigPath);
+  }
+
   let content = `<?xml version='1.0' encoding='utf-8'?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:amazon="http://schemas.amazon.com/apk/res/android">
-<application ${applicationXMLAttributes.join('\n')} ${cleartextValue}>
+<application ${applicationXMLAttributes.filter((attr) => !attr.includes('android:usesCleartextTraffic')).join('\n')} ${networkSecurityConfigValue}>
 ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
