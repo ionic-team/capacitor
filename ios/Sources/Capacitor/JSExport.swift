@@ -24,7 +24,11 @@ internal class JSExport {
     }
 
     static func exportBridgeJS(userContentController: WKUserContentController) throws {
+        #if SWIFT_PACKAGE
+        let capBundle = Bundle.module
+        #else
         let capBundle = Bundle(for: Self.self)
+        #endif
         guard let jsUrl = capBundle.url(forResource: "native-bridge", withExtension: "js") else {
             CAPLog.print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")
             throw CapacitorBridgeError.errorExportingCoreJS
