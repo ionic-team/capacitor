@@ -36,8 +36,8 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let localUrl = URL.init(string: url.absoluteString)!
 
         if url.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
-            // Only serve the proxy when CapacitorHttp is enabled; the JS bridge only routes fetch/XHR
-            // through it in that case. Otherwise refuse, so it can't be used to fetch arbitrary URLs.
+            // Only serve the proxy when CapacitorHttp is on. A scheme task can't tell a document from
+            // a subresource, so keeping documents out relies on the check in decidePolicyFor.
             if configuration?.getPluginConfig("CapacitorHttp").getBoolean("enabled", false) == true {
                 handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
             } else {
@@ -163,12 +163,13 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     let existingHeaders = response.allHeaderFields
                     var newHeaders: [AnyHashable: Any] = [:]
 
+                    // Nothing should render this. If anything does, sandbox keeps it inert.
+                    newHeaders["Content-Security-Policy"] = "sandbox; frame-ancestors 'none'"
+
                     // if using live reload, then set CORS headers
                     if self.isUsingLiveReload(url) {
-                        newHeaders = [
-                            "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
-                            "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"
-                        ]
+                        newHeaders["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString ?? ""
+                        newHeaders["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, TRACE"
                     }
 
                     if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (_, newHeaders) in newHeaders }) as? [String: String] {

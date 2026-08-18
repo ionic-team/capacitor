@@ -303,6 +303,12 @@ public class Bridge {
     }
 
     public boolean launchIntent(Uri url) {
+        // The proxy returns a remote body at the app origin, so block it before plugins can allow it.
+        String path = url.getPath();
+        if (path != null && path.startsWith(CAPACITOR_HTTP_INTERCEPTOR_START)) {
+            return true;
+        }
+
         /*
          * Give plugins the chance to handle the url
          */
@@ -318,14 +324,6 @@ public class Bridge {
 
         if (url.getScheme().equals("data") || url.getScheme().equals("blob")) {
             return false;
-        }
-
-        // The internal HTTP proxy fetches an arbitrary URL and returns its body at the app origin.
-        // It is only meant to be hit as an XHR/fetch subresource, which never reaches this method;
-        // a frame navigation here would render attacker content with full bridge access, so block it.
-        String path = url.getPath();
-        if (path != null && path.startsWith(CAPACITOR_HTTP_INTERCEPTOR_START)) {
-            return true;
         }
 
         Uri appUri = Uri.parse(appUrl);
