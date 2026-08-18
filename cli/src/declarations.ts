@@ -86,7 +86,7 @@ export interface CapacitorConfig {
   initialFocus?: boolean;
 
   /**
-   * If set, will include Cordova support libraries regardless 
+   * If set, will include Cordova support libraries regardless
    * of whether or not they are needed by plugins.
    *
    * @since 9.0.0
