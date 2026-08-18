@@ -101,7 +101,7 @@ export async function generatePackageText(config: Config, plugins: Plugin[]): Pr
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
   const cordovaPlugins = await getCordovaPlugins(config, 'ios');
-  const enableCordova = cordovaPlugins.length > 0;
+  const enableCordova = cordovaPlugins.length > 0 || config.app.forceCordova;
   const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits ?? {};
   const packageOptions = config.app.extConfig.experimental?.ios?.spm?.packageOptions ?? {};
   const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '5.9';

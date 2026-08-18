@@ -37,7 +37,7 @@ export async function updateAndroid(config: Config): Promise<void> {
   printPlugins(capacitorPlugins, 'android');
 
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
-  const enableCordova = cordovaPlugins.length > 0;
+  const enableCordova = cordovaPlugins.length > 0 || config.app.forceCordova;
 
   await writePluginsJson(config, capacitorPlugins, enableCordova);
   await removePluginsNativeFiles(config);
