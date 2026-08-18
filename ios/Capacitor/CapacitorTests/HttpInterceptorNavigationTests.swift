@@ -3,19 +3,23 @@ import XCTest
 
 @testable import Capacitor
 
+private class StubFrameInfo: WKFrameInfo {
+    override var isMainFrame: Bool { false }
+}
+
 private class StubNavigationAction: WKNavigationAction {
     private let stubbedRequest: URLRequest
-    init(url: String) {
+    private let stubbedTargetFrame: WKFrameInfo?
+    init(url: String, subframe: Bool = false) {
         self.stubbedRequest = URLRequest(url: URL(string: url)!)
+        self.stubbedTargetFrame = subframe ? StubFrameInfo() : nil
         super.init()
     }
     override var request: URLRequest { stubbedRequest }
-    override var targetFrame: WKFrameInfo? { nil }
+    override var targetFrame: WKFrameInfo? { stubbedTargetFrame }
 }
 
-// A frame navigation to the internal HTTP proxy path must be blocked. Because the app is served at
-// capacitor://localhost, such a URL shares the app's origin, so the origin-based navigation guard
-// alone would allow it and render proxied content at the app origin.
+// The proxy path shares the app's origin, so the origin guard alone would allow it.
 class HttpInterceptorNavigationTests: XCTestCase {
     private var bridge: MockBridge!
     private var handler: WebViewDelegationHandler!
@@ -43,6 +47,14 @@ class HttpInterceptorNavigationTests: XCTestCase {
     func testBlocksNavigationToInterceptorPath() {
         let interceptorURL = "capacitor://localhost\(CapacitorBridge.httpInterceptorStartIdentifier)?u=https://example.com/payload.html"
         XCTAssertEqual(policy(for: interceptorURL), .cancel)
+    }
+
+    // decidePolicyFor also fires for subframes, and a same-origin iframe gets the bridge too.
+    func testBlocksSubframeNavigationToInterceptorPath() {
+        let interceptorURL = "capacitor://localhost\(CapacitorBridge.httpInterceptorStartIdentifier)?u=https://example.com/payload.html"
+        var decision: WKNavigationActionPolicy?
+        handler.webView(webView, decidePolicyFor: StubNavigationAction(url: interceptorURL, subframe: true)) { decision = $0 }
+        XCTAssertEqual(decision, .cancel)
     }
 
     func testAllowsInAppNavigation() {
