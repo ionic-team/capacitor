@@ -1,5 +1,6 @@
 import { copy, readFile, writeFile, remove } from 'fs-extra';
 import { join } from 'path';
+import { major } from 'semver';
 
 import { getCapacitorPackageVersion } from '../common';
 import { needsStaticPod } from '../cordova';
@@ -353,18 +354,26 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
             publicHeadersPath: "."`;
   }
 
+  const useSourceSPM = major(iosPlatformVersion) >= 9;
+  const capacitorPackageName = useSourceSPM ? 'capacitor' : 'capacitor-swift-pm';
+  const capacitorPackageUrl = useSourceSPM
+    ? 'https://github.com/ionic-team/capacitor'
+    : 'https://github.com/ionic-team/capacitor-swift-pm.git';
+  const capacitorPackageVersionSuffix = useSourceSPM
+    ? ` branch: "feature/source-spm"`
+    : ` from: "${iosPlatformVersion}"`;
+
   const platformTag = getPluginPlatform(p, platform);
 
   if (platformTag.$?.package) {
     const packageSwiftPath = join(p.rootPath, 'Package.swift');
     let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
-    content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, `capacitor-swift-pm`);
-    content = setAllStringIn(
-      content,
-      `url: "https://github.com/ionic-team/capacitor-swift-pm.git",`,
-      `)`,
-      ` from: "${iosPlatformVersion}"`,
-    );
+    content = content.replace(`apache`, `ionic-team`);
+    // The source repo is referenced as "cordova-ios.git" in URLs; source-SPM's package has no .git suffix.
+    content = useSourceSPM
+      ? content.replaceAll(`cordova-ios.git`, capacitorPackageName).replaceAll(`cordova-ios`, capacitorPackageName)
+      : content.replaceAll(`cordova-ios`, capacitorPackageName);
+    content = setAllStringIn(content, `url: "${capacitorPackageUrl}",`, `)`, capacitorPackageVersionSuffix);
     await writeFile(packageSwiftPath, content);
   } else {
     const content = `// swift-tools-version: 5.9
@@ -381,13 +390,13 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")
+        .package(url: "${capacitorPackageUrl}",${capacitorPackageVersionSuffix})
     ],
     targets: [
         .target(
             name: "${p.name}",
             dependencies: [
-                .product(name: "Cordova", package: "capacitor-swift-pm")
+                .product(name: "Cordova", package: "${capacitorPackageName}")
             ],
             path: "."${headersText}
         )

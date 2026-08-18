@@ -65,13 +65,18 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     await Promise.all(
       validSPMPackages.map(async (plugin) => {
         const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
+        const majorCapVersion = major(iosPlatformVersion);
+        if (majorCapVersion >= 9) {
+          // Capacitor 9+ uses a branch-based dependency, so there's no version to reconcile.
+          return;
+        }
+
         const packageSwiftPath = join(plugin.rootPath, 'Package.swift');
         let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
         const regex = new RegExp(
           'url:\\s*"https://github.com/ionic-team/capacitor-swift-pm\\.git",\\s*from:\\s*"([^"]+)"',
         );
         const version = content.match(regex)?.[1];
-        const majorCapVersion = major(iosPlatformVersion);
         if (version && major(version) != majorCapVersion) {
           const preCapVersion = prerelease(iosPlatformVersion);
           const forceVersion = preCapVersion ? iosPlatformVersion : `${majorCapVersion}.0.0`;

@@ -3,6 +3,7 @@ import { tmpdir } from 'os';
 import { join, relative, resolve } from 'path';
 import type { PlistObject } from 'plist';
 import { build, parse } from 'plist';
+import { major } from 'semver';
 import { extract } from 'tar';
 
 import { getCapacitorPackageVersion } from '../common';
@@ -105,7 +106,12 @@ export async function generatePackageText(config: Config, plugins: Plugin[]): Pr
   const enableCordova = cordovaPlugins.length > 0;
   const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits ?? {};
   const packageOptions = config.app.extConfig.experimental?.ios?.spm?.packageOptions ?? {};
-  const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '5.9';
+  const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '6.3';
+  const useSourceSPM = major(iosPlatformVersion) >= 9;
+  const capacitorPackageName = useSourceSPM ? 'capacitor' : 'capacitor-swift-pm';
+  const capacitorPackageDependency = useSourceSPM
+    ? `.package(url: "https://github.com/ionic-team/capacitor", branch: "feature/source-spm")`
+    : `.package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "${iosPlatformVersion}")`;
 
   let packageSwiftText = `// swift-tools-version: ${swiftToolsVersion}
 import PackageDescription
@@ -120,7 +126,7 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "${iosPlatformVersion}")`;
+        ${capacitorPackageDependency}`;
 
   for (const plugin of plugins) {
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
@@ -165,10 +171,10 @@ let package = Package(
         .target(
             name: "CapApp-SPM",
             dependencies: [
-                .product(name: "Capacitor", package: "capacitor-swift-pm")`;
+                .product(name: "Capacitor", package: "${capacitorPackageName}")`;
 
   if (enableCordova) {
-    packageSwiftText += `,\n                .product(name: "Cordova", package: "capacitor-swift-pm")`;
+    packageSwiftText += `,\n                .product(name: "Cordova", package: "${capacitorPackageName}")`;
   }
 
   for (const plugin of plugins) {
