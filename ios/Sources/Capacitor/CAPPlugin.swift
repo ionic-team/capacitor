@@ -22,7 +22,7 @@ import UIKit
         self.shouldStringifyDatesInCalls = true
     }
 
-    @objc required override public init() {
+    @objc override public required init() {
         super.init()
         self.bridge = nil
         self.webView = nil
@@ -188,7 +188,7 @@ import UIKit
     }
 
     @objc public func handleWKWebViewURLAuthenticationChallenge(
-      _ challenge: URLAuthenticationChallenge,
+        _ challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) -> Bool {
         return false

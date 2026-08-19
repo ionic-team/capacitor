@@ -27,7 +27,7 @@ struct ConfigurationTests {
 
     private func getConfigURL() -> URL {
         Bundle.module.resourceURL?.appendingPathComponent("configurations") ??
-        Bundle.module.resourceURL ?? Bundle.main.resourceURL ?? URL(fileURLWithPath: "/")
+            Bundle.module.resourceURL ?? Bundle.main.resourceURL ?? URL(fileURLWithPath: "/")
     }
 
     @Test func defaultErrors() throws {

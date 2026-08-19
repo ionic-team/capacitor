@@ -5,11 +5,11 @@ import Testing
 private class TestContainer: NSObject, JSValueContainer {
     var coercedDictionary: [AnyHashable: Any] = [:]
 
-    public static var jsDateFormatter: ISO8601DateFormatter = {
+    static var jsDateFormatter: ISO8601DateFormatter = {
         return ISO8601DateFormatter()
     }()
 
-    public var jsObjectRepresentation: JSObject {
+    var jsObjectRepresentation: JSObject {
         return coercedDictionary as? JSObject ?? [:]
     }
 }

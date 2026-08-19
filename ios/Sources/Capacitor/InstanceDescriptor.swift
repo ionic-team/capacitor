@@ -41,7 +41,7 @@ open class InstanceDescriptor: NSObject {
 
     // MARK: - Initialization
 
-    @objc public override init() {
+    @objc override public init() {
         self.instanceType = .fixed
         let publicURL = Bundle.main.url(forResource: "public", withExtension: nil)
         self.appLocation = publicURL ?? Bundle.main.resourceURL ?? URL(fileURLWithPath: "/")

@@ -113,7 +113,6 @@ public typealias CAPPluginCallErrorHandler = (CAPPluginCallError) -> Void
     }
 }
 
-
 // MARK: - JSValue Representation
 
 extension CAPPluginCall: JSValueContainer {
