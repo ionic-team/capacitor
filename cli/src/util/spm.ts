@@ -110,7 +110,7 @@ export async function generatePackageText(config: Config, plugins: Plugin[]): Pr
   const useSourceSPM = major(iosPlatformVersion) >= 9;
   const capacitorPackageName = useSourceSPM ? 'capacitor' : 'capacitor-swift-pm';
   const capacitorPackageDependency = useSourceSPM
-    ? `.package(url: "https://github.com/ionic-team/capacitor", branch: "feature/source-spm")`
+    ? `.package(url: "https://github.com/ionic-team/capacitor", branch: "next")`
     : `.package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "${iosPlatformVersion}")`;
 
   let packageSwiftText = `// swift-tools-version: ${swiftToolsVersion}

@@ -11,7 +11,7 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-      .package(url: "https://github.com/ionic-team/capacitor", branch: "feature/source-spm")
+      .package(url: "https://github.com/ionic-team/capacitor", branch: "next")
     ],
     targets: [
         .target(
