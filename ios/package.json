@@ -13,16 +13,15 @@
     "url": "https://github.com/ionic-team/capacitor/issues"
   },
   "files": [
-    "Capacitor/Capacitor/",
-    "CapacitorCordova/CapacitorCordova/",
+    "Sources/",
     "Capacitor.podspec",
     "CapacitorCordova.podspec",
     "scripts/pods_helpers.rb"
   ],
   "scripts": {
-    "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova",
-    "xc:build:Capacitor": "cd Capacitor && xcodebuild clean test -workspace Capacitor.xcworkspace -scheme Capacitor -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.0.1' && cd ..",
-    "xc:build:CapacitorCordova": "cd Capacitor && xcodebuild clean build -workspace Capacitor.xcworkspace -scheme Cordova && cd .."
+    "verify": "npm run xc:build && npm run xc:test",
+    "xc:build": "cd .. && xcodebuild build -scheme Capacitor-Package -destination 'generic/platform=iOS Simulator'",
+    "xc:test": "cd .. && xcodebuild test -scheme Capacitor-Package -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.0.1' -collect-test-diagnostics never"
   },
   "peerDependencies": {
     "@capacitor/core": "^9.0.0-alpha.6"

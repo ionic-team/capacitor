@@ -16,7 +16,7 @@ private let formatter: DateFormatter = {
     formatter.locale = .init(identifier: "en_US")
     return formatter
 }()
-private let formatted = "Sep 5, 2024 at 5:36:20 PM CDT"
+private let formatted = "Sep 5, 2024 at 5:36:20\u{202F}PM CDT"
 
 private struct Foo: Codable, Equatable {
     var date: Date
