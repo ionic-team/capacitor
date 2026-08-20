@@ -157,7 +157,7 @@ export async function installGradlePlugins(
     );
   }
 
-  const enableCordova = cordovaPlugins.length > 0;
+  const enableCordova = cordovaPlugins.length > 0 || config.app.forceCordova;
 
   const capacitorAndroidPath = resolve(dirname(capacitorAndroidPackagePath), 'capacitor');
   const capacitorCordovaAndroidPath = resolve(dirname(capacitorAndroidPackagePath), 'capacitor-cordova');
