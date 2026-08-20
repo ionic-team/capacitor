@@ -44,7 +44,7 @@ export async function updateAndroid(config: Config): Promise<void> {
   if (enableCordova) {
     logger.info('Found Cordova Plugins: Including Android Cordova Support');
     if (config.app.forceCordova) {
-      logger.info('Cordova support installation has been forced')
+      logger.info('Cordova support installation has been forced');
     }
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
