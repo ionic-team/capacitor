@@ -37,12 +37,15 @@ export async function updateAndroid(config: Config): Promise<void> {
   printPlugins(capacitorPlugins, 'android');
 
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
-  const enableCordova = cordovaPlugins.length > 0;
+  const enableCordova = cordovaPlugins.length > 0 || config.app.forceCordova;
 
   await writePluginsJson(config, capacitorPlugins, enableCordova);
   await removePluginsNativeFiles(config);
   if (enableCordova) {
     logger.info('Found Cordova Plugins: Including Android Cordova Support');
+    if (config.app.forceCordova) {
+      logger.info('Cordova support installation has been forced');
+    }
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
   if (!(await pathExists(config.android.webDirAbs))) {
@@ -157,7 +160,7 @@ export async function installGradlePlugins(
     );
   }
 
-  const enableCordova = cordovaPlugins.length > 0;
+  const enableCordova = cordovaPlugins.length > 0 || config.app.forceCordova;
 
   const capacitorAndroidPath = resolve(dirname(capacitorAndroidPackagePath), 'capacitor');
   const capacitorCordovaAndroidPath = resolve(dirname(capacitorAndroidPackagePath), 'capacitor-cordova');

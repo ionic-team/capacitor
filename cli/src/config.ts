@@ -53,6 +53,7 @@ export async function loadConfig(): Promise<Config> {
   const appId = conf.extConfig.appId ?? '';
   const appName = conf.extConfig.appName ?? '';
   const webDir = conf.extConfig.webDir ?? 'www';
+  const forceCordova = conf.extConfig.forceCordovaInclusion ?? false;
   const cli = await loadCLIConfig(cliRootDir);
 
   const config: Config = {
@@ -66,6 +67,7 @@ export async function loadConfig(): Promise<Config> {
       appName,
       webDir,
       webDirAbs: resolve(appRootDir, webDir),
+      forceCordova,
       package: (await tryFn(readJSON, resolve(appRootDir, 'package.json'))) ?? {
         name: appName,
         version: '1.0.0',

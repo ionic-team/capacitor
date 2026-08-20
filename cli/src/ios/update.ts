@@ -43,10 +43,13 @@ export async function updateIOS(config: Config, deployment: boolean): Promise<vo
 async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: boolean) {
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Cordova);
-  const enableCordova = cordovaPlugins.length > 0;
+  const enableCordova = cordovaPlugins.length > 0 || config.app.forceCordova;
 
   if (enableCordova) {
     logger.info('Found Cordova Plugins: Including iOS Cordova Support');
+    if (config.app.forceCordova) {
+      logger.info('Cordova support installation has been forced');
+    }
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
 

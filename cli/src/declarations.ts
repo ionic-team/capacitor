@@ -85,6 +85,15 @@ export interface CapacitorConfig {
    */
   initialFocus?: boolean;
 
+  /**
+   * If set, will include Cordova support libraries regardless
+   * of whether or not they are needed by plugins.
+   *
+   * @since 9.0.0
+   * @default false
+   */
+  forceCordovaInclusion?: boolean;
+
   android?: {
     /**
      * Specify a custom path to the native Android project.

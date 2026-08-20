@@ -15,6 +15,7 @@ describe('framework detection', () => {
         appName: 'appName',
         webDir: '',
         webDirAbs: '',
+        forceCordova: false,
         package: {
           name: 'package-name',
           version: '0.0.0',
