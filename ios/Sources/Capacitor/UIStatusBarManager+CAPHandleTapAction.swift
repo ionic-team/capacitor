@@ -11,17 +11,17 @@ import ObjectiveC
 
 extension UIStatusBarManager {
     private static let swizzle: Void = {
-        let class_ = UIStatusBarManager.self
+        let classRef = UIStatusBarManager.self
         let originalSelector = Selector(("handleTapAction:"))
         let swizzledSelector = #selector(UIStatusBarManager.nofity_handleTapAction(_:))
 
-        guard let originalMethod = class_getInstanceMethod(class_, originalSelector),
-              let swizzledMethod = class_getInstanceMethod(class_, swizzledSelector) else {
+        guard let originalMethod = class_getInstanceMethod(classRef, originalSelector),
+              let swizzledMethod = class_getInstanceMethod(classRef, swizzledSelector) else {
             return
         }
 
         let didAddMethod = class_addMethod(
-            class_,
+            classRef,
             originalSelector,
             method_getImplementation(swizzledMethod),
             method_getTypeEncoding(swizzledMethod)
@@ -29,7 +29,7 @@ extension UIStatusBarManager {
 
         if didAddMethod {
             class_replaceMethod(
-                class_,
+                classRef,
                 swizzledSelector,
                 method_getImplementation(originalMethod),
                 method_getTypeEncoding(originalMethod)
