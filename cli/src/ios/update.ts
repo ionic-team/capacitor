@@ -47,6 +47,9 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
 
   if (enableCordova) {
     logger.info('Found Cordova Plugins: Including iOS Cordova Support');
+    if (config.app.forceCordova) {
+      logger.info('Cordova support installation has been forced')
+    }
     await copyPluginsNativeFiles(config, cordovaPlugins);
   }
 
