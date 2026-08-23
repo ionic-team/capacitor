@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
@@ -17,6 +18,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.webkit.WebViewCompat;
+import com.getcapacitor.Logger;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -35,6 +37,7 @@ public class SystemBars extends Plugin {
     static final String BAR_STATUS_BAR = "StatusBar";
     static final String BAR_GESTURE_BAR = "NavigationBar";
 
+    // TODO: In Cap 9, add an additional option "full"
     static final String INSETS_HANDLING_CSS = "css";
     static final String INSETS_HANDLING_DISABLE = "disable";
 
@@ -56,11 +59,14 @@ public class SystemBars extends Plugin {
         capacitorSystemBarsCheckMetaViewport();
         """;
 
-    private boolean insetHandlingEnabled = true;
+    private String insetsHandling = INSETS_HANDLING_CSS;
     private boolean hasViewportCover = false;
     private Integer cachedWebViewMajorVersion;
 
-    private String currentStyle = STYLE_DEFAULT;
+    private boolean navBarVisible = true;
+
+    private String currentStatusBarStyle = STYLE_DEFAULT;
+    private String currentGestureBarStyle = STYLE_DEFAULT;
 
     @Override
     public void load() {
@@ -95,6 +101,8 @@ public class SystemBars extends Plugin {
         super.handleOnResume();
         getBridge().executeOnMainThread(() -> {
             WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
+            setStyle(currentGestureBarStyle, BAR_GESTURE_BAR);
+            setStyle(currentStatusBarStyle, BAR_STATUS_BAR);
             getBridge().getWebView().requestApplyInsets();
         });
     }
@@ -103,16 +111,23 @@ public class SystemBars extends Plugin {
     protected void handleOnConfigurationChanged(Configuration newConfig) {
         super.handleOnConfigurationChanged(newConfig);
 
-        setStyle(currentStyle, "");
+        setStyle(currentGestureBarStyle, BAR_GESTURE_BAR);
+        setStyle(currentStatusBarStyle, BAR_STATUS_BAR);
     }
 
     private void initSystemBars() {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        String insetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
-        if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
-            insetHandlingEnabled = false;
+        String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
+        if (INSETS_HANDLING_CSS.equals(configuredInsetsHandling) || INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling)) {
+            insetsHandling = configuredInsetsHandling;
+        } else {
+            Logger.warn(
+                "SystemBars",
+                "Unknown insetsHandling value '" + configuredInsetsHandling + "'. Falling back to '" + INSETS_HANDLING_CSS + "'."
+            );
+            insetsHandling = INSETS_HANDLING_CSS;
         }
 
         initWindowInsetsListener();
@@ -162,6 +177,10 @@ public class SystemBars extends Plugin {
 
     @JavascriptInterface
     public void onDOMReady() {
+        if (!INSETS_HANDLING_CSS.equals(insetsHandling)) {
+            return;
+        }
+
         getActivity().runOnUiThread(() ->
             this.bridge.getWebView().evaluateJavascript(VIEWPORT_META_JS, (res) -> {
                 hasViewportCover = res.equals("true");
@@ -174,14 +193,48 @@ public class SystemBars extends Plugin {
 
     private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
         Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-        if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
+
+        int bottom = safeArea.bottom;
+
+        // Some legacy devices report a zero-height navigation bar inset while the bar is
+        // actually drawn. Fall back to the framework dimension in portrait layouts.
+        if (bottom == 0 && Build.VERSION.SDK_INT < Build.VERSION_CODES.R && safeArea.left == 0 && safeArea.right == 0) {
+            bottom = getNavBarHeightFromResources();
+        }
+
+        // WindowInsetsCompat cannot observe IME visibility below Android 8,
+        // so fall back to checking whether any IME inset is reported.
+        boolean imeVisible =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                ? insets.isVisible(WindowInsetsCompat.Type.ime())
+                : insets.getInsets(WindowInsetsCompat.Type.ime()).bottom > 0;
+
+        if (imeVisible) {
             return Insets.of(safeArea.left, safeArea.top, safeArea.right, 0);
         }
-        return Insets.of(safeArea.left, safeArea.top, safeArea.right, safeArea.bottom);
+        return Insets.of(safeArea.left, safeArea.top, safeArea.right, bottom);
+    }
+
+    /**
+     * Last-resort heuristic for legacy devices (API &lt; 30) whose OEM builds report a
+     * zero-height navigation bar inset while the bar is actually drawn. Only consulted
+     * when the plugin did not hide the navigation bar.
+     *
+     * <p>The framework dimension is intentionally used despite being internal: there is
+     * no supported API that returns the navigation bar height as a static value.
+     */
+    @SuppressLint({"InternalInsetResource", "DiscouragedApi"})
+    private int getNavBarHeightFromResources() {
+        if (!navBarVisible) {
+            return 0;
+        }
+        Resources res = getActivity().getResources();
+        int heightId = res.getIdentifier("navigation_bar_height", "dimen", "android");
+        return heightId > 0 ? res.getDimensionPixelSize(heightId) : 0;
     }
 
     private void initSafeAreaCSSVariables() {
-        if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION && insetHandlingEnabled) {
+        if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION && INSETS_HANDLING_CSS.equals(insetsHandling)) {
             View v = (View) this.getBridge().getWebView().getParent();
             WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
             if (insets != null) {
@@ -198,7 +251,11 @@ public class SystemBars extends Plugin {
     }
 
     private void initWindowInsetsListener() {
-        if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION && insetHandlingEnabled) {
+        if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION && INSETS_HANDLING_CSS.equals(insetsHandling)) {
             View parentView = (View) getBridge().getWebView().getParent();
             ViewCompat.setOnApplyWindowInsetsListener(parentView, this::applyInsets);
         }
@@ -317,7 +374,9 @@ public class SystemBars extends Plugin {
     }
 
     private void setStyle(String style, String bar) {
-        currentStyle = style;
+        // Store the requested value so `DEFAULT` keeps following the system theme
+        // when styles are reapplied on configuration changes or resumes.
+        String requestedStyle = style;
 
         if (style.equals(STYLE_DEFAULT)) {
             style = getStyleForTheme();
@@ -326,10 +385,12 @@ public class SystemBars extends Plugin {
         Window window = getActivity().getWindow();
         WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
         if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
+            currentStatusBarStyle = requestedStyle;
             windowInsetsControllerCompat.setAppearanceLightStatusBars(!style.equals(STYLE_DARK));
         }
 
         if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
+            currentGestureBarStyle = requestedStyle;
             windowInsetsControllerCompat.setAppearanceLightNavigationBars(!style.equals(STYLE_DARK));
         }
 
@@ -341,20 +402,26 @@ public class SystemBars extends Plugin {
         WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
 
         if (hide) {
-            if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
+            if (bar.isEmpty()) {
+                windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars());
+                navBarVisible = false;
+            } else if (bar.equals(BAR_STATUS_BAR)) {
                 windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
-            }
-            if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
+            } else if (bar.equals(BAR_GESTURE_BAR)) {
                 windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
+                navBarVisible = false;
             }
             return;
         }
 
-        if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
+        if (bar.isEmpty()) {
             windowInsetsControllerCompat.show(WindowInsetsCompat.Type.systemBars());
-        }
-        if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
+            navBarVisible = true;
+        } else if (bar.equals(BAR_STATUS_BAR)) {
+            windowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars());
+        } else if (bar.equals(BAR_GESTURE_BAR)) {
             windowInsetsControllerCompat.show(WindowInsetsCompat.Type.navigationBars());
+            navBarVisible = true;
         }
     }
 
