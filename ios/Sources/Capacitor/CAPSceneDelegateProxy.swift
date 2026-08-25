@@ -182,6 +182,15 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
             ])
     }
 
+    private static func activeForegroundScene() -> UIWindowScene? {
+        let scenes = UIApplication.shared.connectedScenes
+        if let active = scenes.first(where: { $0.activationState == .foregroundActive })
+            as? UIWindowScene {
+            return active
+        }
+        return scenes.first(where: { $0.activationState == .foregroundInactive }) as? UIWindowScene
+    }
+
     private static func openURLOptions(from sceneOptions: UIScene.OpenURLOptions) -> [UIApplication.OpenURLOptionsKey: Any] {
         var options: [UIApplication.OpenURLOptionsKey: Any] = [:]
         if let sourceApplication = sceneOptions.sourceApplication {
