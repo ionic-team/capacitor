@@ -30,6 +30,49 @@ import org.json.JSONObject;
 
 public class HttpRequestHandler {
 
+    public static void applyDefaultRequestHeaders(JSObject headers, Bridge bridge) {
+        if (headers == null || bridge == null) {
+            return;
+        }
+
+        // a workaround for the following android web view issue:
+        // https://issues.chromium.org/issues/40450316
+        // x-cap-user-agent contains the user agent set in JavaScript
+        String userAgentValue = headers.getString("x-cap-user-agent");
+        if (userAgentValue != null) {
+            headers.put("User-Agent", userAgentValue);
+        }
+        headers.remove("x-cap-user-agent");
+
+        if (!headers.has("User-Agent") && !headers.has("user-agent")) {
+            String overriddenUserAgent = bridge.getConfig().getOverriddenUserAgentString();
+            if (overriddenUserAgent != null) {
+                headers.put("User-Agent", overriddenUserAgent);
+            }
+        }
+
+        if (!headers.has("Referer") && !headers.has("referer")) {
+            String refererValue = bridge.getConfig().getRequestReferer();
+            if (isValidHttpReferer(refererValue)) {
+                headers.put("Referer", refererValue);
+            }
+        }
+    }
+
+    public static boolean isValidHttpReferer(String refererValue) {
+        if (refererValue == null || refererValue.isBlank()) {
+            return false;
+        }
+
+        try {
+            URL refererUrl = new URL(refererValue);
+            String protocol = refererUrl.getProtocol();
+            return ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) && refererUrl.getHost() != null;
+        } catch (MalformedURLException ex) {
+            return false;
+        }
+    }
+
     /**
      * An enum specifying conventional HTTP Response Types
      * See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
@@ -398,18 +441,7 @@ public class HttpRequestHandler {
 
         boolean isHttpMutate = method.equals("DELETE") || method.equals("PATCH") || method.equals("POST") || method.equals("PUT");
 
-        // a workaround for the following android web view issue:
-        // https://issues.chromium.org/issues/40450316
-        // x-cap-user-agent contains the user agent set in JavaScript
-        String userAgentValue = headers.getString("x-cap-user-agent");
-        if (userAgentValue != null) {
-            headers.put("User-Agent", userAgentValue);
-        }
-        headers.remove("x-cap-user-agent");
-
-        if (!headers.has("User-Agent") && !headers.has("user-agent")) {
-            headers.put("User-Agent", bridge.getConfig().getOverriddenUserAgentString());
-        }
+        applyDefaultRequestHeaders(headers, bridge);
 
         URL url = new URL(urlString);
         HttpURLConnectionBuilder connectionBuilder = new HttpURLConnectionBuilder()

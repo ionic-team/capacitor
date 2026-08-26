@@ -54,6 +54,7 @@ public class ConfigBuildingTest {
                 .setBackgroundColor("red")
                 .setPluginsConfiguration(pluginConfig)
                 .setServerUrl("http://www.google.com")
+                .setRequestReferer("https://example.com/app")
                 .setResolveServiceWorkerRequests(false)
                 .create();
         } catch (Exception e) {
@@ -74,6 +75,7 @@ public class ConfigBuildingTest {
         assertTrue(config.isWebContentsDebuggingEnabled());
         assertEquals("red", config.getBackgroundColor());
         assertEquals("http://www.google.com", config.getServerUrl());
+        assertEquals("https://example.com/app", config.getRequestReferer());
         assertFalse(config.isResolveServiceWorkerRequests());
     }
 

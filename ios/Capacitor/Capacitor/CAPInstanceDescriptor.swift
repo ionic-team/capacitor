@@ -99,6 +99,9 @@ internal extension InstanceDescriptor {
             if let errorPathString = (config[keyPath: "server.errorPath"] as? String) {
                 errorPath = errorPathString
             }
+            if let referer = config[keyPath: "server.referer"] as? String {
+                requestReferer = referer
+            }
             if let insetBehavior = config[keyPath: "ios.contentInset"] as? String {
                 let availableInsets: [String: UIScrollView.ContentInsetAdjustmentBehavior] = ["automatic": .automatic,
                                                                                               "scrollableAxes": .scrollableAxes,
