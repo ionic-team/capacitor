@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
 import androidx.activity.result.contract.ActivityResultContract;
@@ -24,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DownloadJSOperationController extends ActivityResultContract<DownloadJSOperationController.Input, Boolean> {
@@ -57,7 +56,6 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
         public Boolean pendingClose;
         public Boolean failureClose;
 
-        //
         public Operation(Input input) {
             this.input = input;
             this.operationID = input.operationID;
@@ -78,9 +76,9 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
     private static final String EXTRA_OPERATION_ID = "OPERATION_ID";
     private final AppCompatActivity activity;
     private final HashMap<String, Operation> operations;
+    private final ExecutorService pipeExecutor = Executors.newCachedThreadPool();
     private Operation pendingOperation;
 
-    //
     public DownloadJSOperationController(AppCompatActivity activity) {
         this.activity = activity;
         this.operations = new HashMap<>();
@@ -88,130 +86,112 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
 
     /* Public operations */
     public boolean appendToOperation(String operationID, String data) {
-        //get operation status
-        Operation operation = this.operations.get(operationID);
-        if (operation == null && this.pendingOperation.input.operationID.equals(operationID)) operation = this.pendingOperation;
-        if (operation == null || operation.closed) return false; //already closed?
-        //write
+        Operation operation = resolveOperation(operationID);
+        if (operation == null || operation.closed) return false;
         try {
             operation.outStream.write(data.getBytes(StandardCharsets.ISO_8859_1));
         } catch (IOException e) {
-            Logger.debug("Exception while writting on DownloadJSActivity stream. Closing it!", e.toString());
-            //Ask for close
+            Logger.debug("Exception while writing on DownloadJSActivity stream. Closing it!", e.toString());
             operation.pendingClose = true;
         }
         return !operation.pendingClose;
     }
 
     public boolean failOperation(String operationID) {
-        //get operation status
-        Operation operation = this.operations.get(operationID);
-        if (operation == null && this.pendingOperation.input.operationID.equals(operationID)) operation = this.pendingOperation;
-        if (operation == null || operation.closed) return false; //already closed?
-        //Ask for close
+        Operation operation = resolveOperation(operationID);
+        if (operation == null || operation.closed) return false;
         operation.failureClose = true;
         operation.pendingClose = true;
-        //
         return true;
     }
 
     public boolean completeOperation(String operationID) {
-        //get operation status
-        Operation operation = this.operations.get(operationID);
-        if (operation == null && this.pendingOperation.input.operationID.equals(operationID)) operation = this.pendingOperation;
-        if (operation == null || operation.closed) return false; //already closed?
-        //Ask for close
+        Operation operation = resolveOperation(operationID);
+        if (operation == null || operation.closed) return false;
         operation.pendingClose = true;
-        //
         return true;
     }
 
     /* ActivityResultContract Implementation */
+    @Override
     @NonNull
     public Intent createIntent(@NonNull Context context, DownloadJSOperationController.Input input) {
-        //ask path
         String[] paths =
             this.getUniqueDownloadFileNameFromDetails(input.fileNameURL, input.contentDisposition, input.optionalMimeType, null);
-        //Create/config intent to prompt for file selection
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         if (paths != null && paths[1] != null) intent.putExtra(Intent.EXTRA_TITLE, paths[1]);
         intent.putExtra(EXTRA_OPERATION_ID, input.operationID);
         if (input.optionalMimeType != null) intent.setType(input.optionalMimeType);
-        if (paths != null && paths[0] != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) intent.putExtra(
-            DocumentsContract.EXTRA_INITIAL_URI,
-            paths[0]
-        );
-        //Add operation
+        // EXTRA_INITIAL_URI expects a document/tree Uri. A filesystem path string is not valid
+        // here and can crash on some OEMs, so we do not set it.
         this.pendingOperation = new Operation(input);
-        //
         return intent;
     }
 
+    @Override
     public Boolean parseResult(int resultCode, @Nullable Intent result) {
-        //get operation status
         Operation operation = this.pendingOperation;
-        if (operation == null) return false; //double call?
-        //Process if resultCode is OK and have result
+        if (operation == null) return false;
         if (resultCode == Activity.RESULT_OK && result != null) {
+            Uri uri = result.getData();
+            if (uri == null) {
+                this.pendingOperation = null;
+                this.cancelPreOperation(operation);
+                return false;
+            }
             this.operations.put(operation.input.operationID, operation);
             this.pendingOperation = null;
-            this.createThreadedPipeForOperation(operation, result.getData());
+            this.createThreadedPipeForOperation(operation, uri);
             return true;
         }
-        //Cancel pre operation (haven't started yet)
-        this.pendingOperation = null; //can't be used for writting anymore
+        this.pendingOperation = null;
         this.cancelPreOperation(operation);
         return false;
     }
 
-    //Thread operation that uses duplex stream
     private void createThreadedPipeForOperation(Operation operation, Uri uri) {
-        DownloadJSOperationController upperRef = this;
-        Executors.newSingleThreadExecutor().execute(() -> upperRef.createPipeForOperation(operation, uri));
+        pipeExecutor.execute(() -> createPipeForOperation(operation, uri));
     }
 
     private void createPipeForOperation(Operation operation, Uri uri) {
-        //check for operation finished
         if (operation.started || operation.closed) return;
-        //start operation
         operation.started = true;
-        //
         try {
             OutputStream output = this.activity.getContentResolver().openOutputStream(uri);
-            int lastReadSize = 0;
-            boolean flushed = false;
-            while (!operation.pendingClose || lastReadSize > 0 || !flushed) {
-                //Have what to read?
-                lastReadSize = Math.min(operation.inStream.available(), 64 * 1024);
-                if (lastReadSize <= 0) {
-                    //read size is 0, attempt to flush duplex and make sure we got everything
-                    if (!flushed) {
-                        operation.outStream.flush();
-                        flushed = true;
+            if (output == null) {
+                Logger.debug("Failed to open OutputStream for uri in DownloadJSActivity threaded operation.", uri.toString());
+                this.cancelPreOperation(operation);
+                this.releaseOperation(operation.input.operationID);
+                return;
+            }
+            byte[] buffer = new byte[64 * 1024];
+            int lastReadSize;
+            while (true) {
+                lastReadSize = operation.inStream.read(buffer, 0, buffer.length);
+                if (lastReadSize == -1) {
+                    break;
+                }
+                if (lastReadSize == 0) {
+                    if (operation.pendingClose) {
+                        break;
                     }
                     continue;
                 }
-                //Reset flushed state if we got more data
-                flushed = false;
-                //Read
-                byte[] bytes = new byte[lastReadSize];
-                lastReadSize = operation.inStream.read(bytes, 0, lastReadSize);
-                output.write(bytes);
+                output.write(buffer, 0, lastReadSize);
+                if (operation.pendingClose && operation.inStream.available() <= 0) {
+                    break;
+                }
             }
-            //Close streams
-            output.flush(); //IO flush
+            output.flush();
             output.close();
             operation.closed = true;
             operation.outStream.close();
             operation.inStream.close();
-            //Release from operations
             this.releaseOperation(operation.input.operationID);
-            //Ask for media scan
             this.performMediaScan(uri);
         } catch (Exception e) {
             Logger.debug("Exception while running DownloadJSActivity threaded operation.", e.toString());
-            //Cancel operation stream (safely) and release from operations
             this.cancelPreOperation(operation);
             this.releaseOperation(operation.input.operationID);
         }
@@ -219,39 +199,36 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
     }
 
     /* Operation Utils */
+    private Operation resolveOperation(String operationID) {
+        Operation operation = this.operations.get(operationID);
+        if (operation == null && this.pendingOperation != null && this.pendingOperation.input.operationID.equals(operationID)) {
+            operation = this.pendingOperation;
+        }
+        return operation;
+    }
+
     private void cancelPreOperation(Operation operation) {
         operation.pendingClose = true;
         operation.closed = true;
         try {
             operation.outStream.close();
             operation.inStream.close();
-        } catch (IOException ignored) {} //failsafe stream close
+        } catch (IOException ignored) {}
     }
 
     private void releaseOperation(String operationID) {
-        //get operation status
-        Operation operation = this.operations.get(operationID);
-        if (operation == null && this.pendingOperation.input.operationID.equals(operationID)) operation = this.pendingOperation;
-        if (operation == null) return; //already closed?
-        //Check for pending closure (loop interruption)
+        Operation operation = resolveOperation(operationID);
+        if (operation == null) return;
         if (!operation.pendingClose) operation.pendingClose = true;
-        //Remove from operations
         this.operations.remove(operation.input.operationID);
+        if (this.pendingOperation != null && this.pendingOperation.input.operationID.equals(operationID)) {
+            this.pendingOperation = null;
+        }
     }
 
     /* Media utils */
     private void performMediaScan(Uri uri) {
-        // Tell the media scanner about the new file so that it is
-        // immediately available to the user.
-        MediaScannerConnection.scanFile(
-            this.activity,
-            new String[] { uri.toString() },
-            null,
-            (path, uri2) -> {
-                //                    Logger.debug("ExternalStorage", "Scanned " + path + ":");
-                //                    Logger.debug("ExternalStorage", "-> uri=" + uri2);
-            }
-        );
+        MediaScannerConnection.scanFile(this.activity, new String[] { uri.toString() }, null, (path, uri2) -> {});
     }
 
     /* FS Utils */
@@ -278,13 +255,10 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
         String optionalMimeType,
         @Nullable Integer optionalSuffix
     ) {
-        //Auxs for filename gen.
         String suggestedFilename = URLUtil.guessFileName(fileDownloadURL, optionalCD, optionalMimeType);
-        ArrayList<String> fileComps = new ArrayList<>(Arrays.asList(suggestedFilename.split(".")));
+        ArrayList<String> fileComps = new ArrayList<>(Arrays.asList(suggestedFilename.split("\\.")));
         String suffix = (optionalSuffix != null ? " (" + optionalSuffix + ")" : "");
-        //Check for invalid filename
         if (suggestedFilename.length() <= 0) suggestedFilename = UUID.randomUUID().toString();
-        //Generate filename
         String fileName;
         if (fileComps.size() > 1) {
             String fileExtension = "." + fileComps.remove(fileComps.size() - 1);
@@ -292,11 +266,8 @@ public class DownloadJSOperationController extends ActivityResultContract<Downlo
         } else {
             fileName = suggestedFilename + suffix;
         }
-        //Check for default dir (might not exists per official documentation)
         if (!this.checkCreateDefaultDir()) return null;
-        //Check if file with generated name exists
         String fullPath = this.getDownloadFilePath(fileName);
-        //
         return new String[] { fullPath, fileName };
     }
 }

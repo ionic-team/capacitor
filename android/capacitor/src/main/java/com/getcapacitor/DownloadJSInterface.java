@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import android.app.Activity;
 import android.webkit.JavascriptInterface;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
@@ -19,7 +20,6 @@ public class DownloadJSInterface {
     private final HashMap<String, DownloadJSOperationController.Input> pendingInputs;
     private final Bridge bridge;
 
-    //
     public DownloadJSInterface(Bridge bridge) {
         this.operationsController = new DownloadJSOperationController(bridge.getActivity());
         this.pendingInputs = new HashMap<>();
@@ -36,33 +36,26 @@ public class DownloadJSInterface {
     /* JavascriptInterface imp. */
     @JavascriptInterface
     public void receiveContentTypeFromJavascript(String contentType, String operationID) {
-        //Transition pending input operation to started with resolved content type
-        this.transitionPendingInputOperation(operationID, contentType, null);
+        this.transitionPendingInputOperation(operationID, contentType, false);
     }
 
     @JavascriptInterface
     public void receiveStreamChunkFromJavascript(String chunk, String operationID) {
-        //Guarantee pending input transition to started operation (when no content type is resolved)
-        this.transitionPendingInputOperation(operationID, null, null);
-        //Append data to operation
+        this.transitionPendingInputOperation(operationID, null, false);
         this.operationsController.appendToOperation(operationID, chunk);
     }
 
     @JavascriptInterface
     public void receiveStreamErrorFromJavascript(String error, String operationID) {
-        //Guarantee pending input transition to 'started-but-stale' operation before actually failing
-        this.transitionPendingInputOperation(operationID, null, true);
-        //Fail operation signal
-        if (!this.operationsController.failOperation(operationID)) return;
-        //Notify
+        // Drop pending input without launching the file picker or emitting STARTED.
+        this.pendingInputs.remove(operationID);
+        this.operationsController.failOperation(operationID);
         this.bridge.getApp().fireDownloadUpdate(operationID, App.DownloadStatus.FAILED, error);
     }
 
     @JavascriptInterface
     public void receiveStreamCompletionFromJavascript(String operationID) {
-        //Complete operation signal
         if (!this.operationsController.completeOperation(operationID)) return;
-        //Notify
         this.bridge.getApp().fireDownloadUpdate(operationID, App.DownloadStatus.COMPLETED, null);
     }
 
@@ -74,9 +67,6 @@ public class DownloadJSInterface {
      */
     public String getJavascriptBridgeForURL(String fileURL, String contentDisposition, String mimeType) {
         if (fileURL.startsWith("http://") || fileURL.startsWith("https://") || fileURL.startsWith("blob:")) {
-            //setup background operation input (not started yet)
-            //will wait either stream start on content-type resolution to start asking
-            //for file pick and stream drain
             String operationID = UUID.randomUUID().toString();
             DownloadJSOperationController.Input input = new DownloadJSOperationController.Input(
                 operationID,
@@ -85,7 +75,6 @@ public class DownloadJSInterface {
                 contentDisposition
             );
             this.pendingInputs.put(operationID, input);
-            //Return JS bridge with operationID tagged
             return this.getJavascriptInterfaceBridgeForReadyAvailableData(fileURL, mimeType, operationID);
         }
         return null;
@@ -93,19 +82,24 @@ public class DownloadJSInterface {
 
     /* Injectors */
     private String getJavascriptInterfaceBridgeForReadyAvailableData(String blobUrl, String mimeType, String operationID) {
+        String escapedUrl = blobUrl.replace("\\", "\\\\").replace("'", "\\'");
+        String acceptHeader =
+            (mimeType != null && mimeType.length() > 0) ? "xhr.setRequestHeader('Accept','" + mimeType.replace("'", "") + "');" : "";
         return (
             "javascript: " +
-            "" +
             "function parseFile(file, chunkReadCallback, errorCallback, successCallback) {\n" +
             "    let fileSize   = file.size;" +
             "    let chunkSize  = 64 * 1024;" +
             "    let offset     = 0;" +
-            "    let self       = this;" +
             "    let readBlock  = null;" +
             "    let onLoadHandler = function(evt) {" +
             "        if (evt.target.error == null) {" +
-            "            offset += evt.target.result.length;" +
-            "            chunkReadCallback(evt.target.result);" +
+            "            var buf = evt.target.result;" +
+            "            var bytes = new Uint8Array(buf);" +
+            "            offset += bytes.length;" +
+            "            var binary = '';" +
+            "            for (var i = 0; i < bytes.length; i++) { binary += String.fromCharCode(bytes[i]); }" +
+            "            chunkReadCallback(binary);" +
             "        } else {" +
             "            errorCallback(evt.target.error);" +
             "            return;" +
@@ -120,17 +114,24 @@ public class DownloadJSInterface {
             "        var r = new FileReader();" +
             "        var blob = _file.slice(_offset, length + _offset);" +
             "        r.onload = onLoadHandler;" +
-            "        r.readAsBinaryString(blob);" +
+            "        r.readAsArrayBuffer(blob);" +
             "    };" +
             "    readBlock(offset, chunkSize, file);" +
             "};\n" +
             "(() => { let xhr = new XMLHttpRequest();" +
             "xhr.open('GET', '" +
-            blobUrl +
+            escapedUrl +
             "', true);" +
-            ((mimeType != null && mimeType.length() > 0) ? "xhr.setRequestHeader('Content-type','" + mimeType + "');" : "") +
+            acceptHeader +
             "xhr.responseType = 'blob';" +
-            "xhr.onerror = xhr.onload = function(e) {" +
+            "xhr.onerror = function(e) {" +
+            "    var msg = (e && e.type) ? e.type : 'network error';" +
+            "    console.error('[Capacitor XHR] - error:', msg);" +
+            "    CapacitorDownloadInterface.receiveStreamErrorFromJavascript(msg, '" +
+            operationID +
+            "');" +
+            "};" +
+            "xhr.onload = function(e) {" +
             "    if (this.status == 200) {" +
             "        let contentType = this.getResponseHeader('content-type');" +
             "        if (contentType) { CapacitorDownloadInterface.receiveContentTypeFromJavascript(contentType, '" +
@@ -141,7 +142,7 @@ public class DownloadJSInterface {
             "         function(chunk) { CapacitorDownloadInterface.receiveStreamChunkFromJavascript(chunk, '" +
             operationID +
             "'); }," +
-            "         function(err) { console.error('[Capacitor XHR] - error:', err); CapacitorDownloadInterface.receiveStreamChunkFromJavascript(err.message, '" +
+            "         function(err) { console.error('[Capacitor XHR] - error:', err); CapacitorDownloadInterface.receiveStreamErrorFromJavascript(err && err.message ? err.message : 'Unknown error', '" +
             operationID +
             "'); }, " +
             "         function() { console.log('[Capacitor XHR] - Drained!'); CapacitorDownloadInterface.receiveStreamCompletionFromJavascript('" +
@@ -149,7 +150,11 @@ public class DownloadJSInterface {
             "'); } " +
             "        );" +
             "    } else {" +
+            "         var msg = 'HTTP ' + this.status;" +
             "         console.error('[Capacitor XHR] - error:', this.status, (e ? e.loaded : this.responseText));" +
+            "         CapacitorDownloadInterface.receiveStreamErrorFromJavascript(msg, '" +
+            operationID +
+            "');" +
             "    }" +
             "};" +
             "xhr.send();})()"
@@ -157,21 +162,23 @@ public class DownloadJSInterface {
     }
 
     /* Helpers */
-    private void transitionPendingInputOperation(String operationID, @Nullable String optionalContentType, @Nullable Boolean doNotStart) {
-        //Check if have pending input operation, if not, we discard this content type resolution
-        //for some awkward reason the chunk was received before
+    private void transitionPendingInputOperation(String operationID, @Nullable String optionalContentType, boolean doNotStart) {
         DownloadJSOperationController.Input input = this.pendingInputs.get(operationID);
         if (input == null) return;
-        //Set content type if available (override, no problem with that)
         if (optionalContentType != null) {
             Logger.debug("Received content type", optionalContentType);
             input.optionalMimeType = optionalContentType;
         }
-        //Start operation
         this.pendingInputs.remove(operationID);
-        if (doNotStart == null || !doNotStart) this.launcher.launch(input);
-        //Notify
-        this.bridge.getApp().fireDownloadUpdate(operationID, App.DownloadStatus.STARTED, null);
-        return;
+        Activity activity = bridge.getActivity();
+        if (activity == null) return;
+        activity.runOnUiThread(
+            () -> {
+                if (!doNotStart) {
+                    launcher.launch(input);
+                    bridge.getApp().fireDownloadUpdate(operationID, App.DownloadStatus.STARTED, null);
+                }
+            }
+        );
     }
 }
