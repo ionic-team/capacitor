@@ -35,6 +35,5 @@ extend-exclude = [
 ]
 
 [default.extend-words]
-# Add any custom words that should not be corrected
-# Format: incorrectword = "incorrectword"
+# `thn` is a real MIME type in ios/.../WebViewAssetHandler.swift, not a typo of "then".
 thn = "thn"

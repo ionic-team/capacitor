@@ -24,36 +24,9 @@ export interface SystemConfig {
   readonly telemetry?: boolean;
 
   /**
-   * Whether the user choose to signup or not.
+   * Whether the user chooses to sign up or not.
    *
    * If undefined, the prompt has not been shown.
    */
   readonly signup?: boolean;
-}
-
-export async function readConfig(): Promise<SystemConfig> {
-  debug('Reading from %O', SYSCONFIG_PATH);
-
-  try {
-    return await readJSON(SYSCONFIG_PATH);
-  } catch (e: any) {
-    if (e.code !== 'ENOENT') {
-      throw e;
-    }
-
-    const sysconfig: SystemConfig = {
-      machine: uuidv4(),
-    };
-
-    await writeConfig(sysconfig);
-
-    return sysconfig;
-  }
-}
-
-export async function writeConfig(sysconfig: SystemConfig): Promise<void> {
-  debug('Writing to %O', SYSCONFIG_PATH);
-
-  await mkdirp(dirname(SYSCONFIG_PATH));
-  await writeJSON(SYSCONFIG_PATH, sysconfig, { spaces: '\t' });
 }
