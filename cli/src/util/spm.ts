@@ -1,4 +1,4 @@
-import { pathExists, existsSync, readFileSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
+import { ensureSymlink, pathExists, existsSync, readFileSync, writeFileSync, remove, move, mkdtemp } from 'fs-extra';
 import { tmpdir } from 'os';
 import { join, relative, resolve } from 'path';
 import type { PlistObject } from 'plist';
@@ -11,7 +11,8 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
-import { getPluginPlatform, getPluginType, PluginType } from '../plugin';
+import { getPlatformElement, getPluginPlatform, getPluginType, PluginType } from '../plugin';
+import { convertToUnixPath } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 
 export interface SwiftPlugin {
@@ -54,11 +55,13 @@ export async function checkPluginsForPackageSwift(config: Config, plugins: Plugi
   const iOSCapacitorPlugins = plugins.filter((p) => getPluginType(p, 'ios') === PluginType.Core);
   const packageSwiftPluginList = await pluginsWithPackageSwift(iOSCapacitorPlugins);
 
-  if (plugins.length == packageSwiftPluginList.length) {
-    logger.debug(`Found ${plugins.length} iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`);
-    logger.info('All plugins have a Package.swift file and will be included in Package.swift');
+  if (iOSCapacitorPlugins.length == packageSwiftPluginList.length) {
+    logger.debug(
+      `Found ${iOSCapacitorPlugins.length} Capacitor iOS plugins, ${packageSwiftPluginList.length} have a Package.swift file`,
+    );
+    logger.info('All Capacitor plugins have a Package.swift file and will be included in Package.swift');
   } else {
-    logger.warn('Some installed packages are not compatable with SPM');
+    logger.warn('Some installed Capacitor plugins are not compatible with SPM');
   }
 
   return packageSwiftPluginList;
@@ -98,6 +101,7 @@ export async function generatePackageText(config: Config, plugins: Plugin[]): Pr
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
   const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits ?? {};
+  const packageOptions = config.app.extConfig.experimental?.ios?.spm?.packageOptions ?? {};
   const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '5.9';
 
   let packageSwiftText = `// swift-tools-version: ${swiftToolsVersion}
@@ -119,13 +123,26 @@ let package = Package(
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
       const platformTag = getPluginPlatform(plugin, config.ios.name);
       if (platformTag.$?.package) {
-        const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+        const relPath = convertToUnixPath(relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath));
         packageSwiftText += `,\n        .package(name: "${plugin.id}", path: "${relPath}")`;
       } else {
+        const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
+        const headerFiles = getPlatformElement(plugin, config.ios.name, 'header-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0) {
+          continue;
+        }
         packageSwiftText += `,\n        .package(name: "${plugin.name}", path: "../../capacitor-cordova-ios-plugins/sources/${plugin.name}")`;
       }
     } else {
-      const relPath = relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath);
+      const options = packageOptions[plugin.id];
+      const symlink = options?.symlink;
+      const symlinkFolder = join('symlinks', plugin.name);
+      const relPath = symlink
+        ? symlinkFolder
+        : convertToUnixPath(relative(config.ios.nativeXcodeProjDirAbs, plugin.rootPath));
+      if (symlink) {
+        await ensureSymlink(plugin.rootPath, resolve(config.ios.nativeProjectDirAbs, 'CapApp-SPM', symlinkFolder));
+      }
       const traits = packageTraits[plugin.id];
       const traitsSuffix = traits?.length
         ? `, traits: [${traits
@@ -149,11 +166,25 @@ let package = Package(
                 .product(name: "Cordova", package: "capacitor-swift-pm")`;
 
   for (const plugin of plugins) {
-    let pluginText = `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}")`;
+    const aliases = Object.entries(packageOptions[plugin.id]?.moduleAliases ?? {});
+    const aliasText = aliases?.length
+      ? `, moduleAliases:  [${aliases
+          .map(([target, replacement]) => {
+            return `"${target}": "${replacement}"`;
+          })
+          .join(', ')}]`
+      : '';
+    let pluginText = `,\n                .product(name: "${plugin.ios?.name}", package: "${plugin.ios?.name}"${aliasText})`;
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
       const platformTag = getPluginPlatform(plugin, config.ios.name);
       if (platformTag.$?.package) {
         pluginText = `,\n                .product(name: "${plugin.id}", package: "${plugin.id}")`;
+      } else {
+        const sourceFiles = getPlatformElement(plugin, config.ios.name, 'source-file');
+        const headerFiles = getPlatformElement(plugin, config.ios.name, 'header-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0) {
+          pluginText = '';
+        }
       }
     }
     packageSwiftText += pluginText;
@@ -209,6 +240,48 @@ export async function addInfoPlistDebugIfNeeded(config: Config): Promise<void> {
   } else {
     logger.warn(infoPlist + ' not found.');
   }
+}
+
+export function hasSceneManifest(config: Config): boolean {
+  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+  if (!existsSync(infoPlist)) {
+    return false;
+  }
+  const entries = parse(readFileSync(infoPlist, 'utf-8')) as PlistObject;
+  return entries['UIApplicationSceneManifest'] !== undefined;
+}
+
+export async function addSceneManifestIfNeeded(config: Config): Promise<void> {
+  type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+
+  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+
+  if (!existsSync(infoPlist)) {
+    logger.warn(infoPlist + ' not found.');
+    return;
+  }
+
+  const entries = parse(readFileSync(infoPlist, 'utf-8')) as Mutable<PlistObject>;
+
+  if (entries['UIApplicationSceneManifest'] !== undefined) {
+    logger.warn('Found UIApplicationSceneManifest in ' + infoPlist + ', skipping.');
+    return;
+  }
+
+  entries['UIApplicationSceneManifest'] = {
+    UIApplicationSupportsMultipleScenes: false,
+    UISceneConfigurations: {
+      UIWindowSceneSessionRoleApplication: [
+        {
+          UISceneConfigurationName: 'Default Configuration',
+          UISceneDelegateClassName: '$(PRODUCT_MODULE_NAME).SceneDelegate',
+          UISceneStoryboardFile: 'Main',
+        },
+      ],
+    },
+  };
+
+  writeFileSync(infoPlist, build(entries));
 }
 
 export async function checkSwiftToolsVersion(config: Config, version: string | undefined): Promise<string | null> {
