@@ -3,6 +3,78 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.5.0](https://github.com/ionic-team/capacitor/compare/8.4.2...8.5.0) (2026-07-31)
+
+### Bug Fixes
+
+- **cli:** support TypeScript 7 when loading capacitor.config.ts ([#8534](https://github.com/ionic-team/capacitor/issues/8534)) ([4c1c870](https://github.com/ionic-team/capacitor/commit/4c1c8709413b9c19b008c99122ca330cc3c90e6f))
+
+### Features
+
+- **cli:** add migrator functionality for adopting UIScene ([#8544](https://github.com/ionic-team/capacitor/issues/8544)) ([984fa85](https://github.com/ionic-team/capacitor/commit/984fa85ba0adab0aacf895aed6323bf4b503dccb))
+- **ios:** UIScene Support ([#8536](https://github.com/ionic-team/capacitor/issues/8536)) ([3fa04a3](https://github.com/ionic-team/capacitor/commit/3fa04a357c92af34cd6fccb8124791963804a9dc))
+
+## [8.4.2](https://github.com/ionic-team/capacitor/compare/8.4.1...8.4.2) (2026-07-14)
+
+### Bug Fixes
+
+- **android:** explicitly grant URI permissions for image capture intent ([#8526](https://github.com/ionic-team/capacitor/issues/8526)) ([6f2d328](https://github.com/ionic-team/capacitor/commit/6f2d3283897a375d09ca9ec8784a9f0d65f0a530))
+
+## [8.4.1](https://github.com/ionic-team/capacitor/compare/8.4.0...8.4.1) (2026-06-19)
+
+### Bug Fixes
+
+- **cli:** make SPM dependency patch work on prereleases ([#8508](https://github.com/ionic-team/capacitor/issues/8508)) ([6048e90](https://github.com/ionic-team/capacitor/commit/6048e90171afa0229a3c25b52a23c377c6bb804c))
+- **cli:** patch Capacitor SPM dependency version in plugins ([#8492](https://github.com/ionic-team/capacitor/issues/8492)) ([28bb2c6](https://github.com/ionic-team/capacitor/commit/28bb2c687069dfdd6aa7abc866004a1c6388d103))
+
+# [8.4.0](https://github.com/ionic-team/capacitor/compare/8.3.4...8.4.0) (2026-06-02)
+
+### Bug Fixes
+
+- **android:** show only the requested system bar ([#8480](https://github.com/ionic-team/capacitor/issues/8480)) ([4c6c321](https://github.com/ionic-team/capacitor/commit/4c6c3219afb5223211e857457e46283c37eb9424))
+- **cli:** revert live reload config on failure ([#8485](https://github.com/ionic-team/capacitor/issues/8485)) ([1d031a4](https://github.com/ionic-team/capacitor/commit/1d031a4abec2c793079ba8897ad2e40c4cc6c7f9))
+- **SystemBars:** make `safe-area-inset-x` available on API <= 34 ([#8424](https://github.com/ionic-team/capacitor/issues/8424)) ([e456de0](https://github.com/ionic-team/capacitor/commit/e456de083e19644f484bec5a5359cb67960ac8bc))
+- **SystemBars:** respect `insetsHandling` disable ([#8481](https://github.com/ionic-team/capacitor/issues/8481)) ([d4ad7ff](https://github.com/ionic-team/capacitor/commit/d4ad7ffe39daf66e0cfc63af9028d5c05543bde7))
+
+### Features
+
+- add method getDouble to plugin config ([#7638](https://github.com/ionic-team/capacitor/issues/7638)) ([93c72de](https://github.com/ionic-team/capacitor/commit/93c72de40a2ec4c78b33659250cb08340083088e))
+- **cli:** add experimental packageOptions ([#8471](https://github.com/ionic-team/capacitor/issues/8471)) ([258867b](https://github.com/ionic-team/capacitor/commit/258867b7bf37b1837b99b02ec9638e5a6df08d97))
+- **cli:** capture ios_package_manager in telemetry ([#8482](https://github.com/ionic-team/capacitor/issues/8482)) ([b4b297a](https://github.com/ionic-team/capacitor/commit/b4b297a52f8732659662d5e5aaeff81c0f7d9835))
+
+## [8.3.4](https://github.com/ionic-team/capacitor/compare/8.3.3...8.3.4) (2026-05-12)
+
+**Note:** Version bump only for package capacitor
+
+## [8.3.3](https://github.com/ionic-team/capacitor/compare/8.3.2...8.3.3) (2026-05-08)
+
+### Bug Fixes
+
+- **cli:** copy plugin files in CocoaPods projects ([#8467](https://github.com/ionic-team/capacitor/issues/8467)) ([b2d7719](https://github.com/ionic-team/capacitor/commit/b2d771926a180e60deea31992d7d4abcd5ca3bc7))
+
+## [8.3.2](https://github.com/ionic-team/capacitor/compare/8.3.1...8.3.2) (2026-05-07)
+
+### Bug Fixes
+
+- **cli:** add cSettings support for compiler flags in generated Package.swift ([#8448](https://github.com/ionic-team/capacitor/issues/8448)) ([0bd0676](https://github.com/ionic-team/capacitor/commit/0bd0676315c5fd77e50312dd7b5bf4990dcbd7d0))
+- **cli:** add system framework and weak framework support in SPM Package.swift ([#8447](https://github.com/ionic-team/capacitor/issues/8447)) ([3232f0f](https://github.com/ionic-team/capacitor/commit/3232f0fe1d9811b0b5c500e3dc05cb8a250177f8))
+- **cli:** correct Capacitor plugin SPM compat check ([#8440](https://github.com/ionic-team/capacitor/issues/8440)) ([e5ccc45](https://github.com/ionic-team/capacitor/commit/e5ccc451dda27d56bca824ed644bd20fe4d988cb))
+- **cli:** generate binaryTarget entries for custom xcframeworks in Package.swift ([#8445](https://github.com/ionic-team/capacitor/issues/8445)) ([1f7e33f](https://github.com/ionic-team/capacitor/commit/1f7e33fca43d183332ec19d22b0d75ef81d8cc6d))
+- **cli:** generate resource entries in Package.swift ([#8455](https://github.com/ionic-team/capacitor/issues/8455)) ([790bd27](https://github.com/ionic-team/capacitor/commit/790bd27123497111984227010c3162cec94a108e))
+- **cli:** handle Cordova plugins without iOS source files ([#8443](https://github.com/ionic-team/capacitor/issues/8443)) ([0da130e](https://github.com/ionic-team/capacitor/commit/0da130eb7a861bee4e2c35bc0aac53ba9c983fc3))
+- **cli:** link plugin dependencies in Package.swift ([#8457](https://github.com/ionic-team/capacitor/issues/8457)) ([b3c769e](https://github.com/ionic-team/capacitor/commit/b3c769e856c826b1174518877cf86ac7ce73bf09))
+- **ios:** support Cordova plugins with Package.swift ([#8438](https://github.com/ionic-team/capacitor/issues/8438)) ([139943b](https://github.com/ionic-team/capacitor/commit/139943b0c05fddb2d1ce2d6f468800fddf17b4cf))
+- **SystemBars:** avoid extra view padding on API <= 34 ([#8439](https://github.com/ionic-team/capacitor/issues/8439)) ([5b135a7](https://github.com/ionic-team/capacitor/commit/5b135a70217be560e7176c8d5b514cc92ed3e4e4))
+
+## [8.3.1](https://github.com/ionic-team/capacitor/compare/8.3.0...8.3.1) (2026-04-16)
+
+### Bug Fixes
+
+- **android:** handle null versionName in isNewBinary() ([#8397](https://github.com/ionic-team/capacitor/issues/8397)) ([aa1a660](https://github.com/ionic-team/capacitor/commit/aa1a660f364f9b5f5a1e350e279c8864b04dd13b))
+- boundary value extraction for form-data requests ([#7518](https://github.com/ionic-team/capacitor/issues/7518)) ([64ab854](https://github.com/ionic-team/capacitor/commit/64ab854c12330804c24275d88d3a9f7c8e52a73d))
+- **cli:** check CAPACITOR_COCOAPODS_PATH in determinePackageManager ([#8407](https://github.com/ionic-team/capacitor/issues/8407)) ([acb64ab](https://github.com/ionic-team/capacitor/commit/acb64ab92a37ff53701cde453558e272e2e11eb6))
+- **system-bars:** use separate current styles ([#8409](https://github.com/ionic-team/capacitor/issues/8409)) ([3d1f8d1](https://github.com/ionic-team/capacitor/commit/3d1f8d1b61480187375f5cd4de7ba999db007542))
+
 # [8.3.0](https://github.com/ionic-team/capacitor/compare/8.2.0...8.3.0) (2026-03-25)
 
 ### Bug Fixes

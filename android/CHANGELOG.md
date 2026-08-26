@@ -3,6 +3,54 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.5.0](https://github.com/ionic-team/capacitor/compare/8.4.2...8.5.0) (2026-07-31)
+
+**Note:** Version bump only for package @capacitor/android
+
+## [8.4.2](https://github.com/ionic-team/capacitor/compare/8.4.1...8.4.2) (2026-07-14)
+
+### Bug Fixes
+
+- **android:** explicitly grant URI permissions for image capture intent ([#8526](https://github.com/ionic-team/capacitor/issues/8526)) ([6f2d328](https://github.com/ionic-team/capacitor/commit/6f2d3283897a375d09ca9ec8784a9f0d65f0a530))
+
+## [8.4.1](https://github.com/ionic-team/capacitor/compare/8.4.0...8.4.1) (2026-06-19)
+
+**Note:** Version bump only for package @capacitor/android
+
+# [8.4.0](https://github.com/ionic-team/capacitor/compare/8.3.4...8.4.0) (2026-06-02)
+
+### Bug Fixes
+
+- **android:** show only the requested system bar ([#8480](https://github.com/ionic-team/capacitor/issues/8480)) ([4c6c321](https://github.com/ionic-team/capacitor/commit/4c6c3219afb5223211e857457e46283c37eb9424))
+- **SystemBars:** make `safe-area-inset-x` available on API <= 34 ([#8424](https://github.com/ionic-team/capacitor/issues/8424)) ([e456de0](https://github.com/ionic-team/capacitor/commit/e456de083e19644f484bec5a5359cb67960ac8bc))
+- **SystemBars:** respect `insetsHandling` disable ([#8481](https://github.com/ionic-team/capacitor/issues/8481)) ([d4ad7ff](https://github.com/ionic-team/capacitor/commit/d4ad7ffe39daf66e0cfc63af9028d5c05543bde7))
+
+### Features
+
+- add method getDouble to plugin config ([#7638](https://github.com/ionic-team/capacitor/issues/7638)) ([93c72de](https://github.com/ionic-team/capacitor/commit/93c72de40a2ec4c78b33659250cb08340083088e))
+
+## [8.3.4](https://github.com/ionic-team/capacitor/compare/8.3.3...8.3.4) (2026-05-12)
+
+**Note:** Version bump only for package @capacitor/android
+
+## [8.3.3](https://github.com/ionic-team/capacitor/compare/8.3.2...8.3.3) (2026-05-08)
+
+**Note:** Version bump only for package @capacitor/android
+
+## [8.3.2](https://github.com/ionic-team/capacitor/compare/8.3.1...8.3.2) (2026-05-07)
+
+### Bug Fixes
+
+- **SystemBars:** avoid extra view padding on API <= 34 ([#8439](https://github.com/ionic-team/capacitor/issues/8439)) ([5b135a7](https://github.com/ionic-team/capacitor/commit/5b135a70217be560e7176c8d5b514cc92ed3e4e4))
+
+## [8.3.1](https://github.com/ionic-team/capacitor/compare/8.3.0...8.3.1) (2026-04-16)
+
+### Bug Fixes
+
+- **android:** handle null versionName in isNewBinary() ([#8397](https://github.com/ionic-team/capacitor/issues/8397)) ([aa1a660](https://github.com/ionic-team/capacitor/commit/aa1a660f364f9b5f5a1e350e279c8864b04dd13b))
+- boundary value extraction for form-data requests ([#7518](https://github.com/ionic-team/capacitor/issues/7518)) ([64ab854](https://github.com/ionic-team/capacitor/commit/64ab854c12330804c24275d88d3a9f7c8e52a73d))
+- **system-bars:** use separate current styles ([#8409](https://github.com/ionic-team/capacitor/issues/8409)) ([3d1f8d1](https://github.com/ionic-team/capacitor/commit/3d1f8d1b61480187375f5cd4de7ba999db007542))
+
 # [8.3.0](https://github.com/ionic-team/capacitor/compare/8.2.0...8.3.0) (2026-03-25)
 
 ### Bug Fixes
