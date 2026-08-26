@@ -282,7 +282,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         boolean captureEnabled = fileChooserParams.isCaptureEnabled();
         boolean capturePhoto = captureEnabled && acceptTypes.contains("image/*");
         final boolean captureVideo = captureEnabled && acceptTypes.contains("video/*");
-        if ((capturePhoto || captureVideo)) {
+        if (capturePhoto || captureVideo) {
             if (isMediaCaptureSupported()) {
                 showMediaCaptureOrFilePicker(filePathCallback, fileChooserParams, captureVideo);
             } else {
@@ -340,6 +340,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return false;
         }
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
+        takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         activityListener = (activityResult) -> {
             Uri[] result = null;
             if (activityResult.getResultCode() == Activity.RESULT_OK) {
@@ -447,7 +448,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     public boolean isValidMsg(String msg) {
-        return !(msg.contains("%cresult %c") || (msg.contains("%cnative %c")) || msg.equalsIgnoreCase("console.groupEnd"));
+        return !(msg.contains("%cresult %c") || msg.contains("%cnative %c") || msg.equalsIgnoreCase("console.groupEnd"));
     }
 
     private Uri createImageFileUri() throws IOException {
