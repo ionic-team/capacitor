@@ -30,3 +30,30 @@ export interface SystemConfig {
    */
   readonly signup?: boolean;
 }
+
+export async function readConfig(): Promise<SystemConfig> {
+  debug('Reading from %O', SYSCONFIG_PATH);
+
+  try {
+    return await readJSON(SYSCONFIG_PATH);
+  } catch (e: any) {
+    if (e.code !== 'ENOENT') {
+      throw e;
+    }
+
+    const sysconfig: SystemConfig = {
+      machine: uuidv4(),
+    };
+
+    await writeConfig(sysconfig);
+
+    return sysconfig;
+  }
+}
+
+export async function writeConfig(sysconfig: SystemConfig): Promise<void> {
+  debug('Writing to %O', SYSCONFIG_PATH);
+
+  await mkdirp(dirname(SYSCONFIG_PATH));
+  await writeJSON(SYSCONFIG_PATH, sysconfig, { spaces: '\t' });
+}
