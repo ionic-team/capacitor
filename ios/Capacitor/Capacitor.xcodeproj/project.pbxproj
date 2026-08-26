@@ -109,3 +109,1119 @@
 		A7F7EDCD291EC75C0015B73B /* CAPPlugin+LoadInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */; };
 		A7F7EDD5292BE8520015B73B /* CAPInstancePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDD4292BE8520015B73B /* CAPInstancePlugin.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		50503EEA1FC08595003606DC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 50503ED61FC08594003606DC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 50503EDE1FC08594003606DC;
+			remoteInfo = Avocado;
+		};
+		62959B9F2526474300A3D7F1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2F5C86DC1FE94845004B09C7;
+			remoteInfo = Cordova;
+		};
+		6296A796253A2EAE005A202A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 50503ED61FC08594003606DC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6296A77A253A2E49005A202A;
+			remoteInfo = TestsHostApp;
+		};
+		A7D8B3652B263B8D0003FAD6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 50503ED61FC08594003606DC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 50503EDE1FC08594003606DC;
+			remoteInfo = Capacitor;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		622BB9C32541FE1900A5DBCA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = configurations;
+			dstSubfolderSpec = 1;
+			files = (
+				626D2D992613B61E0046CE81 /* hidinglogs.json in CopyFiles */,
+				62A91C3F2553710E00861508 /* nonjson.json in CopyFiles */,
+				62E0736125535E8700BAAADB /* server.json in CopyFiles */,
+				62E0736225535E8700BAAADB /* bad.json in CopyFiles */,
+				62E0736325535E8700BAAADB /* flat.json in CopyFiles */,
+				62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0F83E884285A332D006C43CB /* AppUUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUUID.swift; sourceTree = "<group>"; };
+		0F8F33B127DA980A003F49D6 /* PluginConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PluginConfig.swift; sourceTree = "<group>"; };
+		2F81F5C726FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CAPBridgeViewController+CDVScreenOrientationDelegate.h"; sourceTree = "<group>"; };
+		2F81F5C826FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CAPBridgeViewController+CDVScreenOrientationDelegate.m"; sourceTree = "<group>"; };
+		373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerProtocol.swift; sourceTree = "<group>"; };
+		373A69F1255C95D0000A6F44 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
+		501CBAA61FC0A723009B0D4D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		50503EDF1FC08594003606DC /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		50503EE81FC08595003606DC /* CapacitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapacitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		50503EED1FC08595003606DC /* CapacitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorTests.swift; sourceTree = "<group>"; };
+		6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstanceConfiguration.swift; sourceTree = "<group>"; };
+		621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPBridgedJSTypes.m; sourceTree = "<group>"; };
+		621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPBridgedJSTypes.h; sourceTree = "<group>"; };
+		621ECCBB2542046400D3D615 /* JSTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSTypes.swift; sourceTree = "<group>"; };
+		621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BridgedTypesTests.swift; sourceTree = "<group>"; };
+		621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONSerializationWrapper.m; sourceTree = "<group>"; };
+		621ECCC7254204BE00D3D615 /* JSONSerializationWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONSerializationWrapper.h; sourceTree = "<group>"; };
+		621ECCCD254204C400D3D615 /* CapacitorTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CapacitorTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		621ECCD4254205BD00D3D615 /* CAPBridgeProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridgeProtocol.swift; sourceTree = "<group>"; };
+		621ECCD9254205C400D3D615 /* CapacitorBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorBridge.swift; sourceTree = "<group>"; };
+		621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPApplicationDelegateProxy.swift; sourceTree = "<group>"; };
+		623D68F9254C5037002D01D1 /* KeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPath.swift; sourceTree = "<group>"; };
+		623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPInstanceDescriptor.h; sourceTree = "<group>"; };
+		623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CAPInstanceDescriptor.m; sourceTree = "<group>"; };
+		623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstanceDescriptor.swift; sourceTree = "<group>"; };
+		623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPInstanceConfiguration.h; sourceTree = "<group>"; };
+		623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CAPInstanceConfiguration.m; sourceTree = "<group>"; };
+		625AF1EC258963C700869675 /* WebViewAssetHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewAssetHandler.swift; sourceTree = "<group>"; };
+		B10B5700E000000000000001 /* CAPBlobStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBlobStore.swift; sourceTree = "<group>"; };
+		B10B5700E000000000000003 /* CAPBlobURLSchemeHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBlobURLSchemeHandler.swift; sourceTree = "<group>"; };
+		B10B5700E000000000000005 /* BlobStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlobStoreTests.swift; sourceTree = "<group>"; };
+		6263685F25F6EC0100576C1C /* PluginCallAccessorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginCallAccessorTests.m; sourceTree = "<group>"; };
+		626D2D902613B4BB0046CE81 /* hidinglogs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hidinglogs.json; sourceTree = "<group>"; };
+		62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPluginCall.h; sourceTree = "<group>"; };
+		62959AE32524DA7700A3D7F1 /* JSExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSExport.swift; sourceTree = "<group>"; };
+		62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPBridgedPlugin.h; sourceTree = "<group>"; };
+		62959AE62524DA7700A3D7F1 /* CAPPluginCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPPluginCall.swift; sourceTree = "<group>"; };
+		62959AE72524DA7700A3D7F1 /* CAPFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPFile.swift; sourceTree = "<group>"; };
+		62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPluginMethod.m; sourceTree = "<group>"; };
+		62959AE92524DA7700A3D7F1 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		62959AEF2524DA7700A3D7F1 /* Console.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
+		62959AF32524DA7700A3D7F1 /* WebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIStatusBarManager+CAPHandleTapAction.m"; sourceTree = "<group>"; };
+		62959AFF2524DA7700A3D7F1 /* JS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
+		62959B012524DA7700A3D7F1 /* CAPPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPlugin.m; sourceTree = "<group>"; };
+		62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridgeViewController.swift; sourceTree = "<group>"; };
+		62959B062524DA7700A3D7F1 /* CAPPluginCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPluginCall.m; sourceTree = "<group>"; };
+		62959B072524DA7700A3D7F1 /* CapacitorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorExtension.swift; sourceTree = "<group>"; };
+		62959B082524DA7700A3D7F1 /* CAPLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPLog.swift; sourceTree = "<group>"; };
+		62959B092524DA7700A3D7F1 /* CAPPluginMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPluginMethod.h; sourceTree = "<group>"; };
+		62959B0A2524DA7700A3D7F1 /* CAPBridgeDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridgeDelegate.swift; sourceTree = "<group>"; };
+		62959B0F2524DA7700A3D7F1 /* Capacitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Capacitor.h; sourceTree = "<group>"; };
+		62959B102524DA7700A3D7F1 /* DocLinks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocLinks.swift; sourceTree = "<group>"; };
+		62959B112524DA7700A3D7F1 /* Data+Capacitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Capacitor.swift"; sourceTree = "<group>"; };
+		62959B122524DA7700A3D7F1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		62959B132524DA7700A3D7F1 /* CAPPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPlugin.h; sourceTree = "<group>"; };
+		62959B142524DA7700A3D7F1 /* CAPBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridge.swift; sourceTree = "<group>"; };
+		62959B152524DA7700A3D7F1 /* CAPNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPNotifications.swift; sourceTree = "<group>"; };
+		62959B56252518FB00A3D7F1 /* Cordova.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Cordova.framework; sourceTree = "<group>"; };
+		62959B8225253A9500A3D7F1 /* Capacitor.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = Capacitor.modulemap; sourceTree = "<group>"; };
+		62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CapacitorCordova.xcodeproj; path = ../CapacitorCordova/CapacitorCordova.xcodeproj; sourceTree = "<group>"; };
+		62959BBD2526510200A3D7F1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6296A77B253A2E49005A202A /* TestsHostApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestsHostApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6296A77D253A2E49005A202A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		6296A781253A2E49005A202A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		6296A7A1253A2E49005A202A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		6296A784253A2E49005A202A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		6296A786253A2E49005A202A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6296A789253A2E49005A202A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		6296A78B253A2E49005A202A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		62A91C3325535F5700861508 /* ConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
+		62A91C392553710300861508 /* nonjson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nonjson.json; sourceTree = "<group>"; };
+		62ADC0C925CB678000E914DE /* PluginCallResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginCallResult.swift; sourceTree = "<group>"; };
+		62D43AEF2581817500673C24 /* WKWebView+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+Capacitor.swift"; sourceTree = "<group>"; };
+		62D43B642582A13D00673C24 /* WKWebView+Capacitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WKWebView+Capacitor.m"; sourceTree = "<group>"; };
+		62E0735225535E6500BAAADB /* server.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = server.json; sourceTree = "<group>"; };
+		62E0735325535E6500BAAADB /* bad.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bad.json; sourceTree = "<group>"; };
+		62E0735425535E6500BAAADB /* flat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = flat.json; sourceTree = "<group>"; };
+		62E0735525535E6500BAAADB /* hierarchy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hierarchy.json; sourceTree = "<group>"; };
+		62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewDelegationHandler.swift; sourceTree = "<group>"; };
+		62E79C572638AF7500414164 /* native-bridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "native-bridge.js"; sourceTree = "<group>"; };
+		62E79C712638B23300414164 /* JSExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSExportTests.swift; sourceTree = "<group>"; };
+		62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Capacitor.swift"; sourceTree = "<group>"; };
+		62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgedTypesTests.m; sourceTree = "<group>"; };
+		62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesHelper.swift; sourceTree = "<group>"; };
+		9527076F2FD9DD260079E5D3 /* CAPSceneDelegateProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPSceneDelegateProxy.swift; sourceTree = "<group>"; };
+		957BD93E2E78A4A20056874C /* SystemBars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemBars.swift; sourceTree = "<group>"; };
+		A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
+		A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorHttp.swift; sourceTree = "<group>"; };
+		A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorUrlRequest.swift; sourceTree = "<group>"; };
+		A38C3D7628484E76004B3680 /* CapacitorCookies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookies.swift; sourceTree = "<group>"; };
+		A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookieManager.swift; sourceTree = "<group>"; };
+		A71289E527F380A500DADDF3 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		A71289EA27F380FD00DADDF3 /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
+		A7187FD12BD1CB7D00093C45 /* CAPPluginMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPPluginMethod.swift; sourceTree = "<group>"; };
+		A76739782B98E09700795F7B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A771ADED2C8B845000AF234D /* DateCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCodableTests.swift; sourceTree = "<group>"; };
+		A771ADF02C8B909100AF234D /* URLCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCodableTests.swift; sourceTree = "<group>"; };
+		A7BE62CB2B486A5400165ACB /* KeyValueStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueStore.swift; sourceTree = "<group>"; };
+		A7D474D42C8BA8E8005620A8 /* DataCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCodableTests.swift; sourceTree = "<group>"; };
+		A7D474D72C8BA8FD005620A8 /* NonconformingFloatCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonconformingFloatCodableTests.swift; sourceTree = "<group>"; };
+		A7D8B3512B238A840003FAD6 /* JSValueEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueEncoder.swift; sourceTree = "<group>"; };
+		A7D8B3562B23B2110003FAD6 /* CodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableTests.swift; sourceTree = "<group>"; };
+		A7D8B3602B263B8D0003FAD6 /* CodableTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodableTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7D8B3622B263B8D0003FAD6 /* NestedCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedCodableTests.swift; sourceTree = "<group>"; };
+		A7D8B36D2B2692300003FAD6 /* SuperCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperCodableTests.swift; sourceTree = "<group>"; };
+		A7D9312E2B23710300FF59A2 /* JSValueDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueDecoder.swift; sourceTree = "<group>"; };
+		A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CAPBridgedPlugin+getMethod.swift"; sourceTree = "<group>"; };
+		A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CAPPlugin+LoadInstance.swift"; sourceTree = "<group>"; };
+		A7F7EDD4292BE8520015B73B /* CAPInstancePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstancePlugin.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		50503EDB1FC08594003606DC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */,
+				62959BA52526475A00A3D7F1 /* Cordova.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		50503EE51FC08595003606DC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50503EE91FC08595003606DC /* Capacitor.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6296A778253A2E49005A202A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7D8B35D2B263B8D0003FAD6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A7D8B3642B263B8D0003FAD6 /* Capacitor.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		501CBAA51FC0A723009B0D4D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */,
+				62959B56252518FB00A3D7F1 /* Cordova.framework */,
+				501CBAA61FC0A723009B0D4D /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		50503ED51FC08594003606DC = {
+			isa = PBXGroup;
+			children = (
+				62959AE12524DA7700A3D7F1 /* Capacitor */,
+				50503EEC1FC08595003606DC /* CapacitorTests */,
+				6296A77C253A2E49005A202A /* TestsHostApp */,
+				A7D8B3612B263B8D0003FAD6 /* CodableTests */,
+				50503EE01FC08594003606DC /* Products */,
+				501CBAA51FC0A723009B0D4D /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		50503EE01FC08594003606DC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				50503EDF1FC08594003606DC /* Capacitor.framework */,
+				50503EE81FC08595003606DC /* CapacitorTests.xctest */,
+				6296A77B253A2E49005A202A /* TestsHostApp.app */,
+				A7D8B3602B263B8D0003FAD6 /* CodableTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		50503EEC1FC08595003606DC /* CapacitorTests */ = {
+			isa = PBXGroup;
+			children = (
+				50503EED1FC08595003606DC /* CapacitorTests.swift */,
+				B10B5700E000000000000005 /* BlobStoreTests.swift */,
+				621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */,
+				62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */,
+				62A91C3325535F5700861508 /* ConfigurationTests.swift */,
+				62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */,
+				621ECCC7254204BE00D3D615 /* JSONSerializationWrapper.h */,
+				621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */,
+				6263685F25F6EC0100576C1C /* PluginCallAccessorTests.m */,
+				621ECCCD254204C400D3D615 /* CapacitorTests-Bridging-Header.h */,
+				62E79C712638B23300414164 /* JSExportTests.swift */,
+				62959BBD2526510200A3D7F1 /* Info.plist */,
+				A71289EA27F380FD00DADDF3 /* RouterTests.swift */,
+			);
+			path = CapacitorTests;
+			sourceTree = "<group>";
+		};
+		62959AE12524DA7700A3D7F1 /* Capacitor */ = {
+			isa = PBXGroup;
+			children = (
+				9527076F2FD9DD260079E5D3 /* CAPSceneDelegateProxy.swift */,
+				A7D9312C2B2370EF00FF59A2 /* Codable */,
+				0F8F33B127DA980A003F49D6 /* PluginConfig.swift */,
+				A76739782B98E09700795F7B /* PrivacyInfo.xcprivacy */,
+				62959B0F2524DA7700A3D7F1 /* Capacitor.h */,
+				62959B132524DA7700A3D7F1 /* CAPPlugin.h */,
+				62959B012524DA7700A3D7F1 /* CAPPlugin.m */,
+				A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */,
+				62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */,
+				A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */,
+				62959B092524DA7700A3D7F1 /* CAPPluginMethod.h */,
+				62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */,
+				A7187FD12BD1CB7D00093C45 /* CAPPluginMethod.swift */,
+				62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */,
+				62959B062524DA7700A3D7F1 /* CAPPluginCall.m */,
+				62959AE62524DA7700A3D7F1 /* CAPPluginCall.swift */,
+				A7F7EDD4292BE8520015B73B /* CAPInstancePlugin.swift */,
+				62ADC0C925CB678000E914DE /* PluginCallResult.swift */,
+				621ECCBB2542046400D3D615 /* JSTypes.swift */,
+				621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */,
+				621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */,
+				623D68F9254C5037002D01D1 /* KeyPath.swift */,
+				62959AFF2524DA7700A3D7F1 /* JS.swift */,
+				62959AE32524DA7700A3D7F1 /* JSExport.swift */,
+				621ECCD4254205BD00D3D615 /* CAPBridgeProtocol.swift */,
+				621ECCD9254205C400D3D615 /* CapacitorBridge.swift */,
+				62959B142524DA7700A3D7F1 /* CAPBridge.swift */,
+				62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */,
+				621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */,
+				62959B0A2524DA7700A3D7F1 /* CAPBridgeDelegate.swift */,
+				62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */,
+				625AF1EC258963C700869675 /* WebViewAssetHandler.swift */,
+				B10B5700E000000000000001 /* CAPBlobStore.swift */,
+				B10B5700E000000000000003 /* CAPBlobURLSchemeHandler.swift */,
+				62959AEA2524DA7700A3D7F1 /* Plugins */,
+				623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */,
+				623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */,
+				623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */,
+				623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */,
+				623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */,
+				6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */,
+				62959B082524DA7700A3D7F1 /* CAPLog.swift */,
+				62959AE72524DA7700A3D7F1 /* CAPFile.swift */,
+				62959B102524DA7700A3D7F1 /* DocLinks.swift */,
+				62959B152524DA7700A3D7F1 /* CAPNotifications.swift */,
+				62959B072524DA7700A3D7F1 /* CapacitorExtension.swift */,
+				62959B112524DA7700A3D7F1 /* Data+Capacitor.swift */,
+				62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */,
+				62D43AEF2581817500673C24 /* WKWebView+Capacitor.swift */,
+				62D43B642582A13D00673C24 /* WKWebView+Capacitor.m */,
+				2F81F5C726FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.h */,
+				2F81F5C826FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m */,
+				62959AE92524DA7700A3D7F1 /* UIColor.swift */,
+				62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */,
+				62959B122524DA7700A3D7F1 /* Info.plist */,
+				62959B8225253A9500A3D7F1 /* Capacitor.modulemap */,
+				373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */,
+				373A69F1255C95D0000A6F44 /* NotificationRouter.swift */,
+				62E79C562638AF7500414164 /* assets */,
+				A71289E527F380A500DADDF3 /* Router.swift */,
+				A7BE62CB2B486A5400165ACB /* KeyValueStore.swift */,
+				0F83E884285A332D006C43CB /* AppUUID.swift */,
+			);
+			path = Capacitor;
+			sourceTree = "<group>";
+		};
+		62959AEA2524DA7700A3D7F1 /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				957BD93E2E78A4A20056874C /* SystemBars.swift */,
+				A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */,
+				A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */,
+				A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */,
+				62959AEF2524DA7700A3D7F1 /* Console.swift */,
+				62959AF32524DA7700A3D7F1 /* WebView.swift */,
+				A38C3D7628484E76004B3680 /* CapacitorCookies.swift */,
+				A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */,
+			);
+			path = Plugins;
+			sourceTree = "<group>";
+		};
+		62959B9C2526474300A3D7F1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				62959BA02526474300A3D7F1 /* Cordova.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6296A77C253A2E49005A202A /* TestsHostApp */ = {
+			isa = PBXGroup;
+			children = (
+				6296A77D253A2E49005A202A /* AppDelegate.swift */,
+				6296A7A1253A2E49005A202A /* SceneDelegate.swift */,
+				6296A781253A2E49005A202A /* ViewController.swift */,
+				62E0735125535E6500BAAADB /* configurations */,
+				6296A783253A2E49005A202A /* Main.storyboard */,
+				6296A786253A2E49005A202A /* Assets.xcassets */,
+				6296A788253A2E49005A202A /* LaunchScreen.storyboard */,
+				6296A78B253A2E49005A202A /* Info.plist */,
+			);
+			path = TestsHostApp;
+			sourceTree = "<group>";
+		};
+		62E0735125535E6500BAAADB /* configurations */ = {
+			isa = PBXGroup;
+			children = (
+				62E0735225535E6500BAAADB /* server.json */,
+				62E0735325535E6500BAAADB /* bad.json */,
+				62E0735425535E6500BAAADB /* flat.json */,
+				626D2D902613B4BB0046CE81 /* hidinglogs.json */,
+				62E0735525535E6500BAAADB /* hierarchy.json */,
+				62A91C392553710300861508 /* nonjson.json */,
+			);
+			path = configurations;
+			sourceTree = "<group>";
+		};
+		62E79C562638AF7500414164 /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				62E79C572638AF7500414164 /* native-bridge.js */,
+			);
+			path = assets;
+			sourceTree = "<group>";
+		};
+		A7D8B3612B263B8D0003FAD6 /* CodableTests */ = {
+			isa = PBXGroup;
+			children = (
+				A7D8B3622B263B8D0003FAD6 /* NestedCodableTests.swift */,
+				A7D8B3562B23B2110003FAD6 /* CodableTests.swift */,
+				A7D8B36D2B2692300003FAD6 /* SuperCodableTests.swift */,
+				A771ADED2C8B845000AF234D /* DateCodableTests.swift */,
+				A771ADF02C8B909100AF234D /* URLCodableTests.swift */,
+				A7D474D42C8BA8E8005620A8 /* DataCodableTests.swift */,
+				A7D474D72C8BA8FD005620A8 /* NonconformingFloatCodableTests.swift */,
+			);
+			path = CodableTests;
+			sourceTree = "<group>";
+		};
+		A7D9312C2B2370EF00FF59A2 /* Codable */ = {
+			isa = PBXGroup;
+			children = (
+				A7D9312E2B23710300FF59A2 /* JSValueDecoder.swift */,
+				A7D8B3512B238A840003FAD6 /* JSValueEncoder.swift */,
+			);
+			path = Codable;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		50503EDC1FC08594003606DC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				62959B412524DA7800A3D7F1 /* Capacitor.h in Headers */,
+				62959B452524DA7800A3D7F1 /* CAPPlugin.h in Headers */,
+				62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */,
+				62959B3B2524DA7800A3D7F1 /* CAPPluginMethod.h in Headers */,
+				623D691D254C7462002D01D1 /* CAPInstanceConfiguration.h in Headers */,
+				623D6909254C6FDF002D01D1 /* CAPInstanceDescriptor.h in Headers */,
+				62959B192524DA7800A3D7F1 /* CAPBridgedPlugin.h in Headers */,
+				621ECCB82542045900D3D615 /* CAPBridgedJSTypes.h in Headers */,
+				2F81F5C926FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		50503EDE1FC08594003606DC /* Capacitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 50503EF31FC08595003606DC /* Build configuration list for PBXNativeTarget "Capacitor" */;
+			buildPhases = (
+				50503EDA1FC08594003606DC /* Sources */,
+				50503EDB1FC08594003606DC /* Frameworks */,
+				50503EDC1FC08594003606DC /* Headers */,
+				50503EDD1FC08594003606DC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Capacitor;
+			productName = Avocado;
+			productReference = 50503EDF1FC08594003606DC /* Capacitor.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		50503EE71FC08595003606DC /* CapacitorTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 50503EF61FC08595003606DC /* Build configuration list for PBXNativeTarget "CapacitorTests" */;
+			buildPhases = (
+				50503EE41FC08595003606DC /* Sources */,
+				50503EE51FC08595003606DC /* Frameworks */,
+				50503EE61FC08595003606DC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				50503EEB1FC08595003606DC /* PBXTargetDependency */,
+				6296A797253A2EAE005A202A /* PBXTargetDependency */,
+			);
+			name = CapacitorTests;
+			productName = AvocadoTests;
+			productReference = 50503EE81FC08595003606DC /* CapacitorTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		6296A77A253A2E49005A202A /* TestsHostApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6296A78F253A2E49005A202A /* Build configuration list for PBXNativeTarget "TestsHostApp" */;
+			buildPhases = (
+				6296A777253A2E49005A202A /* Sources */,
+				6296A778253A2E49005A202A /* Frameworks */,
+				6296A779253A2E49005A202A /* Resources */,
+				622BB9C32541FE1900A5DBCA /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestsHostApp;
+			productName = TestsHostApp;
+			productReference = 6296A77B253A2E49005A202A /* TestsHostApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A7D8B35F2B263B8D0003FAD6 /* CodableTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A7D8B3672B263B8D0003FAD6 /* Build configuration list for PBXNativeTarget "CodableTests" */;
+			buildPhases = (
+				A7D8B35C2B263B8D0003FAD6 /* Sources */,
+				A7D8B35D2B263B8D0003FAD6 /* Frameworks */,
+				A7D8B35E2B263B8D0003FAD6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A7D8B3662B263B8D0003FAD6 /* PBXTargetDependency */,
+			);
+			name = CodableTests;
+			productName = CodableTests;
+			productReference = A7D8B3602B263B8D0003FAD6 /* CodableTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		50503ED61FC08594003606DC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1240;
+				ORGANIZATIONNAME = "Drifty Co.";
+				TargetAttributes = {
+					50503EDE1FC08594003606DC = {
+						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0940;
+						ProvisioningStyle = Automatic;
+					};
+					50503EE71FC08595003606DC = {
+						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 1200;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 6296A77A253A2E49005A202A;
+					};
+					6296A77A253A2E49005A202A = {
+						CreatedOnToolsVersion = 12.0;
+						ProvisioningStyle = Automatic;
+					};
+					A7D8B35F2B263B8D0003FAD6 = {
+						CreatedOnToolsVersion = 15.0.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 50503ED91FC08594003606DC /* Build configuration list for PBXProject "Capacitor" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 50503ED51FC08594003606DC;
+			productRefGroup = 50503EE01FC08594003606DC /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 62959B9C2526474300A3D7F1 /* Products */;
+					ProjectRef = 62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				50503EDE1FC08594003606DC /* Capacitor */,
+				50503EE71FC08595003606DC /* CapacitorTests */,
+				6296A77A253A2E49005A202A /* TestsHostApp */,
+				A7D8B35F2B263B8D0003FAD6 /* CodableTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		62959BA02526474300A3D7F1 /* Cordova.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Cordova.framework;
+			remoteRef = 62959B9F2526474300A3D7F1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		50503EDD1FC08594003606DC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A76739792B98E09700795F7B /* PrivacyInfo.xcprivacy in Resources */,
+				62E79CD7263A178B00414164 /* native-bridge.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		50503EE61FC08595003606DC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6296A779253A2E49005A202A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6296A78A253A2E49005A202A /* LaunchScreen.storyboard in Resources */,
+				6296A787253A2E49005A202A /* Assets.xcassets in Resources */,
+				6296A785253A2E49005A202A /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7D8B35E2B263B8D0003FAD6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		50503EDA1FC08594003606DC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A38C3D7728484E76004B3680 /* CapacitorCookies.swift in Sources */,
+				A71289E627F380A500DADDF3 /* Router.swift in Sources */,
+				A327E6B828DB8B2900CA8B0A /* CapacitorUrlRequest.swift in Sources */,
+				A7D9312F2B23710300FF59A2 /* JSValueDecoder.swift in Sources */,
+				62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */,
+				621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */,
+				621ECCD6254205BD00D3D615 /* CAPBridgeProtocol.swift in Sources */,
+				62D43AF02581817500673C24 /* WKWebView+Capacitor.swift in Sources */,
+				62959B432524DA7800A3D7F1 /* Data+Capacitor.swift in Sources */,
+				62E207AE2588234500A78983 /* WebViewDelegationHandler.swift in Sources */,
+				B10B5700E000000000000002 /* CAPBlobStore.swift in Sources */,
+				B10B5700E000000000000004 /* CAPBlobURLSchemeHandler.swift in Sources */,
+				A7187FD22BD1CB7D00093C45 /* CAPPluginMethod.swift in Sources */,
+				621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */,
+				621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */,
+				62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */,
+				623D690A254C6FDF002D01D1 /* CAPInstanceDescriptor.m in Sources */,
+				A7D8B3522B238A840003FAD6 /* JSValueEncoder.swift in Sources */,
+				A7F7EDD5292BE8520015B73B /* CAPInstancePlugin.swift in Sources */,
+				A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */,
+				62959B1B2524DA7800A3D7F1 /* CAPFile.swift in Sources */,
+				952707712FD9DD2D0079E5D3 /* CAPSceneDelegateProxy.swift in Sources */,
+				62959B462524DA7800A3D7F1 /* CAPBridge.swift in Sources */,
+				62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */,
+				62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */,
+				62959B1C2524DA7800A3D7F1 /* CAPPluginMethod.m in Sources */,
+				2F81F5CA26FB7CB400DD35BE /* CAPBridgeViewController+CDVScreenOrientationDelegate.m in Sources */,
+				62ADC0CA25CB678000E914DE /* PluginCallResult.swift in Sources */,
+				62959B472524DA7800A3D7F1 /* CAPNotifications.swift in Sources */,
+				62D43B652582A13D00673C24 /* WKWebView+Capacitor.m in Sources */,
+				62959B312524DA7800A3D7F1 /* JS.swift in Sources */,
+				373A69F2255C95D0000A6F44 /* NotificationRouter.swift in Sources */,
+				62959B1A2524DA7800A3D7F1 /* CAPPluginCall.swift in Sources */,
+				62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */,
+				62959B392524DA7800A3D7F1 /* CapacitorExtension.swift in Sources */,
+				A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */,
+				957BD9402E78A4A50056874C /* SystemBars.swift in Sources */,
+				62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */,
+				62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */,
+				A7BE62CC2B486A5400165ACB /* KeyValueStore.swift in Sources */,
+				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
+				373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */,
+				0F83E885285A332E006C43CB /* AppUUID.swift in Sources */,
+				625AF1ED258963C700869675 /* WebViewAssetHandler.swift in Sources */,
+				A327E6B728DB8B2900CA8B0A /* CapacitorHttp.swift in Sources */,
+				0F8F33B327DA980A003F49D6 /* PluginConfig.swift in Sources */,
+				62959B3C2524DA7800A3D7F1 /* CAPBridgeDelegate.swift in Sources */,
+				623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */,
+				623D68FA254C5037002D01D1 /* KeyPath.swift in Sources */,
+				62959B222524DA7800A3D7F1 /* Console.swift in Sources */,
+				62959B3A2524DA7800A3D7F1 /* CAPLog.swift in Sources */,
+				A7DB03AC29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift in Sources */,
+				6214934725509C3F006C36F9 /* CAPInstanceConfiguration.swift in Sources */,
+				623D6914254C7030002D01D1 /* CAPInstanceDescriptor.swift in Sources */,
+				621ECCE3254206A600D3D615 /* CAPApplicationDelegateProxy.swift in Sources */,
+				A7F7EDCD291EC75C0015B73B /* CAPPlugin+LoadInstance.swift in Sources */,
+				62959B262524DA7800A3D7F1 /* WebView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		50503EE41FC08595003606DC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				62E79C722638B23300414164 /* JSExportTests.swift in Sources */,
+				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
+				B10B5700E000000000000006 /* BlobStoreTests.swift in Sources */,
+				62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */,
+				621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */,
+				62A91C3425535F5700861508 /* ConfigurationTests.swift in Sources */,
+				62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */,
+				621ECCC3254204B700D3D615 /* BridgedTypesTests.swift in Sources */,
+				A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */,
+				6263686025F6EC0100576C1C /* PluginCallAccessorTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6296A777253A2E49005A202A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6296A782253A2E49005A202A /* ViewController.swift in Sources */,
+				6296A77E253A2E49005A202A /* AppDelegate.swift in Sources */,
+				6296A7A0253A2E49005A202A /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7D8B35C2B263B8D0003FAD6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A771ADEE2C8B845000AF234D /* DateCodableTests.swift in Sources */,
+				A7D8B3632B263B8D0003FAD6 /* NestedCodableTests.swift in Sources */,
+				A7D474D52C8BA8E8005620A8 /* DataCodableTests.swift in Sources */,
+				A7D8B36A2B263B990003FAD6 /* CodableTests.swift in Sources */,
+				A7D8B36E2B2692300003FAD6 /* SuperCodableTests.swift in Sources */,
+				A7D474D82C8BA8FD005620A8 /* NonconformingFloatCodableTests.swift in Sources */,
+				A771ADF12C8B909100AF234D /* URLCodableTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		50503EEB1FC08595003606DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 50503EDE1FC08594003606DC /* Capacitor */;
+			targetProxy = 50503EEA1FC08595003606DC /* PBXContainerItemProxy */;
+		};
+		6296A797253A2EAE005A202A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6296A77A253A2E49005A202A /* TestsHostApp */;
+			targetProxy = 6296A796253A2EAE005A202A /* PBXContainerItemProxy */;
+		};
+		A7D8B3662B263B8D0003FAD6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 50503EDE1FC08594003606DC /* Capacitor */;
+			targetProxy = A7D8B3652B263B8D0003FAD6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		6296A783253A2E49005A202A /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6296A784253A2E49005A202A /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		6296A788253A2E49005A202A /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6296A789253A2E49005A202A /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		50503EF11FC08595003606DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		50503EF21FC08595003606DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		50503EF41FC08595003606DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = Capacitor/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = Capacitor/Capacitor.modulemap;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.Capacitor;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		50503EF51FC08595003606DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = Capacitor/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = Capacitor/Capacitor.modulemap;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.Capacitor;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		50503EF71FC08595003606DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = CapacitorTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapacitorTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CapacitorTests/CapacitorTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/TestsHostApp";
+			};
+			name = Debug;
+		};
+		50503EF81FC08595003606DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = CapacitorTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapacitorTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CapacitorTests/CapacitorTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/TestsHostApp";
+			};
+			name = Release;
+		};
+		6296A78C253A2E49005A202A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = TestsHostApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.TestsHostApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6296A78D253A2E49005A202A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = TestsHostApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.TestsHostApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A7D8B3682B263B8D0003FAD6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CodableTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A7D8B3692B263B8D0003FAD6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CodableTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		50503ED91FC08594003606DC /* Build configuration list for PBXProject "Capacitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50503EF11FC08595003606DC /* Debug */,
+				50503EF21FC08595003606DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		50503EF31FC08595003606DC /* Build configuration list for PBXNativeTarget "Capacitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50503EF41FC08595003606DC /* Debug */,
+				50503EF51FC08595003606DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		50503EF61FC08595003606DC /* Build configuration list for PBXNativeTarget "CapacitorTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50503EF71FC08595003606DC /* Debug */,
+				50503EF81FC08595003606DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6296A78F253A2E49005A202A /* Build configuration list for PBXNativeTarget "TestsHostApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6296A78C253A2E49005A202A /* Debug */,
+				6296A78D253A2E49005A202A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A7D8B3672B263B8D0003FAD6 /* Build configuration list for PBXNativeTarget "CodableTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A7D8B3682B263B8D0003FAD6 /* Debug */,
+				A7D8B3692B263B8D0003FAD6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 50503ED61FC08594003606DC /* Project object */;
+}
