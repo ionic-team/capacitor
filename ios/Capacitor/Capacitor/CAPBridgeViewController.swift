@@ -295,6 +295,7 @@ extension CAPBridgeViewController {
         // setup the web view configuration
         let webConfig = webViewConfiguration(for: configuration)
         webConfig.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
+        CAPBlobURLSchemeHandler.register(with: webConfig)
         webConfig.userContentController = delegationHandler.contentController
         // create the web view and set its properties
         let aWebView = webView(with: .zero, configuration: webConfig)

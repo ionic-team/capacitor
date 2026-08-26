@@ -32,6 +32,9 @@
 		623D691D254C7462002D01D1 /* CAPInstanceConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */; };
 		625AF1ED258963C700869675 /* WebViewAssetHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625AF1EC258963C700869675 /* WebViewAssetHandler.swift */; };
+		B10B5700E000000000000002 /* CAPBlobStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10B5700E000000000000001 /* CAPBlobStore.swift */; };
+		B10B5700E000000000000004 /* CAPBlobURLSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10B5700E000000000000003 /* CAPBlobURLSchemeHandler.swift */; };
+		B10B5700E000000000000006 /* BlobStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10B5700E000000000000005 /* BlobStoreTests.swift */; };
 		6263686025F6EC0100576C1C /* PluginCallAccessorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6263685F25F6EC0100576C1C /* PluginCallAccessorTests.m */; };
 		626D2D992613B61E0046CE81 /* hidinglogs.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 626D2D902613B4BB0046CE81 /* hidinglogs.json */; };
 		62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -185,6 +188,9 @@
 		623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPInstanceConfiguration.h; sourceTree = "<group>"; };
 		623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CAPInstanceConfiguration.m; sourceTree = "<group>"; };
 		625AF1EC258963C700869675 /* WebViewAssetHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewAssetHandler.swift; sourceTree = "<group>"; };
+		B10B5700E000000000000001 /* CAPBlobStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBlobStore.swift; sourceTree = "<group>"; };
+		B10B5700E000000000000003 /* CAPBlobURLSchemeHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBlobURLSchemeHandler.swift; sourceTree = "<group>"; };
+		B10B5700E000000000000005 /* BlobStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlobStoreTests.swift; sourceTree = "<group>"; };
 		6263685F25F6EC0100576C1C /* PluginCallAccessorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginCallAccessorTests.m; sourceTree = "<group>"; };
 		626D2D902613B4BB0046CE81 /* hidinglogs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hidinglogs.json; sourceTree = "<group>"; };
 		62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPluginCall.h; sourceTree = "<group>"; };
@@ -339,6 +345,7 @@
 			isa = PBXGroup;
 			children = (
 				50503EED1FC08595003606DC /* CapacitorTests.swift */,
+				B10B5700E000000000000005 /* BlobStoreTests.swift */,
 				621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */,
 				62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */,
 				62A91C3325535F5700861508 /* ConfigurationTests.swift */,
@@ -389,6 +396,8 @@
 				62959B0A2524DA7700A3D7F1 /* CAPBridgeDelegate.swift */,
 				62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */,
 				625AF1EC258963C700869675 /* WebViewAssetHandler.swift */,
+				B10B5700E000000000000001 /* CAPBlobStore.swift */,
+				B10B5700E000000000000003 /* CAPBlobURLSchemeHandler.swift */,
 				62959AEA2524DA7700A3D7F1 /* Plugins */,
 				623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */,
 				623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */,
@@ -717,6 +726,8 @@
 				62D43AF02581817500673C24 /* WKWebView+Capacitor.swift in Sources */,
 				62959B432524DA7800A3D7F1 /* Data+Capacitor.swift in Sources */,
 				62E207AE2588234500A78983 /* WebViewDelegationHandler.swift in Sources */,
+				B10B5700E000000000000002 /* CAPBlobStore.swift in Sources */,
+				B10B5700E000000000000004 /* CAPBlobURLSchemeHandler.swift in Sources */,
 				A7187FD22BD1CB7D00093C45 /* CAPPluginMethod.swift in Sources */,
 				621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */,
 				621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */,
@@ -771,6 +782,7 @@
 			files = (
 				62E79C722638B23300414164 /* JSExportTests.swift in Sources */,
 				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
+				B10B5700E000000000000006 /* BlobStoreTests.swift in Sources */,
 				62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */,
 				621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */,
 				62A91C3425535F5700861508 /* ConfigurationTests.swift in Sources */,
