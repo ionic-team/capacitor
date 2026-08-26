@@ -338,7 +338,7 @@ public class PluginCall {
     /**
      * Indicate that the Bridge should cache this call in order to call
      * it again later. For example, the addListener system uses this to
-     * continuously call the call's callback (😆).
+     * continuously call the call's callback (😂).
      * @deprecated use {@link #setKeepAlive(Boolean)} instead
      */
     @Deprecated
@@ -440,7 +440,7 @@ public class PluginCall {
         }
 
         // Check if this is a Capacitor blob (already in our store)
-        if (blobUrl.startsWith("blob:capacitor://")) {
+        if (blobUrl.startsWith(BlobStore.URL_PREFIX) || blobUrl.startsWith("blob:capacitor://")) {
             BlobStore.BlobData blobData = BlobStore.getInstance().retrieve(blobUrl);
             if (blobData != null) {
                 callback.onSuccess(blobData.data, blobData.mimeType);

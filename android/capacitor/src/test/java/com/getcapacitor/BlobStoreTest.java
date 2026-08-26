@@ -41,7 +41,7 @@ public class BlobStoreTest {
 
         // Then
         assertNotNull("Blob URL should not be null", blobUrl);
-        assertTrue("Blob URL should have correct format", blobUrl.startsWith("blob:capacitor://"));
+        assertTrue("Blob URL should have correct format", blobUrl.startsWith("capacitorblob://"));
 
         // Retrieve and verify
         BlobStore.BlobData retrieved = blobStore.retrieve(blobUrl);
@@ -113,7 +113,7 @@ public class BlobStoreTest {
     @Test
     public void testRetrieveNonexistentBlob() {
         // Given
-        String fakeBlobUrl = "blob:capacitor://nonexistent-uuid";
+        String fakeBlobUrl = "capacitorblob://nonexistent-uuid";
 
         // When
         BlobStore.BlobData result = blobStore.retrieve(fakeBlobUrl);
@@ -128,7 +128,7 @@ public class BlobStoreTest {
         String[] invalidUrls = {
             "not-a-blob-url",
             "blob://wrong-scheme",
-            "blob:capacitor:/", // Missing ID
+            "capacitorblob:/", // Missing ID
             ""
         };
 
@@ -200,10 +200,10 @@ public class BlobStoreTest {
         String blobUrl = blobStore.store(testData, "text/plain");
 
         // Then
-        assertTrue("Should start with blob:capacitor://", blobUrl.startsWith("blob:capacitor://"));
+        assertTrue("Should start with capacitorblob://", blobUrl.startsWith("capacitorblob://"));
 
         // Extract UUID and verify format
-        String uuid = blobUrl.replace("blob:capacitor://", "");
+        String uuid = blobUrl.replace("capacitorblob://", "");
         assertFalse("Should contain UUID", uuid.isEmpty());
         assertEquals("UUID should be standard format", 36, uuid.length());
         assertTrue("Should contain dashes", uuid.contains("-"));
