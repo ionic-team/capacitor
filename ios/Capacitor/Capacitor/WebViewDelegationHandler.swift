@@ -1,6 +1,11 @@
 import Foundation
 import WebKit
+#if canImport(UniformTypeIdentifiers)
+import UniformTypeIdentifiers
+#endif
+#if canImport(MobileCoreServices)
 import MobileCoreServices
+#endif
 
 // TODO: remove once Xcode 12 support is dropped
 #if compiler(<5.5)
@@ -409,58 +414,62 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                                                proposedFileName: suggestedFilename,
                                                downloadId: download.hash)
 
-        // Ask for document selection (it will cal the completion handler)
-        let documentPicker = UIDocumentPickerViewController(documentTypes: [String(kUTTypeFolder)], in: .open)
+        // Ask for document selection (it will call the completion handler)
+        let documentPicker: UIDocumentPickerViewController
+        if #available(iOS 14.0, *) {
+            documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.folder])
+        } else {
+            documentPicker = UIDocumentPickerViewController(documentTypes: [String(kUTTypeFolder)], in: .open)
+        }
         documentPicker.delegate = self
         bridge?.viewController?.present(documentPicker, animated: true)
     }
     @available(iOS 14.5, *)
     public func downloadDidFinish(_ download: WKDownload) {
         CAPLog.print("⚡️  Download finished")
-        // notify
         NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
             "id": String(download.hash),
-            "status": FileDownloadNotificationStatus.completed
+            "status": FileDownloadNotificationStatus.completed.rawValue
         ])
     }
     @available(iOS 14.5, *)
     public func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
         CAPLog.print("⚡️  Download failed")
         CAPLog.print("⚡️  Error: " + error.localizedDescription)
-        // notify
         NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
             "id": String(download.hash),
             "error": error.localizedDescription,
-            "status": FileDownloadNotificationStatus.failed
+            "status": FileDownloadNotificationStatus.failed.rawValue
         ])
     }
     #endif
 
     // MARK: - UIDocumentPickerDelegate
 
-    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-        guard self.pendingDownload == nil else {
-            // cancel download
-            self.pendingDownload?.pathSelectionCallback(nil)
-            // empty refs
-            self.pendingDownload = nil
-            return
-        }
+    public func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        guard self.pendingDownload != nil else { return }
+        self.pendingDownload?.pathSelectionCallback(nil)
+        self.pendingDownload = nil
     }
 
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-        if let pendingDownload = self.pendingDownload {
-            // Generate unique file name on the choosen directory
-            let fileName: URL = self.getUniqueDownloadFileURL(url, suggestedFilename: pendingDownload.proposedFileName, optionalSuffix: nil)
-            pendingDownload.pathSelectionCallback(fileName)
-            // Notify
-            NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
-                "id": String(pendingDownload.downloadId), "status": FileDownloadNotificationStatus.started
-            ])
-            // empty refs
-            self.pendingDownload = nil
-            return
-        }
+    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let url = urls.first else { return }
+        handlePickedDownloadDestination(url)
+    }
+
+    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+        handlePickedDownloadDestination(url)
+    }
+
+    private func handlePickedDownloadDestination(_ url: URL) {
+        guard let pendingDownload = self.pendingDownload else { return }
+        let fileName: URL = self.getUniqueDownloadFileURL(url, suggestedFilename: pendingDownload.proposedFileName, optionalSuffix: nil)
+        pendingDownload.pathSelectionCallback(fileName)
+        NotificationCenter.default.post(name: .capacitorDidReceiveFileDownloadUpdate, object: [
+            "id": String(pendingDownload.downloadId),
+            "status": FileDownloadNotificationStatus.started.rawValue
+        ])
+        self.pendingDownload = nil
     }
 
     // MARK: - UIScrollViewDelegate
