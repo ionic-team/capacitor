@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 public class BlobStore {
 
     private static final String TAG = "Capacitor/BlobStore";
+    public static final String SCHEME = "capacitorblob";
+    public static final String URL_PREFIX = "capacitorblob://";
     private static BlobStore instance;
 
     // Blob entry class
@@ -73,7 +75,7 @@ public class BlobStore {
         }
 
         String blobId = UUID.randomUUID().toString();
-        String blobUrl = "blob:capacitor://" + blobId;
+        String blobUrl = URL_PREFIX + blobId;
 
         BlobEntry entry = new BlobEntry(data, mimeType);
         storage.put(blobId, entry);
@@ -85,7 +87,7 @@ public class BlobStore {
 
     /**
      * Retrieve data for a blob URL
-     * @param blobUrl The blob URL (format: "blob:capacitor://<uuid>")
+     * @param blobUrl The blob URL (format: "capacitorblob://<uuid>")
      * @return BlobData object if found, null otherwise
      */
     @Nullable
@@ -217,25 +219,35 @@ public class BlobStore {
 
     @Nullable
     private String extractBlobId(String blobUrl) {
-        if (!blobUrl.startsWith("blob:capacitor://")) {
-            return null;
+        if (blobUrl.startsWith(URL_PREFIX)) {
+            String id = blobUrl.substring(URL_PREFIX.length());
+            return id.isEmpty() ? null : id;
         }
-        return blobUrl.substring("blob:capacitor://".length());
+        if (blobUrl.startsWith("blob:capacitor://")) {
+            String id = blobUrl.substring("blob:capacitor://".length());
+            return id.isEmpty() ? null : id;
+        }
+        return null;
     }
 
     private synchronized void cleanupExpiredBlobs() {
         long now = System.currentTimeMillis();
         int removedCount = 0;
         long removedSize = 0;
+        java.util.ArrayList<String> expiredIds = new java.util.ArrayList<>();
 
         for (Map.Entry<String, BlobEntry> entry : storage.entrySet()) {
             long age = now - entry.getValue().createdAt;
             if (age > maxBlobLifetime) {
-                BlobEntry blobEntry = storage.remove(entry.getKey());
-                if (blobEntry != null) {
-                    removedCount++;
-                    removedSize += blobEntry.data.length;
-                }
+                expiredIds.add(entry.getKey());
+            }
+        }
+
+        for (String blobId : expiredIds) {
+            BlobEntry blobEntry = storage.remove(blobId);
+            if (blobEntry != null) {
+                removedCount++;
+                removedSize += blobEntry.data.length;
             }
         }
 

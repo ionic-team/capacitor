@@ -8,6 +8,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 public class BridgeWebViewClient extends WebViewClient {
@@ -20,6 +21,13 @@ public class BridgeWebViewClient extends WebViewClient {
 
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+        String url = request.getUrl() != null ? request.getUrl().toString() : "";
+        if (url.startsWith(BlobStore.URL_PREFIX) || url.startsWith("blob:capacitor://")) {
+            BlobStore.BlobData blob = BlobStore.getInstance().retrieve(url);
+            if (blob != null) {
+                return new WebResourceResponse(blob.mimeType, null, new ByteArrayInputStream(blob.data));
+            }
+        }
         return bridge.getLocalServer().shouldInterceptRequest(request);
     }
 

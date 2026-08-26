@@ -90,7 +90,7 @@ public class MyPlugin: CAPPlugin {
 
 ```swift
 @objc func saveImage(_ call: CAPPluginCall) {
-    // JavaScript sends: { blob: "blob:capacitor://..." }
+    // JavaScript sends: { blob: "capacitorblob://..." }
     call.getBlobData(for: "blob") { data, mimeType, error in
         if let error = error {
             call.reject("Failed to get blob data: \(error.localizedDescription)")
@@ -138,7 +138,7 @@ public class MyPlugin: CAPPlugin {
 
         // Process the binary data
         // getBlobData automatically handles both:
-        // - Capacitor blob URLs (blob:capacitor://...)
+        // - Capacitor blob URLs (capacitorblob://...)
         // - Browser blob URLs (blob:http://...)
 
         call.resolve([
@@ -216,7 +216,7 @@ public class MyPlugin extends Plugin {
 ```java
 @PluginMethod
 public void saveImage(PluginCall call) {
-    // JavaScript sends: { blob: "blob:capacitor://..." }
+    // JavaScript sends: { blob: "capacitorblob://..." }
     call.getBlobData("blob", new PluginCall.BlobDataCallback() {
         @Override
         public void onSuccess(byte[] data, String mimeType) {
@@ -254,7 +254,7 @@ public void processBlob(PluginCall call) {
         public void onSuccess(byte[] data, String mimeType) {
             // Process the binary data
             // getBlobData automatically handles both:
-            // - Capacitor blob URLs (blob:capacitor://...)
+            // - Capacitor blob URLs (capacitorblob://...)
             // - Browser blob URLs (blob:http://...)
 
             JSObject result = new JSObject();
@@ -293,7 +293,7 @@ async function displayImage() {
 
   // Use blob URL directly in DOM
   const img = document.createElement('img');
-  img.src = result.blob; // blob:capacitor://...
+  img.src = result.blob; // capacitorblob://...
   document.body.appendChild(img);
 
   // Or convert to browser Blob for manipulation
@@ -398,8 +398,8 @@ async function processImage() {
   img.src = blob;
   document.body.appendChild(img);
 
-  // Blob URLs are automatically cleaned up after retrieval
-  // No manual cleanup needed for Capacitor blob URLs
+  // Capacitor blob URLs are managed by an internal cache (time/size-based eviction),
+  // so they can be reused and are cleaned up automatically when they expire.
 }
 
 // ✅ Good: Clean up browser blob URLs
@@ -553,12 +553,14 @@ img.src = blob; // Direct use!
 
 Capacitor blob URLs follow this format:
 ```
-blob:capacitor://<uuid>
+capacitorblob://<uuid>
 ```
+
+The `capacitorblob` scheme is used instead of `blob:` because WebKit reserves `blob` and will not dispatch it to a custom `WKURLSchemeHandler`.
 
 Example:
 ```
-blob:capacitor://a3d5e7f9-1234-5678-90ab-cdef12345678
+capacitorblob://a3d5e7f9-1234-5678-90ab-cdef12345678
 ```
 
 ### Storage
