@@ -41,7 +41,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 /**
  @brief Deprecated, misspelled alias for @c overriddenUserAgentString.
  */
-@property (nonatomic, copy, nullable) NSString *overridenUserAgentString __attribute__((deprecated("Use overriddenUserAgentString instead")));
+@property (nonatomic, copy, nullable, getter=overriddenUserAgentString, setter=setOverriddenUserAgentString:) NSString *overridenUserAgentString __attribute__((deprecated("Use overriddenUserAgentString instead")));
 /**
  @brief The background color to set on the web view where content is not visible.
  @discussion Set by @c backgroundColor in the configuration file.
