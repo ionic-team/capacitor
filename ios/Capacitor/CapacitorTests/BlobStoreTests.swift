@@ -28,7 +28,7 @@ class BlobStoreTests: XCTestCase {
 
         // Then
         XCTAssertNotNil(blobUrl, "Blob URL should not be nil")
-        XCTAssertTrue(blobUrl!.starts(with: "blob:capacitor://"), "Blob URL should have correct format")
+        XCTAssertTrue(blobUrl!.starts(with: "capacitorblob://"), "Blob URL should have correct format")
 
         // Retrieve and verify
         let retrieved = blobStore.retrieve(blobUrl: blobUrl!)
@@ -96,7 +96,7 @@ class BlobStoreTests: XCTestCase {
 
     func testRetrieveNonexistentBlob() {
         // Given
-        let fakeBlobUrl = "blob:capacitor://nonexistent-uuid"
+        let fakeBlobUrl = "capacitorblob://nonexistent-uuid"
 
         // When
         let result = blobStore.retrieve(blobUrl: fakeBlobUrl)
@@ -110,7 +110,7 @@ class BlobStoreTests: XCTestCase {
         let invalidUrls = [
             "not-a-blob-url",
             "blob://wrong-scheme",
-            "blob:capacitor:/", // Missing ID
+            "capacitorblob:/", // Missing ID
             ""
         ]
 
@@ -240,10 +240,10 @@ class BlobStoreTests: XCTestCase {
         let blobUrl = blobStore.store(data: testData, mimeType: "text/plain")
 
         // Then
-        XCTAssertTrue(blobUrl!.starts(with: "blob:capacitor://"))
+        XCTAssertTrue(blobUrl!.starts(with: "capacitorblob://"))
 
         // Extract UUID and verify format
-        let uuid = blobUrl!.replacingOccurrences(of: "blob:capacitor://", with: "")
+        let uuid = blobUrl!.replacingOccurrences(of: "capacitorblob://", with: "")
         XCTAssertFalse(uuid.isEmpty, "Should contain UUID")
         XCTAssertTrue(uuid.count == 36, "UUID should be standard format")
     }

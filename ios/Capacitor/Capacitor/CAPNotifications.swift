@@ -25,8 +25,10 @@ extension Notification.Name {
         Notification.Name(rawValue: "CapacitorSceneOpenUniversalLinkNotification")
 }
 
-public enum FileDownloadNotificationStatus {
-    case started, completed, failed
+@objc public enum FileDownloadNotificationStatus: Int {
+    case started = 0
+    case completed = 1
+    case failed = 2
 }
 
 @objc extension NSNotification {

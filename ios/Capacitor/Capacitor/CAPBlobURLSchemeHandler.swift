@@ -1,9 +1,23 @@
 import Foundation
 import WebKit
 
-/// URL Scheme Handler for intercepting and serving Capacitor blob URLs
+/// URL Scheme Handler for intercepting and serving Capacitor blob URLs.
+///
+/// `blob` is a reserved WebKit scheme, so this handler is registered for `capacitorblob`.
 @available(iOS 11.0, *)
 @objc public class CAPBlobURLSchemeHandler: NSObject, WKURLSchemeHandler {
+
+    /// The URL scheme this handler serves (`capacitorblob`).
+    @objc public static let scheme = CAPBlobStore.scheme
+
+    /// Register a CAPBlobURLSchemeHandler on the given WKWebViewConfiguration.
+    ///
+    /// Call this during WKWebView setup:
+    ///
+    ///     CAPBlobURLSchemeHandler.register(with: configuration)
+    @objc public static func register(with configuration: WKWebViewConfiguration) {
+        configuration.setURLSchemeHandler(CAPBlobURLSchemeHandler(), forURLScheme: CAPBlobURLSchemeHandler.scheme)
+    }
 
     // MARK: - WKURLSchemeHandler
 
@@ -17,7 +31,6 @@ import WebKit
             return
         }
 
-        // Convert blob:capacitor://uuid to the format our BlobStore expects
         let blobUrl = url.absoluteString
 
         guard let (data, mimeType) = CAPBlobStore.shared.retrieve(blobUrl: blobUrl) else {
@@ -30,7 +43,6 @@ import WebKit
             return
         }
 
-        // Create HTTP response
         let response = URLResponse(
             url: url,
             mimeType: mimeType,

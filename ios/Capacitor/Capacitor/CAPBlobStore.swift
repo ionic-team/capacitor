@@ -1,7 +1,17 @@
 import Foundation
+import WebKit
 
-/// Manages temporary blob storage for efficient binary data transfer between native and JavaScript
+/// Manages temporary blob storage for efficient binary data transfer between native and JavaScript.
+///
+/// Blob URLs use the custom `capacitorblob` scheme (not `blob:`) because WKWebView cannot
+/// register a handler for the reserved `blob` scheme.
 @objc public class CAPBlobStore: NSObject {
+
+    /// URL scheme used for Capacitor-managed blobs. Must be a custom (non-reserved) scheme.
+    @objc public static let scheme = "capacitorblob"
+
+    /// Prefix used when creating blob URLs: `capacitorblob://<uuid>`
+    @objc public static let urlPrefix = "capacitorblob://"
 
     // MARK: - Blob Entry
 
@@ -48,18 +58,14 @@ import Foundation
     ///   - mimeType: MIME type of the data (e.g., "image/png")
     /// - Returns: A blob URL string that can be used to retrieve the data
     @objc public func store(data: Data, mimeType: String = "application/octet-stream") -> String? {
-        // Check size limits
-        guard data.count + currentStorageSize <= maxStorageSize else {
-            CAPLog.print("⚠️  BlobStore: Storage limit exceeded")
-            return nil
-        }
+        return queue.sync(flags: .barrier) {
+            guard data.count + currentStorageSize <= maxStorageSize else {
+                CAPLog.print("⚠️  BlobStore: Storage limit exceeded")
+                return nil
+            }
 
-        let blobId = UUID().uuidString
-        let blobUrl = "blob:capacitor://\(blobId)"
-
-        queue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-
+            let blobId = UUID().uuidString
+            let blobUrl = CAPBlobStore.urlPrefix + blobId
             let entry = BlobEntry(
                 data: data,
                 mimeType: mimeType,
@@ -67,39 +73,25 @@ import Foundation
                 accessCount: 0
             )
 
-            self.storage[blobId] = entry
-            self.currentStorageSize += data.count
-
+            storage[blobId] = entry
+            currentStorageSize += data.count
             CAPLog.print("📦 BlobStore: Stored \(data.count) bytes as \(blobUrl)")
+            return blobUrl
         }
-
-        return blobUrl
     }
 
     /// Retrieve data for a blob URL
-    /// - Parameter blobUrl: The blob URL (format: "blob:capacitor://<uuid>")
+    /// - Parameter blobUrl: The blob URL (format: "capacitorblob://<uuid>")
     /// - Returns: Tuple of (data, mimeType) if found, nil otherwise
     @objc public func retrieve(blobUrl: String) -> (data: Data, mimeType: String)? {
         guard let blobId = extractBlobId(from: blobUrl) else {
             return nil
         }
 
-        var result: (Data, String)?
-
-        queue.sync {
-            if let entry = storage[blobId] {
-                result = (entry.data, entry.mimeType)
-            }
+        return queue.sync {
+            guard let entry = storage[blobId] else { return nil }
+            return (entry.data, entry.mimeType)
         }
-
-        // Increment access count
-        if result != nil {
-            queue.async(flags: .barrier) { [weak self] in
-                self?.storage[blobId]?.accessCount += 1
-            }
-        }
-
-        return result
     }
 
     /// Remove a specific blob from storage
@@ -109,11 +101,9 @@ import Foundation
             return
         }
 
-        queue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-
-            if let entry = self.storage.removeValue(forKey: blobId) {
-                self.currentStorageSize -= entry.data.count
+        queue.sync(flags: .barrier) {
+            if let entry = storage.removeValue(forKey: blobId) {
+                currentStorageSize -= entry.data.count
                 CAPLog.print("🗑️  BlobStore: Removed blob \(blobId)")
             }
         }
@@ -121,13 +111,10 @@ import Foundation
 
     /// Clear all stored blobs
     @objc public func clearAll() {
-        queue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-
-            let count = self.storage.count
-            self.storage.removeAll()
-            self.currentStorageSize = 0
-
+        queue.sync(flags: .barrier) {
+            let count = storage.count
+            storage.removeAll()
+            currentStorageSize = 0
             CAPLog.print("🗑️  BlobStore: Cleared all \(count) blobs")
         }
     }
@@ -135,10 +122,16 @@ import Foundation
     // MARK: - Private Methods
 
     private func extractBlobId(from blobUrl: String) -> String? {
-        guard blobUrl.starts(with: "blob:capacitor://") else {
-            return nil
+        if blobUrl.hasPrefix(CAPBlobStore.urlPrefix) {
+            let id = String(blobUrl.dropFirst(CAPBlobStore.urlPrefix.count))
+            return id.isEmpty ? nil : id
         }
-        return String(blobUrl.dropFirst("blob:capacitor://".count))
+        // Legacy identifier used in early drafts of this API
+        if blobUrl.hasPrefix("blob:capacitor://") {
+            let id = String(blobUrl.dropFirst("blob:capacitor://".count))
+            return id.isEmpty ? nil : id
+        }
+        return nil
     }
 
     private func startCleanupTimer() {
@@ -152,21 +145,24 @@ import Foundation
             guard let self = self else { return }
 
             let now = Date()
-            var removedCount = 0
+            var expiredBlobIds: [String] = []
             var removedSize = 0
 
             for (blobId, entry) in self.storage {
                 let age = now.timeIntervalSince(entry.createdAt)
                 if age > self.maxBlobLifetime {
-                    self.storage.removeValue(forKey: blobId)
-                    removedCount += 1
+                    expiredBlobIds.append(blobId)
                     removedSize += entry.data.count
                 }
             }
 
-            if removedCount > 0 {
+            for blobId in expiredBlobIds {
+                self.storage.removeValue(forKey: blobId)
+            }
+
+            if !expiredBlobIds.isEmpty {
                 self.currentStorageSize -= removedSize
-                CAPLog.print("🧹 BlobStore: Cleaned up \(removedCount) expired blobs (\(removedSize) bytes)")
+                CAPLog.print("🧹 BlobStore: Cleaned up \(expiredBlobIds.count) expired blobs (\(removedSize) bytes)")
             }
         }
     }
@@ -196,7 +192,6 @@ import Foundation
 
         return result
     }
-}
 
     // MARK: - Blob Fetching from WebView
 
@@ -206,12 +201,11 @@ import Foundation
     ///   - webView: The WKWebView that created the blob
     ///   - completion: Called with the fetched data or error
     @objc public func fetchWebViewBlob(blobUrl: String, from webView: WKWebView, completion: @escaping (Data?, String?, Error?) -> Void) {
-        // Use JavaScript to read the blob as base64 (we have to for cross-process transfer)
-        // But this is a one-time conversion that happens in the browser's optimized code
+        let escaped = blobUrl.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "'", with: "\\'")
         let script = """
         (async function() {
             try {
-                const response = await fetch('\(blobUrl)');
+                const response = await fetch('\(escaped)');
                 const blob = await response.blob();
 
                 return new Promise((resolve) => {
@@ -308,8 +302,7 @@ extension CAPPluginCall {
             return
         }
 
-        // Check if this is a Capacitor blob (already in our store)
-        if blobUrl.starts(with: "blob:capacitor://") {
+        if blobUrl.hasPrefix(CAPBlobStore.urlPrefix) || blobUrl.hasPrefix("blob:capacitor://") {
             if let (data, mimeType) = CAPBlobStore.shared.retrieve(blobUrl: blobUrl) {
                 completion(data, mimeType, nil)
             } else {
@@ -322,7 +315,6 @@ extension CAPPluginCall {
             return
         }
 
-        // Otherwise, it's a browser blob URL - fetch it from the webview
         guard let webView = bridge?.webView else {
             completion(nil, nil, NSError(
                 domain: "CAPPluginCall",
