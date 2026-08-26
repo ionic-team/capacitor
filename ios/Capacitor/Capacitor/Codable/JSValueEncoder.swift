@@ -87,6 +87,22 @@ public final class JSValueEncoder: TopLevelEncoder {
         )
     }
 
+    /// Deprecated misspelled initializer label kept so existing call sites compile.
+    @available(*, deprecated, renamed: "init(optionalEncodingStrategy:dateEncodingStrategy:dataEncodingStrategy:nonConformingFloatEncodingStrategy:)")
+    public convenience init(
+        optionalEncodingStrategy: OptionalEncodingStrategy = .undefined,
+        dateEncodingStrategy: DateEncodingStrategy = .deferredToDate,
+        dataEncodingStrategy: DataEncodingStrategy = .deferredToData,
+        nonConformingFloatEncodingStategy: NonConformingFloatEncodingStrategy
+    ) {
+        self.init(
+            optionalEncodingStrategy: optionalEncodingStrategy,
+            dateEncodingStrategy: dateEncodingStrategy,
+            dataEncodingStrategy: dataEncodingStrategy,
+            nonConformingFloatEncodingStrategy: nonConformingFloatEncodingStategy
+        )
+    }
+
     /// Encodes an `Encodable` value to a ``JSValue``
     /// - Parameter value: The value to encode to ``JSValue``
     /// - Returns: The encoded ``JSValue``
