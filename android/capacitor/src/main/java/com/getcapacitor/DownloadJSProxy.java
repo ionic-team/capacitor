@@ -1,14 +1,12 @@
 package com.getcapacitor;
 
-import android.webkit.ServiceWorkerClient;
-import android.webkit.ServiceWorkerController;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-
 /**
  * Represents the bridge.webview download proxy to jsInterface (DownloadJSInterface class).
  * Every download request from webview will be sent to the proxy, which decides to inject
  * dynamic javascript upon the 'protocol' interface availability.
+ *
+ * Service worker interception is left to {@link Bridge}, which already installs a client
+ * when {@code config.isResolveServiceWorkerRequests()} is true.
  */
 public class DownloadJSProxy implements android.webkit.DownloadListener {
 
@@ -18,10 +16,8 @@ public class DownloadJSProxy implements android.webkit.DownloadListener {
     public DownloadJSProxy(Bridge bridge) {
         this.bridge = bridge;
         this.downloadInterface = new DownloadJSInterface(this.bridge);
-        this.installServiceWorkerProxy();
     }
 
-    //
     public DownloadJSInterface jsInterface() {
         return this.downloadInterface;
     }
@@ -32,15 +28,11 @@ public class DownloadJSProxy implements android.webkit.DownloadListener {
 
     /* Public interceptors */
     public boolean shouldOverrideLoad(String url) {
-        //Only override blobs URIs (do not leave up to the interface because
-        //it does accept http/https schemas
         if (!url.startsWith("blob:")) return false;
-        //Debug
         Logger.debug("Capacitor webview intercepted blob download request", url);
-        //Check if we can handle the URL..
-        String bridge = this.downloadInterface.getJavascriptBridgeForURL(url, null, null);
-        if (bridge != null) {
-            this.bridge.getWebView().loadUrl(bridge);
+        String bridgeJs = this.downloadInterface.getJavascriptBridgeForURL(url, null, null);
+        if (bridgeJs != null) {
+            this.bridge.getWebView().loadUrl(bridgeJs);
             return true;
         } else {
             Logger.info("Capacitor webview download has no handler for the following url", url);
@@ -51,32 +43,13 @@ public class DownloadJSProxy implements android.webkit.DownloadListener {
     /* Public DownloadListener implementation */
     @Override
     public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
-        //Debug
         Logger.debug("Capacitor webview download start request", url);
         Logger.debug(userAgent + "  -  " + contentDisposition + "  -  " + mimeType);
-        //Check if we can handle the URL..
-        String bridge = this.downloadInterface.getJavascriptBridgeForURL(url, contentDisposition, mimeType);
-        if (bridge != null) {
-            this.bridge.getWebView().loadUrl(bridge);
+        String bridgeJs = this.downloadInterface.getJavascriptBridgeForURL(url, contentDisposition, mimeType);
+        if (bridgeJs != null) {
+            this.bridge.getWebView().loadUrl(bridgeJs);
         } else {
             Logger.info("Capacitor webview download has no handler for the following url", url);
-        }
-    }
-
-    /* Private utils */
-    private void installServiceWorkerProxy() {
-        //Downloads can be done via webworker, webworkers might need local resources, we enable that
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            ServiceWorkerController swController = ServiceWorkerController.getInstance();
-            swController.setServiceWorkerClient(
-                new ServiceWorkerClient() {
-                    @Override
-                    public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
-                        Logger.debug("ServiceWorker Request", request.getUrl().toString());
-                        return bridge.getLocalServer().shouldInterceptRequest(request);
-                    }
-                }
-            );
         }
     }
 }
