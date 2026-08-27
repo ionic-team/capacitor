@@ -202,10 +202,6 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           join(config.android.platformDirAbs, 'gradle', 'wrapper', 'gradle-wrapper.properties'),
         );
 
-        await runTask(`Migrating root build.gradle file.`, () => {
-          return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
-        });
-
         await runTask(`Migrating app build.gradle file.`, () => {
           return updateAppBuildGradle(join(config.android.appDirAbs, 'build.gradle'));
         });
@@ -227,6 +223,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           })();
         });
 
+        // Always run before root build.gradle changes as the AGP update could be incompatible with current gradle
         if (!installFailed && gte(gradleVersion, gradleWrapperVersion)) {
           try {
             await runTask(`Upgrading gradle wrapper`, () => {
@@ -252,6 +249,10 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         } else {
           logger.warn('Skipped upgrading gradle wrapper files');
         }
+
+        await runTask(`Migrating root build.gradle file.`, () => {
+          return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
+        });
 
         // Variables gradle
         await runTask(`Migrating variables.gradle file.`, () => {
