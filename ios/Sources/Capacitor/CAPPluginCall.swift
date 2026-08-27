@@ -126,9 +126,7 @@ extension CAPPluginCall: JSValueContainer {
         options as NSDictionary
     }
 
-    public static var jsDateFormatter: ISO8601DateFormatter {
-        ISO8601DateFormatter()
-    }
+    public static var jsDateFormatter = ISO8601DateFormatter()
 }
 
 // MARK: - Result Handling

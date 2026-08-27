@@ -7,7 +7,7 @@ let package = Package(
   products: [
     .library(
       name: "Capacitor",
-      targets: ["Capacitor"]
+      targets: ["Capacitor", "CapacitorObjC"]
     ),
     .library(
       name: "Cordova",
@@ -27,6 +27,12 @@ let package = Package(
         .swiftLanguageMode(.v5)
       ],
 
+    ),
+    .target(
+      name: "CapacitorObjC",
+      dependencies: ["Capacitor"],
+      path: "ios/Sources/CapacitorObjC",
+      publicHeadersPath: "include"
     ),
     .target(
       name: "Cordova",

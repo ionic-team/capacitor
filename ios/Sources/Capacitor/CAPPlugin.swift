@@ -84,7 +84,8 @@ import UIKit
     }
 
     @objc public func notifyListeners(_ eventName: String, data: [String: Any]?, retainUntilConsumed: Bool) {
-        guard let listenersForEvent = eventListeners.object(forKey: eventName) as? [CAPPluginCall] else {
+        let listenersForEvent = eventListeners.object(forKey: eventName) as? [CAPPluginCall] ?? []
+        guard !listenersForEvent.isEmpty else {
             if retainUntilConsumed {
                 if retainedEventArguments.object(forKey: eventName) == nil {
                     retainedEventArguments.setValue(NSMutableArray(), forKey: eventName)
