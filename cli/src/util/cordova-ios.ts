@@ -360,7 +360,7 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
     ? 'https://github.com/ionic-team/capacitor'
     : 'https://github.com/ionic-team/capacitor-swift-pm.git';
   const capacitorPackageVersionSuffix = useSourceSPM
-    ? ` branch: "feature/source-spm"`
+    ? ` branch: "next"`
     : ` from: "${iosPlatformVersion}"`;
 
   const platformTag = getPluginPlatform(p, platform);
