@@ -51,6 +51,27 @@ const gradleVersion = '9.5.1';
 const iOSVersion = '16';
 let installFailed = false;
 
+// AGP 9 changed the defaults of these properties and Android Studio's AGP Upgrade Assistant
+// writes them into gradle.properties as compatibility shims. Capacitor apps need none of them,
+// most are deprecated and will be removed in AGP 10, and some (android.builtInKotlin,
+// android.sdk.defaultTargetSdkToCompileSdkIfUnset) break a Capacitor 9 build.
+const agpMigrationAssistantProperties = [
+  'android.builtInKotlin',
+  'android.defaults.buildfeatures.resvalues',
+  'android.dependency.useConstraints',
+  'android.enableAppCompileTimeRClass',
+  'android.newDsl',
+  'android.r8.optimizedResourceShrinking',
+  'android.r8.strictFullModeForKeepRules',
+  'android.sdk.defaultTargetSdkToCompileSdkIfUnset',
+  'android.uniquePackageNames',
+  'android.usesSdkInManifest.disallowed',
+];
+
+const jcenterLine = /^jcenter\(\)\s*(\/\/.*)?$/;
+const mavenCentralLine = /^mavenCentral\(\)\s*(\/\/.*)?$/;
+const repositoriesBlockStart = /(^|\s)repositories\s*\{/;
+
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
   if (config === null) {
     fatal('Config data missing');
@@ -221,6 +242,17 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
             );
             writeFileSync(settingsPath, txt, { encoding: 'utf-8' });
           })();
+        });
+
+        // gradle.properties
+        await runTask(`Migrating gradle.properties file.`, () => {
+          return updateGradleProperties(join(config.android.platformDirAbs, 'gradle.properties'));
+        });
+
+        // Gradle 9 removed jcenter(), so it has to go before the wrapper upgrade below or the
+        // wrapper task itself fails at the configuration phase once it runs on Gradle 9
+        await runTask(`Removing jcenter() from gradle files.`, () => {
+          return removeJCenter(config);
         });
 
         // Always run before root build.gradle changes as the AGP update could be incompatible with current gradle
@@ -574,6 +606,108 @@ def androidxEspressoCoreVersion = rootProject.ext.androidxEspressoCoreVersion
   writeFileSync(filename, replaced, 'utf-8');
 }
 
+async function updateGradleProperties(filename: string): Promise<void> {
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
+
+  const replaced = removeAGPMigrationProperties(txt);
+  if (replaced !== txt) {
+    writeFileSync(filename, replaced, 'utf-8');
+  }
+}
+
+function removeAGPMigrationProperties(txt: string): string {
+  return txt
+    .split('\n')
+    .filter((line) => {
+      const property = line.split('=')[0].trim();
+      if (!agpMigrationAssistantProperties.includes(property)) {
+        return true;
+      }
+      logger.info(`Removed ${property} from gradle.properties.`);
+      return false;
+    })
+    .join('\n');
+}
+
+async function removeJCenter(config: Config): Promise<void> {
+  const gradleFiles = [
+    join(config.android.platformDirAbs, 'build.gradle'),
+    join(config.android.appDirAbs, 'build.gradle'),
+  ];
+
+  for (const filename of gradleFiles) {
+    const txt = readFile(filename);
+    if (!txt) {
+      continue;
+    }
+
+    const replaced = removeJCenterFromGradleFile(txt);
+    if (replaced !== txt) {
+      writeFileSync(filename, replaced, 'utf-8');
+    }
+  }
+}
+
+function removeJCenterFromGradleFile(txt: string): string {
+  const lines = txt.split('\n');
+  const result: string[] = [];
+  let index = 0;
+
+  while (index < lines.length) {
+    // A commented out block start would make the brace counting below swallow the rest of the file
+    if (isCommentedOut(lines[index]) || !repositoriesBlockStart.test(lines[index])) {
+      result.push(lines[index]);
+      index++;
+      continue;
+    }
+
+    // Collect the whole block so nested ones (maven, flatDir) don't end it early
+    const block: string[] = [];
+    let depth = 0;
+    do {
+      const line = lines[index];
+      depth += (line.match(/{/g) ?? []).length - (line.match(/}/g) ?? []).length;
+      block.push(line);
+      index++;
+    } while (index < lines.length && depth > 0);
+
+    result.push(...replaceJCenterInRepositories(block));
+  }
+
+  return result.join('\n');
+}
+
+function isCommentedOut(line: string): boolean {
+  return line.trim().startsWith('//');
+}
+
+function replaceJCenterInRepositories(block: string[]): string[] {
+  if (!block.some((line) => jcenterLine.test(line.trim()))) {
+    return block;
+  }
+
+  const hasMavenCentral = block.some((line) => mavenCentralLine.test(line.trim()));
+  const replaced: string[] = [];
+  let mavenCentralAdded = false;
+
+  for (const line of block) {
+    if (!jcenterLine.test(line.trim())) {
+      replaced.push(line);
+    } else if (!hasMavenCentral && !mavenCentralAdded) {
+      replaced.push(line.replace('jcenter()', 'mavenCentral()'));
+      mavenCentralAdded = true;
+      logger.info(`Replaced jcenter() with mavenCentral().`);
+    } else {
+      logger.info(`Removed jcenter().`);
+    }
+  }
+
+  return replaced;
+}
+
 async function updateFile(
   config: Config,
   filename: string,
@@ -684,3 +818,11 @@ async function updateAppDelegate(filename: string) {
     writeFileSync(filename, replaced, 'utf-8');
   }
 }
+
+export const __testables = {
+  agpMigrationAssistantProperties,
+  removeAGPMigrationProperties,
+  removeJCenter,
+  removeJCenterFromGradleFile,
+  updateGradleProperties,
+};
