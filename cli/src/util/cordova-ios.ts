@@ -500,6 +500,9 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
   } else {
     const resources = getPlatformElement(p, platform, 'resource-file');
     const sourceFiles = getPlatformElement(p, platform, 'source-file');
+    if (sourceFiles.length === 0 && headerFiles.length === 0 && resources.length === 0) {
+      return;
+    }
     const frameworks = getPlatformElement(p, platform, 'framework');
     const { binaryTargetsText, binaryDepsText } = buildBinaryTargetEntries(p, frameworks);
     const cSettingsText = buildCSettingsText(p, sourceFiles);
