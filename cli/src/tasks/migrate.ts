@@ -13,6 +13,8 @@ import { deleteFolderRecursive } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
+import { migrateToUIScene } from './migrate-uiscene';
+
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
 const libs = ['@capacitor/core', '@capacitor/cli', '@capacitor/ios', '@capacitor/android'];
@@ -175,6 +177,8 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         } else {
           logger.warn('Skipped updating deployment target');
         }
+
+        await migrateToUIScene(config);
       }
 
       if (!installFailed) {
@@ -389,6 +393,12 @@ async function writeBreakingChanges() {
       `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/8-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
+    );
+  }
+  if (allDependencies['@capacitor/ios']) {
+    logger.info(
+      'IMPORTANT: Capacitor 8.5 adopts UIScene on iOS. ' +
+        'See https://capacitorjs.com/docs/updating/8-5 for the full 8.4 → 8.5 migration guide.',
     );
   }
 }

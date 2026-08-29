@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "8.4.1",
+  "version": "8.5.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -60,6 +60,7 @@
     "semver": "^7.6.3",
     "tar": "^7.5.3",
     "tslib": "^2.8.1",
+    "xcode": "^3.0.1",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
@@ -70,6 +71,7 @@
     "@types/prompts": "^2.4.9",
     "@types/semver": "^7.5.8",
     "@types/tmp": "^0.2.6",
+    "@types/xcode": "^3.0.0",
     "@types/xml2js": "0.4.5",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
