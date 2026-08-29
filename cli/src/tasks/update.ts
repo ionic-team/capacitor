@@ -13,7 +13,7 @@ import {
 import type { CheckFunction } from '../common';
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
-import { checkBundler, checkCocoaPods } from '../ios/common';
+import { checkBundler, checkCocoaPods, getCommonChecks } from '../ios/common';
 import { updateIOS } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
@@ -30,8 +30,7 @@ export async function updateCommand(config: Config, selectedPlatformName: string
     const then = +new Date();
     const platforms = await selectPlatforms(config, selectedPlatformName);
     try {
-      await check([() => checkPackage(), ...updateChecks(config, platforms)]);
-
+      await check([() => checkPackage(), ...(await addUpdateChecks(config, platforms))]);
       await allSerial(platforms.map((platformName) => async () => await update(config, platformName, deployment)));
       const now = +new Date();
       const diff = (now - then) / 1000;
@@ -46,6 +45,28 @@ export async function updateCommand(config: Config, selectedPlatformName: string
   }
 }
 
+export async function addUpdateChecks(config: Config, platforms: string[]): Promise<CheckFunction[]> {
+  let checks: CheckFunction[] = [];
+  for (const platformName of platforms) {
+    if (platformName === config.ios.name) {
+      checks = await getCommonChecks(config);
+    } else if (platformName === config.android.name) {
+      continue;
+    } else if (platformName === config.web.name) {
+      continue;
+    } else {
+      throw `Platform ${platformName} is not valid.`;
+    }
+  }
+  return checks;
+}
+
+/**
+ * @deprecated use addUpdateChecks
+ * @param config
+ * @param platforms
+ * @returns
+ */
 export function updateChecks(config: Config, platforms: string[]): CheckFunction[] {
   const checks: CheckFunction[] = [];
   for (const platformName of platforms) {

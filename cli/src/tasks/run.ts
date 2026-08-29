@@ -34,6 +34,7 @@ export interface RunCommandOptions {
   host?: string;
   port?: string;
   configuration?: string;
+  https?: boolean;
 }
 
 export async function runCommand(
@@ -42,7 +43,9 @@ export async function runCommand(
   options: RunCommandOptions,
 ): Promise<void> {
   options.host = options.host ?? CapLiveReloadHelper.getIpAddress() ?? 'localhost';
-  options.port = options.port ?? '3000';
+  if (!options.https && !options.port) {
+    options.port = '3000';
+  }
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -108,11 +111,14 @@ export async function runCommand(
           })
           .then(() => process.exit());
         logger.info(
-          `App running with live reload listing for: http://${options.host}:${options.port}. Press Ctrl+C to quit.`,
+          `App running with live reload listing for: ${options.https ? 'https' : 'http'}://${options.host}${options.port ? `:${options.port}` : ''}. Press Ctrl+C to quit.`,
         );
         await sleepForever();
       }
     } catch (e: any) {
+      if (options.liveReload) {
+        await CapLiveReloadHelper.revertCapConfigForLiveReload();
+      }
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
       }
