@@ -9,6 +9,7 @@
     "noEmitHelpers": true,
     "outDir": "dist",
     "pretty": true,
+    "skipLibCheck": true,
     "strict": true,
     "target": "es2019"
   },
