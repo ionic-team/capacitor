@@ -297,6 +297,17 @@ export interface CapacitorConfig {
      * @default true
      */
     resolveServiceWorkerRequests?: boolean;
+
+    /**
+     * Enable JavaScript profiling by adding the `Document-Policy: js-profiling`
+     * HTTP response header to WebView responses.
+     *
+     * This header is required for the JS Self-Profiling API to work in the WebView.
+     *
+     * @since 8.0.0
+     * @default false
+     */
+    jsProfilingEnabled?: boolean;
   };
 
   ios?: {
