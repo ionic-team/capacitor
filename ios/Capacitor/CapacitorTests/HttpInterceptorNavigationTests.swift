@@ -32,7 +32,6 @@ class HttpInterceptorNavigationTests: XCTestCase {
         bridge = MockBridge(
             with: InstanceConfiguration(with: descriptor, isDebug: true),
             delegate: MockBridgeViewController(),
-            cordovaConfiguration: descriptor.cordovaConfiguration,
             assetHandler: MockAssetHandler(router: CapacitorRouter()),
             delegationHandler: handler
         )
