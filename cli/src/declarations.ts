@@ -772,13 +772,33 @@ export interface PluginsConfig {
      *
      * This option is only supported on Android.
      *
-     * `css` = Injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
+     * `native` = (recommended) For older Chromium versions (< v140) this embeds the webview with padding and sets the `env(safe-area-inset-*)` variables to `0px`. For newer Chromium versions (>= v140) this makes sure the webview adheres to the `viewport-fit` meta tag. If set to `viewport-fit="cover"` this will make the webview edge-to-edge and the `env(safe-area-inset-*)` variables will contain the correct values. With those values you could set padding for example so make sure the webview is shown correctly.
      *
-     * `disable` = Disable CSS variables injection.
+     * `css` = This is the same as `native`, but it also injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
+     *
+     * `disable` = (not recommended) Disable safe area insets handling completely.
+     * This shifts the responsibility from Capacitor to your own code to handle the insets.
+     * Be aware that this might result in a visually broken UI if your native app code and the content loaded into the webview do not correctly handle safe area insets.
      *
      * @default "css"
      */
-    insetsHandling?: 'css' | 'disable';
+    insetsHandling?: 'native' | 'css' | 'disable';
+
+    /**
+     * Set an initial value for the to be detected `viewport-fit=` meta tag value.
+     * For most apps that support edge-to-edge this value will eventually be `cover`.
+     * Therefore you might want to set this value to `cover` to help prevent layout jumps and glitches.
+     * If you know the value to be `cover` initially, you can set it here.
+     * The value will always end up correctly, no matter what you set here,
+     * as long as `insetsHandling` is set to `native` or `css`.
+     * It only exists to help prevent layout jumps and glitches.
+     *
+     * This option is only supported on Android.
+     *
+     * @default undefined
+     */
+    initialViewportFitValueHint?: 'auto' | 'contain' | 'cover';
+
     /**
      * The style of the text and icons of the system bars.
      *
