@@ -1,9 +1,10 @@
 // swift-tools-version: 6.3
 import PackageDescription
+import CompilerPluginSupport
 
 let package = Package(
   name: "Capacitor",
-  platforms: [.iOS(.v16)],
+  platforms: [.iOS(.v16), .macOS(.v10_15)],
   products: [
     .library(
       name: "Capacitor",
@@ -18,15 +19,29 @@ let package = Package(
       targets: ["Cordova", "CapacitorCordova"]
     )
   ],
+  dependencies: [
+    .package(url: "https://github.com/swiftlang/swift-syntax.git", "600.0.0"..<"700.0.0")
+  ],
   targets: [
     .target(
       name: "Capacitor",
+      dependencies: ["CapacitorMacrosImpl"],
       path: "ios/Sources/Capacitor",
       resources: [.copy("assets")],
       swiftSettings: [
         .swiftLanguageMode(.v5)
       ],
 
+    ),
+    .macro(
+      name: "CapacitorMacrosImpl",
+      dependencies: [
+        .product(name: "SwiftSyntax", package: "swift-syntax"),
+        .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+        .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
+        .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+      ],
+      path: "ios/Sources/CapacitorMacrosImpl"
     ),
     .target(
       name: "CapacitorObjC",

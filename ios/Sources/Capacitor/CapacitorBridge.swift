@@ -119,6 +119,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
+    // Serial chain for Swift-native (async) plugin calls, mirroring the serial `dispatchQueue`
+    // used for Objective-C calls. Only mutated from `handleJSCall` on the main thread.
+    private var nativeCallChain: Task<Void, Never> = Task {}
     internal private(set) var callInterceptors: [String: ([String: Any]) -> Void] = [:]
     // Array of block based observers
     var observers: [NSObjectProtocol] = []
@@ -438,9 +441,14 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     /// Dispatch a call to a Swift-native plugin. A thrown error rejects the originating call.
+    ///
+    /// Calls are chained so they execute one at a time in the order received, matching the serial
+    /// semantics of the Objective-C `dispatchQueue` path.
     private func handleNativeJSCall(call: JSCall, plugin: BridgedCAPPlugin, handler: @escaping (CAPPluginCall) async throws -> Void) {
         let pluginCall = makePluginCall(for: call, plugin: plugin)
-        Task { [weak self] in
+        let previous = nativeCallChain
+        nativeCallChain = Task { [weak self] in
+            await previous.value
             do {
                 try await handler(pluginCall)
             } catch {
