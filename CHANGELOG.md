@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.9](https://github.com/ionic-team/capacitor/compare/7.6.8...7.6.9) (2026-08-31)
+
+### Bug Fixes
+
+- block navigation to the internal HTTP proxy path ([430356a](https://github.com/ionic-team/capacitor/commit/430356a91e1419fc66862dc09835081aa501677e))
+- block the HTTP proxy path in subframes ([80b6c5e](https://github.com/ionic-team/capacitor/commit/80b6c5e81d062e1e158914040f49e044d95b7ccb))
+
 ## [7.6.8](https://github.com/ionic-team/capacitor/compare/7.6.7...7.6.8) (2026-07-14)
 
 ### Bug Fixes
