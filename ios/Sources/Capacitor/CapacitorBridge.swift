@@ -2,7 +2,7 @@ import Foundation
 import Dispatch
 import WebKit
 
-internal typealias CapacitorPlugin = CAPPlugin & CAPBridgedPlugin
+internal typealias BridgedCAPPlugin = CAPPlugin & CAPBridgedPlugin
 
 struct RegistrationList: Codable {
     var packageClassList: Set<String>
@@ -109,7 +109,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     @objc public var config: InstanceConfiguration
     // Map of all loaded and instantiated plugins by pluginId -> instance
-    var plugins =  [String: CapacitorPlugin]()
+    var plugins =  [String: BridgedCAPPlugin]()
     // Calls we are storing to resolve later
     var storedCalls = ConcurrentDictionary<CAPPluginCall>()
     // Whether to inject the Cordova files
@@ -119,6 +119,9 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // Background dispatch queue for plugin calls
     open private(set) var dispatchQueue = DispatchQueue(label: "bridge")
+    // Serial chain for Swift-native (async) plugin calls, mirroring the serial `dispatchQueue`
+    // used for Objective-C calls. Only mutated from `handleJSCall` on the main thread.
+    private var nativeCallChain: Task<Void, Never> = Task {}
     internal private(set) var callInterceptors: [String: ([String: Any]) -> Void] = [:]
     // Array of block based observers
     var observers: [NSObjectProtocol] = []
@@ -274,7 +277,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         for plugin in pluginList {
             if plugin is CAPInstancePlugin.Type { continue }
-            if let capPlugin = plugin as? CapacitorPlugin.Type {
+            if let capPlugin = plugin as? BridgedCAPPlugin.Type {
                 registerPlugin(capPlugin)
             }
         }
@@ -289,12 +292,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             ⚡️ ❌  Use `registerPluginInstance(_:)` to register subclasses of CAPInstancePlugin.
             """)
         }
-        guard let bridgedType = pluginType as? CapacitorPlugin.Type else { return }
+        guard let bridgedType = pluginType as? BridgedCAPPlugin.Type else { return }
         registerPlugin(bridgedType)
     }
 
     public func registerPluginInstance(_ pluginInstance: CAPPlugin) {
-        guard let pluginInstance = pluginInstance as? CapacitorPlugin else {
+        guard let pluginInstance = pluginInstance as? BridgedCAPPlugin else {
             CAPLog.print("""
 
             ⚡️  Plugin \(pluginInstance.classForCoder) must conform to CAPBridgedPlugin.
@@ -315,14 +318,14 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     /**
      Register a single plugin.
      */
-    func registerPlugin(_ pluginType: CapacitorPlugin.Type) {
+    func registerPlugin(_ pluginType: BridgedCAPPlugin.Type) {
         if let plugin = loadPlugin(type: pluginType) {
             JSExport.exportJS(for: plugin, in: webViewDelegationHandler.contentController)
         }
     }
 
-    func loadPlugin(type: CAPPlugin.Type) -> CapacitorPlugin? {
-        guard let plugin = type.init() as? CapacitorPlugin else {
+    func loadPlugin(type: CAPPlugin.Type) -> BridgedCAPPlugin? {
+        guard let plugin = type.init() as? BridgedCAPPlugin else {
             CAPLog.print("⚡️  Unable to load plugin \(type.classForCoder()). No such module found.")
             return nil
         }
@@ -390,7 +393,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
      Quiet the length warning because we don't want to refactor the function at this time.
      */
-    // swiftlint:disable:next function_body_length
     func handleJSCall(call: JSCall) {
         let load = {
             NSClassFromString(call.pluginId)
@@ -403,6 +405,66 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             return
         }
 
+        // Swift-native path: dispatch through the plugin's typed, async handler map.
+        // Listener methods (addListener/removeListener/removeAllListeners) are not in the map
+        // and intentionally fall through to the Objective-C selector path below.
+        if let nativePlugin = plugin as? CapacitorPlugin, let handler = nativePlugin.methodHandlers[call.method] {
+            handleNativeJSCall(call: call, plugin: plugin, handler: handler)
+            return
+        }
+
+        handleLegacyJSCall(call: call, plugin: plugin)
+    }
+
+    /// Build the ``CAPPluginCall`` that wires success/error callbacks back to the web view.
+    private func makePluginCall(for call: JSCall, plugin: BridgedCAPPlugin) -> CAPPluginCall {
+        return CAPPluginCall(callbackId: call.callbackId, methodName: call.method,
+                             options: JSTypes.coerceDictionaryToJSObject(call.options,
+                                                                         formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
+                             success: { [weak self] (result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) in
+                                if let result = result {
+                                    self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.keepAlive ?? false)
+                                } else {
+                                    self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.keepAlive ?? false)
+                                }
+                             }, error: { [weak self] (error: CAPPluginCallError?) in
+                                if let error = error {
+                                    self?.toJsError(error: JSResultError(call: call, callError: error))
+                                } else {
+                                    self?.toJsError(error: JSResultError(call: call,
+                                                                         errorMessage: "",
+                                                                         errorDescription: "",
+                                                                         errorCode: nil,
+                                                                         result: .dictionary([:])))
+                                }
+                             })
+    }
+
+    /// Dispatch a call to a Swift-native plugin. A thrown error rejects the originating call.
+    ///
+    /// Calls are chained so they execute one at a time in the order received, matching the serial
+    /// semantics of the Objective-C `dispatchQueue` path.
+    private func handleNativeJSCall(call: JSCall, plugin: BridgedCAPPlugin, handler: @escaping (CAPPluginCall) async throws -> Void) {
+        let pluginCall = makePluginCall(for: call, plugin: plugin)
+        let previous = nativeCallChain
+        nativeCallChain = Task { [weak self] in
+            await previous.value
+            do {
+                try await handler(pluginCall)
+            } catch {
+                pluginCall.reject(error.localizedDescription, nil, error)
+            }
+            if pluginCall.keepAlive {
+                self?.saveCall(pluginCall)
+            }
+        }
+    }
+
+    /// Dispatch a call through the Objective-C runtime (selector + `perform`).
+    ///
+    /// Quiet the length warning because we don't want to refactor the function at this time.
+    // swiftlint:disable:next function_body_length
+    private func handleLegacyJSCall(call: JSCall, plugin: BridgedCAPPlugin) {
         let selector: Selector
         if call.method == "addListener" || call.method == "removeListener" || call.method == "removeAllListeners" {
             selector = NSSelectorFromString(call.method + ":")
@@ -430,26 +492,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         dispatchQueue.async { [weak self] in
             // let startTime = CFAbsoluteTimeGetCurrent()
 
-            let pluginCall = CAPPluginCall(callbackId: call.callbackId, methodName: call.method,
-                                           options: JSTypes.coerceDictionaryToJSObject(call.options,
-                                                                                       formattingDatesAsStrings: plugin.shouldStringifyDatesInCalls) ?? [:],
-                                           success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) in
-                                            if let result = result {
-                                                self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.keepAlive ?? false)
-                                            } else {
-                                                self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.keepAlive ?? false)
-                                            }
-                                           }, error: {(error: CAPPluginCallError?) in
-                                            if let error = error {
-                                                self?.toJsError(error: JSResultError(call: call, callError: error))
-                                            } else {
-                                                self?.toJsError(error: JSResultError(call: call,
-                                                                                     errorMessage: "",
-                                                                                     errorDescription: "",
-                                                                                     errorCode: nil,
-                                                                                     result: .dictionary([:])))
-                                            }
-                                           })
+            guard let pluginCall = self?.makePluginCall(for: call, plugin: plugin) else { return }
 
             plugin.perform(selector, with: pluginCall)
             if pluginCall.keepAlive {

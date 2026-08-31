@@ -6,7 +6,10 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#ifndef COCOAPODS
 @import Capacitor;
+#endif
 
 #if defined(__cplusplus)
 #define CAP_EXTERN extern "C" __attribute__((visibility("default")))
