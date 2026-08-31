@@ -58,7 +58,7 @@ internal class JSExport {
     /**
      Export the JS required to implement the given plugin.
      */
-    static func exportJS(for plugin: CapacitorPlugin, in userContentController: WKUserContentController) {
+    static func exportJS(for plugin: BridgedCAPPlugin, in userContentController: WKUserContentController) {
         var lines = [String]()
 
         lines.append("""
@@ -96,7 +96,7 @@ internal class JSExport {
         userContentController.addUserScript(userScript)
     }
 
-    private static func createPluginHeader(for plugin: CapacitorPlugin) -> PluginHeader? {
+    private static func createPluginHeader(for plugin: BridgedCAPPlugin) -> PluginHeader? {
         let methods = [
             PluginHeaderMethod(name: "addListener", rtype: nil),
             PluginHeaderMethod(name: "removeListener", rtype: nil),

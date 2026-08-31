@@ -1,7 +1,7 @@
 import Foundation
 
 @objc(CAPHttpPlugin)
-public class CAPHttpPlugin: CAPPlugin, CAPBridgedPlugin {
+public class CAPHttpPlugin: CAPPlugin, CapacitorPlugin {
     public let identifier = "CAPHttpPlugin"
     public let jsName = "CapacitorHttp"
     public let pluginMethods: [CAPPluginMethod] = [
@@ -13,45 +13,28 @@ public class CAPHttpPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "delete", returnType: CAPPluginReturnPromise)
     ]
 
-    @objc func http(_ call: CAPPluginCall, _ httpMethod: String?) {
-        do {
-            if let clazz = NSClassFromString("SSLPinningHttpRequestHandlerClass") {
-                // swiftlint:disable force_cast
-                (clazz as! NSObject.Type).perform(#selector(self.request(_:)), with: [
-                    "call": call,
-                    "httpMethod": httpMethod as Any,
-                    "config": self.bridge?.config as Any
-                ])
-                // swiftlint:enable force_cast
-            } else {
-                try HttpRequestHandler.request(call, httpMethod, self.bridge?.config)
-            }
-        } catch let error {
-            call.reject(error.localizedDescription)
+    public var methodHandlers: [String: (CAPPluginCall) async throws -> Void] {
+        [
+            "request": { try self.http($0, nil) },
+            "get": { try self.http($0, "GET") },
+            "post": { try self.http($0, "POST") },
+            "put": { try self.http($0, "PUT") },
+            "patch": { try self.http($0, "PATCH") },
+            "delete": { try self.http($0, "DELETE") }
+        ]
+    }
+
+    func http(_ call: CAPPluginCall, _ httpMethod: String?) throws {
+        if let clazz = NSClassFromString("SSLPinningHttpRequestHandlerClass") {
+            // swiftlint:disable force_cast
+            (clazz as! NSObject.Type).perform(NSSelectorFromString("request:"), with: [
+                "call": call,
+                "httpMethod": httpMethod as Any,
+                "config": self.bridge?.config as Any
+            ])
+            // swiftlint:enable force_cast
+        } else {
+            try HttpRequestHandler.request(call, httpMethod, self.bridge?.config)
         }
-    }
-
-    @objc func request(_ call: CAPPluginCall) {
-        http(call, nil)
-    }
-
-    @objc func get(_ call: CAPPluginCall) {
-        http(call, "GET")
-    }
-
-    @objc func post(_ call: CAPPluginCall) {
-        http(call, "POST")
-    }
-
-    @objc func put(_ call: CAPPluginCall) {
-        http(call, "PUT")
-    }
-
-    @objc func patch(_ call: CAPPluginCall) {
-        http(call, "PATCH")
-    }
-
-    @objc func delete(_ call: CAPPluginCall) {
-        http(call, "DELETE")
     }
 }
