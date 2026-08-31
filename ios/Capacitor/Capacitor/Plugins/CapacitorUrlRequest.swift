@@ -172,7 +172,7 @@ open class CapacitorUrlRequest: NSObject, URLSessionTaskDelegate {
     }
 
     public func getRequestData(_ body: JSValue, _ contentType: String, _ dataType: String? = nil) throws -> Data? {
-        if dataType == "file" {
+        if dataType == "file" || dataType == "binary" {
             guard let stringData = body as? String else {
                 throw CapacitorUrlRequestError.serializationError("[ data ] argument could not be parsed as string")
             }
