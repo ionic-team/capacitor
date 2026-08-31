@@ -8,7 +8,6 @@ case $1 in
 
      publish) 
        export NATIVE_PUBLISH=true
-       pod trunk push ios/CapacitorCordova.podspec --allow-warnings
        pod trunk push ios/Capacitor.podspec --allow-warnings;;
 
      *) echo "'lint' or 'publish' were not provided. Exiting...";;
