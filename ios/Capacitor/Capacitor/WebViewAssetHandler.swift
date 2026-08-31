@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     private var router: Router
     private var serverUrl: URL?
+    private var configuration: InstanceConfiguration?
 
     public init(router: Router) {
         self.router = router
@@ -20,6 +21,10 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         self.serverUrl = serverUrl
     }
 
+    open func setConfiguration(_ configuration: InstanceConfiguration?) {
+        self.configuration = configuration
+    }
+
     private func isUsingLiveReload(_ localUrl: URL) -> Bool {
         return self.serverUrl != nil && self.serverUrl?.scheme != localUrl.scheme
     }
@@ -31,7 +36,13 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         let localUrl = URL.init(string: url.absoluteString)!
 
         if url.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
-            handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
+            // Only serve the proxy when CapacitorHttp is on. A scheme task can't tell a document from
+            // a subresource, so keeping documents out relies on the check in decidePolicyFor.
+            if configuration?.getPluginConfig("CapacitorHttp").getBoolean("enabled", false) == true {
+                handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
+            } else {
+                urlSchemeTask.didFailWithError(URLError(.unsupportedURL))
+            }
             return
         }
 
@@ -152,12 +163,13 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                     let existingHeaders = response.allHeaderFields
                     var newHeaders: [AnyHashable: Any] = [:]
 
+                    // Nothing should render this. If anything does, sandbox keeps it inert.
+                    newHeaders["Content-Security-Policy"] = "sandbox; frame-ancestors 'none'"
+
                     // if using live reload, then set CORS headers
                     if self.isUsingLiveReload(url) {
-                        newHeaders = [
-                            "Access-Control-Allow-Origin": self.serverUrl?.absoluteString ?? "",
-                            "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS, TRACE"
-                        ]
+                        newHeaders["Access-Control-Allow-Origin"] = self.serverUrl?.absoluteString ?? ""
+                        newHeaders["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, TRACE"
                     }
 
                     if let mergedHeaders = existingHeaders.merging(newHeaders, uniquingKeysWith: { (_, newHeaders) in newHeaders }) as? [String: String] {
