@@ -1,4 +1,4 @@
-// Emoji falback, right now just uses fallback on windows,
+// Emoji fallback, right now just uses fallback on windows,
 // but could expand to be more sophisticated to allow emoji
 // on Hyper term on windows, for example.
 export const emoji = (x: string, fallback: string): string => {

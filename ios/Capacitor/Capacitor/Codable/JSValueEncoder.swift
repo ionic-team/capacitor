@@ -72,18 +72,34 @@ public final class JSValueEncoder: TopLevelEncoder {
     /// - Parameter optionalEncodingStrategy: The strategy to use when encoding `nil` values. Defaults to ``OptionalEncodingStrategy-swift.enum/undefined``
     /// - Parameter dateEncodingStrategy: Defaults to `DateEncodingStrategy.deferredToDate`
     /// - Parameter dataEncodingStrategy: Defaults to `DataEncodingStrategy.deferredToData`
-    /// - Parameter nonConformingFloatEncodingStategy: Defaults to ``NonConformingFloatEncodingStrategy-swift.enum/deferred``
+    /// - Parameter nonConformingFloatEncodingStrategy: Defaults to ``NonConformingFloatEncodingStrategy-swift.enum/deferred``
     public init(
         optionalEncodingStrategy: OptionalEncodingStrategy = .undefined,
         dateEncodingStrategy: DateEncodingStrategy = .deferredToDate,
         dataEncodingStrategy: DataEncodingStrategy = .deferredToData,
-        nonConformingFloatEncodingStategy: NonConformingFloatEncodingStrategy = .deferred
+        nonConformingFloatEncodingStrategy: NonConformingFloatEncodingStrategy = .deferred
     ) {
         self.options = .init(
             optionalStrategy: optionalEncodingStrategy,
             dateStrategy: dateEncodingStrategy,
             dataStrategy: dataEncodingStrategy,
-            nonConformingFloatStrategy: nonConformingFloatEncodingStategy
+            nonConformingFloatStrategy: nonConformingFloatEncodingStrategy
+        )
+    }
+
+    /// Deprecated misspelled initializer label kept so existing call sites compile.
+    @available(*, deprecated, renamed: "init(optionalEncodingStrategy:dateEncodingStrategy:dataEncodingStrategy:nonConformingFloatEncodingStrategy:)")
+    public convenience init(
+        optionalEncodingStrategy: OptionalEncodingStrategy = .undefined,
+        dateEncodingStrategy: DateEncodingStrategy = .deferredToDate,
+        dataEncodingStrategy: DataEncodingStrategy = .deferredToData,
+        nonConformingFloatEncodingStategy: NonConformingFloatEncodingStrategy
+    ) {
+        self.init(
+            optionalEncodingStrategy: optionalEncodingStrategy,
+            dateEncodingStrategy: dateEncodingStrategy,
+            dataEncodingStrategy: dataEncodingStrategy,
+            nonConformingFloatEncodingStrategy: nonConformingFloatEncodingStategy
         )
     }
 

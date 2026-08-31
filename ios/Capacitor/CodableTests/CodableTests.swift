@@ -161,7 +161,7 @@ final class JSValueEncoderTest: XCTestCase {
         XCTAssertEqual(person.family?[1].age as? NSNumber, leiaAge)
     }
 
-    func testEncode__when_provided_an_instance_of_a_nested_unkeyed_container__encoding_succedds() throws {
+    func testEncode__when_provided_an_instance_of_a_nested_unkeyed_container__encoding_succeeds() throws {
         let encoder = JSValueEncoder()
         let encodedValue = try encoder.encode([person.family, person.family])
         let encodedArray = try XCTUnwrap(encodedValue as? [[JSObject]])

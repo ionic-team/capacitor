@@ -9,7 +9,7 @@
   dispatch_once(&onceToken, ^{
     Class class = [self class];
     SEL originalSelector = NSSelectorFromString(@"handleTapAction:");
-    SEL swizzledSelector = @selector(nofity_handleTapAction:);
+    SEL swizzledSelector = @selector(notify_handleTapAction:);
 
     Method originalMethod = class_getInstanceMethod(class, originalSelector);
     Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
@@ -29,9 +29,9 @@
   });
 }
 
--(void)nofity_handleTapAction:(id)arg1 {
+-(void)notify_handleTapAction:(id)arg1 {
   [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:NSNotification.capacitorStatusBarTapped object:nil]];
-  [self nofity_handleTapAction:arg1];
+  [self notify_handleTapAction:arg1];
 }
 
 @end

@@ -16,7 +16,7 @@ public final class JSValueDecoder: TopLevelDecoder {
     /// The strategies available for decoding raw data.
     public typealias DataDecodingStrategy = JSONDecoder.DataDecodingStrategy
 
-    /// The strategies availble for decoding NaN, Infinity, and -Infinity
+    /// The strategies available for decoding NaN, Infinity, and -Infinity
     public enum NonConformingFloatDecodingStrategy {
         /// Decodes directly into the floating point type as .infinity, -.infinity, or .nan
         case deferred
@@ -127,7 +127,7 @@ extension _JSValueDecoder: Decoder {
         SingleValueContainer(data: data, codingPath: codingPath, userInfo: userInfo, options: options)
     }
 
-    // force casting is fine becasue we've already determined that T is the type in the case
+    // force casting is fine because we've already determined that T is the type in the case
     // the swift standard library also force casts in their similar functions
     // https://github.com/swiftlang/swift-foundation/blob/da80d51fa3e77f3e7ed57c4300a870689e755713/Sources/FoundationEssentials/JSON/JSONEncoder.swift#L1140
     // swiftlint:disable force_cast
