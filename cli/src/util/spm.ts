@@ -174,7 +174,7 @@ let package = Package(
                 .product(name: "Capacitor", package: "${capacitorPackageName}")`;
 
   if (enableCordova) {
-    packageSwiftText += `,\n                .product(name: "Cordova", package: "${capacitorPackageName}")`;
+    packageSwiftText += `,\n                .product(name: "CapacitorCordova", package: "${capacitorPackageName}")`;
   }
 
   for (const plugin of plugins) {
