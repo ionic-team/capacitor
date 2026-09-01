@@ -8,7 +8,7 @@ let package = Package(
   products: [
     .library(
       name: "Capacitor",
-      targets: ["Capacitor", "CapacitorObjC"]
+      targets: ["Capacitor", "CapacitorObjC", "CapacitorObjCShims"]
     ),
     .library(
       name: "Cordova",
@@ -25,7 +25,7 @@ let package = Package(
   targets: [
     .target(
       name: "Capacitor",
-      dependencies: ["CapacitorMacrosImpl"],
+      dependencies: ["CapacitorMacrosImpl", "CapacitorObjC"],
       path: "ios/Sources/Capacitor",
       resources: [.copy("assets")],
       swiftSettings: [
@@ -45,8 +45,13 @@ let package = Package(
     ),
     .target(
       name: "CapacitorObjC",
-      dependencies: ["Capacitor"],
       path: "ios/Sources/CapacitorObjC",
+      publicHeadersPath: "include"
+    ),
+    .target(
+      name: "CapacitorObjCShims",
+      dependencies: ["Capacitor"],
+      path: "ios/Sources/CapacitorObjCShims",
       publicHeadersPath: "include"
     ),
     .target(
@@ -55,6 +60,7 @@ let package = Package(
       publicHeadersPath: "include",
       cSettings: [
         .headerSearchPath("include"),
+        .headerSearchPath("include/Cordova"),
       ],
       linkerSettings: [
         .linkedFramework("UIKit"),

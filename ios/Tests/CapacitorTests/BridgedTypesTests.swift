@@ -167,12 +167,12 @@ struct BridgedTypesTests {
 
     @Test func testDateResultWrapping() throws {
         let unserializedDictionary = Self.fixture.unserializedDictionary
-        let result = try PluginCallResult.dictionary(["date": unserializedDictionary["testDateObject"]!]).jsonRepresentation()
+        let result = try JSResultSerialization.jsonRepresentation(of: ["date": unserializedDictionary["testDateObject"]!])
         #expect(result == "{\"date\":\"\(unserializedDictionary["testDateString"] as! String)\"}")
     }
 
     @Test func testResultMerging() throws {
-        let result = try PluginCallResult.dictionary(["number": 1]).jsonRepresentation(includingFields: ["string": "foo"])
+        let result = try JSResultSerialization.jsonRepresentation(of: ["number": 1], includingFields: ["string": "foo"])
         let isValid = result == "{\"string\":\"foo\",\"number\":1}" || result == "{\"number\":1,\"string\":\"foo\"}"
         #expect(isValid)
     }

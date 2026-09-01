@@ -1,61 +1,17 @@
 import Foundation
 
-public typealias CAPPluginCallSuccessHandler = (CAPPluginCallResult, CAPPluginCall) -> Void
-public typealias CAPPluginCallErrorHandler = (CAPPluginCallError) -> Void
+// MARK: - Accessors
 
-@objc open class CAPPluginCall: NSObject {
-    // MARK: - Properties
-
-    @objc public var callbackId: String
-    @objc public var methodName: String
-    @objc public var options: [String: Any]
-    @objc public var successHandler: CAPPluginCallSuccessHandler
-    @objc public var errorHandler: CAPPluginCallErrorHandler
-    @objc public var keepAlive: Bool = false
-
-    // MARK: - Initialization
-
-    @objc public init(
-        callbackId: String,
-        methodName: String,
-        options: [String: Any],
-        success: @escaping CAPPluginCallSuccessHandler,
-        error: @escaping CAPPluginCallErrorHandler
-    ) {
-        self.callbackId = callbackId
-        self.methodName = methodName
-        self.options = options
-        self.successHandler = success
-        self.errorHandler = error
-        super.init()
-    }
-
-    @objc public convenience init(
-        callbackId: String,
-        options: [String: Any],
-        success: @escaping CAPPluginCallSuccessHandler,
-        error: @escaping CAPPluginCallErrorHandler
-    ) {
-        self.init(
-            callbackId: callbackId,
-            methodName: "",
-            options: options,
-            success: success,
-            error: error
-        )
-    }
-
-    // MARK: - Accessors
-
-    public func getString(_ key: String) -> String? {
+public extension CAPPluginCall {
+    func getString(_ key: String) -> String? {
         options[key] as? String
     }
 
-    @objc public func getString(_ key: String, defaultValue: String? = nil) -> String? {
+    @objc func getString(_ key: String, defaultValue: String? = nil) -> String? {
         getString(key) ?? defaultValue
     }
 
-    @objc public func getNumber(_ key: String, defaultValue: NSNumber? = nil) -> NSNumber? {
+    @objc func getNumber(_ key: String, defaultValue: NSNumber? = nil) -> NSNumber? {
         if let number = options[key] as? NSNumber {
             return number
         }
@@ -68,20 +24,20 @@ public typealias CAPPluginCallErrorHandler = (CAPPluginCallError) -> Void
         return defaultValue
     }
 
-    @objc public func getBool(_ key: String, defaultValue: Bool) -> Bool {
+    @objc func getBool(_ key: String, defaultValue: Bool) -> Bool {
         guard let number = getNumber(key) else { return defaultValue }
         return number.boolValue
     }
 
-    @objc public func getObject(_ key: String) -> [String: Any]? {
+    @objc func getObject(_ key: String) -> [String: Any]? {
         options[key] as? [String: Any]
     }
 
-    @objc public func getArray(_ key: String) -> [Any]? {
+    @objc func getArray(_ key: String) -> [Any]? {
         options[key] as? [Any]
     }
 
-    public func getDate(_ key: String) -> Date? {
+    func getDate(_ key: String) -> Date? {
         guard let value = options[key] else {
             return nil
         }
@@ -97,19 +53,8 @@ public typealias CAPPluginCallErrorHandler = (CAPPluginCallError) -> Void
         return nil
     }
 
-    @objc public func getDate(_ key: String, defaultValue: Date? = nil) -> Date? {
+    @objc func getDate(_ key: String, defaultValue: Date? = nil) -> Date? {
         getDate(key) ?? defaultValue
-    }
-
-    // MARK: - Deprecated
-
-    @objc public var isSaved: Bool {
-        get { keepAlive }
-        set { keepAlive = newValue }
-    }
-
-    @objc public func save() {
-        keepAlive = true
     }
 }
 
@@ -141,7 +86,7 @@ extension CAPPluginCall: JSValueContainer {
     }
 
     func reject(_ message: String, _ code: String? = nil, _ error: Error? = nil, _ data: PluginCallResultData? = nil) {
-        errorHandler(CAPPluginCallError(message: message, code: code, error: error, data: data))
+        errorHandler(CAPPluginCallError(message: message, code: code, error: error as NSError?, data: data))
     }
 
     func unimplemented() {

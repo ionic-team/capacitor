@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, 16.0
   s.source_files = "#{prefix}Sources/Cordova/**/*.{h,m}",
                     "#{prefix}Sources/CapacitorCordova/**/*.swift"
-  s.public_header_files = "#{prefix}Sources/Cordova/include/*.h",
+  s.public_header_files = "#{prefix}Sources/Cordova/include/Cordova/*.h",
                           "#{prefix}Sources/Cordova/CapacitorCordova.h"
   s.module_map = "#{prefix}Sources/Cordova/CapacitorCordova.modulemap"
   s.resource_bundles = { 'CapacitorCordova' => ["#{prefix}Sources/Cordova/PrivacyInfo.xcprivacy"] }

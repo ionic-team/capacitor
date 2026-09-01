@@ -425,7 +425,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                                 if let result = result {
                                     self?.toJs(result: JSResult(call: call, callResult: result), save: pluginCall?.keepAlive ?? false)
                                 } else {
-                                    self?.toJs(result: JSResult(call: call, result: .dictionary([:])), save: pluginCall?.keepAlive ?? false)
+                                    self?.toJs(result: JSResult(call: call, data: [:]), save: pluginCall?.keepAlive ?? false)
                                 }
                              }, error: { [weak self] (error: CAPPluginCallError?) in
                                 if let error = error {
@@ -435,7 +435,7 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
                                                                          errorMessage: "",
                                                                          errorDescription: "",
                                                                          errorCode: nil,
-                                                                         result: .dictionary([:])))
+                                                                         data: [:]))
                                 }
                              })
     }
