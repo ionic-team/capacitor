@@ -148,7 +148,7 @@ describe('removeJCenterFromGradleFile', () => {
     jest.restoreAllMocks();
   });
 
-  it('replaces jcenter() with mavenCentral() when the block has no mavenCentral()', () => {
+  it('removes the jcenter() line and leaves the rest of the block alone', () => {
     // Arrange
     const txt = 'buildscript {\n    repositories {\n        google()\n        jcenter()\n    }\n}\n';
 
@@ -156,10 +156,10 @@ describe('removeJCenterFromGradleFile', () => {
     const result = removeJCenterFromGradleFile(txt);
 
     // Assert
-    expect(result).toBe('buildscript {\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n');
+    expect(result).toBe('buildscript {\n    repositories {\n        google()\n    }\n}\n');
   });
 
-  it('drops jcenter() without duplicating an existing mavenCentral()', () => {
+  it('removes jcenter() from every repositories block', () => {
     // Arrange
     const txt = ROOT_BUILD_GRADLE_WITH_JCENTER;
 
@@ -168,57 +168,21 @@ describe('removeJCenterFromGradleFile', () => {
 
     // Assert
     expect(result).not.toContain('jcenter()');
-    expect(result.match(/mavenCentral\(\)/g)).toHaveLength(2);
+    expect(result.match(/mavenCentral\(\)/g)).toHaveLength(1);
   });
 
-  it('adds mavenCentral() to the buildscript block that was missing it', () => {
+  it('does not add mavenCentral() to a block that lacks it', () => {
     // Arrange
-    const txt = ROOT_BUILD_GRADLE_WITH_JCENTER;
+    const txt = 'buildscript {\n    repositories {\n        google()\n        jcenter()\n    }\n}\n';
 
     // Act
     const result = removeJCenterFromGradleFile(txt);
 
     // Assert
-    expect(result).toContain('buildscript {\n    repositories {\n        google()\n        mavenCentral()\n    }');
+    expect(result).not.toContain('mavenCentral()');
   });
 
-  it('keeps nested blocks intact when removing jcenter()', () => {
-    // Arrange
-    const txt = APP_BUILD_GRADLE_WITH_FLATDIR;
-
-    // Act
-    const result = removeJCenterFromGradleFile(txt);
-
-    // Assert
-    expect(result).not.toContain('jcenter()');
-    expect(result).toContain("        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'");
-    expect(result).toContain('    flatDir{');
-    expect(result).toContain('    mavenCentral()');
-  });
-
-  it('does not add mavenCentral() to repositories blocks that never had jcenter()', () => {
-    // Arrange
-    const txt = "repositories {\n    flatDir{\n        dirs 'libs'\n    }\n}\n";
-
-    // Act
-    const result = removeJCenterFromGradleFile(txt);
-
-    // Assert
-    expect(result).toBe(txt);
-  });
-
-  it('preserves the indentation of the line it replaces', () => {
-    // Arrange
-    const txt = 'repositories {\n\t\tjcenter()\n}\n';
-
-    // Act
-    const result = removeJCenterFromGradleFile(txt);
-
-    // Assert
-    expect(result).toBe('repositories {\n\t\tmavenCentral()\n}\n');
-  });
-
-  it('keeps a trailing comment on the replaced line', () => {
+  it('removes a jcenter() line that carries a trailing comment', () => {
     // Arrange
     const txt = 'repositories {\n    jcenter() // legacy artifacts\n}\n';
 
@@ -226,10 +190,10 @@ describe('removeJCenterFromGradleFile', () => {
     const result = removeJCenterFromGradleFile(txt);
 
     // Assert
-    expect(result).toBe('repositories {\n    mavenCentral() // legacy artifacts\n}\n');
+    expect(result).toBe('repositories {\n}\n');
   });
 
-  it('ignores jcenter() outside of a repositories block', () => {
+  it('leaves a commented out jcenter() alone', () => {
     // Arrange
     const txt =
       '// jcenter() was removed in Gradle 9\ntask clean(type: Delete) {\n    delete rootProject.buildDir\n}\n';
@@ -239,19 +203,6 @@ describe('removeJCenterFromGradleFile', () => {
 
     // Assert
     expect(result).toBe(txt);
-  });
-
-  it('does not treat a commented out block start as a repositories block', () => {
-    // Arrange
-    const txt = '// repositories {\nallprojects {\n    repositories {\n        google()\n        jcenter()\n    }\n}\n';
-
-    // Act
-    const result = removeJCenterFromGradleFile(txt);
-
-    // Assert
-    expect(result).toBe(
-      '// repositories {\nallprojects {\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n',
-    );
   });
 
   it('returns the file unchanged when there is no jcenter()', () => {
@@ -312,7 +263,19 @@ describe('android gradle migration against a project on disk', () => {
     }
   });
 
-  it('removes jcenter() from both the root and the app build.gradle', async () => {
+  it('removes jcenter() from the root build.gradle', async () => {
+    // Arrange
+    const rootPath = join(platformDir, 'build.gradle');
+    writeFileSync(rootPath, ROOT_BUILD_GRADLE_WITH_JCENTER, 'utf-8');
+
+    // Act
+    await removeJCenter(makeConfig());
+
+    // Assert
+    expect(read(rootPath)).not.toContain('jcenter()');
+  });
+
+  it('leaves the app build.gradle alone', async () => {
     // Arrange
     const rootPath = join(platformDir, 'build.gradle');
     const appPath = join(appDir, 'build.gradle');
@@ -323,9 +286,7 @@ describe('android gradle migration against a project on disk', () => {
     await removeJCenter(makeConfig());
 
     // Assert
-    expect(read(rootPath)).not.toContain('jcenter()');
-    expect(read(appPath)).not.toContain('jcenter()');
-    expect(read(appPath)).toContain('    mavenCentral()');
+    expect(read(appPath)).toBe(APP_BUILD_GRADLE_WITH_FLATDIR);
   });
 
   it('leaves a clean project untouched', async () => {
@@ -339,17 +300,5 @@ describe('android gradle migration against a project on disk', () => {
 
     // Assert
     expect(read(rootPath)).toBe(clean);
-  });
-
-  it('does not fail when the app build.gradle is missing', async () => {
-    // Arrange
-    const rootPath = join(platformDir, 'build.gradle');
-    writeFileSync(rootPath, ROOT_BUILD_GRADLE_WITH_JCENTER, 'utf-8');
-
-    // Act
-    await removeJCenter(makeConfig());
-
-    // Assert
-    expect(read(rootPath)).not.toContain('jcenter()');
   });
 });

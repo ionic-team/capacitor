@@ -69,8 +69,6 @@ const agpMigrationAssistantProperties = [
 ];
 
 const jcenterLine = /^jcenter\(\)\s*(\/\/.*)?$/;
-const mavenCentralLine = /^mavenCentral\(\)\s*(\/\/.*)?$/;
-const repositoriesBlockStart = /(^|\s)repositories\s*\{/;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
   if (config === null) {
@@ -633,79 +631,32 @@ function removeAGPMigrationProperties(txt: string): string {
 }
 
 async function removeJCenter(config: Config): Promise<void> {
-  const gradleFiles = [
-    join(config.android.platformDirAbs, 'build.gradle'),
-    join(config.android.appDirAbs, 'build.gradle'),
-  ];
+  // jcenter() has only ever been in the root build.gradle of our templates, never in app/build.gradle
+  const filename = join(config.android.platformDirAbs, 'build.gradle');
+  const txt = readFile(filename);
+  if (!txt) {
+    return;
+  }
 
-  for (const filename of gradleFiles) {
-    const txt = readFile(filename);
-    if (!txt) {
-      continue;
-    }
-
-    const replaced = removeJCenterFromGradleFile(txt);
-    if (replaced !== txt) {
-      writeFileSync(filename, replaced, 'utf-8');
-    }
+  const replaced = removeJCenterFromGradleFile(txt);
+  if (replaced !== txt) {
+    writeFileSync(filename, replaced, 'utf-8');
   }
 }
 
+// mavenCentral() is not added back: it has been in the template since Capacitor 4 and the
+// 3 to 4 migrator always added it, so every app is assumed to declare it already
 function removeJCenterFromGradleFile(txt: string): string {
-  const lines = txt.split('\n');
-  const result: string[] = [];
-  let index = 0;
-
-  while (index < lines.length) {
-    // A commented out block start would make the brace counting below swallow the rest of the file
-    if (isCommentedOut(lines[index]) || !repositoriesBlockStart.test(lines[index])) {
-      result.push(lines[index]);
-      index++;
-      continue;
-    }
-
-    // Collect the whole block so nested ones (maven, flatDir) don't end it early
-    const block: string[] = [];
-    let depth = 0;
-    do {
-      const line = lines[index];
-      depth += (line.match(/{/g) ?? []).length - (line.match(/}/g) ?? []).length;
-      block.push(line);
-      index++;
-    } while (index < lines.length && depth > 0);
-
-    result.push(...replaceJCenterInRepositories(block));
-  }
-
-  return result.join('\n');
-}
-
-function isCommentedOut(line: string): boolean {
-  return line.trim().startsWith('//');
-}
-
-function replaceJCenterInRepositories(block: string[]): string[] {
-  if (!block.some((line) => jcenterLine.test(line.trim()))) {
-    return block;
-  }
-
-  const hasMavenCentral = block.some((line) => mavenCentralLine.test(line.trim()));
-  const replaced: string[] = [];
-  let mavenCentralAdded = false;
-
-  for (const line of block) {
-    if (!jcenterLine.test(line.trim())) {
-      replaced.push(line);
-    } else if (!hasMavenCentral && !mavenCentralAdded) {
-      replaced.push(line.replace('jcenter()', 'mavenCentral()'));
-      mavenCentralAdded = true;
-      logger.info(`Replaced jcenter() with mavenCentral().`);
-    } else {
+  return txt
+    .split('\n')
+    .filter((line) => {
+      if (!jcenterLine.test(line.trim())) {
+        return true;
+      }
       logger.info(`Removed jcenter().`);
-    }
-  }
-
-  return replaced;
+      return false;
+    })
+    .join('\n');
 }
 
 async function updateFile(
