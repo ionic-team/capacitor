@@ -49,7 +49,35 @@ const coreVersion = 'next';
 const pluginVersion = 'next';
 const gradleVersion = '9.5.1';
 const iOSVersion = '16';
+const eslintVersion = '^10.0.0';
+const ionicEslintConfigVersion = '^1.0.0';
 let installFailed = false;
+let eslintUpdated = false;
+
+const eslintConfigCjs = `const ionic = require('@ionic/eslint-config/recommended');
+
+module.exports = [
+  {
+    ignores: [
+      '**/build/**',
+      '**/dist/**',
+      '**/www/**',
+      // lint TypeScript only
+      '**/*.js',
+      '**/*.mjs',
+      '**/*.cjs',
+    ],
+  },
+  ...ionic,
+  {
+    files: ['**/*.ts'],
+    rules: {
+      // underscore-prefixed parameters are intentionally unused (interface signatures)
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+];
+`;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
   if (config === null) {
@@ -335,6 +363,11 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           `Migration to Capacitor ${coreVersion} is incomplete. Check the log messages for more information.`,
         );
       }
+      if (eslintUpdated) {
+        logger.info(
+          'ESLint was updated to v10 and @ionic/eslint-config to v1, which uses flat config. An eslint.config.cjs file was added; .eslintignore and the eslintConfig block in package.json were removed. Running lint may surface new reports; see https://github.com/ionic-team/eslint-config#migrating-from-0x',
+        );
+      }
     } catch (err) {
       fatal(`Failed to migrate: ${err}`);
     }
@@ -382,9 +415,35 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
     }
   }
 
+  if (pkgJson['devDependencies']?.['@ionic/eslint-config']) {
+    pkgJson['devDependencies']['@ionic/eslint-config'] = ionicEslintConfigVersion;
+    if (pkgJson['devDependencies']['eslint']) {
+      pkgJson['devDependencies']['eslint'] = eslintVersion;
+    }
+    delete pkgJson.eslintConfig;
+    if (pkgJson.scripts?.['eslint']) {
+      pkgJson.scripts['eslint'] = pkgJson.scripts['eslint'].replace(' --ext ts', '');
+    }
+    eslintUpdated = true;
+  }
+
   writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2), {
     encoding: 'utf-8',
   });
+
+  if (eslintUpdated) {
+    const eslintIgnorePath = join(config.app.rootDir, '.eslintignore');
+    if (existsSync(eslintIgnorePath)) {
+      rimraf.sync(eslintIgnorePath);
+    }
+    if (
+      !['eslint.config.js', 'eslint.config.mjs', 'eslint.config.cjs'].some((file) =>
+        existsSync(join(config.app.rootDir, file)),
+      )
+    ) {
+      writeFileSync(join(config.app.rootDir, 'eslint.config.cjs'), eslintConfigCjs, { encoding: 'utf-8' });
+    }
+  }
 
   if (runInstall) {
     rimraf.sync(join(config.app.rootDir, 'node_modules/@capacitor/!(cli)'));
