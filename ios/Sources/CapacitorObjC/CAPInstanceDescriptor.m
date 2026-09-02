@@ -1,5 +1,4 @@
 #import "CAPInstanceDescriptor.h"
-#import <Capacitor/Capacitor-Swift.h>
 
 // Swift extensions marked as @objc and internal are available to the Obj-C runtime but are not available at compile time.
 // so we need this declaration to avoid compiler complaints

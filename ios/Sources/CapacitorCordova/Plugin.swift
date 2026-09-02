@@ -1,4 +1,5 @@
 import Capacitor
+import Cordova
 
 @objc(CordovaPlugin)
 public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {

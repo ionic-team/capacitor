@@ -1,5 +1,13 @@
 #import "CAPInstanceConfiguration.h"
-#import <Capacitor/Capacitor-Swift.h>
+#import "CAPInstanceDescriptor.h"
+
+// Implemented in Swift (CAPInstanceDescriptor.swift), which can't be imported here without a
+// circular dependency. Declared locally rather than in the header so Swift doesn't see a
+// redeclaration.
+@interface CAPInstanceDescriptor (SwiftVended)
+@property (nonatomic, readonly) BOOL cordovaDeployDisabled;
+- (void)normalize;
+@end
 
 @interface CAPInstanceConfiguration (Internal)
 - (instancetype)initWithConfiguration:(CAPInstanceConfiguration*)configuration andLocation:(NSURL*)location;

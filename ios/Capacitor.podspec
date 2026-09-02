@@ -20,6 +20,8 @@ Pod::Spec.new do |s|
     "#{prefix}Sources/CapacitorObjC/**/*.{h,m}",
     "#{prefix}Sources/CapacitorObjCShims/**/*.{h,m}"
   ]
+  # SPM-only shim; CocoaPods generates the real Capacitor-Swift.h for the mixed-language module.
+  s.exclude_files = ["#{prefix}Sources/CapacitorObjCShims/include/Capacitor/Capacitor-Swift.h"]
   s.module_map = "#{prefix}Sources/CapacitorObjCShims/Capacitor.modulemap"
   s.resources = ["#{prefix}Sources/Capacitor/assets/native-bridge.js"]
   s.resource_bundles = { 'Capacitor' => ["#{prefix}Sources/Capacitor/PrivacyInfo.xcprivacy"] }

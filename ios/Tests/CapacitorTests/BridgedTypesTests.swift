@@ -149,12 +149,12 @@ class BridgedTypesTests: XCTestCase {
     }
     
     func testDateResultWrapping() throws {
-        let result = try PluginCallResult.dictionary(["date": unserializedDictionary["testDateObject"]!]).jsonRepresentation()
+        let result = try JSResultSerialization.jsonRepresentation(of: ["date": unserializedDictionary["testDateObject"]!])
         XCTAssertEqual(result, "{\"date\":\"\(unserializedDictionary["testDateString"] as! String)\"}")
     }
     
     func testResultMerging() throws {
-        let result = try PluginCallResult.dictionary(["number": 1]).jsonRepresentation(includingFields: ["string":"foo"])
+        let result = try JSResultSerialization.jsonRepresentation(of: ["number": 1], includingFields: ["string":"foo"])
         // ordering of the pairs should be non-deterministic
         if result != "{\"string\":\"foo\",\"number\":1}" && result != "{\"number\":1,\"string\":\"foo\"}" {
             XCTAssert(false)

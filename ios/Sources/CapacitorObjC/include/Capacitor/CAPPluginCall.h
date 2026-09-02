@@ -1,8 +1,7 @@
 #import <Foundation/Foundation.h>
+#import "CAPPluginCallResult.h"
 
 @class CAPPluginCall;
-@class CAPPluginCallResult;
-@class CAPPluginCallError;
 
 typedef void(^CAPPluginCallSuccessHandler)(CAPPluginCallResult *result, CAPPluginCall* call);
 typedef void(^CAPPluginCallErrorHandler)(CAPPluginCallError *error);
