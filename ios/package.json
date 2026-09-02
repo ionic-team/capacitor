@@ -21,7 +21,7 @@
   "scripts": {
     "verify": "npm run xc:build && npm run xc:test",
     "xc:build": "cd .. && xcodebuild build -scheme Capacitor-Package -destination 'generic/platform=iOS Simulator'",
-    "xc:test": "cd .. && xcodebuild test -scheme Capacitor-Package -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' -collect-test-diagnostics never"
+    "xc:test": "cd .. && xcodebuild test -scheme Capacitor-Package -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -collect-test-diagnostics never"
   },
   "peerDependencies": {
     "@capacitor/core": "^9.0.0-alpha.6"

@@ -1,11 +1,20 @@
 import Foundation
 
 @objc(CAPNotificationRouter) public class NotificationRouter: NSObject, UNUserNotificationCenterDelegate {
+    // UNUserNotificationCenter.current() raises when the process has no application bundle, which
+    // is the case in a host-less unit test runner and some extension contexts. There is no
+    // notification center to register with there, so treat it as unavailable rather than trapping.
+    private static var isNotificationCenterAvailable: Bool {
+        return ["app", "appex"].contains(Bundle.main.bundleURL.pathExtension)
+    }
+
     var handleApplicationNotifications: Bool {
         get {
+            guard Self.isNotificationCenterAvailable else { return false }
             return UNUserNotificationCenter.current().delegate === self
         }
         set {
+            guard Self.isNotificationCenterAvailable else { return }
             let center = UNUserNotificationCenter.current()
 
             if newValue {

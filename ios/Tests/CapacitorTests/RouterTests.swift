@@ -1,39 +1,27 @@
-//
-//  RouterTests.swift
-//  CapacitorTests
-//
-//  Created by Steven Sherry on 3/29/22.
-//  Copyright © 2022 Drifty Co. All rights reserved.
-//
-
-import XCTest
+import Testing
 @testable import Capacitor
 
-class RouterTests: XCTestCase {
-    
-    func testRouterReturnsIndexWhenProvidedEmptyPath() {
+struct RouterTests {
+    @Test func routerReturnsIndexWhenProvidedEmptyPath() {
         checkRouter(path: "", expected: "/index.html")
     }
-    
-    func testRouterReturnsIndexWhenProviedPathWithoutExtension() {
+
+    @Test func routerReturnsIndexWhenProvidedPathWithoutExtension() {
         checkRouter(path: "/a/valid/path/no/ext", expected: "/index.html")
     }
-    
-    func testRouterReturnsPathWhenProvidedValidPath() {
+
+    @Test func routerReturnsPathWhenProvidedValidPath() {
         checkRouter(path: "/a/valid/path.ext", expected: "/a/valid/path.ext")
     }
-    
-    func testRouterReturnsPathWhenProvidedValidPathWithExtensionAndSpaces() {
+
+    @Test func routerReturnsPathWhenProvidedValidPathWithExtensionAndSpaces() {
         checkRouter(path: "/a/valid/file path.ext", expected: "/a/valid/file path.ext")
     }
-    
-    func checkRouter(path: String, expected: String) {
-        XCTContext.runActivity(named: "router creates route path correctly") { _ in
-            var router = CapacitorRouter()
-            XCTAssertEqual(router.route(for: path), expected)
-            router.basePath = "/A/Route"
-            XCTAssertEqual(router.route(for: path), "/A/Route" + expected)
-        }
+
+    private func checkRouter(path: String, expected: String) {
+        var router = CapacitorRouter()
+        #expect(router.route(for: path) == expected)
+        router.basePath = "/A/Route"
+        #expect(router.route(for: path) == "/A/Route" + expected)
     }
-    
 }

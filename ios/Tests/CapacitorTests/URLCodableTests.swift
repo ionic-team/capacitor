@@ -1,12 +1,5 @@
-//
-//  URLCodableTests.swift
-//  CodableTests
-//
-//  Created by Steven Sherry on 9/6/24.
-//  Copyright © 2024 Drifty Co. All rights reserved.
-//
-
-import XCTest
+import Foundation
+import Testing
 import Capacitor
 
 private let urlString = "https://capacitorjs.com"
@@ -16,47 +9,50 @@ private struct Website: Codable, Equatable {
     var url: URL
 }
 
-class JSValueDecoderURLTests: XCTestCase {
+struct JSValueDecoderURLTests {
     let decoder = JSValueDecoder()
 
-    func testDecode_url__root() throws {
+    @Test func decodingURLRoot() throws {
         let result = try decoder.decode(URL.self, from: urlString)
-        XCTAssertEqual(result, url)
+        #expect(result == url)
     }
 
-    func testDecode_url__array() throws {
+    @Test func decodingURLArray() throws {
         let result = try decoder.decode([URL].self, from: [urlString, urlString])
-        XCTAssertEqual(result, [url, url])
+        #expect(result == [url, url])
     }
 
-    func testDecode_url__struct() throws {
+    @Test func decodingURLStruct() throws {
         let result = try decoder.decode(Website.self, from: ["url": urlString])
-        XCTAssertEqual(result, .init(url: url))
+        #expect(result == .init(url: url))
     }
 
-    func testDecode_url__fails_when_invalid_url_string_is_provided() {
-        XCTAssertThrowsError(try decoder.decode(URL.self, from: "🐞://🐞.com/🐞"))
+    @Test func decodingURLFailsWithInvalidString() throws {
+        let decoder = JSValueDecoder()
+        #expect(throws: DecodingError.self) {
+            try decoder.decode(URL.self, from: "🐞://🐞.com/🐞")
+        }
     }
 }
 
-class JSValueEncoderURLTests: XCTestCase {
+struct JSValueEncoderURLTests {
     let encoder = JSValueEncoder()
 
-    func testEncode_url__root() throws {
+    @Test func encodingURLRoot() throws {
         let rawResult = try encoder.encode(url)
-        let result = try XCTUnwrap(rawResult as? String)
-        XCTAssertEqual(result, urlString)
+        let result = try #require(rawResult as? String)
+        #expect(result == urlString)
     }
 
-    func testEncode_url__array() throws {
+    @Test func encodingURLArray() throws {
         let rawResult = try encoder.encode([url, url])
-        let result = try XCTUnwrap(rawResult as? [String])
-        XCTAssertEqual(result, [urlString, urlString])
+        let result = try #require(rawResult as? [String])
+        #expect(result == [urlString, urlString])
     }
 
-    func testEncode_url__struct() throws {
+    @Test func encodingURLStruct() throws {
         let rawResult = try encoder.encode(Website(url: url))
-        let result = try XCTUnwrap(rawResult as? [String: String])
-        XCTAssertEqual(result, ["url": urlString])
+        let result = try #require(rawResult as? [String: String])
+        #expect(result == ["url": urlString])
     }
 }

@@ -1,7 +1,6 @@
 #import <XCTest/XCTest.h>
 #import <Capacitor/Capacitor.h>
 #import <Capacitor/CAPBridgedJSTypes.h>
-#import "CapacitorTests-Swift.h"
 
 // interface for this class
 @interface PluginCallAccessorTests : XCTestCase

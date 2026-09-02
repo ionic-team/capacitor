@@ -10,6 +10,17 @@
 
 @implementation CAPPlugin
 
+- (instancetype)init {
+  if ((self = [super init])) {
+    _pluginId = @"";
+    _pluginName = @"";
+    _eventListeners = [[NSMutableDictionary alloc] init];
+    _retainedEventArguments = [[NSMutableDictionary alloc] init];
+    _shouldStringifyDatesInCalls = YES;
+  }
+  return self;
+}
+
 -(NSString *) getId {
   return self.pluginName;
 }

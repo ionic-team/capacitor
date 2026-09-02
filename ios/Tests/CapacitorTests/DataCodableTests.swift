@@ -1,12 +1,5 @@
-//
-//  DataCodableTests.swift
-//  CodableTests
-//
-//  Created by Steven Sherry on 9/6/24.
-//  Copyright © 2024 Drifty Co. All rights reserved.
-//
-
-import XCTest
+import Foundation
+import Testing
 import Capacitor
 
 private struct Foo: Codable, Equatable {
@@ -18,138 +11,138 @@ private let jsonData = jsonString.data(using: .utf8)!
 private let jsonByteArray: [NSNumber] = [123, 32, 34, 107, 101, 121, 34, 58, 32, 34, 118, 97, 108, 117, 101, 34, 32, 125]
 private let jsonBase64 = "eyAia2V5IjogInZhbHVlIiB9"
 
-class JSValueDecoderDataTests: XCTestCase {
-    func testDecode_data__default_root() throws {
+private let customDecodingStrategy = JSValueDecoder.DataDecodingStrategy.custom { decoder in
+    var container = try decoder.unkeyedContainer()
+    var byteArray: [UInt8] = []
+    while !container.isAtEnd {
+        byteArray.append(try container.decode(UInt8.self))
+    }
+    return Data(byteArray)
+}
+
+private let customEncodingStrategy = JSValueEncoder.DataEncodingStrategy.custom { data, encoder in
+    let byteArray = data.map { $0 }
+    var unkeyedContainer = encoder.unkeyedContainer()
+    try unkeyedContainer.encode(contentsOf: byteArray)
+}
+
+struct JSValueDecoderDataTests {
+    @Test func decodingDataDefaultRoot() throws {
         let decoder = JSValueDecoder()
         let result = try decoder.decode(Data.self, from: jsonByteArray)
-        XCTAssertEqual(result, jsonData)
+        #expect(result == jsonData)
     }
 
-    func testDecode_data__default_array() throws {
+    @Test func decodingDataDefaultArray() throws {
         let decoder = JSValueDecoder()
         let result = try decoder.decode([Data].self, from: [jsonByteArray, jsonByteArray])
-        XCTAssertEqual(result, [jsonData, jsonData])
+        #expect(result == [jsonData, jsonData])
     }
 
-    func testDecode_data__default_struct() throws {
+    @Test func decodingDataDefaultStruct() throws {
         let decoder = JSValueDecoder()
         let result = try decoder.decode(Foo.self, from: ["data": jsonByteArray])
-        XCTAssertEqual(result, .init(data: jsonData))
+        #expect(result == .init(data: jsonData))
     }
 
-    func testDecode_data__base64_root() throws {
+    @Test func decodingDataBase64Root() throws {
         let decoder = JSValueDecoder(dataDecodingStrategy: .base64)
         let result = try decoder.decode(Data.self, from: jsonBase64)
-        XCTAssertEqual(result, jsonData)
+        #expect(result == jsonData)
     }
 
-    func testDecode_data__base64_array() throws {
+    @Test func decodingDataBase64Array() throws {
         let decoder = JSValueDecoder(dataDecodingStrategy: .base64)
         let result = try decoder.decode([Data].self, from: [jsonBase64, jsonBase64])
-        XCTAssertEqual(result, [jsonData, jsonData])
+        #expect(result == [jsonData, jsonData])
     }
 
-    func testDecode_data__base64_struct() throws {
+    @Test func decodingDataBase64Struct() throws {
         let decoder = JSValueDecoder(dataDecodingStrategy: .base64)
         let result = try decoder.decode(Foo.self, from: ["data": jsonBase64])
-        XCTAssertEqual(result, .init(data: jsonData))
+        #expect(result == .init(data: jsonData))
     }
 
-    let customStrategy = JSValueDecoder.DataDecodingStrategy.custom { decoder in
-        var container = try decoder.unkeyedContainer()
-        var byteArray: [UInt8] = []
-        while !container.isAtEnd {
-            byteArray.append(try container.decode(UInt8.self))
-        }
-        return Data(byteArray)
-    }
-
-    func testDecode_data__custom_root() throws {
-        let decoder = JSValueDecoder(dataDecodingStrategy: customStrategy)
+    @Test func decodingDataCustomRoot() throws {
+        let decoder = JSValueDecoder(dataDecodingStrategy: customDecodingStrategy)
         let result = try decoder.decode(Data.self, from: jsonByteArray)
-        XCTAssertEqual(result, jsonData)
+        #expect(result == jsonData)
     }
 
-    func testDecode_data__custom_array() throws {
-        let decoder = JSValueDecoder(dataDecodingStrategy: customStrategy)
+    @Test func decodingDataCustomArray() throws {
+        let decoder = JSValueDecoder(dataDecodingStrategy: customDecodingStrategy)
         let result = try decoder.decode([Data].self, from: [jsonByteArray, jsonByteArray])
-        XCTAssertEqual(result, [jsonData, jsonData])
+        #expect(result == [jsonData, jsonData])
     }
 
-    func testDecode_data__custom_struct() throws {
-        let decoder = JSValueDecoder(dataDecodingStrategy: customStrategy)
+    @Test func decodingDataCustomStruct() throws {
+        let decoder = JSValueDecoder(dataDecodingStrategy: customDecodingStrategy)
         let result = try decoder.decode(Foo.self, from: ["data": jsonByteArray])
-        XCTAssertEqual(result, .init(data: jsonData))
+        #expect(result == .init(data: jsonData))
     }
 }
 
-class JSValueEncoderDataTests: XCTestCase {
-    func testEncode_data__default_root() throws {
+struct JSValueEncoderDataTests {
+    @Test func encodingDataDefaultRoot() throws {
         let encoder = JSValueEncoder()
         let rawResult = try encoder.encode(jsonData)
-        let result = try XCTUnwrap(rawResult as? [NSNumber])
-        XCTAssertEqual(result, jsonByteArray)
+        let result = try #require(rawResult as? [NSNumber])
+        #expect(result == jsonByteArray)
     }
 
-    func testEncode_data__default_array() throws {
+    @Test func encodingDataDefaultArray() throws {
         let encoder = JSValueEncoder()
         let rawResult = try encoder.encode([jsonData, jsonData])
-        let result = try XCTUnwrap(rawResult as? [[NSNumber]])
-        XCTAssertEqual(result, [jsonByteArray, jsonByteArray])
+        let result = try #require(rawResult as? [[NSNumber]])
+        #expect(result == [jsonByteArray, jsonByteArray])
     }
 
-    func testEncode_data__default_struct() throws {
+    @Test func encodingDataDefaultStruct() throws {
         let encoder = JSValueEncoder()
         let rawResult = try encoder.encode(Foo(data: jsonData))
-        let result = try XCTUnwrap(rawResult as? [String: [NSNumber]])
-        XCTAssertEqual(result, ["data": jsonByteArray])
+        let result = try #require(rawResult as? [String: [NSNumber]])
+        #expect(result == ["data": jsonByteArray])
     }
 
-    func testEncode_data__base64_root() throws {
+    @Test func encodingDataBase64Root() throws {
         let encoder = JSValueEncoder(dataEncodingStrategy: .base64)
         let rawResult = try encoder.encode(jsonData)
-        let result = try XCTUnwrap(rawResult as? String)
-        XCTAssertEqual(result, jsonBase64)
+        let result = try #require(rawResult as? String)
+        #expect(result == jsonBase64)
     }
 
-    func testEncode_data__base64_array() throws {
+    @Test func encodingDataBase64Array() throws {
         let encoder = JSValueEncoder(dataEncodingStrategy: .base64)
         let rawResult = try encoder.encode([jsonData, jsonData])
-        let result = try XCTUnwrap(rawResult as? [String])
-        XCTAssertEqual(result, [jsonBase64, jsonBase64])
+        let result = try #require(rawResult as? [String])
+        #expect(result == [jsonBase64, jsonBase64])
     }
 
-    func testEncode_data__base64_struct() throws {
+    @Test func encodingDataBase64Struct() throws {
         let encoder = JSValueEncoder(dataEncodingStrategy: .base64)
         let rawResult = try encoder.encode(Foo(data: jsonData))
-        let result = try XCTUnwrap(rawResult as? [String: String])
-        XCTAssertEqual(result, ["data": jsonBase64])
+        let result = try #require(rawResult as? [String: String])
+        #expect(result == ["data": jsonBase64])
     }
 
-    let customStrategy = JSValueEncoder.DataEncodingStrategy.custom { data, encoder in
-        let byteArray = data.map { $0 }
-        var unkeyedContainer = encoder.unkeyedContainer()
-        try unkeyedContainer.encode(contentsOf: byteArray)
-    }
-
-    func testEncode_data__custom_root() throws {
-        let encoder = JSValueEncoder(dataEncodingStrategy: customStrategy)
+    @Test func encodingDataCustomRoot() throws {
+        let encoder = JSValueEncoder(dataEncodingStrategy: customEncodingStrategy)
         let rawResult = try encoder.encode(jsonData)
-        let result = try XCTUnwrap(rawResult as? [NSNumber])
-        XCTAssertEqual(result, jsonByteArray)
+        let result = try #require(rawResult as? [NSNumber])
+        #expect(result == jsonByteArray)
     }
 
-    func testEncode_data__custom_array() throws {
-        let encoder = JSValueEncoder(dataEncodingStrategy: customStrategy)
+    @Test func encodingDataCustomArray() throws {
+        let encoder = JSValueEncoder(dataEncodingStrategy: customEncodingStrategy)
         let rawResult = try encoder.encode([jsonData, jsonData])
-        let result = try XCTUnwrap(rawResult as? [[NSNumber]])
-        XCTAssertEqual(result, [jsonByteArray, jsonByteArray])
+        let result = try #require(rawResult as? [[NSNumber]])
+        #expect(result == [jsonByteArray, jsonByteArray])
     }
 
-    func testEncode_data__custom_struct() throws {
-        let encoder = JSValueEncoder(dataEncodingStrategy: customStrategy)
+    @Test func encodingDataCustomStruct() throws {
+        let encoder = JSValueEncoder(dataEncodingStrategy: customEncodingStrategy)
         let rawResult = try encoder.encode(Foo(data: jsonData))
-        let result = try XCTUnwrap(rawResult as? [String: [NSNumber]])
-        XCTAssertEqual(result, ["data": jsonByteArray])
+        let result = try #require(rawResult as? [String: [NSNumber]])
+        #expect(result == ["data": jsonByteArray])
     }
 }

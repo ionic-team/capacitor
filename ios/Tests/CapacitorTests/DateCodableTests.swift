@@ -1,15 +1,7 @@
-//
-//  DateCodableTests.swift
-//  CodableTests
-//
-//  Created by Steven Sherry on 9/6/24.
-//  Copyright © 2024 Drifty Co. All rights reserved.
-//
-
-import XCTest
+import Foundation
+import Testing
 import Capacitor
 
-// Fixture data that all refers to the same Date and Time
 private let timeIntervalSinceReferenceDate: TimeInterval = 747268580
 private let referenceDate = Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate)
 private let secondsSince1970 = 1725575780 as Double
@@ -24,45 +16,45 @@ private let formatter: DateFormatter = {
     formatter.locale = .init(identifier: "en_US")
     return formatter
 }()
-private let formatted = "Sep 5, 2024 at 5:36:20 PM CDT"
+private let formatted = "Sep 5, 2024 at 5:36:20\u{202F}PM CDT"
 
 private struct Foo: Codable, Equatable {
     var date: Date
 }
 
-final class JSValueDecoderDateTests: XCTestCase {
-    func testDecode_date__default() throws {
+struct JSValueDecoderDateTests {
+    @Test func decodingDateDefault() throws {
         let reference = timeIntervalSinceReferenceDate
         let decoder = JSValueDecoder()
         let result = try decoder.decode(Date.self, from: reference)
-        XCTAssertEqual(result, referenceDate)
+        #expect(result == referenceDate)
     }
 
-    func testDecode_date__secondsSince1970() throws {
+    @Test func decodingDateSecondsSince1970() throws {
         let decoder = JSValueDecoder(dateDecodingStrategy: .secondsSince1970)
         let result = try decoder.decode(Date.self, from: secondsSince1970)
-        XCTAssertEqual(result, referenceDate)
+        #expect(result == referenceDate)
     }
 
-    func testDecode_date__millisecondsSince1970() throws {
+    @Test func decodingDateMillisecondsSince1970() throws {
         let decoder = JSValueDecoder(dateDecodingStrategy: .millisecondsSince1970)
         let result = try decoder.decode(Date.self, from: millisecondsSince1970)
-        XCTAssertEqual(result, referenceDate)
+        #expect(result == referenceDate)
     }
 
-    func testDecode_date__iso8601() throws {
+    @Test func decodingDateISO8601() throws {
         let decoder = JSValueDecoder(dateDecodingStrategy: .iso8601)
         let result = try decoder.decode(Date.self, from: iso8601)
-        XCTAssertEqual(result, referenceDate)
+        #expect(result == referenceDate)
     }
 
-    func testDecode_date__formatted() throws {
+    @Test func decodingDateFormatted() throws {
         let decoder = JSValueDecoder(dateDecodingStrategy: .formatted(formatter))
         let result = try decoder.decode(Date.self, from: formatted)
-        XCTAssertEqual(result, referenceDate)
+        #expect(result == referenceDate)
     }
 
-    func testDecode_date__custom() throws {
+    @Test func decodingDateCustom() throws {
         let strategy = JSValueDecoder.DateDecodingStrategy.custom { decoder in
             let container = try decoder.singleValueContainer()
             let referenceDateString = try container.decode(String.self)
@@ -75,61 +67,61 @@ final class JSValueDecoderDateTests: XCTestCase {
         let referenceString = "\(timeIntervalSinceReferenceDate)"
         let decoder = JSValueDecoder(dateDecodingStrategy: strategy)
         let result = try decoder.decode(Date.self, from: referenceString)
-        XCTAssertEqual(result, referenceDate)
+        #expect(result == referenceDate)
     }
 
-    func testDecode_date__array() throws {
+    @Test func decodingDateArray() throws {
         let dateArray = [iso8601, iso8601]
         let decoder = JSValueDecoder(dateDecodingStrategy: .iso8601)
         let result = try decoder.decode([Date].self, from: dateArray)
-        XCTAssertEqual(result, [referenceDate, referenceDate])
+        #expect(result == [referenceDate, referenceDate])
     }
 
-    func testDecode_date__struct() throws {
+    @Test func decodingDateStruct() throws {
         let value = ["date": iso8601] as JSObject
         let decoder = JSValueDecoder(dateDecodingStrategy: .iso8601)
         let result = try decoder.decode(Foo.self, from: value)
-        XCTAssertEqual(result, Foo(date: referenceDate))
+        #expect(result == Foo(date: referenceDate))
     }
 }
 
-final class JSValueEncoderDateTests: XCTestCase {
-    func testEncode_date__default() throws {
+struct JSValueEncoderDateTests {
+    @Test func encodingDateDefault() throws {
         let encoder = JSValueEncoder()
         let rawResult = try encoder.encode(referenceDate)
-        let result = try XCTUnwrap(rawResult as? Double)
-        XCTAssertEqual(result, timeIntervalSinceReferenceDate)
+        let result = try #require(rawResult as? Double)
+        #expect(result == timeIntervalSinceReferenceDate)
     }
 
-    func testEncode_date__secondsSince1970() throws {
+    @Test func encodingDateSecondsSince1970() throws {
         let encoder = JSValueEncoder(dateEncodingStrategy: .secondsSince1970)
         let rawResult = try encoder.encode(referenceDate)
-        let result = try XCTUnwrap(rawResult as? Double)
-        XCTAssertEqual(result, secondsSince1970)
+        let result = try #require(rawResult as? Double)
+        #expect(result == secondsSince1970)
     }
 
-    func testEncode_date__millisecondsSince1970() throws {
+    @Test func encodingDateMillisecondsSince1970() throws {
         let encoder = JSValueEncoder(dateEncodingStrategy: .millisecondsSince1970)
         let rawResult = try encoder.encode(referenceDate)
-        let result = try XCTUnwrap(rawResult as? Double)
-        XCTAssertEqual(result, millisecondsSince1970)
+        let result = try #require(rawResult as? Double)
+        #expect(result == millisecondsSince1970)
     }
 
-    func testEncode_date__iso8601() throws {
+    @Test func encodingDateISO8601() throws {
         let encoder = JSValueEncoder(dateEncodingStrategy: .iso8601)
         let rawResult = try encoder.encode(referenceDate)
-        let result = try XCTUnwrap(rawResult as? String)
-        XCTAssertEqual(result, iso8601)
+        let result = try #require(rawResult as? String)
+        #expect(result == iso8601)
     }
 
-    func testEncode_date__formatted() throws {
+    @Test func encodingDateFormatted() throws {
         let encoder = JSValueEncoder(dateEncodingStrategy: .formatted(formatter))
         let rawResult = try encoder.encode(referenceDate)
-        let result = try XCTUnwrap(rawResult as? String)
-        XCTAssertEqual(result, formatted)
+        let result = try #require(rawResult as? String)
+        #expect(result == formatted)
     }
 
-    func testEncode_date__custom() throws {
+    @Test func encodingDateCustom() throws {
         let strategy = JSValueEncoder.DateEncodingStrategy.custom { date, encoder in
             var container = encoder.singleValueContainer()
             try container.encode("\(date.timeIntervalSinceReferenceDate)")
@@ -137,22 +129,22 @@ final class JSValueEncoderDateTests: XCTestCase {
 
         let encoder = JSValueEncoder(dateEncodingStrategy: strategy)
         let rawResult = try encoder.encode(referenceDate)
-        let result = try XCTUnwrap(rawResult as? String)
-        XCTAssertEqual(result, "\(timeIntervalSinceReferenceDate)")
+        let result = try #require(rawResult as? String)
+        #expect(result == "\(timeIntervalSinceReferenceDate)")
     }
 
-    func testEncode_date__array() throws {
+    @Test func encodingDateArray() throws {
         let encoder = JSValueEncoder(dateEncodingStrategy: .iso8601)
         let array = [referenceDate, referenceDate]
         let rawResult = try encoder.encode(array)
-        let result = try XCTUnwrap(rawResult as? [String])
-        XCTAssertEqual(result, [iso8601, iso8601])
+        let result = try #require(rawResult as? [String])
+        #expect(result == [iso8601, iso8601])
     }
 
-    func testEncode_date__struct() throws {
+    @Test func encodingDateStruct() throws {
         let encoder = JSValueEncoder(dateEncodingStrategy: .iso8601)
         let rawResult = try encoder.encode(Foo(date: referenceDate))
-        let result = try XCTUnwrap(rawResult as? [String: String])
-        XCTAssertEqual(result, ["date": iso8601])
+        let result = try #require(rawResult as? [String: String])
+        #expect(result == ["date": iso8601])
     }
 }

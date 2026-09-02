@@ -1,61 +1,54 @@
-//
-//  SuperCodableTests.swift
-//  CodableTests
-//
-//  Created by Steven Sherry on 12/10/23.
-//  Copyright © 2023 Drifty Co. All rights reserved.
-//
-
-import XCTest
+import Foundation
+import Testing
 import Capacitor
 
-final class SuperCodableTests: XCTestCase {
-    // MARK: Keyed Super Encoding/Decoding
-    func testEncode__when_given_a_value_that_encodes_to_a_keyed_superEncoder_without_specifying_a_key__it_encodes_the_super_container_with_the_string_key_super() throws {
+struct SuperCodableTests {
+    @Test func encodingKeyedSuperEncoderWithoutKeyUsesDefaultKey() throws {
         let sut = JSValueEncoder()
         let value = KeyedSubSuper(bool: true)
         let encoded = try sut.encodeJSObject(value)
 
-        let bool = try XCTUnwrap(encoded["bool"] as? Bool)
-        XCTAssertTrue(bool)
-        let superObject = try XCTUnwrap(encoded["super"] as? JSObject)
-        let number = try XCTUnwrap(superObject["number"] as? NSNumber)
-        XCTAssertEqual(0, number)
-        let string = try XCTUnwrap(superObject["string"] as? String)
-        XCTAssertEqual("empty", string)
+        let bool = try #require(encoded["bool"] as? Bool)
+        #expect(bool == true)
+        let superObject = try #require(encoded["super"] as? JSObject)
+        let number = try #require(superObject["number"] as? NSNumber)
+        #expect(number == 0)
+        let string = try #require(superObject["string"] as? String)
+        #expect(string == "empty")
     }
-    func testEncode__when_given_a_value_that_encodes_to_a_keyed_superEncoder_with_a_specific_key__it_encodes_the_super_container_with_the_provided_key() throws {
+
+    @Test func encodingKeyedSuperEncoderWithSpecificKey() throws {
         let sut = JSValueEncoder()
         let value = KeyedSubSuperKeyed(bool: false)
         value.number = 5
         value.string = "encoding"
         let encoded = try sut.encodeJSObject(value)
 
-        let bool = try XCTUnwrap(encoded["bool"] as? Bool)
-        XCTAssertFalse(bool)
-        let superObject = try XCTUnwrap(encoded["info"] as? JSObject)
-        let number = try XCTUnwrap(superObject["number"] as? NSNumber)
-        XCTAssertEqual(5, number)
-        let string = try XCTUnwrap(superObject["string"] as? String)
-        XCTAssertEqual("encoding", string)
+        let bool = try #require(encoded["bool"] as? Bool)
+        #expect(bool == false)
+        let superObject = try #require(encoded["info"] as? JSObject)
+        let number = try #require(superObject["number"] as? NSNumber)
+        #expect(number == 5)
+        let string = try #require(superObject["string"] as? String)
+        #expect(string == "encoding")
     }
 
-    func testEncode__when_given_a_value_that_encodes_its_superclass_without_a_superEncoder__it_encodes_the_entire_structure_flattened() throws {
+    @Test func encodingSuperclassWithoutSuperEncoderFlattenStructure() throws {
         let sut = JSValueEncoder()
         let value = KeyedSubSuperFlat(bool: true)
         value.number = 10
         value.string = "flattened"
         let encoded = try sut.encodeJSObject(value)
 
-        let bool = try XCTUnwrap(encoded["bool"] as? Bool)
-        XCTAssertTrue(bool)
-        let number = try XCTUnwrap(encoded["number"] as? NSNumber)
-        XCTAssertEqual(10, number)
-        let string = try XCTUnwrap(encoded["string"] as? String)
-        XCTAssertEqual("flattened", string)
+        let bool = try #require(encoded["bool"] as? Bool)
+        #expect(bool == true)
+        let number = try #require(encoded["number"] as? NSNumber)
+        #expect(number == 10)
+        let string = try #require(encoded["string"] as? String)
+        #expect(string == "flattened")
     }
 
-    func testDecode__when_given_a_value_that_decodes_its_superclass_without_specifying_a_key__it_will_attempt_to_decode_the_super_container_from_the_super_key() throws {
+    @Test func decodingSuperclassWithoutKeyUsesSuperKey() throws {
         let sut = JSValueDecoder()
         let value: JSObject = [
             "super": [
@@ -66,12 +59,12 @@ final class SuperCodableTests: XCTestCase {
         ]
 
         let decoded = try sut.decode(KeyedSubSuper.self, from: value)
-        XCTAssertTrue(decoded.bool)
-        XCTAssertEqual(decoded.number, 5)
-        XCTAssertEqual(decoded.string, "super decoding")
+        #expect(decoded.bool == true)
+        #expect(decoded.number == 5)
+        #expect(decoded.string == "super decoding")
     }
 
-    func testDecode__when_given_a_value_that_decodes_its_superclass_with_a_specific_key__it_will_attempt_to_decode_the_super_container_from_the_specified_key() throws {
+    @Test func decodingSuperclassWithSpecificKey() throws {
         let sut = JSValueDecoder()
         let value: JSObject = [
             "info": [
@@ -82,12 +75,12 @@ final class SuperCodableTests: XCTestCase {
         ]
 
         let decoded = try sut.decode(KeyedSubSuperKeyed.self, from: value)
-        XCTAssertFalse(decoded.bool)
-        XCTAssertEqual(decoded.number, 9)
-        XCTAssertEqual(decoded.string, "info decoding")
+        #expect(decoded.bool == false)
+        #expect(decoded.number == 9)
+        #expect(decoded.string == "info decoding")
     }
 
-    func testDecode__when_given_a_value_that_decodes_its_superclass_without_a_superContainer__it_will_attempt_to_decode_a_flat_structure() throws {
+    @Test func decodingSuperclassWithoutSuperContainerDecodeFlatStructure() throws {
         let sut = JSValueDecoder()
         let value: JSObject = [
             "number": 20,
@@ -96,35 +89,34 @@ final class SuperCodableTests: XCTestCase {
         ]
 
         let decoded = try sut.decode(KeyedSubSuperFlat.self, from: value)
-        XCTAssertTrue(decoded.bool)
-        XCTAssertEqual(decoded.number, 20)
-        XCTAssertEqual(decoded.string, "flat decoding")
+        #expect(decoded.bool == true)
+        #expect(decoded.number == 20)
+        #expect(decoded.string == "flat decoding")
     }
 
-    // MARK: Unkeyed Super Encoding/Decoding
-    func testEncode__when_given_a_value_that_encodes_its_superclass_with_a_superContainer__it_will_encode_the_super_container_as_a_nested_array() throws {
+    @Test func encodingUnkeyedSuperEncoderNestedArray() throws {
         let sut = JSValueEncoder()
         let value = UnkeyedSubSuper(bool: true)
         value.number = -3
         value.string = "unkeyed encoding"
 
-        let encoded = try XCTUnwrap(try sut.encode(value) as? JSArray)
-        XCTAssertEqual(encoded[0] as? Bool, true)
-        let nested = try XCTUnwrap(encoded[1] as? JSArray)
-        XCTAssertEqual(nested[0] as? NSNumber, -3)
-        XCTAssertEqual(nested[1] as? String, "unkeyed encoding")
+        let encoded = try #require(try sut.encode(value) as? JSArray)
+        #expect(encoded[0] as? Bool == true)
+        let nested = try #require(encoded[1] as? JSArray)
+        #expect(nested[0] as? NSNumber == -3)
+        #expect(nested[1] as? String == "unkeyed encoding")
     }
 
-    func testDecode__when_given_a_type_that_decodes_its_superclass_with_a_superContainer__it_will_decode_the_superclass_as_a_nested_array() throws {
+    @Test func decodingUnkeyedSuperEncoderNestedArray() throws {
         let sut = JSValueDecoder()
         let value: JSArray = [
             true, [4, "unkeyed decoding"]
         ]
 
         let decoded = try sut.decode(UnkeyedSubSuper.self, from: value)
-        XCTAssertTrue(decoded.bool)
-        XCTAssertEqual(decoded.number, 4)
-        XCTAssertEqual(decoded.string, "unkeyed decoding")
+        #expect(decoded.bool == true)
+        #expect(decoded.number == 4)
+        #expect(decoded.string == "unkeyed decoding")
     }
 }
 

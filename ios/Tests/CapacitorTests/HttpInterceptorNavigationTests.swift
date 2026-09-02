@@ -5,6 +5,11 @@ import XCTest
 
 private class StubFrameInfo: WKFrameInfo {
     override var isMainFrame: Bool { false }
+
+    // WKFrameInfo has no public initializer, so super.init() leaves WebKit's internal state
+    // unset and -[WKFrameInfo dealloc] then dereferences garbage. Keeping a single instance
+    // alive for the process avoids ever deallocating one.
+    static let shared = StubFrameInfo()
 }
 
 private class StubNavigationAction: WKNavigationAction {
@@ -12,7 +17,7 @@ private class StubNavigationAction: WKNavigationAction {
     private let stubbedTargetFrame: WKFrameInfo?
     init(url: String, subframe: Bool = false) {
         self.stubbedRequest = URLRequest(url: URL(string: url)!)
-        self.stubbedTargetFrame = subframe ? StubFrameInfo() : nil
+        self.stubbedTargetFrame = subframe ? StubFrameInfo.shared : nil
         super.init()
     }
     override var request: URLRequest { stubbedRequest }

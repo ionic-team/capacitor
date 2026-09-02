@@ -1,12 +1,5 @@
-//
-//  JSValueDecoderTest.swift
-//  CapacitorTests
-//
-//  Created by Steven Sherry on 12/8/23.
-//  Copyright © 2023 Drifty Co. All rights reserved.
-//
-
-import XCTest
+import Foundation
+import Testing
 import Capacitor
 
 private struct Pet: Codable, Equatable {
@@ -58,52 +51,58 @@ private let person = Person(
     ]
 )
 
-final class JSValueDecoderTest: XCTestCase {
-    func testDecode_when_provided_a_valid_keyed_container_for_the_target_type__decoding_is_successful() throws {
+struct JSValueDecoderTests {
+    @Test func decodingValidKeyedContainerSucceeds() throws {
         let decoder = JSValueDecoder()
         let decodedPerson = try decoder.decode(Person.self, from: rawPerson)
-        XCTAssertEqual(decodedPerson, person)
+        #expect(decodedPerson == person)
     }
 
-    func testDecode__when_provided_a_valid_unkeyed_container_for_the_target_type__decoding_is_successful() throws {
+    @Test func decodingValidUnkeyedContainerSucceeds() throws {
         let decoder = JSValueDecoder()
         let decodedPeople = try decoder.decode([Person].self, from: rawPeople)
-        XCTAssertEqual(person.family, decodedPeople)
+        #expect(person.family == decodedPeople)
     }
 
-    func testDecode__when_provided_a_single_value_for_the_target_type__decoding_is_successful() throws {
+    @Test func decodingSingleValueSucceeds() throws {
         let decoder = JSValueDecoder()
         let decodedNumber = try decoder.decode(UInt.self, from: 100 as NSNumber)
-        XCTAssertEqual(100, decodedNumber)
+        #expect(decodedNumber == 100)
     }
 
-    func testDecode__when_provided_an_invalid_keyed_container_for_the_target_type__decoding_fails() throws {
+    @Test func decodingInvalidKeyedContainerFails() throws {
         let decoder = JSValueDecoder()
         var invalidRawPerson = rawPerson
         invalidRawPerson["name"] = nil
-        XCTAssertThrowsError(try decoder.decode(Person.self, from: invalidRawPerson))
+        #expect(throws: DecodingError.self) {
+            try decoder.decode(Person.self, from: invalidRawPerson)
+        }
     }
 
-    func testDecode__when_provided_an_invalid_unkeyed_container_for_the_target_type__decoding_fails() throws {
+    @Test func decodingInvalidUnkeyedContainerFails() throws {
         let decoder = JSValueDecoder()
-        var invalidRawPeople = try XCTUnwrap(rawPeople as? [JSObject])
+        var invalidRawPeople = try #require(rawPeople as? [JSObject])
         invalidRawPeople[0]["name"] = nil
-        XCTAssertThrowsError(try decoder.decode([Person].self, from: invalidRawPeople))
+        #expect(throws: DecodingError.self) {
+            try decoder.decode([Person].self, from: invalidRawPeople)
+        }
     }
 
-    func testDecode__when_provided_an_invalid_single_value_type_for_the_input_value__decoding_fails() throws {
+    @Test func decodingInvalidSingleValueTypeFails() throws {
         let decoder = JSValueDecoder()
-        XCTAssertThrowsError(try decoder.decode(UInt.self, from: -1 as NSNumber))
+        #expect(throws: DecodingError.self) {
+            try decoder.decode(UInt.self, from: -1 as NSNumber)
+        }
     }
 
-    func testDecode__when_provided_a_valid_nested_array__decoding_is_successful() throws {
+    @Test func decodingValidNestedArraySucceeds() throws {
         let decoder = JSValueDecoder()
         let nestedPeople: JSArray = [rawPeople, rawPeople]
         let decodedPeople = try decoder.decode([[Person]].self, from: nestedPeople)
-        XCTAssertEqual([person.family, person.family], decodedPeople)
+        #expect([person.family, person.family] == decodedPeople)
     }
 
-    func testDecode_when_attempting_to_decode_a_class__decoding_fails() throws {
+    @Test func decodingClassFails() throws {
         class Pet: Decodable {
             var name: String
             var breed: String
@@ -116,79 +115,81 @@ final class JSValueDecoderTest: XCTestCase {
         }
 
         let decoder = JSValueDecoder()
-        XCTAssertThrowsError(try decoder.decode(Pet.self, from: rawPet))
+        #expect(throws: DecodingError.self) {
+            try decoder.decode(Pet.self, from: rawPet)
+        }
     }
 
-    func testDecode__when_nsnull_explicitly_present_in_container__it_correctly_decodes_to_nil() throws {
+    @Test func decodingNSNullToNilSucceeds() throws {
         let decoder = JSValueDecoder()
-        var rawPerson = rawPerson
-        rawPerson["pet"] = NSNull()
+        var rawPersonWithNull = rawPerson
+        rawPersonWithNull["pet"] = NSNull()
 
-        let decodedPerson = try decoder.decode(Person.self, from: rawPerson)
-        XCTAssertNil(decodedPerson.pet)
+        let decodedPerson = try decoder.decode(Person.self, from: rawPersonWithNull)
+        #expect(decodedPerson.pet == nil)
     }
 }
 
-final class JSValueEncoderTest: XCTestCase {
-    func testEncode__when_provided_with_an_instance_of_nonclass_codable_instance__encoding_succeeds() throws {
+struct JSValueEncoderTests {
+    @Test func encodingNonclassCodableSucceeds() throws {
         let encoder = JSValueEncoder()
         let encodedValue = try encoder.encode(person)
-        let encodedObject = try XCTUnwrap(encodedValue as? JSObject)
+        let encodedObject = try #require(encodedValue as? JSObject)
 
-        let name = try XCTUnwrap(encodedObject["name"] as? String)
-        XCTAssertEqual(person.name, name)
-        let age = try XCTUnwrap(encodedObject["age"] as? NSNumber)
-        XCTAssertEqual(person.age as NSNumber, age)
+        let name = try #require(encodedObject["name"] as? String)
+        #expect(person.name == name)
+        let age = try #require(encodedObject["age"] as? NSNumber)
+        #expect(person.age as NSNumber == age)
 
-        let pet = try XCTUnwrap(encodedObject["pet"] as? JSObject)
-        let petName = try XCTUnwrap(pet["name"] as? String)
-        XCTAssertEqual(person.pet?.name, petName)
-        let petBreed = try XCTUnwrap(pet["breed"] as? String)
-        XCTAssertEqual(person.pet?.breed, petBreed)
-        let petIsVaccinated = try XCTUnwrap(pet["isVaccinated"] as? Bool)
-        XCTAssertEqual(person.pet?.isVaccinated, petIsVaccinated)
+        let pet = try #require(encodedObject["pet"] as? JSObject)
+        let petName = try #require(pet["name"] as? String)
+        #expect(person.pet?.name == petName)
+        let petBreed = try #require(pet["breed"] as? String)
+        #expect(person.pet?.breed == petBreed)
+        let petIsVaccinated = try #require(pet["isVaccinated"] as? Bool)
+        #expect(person.pet?.isVaccinated == petIsVaccinated)
 
-        let family = try XCTUnwrap(encodedObject["family"] as? [JSObject])
-        XCTAssertEqual(person.family?.count, family.count)
-        let aniName = try XCTUnwrap(family[0]["name"] as? String)
-        XCTAssertEqual(person.family?[0].name, aniName)
-        let aniAge = try XCTUnwrap(family[0]["age"] as? NSNumber)
-        XCTAssertEqual(person.family?[0].age as? NSNumber, aniAge)
+        let family = try #require(encodedObject["family"] as? [JSObject])
+        #expect(person.family?.count == family.count)
+        let aniName = try #require(family[0]["name"] as? String)
+        #expect(person.family?[0].name == aniName)
+        let aniAge = try #require(family[0]["age"] as? NSNumber)
+        #expect(person.family?[0].age as? NSNumber == aniAge)
 
-        let leiaName = try XCTUnwrap(family[1]["name"] as? String)
-        XCTAssertEqual(person.family?[1].name, leiaName)
-        let leiaAge = try XCTUnwrap(family[1]["age"] as? NSNumber)
-        XCTAssertEqual(person.family?[1].age as? NSNumber, leiaAge)
+        let leiaName = try #require(family[1]["name"] as? String)
+        #expect(person.family?[1].name == leiaName)
+        let leiaAge = try #require(family[1]["age"] as? NSNumber)
+        #expect(person.family?[1].age as? NSNumber == leiaAge)
     }
 
-    func testEncode__when_provided_an_instance_of_a_nested_unkeyed_container__encoding_succedds() throws {
+    @Test func encodingNestedUnkeyedContainerSucceeds() throws {
         let encoder = JSValueEncoder()
         let encodedValue = try encoder.encode([person.family, person.family])
-        let encodedArray = try XCTUnwrap(encodedValue as? [[JSObject]])
-        XCTAssertEqual(encodedArray.count, 2)
-        XCTAssertEqual(encodedArray[0].count, 2)
-        XCTAssertEqual(encodedArray[1].count, 2)
+        let encodedArray = try #require(encodedValue as? [[JSObject]])
+        #expect(encodedArray.count == 2)
+        #expect(encodedArray[0].count == 2)
+        #expect(encodedArray[1].count == 2)
 
-        let family = try XCTUnwrap(person.family)
+        let family = try #require(person.family)
 
-        XCTAssertEqual(family[0].name, encodedArray[0][0]["name"] as? String)
-        XCTAssertEqual(family[0].name, encodedArray[1][0]["name"] as? String)
-        XCTAssertEqual(family[0].age as NSNumber, encodedArray[0][0]["age"] as? NSNumber)
-        XCTAssertEqual(family[0].age as NSNumber, encodedArray[1][0]["age"] as? NSNumber)
-        XCTAssertEqual(family[1].name, encodedArray[0][1]["name"] as? String)
-        XCTAssertEqual(family[1].name, encodedArray[1][1]["name"] as? String)
-        XCTAssertEqual(family[1].age as NSNumber, encodedArray[0][1]["age"] as? NSNumber)
-        XCTAssertEqual(family[1].age as NSNumber, encodedArray[1][1]["age"] as? NSNumber)
+        #expect(family[0].name == encodedArray[0][0]["name"] as? String)
+        #expect(family[0].name == encodedArray[1][0]["name"] as? String)
+        #expect(family[0].age as NSNumber == encodedArray[0][0]["age"] as? NSNumber)
+        #expect(family[0].age as NSNumber == encodedArray[1][0]["age"] as? NSNumber)
+        #expect(family[1].name == encodedArray[0][1]["name"] as? String)
+        #expect(family[1].name == encodedArray[1][1]["name"] as? String)
+        #expect(family[1].age as NSNumber == encodedArray[0][1]["age"] as? NSNumber)
+        #expect(family[1].age as NSNumber == encodedArray[1][1]["age"] as? NSNumber)
     }
 
-    func testEncode__when_nil_is_present_in_value__and_optional_encoding_is_set_to_explicit_nulls__it_is_encoded_as_nsnull() throws {
+    @Test func encodingNilWithExplicitNullsSucceeds() throws {
         struct Test: Encodable {
             var name: String?
         }
 
         let explicitEncoder = JSValueEncoder(optionalEncodingStrategy: .explicitNulls)
-        let encoded = try XCTUnwrap(try explicitEncoder.encode(Test()) as? JSObject)
-        XCTAssertTrue(encoded["name"] is NSNull)
-        XCTAssertNotNil(encoded["name"])
+        let encoded = try #require(try explicitEncoder.encode(Test()) as? JSObject)
+        #expect(encoded["name"] is NSNull)
+        #expect(encoded["name"] != nil)
     }
 }

@@ -1,15 +1,8 @@
-//
-//  CodableTests.swift
-//  CodableTests
-//
-//  Created by Steven Sherry on 12/10/23.
-//  Copyright © 2023 Drifty Co. All rights reserved.
-//
-
-import XCTest
+import Foundation
+import Testing
 import Capacitor
 
-final class NestedCodableTests: XCTestCase {
+struct NestedCodableTests {
     private let nestedData: JSObject = [
         "id": 1,
         "user": [
@@ -30,34 +23,32 @@ final class NestedCodableTests: XCTestCase {
         reviewCount: 4
     )
 
-    func testDecode__when_decoding_a_decodable_value_with_a_custom_implementation_with_nested_values__it_successfully_decodes() throws {
+    @Test func decodingNestedValueWithCustomImplementation() throws {
         let decoder = JSValueDecoder()
         let decoded = try decoder.decode(Flattened.self, from: nestedData)
-        XCTAssertEqual(decoded, flatData)
+        #expect(decoded == flatData)
     }
 
-    func testEncode__when_encoding_an_encodable_value_with_a_custom_implementation_with_nested_values__it_successfully_encodes() throws {
+    @Test func encodingNestedValueWithCustomImplementation() throws {
         let encoder = JSValueEncoder()
-        let encoded = try XCTUnwrap(try encoder.encode(flatData) as? JSObject)
+        let encoded = try #require(try encoder.encode(flatData) as? JSObject)
 
-        print(encoded)
-        let encodedId = try XCTUnwrap(encoded["id"] as? NSNumber)
-        let encodedUser = try XCTUnwrap(encoded["user"] as? JSObject)
-        let encodedUserName = try XCTUnwrap(encodedUser["userName"] as? String)
-        let encodedRealInfo = try XCTUnwrap(encodedUser["realInfo"] as? JSObject)
-        let encodedFullName = try XCTUnwrap(encodedRealInfo["fullName"] as? String)
-        let encodedReviewCount = try XCTUnwrap(encoded["reviewCount"] as? JSArray)
-        let encodedCountEntry = try XCTUnwrap(encodedReviewCount[0] as? JSObject)
-        let encodedCount = try XCTUnwrap(encodedCountEntry["count"] as? NSNumber)
+        let encodedId = try #require(encoded["id"] as? NSNumber)
+        let encodedUser = try #require(encoded["user"] as? JSObject)
+        let encodedUserName = try #require(encodedUser["userName"] as? String)
+        let encodedRealInfo = try #require(encodedUser["realInfo"] as? JSObject)
+        let encodedFullName = try #require(encodedRealInfo["fullName"] as? String)
+        let encodedReviewCount = try #require(encoded["reviewCount"] as? JSArray)
+        let encodedCountEntry = try #require(encodedReviewCount[0] as? JSObject)
+        let encodedCount = try #require(encodedCountEntry["count"] as? NSNumber)
 
-        XCTAssertEqual(encodedId, flatData.id as NSNumber)
-        XCTAssertEqual(encodedUserName, flatData.userName)
-        XCTAssertEqual(encodedFullName, flatData.fullName)
-        XCTAssertEqual(encodedCount, flatData.reviewCount as NSNumber)
+        #expect(encodedId == flatData.id as NSNumber)
+        #expect(encodedUserName == flatData.userName)
+        #expect(encodedFullName == flatData.fullName)
+        #expect(encodedCount == flatData.reviewCount as NSNumber)
     }
 }
 
-// Example taken from https://stackoverflow.com/questions/44549310/how-to-decode-a-nested-json-struct-with-swift-decodable-protocol
 private struct Flattened: Equatable {
     let id: Int
     let userName: String
@@ -83,7 +74,6 @@ extension Flattened: Decodable {
     }
 
     init(from decoder: Decoder) throws {
-        // id
         let container = try decoder.container(keyedBy: RootKeys.self)
         id = try container.decode(Int.self, forKey: .id)
         let userContainer = try container.nestedContainer(keyedBy: UserKeys.self, forKey: .user)

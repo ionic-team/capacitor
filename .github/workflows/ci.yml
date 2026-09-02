@@ -89,7 +89,7 @@ jobs:
       - run: npm test
         working-directory: ./core
   test-ios:
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 30
     needs:
       - setup
@@ -97,7 +97,7 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - /Applications/Xcode_26.0.app
+          - /Applications/Xcode_26.6.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - run: xcrun simctl list > /dev/null
