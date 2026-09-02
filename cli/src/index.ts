@@ -384,11 +384,12 @@ export function runProgram(config: Config): void {
     .command('migrate')
     .option('--noprompt', 'do not prompt for confirmation')
     .option('--packagemanager <packageManager>', 'The package manager to use for dependency installs (npm, pnpm, yarn)')
+    .option('--update-eslint', 'also update ESLint to v10 and @ionic/eslint-config to v1 (breaking change to the lint setup)')
     .description('Migrate your current Capacitor app to the latest major version of Capacitor.')
     .action(
-      wrapAction(async ({ noprompt, packagemanager }) => {
+      wrapAction(async ({ noprompt, packagemanager, updateEslint }) => {
         const { migrateCommand } = await import('./tasks/migrate');
-        await migrateCommand(config, noprompt, packagemanager);
+        await migrateCommand(config, noprompt, packagemanager, updateEslint);
       }),
     );
 

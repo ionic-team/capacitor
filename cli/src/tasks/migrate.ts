@@ -79,7 +79,12 @@ module.exports = [
 ];
 `;
 
-export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
+export async function migrateCommand(
+  config: Config,
+  noprompt: boolean,
+  packagemanager: string,
+  updateEslintOptIn: boolean,
+): Promise<void> {
   if (config === null) {
     fatal('Config data missing');
   }
@@ -161,9 +166,32 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         installerType = manager;
       }
 
+      let updateEslint = false;
+      if (config.app.package.devDependencies?.['@ionic/eslint-config']) {
+        if (updateEslintOptIn) {
+          updateEslint = true;
+        } else if (!noprompt) {
+          const { eslintConfirm } = await logPrompt(
+            `This app uses @ionic/eslint-config. Version 1 requires ESLint 9 or 10 and a flat config file, and may surface new lint errors. \n`,
+            {
+              type: 'text',
+              name: 'eslintConfirm',
+              message: `Update ESLint setup? (y/N)`,
+              initial: 'n',
+            },
+          );
+          updateEslint = typeof eslintConfirm === 'string' && eslintConfirm.toLowerCase() === 'y';
+        }
+        if (!updateEslint) {
+          logger.info(
+            'Skipping the ESLint update. The current setup keeps working; to update later, see https://github.com/ionic-team/eslint-config#migrating-from-0x',
+          );
+        }
+      }
+
       try {
         await runTask(`Installing Latest Modules using ${installerType}.`, () => {
-          return installLatestLibs(installerType, runNpmInstall, config);
+          return installLatestLibs(installerType, runNpmInstall, config, updateEslint);
         });
       } catch (ex) {
         logger.error(
@@ -383,7 +411,7 @@ async function checkCapacitorMajorVersion(config: Config): Promise<number> {
   return majorVersion;
 }
 
-async function installLatestLibs(dependencyManager: string, runInstall: boolean, config: Config) {
+async function installLatestLibs(dependencyManager: string, runInstall: boolean, config: Config, updateEslint: boolean) {
   const pkgJsonPath = join(config.app.rootDir, 'package.json');
   const pkgJsonFile = readFile(pkgJsonPath);
   if (!pkgJsonFile) {
@@ -415,12 +443,15 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
     }
   }
 
-  if (pkgJson['devDependencies']?.['@ionic/eslint-config']) {
+  if (updateEslint && pkgJson['devDependencies']?.['@ionic/eslint-config']) {
     pkgJson['devDependencies']['@ionic/eslint-config'] = ionicEslintConfigVersion;
     if (pkgJson['devDependencies']['eslint']) {
       pkgJson['devDependencies']['eslint'] = eslintVersion;
     }
-    delete pkgJson.eslintConfig;
+    // a block with custom settings is kept so they can be ported to the new config file
+    if (Object.keys(pkgJson.eslintConfig ?? {}).every((key) => key === 'extends')) {
+      delete pkgJson.eslintConfig;
+    }
     if (pkgJson.scripts?.['eslint']) {
       pkgJson.scripts['eslint'] = pkgJson.scripts['eslint'].replace(' --ext ts', '');
     }
