@@ -5,6 +5,7 @@ import { getCapacitorPackageVersion } from '../common';
 import { needsStaticPod } from '../cordova';
 import type { Config } from '../definitions';
 import { getMajoriOSVersion } from '../ios/common';
+import { logger } from '../log';
 import {
   PluginType,
   getAllElements,
@@ -12,6 +13,7 @@ import {
   getPlatformElement,
   getPluginPlatform,
   getPluginType,
+  resolvePlugin,
 } from '../plugin';
 import type { Plugin } from '../plugin';
 import { setAllStringIn } from '../tasks/migrate';
@@ -343,6 +345,135 @@ export async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], conf
   });
 }
 
+function buildBinaryTargetEntries(p: Plugin, frameworks: any[]): { binaryTargetsText: string; binaryDepsText: string } {
+  const customXcframeworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.xcframework'));
+  const customFrameworks = frameworks.filter((f: any) => f.$.custom === 'true' && f.$.src.endsWith('.framework'));
+
+  if (customFrameworks.length > 0) {
+    customFrameworks.forEach((f: any) => {
+      logger.warn(
+        `${p.id}: custom .framework files are not supported as binaryTarget in SPM (${f.$.src}). Convert to .xcframework for SPM compatibility.`,
+      );
+    });
+  }
+
+  const binaryTargetsText = customXcframeworks
+    .map((f: any) => {
+      const name = f.$.src.split('/').pop().replace('.xcframework', '');
+      return `,
+        .binaryTarget(
+            name: "${name}",
+            path: "${f.$.src}"
+        )`;
+    })
+    .join('');
+
+  const binaryDepsText = customXcframeworks
+    .map((f: any) => {
+      const name = f.$.src.split('/').pop().replace('.xcframework', '');
+      return `,\n                .target(name: "${name}")`;
+    })
+    .join('');
+
+  return { binaryTargetsText, binaryDepsText };
+}
+
+function buildResourcesText(resources: any[]) {
+  const resourceEntry = [];
+  for (const resource of resources) {
+    resourceEntry.push(`.copy("resources/${resource.$.src.split('/').pop()}")`);
+  }
+  return resources.length > 0
+    ? `,
+            resources: [
+                ${resourceEntry.join(',\n                ')}
+            ]`
+    : '';
+}
+
+async function buildDependencyTexts(p: Plugin, config: Config) {
+  let allDependencies: string[] = getPlatformElement(p, platform, 'dependency');
+  if (p.xml['dependency']) {
+    allDependencies = allDependencies.concat(p.xml['dependency']);
+  }
+  let packageText = '';
+  let productText = '';
+  await Promise.all(
+    allDependencies.map(async (dep: any) => {
+      let plugin = dep.$.id;
+      if (plugin.includes('@') && plugin.indexOf('@') !== 0) {
+        [plugin] = plugin.split('@');
+      }
+      const depPlugin = await resolvePlugin(config, plugin);
+      if (depPlugin) {
+        const headerFiles = getPlatformElement(depPlugin, platform, 'header-file');
+        const resources = getPlatformElement(depPlugin, platform, 'resource-file');
+        const sourceFiles = getPlatformElement(depPlugin, platform, 'source-file');
+        if (sourceFiles.length === 0 && headerFiles.length === 0 && resources.length === 0) {
+          return;
+        }
+        packageText += `,\n        .package(name: "${depPlugin.name}", path: "../${depPlugin.name}")`;
+        productText += `,\n                .product(name: "${depPlugin.name}", package: "${depPlugin.name}")`;
+      }
+    }),
+  );
+  return { packageText, productText };
+}
+
+function buildCSettingsText(p: Plugin, sourceFiles: any[]): string {
+  const pluginId = p.id;
+  const allFlags = new Set<string>();
+  for (const sourceFile of sourceFiles) {
+    const flags = sourceFile.$?.['compiler-flags'];
+    if (flags) {
+      flags
+        .split(/\s+/)
+        .map((f: string) => f.trim())
+        .filter((f: string) => f.length > 0)
+        .forEach((f: string) => allFlags.add(f));
+    }
+  }
+
+  if (allFlags.size === 0) {
+    return '';
+  }
+
+  const entries: string[] = [];
+  const unsupportedFlags: string[] = [];
+
+  for (const flag of allFlags) {
+    if (flag.startsWith('-D')) {
+      const definition = flag.slice(2);
+      const eqIndex = definition.indexOf('=');
+      if (eqIndex !== -1) {
+        const name = definition.slice(0, eqIndex);
+        const value = definition.slice(eqIndex + 1);
+        entries.push(`                .define("${name}", to: "${value}")`);
+      } else {
+        entries.push(`                .define("${definition}")`);
+      }
+    } else {
+      unsupportedFlags.push(flag);
+    }
+  }
+
+  if (unsupportedFlags.length > 0) {
+    logger.warn(
+      `${pluginId}: the following compiler flags are not supported in SPM and were ignored: ${unsupportedFlags.join(', ')}. ` +
+        `This might cause the plugin to fail to compile.`,
+    );
+  }
+
+  if (entries.length === 0) {
+    return '';
+  }
+
+  return `,
+            cSettings: [
+${entries.join(',\n')}
+            ]`;
+}
+
 export async function generateCordovaPackageFile(p: Plugin, config: Config): Promise<void> {
   const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
@@ -367,6 +498,29 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
     );
     await writeFile(packageSwiftPath, content);
   } else {
+    const resources = getPlatformElement(p, platform, 'resource-file');
+    const sourceFiles = getPlatformElement(p, platform, 'source-file');
+    if (sourceFiles.length === 0 && headerFiles.length === 0 && resources.length === 0) {
+      return;
+    }
+    const frameworks = getPlatformElement(p, platform, 'framework');
+    const { binaryTargetsText, binaryDepsText } = buildBinaryTargetEntries(p, frameworks);
+    const cSettingsText = buildCSettingsText(p, sourceFiles);
+    const systemFrameworks = frameworks.filter((f: any) => !f.$.custom && f.$.src.endsWith('.framework'));
+    const hasWeakFrameworks = systemFrameworks.some((f: any) => f.$.weak === 'true');
+    const requiredSystemFrameworks = systemFrameworks.filter((f: any) => f.$.weak !== 'true');
+    const resourcesText = buildResourcesText(resources);
+
+    const libraryTypeText = hasWeakFrameworks ? `\n            type: .dynamic,` : '';
+    const linkerSettingsText =
+      requiredSystemFrameworks.length > 0
+        ? `,
+            linkerSettings: [
+${requiredSystemFrameworks.map((f: any) => `                .linkedFramework("${f.$.src.replace('.framework', '')}")`).join(',\n')}
+            ]`
+        : '';
+    const { packageText, productText } = await buildDependencyTexts(p, config);
+
     const content = `// swift-tools-version: 5.9
 
 import PackageDescription
@@ -376,21 +530,21 @@ let package = Package(
     platforms: [.iOS(.v${iosVersion})],
     products: [
         .library(
-            name: "${p.name}",
+            name: "${p.name}",${libraryTypeText}
             targets: ["${p.name}"]
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")${packageText}
     ],
     targets: [
         .target(
             name: "${p.name}",
             dependencies: [
-                .product(name: "Cordova", package: "capacitor-swift-pm")
+                .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}${productText}
             ],
-            path: "."${headersText}
-        )
+            path: "."${resourcesText}${headersText}${cSettingsText}${linkerSettingsText}
+        )${binaryTargetsText}
     ]
 )`;
     await writeFile(join(config.ios.cordovaPluginsDirAbs, 'sources', p.name, 'Package.swift'), content);
