@@ -1,7 +1,6 @@
 import { copy, readFile, writeFile, remove } from 'fs-extra';
 import { join } from 'path';
 
-import { getCapacitorPackageVersion } from '../common';
 import { needsStaticPod } from '../cordova';
 import type { Config } from '../definitions';
 import { getMajoriOSVersion } from '../ios/common';
@@ -16,7 +15,7 @@ import {
   resolvePlugin,
 } from '../plugin';
 import type { Plugin } from '../plugin';
-import { setAllStringIn } from '../tasks/migrate';
+import { renderCapacitorPackage, resolveCapacitorPackage, rewriteCapacitorDependency } from '../util/capacitor-package';
 import { extractTemplate } from '../util/template';
 
 const platform = 'ios';
@@ -475,7 +474,7 @@ ${entries.join(',\n')}
 }
 
 export async function generateCordovaPackageFile(p: Plugin, config: Config): Promise<void> {
-  const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
+  const capacitorPackage = await resolveCapacitorPackage(config, 'from');
   const iosVersion = getMajoriOSVersion(config);
   const headerFiles = getPlatformElement(p, platform, 'header-file');
   let headersText = '';
@@ -489,13 +488,8 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
   if (platformTag.$?.package) {
     const packageSwiftPath = join(p.rootPath, 'Package.swift');
     let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
-    content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, `capacitor-swift-pm`);
-    content = setAllStringIn(
-      content,
-      `url: "https://github.com/ionic-team/capacitor-swift-pm.git",`,
-      `)`,
-      ` from: "${iosPlatformVersion}"`,
-    );
+    content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, capacitorPackage.identity);
+    content = rewriteCapacitorDependency(content, capacitorPackage, p.rootPath);
     await writeFile(packageSwiftPath, content);
   } else {
     const resources = getPlatformElement(p, platform, 'resource-file');
@@ -535,13 +529,13 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "${iosPlatformVersion}")${packageText}
+        ${renderCapacitorPackage(capacitorPackage, join(config.ios.cordovaPluginsDirAbs, 'sources', p.name))}${packageText}
     ],
     targets: [
         .target(
             name: "${p.name}",
             dependencies: [
-                .product(name: "Cordova", package: "capacitor-swift-pm")${binaryDepsText}${productText}
+                .product(name: "Cordova", package: "${capacitorPackage.identity}")${binaryDepsText}${productText}
             ],
             path: "."${resourcesText}${headersText}${cSettingsText}${linkerSettingsText}
         )${binaryTargetsText}

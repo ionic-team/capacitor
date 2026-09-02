@@ -1,5 +1,9 @@
 import Capacitor
+// Under CocoaPods this file is compiled into the Cordova module itself, so importing it would be a
+// self-import. Under SPM the Swift and Objective-C halves are separate targets.
+#if SWIFT_PACKAGE
 import Cordova
+#endif
 
 @objc(CordovaPlugin)
 public class CordovaPlugin: CAPPlugin, CAPBridgedPlugin {
