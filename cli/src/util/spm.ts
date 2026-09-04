@@ -5,7 +5,6 @@ import type { PlistObject } from 'plist';
 import { build, parse } from 'plist';
 import { extract } from 'tar';
 
-import { getCapacitorPackageVersion } from '../common';
 import { getCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
@@ -13,6 +12,7 @@ import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
 import { getPlatformElement, getPluginPlatform, getPluginType, PluginType } from '../plugin';
+import { renderCapacitorPackage, resolveCapacitorPackage } from '../util/capacitor-package';
 import { convertToUnixPath } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 
@@ -99,12 +99,13 @@ export async function removeCocoapodsFiles(config: Config): Promise<void> {
 }
 
 export async function generatePackageText(config: Config, plugins: Plugin[]): Promise<string> {
-  const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
   const iosVersion = getMajoriOSVersion(config);
   const cordovaPlugins = await getCordovaPlugins(config, 'ios');
   const enableCordova = cordovaPlugins.length > 0 || config.app.forceCordova;
   const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits ?? {};
   const packageOptions = config.app.extConfig.experimental?.ios?.spm?.packageOptions ?? {};
+  const capacitorPackage = await resolveCapacitorPackage(config);
+  const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
   const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '5.9';
 
   let packageSwiftText = `// swift-tools-version: ${swiftToolsVersion}
@@ -120,7 +121,7 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "${iosPlatformVersion}")`;
+        ${renderCapacitorPackage(capacitorPackage, spmDirectory)}`;
 
   for (const plugin of plugins) {
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
@@ -165,10 +166,10 @@ let package = Package(
         .target(
             name: "CapApp-SPM",
             dependencies: [
-                .product(name: "Capacitor", package: "capacitor-swift-pm")`;
+                .product(name: "Capacitor", package: "${capacitorPackage.identity}")`;
 
   if (enableCordova) {
-    packageSwiftText += `,\n                .product(name: "Cordova", package: "capacitor-swift-pm")`;
+    packageSwiftText += `,\n                .product(name: "${capacitorPackage.cordovaProduct}", package: "${capacitorPackage.identity}")`;
   }
 
   for (const plugin of plugins) {

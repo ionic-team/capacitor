@@ -13,6 +13,11 @@ import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 import { setAllStringIn } from '../tasks/migrate';
 import {
+  findCapacitorDependencyVersion,
+  resolveCapacitorPackage,
+  rewriteCapacitorDependency,
+} from '../util/capacitor-package';
+import {
   generateCordovaPodspecs,
   generateCordovaPackageFiles,
   copyPluginsNativeFiles,
@@ -65,16 +70,29 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     }
 
     const validSPMPackages = await checkPluginsForPackageSwift(config, plugins);
+    const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
+    const majorCapVersion = major(iosPlatformVersion);
+    const capacitorPackage = await resolveCapacitorPackage(config, 'from');
     await Promise.all(
       validSPMPackages.map(async (plugin) => {
-        const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
         const packageSwiftPath = join(plugin.rootPath, 'Package.swift');
         let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
-        const regex = new RegExp(
-          'url:\\s*"https://github.com/ionic-team/capacitor-swift-pm\\.git",\\s*from:\\s*"([^"]+)"',
-        );
-        const version = content.match(regex)?.[1];
-        const majorCapVersion = major(iosPlatformVersion);
+        const version = findCapacitorDependencyVersion(content);
+
+        if (version && major(version) != majorCapVersion) {
+          logger.warn(`${plugin.id} is built for Capacitor ${major(version)}, it might cause issues`);
+        }
+
+        if (capacitorPackage.sourceBased) {
+          // The plugin has to resolve to the same package identity as the app, or SPM ends up with
+          // two packages that both vend a Capacitor product.
+          const rewritten = rewriteCapacitorDependency(content, capacitorPackage, plugin.rootPath);
+          if (rewritten !== content) {
+            await writeFile(packageSwiftPath, rewritten);
+          }
+          return;
+        }
+
         if (version && major(version) != majorCapVersion) {
           const preCapVersion = prerelease(iosPlatformVersion);
           const forceVersion = preCapVersion ? iosPlatformVersion : `${majorCapVersion}.0.0`;
@@ -85,7 +103,6 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
             ` from: "${forceVersion}"`,
           );
           await writeFile(packageSwiftPath, content);
-          logger.warn(`${plugin.id} is built for Capacitor ${major(version)}, it might cause issues`);
         }
       }),
     );
