@@ -129,61 +129,137 @@ function referencesCapacitor(call: string): boolean {
   return call.includes(BINARY_PACKAGE_IDENTITY) || call.includes(`${SOURCE_PACKAGE_URL}`);
 }
 
-/** Locates `.package(...)` calls, tracking paren depth so nested calls don't terminate the match. */
-function findPackageCalls(content: string): { start: number; end: number; text: string }[] {
-  const calls: { start: number; end: number; text: string }[] = [];
+interface PackageCall {
+  start: number;
+  /** Exclusive. */
+  end: number;
+  text: string;
+}
+
+/**
+ * Locates `.package(...)` calls in code, skipping any inside a comment or string literal.
+ *
+ * Commented-out calls have to be skipped rather than merely tolerated: `replacePackageCalls`
+ * keeps the first match and drops the rest, so a commented dependency above the real one would
+ * otherwise be the entry that survives.
+ */
+function findPackageCalls(content: string): PackageCall[] {
   const marker = '.package(';
-  let index = content.indexOf(marker);
+  const calls: PackageCall[] = [];
 
-  while (index !== -1) {
-    let depth = 0;
-    let inString = false;
-    let cursor = index + marker.length - 1;
-
-    for (; cursor < content.length; cursor++) {
-      const char = content[cursor];
-      if (inString) {
-        if (char === '\\') {
-          cursor++;
-        } else if (char === '"') {
-          inString = false;
-        }
-        continue;
-      }
-      if (char === '"') {
-        inString = true;
-      } else if (char === '(') {
-        depth++;
-      } else if (char === ')') {
-        depth--;
-        if (depth === 0) {
-          break;
-        }
-      }
+  for (let index = 0; index < content.length; index++) {
+    if (content[index] === '"') {
+      index = skipString(content, index);
+      continue;
     }
 
-    if (depth !== 0) {
+    if (content.startsWith('//', index)) {
+      const newline = content.indexOf('\n', index);
+      if (newline === -1) {
+        break;
+      }
+      index = newline;
+      continue;
+    }
+
+    if (content.startsWith('/*', index)) {
+      const close = content.indexOf('*/', index + 2);
+      if (close === -1) {
+        break;
+      }
+      index = close + 1;
+      continue;
+    }
+
+    if (!content.startsWith(marker, index)) {
+      continue;
+    }
+
+    const end = findCallEnd(content, index + marker.length - 1);
+    if (end === -1) {
       break;
     }
 
-    calls.push({ start: index, end: cursor + 1, text: content.slice(index, cursor + 1) });
-    index = content.indexOf(marker, cursor + 1);
+    calls.push({ start: index, end, text: content.slice(index, end) });
+    index = end - 1;
   }
 
   return calls;
 }
 
-function replacePackageCalls(content: string, rendered: string): string {
-  let result = content;
+/** Walks from an opening paren to its match, tracking depth so nested calls don't terminate it. */
+function findCallEnd(content: string, openParen: number): number {
+  let depth = 0;
 
-  // Walk backwards so earlier offsets stay valid as we splice.
-  for (const call of findPackageCalls(content).reverse()) {
-    if (referencesCapacitor(call.text)) {
-      result = result.slice(0, call.start) + rendered + result.slice(call.end);
+  for (let cursor = openParen; cursor < content.length; cursor++) {
+    const char = content[cursor];
+    if (char === '"') {
+      cursor = skipString(content, cursor);
+    } else if (char === '(') {
+      depth++;
+    } else if (char === ')') {
+      depth--;
+      if (depth === 0) {
+        return cursor + 1;
+      }
     }
   }
 
-  return result;
+  return -1;
+}
+
+/** Returns the index of the closing quote of the string literal opening at `open`. */
+function skipString(content: string, open: number): number {
+  for (let cursor = open + 1; cursor < content.length; cursor++) {
+    if (content[cursor] === '\\') {
+      cursor++;
+    } else if (content[cursor] === '"') {
+      return cursor;
+    }
+  }
+
+  return content.length;
+}
+
+/**
+ * Points every Capacitor dependency at `rendered`, collapsing them to a single entry.
+ *
+ * A manifest supporting both Capacitor 8 and 9 can declare the prebuilt and source packages side
+ * by side. Both rewrite to the same text, and SPM rejects a manifest that declares one dependency
+ * twice, so the extra entries are removed rather than replaced.
+ */
+function replacePackageCalls(content: string, rendered: string): string {
+  const matches = findPackageCalls(content).filter((call) => referencesCapacitor(call.text));
+
+  if (matches.length === 0) {
+    return content;
+  }
+
+  const [survivor, ...duplicates] = matches;
+  let result = content;
+
+  // Every duplicate sits after the survivor, so splicing them out backwards leaves its offsets
+  // valid and guarantees each one is preceded by the comma separating it from an earlier entry.
+  for (const call of duplicates.reverse()) {
+    result = result.slice(0, startOfEntry(content, call.start)) + result.slice(call.end);
+  }
+
+  return result.slice(0, survivor.start) + rendered + result.slice(survivor.end);
+}
+
+/**
+ * Extends a deletion back over the comma separating an entry from the previous one. Swift allows a
+ * trailing comma in an array literal but not a leading one, so the preceding comma is the one to
+ * take.
+ */
+function startOfEntry(content: string, start: number): number {
+  let cursor = start - 1;
+
+  while (cursor >= 0 && /\s/.test(content[cursor])) {
+    cursor--;
+  }
+
+  return content[cursor] === ',' ? cursor : start;
 }
 
 function renderRequirement(requirement: CapacitorRequirement): string {

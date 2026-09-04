@@ -19,6 +19,10 @@ const { getCapacitorPackageVersion } = require('../src/common');
 
 const SPM_DIR = '/app/ios/App/CapApp-SPM';
 
+function occurrences(haystack: string, needle: string): number {
+  return haystack.split(needle).length - 1;
+}
+
 function makeConfig(extConfig: any = {}, rootDir = '/app'): Config {
   return {
     app: { rootDir, extConfig },
@@ -251,6 +255,98 @@ describe('rewriting an existing Package.swift', () => {
       pkg,
       '/plugin',
     );
+    expect(rewriteCapacitorDependency(once, pkg, '/plugin')).toBe(once);
+  });
+
+  it('collapses a manifest declaring both the prebuilt and source packages', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0"),
+        .package(url: "https://github.com/ionic-team/capacitor", exact: "9.0.0")
+    ]`;
+
+    const after = rewriteCapacitorDependency(before, pkg, '/plugin');
+
+    expect(occurrences(after, '.package(')).toBe(1);
+    expect(after).toBe(`dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor", exact: "9.0.0")
+    ]`);
+  });
+
+  it('keeps the first entry when the source package is declared first', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor", from: "9.0.0"),
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0")
+    ]`;
+
+    const after = rewriteCapacitorDependency(before, pkg, '/plugin');
+
+    expect(occurrences(after, '.package(')).toBe(1);
+    expect(after).toBe(`dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor", exact: "9.0.0")
+    ]`);
+  });
+
+  it('collapses three references down to one, preserving unrelated entries', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/other/thing.git", from: "1.0.0"),
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0"),
+        .package(path: "../capacitor-swift-pm"),
+        .package(url: "https://github.com/ionic-team/capacitor", branch: "next")
+    ]`;
+
+    const after = rewriteCapacitorDependency(before, pkg, '/plugin');
+
+    expect(occurrences(after, '.package(')).toBe(2);
+    expect(after).toContain('.package(url: "https://github.com/other/thing.git", from: "1.0.0")');
+    expect(occurrences(after, '.package(url: "https://github.com/ionic-team/capacitor", exact: "9.0.0")')).toBe(1);
+  });
+
+  it('leaves no leading comma when the surviving entry is last', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0"),
+        .package(url: "https://github.com/other/thing.git", from: "1.0.0")
+    ]`;
+
+    const after = rewriteCapacitorDependency(before, pkg, '/plugin');
+
+    expect(after).not.toMatch(/\[\s*,/);
+    expect(after).not.toMatch(/,\s*,/);
+  });
+
+  it('ignores a commented-out dependency rather than letting it win the collapse', () => {
+    const before = `dependencies: [
+        // .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", branch: "main"),
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0")
+    ]`;
+
+    const after = rewriteCapacitorDependency(before, pkg, '/plugin');
+
+    expect(after).toContain('// .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", branch: "main")');
+    expect(after).toContain('.package(url: "https://github.com/ionic-team/capacitor", exact: "9.0.0")');
+  });
+
+  it('ignores a dependency inside a block comment', () => {
+    const before = `/* .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "7.0.0") */
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0")`;
+
+    const after = rewriteCapacitorDependency(before, pkg, '/plugin');
+
+    expect(after).toContain(
+      '/* .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "7.0.0") */',
+    );
+    expect(after).toContain('.package(url: "https://github.com/ionic-team/capacitor", exact: "9.0.0")');
+  });
+
+  it('stays idempotent after collapsing', () => {
+    const once = rewriteCapacitorDependency(
+      `dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0"),
+        .package(url: "https://github.com/ionic-team/capacitor", exact: "9.0.0")
+    ]`,
+      pkg,
+      '/plugin',
+    );
+
     expect(rewriteCapacitorDependency(once, pkg, '/plugin')).toBe(once);
   });
 
