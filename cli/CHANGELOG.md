@@ -3,11 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [9.0.0-alpha.6](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.5...9.0.0-alpha.6) (2026-07-14)
+## [8.5.1](https://github.com/ionic-team/capacitor/compare/8.5.0...8.5.1) (2026-08-31)
 
 ### Bug Fixes
 
-- **cli:** Don't add kotlin plugin for Cordova plugins ([#8518](https://github.com/ionic-team/capacitor/issues/8518)) ([9a2d3e6](https://github.com/ionic-team/capacitor/commit/9a2d3e65a616366b42dbcc2ffa40790b9f102722))
+- **cli:** use POSIX paths in CapApp-SPM Package.swift ([#8549](https://github.com/ionic-team/capacitor/issues/8549)) ([5e5bb3b](https://github.com/ionic-team/capacitor/commit/5e5bb3befc312477900252ab07e23b596f8cb0d1))
 
 # [8.5.0](https://github.com/ionic-team/capacitor/compare/8.4.2...8.5.0) (2026-07-31)
 
@@ -18,6 +18,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 - **cli:** add migrator functionality for adopting UIScene ([#8544](https://github.com/ionic-team/capacitor/issues/8544)) ([984fa85](https://github.com/ionic-team/capacitor/commit/984fa85ba0adab0aacf895aed6323bf4b503dccb))
+
+# [9.0.0-alpha.6](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.5...9.0.0-alpha.6) (2026-07-14)
+
+### Bug Fixes
+
+- **cli:** Don't add kotlin plugin for Cordova plugins ([#8518](https://github.com/ionic-team/capacitor/issues/8518)) ([9a2d3e6](https://github.com/ionic-team/capacitor/commit/9a2d3e65a616366b42dbcc2ffa40790b9f102722))
 
 ## [8.4.2](https://github.com/ionic-team/capacitor/compare/8.4.1...8.4.2) (2026-07-14)
 
