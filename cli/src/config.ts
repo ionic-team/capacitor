@@ -137,11 +137,14 @@ async function loadExtConfigJS(
   extConfigFilePath: string,
 ): Promise<ExtConfigPairs> {
   try {
+    const extConfigObject = await require(extConfigFilePath);
+    const extConfig = extConfigObject.default ? await extConfigObject.default : extConfigObject;
+
     return {
       extConfigType: 'js',
       extConfigName,
       extConfigFilePath: extConfigFilePath,
-      extConfig: await require(extConfigFilePath),
+      extConfig,
     };
   } catch (e: any) {
     fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
