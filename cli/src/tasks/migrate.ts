@@ -217,9 +217,23 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           return updateAndroidManifest(join(config.android.srcMainDirAbs, 'AndroidManifest.xml'));
         });
 
-        const gradleWrapperVersion = getGradleWrapperVersion(
-          join(config.android.platformDirAbs, 'gradle', 'wrapper', 'gradle-wrapper.properties'),
-        );
+        const gradleWrapperPath = join(config.android.platformDirAbs, 'gradle', 'wrapper', 'gradle-wrapper.properties');
+
+        const gradleWrapperVersion = getGradleWrapperVersion(gradleWrapperPath);
+
+        const outdatedGradle = gte(gradleVersion, gradleWrapperVersion);
+
+        if (outdatedGradle) {
+          await runTask(`Updating gradle-wrapper.properties`, () => {
+            return updateFile(
+              config,
+              gradleWrapperPath,
+              'services.gradle.org/distributions/gradle-',
+              '.zip',
+              `${gradleVersion}-all`,
+            );
+          });
+        }
 
         await runTask(`Migrating app build.gradle file.`, () => {
           return updateAppBuildGradle(join(config.android.appDirAbs, 'build.gradle'));
@@ -254,7 +268,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         });
 
         // Always run before root build.gradle changes as the AGP update could be incompatible with current gradle
-        if (!installFailed && gte(gradleVersion, gradleWrapperVersion)) {
+        if (!installFailed && outdatedGradle) {
           try {
             await runTask(`Upgrading gradle wrapper`, () => {
               return updateGradleWrapperFiles(config.android.platformDirAbs);
