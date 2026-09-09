@@ -26,7 +26,7 @@
   },
   "prettier": "@ionic/prettier-config",
   "devDependencies": {
-    "@ionic/eslint-config": "^1.0.0",
+    "@ionic/eslint-config": "^0.5.0",
     "@ionic/prettier-config": "^4.0.0",
     "@ionic/swiftlint-config": "^2.0.0",
     "@types/node": "18.18.6",
