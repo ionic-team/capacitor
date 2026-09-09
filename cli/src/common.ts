@@ -531,7 +531,7 @@ export async function checkJDKMajorVersion(): Promise<number> {
     } else {
       return -1;
     }
-  } catch (e) {
+  } catch {
     return -1;
   }
 }

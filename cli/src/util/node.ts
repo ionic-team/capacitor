@@ -45,6 +45,7 @@ export const requireTS = async (ts: typeof typescript, p: string): Promise<unkno
           `Your installed version of TypeScript (${ts.version}) no longer provides the compiler API Capacitor previously used to load .ts config files, ` +
             `and your Node.js runtime (${process.version}) doesn't support loading them natively either.\n` +
             'Upgrade to Node.js 22.6+ (running with --experimental-strip-types), or Node.js 23.6+, to continue using capacitor.config.ts.',
+          { cause: e },
         );
       }
       throw e;
@@ -78,7 +79,7 @@ export const requireTS = async (ts: typeof typescript, p: string): Promise<unkno
     module._compile?.(sourceText, fileName);
   };
 
-  const m = require(id); // eslint-disable-line @typescript-eslint/no-var-requires
+  const m = require(id); // eslint-disable-line @typescript-eslint/no-require-imports
 
   delete require.extensions['.ts'];
 
@@ -88,7 +89,7 @@ export const requireTS = async (ts: typeof typescript, p: string): Promise<unkno
 export function resolveNode(root: string, ...pathSegments: string[]): string | null {
   try {
     return require.resolve(pathSegments.join('/'), { paths: [root] });
-  } catch (e) {
+  } catch {
     const path = [root, 'node_modules', ...pathSegments].join('/');
     if (existsSync(path)) {
       return path;

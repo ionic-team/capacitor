@@ -22,7 +22,7 @@ function execBundler() {
   try {
     const bundleOutput = execSync('bundle &> /dev/null ; echo $?');
     return parseInt(bundleOutput.toString());
-  } catch (e: any) {
+  } catch {
     return -1;
   }
 }

@@ -114,7 +114,7 @@ async function loadExtConfigTS(
       );
     }
 
-    const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
+    const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-require-imports
     const extConfigObject = (await requireTS(ts, extConfigFilePath)) as any;
     const extConfig = extConfigObject.default ? await extConfigObject.default : extConfigObject;
 
@@ -143,6 +143,7 @@ async function loadExtConfigJS(
       extConfigType: 'js',
       extConfigName,
       extConfigFilePath: extConfigFilePath,
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       extConfig: await require(extConfigFilePath),
     };
   } catch (e: any) {
@@ -360,7 +361,7 @@ async function determineIOSWebDirAbs(
 
       return resolve(nativeProjectDirAbs, 'public');
     }
-  } catch (e) {
+  } catch {
     // ignore
   }
 
@@ -458,7 +459,7 @@ async function determinePackageManager(
       if (output != null) {
         gemfilePath = resolve(output, 'Gemfile');
       }
-    } catch (e: any) {
+    } catch {
       // Nothing
     }
   }
