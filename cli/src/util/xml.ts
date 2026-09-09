@@ -9,7 +9,7 @@ export async function readXML(path: string): Promise<any> {
     } catch (e: any) {
       throw `Error parsing: ${path}, ${e.stack ?? e}`;
     }
-  } catch (e) {
+  } catch {
     throw `Unable to read: ${path}`;
   }
 }

@@ -30,7 +30,7 @@ export async function getCommandOutput(
 ): Promise<string | null> {
   try {
     return (await runCommand(command, args, options)).trim();
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -38,7 +38,7 @@ export async function getCommandOutput(
 export async function isInstalled(command: string): Promise<boolean> {
   try {
     await which(command);
-  } catch (e) {
+  } catch {
     return false;
   }
 

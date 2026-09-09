@@ -81,7 +81,7 @@ const convertBody = async (
     if (contentType === 'application/json') {
       try {
         data = JSON.parse(data);
-      } catch (ignored) {
+      } catch {
         // ignore
       }
       type = 'json';
@@ -370,7 +370,7 @@ const initBridge = (w: any): void => {
           msg = JSON.stringify(msg);
         }
         return String(msg);
-      } catch (e) {
+      } catch {
         return '';
       }
     };
@@ -1130,7 +1130,6 @@ const initBridge = (w: any): void => {
       });
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cap.withPlugin = (_pluginId, _fn) => dummy;
 
     cap.Exception = CapacitorException;
