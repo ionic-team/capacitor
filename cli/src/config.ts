@@ -113,7 +113,7 @@ async function loadExtConfigTS(
     }
 
     const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
-    const extConfigObject = requireTS(ts, extConfigFilePath) as any;
+    const extConfigObject = (await requireTS(ts, extConfigFilePath)) as any;
     const extConfig = extConfigObject.default ? await extConfigObject.default : extConfigObject;
 
     return {
@@ -432,6 +432,10 @@ async function determinePackageManager(
 ): Promise<PackageManager> {
   if (existsSync(resolve(nativeProjectDirAbs, 'CapApp-SPM'))) {
     return 'SPM';
+  }
+
+  if (process.env.CAPACITOR_COCOAPODS_PATH) {
+    return 'Cocoapods';
   }
 
   let gemfilePath = '';

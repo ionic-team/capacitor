@@ -98,7 +98,9 @@ export class WebPlugin implements Plugin {
     }
 
     const index = listeners.indexOf(listenerFunc);
-    this.listeners[eventName].splice(index, 1);
+    if (index !== -1) {
+      this.listeners[eventName].splice(index, 1);
+    }
 
     // If there are no more listeners for this type of event,
     // remove the window listener

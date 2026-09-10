@@ -387,6 +387,12 @@ public class Bridge {
     }
 
     public boolean launchIntent(Uri url) {
+        // The proxy returns a remote body at the app origin, so block it before plugins can allow it.
+        String path = url.getPath();
+        if (path != null && path.startsWith(CAPACITOR_HTTP_INTERCEPTOR_START)) {
+            return true;
+        }
+
         /*
          * Give plugins the chance to handle the url
          */
@@ -434,7 +440,7 @@ public class Bridge {
             PackageManager pm = getContext().getPackageManager();
             PackageInfo pInfo = InternalUtils.getPackageInfo(pm, getContext().getPackageName());
             versionCode = Integer.toString((int) PackageInfoCompat.getLongVersionCode(pInfo));
-            versionName = pInfo.versionName;
+            versionName = pInfo.versionName != null ? pInfo.versionName : "";
         } catch (Exception ex) {
             Logger.error("Unable to get package info", ex);
         }
