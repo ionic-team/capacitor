@@ -575,6 +575,52 @@ export interface CapacitorConfig {
          * @since 8.4.0
          */
         packageOptions?: { [pluginId: string]: PackageOptions };
+
+        /**
+         * Override which Capacitor Swift package the generated `Package.swift` depends on.
+         *
+         * By default the generated package pins the git tag matching the installed
+         * `@capacitor/ios` version, which is correct for both stable and pre-release versions
+         * and matches what CocoaPods resolves.
+         *
+         * Set this only when developing against an unreleased Capacitor, such as a local
+         * checkout or a feature branch. Exactly one of `path`, `branch`, `revision`, `exact`,
+         * or `from` must be set. `path` points at the repository root (the directory containing
+         * `Package.swift`) and may be relative to the app.
+         *
+         * The `CAPACITOR_IOS_PACKAGE` environment variable takes precedence over this setting,
+         * so a checkout can be redirected without editing committed configuration.
+         *
+         * Note that `branch` and `revision` builds are not reproducible and decouple the native
+         * code from the `@capacitor/core` JavaScript bridge it is versioned against.
+         *
+         * @since 9.0.0
+         * @example { "path": "../capacitor" }
+         * @example { "branch": "next" }
+         */
+        capacitorPackage?: {
+          /**
+           * Repository to fetch from. Ignored when `path` is set.
+           *
+           * @default 'https://github.com/ionic-team/capacitor'
+           */
+          url?: string;
+
+          /** Path to a local Capacitor repository root. */
+          path?: string;
+
+          /** Branch to track. */
+          branch?: string;
+
+          /** Exact commit to pin. */
+          revision?: string;
+
+          /** Exact version tag to pin. */
+          exact?: string;
+
+          /** Minimum version tag, allowing compatible upgrades. */
+          from?: string;
+        };
       };
     };
   };

@@ -16,11 +16,12 @@ Pod::Spec.new do |s|
   s.authors      = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source       = { git: 'https://github.com/ionic-team/capacitor', tag: s.version.to_s }
   s.platform     = :ios, 16.0
-  s.source_files = "#{prefix}CapacitorCordova/CapacitorCordova/**/*.{h,m,swift}"
-  s.public_header_files = "#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/*.h",
-                          "#{prefix}CapacitorCordova/CapacitorCordova/CapacitorCordova.h"
-  s.module_map = "#{prefix}CapacitorCordova/CapacitorCordova/CapacitorCordova.modulemap"
-  s.resource_bundles = { 'CapacitorCordova' => ["#{prefix}CapacitorCordova/CapacitorCordova/PrivacyInfo.xcprivacy"] }
+  s.source_files = "#{prefix}Sources/Cordova/**/*.{h,m}",
+                   "#{prefix}Sources/CapacitorCordova/**/*.swift"
+  s.public_header_files = "#{prefix}Sources/Cordova/include/Cordova/*.h",
+                          "#{prefix}Sources/Cordova/CapacitorCordova.h"
+  s.module_map = "#{prefix}Sources/Cordova/CapacitorCordova.modulemap"
+  s.resource_bundles = { 'CapacitorCordova' => ["#{prefix}Sources/Cordova/PrivacyInfo.xcprivacy"] }
   s.requires_arc = true
   s.dependency 'Capacitor', s.version.to_s
   s.framework    = 'WebKit'
