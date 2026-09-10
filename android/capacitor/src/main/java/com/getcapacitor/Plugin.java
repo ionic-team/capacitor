@@ -502,10 +502,14 @@ public class Plugin {
     private String[] getPermissionStringsForAliases(@NonNull String[] aliases) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         HashSet<String> perms = new HashSet<>();
-        for (Permission perm : annotation.permissions()) {
-            if (Arrays.asList(aliases).contains(perm.alias())) {
-                perms.addAll(Arrays.asList(perm.strings()));
+        if (annotation != null) {
+            for (Permission perm : annotation.permissions()) {
+                if (Arrays.asList(aliases).contains(perm.alias())) {
+                    perms.addAll(Arrays.asList(perm.strings()));
+                }
             }
+        } else {
+            Logger.warn(String.format("getPermissionStringsForAliases: missing @CapacitorPlugin annotation for plugin %s", handle.getId()));
         }
 
         return perms.toArray(new String[0]);

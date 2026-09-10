@@ -1261,6 +1261,10 @@ public class Bridge {
                     }
                 }
             }
+        } else {
+            Logger.warn(
+                String.format("getPermissionStates: missing @CapacitorPlugin annotation for plugin %s", plugin.getPluginHandle().getId())
+            );
         }
 
         return permissionsResults;
