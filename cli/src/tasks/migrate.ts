@@ -531,7 +531,7 @@ function getGradleWrapperVersion(filename: string): string {
   if (!txt) {
     return '0.0.0';
   }
-  const version = txt.substring(txt.indexOf('gradle-') + 7, txt.indexOf('-all.zip'));
+  const version = txt.substring(txt.indexOf('gradle-') + 7, txt.indexOf('.zip', txt.indexOf('gradle-')));
   const semverVersion = coerce(version)?.version;
   return semverVersion ? semverVersion : '0.0.0';
 }
