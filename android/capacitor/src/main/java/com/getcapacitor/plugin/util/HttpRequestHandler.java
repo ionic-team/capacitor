@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class HttpRequestHandler {
 
@@ -302,36 +302,25 @@ public class HttpRequestHandler {
     /**
      * Returns a JSObject or a JSArray based on a string-ified input
      * @param input String-ified JSON that needs parsing
-     * @return A JSObject or JSArray
-     * @throws JSONException thrown if the JSON is malformed
+     * @return A JSObject, JSArray or literal
      */
-    public static Object parseJSON(String input) throws JSONException {
-        JSONObject json = new JSONObject();
+    public static Object parseJSON(String input) {
         try {
-            if ("null".equals(input.trim())) {
-                return JSONObject.NULL;
-            } else if ("true".equals(input.trim())) {
-                return true;
-            } else if ("false".equals(input.trim())) {
-                return false;
-            } else if (input.trim().length() <= 0) {
-                return "";
-            } else if (input.trim().matches("^\".*\"$")) {
-                // a string enclosed in " " is a json value, return the string without the quotes
-                return input.trim().substring(1, input.trim().length() - 1);
-            } else if (input.trim().matches("^-?\\d+$")) {
-                return Integer.parseInt(input.trim());
-            } else if (input.trim().matches("^-?\\d+(\\.\\d+)?$")) {
-                return Double.parseDouble(input.trim());
-            } else {
+            // try to parse input as an object
+            return new JSObject(input);
+        } catch (JSONException e) {
+            try {
+                // fall through to try to parse it as an array
+                return new JSArray(input);
+            } catch (JSONException e2) {
                 try {
-                    return new JSObject(input);
-                } catch (JSONException e) {
-                    return new JSArray(input);
+                    // the value is probably a literal, so we can try to have the JSONTokener parse it for us
+                    return new JSONTokener(input).nextValue();
+                } catch (JSONException e3) {
+                    // if nothing could be parsed, return the input as is
+                    return input;
                 }
             }
-        } catch (JSONException e) {
-            return input;
         }
     }
 
