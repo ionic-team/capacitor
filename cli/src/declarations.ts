@@ -835,7 +835,7 @@ export interface PluginsConfig {
      * This shifts the responsibility from Capacitor to your own code to handle the insets.
      * Be aware that this might result in a visually broken UI if your native app code and the content loaded into the webview do not correctly handle safe area insets.
      *
-     * @default "css"
+     * @default "native"
      */
     insetsHandling?: 'native' | 'css' | 'disable';
 
