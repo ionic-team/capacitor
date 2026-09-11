@@ -24,6 +24,7 @@ export {
   SystemBarsAnimation,
   CapacitorCookies,
   CapacitorHttp,
+  DisplayFeatures,
   WebView,
   buildRequestInit,
 } from './core-plugins';
@@ -42,6 +43,16 @@ export type {
   WebViewPlugin,
   SystemBarsVisibilityOptions,
   SystemBarsStyleOptions,
+  ActiveDisplay,
+  DisplayFeaturesPlugin,
+  DisplayFeaturesState,
+  DisplayInsets,
+  DisplayPose,
+  DisplayRect,
+  DisplaySize,
+  DisplaySizeClass,
+  ReservedRegion,
+  ReservedRegionType,
 } from './core-plugins';
 
 // Constants

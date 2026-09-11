@@ -1,4 +1,4 @@
-import type { Plugin } from './definitions';
+import type { Plugin, PluginListenerHandle } from './definitions';
 import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
 
@@ -659,3 +659,173 @@ export const SystemBars = registerPlugin<SystemBarsPlugin>('SystemBars', {
 });
 
 /******** END SYSTEM BARS PLUGIN ********/
+
+/******** DISPLAY FEATURES PLUGIN ********/
+
+/**
+ * The physical pose of a foldable / dual-display device.
+ *
+ * `unknown` is reported whenever the OS does not expose pose data
+ * (see `DisplayFeaturesState.supported`).
+ */
+export type DisplayPose = 'closed' | 'open' | 'partiallyOpen' | 'unknown';
+
+/**
+ * Which display of a dual-display device is currently presenting the app.
+ *
+ * `unknown` is reported whenever the OS does not expose display data
+ * (see `DisplayFeaturesState.supported`).
+ */
+export type ActiveDisplay = 'inner' | 'outer' | 'unknown';
+
+/**
+ * A UIKit size class. The iPhone Duo HIG recommends driving layout from size
+ * classes rather than from orientation or device model: the outer display is
+ * compact width, the inner display is regular width.
+ */
+export type DisplaySizeClass = 'compact' | 'regular' | 'unspecified';
+
+/**
+ * The reserved regions named in Apple's "Designing for iPhone Duo" HIG.
+ */
+export type ReservedRegionType = 'outerCamera' | 'innerCamera' | 'fold';
+
+export interface DisplayRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface DisplayInsets {
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
+}
+
+export interface DisplaySize {
+  width: number;
+  height: number;
+}
+
+export interface ReservedRegion {
+  /**
+   * Which reserved region this is.
+   *
+   * @since 8.6.0
+   */
+  type: ReservedRegionType;
+
+  /**
+   * The region's frame in the web view's coordinate space (CSS px).
+   *
+   * @since 8.6.0
+   */
+  rect: DisplayRect;
+}
+
+export interface DisplayFeaturesState {
+  /**
+   * `true` only when the OS exposes pose and reserved-region data. When `false`,
+   * `pose` and `activeDisplay` are `unknown` and `reservedRegions` is empty; the
+   * remaining fields are still real values.
+   *
+   * @since 8.6.0
+   */
+  supported: boolean;
+
+  /**
+   * The current device pose.
+   *
+   * @since 8.6.0
+   */
+  pose: DisplayPose;
+
+  /**
+   * The display currently presenting the app.
+   *
+   * @since 8.6.0
+   */
+  activeDisplay: ActiveDisplay;
+
+  /**
+   * The horizontal size class of the web view.
+   *
+   * @since 8.6.0
+   */
+  horizontalSizeClass: DisplaySizeClass;
+
+  /**
+   * The vertical size class of the web view.
+   *
+   * @since 8.6.0
+   */
+  verticalSizeClass: DisplaySizeClass;
+
+  /**
+   * Regions content should avoid, in the web view's coordinate space.
+   *
+   * @since 8.6.0
+   */
+  reservedRegions: ReservedRegion[];
+
+  /**
+   * The web view's safe-area insets. Equivalent to the CSS
+   * `env(safe-area-inset-*)` values; included so a single call returns a
+   * consistent picture.
+   *
+   * @since 8.6.0
+   */
+  safeAreaInsets: DisplayInsets;
+
+  /**
+   * The web view's bounds in CSS px.
+   *
+   * @since 8.6.0
+   */
+  bounds: DisplaySize;
+}
+
+export interface DisplayFeaturesPlugin {
+  /**
+   * Get the current display features.
+   *
+   * Only available on iOS.
+   *
+   * @since 8.6.0
+   */
+  getDisplayFeatures(): Promise<DisplayFeaturesState>;
+
+  /**
+   * Listen for display feature changes (fold / unfold, size class or
+   * orientation changes). The listener receives the new state.
+   *
+   * Only available on iOS.
+   *
+   * @since 8.6.0
+   */
+  addListener(
+    eventName: 'displayFeaturesChanged',
+    listenerFunc: (state: DisplayFeaturesState) => void,
+  ): Promise<PluginListenerHandle>;
+
+  /**
+   * Remove all listeners for this plugin.
+   *
+   * @since 8.6.0
+   */
+  removeAllListeners(): Promise<void>;
+}
+
+export class DisplayFeaturesPluginWeb extends WebPlugin implements DisplayFeaturesPlugin {
+  async getDisplayFeatures(): Promise<DisplayFeaturesState> {
+    throw this.unavailable('not available for web');
+  }
+}
+
+export const DisplayFeatures = registerPlugin<DisplayFeaturesPlugin>('DisplayFeatures', {
+  web: () => new DisplayFeaturesPluginWeb(),
+});
+
+/******** END DISPLAY FEATURES PLUGIN ********/
