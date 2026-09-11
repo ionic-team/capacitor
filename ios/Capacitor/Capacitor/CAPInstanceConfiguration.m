@@ -31,6 +31,7 @@
         _scrollingEnabled = descriptor.scrollingEnabled;
         _zoomingEnabled =  descriptor.zoomingEnabled;
         _allowLinkPreviews = descriptor.allowLinkPreviews;
+        _allowsBackForwardNavigationGestures = descriptor.allowsBackForwardNavigationGestures;
         _handleApplicationNotifications = descriptor.handleApplicationNotifications;
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
         _appLocation = descriptor.appLocation;
@@ -70,6 +71,7 @@
         _scrollingEnabled = configuration.scrollingEnabled;
         _zoomingEnabled = configuration.zoomingEnabled;
         _allowLinkPreviews = configuration.allowLinkPreviews;
+        _allowsBackForwardNavigationGestures = configuration.allowsBackForwardNavigationGestures;
         _handleApplicationNotifications = configuration.handleApplicationNotifications;
         _isWebDebuggable = configuration.isWebDebuggable;
         _hasInitialFocus = configuration.hasInitialFocus;
