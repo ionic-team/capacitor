@@ -662,6 +662,7 @@ public class Bridge {
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
         this.registerPlugin(com.getcapacitor.plugin.CapacitorHttp.class);
         this.registerPlugin(com.getcapacitor.plugin.SystemBars.class);
+        this.registerPlugin(com.getcapacitor.plugin.DisplayFeatures.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
             this.registerPlugin(pluginClass);
