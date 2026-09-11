@@ -19,7 +19,7 @@ public class PluginCall {
      */
     public static final String CALLBACK_ID_DANGLING = "-1";
 
-    private final MessageHandler msgHandler;
+    private final IMessageHandler msgHandler;
     private final String pluginId;
     private final String callbackId;
     private final String methodName;
@@ -33,7 +33,7 @@ public class PluginCall {
     @Deprecated
     private boolean isReleased = false;
 
-    public PluginCall(MessageHandler msgHandler, String pluginId, String callbackId, String methodName, JSObject data) {
+    public PluginCall(IMessageHandler msgHandler, String pluginId, String callbackId, String methodName, JSObject data) {
         this.msgHandler = msgHandler;
         this.pluginId = pluginId;
         this.callbackId = callbackId;
