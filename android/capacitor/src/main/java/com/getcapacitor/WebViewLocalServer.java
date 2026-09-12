@@ -185,6 +185,11 @@ public class WebViewLocalServer {
         Uri loadingUrl = request.getUrl();
 
         if (null != loadingUrl.getPath() && loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START)) {
+            // Only fetch/XHR should reach the proxy; a document would run remote content at the app origin.
+            boolean httpEnabled = bridge.getConfig().getPluginConfiguration("CapacitorHttp").getBoolean("enabled", false);
+            if (!httpEnabled || isDocumentRequest(request)) {
+                return null;
+            }
             Logger.debug("Handling CapacitorHttp request: " + loadingUrl);
             try {
                 return handleCapacitorHttpRequest(request);
@@ -208,6 +213,24 @@ public class WebViewLocalServer {
         } else {
             return handleProxyRequest(request, handler);
         }
+    }
+
+    /** isForMainFrame() is false for an iframe and a fetch alike; only navigations send this header. */
+    private boolean isDocumentRequest(WebResourceRequest request) {
+        if (request.isForMainFrame()) {
+            return true;
+        }
+        Map<String, String> headers = request.getRequestHeaders();
+        if (headers == null) {
+            // The proxy needs the headers too, so the request fails there anyway.
+            return false;
+        }
+        for (String header : headers.keySet()) {
+            if ("Upgrade-Insecure-Requests".equalsIgnoreCase(header)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isLocalFile(Uri uri) {
@@ -332,6 +355,9 @@ public class WebViewLocalServer {
 
         int responseCode = connection.getResponseCode();
         String reasonPhrase = getReasonPhraseFromResponseCode(responseCode);
+
+        // Nothing should render this. If anything does, sandbox keeps it inert and off the app origin.
+        responseHeaders.put("Content-Security-Policy", "sandbox; frame-ancestors 'none'");
 
         return new WebResourceResponse(mimeType, encoding, responseCode, reasonPhrase, responseHeaders, inputStream);
     }
