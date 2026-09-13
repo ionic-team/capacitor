@@ -10,7 +10,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -37,9 +36,9 @@ public class SystemBars extends Plugin {
     static final String BAR_STATUS_BAR = "StatusBar";
     static final String BAR_GESTURE_BAR = "NavigationBar";
 
-    // TODO: In Cap 9, add an additional option "full"
     static final String INSETS_HANDLING_CSS = "css";
     static final String INSETS_HANDLING_DISABLE = "disable";
+    static final String INSETS_HANDLING_NATIVE = "native";
 
     // https://issues.chromium.org/issues/40699457
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
@@ -68,39 +67,74 @@ public class SystemBars extends Plugin {
     private String currentStatusBarStyle = STYLE_DEFAULT;
     private String currentGestureBarStyle = STYLE_DEFAULT;
 
+    // Declare variable at this scope to help prevent adding multiple listeners.
+    private WebViewListener webViewListener;
+
+    private void warnAboutUnsupportedConfigurationValues() {
+        boolean keyboardResizeOnFullScreen =
+            bridge.getConfig().getPluginConfiguration("Keyboard").getBoolean("resizeOnFullScreen", false);
+
+        if (!INSETS_HANDLING_DISABLE.equals(insetsHandling) && keyboardResizeOnFullScreen) {
+            Logger.warn(
+                "SystemBars",
+                "You should omit `Keyboard.resizeOnFullScreen` in your `capacitor.config.json`. Other values can lead to unexpected behavior."
+            );
+        }
+    }
+
     @Override
     public void load() {
-        getBridge().getWebView().addJavascriptInterface(this, "CapacitorSystemBarsAndroidInterface");
         super.load();
 
         initSystemBars();
 
-        getBridge().executeOnMainThread(() -> {
-            WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
-            getBridge().getWebView().requestApplyInsets();
-        });
+        // In `native` mode the application opts into native edge-to-edge handling and
+        // the webview itself computes `env(safe-area-inset-*)`. The window must stay
+        // edge-to-edge there, so we do not force `setDecorFitsSystemWindows(true)`.
+        if (!INSETS_HANDLING_NATIVE.equals(insetsHandling)) {
+            getBridge().executeOnMainThread(() -> {
+                WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
+                getBridge().getWebView().requestApplyInsets();
+            });
+        }
     }
 
     @Override
     protected void handleOnStart() {
         super.handleOnStart();
 
-        this.getBridge().addWebViewListener(
-            new WebViewListener() {
+        if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
+            return;
+        }
+
+        if (webViewListener == null) {
+            webViewListener = new WebViewListener() {
                 @Override
                 public void onPageCommitVisible(WebView view, String url) {
                     super.onPageCommitVisible(view, url);
-                    getBridge().getWebView().requestApplyInsets();
+                    getBridge().getWebView().evaluateJavascript(VIEWPORT_META_JS, (res) -> {
+                        hasViewportCover = res.equals("true");
+
+                        if (!INSETS_HANDLING_NATIVE.equals(insetsHandling)) {
+                            WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
+                        }
+
+                        // Request new execution tree of `setOnApplyWindowInsetsListener`
+                        getBridge().getWebView().requestApplyInsets();
+                    });
                 }
-            }
-        );
+            };
+            this.getBridge().addWebViewListener(webViewListener);
+        }
     }
 
     @Override
     protected void handleOnResume() {
         super.handleOnResume();
         getBridge().executeOnMainThread(() -> {
-            WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
+            if (!INSETS_HANDLING_NATIVE.equals(insetsHandling)) {
+                WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
+            }
             setStyle(currentGestureBarStyle, BAR_GESTURE_BAR);
             setStyle(currentStatusBarStyle, BAR_STATUS_BAR);
             getBridge().getWebView().requestApplyInsets();
@@ -116,11 +150,20 @@ public class SystemBars extends Plugin {
     }
 
     private void initSystemBars() {
+        // If you already know what the value of the `viewport-fit=` meta tag is going to be,
+        // passing it here through `initialViewportFitValueHint` can help prevent layout shifting.
+        String configuredInitialViewportFitValueHint = getConfig().getString("initialViewportFitValueHint", "");
+        hasViewportCover = "cover".equals(configuredInitialViewportFitValueHint);
+
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
         String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
-        if (INSETS_HANDLING_CSS.equals(configuredInsetsHandling) || INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling)) {
+        if (
+            INSETS_HANDLING_CSS.equals(configuredInsetsHandling) ||
+            INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling) ||
+            INSETS_HANDLING_NATIVE.equals(configuredInsetsHandling)
+        ) {
             insetsHandling = configuredInsetsHandling;
         } else {
             Logger.warn(
@@ -130,8 +173,9 @@ public class SystemBars extends Plugin {
             insetsHandling = INSETS_HANDLING_CSS;
         }
 
+        warnAboutUnsupportedConfigurationValues();
+
         initWindowInsetsListener();
-        initSafeAreaCSSVariables();
 
         getBridge().executeOnMainThread(() -> {
             setStyle(style, "");
@@ -175,46 +219,6 @@ public class SystemBars extends Plugin {
         call.resolve();
     }
 
-    @JavascriptInterface
-    public void onDOMReady() {
-        if (!INSETS_HANDLING_CSS.equals(insetsHandling)) {
-            return;
-        }
-
-        getActivity().runOnUiThread(() ->
-            this.bridge.getWebView().evaluateJavascript(VIEWPORT_META_JS, (res) -> {
-                hasViewportCover = res.equals("true");
-
-                WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), true);
-                getBridge().getWebView().requestApplyInsets();
-            })
-        );
-    }
-
-    private Insets calcSafeAreaInsets(WindowInsetsCompat insets) {
-        Insets safeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-
-        int bottom = safeArea.bottom;
-
-        // Some legacy devices report a zero-height navigation bar inset while the bar is
-        // actually drawn. Fall back to the framework dimension in portrait layouts.
-        if (bottom == 0 && Build.VERSION.SDK_INT < Build.VERSION_CODES.R && safeArea.left == 0 && safeArea.right == 0) {
-            bottom = getNavBarHeightFromResources();
-        }
-
-        // WindowInsetsCompat cannot observe IME visibility below Android 8,
-        // so fall back to checking whether any IME inset is reported.
-        boolean imeVisible =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                ? insets.isVisible(WindowInsetsCompat.Type.ime())
-                : insets.getInsets(WindowInsetsCompat.Type.ime()).bottom > 0;
-
-        if (imeVisible) {
-            return Insets.of(safeArea.left, safeArea.top, safeArea.right, 0);
-        }
-        return Insets.of(safeArea.left, safeArea.top, safeArea.right, bottom);
-    }
-
     /**
      * Last-resort heuristic for legacy devices (API &lt; 30) whose OEM builds report a
      * zero-height navigation bar inset while the bar is actually drawn. Only consulted
@@ -233,35 +237,24 @@ public class SystemBars extends Plugin {
         return heightId > 0 ? res.getDimensionPixelSize(heightId) : 0;
     }
 
-    private void initSafeAreaCSSVariables() {
-        if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION && INSETS_HANDLING_CSS.equals(insetsHandling)) {
-            View v = (View) this.getBridge().getWebView().getParent();
-            WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(v);
-            if (insets != null) {
-                Insets safeAreaInsets = calcSafeAreaInsets(insets);
-                boolean isApiLowerThan30 = Build.VERSION.SDK_INT < Build.VERSION_CODES.R;
-
-                if (isApiLowerThan30) {
-                    injectSafeAreaCSSWithBottom(0, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-                } else {
-                    injectSafeAreaCSS(safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left);
-                }
-            }
-        }
-    }
-
     private void initWindowInsetsListener() {
         if (INSETS_HANDLING_DISABLE.equals(insetsHandling)) {
             return;
         }
 
-        if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION && INSETS_HANDLING_CSS.equals(insetsHandling)) {
+        if (Build.VERSION.SDK_INT >= MIN_INSETS_VERSION) {
             View parentView = (View) getBridge().getWebView().getParent();
             ViewCompat.setOnApplyWindowInsetsListener(parentView, this::applyInsets);
         }
     }
 
     private WindowInsetsCompat applyInsets(View v, WindowInsetsCompat insets) {
+        // In `native` mode safe area handling is delegated to the platform/WebView.
+        // The insets are passed through untouched and no CSS variables are injected.
+        if (INSETS_HANDLING_NATIVE.equals(insetsHandling)) {
+            return insets;
+        }
+
         int webViewVersion = getWebViewMajorVersion();
         boolean hasBrokenWebViewVersion = webViewVersion < WEBVIEW_VERSION_WITH_SAFE_AREA_FIX;
         boolean hasModernWebView = !hasBrokenWebViewVersion;
@@ -333,16 +326,6 @@ public class SystemBars extends Plugin {
         int rightPx = (int) (right / density);
         int bottomPx = (int) (bottom / density);
         int leftPx = (int) (left / density);
-        injectSafeAreaCSSPixels(topPx, rightPx, bottomPx, leftPx);
-    }
-
-    private void injectSafeAreaCSS(int top, int right, int bottom, int left) {
-        float density = getActivity().getResources().getDisplayMetrics().density;
-        int topPx = (int) (top / density);
-        int rightPx = (int) (right / density);
-        int bottomPx = (int) (bottom / density);
-        int leftPx = (int) (left / density);
-
         injectSafeAreaCSSPixels(topPx, rightPx, bottomPx, leftPx);
     }
 
