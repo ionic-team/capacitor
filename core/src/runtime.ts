@@ -173,6 +173,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
               return pluginHeader ? addListenerNative : addListener;
             case 'removeListener':
               return removeListener;
+          // Promise-machinery short-circuit. See #8472 for failure modes.
+          case 'then':
+          case 'catch':
+          case 'finally':
+            return undefined;
             default:
               return createPluginMethodWrapper(prop);
           }

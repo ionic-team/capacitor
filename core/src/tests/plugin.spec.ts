@@ -351,6 +351,23 @@ describe('plugin', () => {
       ],
     });
   };
+
+  it('plugin proxy must not be a Thenable (Promise.resolve chaining short-circuit)', async () => {
+    // Web platform; no native bridge headers. registerPlugin returns a Proxy
+    // that wraps method dispatch. The proxy MUST NOT be unintentionally Thenable
+    // — otherwise Promise.resolve(proxy) and `await proxy` invoke proxy.then(...)
+    // and dispatch a bogus "then" method to the native bridge (or web stub).
+    // See GH issue #8472 for the production failure modes that motivated this regression test.
+    cap = initCapacitorGlobal(win);
+    const Awesome = cap.registerPlugin('Awesome');
+
+    expect(typeof (Awesome as unknown as { then?: unknown }).then).toBe('undefined');
+    expect(typeof (Awesome as unknown as { catch?: unknown }).catch).toBe('undefined');
+    expect(typeof (Awesome as unknown as { finally?: unknown }).finally).toBe('undefined');
+
+    const resolved = await Promise.resolve(Awesome);
+    expect(resolved).toBe(Awesome);
+  });
 });
 
 interface AwesomePlugin extends Plugin {
