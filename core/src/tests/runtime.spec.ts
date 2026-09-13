@@ -74,4 +74,24 @@ describe('runtime', () => {
     cap = createCapacitor(win);
     expect(cap.getServerUrl()).toBe('');
   });
+
+  it('registerPlugin proxy is not thenable', async () => {
+    cap = createCapacitor(win);
+    const plugin = cap.registerPlugin('Awesome');
+
+    // then/catch/finally must not produce callable method wrappers,
+    // otherwise the engine treats the proxy as a thenable
+    expect((plugin as any).then).toBeUndefined();
+    expect((plugin as any).catch).toBeUndefined();
+    expect((plugin as any).finally).toBeUndefined();
+
+    // a plugin proxy returned from an async function must not hang the await
+    await expect((async () => plugin)()).resolves.toBe(plugin);
+    await expect(Promise.resolve(plugin)).resolves.toBe(plugin);
+
+    // regular methods are unaffected
+    expect(typeof (plugin as any).someMethod).toBe('function');
+    expect((plugin as any).$$typeof).toBeUndefined();
+    expect((plugin as any).toJSON()).toEqual({});
+  });
 });
