@@ -10,6 +10,12 @@ import { runCommand } from '../util/subprocess';
 export async function buildAndroid(config: Config, buildOptions: BuildCommandOptions): Promise<void> {
   const releaseType = buildOptions.androidreleasetype ?? 'AAB';
   const releaseTypeIsAAB = releaseType === 'AAB';
+  const signingType = buildOptions.signingtype ?? 'jarsigner';
+
+  if (releaseTypeIsAAB && signingType === 'apksigner') {
+    throw 'apksigner cannot sign Android App Bundles. Use jarsigner by setting android.buildOptions.signingType to "jarsigner" or passing "--signing-type jarsigner". Alternatively, build an APK by setting android.buildOptions.releaseType to "APK" or passing "--androidreleasetype APK".';
+  }
+
   const flavor = buildOptions.flavor ?? '';
   const arg = releaseTypeIsAAB ? `:app:bundle${flavor}Release` : `assemble${flavor}Release`;
   const gradleArgs = [arg];
@@ -55,7 +61,7 @@ export async function buildAndroid(config: Config, buildOptions: BuildCommandOpt
     `-release-signed.${releaseType.toLowerCase()}`,
   );
 
-  if (buildOptions.signingtype == 'jarsigner') {
+  if (signingType === 'jarsigner') {
     await signWithJarSigner(config, buildOptions, releasePath, signedReleaseName, unsignedReleaseName);
   } else {
     await signWithApkSigner(config, buildOptions, releasePath, signedReleaseName, unsignedReleaseName);
