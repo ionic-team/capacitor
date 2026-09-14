@@ -2,7 +2,6 @@ import Foundation
 import UIKit
 import WebKit
 
-
 @objc public extension CAPPlugin {
     var bridge: CAPBridgeProtocol? {
         get { return bridgeRef as? CAPBridgeProtocol }
