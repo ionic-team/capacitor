@@ -1,4 +1,4 @@
-import { __testables } from '../src/tasks/migrate-uiscene';
+import { __testables } from '../src/tasks/migrate-swiftui';
 
 const { classify, describeSignals } = __testables;
 
@@ -16,7 +16,7 @@ const FULLY_MIGRATED = {
   hasDelegateAdaptorShape: true,
 };
 
-describe('migrate-uiscene classify', () => {
+describe('migrate-swiftui classify', () => {
   it('returns eligible for a project with none of the SwiftUI App-struct markers', () => {
     expect(classify(NOTHING_MIGRATED)).toBe('eligible');
   });
@@ -34,7 +34,7 @@ describe('migrate-uiscene classify', () => {
   });
 });
 
-describe('migrate-uiscene describeSignals', () => {
+describe('migrate-swiftui describeSignals', () => {
   it('reports every marker as missing for an unmigrated project', () => {
     const description = describeSignals(NOTHING_MIGRATED);
 

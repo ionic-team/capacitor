@@ -9,9 +9,9 @@ import { hasSwiftUISceneManifest, setSwiftUISceneManifest } from '../util/spm';
 import { extractTemplate } from '../util/template';
 import { addSwiftFileToAppTarget } from '../util/xcode';
 
-type PreUISceneState = 'eligible' | 'already-migrated' | 'partial';
+type MigrationState = 'eligible' | 'already-migrated' | 'partial';
 
-interface UISceneDetectionSignals {
+interface SwiftUIDetectionSignals {
   hasSwiftUIManifest: boolean;
   hasAppStruct: boolean;
   hasCapacitorView: boolean;
@@ -29,17 +29,17 @@ const OPEN_URL_SIG = /func application\([^)]*\bopen url:/;
 const CONTINUE_SIG = /func application\([^)]*\bcontinue userActivity:/;
 const CONFIGURATION_FOR_CONNECTING_SIG = /func application\([^)]*\bconfigurationForConnecting\b/;
 
-export async function migrateToUIScene(config: Config): Promise<void> {
+export async function migrateToSwiftUI(config: Config): Promise<void> {
   const signals = readDetectionSignals(config);
   const state = classify(signals);
 
   switch (state) {
     case 'already-migrated':
-      logger.info('UIScene migration: project already uses the SwiftUI App-struct layout, skipping.');
+      logger.info('SwiftUI migration: project already uses the SwiftUI App-struct layout, skipping.');
       return;
     case 'partial':
       logger.warn(
-        `UIScene migration: project is in a partial state (${describeSignals(signals)}). ` +
+        `SwiftUI migration: project is in a partial state (${describeSignals(signals)}). ` +
           `Skipping automated migration — finish the migration by hand or reset the iOS project to a clean 8.4/8.5 state first.`,
       );
       return;
@@ -50,14 +50,14 @@ export async function migrateToUIScene(config: Config): Promise<void> {
   const appDelegatePath = join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift');
   const rewrite = planAppDelegateRewrite(appDelegatePath);
   if (rewrite.status === 'skipped') {
-    logger.warn(`UIScene migration: skipping automated migration — ${rewrite.reason}`);
+    logger.warn(`SwiftUI migration: skipping automated migration — ${rewrite.reason}`);
     printManualSteps();
     return;
   }
 
   const assets = await loadTemplateAssets(config);
   if (!assets) {
-    logger.error('UIScene migration: could not read shipped iOS template assets; skipping.');
+    logger.error('SwiftUI migration: could not read shipped iOS template assets; skipping.');
     return;
   }
 
@@ -185,7 +185,7 @@ function hasCustomWindowSetup(source: string): boolean {
 
 function printNextSteps(config: Config): void {
   logger.info('');
-  logger.info('UIScene migration next steps:');
+  logger.info('SwiftUI migration next steps:');
   logger.info('  • Review any warnings above for legacy API usage or custom AppDelegate URL/activity handlers.');
   logger.info('  • App.swift now owns the app entry point; move UIKit root-window customizations into its scene body.');
   for (const leftover of leftoverUIKitFiles(config)) {
@@ -219,7 +219,7 @@ async function loadTemplateAssets(config: Config): Promise<TemplateAssets | null
   const packageManager = await config.ios.packageManager;
   const archiveName = packageManager === 'SPM' ? 'ios-spm-template.tar.gz' : 'ios-pods-template.tar.gz';
   const archivePath = join(config.cli.assetsDirAbs, archiveName);
-  const tempDir = join(config.cli.assetsDirAbs, 'tempUISceneTemplate');
+  const tempDir = join(config.cli.assetsDirAbs, 'tempSwiftUITemplate');
 
   try {
     await extractTemplate(archivePath, tempDir);
@@ -338,7 +338,7 @@ function countNewlines(source: string): number {
   return count;
 }
 
-function readDetectionSignals(config: Config): UISceneDetectionSignals {
+function readDetectionSignals(config: Config): SwiftUIDetectionSignals {
   const appStructPath = join(config.ios.nativeTargetDirAbs, 'App.swift');
   const capacitorViewPath = join(config.ios.nativeTargetDirAbs, 'CapacitorView.swift');
   const appDelegatePath = join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift');
@@ -352,7 +352,7 @@ function readDetectionSignals(config: Config): UISceneDetectionSignals {
   };
 }
 
-function classify(signals: UISceneDetectionSignals): PreUISceneState {
+function classify(signals: SwiftUIDetectionSignals): MigrationState {
   const { hasSwiftUIManifest, hasAppStruct, hasCapacitorView, hasDelegateAdaptorShape } = signals;
   const trueCount = [hasSwiftUIManifest, hasAppStruct, hasCapacitorView, hasDelegateAdaptorShape].filter(
     Boolean,
@@ -367,7 +367,7 @@ function describeSignals({
   hasAppStruct,
   hasCapacitorView,
   hasDelegateAdaptorShape,
-}: UISceneDetectionSignals): string {
+}: SwiftUIDetectionSignals): string {
   const present: string[] = [];
   const missing: string[] = [];
   (hasSwiftUIManifest ? present : missing).push('SwiftUI UIApplicationSceneManifest');

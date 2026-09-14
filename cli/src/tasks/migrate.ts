@@ -13,7 +13,7 @@ import { deleteFolderRecursive } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
-import { migrateToUIScene } from './migrate-uiscene';
+import { migrateToSwiftUI } from './migrate-swiftui';
 
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
@@ -200,7 +200,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           return updateAppDelegate(join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift'));
         });
 
-        await migrateToUIScene(config);
+        await migrateToSwiftUI(config);
       }
 
       if (!installFailed) {

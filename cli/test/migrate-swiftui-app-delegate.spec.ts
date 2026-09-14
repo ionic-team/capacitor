@@ -1,4 +1,4 @@
-import { __testables } from '../src/tasks/migrate-uiscene';
+import { __testables } from '../src/tasks/migrate-swiftui';
 
 const { rewriteAppDelegateForAdaptor, hasCustomWindowSetup } = __testables;
 
