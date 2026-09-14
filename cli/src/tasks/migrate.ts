@@ -470,8 +470,8 @@ async function writeBreakingChanges() {
   }
   if (allDependencies['@capacitor/ios']) {
     logger.info(
-      'IMPORTANT: Capacitor 8.5 adopts UIScene on iOS. ' +
-        'See https://capacitorjs.com/docs/updating/8-5 for the full 8.4 → 8.5 migration guide.',
+      'IMPORTANT: Capacitor 9.0 boots iOS apps from a SwiftUI App struct with UIScene. ' +
+        'See https://capacitorjs.com/docs/next/updating/9-0 for the full migration guide.',
     );
   }
 }

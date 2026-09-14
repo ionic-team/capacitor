@@ -9,10 +9,10 @@ import { mktmp } from './util';
 const REPO_ROOT = resolve(__dirname, '..', '..');
 const SHIPPED_PBXPROJ = resolve(REPO_ROOT, 'ios-spm-template/App/App.xcodeproj/project.pbxproj');
 
-function stripSceneDelegate(source: string): string {
+function stripCapacitorView(source: string): string {
   return source
     .split('\n')
-    .filter((line) => !line.includes('SceneDelegate'))
+    .filter((line) => !line.includes('CapacitorView'))
     .join('\n');
 }
 
@@ -51,10 +51,10 @@ describe('addSwiftFileToAppTarget', () => {
   });
 
   it('registers a new Swift file in all four pbxproj sections', () => {
-    const preUISceneSource = stripSceneDelegate(readFileSync(SHIPPED_PBXPROJ, 'utf-8'));
-    writeFileSync(pbxprojPath, preUISceneSource);
+    const preMigrationSource = stripCapacitorView(readFileSync(SHIPPED_PBXPROJ, 'utf-8'));
+    writeFileSync(pbxprojPath, preMigrationSource);
 
-    const result = addSwiftFileToAppTarget(pbxprojPath, 'App', 'SceneDelegate.swift');
+    const result = addSwiftFileToAppTarget(pbxprojPath, 'App', 'CapacitorView.swift');
 
     expect(result.added).toBe(true);
 
@@ -65,30 +65,30 @@ describe('addSwiftFileToAppTarget', () => {
     const objects = project.hash.project.objects;
 
     const fileRefs = Object.entries(objects.PBXFileReference).filter(([k]) => !k.endsWith('_comment'));
-    expect(fileRefs.some(([, ref]) => typeof ref === 'object' && (ref as any).path === '"SceneDelegate.swift"')).toBe(
+    expect(fileRefs.some(([, ref]) => typeof ref === 'object' && (ref as any).path === '"CapacitorView.swift"')).toBe(
       true,
     );
 
     const buildFiles = Object.entries(objects.PBXBuildFile).filter(([k]) => !k.endsWith('_comment'));
     expect(
-      buildFiles.some(([k]) => (objects.PBXBuildFile as any)[`${k}_comment`]?.includes('SceneDelegate.swift')),
+      buildFiles.some(([k]) => (objects.PBXBuildFile as any)[`${k}_comment`]?.includes('CapacitorView.swift')),
     ).toBe(true);
 
     const appGroupUuid = findGroupUuidByComment(project, 'App')!;
     const appGroup = project.getPBXGroupByKey(appGroupUuid)!;
-    expect(appGroup.children.some((c: any) => c.comment === 'SceneDelegate.swift')).toBe(true);
+    expect(appGroup.children.some((c: any) => c.comment === 'CapacitorView.swift')).toBe(true);
 
     const sourcesPhase = objects.PBXSourcesBuildPhase!;
     const sourcesEntries = Object.entries(sourcesPhase).filter(([k]) => !k.endsWith('_comment'));
     const [, sourcesObj] = sourcesEntries[0];
-    expect((sourcesObj as any).files.some((f: any) => f.comment?.includes('SceneDelegate.swift'))).toBe(true);
+    expect((sourcesObj as any).files.some((f: any) => f.comment?.includes('CapacitorView.swift'))).toBe(true);
   });
 
   it('is a no-op when the file is already registered', () => {
     writeFileSync(pbxprojPath, readFileSync(SHIPPED_PBXPROJ, 'utf-8'));
 
     const before = readFileSync(pbxprojPath, 'utf-8');
-    const result = addSwiftFileToAppTarget(pbxprojPath, 'App', 'SceneDelegate.swift');
+    const result = addSwiftFileToAppTarget(pbxprojPath, 'App', 'CapacitorView.swift');
     const after = readFileSync(pbxprojPath, 'utf-8');
 
     expect(result.added).toBe(false);
@@ -96,18 +96,18 @@ describe('addSwiftFileToAppTarget', () => {
   });
 
   it('is idempotent across repeated runs', () => {
-    const preUISceneSource = stripSceneDelegate(readFileSync(SHIPPED_PBXPROJ, 'utf-8'));
-    writeFileSync(pbxprojPath, preUISceneSource);
+    const preMigrationSource = stripCapacitorView(readFileSync(SHIPPED_PBXPROJ, 'utf-8'));
+    writeFileSync(pbxprojPath, preMigrationSource);
 
-    expect(addSwiftFileToAppTarget(pbxprojPath, 'App', 'SceneDelegate.swift').added).toBe(true);
-    expect(addSwiftFileToAppTarget(pbxprojPath, 'App', 'SceneDelegate.swift').added).toBe(false);
-    expect(addSwiftFileToAppTarget(pbxprojPath, 'App', 'SceneDelegate.swift').added).toBe(false);
+    expect(addSwiftFileToAppTarget(pbxprojPath, 'App', 'CapacitorView.swift').added).toBe(true);
+    expect(addSwiftFileToAppTarget(pbxprojPath, 'App', 'CapacitorView.swift').added).toBe(false);
+    expect(addSwiftFileToAppTarget(pbxprojPath, 'App', 'CapacitorView.swift').added).toBe(false);
   });
 
   it('throws when the target group cannot be found', () => {
-    writeFileSync(pbxprojPath, stripSceneDelegate(readFileSync(SHIPPED_PBXPROJ, 'utf-8')));
+    writeFileSync(pbxprojPath, stripCapacitorView(readFileSync(SHIPPED_PBXPROJ, 'utf-8')));
 
-    expect(() => addSwiftFileToAppTarget(pbxprojPath, 'DoesNotExist', 'SceneDelegate.swift')).toThrow(
+    expect(() => addSwiftFileToAppTarget(pbxprojPath, 'DoesNotExist', 'CapacitorView.swift')).toThrow(
       /Could not find PBXGroup/,
     );
   });
