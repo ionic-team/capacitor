@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 import WebKit
 
+
 @objc public extension CAPPlugin {
     var bridge: CAPBridgeProtocol? {
         get { return bridgeRef as? CAPBridgeProtocol }
@@ -78,7 +79,7 @@ import WebKit
     /**
      * Default implementation of the capacitor 3.0 permission pattern
      */
-     open func checkPermissions(_ call: CAPPluginCall) {
+    open func checkPermissions(_ call: CAPPluginCall) {
         call.resolve()
     }
 
