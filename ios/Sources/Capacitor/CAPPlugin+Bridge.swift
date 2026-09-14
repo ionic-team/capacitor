@@ -78,11 +78,11 @@ import WebKit
     /**
      * Default implementation of the capacitor 3.0 permission pattern
      */
-    func checkPermissions(_ call: CAPPluginCall) {
+     open func checkPermissions(_ call: CAPPluginCall) {
         call.resolve()
     }
 
-    func requestPermissions(_ call: CAPPluginCall) {
+    open func requestPermissions(_ call: CAPPluginCall) {
         call.resolve()
     }
 
