@@ -26,8 +26,6 @@ The status bar visibility defaults to visible and the style defaults to
 
 Due to a [bug](https://issues.chromium.org/issues/40699457) in some older versions of Android WebView (< 140), correct safe area values are not available via the `safe-area-inset-x` CSS `env` variables. This plugin has two ways to workaround this. To control this behavior, use the `insetsHandling` configuration setting.
 
-You should also consider calling `EdgeToEdge.enable(this);` inside your application's `BridgeActivity.onCreate` if `insetsHandling` is not set to `disable`.  Starting in Capacitor 9, `insetsHandling` will default to `native` and this will be called for you.
-
 ## Example
 
 ```typescript
