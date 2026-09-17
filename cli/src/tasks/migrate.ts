@@ -13,6 +13,7 @@ import { deleteFolderRecursive } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
+import { migrateToEdgeToEdge } from './migrate-edge-to-edge';
 import { migrateToUIScene } from './migrate-uiscene';
 
 // eslint-disable-next-line prefer-const
@@ -215,6 +216,10 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         // AndroidManifest.xml add "density"
         await runTask(`Migrating AndroidManifest.xml by adding density to Activity configChanges.`, () => {
           return updateAndroidManifest(join(config.android.srcMainDirAbs, 'AndroidManifest.xml'));
+        });
+
+        await runTask(`Migrating the main Activity to enable edge-to-edge.`, () => {
+          return migrateToEdgeToEdge(config);
         });
 
         const gradleWrapperPath = join(config.android.platformDirAbs, 'gradle', 'wrapper', 'gradle-wrapper.properties');
@@ -466,6 +471,13 @@ async function writeBreakingChanges() {
       `IMPORTANT: Review https://capacitorjs.com/docs/next/updating/9-0#plugins for breaking changes in these plugins that you use: ${broken.join(
         ', ',
       )}.`,
+    );
+  }
+  if (allDependencies['@capacitor/android']) {
+    logger.info(
+      `IMPORTANT: The SystemBars 'insetsHandling' option now defaults to 'native' instead of 'css'. ` +
+        `If your app reads the '--safe-area-inset-*' CSS variables that Capacitor injected, ` +
+        `set 'plugins.SystemBars.insetsHandling' to 'css' in your Capacitor configuration file.`,
     );
   }
   if (allDependencies['@capacitor/ios']) {
