@@ -53,7 +53,7 @@ public class SystemBars extends Plugin {
     capacitorSystemBarsCheckMetaViewport();
     """;
 
-    private String insetsHandling = INSETS_HANDLING_CSS;
+    private String insetsHandling = INSETS_HANDLING_NATIVE;
     private boolean hasViewportCover = false;
 
     private String currentStatusBarStyle = STYLE_DEFAULT;
@@ -122,7 +122,7 @@ public class SystemBars extends Plugin {
         String style = getConfig().getString("style", STYLE_DEFAULT).toUpperCase(Locale.US);
         boolean hidden = getConfig().getBoolean("hidden", false);
 
-        String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_CSS);
+        String configuredInsetsHandling = getConfig().getString("insetsHandling", INSETS_HANDLING_NATIVE);
         if (
             INSETS_HANDLING_CSS.equals(configuredInsetsHandling) ||
             INSETS_HANDLING_DISABLE.equals(configuredInsetsHandling) ||
@@ -132,9 +132,9 @@ public class SystemBars extends Plugin {
         } else {
             Logger.warn(
                 "SystemBars",
-                "Unknown insetsHandling value '" + configuredInsetsHandling + "'. Falling back to '" + INSETS_HANDLING_CSS + "'."
+                "Unknown insetsHandling value '" + configuredInsetsHandling + "'. Falling back to '" + INSETS_HANDLING_NATIVE + "'."
             );
-            insetsHandling = INSETS_HANDLING_CSS;
+            insetsHandling = INSETS_HANDLING_NATIVE;
         }
 
         warnAboutUnsupportedConfigurationValues();

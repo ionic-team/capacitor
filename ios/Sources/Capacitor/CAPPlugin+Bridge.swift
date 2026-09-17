@@ -76,17 +76,6 @@ import WebKit
     }
 
     /**
-     * Default implementation of the capacitor 3.0 permission pattern
-     */
-    func checkPermissions(_ call: CAPPluginCall) {
-        call.resolve()
-    }
-
-    func requestPermissions(_ call: CAPPluginCall) {
-        call.resolve()
-    }
-
-    /**
      * Configure popover sourceRect, sourceView and permittedArrowDirections to show it centered
      */
     func setCenteredPopover(_ viewController: UIViewController) {
@@ -102,5 +91,18 @@ import WebKit
         viewController.preferredContentSize = size
         viewController.popoverPresentationController?.sourceView = hostView
         viewController.popoverPresentationController?.permittedArrowDirections = []
+    }
+}
+
+@objc extension CAPPlugin {
+    /**
+     * Default implementation of the capacitor 3.0 permission pattern
+     */
+    open func checkPermissions(_ call: CAPPluginCall) {
+        call.resolve()
+    }
+
+    open func requestPermissions(_ call: CAPPluginCall) {
+        call.resolve()
     }
 }
