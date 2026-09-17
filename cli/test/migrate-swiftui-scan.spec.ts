@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import type { Config } from '../src/definitions';
 import { logger } from '../src/log';
-import { __testables } from '../src/tasks/migrate-uiscene';
+import { __testables } from '../src/tasks/migrate-swiftui';
 
 import { mktmp } from './util';
 

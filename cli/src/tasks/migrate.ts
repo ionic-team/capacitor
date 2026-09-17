@@ -14,7 +14,7 @@ import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
 import { migrateToEdgeToEdge } from './migrate-edge-to-edge';
-import { migrateToUIScene } from './migrate-uiscene';
+import { migrateToSwiftUI } from './migrate-swiftui';
 
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
@@ -201,7 +201,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           return updateAppDelegate(join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift'));
         });
 
-        await migrateToUIScene(config);
+        await migrateToSwiftUI(config);
       }
 
       if (!installFailed) {
@@ -482,8 +482,8 @@ async function writeBreakingChanges() {
   }
   if (allDependencies['@capacitor/ios']) {
     logger.info(
-      'IMPORTANT: Capacitor 8.5 adopts UIScene on iOS. ' +
-        'See https://capacitorjs.com/docs/updating/8-5 for the full 8.4 → 8.5 migration guide.',
+      'IMPORTANT: Capacitor 9.0 boots iOS apps from a SwiftUI App struct with UIScene. ' +
+        'See https://capacitorjs.com/docs/next/updating/9-0 for the full migration guide.',
     );
   }
 }

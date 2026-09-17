@@ -249,6 +249,9 @@ export async function addInfoPlistDebugIfNeeded(config: Config): Promise<void> {
   }
 }
 
+export type SceneManifestResult =
+  { status: 'written' } | { status: 'unchanged' } | { status: 'skipped'; reason: string };
+
 export function hasSceneManifest(config: Config): boolean {
   const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
   if (!existsSync(infoPlist)) {
@@ -258,37 +261,73 @@ export function hasSceneManifest(config: Config): boolean {
   return entries['UIApplicationSceneManifest'] !== undefined;
 }
 
-export async function addSceneManifestIfNeeded(config: Config): Promise<void> {
+export function hasSwiftUISceneManifest(config: Config): boolean {
+  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+  if (!existsSync(infoPlist)) {
+    return false;
+  }
+  const entries = parse(readFileSync(infoPlist, 'utf-8')) as PlistObject;
+  const manifest = entries['UIApplicationSceneManifest'] as PlistObject | undefined;
+  return manifest !== undefined && manifest['UISceneConfigurations'] === undefined;
+}
+
+/**
+ * Point Info.plist at the SwiftUI App-struct scene setup: a scene manifest with no
+ * UISceneConfigurations (SwiftUI declares the scene itself) and no main storyboard.
+ *
+ * Preserves UIApplicationSupportsMultipleScenes when the project already set it, and
+ * refuses to touch a manifest that names a scene delegate class other than the stock
+ * SceneDelegate.
+ */
+export async function setSwiftUISceneManifest(config: Config): Promise<SceneManifestResult> {
   type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
   const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
 
   if (!existsSync(infoPlist)) {
-    logger.warn(infoPlist + ' not found.');
-    return;
+    return { status: 'skipped', reason: `${infoPlist} not found.` };
   }
 
   const entries = parse(readFileSync(infoPlist, 'utf-8')) as Mutable<PlistObject>;
+  const manifest = entries['UIApplicationSceneManifest'] as PlistObject | undefined;
 
-  if (entries['UIApplicationSceneManifest'] !== undefined) {
-    logger.warn('Found UIApplicationSceneManifest in ' + infoPlist + ', skipping.');
-    return;
+  const customDelegates = customSceneDelegateClassNames(manifest);
+  if (customDelegates.length > 0) {
+    return {
+      status: 'skipped',
+      reason:
+        `UIApplicationSceneManifest names custom scene delegate(s): ${customDelegates.join(', ')}. ` +
+        'Remove UISceneConfigurations by hand once the delegate is ported to the SwiftUI scene body.',
+    };
+  }
+
+  if (
+    manifest !== undefined &&
+    manifest['UISceneConfigurations'] === undefined &&
+    !('UIMainStoryboardFile' in entries)
+  ) {
+    return { status: 'unchanged' };
   }
 
   entries['UIApplicationSceneManifest'] = {
-    UIApplicationSupportsMultipleScenes: false,
-    UISceneConfigurations: {
-      UIWindowSceneSessionRoleApplication: [
-        {
-          UISceneConfigurationName: 'Default Configuration',
-          UISceneDelegateClassName: '$(PRODUCT_MODULE_NAME).SceneDelegate',
-          UISceneStoryboardFile: 'Main',
-        },
-      ],
-    },
+    UIApplicationSupportsMultipleScenes: manifest?.['UIApplicationSupportsMultipleScenes'] ?? false,
   };
+  delete entries['UIMainStoryboardFile'];
 
   writeFileSync(infoPlist, build(entries));
+  return { status: 'written' };
+}
+
+function customSceneDelegateClassNames(manifest: PlistObject | undefined): string[] {
+  const configurations = manifest?.['UISceneConfigurations'] as PlistObject | undefined;
+  if (!configurations) {
+    return [];
+  }
+  return Object.values(configurations)
+    .flatMap((roleConfigs) => (Array.isArray(roleConfigs) ? (roleConfigs as PlistObject[]) : []))
+    .map((roleConfig) => roleConfig['UISceneDelegateClassName'])
+    .filter((className): className is string => typeof className === 'string')
+    .filter((className) => className.split('.').pop() !== 'SceneDelegate');
 }
 
 export async function checkSwiftToolsVersion(config: Config, version: string | undefined): Promise<string | null> {
