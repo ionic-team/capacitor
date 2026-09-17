@@ -13,9 +13,8 @@ import { deleteFolderRecursive } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
-import { migrateToSwiftUI } from './migrate-swiftui';
 import { migrateToEdgeToEdge } from './migrate-edge-to-edge';
-import { migrateToUIScene } from './migrate-uiscene';
+import { migrateToSwiftUI } from './migrate-swiftui';
 
 // eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
