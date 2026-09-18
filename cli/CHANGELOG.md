@@ -3,6 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-alpha.7](https://github.com/ionic-team/capacitor/compare/8.5.1...9.0.0-alpha.7) (2026-09-18)
+
+### Bug Fixes
+
+- **cli:** declare app/build.gradle dependency versions in cap migrate ([#8570](https://github.com/ionic-team/capacitor/issues/8570)) ([6ec449e](https://github.com/ionic-team/capacitor/commit/6ec449eda133787198b5abdbcd19dc1b464e0f7b))
+- **cli:** remove AGP 9 property shims and jcenter() in cap migrate ([#8584](https://github.com/ionic-team/capacitor/issues/8584)) ([8ac467a](https://github.com/ionic-team/capacitor/commit/8ac467aee9ce30bf755b957199b34562294fa6dd))
+- **cli:** replace usesCleartextTraffic with network-security-config ([#8572](https://github.com/ionic-team/capacitor/issues/8572)) ([f39dd91](https://github.com/ionic-team/capacitor/commit/f39dd91e96e16c0ddc69e14d0963c0c4886b0fe8))
+- **cli:** restore Cordova Package.swift generator for Cap 9 ([#8580](https://github.com/ionic-team/capacitor/issues/8580)) ([09431bc](https://github.com/ionic-team/capacitor/commit/09431bc23ce4f656a25bd42c4abc424011b80858))
+- **cli:** run gradle wrapper after settings.gradle migration to fix first-run failure ([#8543](https://github.com/ionic-team/capacitor/issues/8543)) ([9b68494](https://github.com/ionic-team/capacitor/commit/9b684944b22a8ff2e634b6c16fef192375d98c61))
+- **cli:** run gradle wrapper before root build.gradle migration ([#8579](https://github.com/ionic-team/capacitor/issues/8579)) ([3a82c57](https://github.com/ionic-team/capacitor/commit/3a82c576fc9ba72d24bb55eb8a722514c21cca1c))
+- **cli:** update gradle-wrapper.properties version to avoid JDK 25 problems ([#8594](https://github.com/ionic-team/capacitor/issues/8594)) ([60dd0b6](https://github.com/ionic-team/capacitor/commit/60dd0b60c3fd42089296435795e8bb3becc00d33))
+- resolve issues with safe area / systembars plugin ([#8535](https://github.com/ionic-team/capacitor/issues/8535)) ([e37d9c6](https://github.com/ionic-team/capacitor/commit/e37d9c60785368acf2a83cfd4c20f47076672bdd))
+
+### Features
+
+- **cli:** add android edge-to-edge settings to migrator ([#8604](https://github.com/ionic-team/capacitor/issues/8604)) ([ee131fa](https://github.com/ionic-team/capacitor/commit/ee131fafa4027ede6d4e1147f34829a69b0d9db1))
+- include option to force cordova inclusion ([#8576](https://github.com/ionic-team/capacitor/issues/8576)) ([638fe4d](https://github.com/ionic-team/capacitor/commit/638fe4dde67d238f5e55de72aefbad7b4c3fc538))
+- **SystemBars:** set default insets handling to 'native' ([#8599](https://github.com/ionic-team/capacitor/issues/8599)) ([f9e2395](https://github.com/ionic-team/capacitor/commit/f9e2395ec26b8980f269697d3fc903520479aaa6))
+
+# [9.0.0-alpha.6](https://github.com/ionic-team/capacitor/compare/8.4.2...9.0.0-alpha.6) (2026-07-14)
+
+### Bug Fixes
+
+- **cli:** Don't add kotlin plugin for Cordova plugins ([#8518](https://github.com/ionic-team/capacitor/issues/8518)) ([9a2d3e6](https://github.com/ionic-team/capacitor/commit/9a2d3e65a616366b42dbcc2ffa40790b9f102722))
+
+# [9.0.0-alpha.5](https://github.com/ionic-team/capacitor/compare/8.4.1...9.0.0-alpha.5) (2026-06-23)
+
+### Bug Fixes
+
+- add missing logic from merge ([#8515](https://github.com/ionic-team/capacitor/issues/8515)) ([356cafa](https://github.com/ionic-team/capacitor/commit/356cafa7a06dd4a2b6d535f421ddc62132b34343))
+- **cli:** Add missing imports ([#8512](https://github.com/ionic-team/capacitor/issues/8512)) ([904b22e](https://github.com/ionic-team/capacitor/commit/904b22e69f4f750ed0b2e006157baaa0c7fc2a7f))
+
+# [9.0.0-alpha.4](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.3...9.0.0-alpha.4) (2026-06-19)
+
+### Bug Fixes
+
+- **ios:** eliminate double comma in SPM generation ([#8505](https://github.com/ionic-team/capacitor/issues/8505)) ([1a5543f](https://github.com/ionic-team/capacitor/commit/1a5543fbfcf4ba911270002d573275342f680bde))
+
+# [9.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.4.0...9.0.0-alpha.3) (2026-06-02)
+
+# [9.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/8.3.4...9.0.0-alpha.2) (2026-05-12)
+
+# [9.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/8.3.3...9.0.0-alpha.1) (2026-05-08)
+
+# [9.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/8.3.2...9.0.0-alpha.0) (2026-05-07)
+
+### Bug Fixes
+
+- **android:** conditionally add Cordova ([#8453](https://github.com/ionic-team/capacitor/issues/8453)) ([e136b3f](https://github.com/ionic-team/capacitor/commit/e136b3f0cdd1437cac5234576301ed388edf85e7))
+- **cli:** conditionally add capacitor-cordova-android-plugins module ([#8449](https://github.com/ionic-team/capacitor/issues/8449)) ([9e85905](https://github.com/ionic-team/capacitor/commit/9e85905bf36c1e2300994e231cf10e829f2074ed))
+- **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([d55f4f8](https://github.com/ionic-team/capacitor/commit/d55f4f859bd88fa5617699e874c48c451bcb5e5f))
+
 ## [8.5.1](https://github.com/ionic-team/capacitor/compare/8.5.0...8.5.1) (2026-08-31)
 
 ### Bug Fixes
