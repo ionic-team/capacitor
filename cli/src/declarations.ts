@@ -785,6 +785,21 @@ export interface PluginsConfig {
     insetsHandling?: 'native' | 'css' | 'disable';
 
     /**
+     * Specifies how to handle the keyboard insets on Android.
+     *
+     * This option is only supported on Android and has no effect if `insetsHandling` is set to `disable`.
+     *
+     * `resize` = Resizes the webview when the keyboard is shown, so the keyboard never covers it.
+     *
+     * `none` = Leaves the webview untouched when the keyboard is shown, so the keyboard overlays it.
+     * This shifts the responsibility of keeping content clear of the keyboard to your own code,
+     * for example by using the keyboard height reported by `@capacitor/keyboard`.
+     *
+     * @default "resize"
+     */
+    keyboardInsetsHandling?: 'resize' | 'none';
+
+    /**
      * Set an initial value for the to be detected `viewport-fit=` meta tag value.
      * For most apps that support edge-to-edge this value will eventually be `cover`.
      * Therefore you might want to set this value to `cover` to help prevent layout jumps and glitches.

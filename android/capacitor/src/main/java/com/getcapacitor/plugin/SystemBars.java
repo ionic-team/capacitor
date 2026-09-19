@@ -35,6 +35,9 @@ public class SystemBars extends Plugin {
     static final String INSETS_HANDLING_DISABLE = "disable";
     static final String INSETS_HANDLING_NATIVE = "native";
 
+    static final String KEYBOARD_INSETS_HANDLING_RESIZE = "resize";
+    static final String KEYBOARD_INSETS_HANDLING_NONE = "none";
+
     // https://issues.chromium.org/issues/40699457
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
     // https://issues.chromium.org/issues/457682720
@@ -54,6 +57,7 @@ public class SystemBars extends Plugin {
     """;
 
     private String insetsHandling = INSETS_HANDLING_CSS;
+    private boolean resizeForKeyboard = true;
     private boolean hasViewportCover = false;
 
     private String currentStatusBarStyle = STYLE_DEFAULT;
@@ -137,6 +141,20 @@ public class SystemBars extends Plugin {
             insetsHandling = INSETS_HANDLING_CSS;
         }
 
+        String configuredKeyboardInsetsHandling = getConfig().getString("keyboardInsetsHandling", KEYBOARD_INSETS_HANDLING_RESIZE);
+        if (KEYBOARD_INSETS_HANDLING_NONE.equals(configuredKeyboardInsetsHandling)) {
+            resizeForKeyboard = false;
+        } else if (!KEYBOARD_INSETS_HANDLING_RESIZE.equals(configuredKeyboardInsetsHandling)) {
+            Logger.warn(
+                "SystemBars",
+                "Unknown keyboardInsetsHandling value '" +
+                    configuredKeyboardInsetsHandling +
+                    "'. Falling back to '" +
+                    KEYBOARD_INSETS_HANDLING_RESIZE +
+                    "'."
+            );
+        }
+
         warnAboutUnsupportedConfigurationValues();
 
         initWindowInsetsListener();
@@ -195,14 +213,14 @@ public class SystemBars extends Plugin {
 
             Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
             Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
-            boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+            boolean keyboardVisible = resizeForKeyboard && insets.isVisible(WindowInsetsCompat.Type.ime());
 
             if (shouldPassthroughInsets) {
                 // We need to correct for a possible shown IME
                 v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
 
-                WindowInsetsCompat newInsets = new WindowInsetsCompat.Builder(insets)
-                    .setInsets(
+                WindowInsetsCompat newInsets = withKeyboardInsetsHandling(
+                    new WindowInsetsCompat.Builder(insets).setInsets(
                         WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
                         Insets.of(
                             systemBarsInsets.left,
@@ -211,7 +229,7 @@ public class SystemBars extends Plugin {
                             getBottomInset(systemBarsInsets, keyboardVisible)
                         )
                     )
-                    .build();
+                ).build();
 
                 injectSafeAreaCSS(newInsets);
 
@@ -229,14 +247,28 @@ public class SystemBars extends Plugin {
             // Returning `WindowInsetsCompat.CONSUMED` breaks recalculation of safe area insets
             // So we have to explicitly set insets to `0`
             // See: https://issues.chromium.org/issues/461332423
-            WindowInsetsCompat newInsets = new WindowInsetsCompat.Builder(insets)
-                .setInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(), Insets.of(0, 0, 0, 0))
-                .build();
+            WindowInsetsCompat newInsets = withKeyboardInsetsHandling(
+                new WindowInsetsCompat.Builder(insets).setInsets(
+                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
+                    Insets.of(0, 0, 0, 0)
+                )
+            ).build();
 
             injectSafeAreaCSS(newInsets);
 
             return newInsets;
         });
+    }
+
+    private WindowInsetsCompat.Builder withKeyboardInsetsHandling(WindowInsetsCompat.Builder builder) {
+        if (resizeForKeyboard) {
+            return builder;
+        }
+
+        // WebView >= 139 resizes its visual viewport for the IME insets it receives, which would make the page pannable.
+        // Setting them to `0` rather than consuming them keeps the WebView's inset state up to date.
+        // See: https://developer.android.com/develop/ui/views/layout/webapps/understand-window-insets
+        return builder.setInsets(WindowInsetsCompat.Type.ime(), Insets.NONE).setVisible(WindowInsetsCompat.Type.ime(), false);
     }
 
     private void injectSafeAreaCSS(WindowInsetsCompat insets) {
