@@ -44,7 +44,11 @@ export default config;
 ## Example
 
 ```typescript
-import { CapacitorHttp } from '@capacitor/core';
+import { CapacitorHttp, type HttpResponse } from '@capacitor/core';
+
+interface MyResponse {
+  foo: string;
+}
 
 // Example of a GET request
 const doGet = () => {
@@ -54,7 +58,7 @@ const doGet = () => {
     params: { size: 'XL' },
   };
 
-  const response: HttpResponse = await CapacitorHttp.get(options);
+  const response: HttpResponse<MyResponse> = await CapacitorHttp.get(options);
 
   // or...
   // const response = await CapacitorHttp.request({ ...options, method: 'GET' })
@@ -69,7 +73,7 @@ const doPost = () => {
     data: { foo: 'bar' },
   };
 
-  const response: HttpResponse = await CapacitorHttp.post(options);
+  const response: HttpResponse<MyResponse> = await CapacitorHttp.post(options);
 
   // or...
   // const response = await CapacitorHttp.request({ ...options, method: 'POST' })
@@ -205,11 +209,11 @@ Make a Http DELETE Request to a server using native libraries.
 ### Interfaces
 
 
-#### HttpResponse
+#### HttpResponse<T = any>
 
 | Prop          | Type                                                | Description                                       |
 | ------------- | --------------------------------------------------- | ------------------------------------------------- |
-| **`data`**    | <code>any</code>                                    | Additional data received with the Http response.  |
+| **`data`**    | <code>T</code>                                      | Additional data received with the Http response.  |
 | **`status`**  | <code>number</code>                                 | The status code received from the Http response.  |
 | **`headers`** | <code><a href="#httpheaders">HttpHeaders</a></code> | The headers received from the Http response.      |
 | **`url`**     | <code>string</code>                                 | The response URL received from the Http response. |
