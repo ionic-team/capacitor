@@ -4,6 +4,24 @@ import XCTest
 class MockBridgeViewController: CAPBridgeViewController {
 }
 
+class BackgroundColorBridgeViewController: CAPBridgeViewController {
+    let descriptor: InstanceDescriptor
+
+    init(descriptor: InstanceDescriptor) {
+        self.descriptor = descriptor
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        descriptor = InstanceDescriptor.init()
+        super.init(coder: coder)
+    }
+
+    override func instanceDescriptor() -> InstanceDescriptor {
+        return descriptor
+    }
+}
+
 class MockAssetHandler: WebViewAssetHandler {
 }
 
@@ -26,8 +44,16 @@ class CapacitorTests: XCTestCase {
         bridge = MockBridge(with: InstanceConfiguration(with: descriptor, isDebug: true), delegate: MockBridgeViewController(), cordovaConfiguration: descriptor.cordovaConfiguration, assetHandler: MockAssetHandler(router: CapacitorRouter()), delegationHandler: MockDelegationHandler())
     }
 
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    func testConfiguredBackgroundCoversStatusBarSafeArea() {
+        let descriptor = InstanceDescriptor.init()
+        descriptor.backgroundColor = .red
+        let controller = BackgroundColorBridgeViewController(descriptor: descriptor)
+
+        controller.loadView()
+
+        let statusBarBackground = controller.statusBarBackgroundView
+        XCTAssertEqual(statusBarBackground?.superview, controller.webView)
+        XCTAssertEqual(statusBarBackground?.backgroundColor, .red)
+        XCTAssertFalse(statusBarBackground?.isUserInteractionEnabled ?? true)
     }
 }
