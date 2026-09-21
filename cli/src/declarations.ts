@@ -725,20 +725,25 @@ export interface PluginsConfig {
   /**
    * Plugin configuration by class name.
    *
+   * Set `disabled` to `true` in a plugin's configuration to prevent its native
+   * implementation from being registered and loaded. For example:
+   * `{ plugins: { MyPlugin: { disabled: true } } }`.
+   *
+   * This does not affect a plugin-specific `enabled` setting, which may have a
+   * different meaning.
+   *
    * @since 1.0.0
    */
-  [key: string]:
-    | {
-        [key: string]: any;
-      }
-    | undefined;
+  [key: string]: PluginConfig & {
+  [key: string]: any;
+} | undefined;
 
   /**
    * Capacitor Cookies plugin configuration
    *
    * @since 4.3.0
    */
-  CapacitorCookies?: {
+  CapacitorCookies?: PluginConfig & {
     /**
      * Enable CapacitorCookies to override the global `document.cookie` on native.
      *
@@ -752,7 +757,7 @@ export interface PluginsConfig {
    *
    * @since 4.3.0
    */
-  CapacitorHttp?: {
+  CapacitorHttp?: PluginConfig & {
     /**
      * Enable CapacitorHttp to override the global `fetch` and `XMLHttpRequest` on native.
      *
@@ -766,7 +771,7 @@ export interface PluginsConfig {
    *
    * @since 8.0.0
    */
-  SystemBars?: {
+  SystemBars?: PluginConfig & {
     /**
      * Specifies how to handle problematic insets on Android.
      *
@@ -825,6 +830,16 @@ export interface PluginsConfig {
      */
     animation?: 'FADE' | 'NONE';
   };
+}
+
+export interface PluginConfig {
+  /**
+   * Prevent this plugin's native implementation from being registered.
+   *
+   * @since 8.5.3
+   */
+  disabled?: boolean;
+
 }
 
 export interface PackageOptions {
