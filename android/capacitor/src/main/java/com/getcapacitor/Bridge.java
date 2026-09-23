@@ -1058,6 +1058,19 @@ public class Bridge {
             String permString = permission.getKey();
             boolean isGranted = permission.getValue();
 
+            if (!PermissionHelper.isPermissionEnforced(permString)) {
+                // Not enforced on this SDK (e.g. local-network permission pre-37).
+                // Clear any cached state and skip rationale/DENIED caching entirely.
+                String cachedState = prefs.getString(permString, null);
+
+                if (cachedState != null) {
+                    SharedPreferences.Editor nonEnforcedEditor = prefs.edit();
+                    nonEnforcedEditor.remove(permString);
+                    nonEnforcedEditor.apply();
+                }
+                continue;
+            }
+
             if (isGranted) {
                 // Permission granted. If previously denied, remove cached state
                 String state = prefs.getString(permString, null);
@@ -1082,9 +1095,15 @@ public class Bridge {
             }
         }
 
-        String[] permStrings = permissions.keySet().toArray(new String[0]);
+        ArrayList<String> enforcedPerms = new ArrayList<>();
+        for (String permString : permissions.keySet()) {
+            if (PermissionHelper.isPermissionEnforced(permString)) {
+                enforcedPerms.add(permString);
+            }
+        }
+        String[] permStrings = enforcedPerms.toArray(new String[0]);
 
-        if (!PermissionHelper.hasDefinedPermissions(getContext(), permStrings)) {
+        if (permStrings.length > 0 && !PermissionHelper.hasDefinedPermissions(getContext(), permStrings)) {
             StringBuilder builder = new StringBuilder();
             builder.append("Missing the following permissions in AndroidManifest.xml:\n");
             String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permStrings);
@@ -1125,7 +1144,9 @@ public class Bridge {
                     for (String permString : perm.strings()) {
                         String key = perm.alias().isEmpty() ? permString : perm.alias();
                         PermissionState permissionStatus;
-                        if (ActivityCompat.checkSelfPermission(this.getContext(), permString) == PackageManager.PERMISSION_GRANTED) {
+                        if (!PermissionHelper.isPermissionEnforced(permString)) {
+                            permissionStatus = PermissionState.GRANTED;
+                        } else if (ActivityCompat.checkSelfPermission(this.getContext(), permString) == PackageManager.PERMISSION_GRANTED) {
                             permissionStatus = PermissionState.GRANTED;
                         } else {
                             permissionStatus = PermissionState.PROMPT;
