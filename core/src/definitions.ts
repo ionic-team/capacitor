@@ -78,6 +78,16 @@ export interface Plugin {
 
 export type PermissionState = 'prompt' | 'prompt-with-rationale' | 'granted' | 'denied';
 
+/**
+ * A mapping of permission aliases to their current state, as returned by the
+ * standard `checkPermissions()` / `requestPermissions()` plugin flow.
+ *
+ * @since 9.0.0
+ */
+export type PermissionResult = {
+  [key: string]: PermissionState;
+};
+
 export interface PluginListenerHandle {
   remove: () => Promise<void>;
 }

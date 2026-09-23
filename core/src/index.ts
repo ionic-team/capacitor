@@ -1,6 +1,7 @@
 // Type Definitions
 export type {
   CapacitorGlobal,
+  PermissionResult,
   PermissionState,
   Plugin,
   PluginCallback,
@@ -24,6 +25,7 @@ export {
   SystemBarsAnimation,
   CapacitorCookies,
   CapacitorHttp,
+  LocalNetwork,
   WebView,
   buildRequestInit,
 } from './core-plugins';
@@ -38,6 +40,7 @@ export type {
   HttpParams,
   HttpResponse,
   HttpResponseType,
+  LocalNetworkPlugin,
   WebViewPath,
   WebViewPlugin,
   SystemBarsVisibilityOptions,

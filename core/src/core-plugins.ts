@@ -1,4 +1,4 @@
-import type { Plugin } from './definitions';
+import type { PermissionResult, Plugin } from './definitions';
 import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
 
@@ -659,3 +659,29 @@ export const SystemBars = registerPlugin<SystemBarsPlugin>('SystemBars', {
 });
 
 /******** END SYSTEM BARS PLUGIN ********/
+
+/******** LOCAL NETWORK PLUGIN ********/
+export interface LocalNetworkPlugin {
+  checkPermissions(): Promise<PermissionResult>;
+  requestPermissions(): Promise<PermissionResult>;
+}
+
+export class LocalNetworkPluginWeb extends WebPlugin implements LocalNetworkPlugin {
+  async checkPermissions(): Promise<PermissionResult> {
+    return {
+      localNetwork: 'granted',
+    };
+  }
+
+  async requestPermissions(): Promise<PermissionResult> {
+    return {
+      localNetwork: 'granted',
+    };
+  }
+}
+
+export const LocalNetwork = registerPlugin<LocalNetworkPlugin>('LocalNetwork', {
+  web: () => new LocalNetworkPluginWeb(),
+});
+
+/******** END LOCAL NETWORK PLUGIN ********/
