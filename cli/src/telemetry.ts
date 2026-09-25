@@ -40,6 +40,24 @@ export interface Metric<N extends string, D> {
 
 type CommanderAction = (...args: any[]) => void | Promise<void>;
 
+/**
+ * Option names whose values are safe to report because the option declares a
+ * fixed set of choices. This is an allowlist by design: a denylist of
+ * password-like names would leak the first sensitive option someone adds.
+ */
+const TELEMETRY_OPTION_VALUE_ALLOWLIST = new Set([
+  'androidreleasetype',
+  'signingType',
+  'xcodeExportMethod',
+  'xcodeSigningStyle',
+]);
+
+/**
+ * Positional argument values that are safe to report. Everything else is
+ * dropped, since arguments like `cap init`'s app name are user content.
+ */
+const TELEMETRY_ARGUMENT_ALLOWLIST = new Set(['android', 'ios', 'web', 'on', 'off']);
+
 export function telemetryAction(config: Config, action: CommanderAction): CommanderAction {
   return async (...actionArgs: any[]): Promise<void> => {
     const start = new Date();
@@ -76,8 +94,8 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
     const data: CommandMetricData = {
       app_id: await getAppIdentifier(config),
       command,
-      arguments: cmd.args.join(' '),
-      options: JSON.stringify(cmd.opts()),
+      arguments: getTelemetryArguments(cmd),
+      options: JSON.stringify(getTelemetryOptions(cmd)),
       duration,
       error: error ? (error.message ? error.message : String(error)) : null,
       node_version: process.version,
@@ -106,6 +124,28 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
       throw error;
     }
   };
+}
+
+/**
+ * Build the reported option map: every option name the command resolved, but
+ * only the values that cannot carry a secret. Booleans are kept because they
+ * cannot encode one, fixed-choice options are kept by allowlist, and every
+ * other value--keystore passwords, paths, signing identities--becomes `null`.
+ */
+export function getTelemetryOptions(cmd: Command): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(cmd.opts()).map(([name, value]) => [
+      name,
+      typeof value === 'boolean' || TELEMETRY_OPTION_VALUE_ALLOWLIST.has(name) ? value : null,
+    ]),
+  );
+}
+
+/**
+ * Build the reported positional arguments, keeping only allowlisted values.
+ */
+export function getTelemetryArguments(cmd: Command): string {
+  return cmd.args.filter((arg) => TELEMETRY_ARGUMENT_ALLOWLIST.has(arg)).join(' ');
 }
 
 /**
