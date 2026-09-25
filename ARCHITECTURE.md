@@ -326,6 +326,34 @@ The synchronous `prompt()` channel on iOS exists because `document.cookie` and t
 "is CapacitorHttp enabled?" check must answer synchronously, and `WKWebView` offers no
 synchronous message handler.
 
+#### What can cross the bridge
+
+**Only JSON-representable data.** The channel is a JSON string on Android and a
+JSON-compatible object on iOS; class instances, functions, `Blob`s, typed arrays and
+anything else with custom serialisation must be converted first (the `CapacitorHttp`
+patches in `native-bridge.ts` do exactly this, base64-encoding `File`s and draining
+`ReadableStream`s before they reach the bridge).
+
+iOS makes the contract explicit as the `JSValue` protocol in `JSTypes.swift`, which
+exactly these types conform to:
+
+```
+String · Bool · Int · Float · Double · NSNumber · NSNull · Date
+Array · Dictionary where Key == String, Value == JSValue
+```
+
+with `JSObject = [String: JSValue]` and `JSArray = [JSValue]`. Two consequences:
+
+- **`Date` is a first-class native value but not a JSON one.** Dates are converted to
+  ISO 8601 strings in both directions — inbound by
+  `JSTypes.coerceDictionaryToJSObject(_:formattingDatesAsStrings:)`, outbound by
+  `JSResultSerialization`, which walks nested dictionaries and arrays. A plugin can opt
+  out of inbound stringification with `shouldStringifyDatesInCalls` on `CAPPlugin`.
+- **`NSNull`, not `nil`.** Objective-C collections cannot hold `nil`, so JS `null`
+  arrives as `NSNull`. Check the value's type rather than testing for key presence;
+  `Array+Capacitor.swift` provides `replacingNullValues()` / `replacingOptionalValues()`
+  to convert between `[JSValue]` and `[JSValue?]`.
+
 ### 4.3 Callback identity and async modes
 
 `cap.toNative()` in `core/native-bridge.ts` owns callback registration:

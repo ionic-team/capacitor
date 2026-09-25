@@ -12,8 +12,9 @@ precedence over anything here.
 
 ## What Capacitor is
 
-Capacitor lets a web app run as a native iOS/Android app (and as a PWA) from one
-codebase, with typed access to native APIs.
+The project describes itself as **"a cross-platform native runtime for web apps"** —
+it lets a web app run as a native iOS/Android app (and as a PWA) from one codebase,
+with typed access to native APIs.
 
 The problems it solves:
 
@@ -286,12 +287,19 @@ Ordered roughly by how often they actually happen.
    resolve the call from the completion handler. To touch UI, hop explicitly:
    `DispatchQueue.main.async` / `bridge.executeOnMainThread(...)`.
 
-5. **Forgetting `@objc` on an iOS plugin method.** It compiles cleanly and fails only at
+5. **Sending non-JSON data over the bridge.** Only JSON-representable values cross —
+   class instances, functions, `Blob`s and typed arrays must be converted first. Two
+   traps on the native side: JS `null` arrives as `NSNull`, not `nil` (Objective-C
+   collections cannot hold `nil`), so type-check values instead of testing for key
+   presence; and `Date` is a valid `JSValue` natively but is stringified to ISO 8601 in
+   both directions. See *ARCHITECTURE.md §4.2*.
+
+6. **Forgetting `@objc` on an iOS plugin method.** It compiles cleanly and fails only at
    runtime with a "does not respond to method call" log — and the JS promise never
    settles. Same for `@objc(ClassName)` on the class, which the CLI's plugin scanner
    relies on.
 
-6. **Adding a built-in plugin and missing a touchpoint.** A new core plugin needs *all*
+7. **Adding a built-in plugin and missing a touchpoint.** A new core plugin needs *all*
    of these. The SystemBars plugin (`a32216ac`) is the reference commit, though it
    predates the iOS SPM move — its iOS paths and `.pbxproj` edit no longer apply. Paths
    below are current:
@@ -308,27 +316,30 @@ Ordered roughly by how often they actually happen.
    Forgetting the two registration lists is the single most common miss: the plugin
    builds, exports cleanly, and is simply absent at runtime.
 
-7. **Changing a built-in plugin's interface without regenerating docs.**
+8. **Changing a built-in plugin's interface without regenerating docs.**
    `core/cookies.md`, `core/http.md` and `core/system-bars.md` are committed docgen
    output. Run `npm run docgen -w core` (or a full `npm run build -w core`) and commit them.
+   User-facing API changes may also need a PR to
+   [`ionic-team/capacitor-docs`](https://github.com/ionic-team/capacitor-docs), which is a
+   separate repo — the published docs do not update themselves.
 
-8. **Adding a file to a template without `git add`.** `scripts/pack-cli-assets.mjs` builds
+9. **Adding a file to a template without `git add`.** `scripts/pack-cli-assets.mjs` builds
    the CLI tarballs from `git ls-files`. An untracked file in `android-template/` or
    `ios-spm-template/` silently never ships.
 
-9. **Type-only imports.** `import { Foo }` where `Foo` is only a type fails lint. Use
-   `import type`.
+10. **Type-only imports.** `import { Foo }` where `Foo` is only a type fails lint. Use
+    `import type`.
 
-10. **Assuming Kotlin, an Xcode project, or modern Swift concurrency.** None of the three
+11. **Assuming Kotlin, an Xcode project, or modern Swift concurrency.** None of the three
     exist here. Android is Java and there is no `.pbxproj` (see *Monorepo layout*); the
     Swift runtime is language mode 5 with zero `async`/`await`, actors or `Sendable`
     (see *Swift version and concurrency*). Reaching for any of them is a change of
     direction, not a cleanup.
 
-11. **Targeting the wrong branch.** A breaking change opened against the stable branch
+12. **Targeting the wrong branch.** A breaking change opened against the stable branch
     will be sent back. See `CONTRIBUTING.md`.
 
-12. **Adding comments nobody asked for.** Match the surrounding density. The existing
+13. **Adding comments nobody asked for.** Match the surrounding density. The existing
     comments in the bridge files explain *non-obvious constraints* (why a counter is
     randomised, why a notification is dropped rather than deferred) — that is the bar.
 
@@ -349,3 +360,31 @@ Report actual results; never claim success unverified.
 
 Markdown is not linted or formatted by this repo — the prettier glob is
 `**/*.{css,html,java,js,mjs,ts}`.
+
+---
+
+## External references
+
+The published docs describe the **released** version; this repo may be ahead of them.
+Where the two disagree, the source in this repo wins.
+
+- [capacitorjs.com/docs](https://capacitorjs.com/docs) — end-user documentation
+- [Creating plugins](https://capacitorjs.com/docs/plugins/creating-plugins) — the
+  third-party plugin authoring model, and the design guidance core plugins also follow
+  (keep plugins small in scope; normalise values across platforms — e.g. ISO 8601
+  datetimes with timezones)
+- [Bridge data types](https://capacitorjs.com/docs/core-apis/data-types) — what may cross
+  the bridge, from the plugin author's side
+
+Related repos, per `CONTRIBUTING.md`:
+
+| Repo | What it is |
+| --- | --- |
+| `ionic-team/capacitor-plugins` | Official plugins |
+| `ionic-team/capacitor-docs` | The docs site — **update it when changing user-facing API** |
+| `ionic-team/capacitor-testapp` | The app the core team develops against |
+| `capacitor-community/*` | Community plugins and platforms |
+
+Background reading: Max Lynch's [How Capacitor
+Works](https://ionic.io/blog/how-capacitor-works-2), which `CONTRIBUTING.md` cites for the
+project's design philosophy.
