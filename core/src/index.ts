@@ -1,7 +1,6 @@
 // Type Definitions
 export type {
   CapacitorGlobal,
-  PermissionResult,
   PermissionState,
   Plugin,
   PluginCallback,
@@ -40,6 +39,7 @@ export type {
   HttpParams,
   HttpResponse,
   HttpResponseType,
+  LocalNetworkPermissions,
   LocalNetworkPlugin,
   WebViewPath,
   WebViewPlugin,
