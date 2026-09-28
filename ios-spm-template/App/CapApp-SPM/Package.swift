@@ -17,8 +17,7 @@ let package = Package(
         .target(
             name: "CapApp-SPM",
             dependencies: [
-                .product(name: "Capacitor", package: "capacitor"),
-                .product(name: "CapacitorCordova", package: "capacitor")
+                .product(name: "Capacitor", package: "capacitor")
             ]
         )
     ]
