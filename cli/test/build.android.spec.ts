@@ -1,7 +1,8 @@
 import { join } from 'path';
 
-import { APP_ID, APP_NAME, run, makeAppDir, MappedFS, installPlatform } from './util';
 import { runCommand } from '../src/util/subprocess';
+
+import { APP_ID, APP_NAME, run, makeAppDir, MappedFS, installPlatform } from './util';
 
 describe('Build: Android', () => {
   let appDirObj: any;

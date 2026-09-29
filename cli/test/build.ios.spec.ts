@@ -1,8 +1,8 @@
 import { join } from 'path';
 
-import { APP_ID, APP_NAME, run, makeAppDir, MappedFS, installPlatform } from './util';
 import { runCommand } from '../src/util/subprocess';
 
+import { APP_ID, APP_NAME, run, makeAppDir, MappedFS, installPlatform } from './util';
 
 describe('Build: iOS', () => {
   let appDirObj: any;
@@ -17,7 +17,7 @@ describe('Build: iOS', () => {
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
     await installPlatform(appDir, 'ios');
     await run(appDir, `add ios`);
-    await runCommand('xcodebuild', ['build', '-scheme', 'App','-sdk', 'iphonesimulator'], {
+    await runCommand('xcodebuild', ['build', '-scheme', 'App', '-sdk', 'iphonesimulator'], {
       cwd: join(appDir, 'ios', 'App'),
     });
     FS = new MappedFS(appDir);
