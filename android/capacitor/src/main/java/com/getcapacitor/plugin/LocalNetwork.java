@@ -16,8 +16,6 @@ import com.getcapacitor.util.PermissionHelper;
  */
 @CapacitorPlugin(
     name = "LocalNetwork",
-    permissions = {
-        @Permission(alias = "localNetwork", strings = { PermissionHelper.ACCESS_LOCAL_NETWORK })
-    }
+    permissions = { @Permission(alias = "localNetwork", strings = { PermissionHelper.ACCESS_LOCAL_NETWORK }) }
 )
 public class LocalNetwork extends Plugin {}
