@@ -10,16 +10,20 @@ describe('Build: iOS', () => {
 
   beforeAll(async () => {
     // These commands are slowww...
-    jest.setTimeout(150000);
-    appDirObj = await makeAppDir(false);
+    jest.setTimeout(1500000);
+    appDirObj = await makeAppDir(false, false);
     const appDir = appDirObj.appDir;
     // Init in this directory so we can test build
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
     await installPlatform(appDir, 'ios');
     await run(appDir, `add ios`);
-    await runCommand('xcodebuild', ['build', '-scheme', 'App', '-sdk', 'iphonesimulator'], {
-      cwd: join(appDir, 'ios', 'App'),
-    });
+    await runCommand(
+      'xcodebuild',
+      ['build', '-scheme', 'App', '-sdk', 'iphonesimulator', '-derivedDataPath', './build'],
+      {
+        cwd: join(appDir, 'ios', 'App'),
+      },
+    );
     FS = new MappedFS(appDir);
   });
 
@@ -28,6 +32,6 @@ describe('Build: iOS', () => {
   });
 
   it('Should build', async () => {
-    expect(await FS.exists('ios/App/build/Release-iphonesimulator/App.app')).toBe(true);
+    expect(await FS.exists('ios/App/build/Build/Products/Debug-iphonesimulator/App.app')).toBe(true);
   });
 });

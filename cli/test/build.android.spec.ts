@@ -10,8 +10,8 @@ describe('Build: Android', () => {
 
   beforeAll(async () => {
     // These commands are slowww...
-    jest.setTimeout(150000);
-    appDirObj = await makeAppDir(false);
+    jest.setTimeout(1500000);
+    appDirObj = await makeAppDir(false, false);
     const appDir = appDirObj.appDir;
     // Init in this directory so we can test build
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);

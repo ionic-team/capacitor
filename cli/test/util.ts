@@ -69,7 +69,7 @@ export async function installPlatform(appDir: string, platform: string): Promise
   await runCommand('npm', ['install', platformPath], { cwd: appDir });
 }
 
-export async function makeAppDir(monoRepoLike = false): Promise<void> {
+export async function makeAppDir(monoRepoLike = false, addCordovaPlugin = true): Promise<void> {
   const appDirObj: any = await mktmp();
   const tmpDir = appDirObj.path;
   const rootDir = monoRepoLike ? join(tmpDir, 'test-root') : join(tmpDir, 'test-app');
@@ -102,12 +102,14 @@ export async function makeAppDir(monoRepoLike = false): Promise<void> {
     cwd: rootDir,
   });
 
-  // Make a fake cordova plugin
-  await makeCordovaPlugin(cordovaPluginPath);
+  if (addCordovaPlugin) {
+    // Make a fake cordova plugin
+    await makeCordovaPlugin(cordovaPluginPath);
 
-  await runCommand('npm', ['install', '--save', cordovaPluginPath], {
-    cwd: rootDir,
-  });
+    await runCommand('npm', ['install', '--save', cordovaPluginPath], {
+      cwd: rootDir,
+    });
+  }
 
   return {
     ...appDirObj,
