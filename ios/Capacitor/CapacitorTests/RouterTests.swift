@@ -15,7 +15,7 @@ class RouterTests: XCTestCase {
         checkRouter(path: "", expected: "/index.html")
     }
     
-    func testRouterReturnsIndexWhenProviedPathWithoutExtension() {
+    func testRouterReturnsIndexWhenProvidedPathWithoutExtension() {
         checkRouter(path: "/a/valid/path/no/ext", expected: "/index.html")
     }
     
