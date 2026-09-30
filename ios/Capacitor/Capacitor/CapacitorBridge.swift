@@ -93,10 +93,6 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-    @available(*, deprecated, message: "obsolete")
-    var tmpWindow: UIWindow?
-    @available(*, deprecated, message: "obsolete")
-    static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let httpInterceptorStartIdentifier = "/_capacitor_http_interceptor_"
@@ -217,15 +213,13 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         super.init()
 
         self.webViewDelegationHandler.bridge = self
+        self.webViewAssetHandler.setConfiguration(configuration)
 
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
         setupCordovaCompatibility()
         exportMiscJS()
         canInjectJS = false
-        observers.append(NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
-            self?.tmpWindow = nil
-        })
 
         self.setupWebDebugging(configuration: configuration)
     }
@@ -270,13 +264,37 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             exportCordovaJS()
             registerCordovaPlugins()
         } else {
-            observers.append(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
-                self?.triggerDocumentJSEvent(eventName: "resume")
+            observers.append(NotificationCenter.default.addObserver(forName: UIScene.willEnterForegroundNotification, object: nil, queue: OperationQueue.main) { [weak self] notification in
+                self?.triggerSceneLifecycleJSEvent("resume", for: notification)
             })
-            observers.append(NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { [weak self] (_) in
-                self?.triggerDocumentJSEvent(eventName: "pause")
+            observers.append(NotificationCenter.default.addObserver(forName: UIScene.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { [weak self] notification in
+                self?.triggerSceneLifecycleJSEvent("pause", for: notification)
             })
         }
+    }
+
+    /**
+     Forward a scene lifecycle transition to the page as a document event, but only once
+     the page exists to receive it.
+
+     On a cold start `UIScene.willEnterForegroundNotification` is posted while the initial
+     load is still in flight, before `window.Capacitor` has been defined. Evaluating
+     `triggerEvent` at that point throws inside the web view and surfaces as a
+     "JS Eval error" in the log. The same happens when the web content process was
+     terminated and the page is being reloaded. In both cases the page is about to load
+     from scratch, so there is nothing for it to resume or pause; the event is dropped
+     rather than deferred, because a "resume" delivered right after a fresh load would
+     make the page react to a transition it never went through.
+     */
+    private func triggerSceneLifecycleJSEvent(_ eventName: String, for notification: Notification) {
+        guard let scene = notification.object as? UIWindowScene,
+              scene === viewController?.view.window?.windowScene else {
+            return
+        }
+        guard case .subsequentLoad = webViewDelegationHandler.webViewLoadingState, webView?.isLoading == false else {
+            return
+        }
+        triggerDocumentJSEvent(eventName: eventName)
     }
 
     /**

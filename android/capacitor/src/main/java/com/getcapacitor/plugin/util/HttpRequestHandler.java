@@ -168,8 +168,8 @@ public class HttpRequestHandler {
                 "://" +
                 uri.getAuthority() +
                 uri.getPath() +
-                ((!urlQuery.equals("")) ? "?" + urlQuery : "") +
-                ((uri.getFragment() != null) ? uri.getFragment() : "");
+                (!urlQuery.equals("") ? "?" + urlQuery : "") +
+                (uri.getFragment() != null ? uri.getFragment() : "");
             this.url = new URL(unEncodedUrlString);
 
             return this;

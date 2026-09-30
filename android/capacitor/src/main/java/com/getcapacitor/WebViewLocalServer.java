@@ -185,6 +185,11 @@ public class WebViewLocalServer {
         Uri loadingUrl = request.getUrl();
 
         if (null != loadingUrl.getPath() && loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START)) {
+            // Only fetch/XHR should reach the proxy; a document would run remote content at the app origin.
+            boolean httpEnabled = bridge.getConfig().getPluginConfiguration("CapacitorHttp").getBoolean("enabled", false);
+            if (!httpEnabled || isDocumentRequest(request)) {
+                return null;
+            }
             Logger.debug("Handling CapacitorHttp request: " + loadingUrl);
             try {
                 return handleCapacitorHttpRequest(request);
@@ -210,6 +215,24 @@ public class WebViewLocalServer {
         }
     }
 
+    /** isForMainFrame() is false for an iframe and a fetch alike; only navigations send this header. */
+    private boolean isDocumentRequest(WebResourceRequest request) {
+        if (request.isForMainFrame()) {
+            return true;
+        }
+        Map<String, String> headers = request.getRequestHeaders();
+        if (headers == null) {
+            // The proxy needs the headers too, so the request fails there anyway.
+            return false;
+        }
+        for (String header : headers.keySet()) {
+            if ("Upgrade-Insecure-Requests".equalsIgnoreCase(header)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isLocalFile(Uri uri) {
         String path = uri.getPath();
         return path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart);
@@ -221,7 +244,7 @@ public class WebViewLocalServer {
     }
 
     private boolean isMainUrl(Uri loadingUrl) {
-        return (bridge.getServerUrl() == null && loadingUrl.getHost().equalsIgnoreCase(bridge.getHost()));
+        return bridge.getServerUrl() == null && loadingUrl.getHost().equalsIgnoreCase(bridge.getHost());
     }
 
     private boolean isAllowedUrl(Uri loadingUrl) {
@@ -332,6 +355,9 @@ public class WebViewLocalServer {
 
         int responseCode = connection.getResponseCode();
         String reasonPhrase = getReasonPhraseFromResponseCode(responseCode);
+
+        // Nothing should render this. If anything does, sandbox keeps it inert and off the app origin.
+        responseHeaders.put("Content-Security-Policy", "sandbox; frame-ancestors 'none'");
 
         return new WebResourceResponse(mimeType, encoding, responseCode, reasonPhrase, responseHeaders, inputStream);
     }
@@ -722,31 +748,31 @@ public class WebViewLocalServer {
         @Override
         public int available() throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.available() : -1;
+            return is != null ? is.available() : -1;
         }
 
         @Override
         public int read() throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.read() : -1;
+            return is != null ? is.read() : -1;
         }
 
         @Override
         public int read(byte[] b) throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.read(b) : -1;
+            return is != null ? is.read(b) : -1;
         }
 
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.read(b, off, len) : -1;
+            return is != null ? is.read(b, off, len) : -1;
         }
 
         @Override
         public long skip(long n) throws IOException {
             InputStream is = getInputStream();
-            return (is != null) ? is.skip(n) : 0;
+            return is != null ? is.skip(n) : 0;
         }
     }
 

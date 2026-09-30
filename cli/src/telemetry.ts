@@ -1,8 +1,9 @@
 import { Command } from 'commander';
 import Debug from 'debug';
+import { pathExists } from 'fs-extra';
 
 import c from './colors';
-import type { Config } from './definitions';
+import type { Config, PackageManager } from './definitions';
 import { send } from './ipc';
 import { output } from './log';
 import { readConfig, writeConfig } from './sysconfig';
@@ -26,6 +27,7 @@ export interface CommandMetricData {
   error: string | null;
   node_version: string;
   os: string;
+  ios_package_manager: PackageManager | 'unknown';
 }
 
 export interface Metric<N extends string, D> {
@@ -80,8 +82,11 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
       error: error ? (error.message ? error.message : String(error)) : null,
       node_version: process.version,
       os: config.cli.os,
+      ios_package_manager: await getIOSPackageManager(config),
       ...Object.fromEntries(versions),
     };
+
+    debug('metric payload: %O', data);
 
     if (isInteractive()) {
       let sysconfig = await readConfig();
@@ -123,6 +128,24 @@ export async function sendMetric<D>(
     await send({ type: 'telemetry', data: message });
   } else {
     debug('Telemetry is off (user choice, non-interactive terminal, or CI)--not sending metric');
+  }
+}
+
+/**
+ * Resolve the iOS dependency manager for telemetry. Returns 'unknown' for
+ * non-iOS projects or when detection throws, so callers never have to handle
+ * errors from this signal.
+ */
+export async function getIOSPackageManager(config: Config): Promise<PackageManager | 'unknown'> {
+  try {
+    if (!(await pathExists(config.ios.platformDirAbs))) {
+      return 'unknown';
+    }
+
+    return await config.ios.packageManager;
+  } catch (e) {
+    debug('Could not resolve iOS package manager for telemetry: %O', e);
+    return 'unknown';
   }
 }
 
