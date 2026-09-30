@@ -259,15 +259,42 @@ public class SystemBars extends Plugin {
         // Execute JavaScript to inject the CSS
         getBridge().executeOnMainThread(() -> {
             if (bridge != null && bridge.getWebView() != null) {
+                // The insets listener can fire before the document exists (e.g. on first layout),
+                // in which case the values are applied on `DOMContentLoaded` instead.
                 String script = String.format(
                     Locale.US,
                     """
-                    try {
-                      document.documentElement.style.setProperty("--safe-area-inset-top", "%dpx");
-                      document.documentElement.style.setProperty("--safe-area-inset-right", "%dpx");
-                      document.documentElement.style.setProperty("--safe-area-inset-bottom", "%dpx");
-                      document.documentElement.style.setProperty("--safe-area-inset-left", "%dpx");
-                    } catch(e) { console.error('Error injecting safe area CSS:', e); }
+                    (function () {
+                      const insets = {
+                        "--safe-area-inset-top": "%dpx",
+                        "--safe-area-inset-right": "%dpx",
+                        "--safe-area-inset-bottom": "%dpx",
+                        "--safe-area-inset-left": "%dpx",
+                      };
+                      const setSafeAreaInsets = (values) => {
+                        try {
+                          for (const name in values) {
+                            document.documentElement.style.setProperty(name, values[name]);
+                          }
+                        } catch(e) { console.error('Error injecting safe area CSS:', e); }
+                      };
+                      if (document.documentElement) {
+                        // Values deferred by an earlier call are stale by now
+                        document.capacitorPendingSafeAreaInsets = null;
+                        setSafeAreaInsets(insets);
+                        return;
+                      }
+                      if (!document.capacitorPendingSafeAreaInsets) {
+                        document.addEventListener("DOMContentLoaded", () => {
+                          const pending = document.capacitorPendingSafeAreaInsets;
+                          document.capacitorPendingSafeAreaInsets = null;
+                          if (pending) {
+                            setSafeAreaInsets(pending);
+                          }
+                        }, { once: true });
+                      }
+                      document.capacitorPendingSafeAreaInsets = insets;
+                    })();
                     """,
                     (int) topPx,
                     (int) rightPx,
