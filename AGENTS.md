@@ -2,32 +2,32 @@
 
 Guidance for AI agents and new contributors. **This file is how to *work* here.**
 For how the system actually *works* — bridge internals, message formats, platform
-details, build pipeline — read [`ARCHITECTURE.md`](./ARCHITECTURE.md). Section
-references below point into it.
+details, build pipeline — read [`ARCHITECTURE.md`](./ARCHITECTURE.md). Links below point
+into it.
 
 Human contributor policy lives in [`CONTRIBUTING.md`](./CONTRIBUTING.md) and takes
 precedence over anything here.
 
 ---
 
-## What Capacitor is
+## Design stance
 
-The project describes itself as **"a cross-platform native runtime for web apps"** —
-it lets a web app run as a native iOS/Android app (and as a PWA) from one codebase,
-with typed access to native APIs.
+Capacitor hosts a web app in a native shell and gives it typed access to the device. The
+choices below are deliberate and should shape any change made here:
 
-The problems it solves:
-
-- **Native APIs from web code.** Camera, filesystem, geolocation etc. are reachable as
-  ordinary `async` TypeScript calls, over a JSON message bridge to a native host.
-- **One implementation surface, three platforms.** A plugin exposes one interface with
-  per-platform implementations; the runtime picks the right one and throws a typed
-  `UNIMPLEMENTED` error when a platform has none.
-- **Native projects you own.** Unlike bundler-driven tooling, `ios/` and `android/` are
-  real, checked-in Xcode/Gradle projects. The CLI syncs assets and plugin wiring into
-  them rather than generating them on every build.
-- **Progressive migration off Cordova.** A compatibility layer runs existing Cordova
-  plugins alongside Capacitor ones.
+- **Stability over features.** The project optimises for apps that upgrade painlessly
+  across majors. Prefer the boring implementation; avoid clever abstractions in the runtime.
+- **No third-party dependencies.** No new CocoaPods, Gradle, or npm runtime dependencies
+  without explicit approval, and no third-party web libraries in `core` at all. Implement
+  the small piece you need. This is policy (`CONTRIBUTING.md`), not preference.
+- **Developers own their native projects.** In an app, `ios/` and `android/` are real
+  Xcode/Gradle projects the developer can read and edit. The CLI syncs into them; it does
+  not regenerate them on every build. Anything the CLI writes must stay legible.
+- **Plugins are thin typed bridges.** A plugin exposes one small interface with
+  per-platform implementations behind a JSON bridge. Keep scope narrow and normalise
+  values across platforms rather than leaking platform shapes into JS.
+- **Cordova is a compatibility target, not a model.** Existing Cordova plugins run
+  alongside Capacitor ones; new work should not take Cordova's shape.
 
 ---
 
@@ -53,65 +53,39 @@ template or tooling.
 discovering *third-party plugin* classes, but the runtime itself is Java only — do not
 add Kotlin sources or the Kotlin Gradle plugin.
 
-**iOS has no Xcode project.** Since the source-first SwiftPM migration, `Package.swift`
-at the repo root is the manifest and new files under `ios/Sources/` are picked up
-automatically. There is no `.pbxproj` to edit.
+**The iOS runtime has no Xcode project.** Since the source-first SwiftPM migration,
+`Package.swift` at the repo root is the manifest and new files under `ios/Sources/` are
+picked up automatically. The only `.pbxproj` files are the app scaffolds in
+`ios-spm-template/App/` and `ios-pods-template/App/`.
 
 ---
 
-## Core concepts
+## Things that will surprise you
 
-Condensed; see `ARCHITECTURE.md` for the full treatment.
+The full treatment is in `ARCHITECTURE.md`; these are the facts that change how you edit.
 
-### Plugin system
-
-A plugin is registered once in JS and gets a `Proxy` whose methods are materialised
-lazily (`core/src/runtime.ts`):
-
-```ts
-export const Camera = registerPlugin<CameraPlugin>('Camera', {
-  web: () => import('./web').then((m) => new m.CameraWeb()),
-});
-```
-
-Method routing is decided **by the native side**, not by JS. Native emits
-`window.Capacitor.PluginHeaders` — `{ name, methods: [{ name, rtype }] }` — and the proxy
-uses it to route each method to `nativePromise`, `nativeCallback`, or a JS
-implementation. No JS implementation and no header entry ⇒ typed `UNIMPLEMENTED` throw.
-See *ARCHITECTURE.md §4.3*.
-
-Native plugin declarations:
-
-- **iOS** — `@objc(MyPlugin)` class conforming to `CAPBridgedPlugin`, with `jsName` and a
-  `pluginMethods` array (via the `CAP_PLUGIN`/`CAP_PLUGIN_METHOD` macros or
-  `CAPPluginMethod(_:returnType:)`).
-- **Android** — `@CapacitorPlugin(name = "MyPlugin")` class extending `Plugin`, with
-  `public void method(PluginCall call)` marked `@PluginMethod`.
-
-### Native bridge
-
-One JSON message format, two transports (*ARCHITECTURE.md §4.2*):
-
-- Web → native: `webkit.messageHandlers.bridge.postMessage(obj)` (iOS) /
-  `androidBridge.postMessage(jsonString)` (Android)
-- Native → web: `evaluateJavaScript("window.Capacitor.fromNative({…})")` (iOS) /
-  `JavaScriptReplyProxy.postMessage` (Android, with a legacy `evaluateJavascript` fallback)
-
-Payload is `{ callbackId, pluginId, methodName, options }` out and
-`{ callbackId, success, data | error, save }` back. `callbackId: '-1'` means fire-and-forget.
-
-### Web view
-
-The app is served from a custom scheme (`capacitor://localhost` on iOS,
-`https://localhost` on Android) by a native asset handler, not from `file://`. That
-handler also rewrites extension-less paths to `/index.html` for SPA routing, and
-intercepts `/_capacitor_http_interceptor_` for native HTTP. See *ARCHITECTURE.md §5.6, §6.4*.
-
-### Lifecycle
-
-Injection order at document-start is load-bearing: global stub → `native-bridge.js` →
-per-plugin shims → app bundle. On every navigation the bridge calls `reset()`, clearing
-saved calls and all plugin listeners. See *ARCHITECTURE.md §4.1, §4.4*.
+- **Native decides routing, not JS.** The plugin proxy routes a method to native only if
+  native emitted it in `window.Capacitor.PluginHeaders`. A JS method with no native
+  declaration (`@objc` + `CAP_PLUGIN_METHOD` on iOS, `@PluginMethod` on Android) throws
+  `UNIMPLEMENTED` at runtime, not at build time.
+  [§4.3](./ARCHITECTURE.md#43-callback-identity-and-async-modes)
+- **Every call settles exactly once** unless `keepAlive` is set. An early `return` without
+  a `reject` hangs the caller's `await` forever.
+  [§4.4](./ARCHITECTURE.md#44-keeping-calls-alive)
+- **Navigation resets the bridge.** `reset()` clears saved calls and all plugin listeners
+  on every page load. State that must survive navigation belongs on the native side.
+  [§4.1](./ARCHITECTURE.md#41-bootstrap-order)
+- **The app is not served from `file://`.** It comes from `capacitor://localhost` (iOS) or
+  `https://localhost` (Android) via a native asset handler that also rewrites
+  extension-less paths to `/index.html` and intercepts `/_capacitor_http_interceptor_`.
+  [§5.6](./ARCHITECTURE.md#56-assets-schemes-and-navigation),
+  [§6.4](./ARCHITECTURE.md#64-asset-serving-and-the-local-server)
+- **Only JSON crosses the bridge.** JS `null` arrives as `NSNull` on iOS, and `Date` is
+  stringified to ISO 8601 in both directions.
+  [§4.2](./ARCHITECTURE.md#42-message-format)
+- **Injection order at document-start is load-bearing:** global stub → `native-bridge.js`
+  → per-plugin shims → app bundle.
+  [§4.1](./ARCHITECTURE.md#41-bootstrap-order)
 
 ---
 
@@ -131,8 +105,8 @@ npm run build  -w core       # docgen + tsc + rollup
 npm test       -w core       # jest
 npm run build  -w cli
 npm test       -w cli
-npm run verify -w ios        # xcodebuild build + test (macOS only)
-npm run verify -w android    # gradlew clean lint build test
+npm run verify -w ios        # xcodebuild build + test (macOS; test step targets the iPhone 17 / iOS 26.5 simulator)
+npm run verify -w android    # gradlew clean/lint/build/test for :capacitor-android only (not :capacitor-cordova-android)
 ```
 
 SwiftLint must be installed separately (`brew install swiftlint`); without macOS, CI
@@ -143,15 +117,21 @@ lints iOS for you.
 Prettier (`@ionic/prettier-config`): 120 cols, 2-space, single quotes, semicolons,
 trailing commas everywhere, always-parens arrows.
 
-ESLint (`@ionic/eslint-config/recommended`) — the rules agents trip over:
+ESLint — `@ionic/eslint-config/recommended`, pinned at `^0.4.0`. Verify against
+`node_modules/@ionic/eslint-config/recommended.js` before trusting any list of rules,
+including this one; newer published versions of that package differ. As installed, the
+rules it adds are:
 
 - `@typescript-eslint/consistent-type-imports` — type-only imports must use
   `import type { Foo } from './foo'`. This is by far the most common lint failure.
-- `import/order` — groups `[builtin+external] → parent → [sibling+index]`, alphabetised
-  ascending, blank line between groups.
 - `@typescript-eslint/explicit-module-boundary-types` — exported functions need explicit
-  return types.
-- `array-type`, `prefer-optional-chain`, `prefer-for-of`, `no-duplicates`.
+  return types (`allowArgumentsExplicitlyTypedAsAny`).
+- `@typescript-eslint/array-type`, `consistent-type-assertions`, `prefer-for-of`,
+  `prefer-optional-chain`.
+- `import/order` — groups `[builtin+external] → parent → [sibling+index]`, alphabetised
+  ascending, blank line between groups. Note the prefix is `import/`, not `import-x/`.
+- `import/first`, `import/newline-after-import`, `import/no-duplicates`,
+  `import/no-mutable-exports`.
 
 `core/tsconfig.json` has `noUnusedLocals` and `noUnusedParameters` on — an unused
 parameter fails the build, not just the lint.
@@ -181,19 +161,13 @@ deliberate, not an oversight, and it is the thing agents most often get wrong in
 target. `Capacitor.podspec` declares `swift_version = '5.1'`. Tools version 6 does **not**
 mean Swift 6 semantics here.
 
-What that means in practice — current state of `ios/Sources/`:
+What that means in practice — current state of `ios/Sources/`: there is **no**
+`async func`, `await`, `actor`, `Sendable`, `nonisolated` or `@preconcurrency` anywhere.
+The single `@MainActor` is a WebKit-imposed signature in a `WKNavigationDelegate` method,
+not our adoption. Concurrency is expressed with GCD: `DispatchQueue.main.async` for UI
+hops and the bridge's serial `dispatchQueue` for plugin work.
 
-| Construct | Count | Notes |
-| --- | --- | --- |
-| `async func` / `await` | 0 / 0 | No Swift concurrency anywhere |
-| `actor` | 0 | |
-| `Sendable` / `@unchecked Sendable` | 0 | No conformances declared |
-| `nonisolated` / `@preconcurrency` | 0 | |
-| `@MainActor` | 1 | WebKit-imposed signature in a `WKNavigationDelegate` method, not our adoption |
-| `DispatchQueue` | 19 | How concurrency is actually expressed |
-
-**`async` in this codebase means GCD, not Swift concurrency.** All 18 occurrences are
-`DispatchQueue.main.async` (17) and `dispatchQueue.async` (1). Do not read them as
+**`.async` in this codebase means GCD, not Swift concurrency.** Do not read it as
 `async`/`await`.
 
 Rules for changes:
@@ -233,12 +207,13 @@ type(scope)!: subject      # breaking change
 ```
 
 Types in use: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `ci`.
-Scopes in use: `core`, `cli`, `ios`, `android`, `http`, `cordova`, `android-template`,
-or a plugin name.
+Scopes in use: `core`, `cli`, `ios`, `android`, `ci`, `http`, `android-template`, or a
+plugin name (e.g. `SystemBars`).
 
-The breaking-change marker goes **after** the scope: `refactor(ios)!:`. A handful of old
-commits use `feat!(ios):` — that form is malformed and Lerna will not detect it as
-breaking. Do not copy it.
+The breaking-change marker goes **after** the scope: `refactor(ios)!:`. Several commits,
+including recent ones such as `feat!(ios): adopting SwiftUI`, put it before the scope.
+That form is malformed: Lerna does not detect it as breaking and the change is missing
+from the generated changelog. Do not copy it.
 
 Write the subject only; skip the body unless asked. Squash-merged PRs get `(#1234)`
 appended automatically — don't add it by hand.
@@ -251,9 +226,7 @@ appended automatically — don't add it by hand.
   `lerna.json` pins `command.version.allowBranch`, so releases can only be cut from the
   branch it names.
 - **Consult the team before large changes** — open a discussion first.
-- **No new third-party dependencies** without explicit approval. That means no new
-  CocoaPods or Gradle dependencies, and no third-party web libraries in `core` at all.
-  Prefer implementing the small piece you need. This is project policy, not a preference.
+- **No new dependencies** — see *Design stance*.
 - Bug reports need a minimal reproduction app.
 
 ---
@@ -267,11 +240,13 @@ Ordered roughly by how often they actually happen.
    `ios/Sources/Capacitor/assets/native-bridge.js`. Run `npm run build:nativebridge` and
    commit both generated files, or your change does nothing.
 
-2. **Editing generated files directly.** These are all overwritten:
-   `android/capacitor.settings.gradle`, `android/app/capacitor.build.gradle` (both carry
-   a `DO NOT EDIT` banner), `ios/App/CapApp-SPM/Package.swift`, the `capacitor_pods`
-   block in `Podfile`, the two `native-bridge.js` copies, and everything in `cli/assets/`.
-   Change the *generator* in `cli/src/` instead.
+2. **Editing generated files directly.** In this repo the only generated, committed
+   files are the two `native-bridge.js` copies (see pitfall 1). `cli/assets/*.tar.gz` is
+   build output from `scripts/pack-cli-assets.mjs` and is gitignored. The files you may
+   think of as "generated" — `capacitor.settings.gradle`, `app/capacitor.build.gradle`,
+   `CapApp-SPM/Package.swift`, the `capacitor_pods` block in `Podfile` — live in
+   *consumer apps*, not here. To change what they contain, change the generators:
+   `cli/src/android/update.ts`, `cli/src/ios/update.ts`, `cli/src/util/spm.ts`.
 
 3. **Settling a bridge call zero times or twice.** Every `PluginCall` must resolve or
    reject exactly once, unless it is explicitly kept alive:
@@ -292,7 +267,7 @@ Ordered roughly by how often they actually happen.
    traps on the native side: JS `null` arrives as `NSNull`, not `nil` (Objective-C
    collections cannot hold `nil`), so type-check values instead of testing for key
    presence; and `Date` is a valid `JSValue` natively but is stringified to ISO 8601 in
-   both directions. See *ARCHITECTURE.md §4.2*.
+   both directions. See [§4.2](./ARCHITECTURE.md#42-message-format).
 
 6. **Forgetting `@objc` on an iOS plugin method.** It compiles cleanly and fails only at
    runtime with a "does not respond to method call" log — and the JS promise never

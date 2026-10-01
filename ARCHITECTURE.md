@@ -4,8 +4,12 @@ This document describes how the Capacitor core repository is put together: what 
 packages are, how the JavaScript runtime talks to the native runtimes, what each
 platform does under the hood, and how the whole thing is built and released.
 
-It describes the repository as it currently stands. It is a contributor-facing document —
-for end-user documentation see [capacitorjs.com/docs](https://capacitorjs.com/docs).
+It describes the repository as it currently stands — last verified against `next` at
+9.0.0-alpha.7. Where this document and the source disagree, the source wins; fix the
+document in the same PR. If you are about to change code, read
+[§12 Invariants and gotchas](#12-invariants-and-gotchas) first. This is a
+contributor-facing document — for end-user documentation see
+[capacitorjs.com/docs](https://capacitorjs.com/docs).
 
 ---
 
@@ -15,11 +19,19 @@ for end-user documentation see [capacitorjs.com/docs](https://capacitorjs.com/do
 - [2. Repository layout](#2-repository-layout)
 - [3. Package boundaries](#3-package-boundaries)
 - [4. Native bridge lifecycle](#4-native-bridge-lifecycle)
+  - [4.9 CapacitorHttp and cookie interception](#49-capacitorhttp-and-cookie-interception)
 - [5. iOS internals](#5-ios-internals)
+  - [5.8 Permissions (iOS)](#58-permissions-ios)
 - [6. Android internals](#6-android-internals)
+  - [6.6 Permissions (Android)](#66-permissions-android)
+  - [6.7 Process-death restoration](#67-process-death-restoration)
+  - [6.8 SystemBars and edge-to-edge](#68-systembars-and-edge-to-edge)
 - [7. Web and custom platforms](#7-web-and-custom-platforms)
+  - [7.1 Cordova compatibility](#71-cordova-compatibility)
 - [8. Configuration flow](#8-configuration-flow)
+  - [8.1 Remote content: `server.url` and the two URLs](#81-remote-content-serverurl-and-the-two-urls)
 - [9. Build pipeline](#9-build-pipeline)
+  - [9.6 Migration tasks](#96-migration-tasks)
 - [10. Release process](#10-release-process)
 - [11. Testing and CI](#11-testing-and-ci)
 - [12. Invariants and gotchas](#12-invariants-and-gotchas)
@@ -191,10 +203,10 @@ in the wild calls them by name.
 | `Cordova` | ObjC | — | `CDV*` compatibility layer. |
 | `CapacitorCordova` | Swift | `Capacitor`, `Cordova` | Glue plugin. |
 
-The ObjC-first split exists to break a cycle: Swift code needs the ObjC plugin base
-classes, and some ObjC code needs Swift symbols. `CAPPlugin.h` deliberately stores the
-bridge as an untyped `NSObject *bridgeRef` so the ObjC target never has to see the
-Swift-defined `CAPBridgeProtocol`; the typed `bridge` accessor is vended from Swift in
+The ObjC-first split breaks a dependency cycle: Swift code needs the ObjC plugin base
+classes, and some ObjC code needs Swift symbols. `CAPPlugin.h` stores the bridge as an
+untyped `NSObject *bridgeRef` so the ObjC target never has to see the Swift-defined
+`CAPBridgeProtocol`; the typed `bridge` accessor is vended from Swift in
 `CAPPlugin+Bridge.swift`.
 
 Public (plugin authors and app integrators depend on these):
@@ -213,7 +225,8 @@ Public (plugin authors and app integrators depend on these):
 
 Internal: `JSExport` (`internal class`), `JSCall`/`JSResult`/`JSResultError`
 (`internal struct`s — `JSCall` itself is `public` but only produced by the bridge),
-`JSResultSerialization`, `KeyValueStore`, `AppUUID`.
+`JSResultSerialization`, `KeyValueStore`, `AppUUID`. Verified against
+`ionic-team/capacitor-plugins`: no official plugin references any of them.
 
 ### 3.4 `@capacitor/android` — public vs internal
 
@@ -226,12 +239,15 @@ Public: `Bridge` (+ `Bridge.Builder`), `BridgeActivity`, `Plugin`, `PluginCall`,
 `JSObject`/`JSArray`/`JSValue`, `PluginResult`, the annotations
 (`@CapacitorPlugin`, `@PluginMethod`, `@Permission`, `@PermissionCallback`,
 `@ActivityCallback`), `CapConfig`/`PluginConfig`, `WebViewListener`, `Logger`,
-`PermissionState`, `RouteProcessor`/`ProcessedRoute`, `ServerPath`.
+`PermissionState`, `RouteProcessor`/`ProcessedRoute`, `ServerPath`, and `PluginHandle`
+(returned by `Bridge.getPlugin(String)`; official plugins such as `local-notifications`
+and `push-notifications` use it to reach a plugin instance from a static context).
 
 Internal in practice (Java `public` for cross-package access inside the library, but not
 a stable contract): `MessageHandler`, `JSExport`, `JSInjector` (package-private),
-`WebViewLocalServer`, `AndroidProtocolHandler`, `UriMatcher`, `PluginHandle`,
-`PluginMethodHandle`, `PluginManager`, `BridgeWebViewClient`, `BridgeWebChromeClient`.
+`WebViewLocalServer`, `AndroidProtocolHandler`, `UriMatcher`, `PluginMethodHandle`,
+`PluginManager`, `BridgeWebViewClient`, `BridgeWebChromeClient`. Verified against
+`ionic-team/capacitor-plugins`: no official plugin references any of them.
 
 ### 3.5 `@capacitor/cli` — public vs internal
 
@@ -322,9 +338,9 @@ Transport differs per platform but the payload does not:
 | Native → web | `webView.evaluateJavaScript("window.Capacitor.fromNative({…})")` | `JavaScriptReplyProxy.postMessage(json)` → `androidBridge.onmessage` → `returnResult(JSON.parse(e.data))`; legacy fallback is `evaluateJavascript("window.Capacitor.fromNative(…)")` |
 | Sync web → native | `prompt(JSON.stringify({ type: … }))` intercepted in `runJavaScriptTextInputPanelWithPrompt` | dedicated `@JavascriptInterface` objects (`CapacitorCookiesAndroidInterface`, `CapacitorHttpAndroidInterface`) |
 
-The synchronous `prompt()` channel on iOS exists because `document.cookie` and the
-"is CapacitorHttp enabled?" check must answer synchronously, and `WKWebView` offers no
-synchronous message handler.
+The synchronous `prompt()` channel on iOS serves `document.cookie` and the
+"is CapacitorHttp enabled?" check, both of which must answer synchronously; `WKWebView`
+offers no synchronous message handler.
 
 #### What can cross the bridge
 
@@ -406,6 +422,11 @@ On the JS side, `returnResult()` deletes the stored callback when a *promise* re
 and additionally deletes it whenever `result.save === false`. This is how
 `addListener` works: the listener registration is a `keepAlive` call whose callback is
 invoked once per event.
+
+Bridge state is reset on every navigation — iOS
+`didStartProvisionalNavigation` → `bridge.reset()`, Android
+`onPageStarted` → `bridge.reset()` — which clears saved calls and removes all plugin
+listeners so a new page cannot receive the previous page's callbacks.
 
 ### 4.5 Round trip: web → native → web
 
@@ -535,12 +556,11 @@ at package level and `.swiftLanguageMode(.v5)` on every Swift target;
 `Capacitor.podspec` declares `swift_version = '5.1'`. Tools version 6 does not imply
 Swift 6 semantics here.
 
-Across `ios/Sources/` there are zero `async func` declarations, zero `await`
-expressions, zero `actor` declarations, and zero `Sendable`, `nonisolated` or
-`@preconcurrency` annotations. The single `@MainActor` is in a WebKit-imposed
-`WKNavigationDelegate` signature, not an adoption of actor isolation. All 18 occurrences
-of `async` are `DispatchQueue.main.async` (17) and `dispatchQueue.async` (1) — grepping
-for `async` in this codebase finds GCD, not Swift concurrency.
+Across `ios/Sources/` there is no `async func`, `await`, `actor`, `Sendable`,
+`nonisolated` or `@preconcurrency`. The single `@MainActor` is in a WebKit-imposed
+`WKNavigationDelegate` signature, not an adoption of actor isolation. Grepping for
+`async` in this codebase finds GCD (`DispatchQueue.main.async`, `dispatchQueue.async`),
+not Swift concurrency.
 
 Two consequences run through the design:
 
@@ -556,10 +576,61 @@ Moving to Swift 6 language mode or enabling strict concurrency would be a delibe
 wide-reaching migration rather than an incremental cleanup. `AGENTS.md` carries the
 working rules for contributors.
 
-Bridge state is reset on every navigation — iOS
-`didStartProvisionalNavigation` → `bridge.reset()`, Android
-`onPageStarted` → `bridge.reset()` — which clears saved calls and removes all plugin
-listeners so a new page cannot receive the previous page's callbacks.
+---
+
+### 4.9 CapacitorHttp and cookie interception
+
+The largest single body of code in `core/native-bridge.ts` is not the bridge itself — it
+is the optional interception of `fetch`, `XMLHttpRequest` and `document.cookie`. Both are
+**off by default** and gated on config:
+
+| Switch | Effect when `true` |
+| --- | --- |
+| `plugins.CapacitorHttp.enabled` | Patches `window.fetch` and `window.XMLHttpRequest` |
+| `plugins.CapacitorCookies.enabled` | Redefines the `document.cookie` property descriptor |
+
+The web layer must know the switch state *before* any app script runs, which is why the
+check is synchronous: on iOS via the `prompt()` channel
+(`{ type: 'CapacitorHttp' }`, `{ type: 'CapacitorCookies.isEnabled' }`), on Android via
+the `@JavascriptInterface` methods `CapacitorHttpAndroidInterface.isEnabled()` and
+`CapacitorCookiesAndroidInterface.isEnabled()`. Both interfaces are installed by the
+plugins themselves in `load()` — see `CapacitorHttp.java` and `CapacitorCookies.java`.
+
+Before patching, the originals are stashed on `window` as `CapacitorWebFetch` and
+`CapacitorWebXMLHttpRequest`, so the patched implementations can delegate.
+
+**Two routes for an intercepted request.** Which one a request takes depends on its
+method:
+
+- **`GET` / `HEAD` / `OPTIONS` / `TRACE`** are rewritten to a proxy URL at the app's own
+  origin — `/_capacitor_http_interceptor_?u=<encoded url>` — and sent through the
+  *original* `fetch`. The native asset handler recognises the path and performs the
+  request natively: `WebViewAssetHandler.handleCapacitorHttpRequest` on iOS,
+  `WebViewLocalServer.shouldInterceptRequest` on Android. Keeping these on the URL-loading
+  path preserves streaming and the normal response pipeline.
+- **Everything else** goes over the bridge as an ordinary plugin call to
+  `CapacitorHttp.request`, and the response is reassembled into a `Response` (or applied
+  to the XHR instance) in JS. Request bodies are normalised first by `convertBody()`:
+  `File` and `FormData` entries are base64-encoded, `ReadableStream`s are drained.
+
+Native ends: `CAPHttpPlugin` (`ios/Sources/Capacitor/Plugins/CapacitorHttp.swift`,
+`jsName` `CapacitorHttp`) with `CapacitorUrlRequest`/`HttpRequestHandler`, and
+`CapacitorHttp.java` with `CapacitorHttpUrlConnection`/`HttpRequestHandler`. Cookies are
+handled by `CAPCookiesPlugin`/`CapacitorCookieManager.swift` and
+`CapacitorCookies.java`/`CapacitorCookieManager.java`.
+
+**What enabling these bypasses.** A request made natively is not subject to the web
+view's CORS enforcement, and it does not use the web view's cookie jar — it uses the
+platform HTTP stack and `HTTPCookieStorage`/`CookieManager`. That is the point (it is how
+apps call APIs that do not serve CORS headers), but it means a request that works in the
+app will not necessarily work in a browser, and vice versa. Two platform-specific
+wrinkles: Android strips a caller-set `User-Agent`, so the patch forwards it as
+`x-cap-user-agent` ([crbug 40450316](https://issues.chromium.org/issues/40450316)); and
+Android cannot filter `httpOnly` cookies, so its `document.cookie` getter returns the
+original descriptor's value rather than a native-filtered list.
+
+The proxy path is also a navigation hazard: because it returns a *remote* body at the
+app's own origin, both platforms explicitly block navigating to it — see §5.6 and §6.4.
 
 ---
 
@@ -593,6 +664,11 @@ public struct CapacitorView: UIViewControllerRepresentable {
   public func updateUIViewController(_ vc: CAPBridgeViewController, context: Context) {}
 }
 ```
+
+`CapacitorView` lives in the app target, not the runtime. An app that needs its own
+`CAPBridgeViewController` subclass (custom `webViewConfiguration(for:)`, `router()`,
+`capacitorDidLoad()`) returns that subclass from `makeUIViewController`. This replaces
+the storyboard custom-class approach used in Capacitor 8 and earlier.
 
 The engine is still `CAPBridgeViewController`, a `UIViewController`. SwiftUI's
 `.onOpenURL` / `.onContinueUserActivity` do not surface a `UIScene`, so
@@ -740,6 +816,34 @@ the WebKit layer; the OS prompt still applies), `didFail`/`didFailProvisionalNav
   from the repo root while apps consume the npm package). The `Capacitor` podspec
   excludes the SPM-only `Capacitor-Swift.h` shim, since CocoaPods generates the real one.
 
+### 5.8 Permissions (iOS)
+
+iOS has no permission *framework* in Capacitor — the OS prompts are issued by whichever
+system API the plugin calls. What the bridge provides is the shape.
+
+`JSExport.createPluginHeader(for:)` adds `checkPermissions` and `requestPermissions` to
+every plugin's `PluginHeaders` entry as `promise` methods, whether or not the plugin
+declares them. That means `SomePlugin.checkPermissions()` always routes to native and
+always resolves.
+
+The defaults live in `CAPPlugin+Bridge.swift` and both simply resolve with no data:
+
+```swift
+@objc extension CAPPlugin {
+    open func checkPermissions(_ call: CAPPluginCall) { call.resolve() }
+    open func requestPermissions(_ call: CAPPluginCall) { call.resolve() }
+}
+```
+
+They are `open`, so a plugin overrides them to report real state — conventionally a
+dictionary of alias → `PermissionState` (`'prompt' | 'prompt-with-rationale' |
+'granted' | 'denied'`, the same string union `@capacitor/core` exports). A plugin that
+needs no permissions inherits the defaults and resolves empty.
+
+The consequence worth knowing: because the header entries are synthesised unconditionally,
+a missing override is indistinguishable from "no permissions required" at the JS boundary.
+There is no build-time check that a plugin requiring camera access actually reports it.
+
 ---
 
 ## 6. Android internals
@@ -871,8 +975,9 @@ The app template (`android-template/app/src/main/AndroidManifest.xml`) declares:
 Cordova plugins' manifest fragments are merged into
 `capacitor-cordova-android-plugins` by the CLI (`writeCordovaAndroidManifest`).
 
-Module build settings (`android/capacitor/build.gradle`): AGP 9.2.1, `compileSdk` 37,
-`minSdk` 26, Java 21 source/target, `lintOptions` with
+Module build settings (`android/capacitor/build.gradle`): AGP, `compileSdk` and `minSdk`
+are pinned there and move every major — read the file for current values. Java 21
+source/target, `lintOptions` with
 `abortOnError = true` and `warningsAsErrors = true` against a checked-in
 `lint-baseline.xml`. Dependencies are limited to AndroidX (`appcompat`, `core`,
 `activity`, `fragment`, `coordinatorlayout`, `webkit`) — consistent with the project's
@@ -880,6 +985,117 @@ policy of minimising third-party dependencies.
 
 `android-template/app/build.gradle` applies the generated `capacitor.build.gradle` and
 conditionally applies the Google Services plugin if `google-services.json` exists.
+
+### 6.6 Permissions (Android)
+
+Unlike iOS, Android has a real permission framework in the runtime, built on the AndroidX
+Activity Result APIs.
+
+**Declaration.** Permissions are declared on the plugin class and grouped under an
+*alias*, so JS never sees Android permission strings:
+
+```java
+@CapacitorPlugin(
+    name = "Camera",
+    permissions = {
+        @Permission(strings = { Manifest.permission.CAMERA }, alias = "camera")
+    }
+)
+```
+
+A `@Permission` with no `strings` is an **auto-grant** alias — used for capabilities that
+need no runtime grant on Android but exist on another platform, so the JS interface stays
+uniform. `requestPermissions` reports those as `GRANTED` without prompting.
+
+**Wiring.** `PluginHandle.loadInstance` calls `Plugin.initializeActivityLaunchers()`,
+which scans the plugin for `@PermissionCallback` and `@ActivityCallback` methods and
+registers one `ActivityResultLauncher` per callback name through
+`Bridge.registerForActivityResult` (delegating to the `Fragment` when Capacitor is
+embedded, otherwise the `AppCompatActivity`). Registration must happen before the
+activity is `STARTED`, which is why it runs at plugin load.
+
+**The round trip.** A plugin requests with `requestPermissionForAlias`,
+`requestPermissionForAliases` or `requestAllPermissions`, naming the callback method:
+
+1. The call is stashed via `bridge.savePermissionCall(call)` — it must outlive the
+   system dialog, which can take the activity through `onStop`.
+2. The launcher fires the OS prompt.
+3. On result, `Plugin.triggerPermissionCallback` retrieves the call with
+   `bridge.getPermissionCall(pluginId)` and invokes the `@PermissionCallback` method.
+4. The callback resolves the original `PluginCall`.
+
+The default `requestPermissions` (`Plugin.java`) implements the whole pattern generically:
+it reads the aliases from the annotation, honours an optional `permissions` array in the
+call to request a subset, separates auto-grant aliases, and routes the result through
+`checkPermissions` as its callback. Note that `checkPermissions` is itself annotated both
+`@PluginMethod` and `@PermissionCallback` — it serves as the result reporter as well as a
+callable method. Most plugins therefore need no permission code at all.
+
+`getPermissionStates()` delegates to `Bridge.getPermissionStates(plugin)`, which maps each
+alias to a `PermissionState`, consulting `SharedPreferences` (`PluginPermStates`) to
+distinguish "never asked" from "denied", since Android cannot report that directly.
+
+### 6.7 Process-death restoration
+
+Android may kill the hosting process while a plugin is waiting on another activity — a
+camera capture, a file picker. On return the web view reloads from scratch, so the JS
+callback the original call belonged to no longer exists. Capacitor preserves the *native*
+half of that call and delivers the result through a side channel.
+
+`Bridge.saveInstanceState(Bundle)` persists `pluginCallForLastActivity` — the call that
+started an activity — as four entries: the plugin id, method name, the options JSON, and
+a plugin-supplied `Bundle` from `Plugin.saveInstanceState()`. `BridgeActivity` calls it
+from `onSaveInstanceState`.
+
+`Bridge.restoreInstanceState(Bundle)` (invoked from `Bridge.Builder.create` when an
+instance state was supplied) rebuilds a `PluginCall` from those entries and hands the
+plugin's own `Bundle` back via `Plugin.restoreState(Bundle)`.
+
+The rebuilt call is given `PluginCall.CALLBACK_ID_DANGLING` — the literal `"-1"` — because
+there is no JS callback to resolve. `MessageHandler.sendResponseMessage` branches on that
+id and routes the result to `bridge.getApp().fireRestoredResult(data)` instead of the web
+view, which surfaces it through `App.AppRestoredListener`. The `@capacitor/app` plugin
+exposes this to JS as the `appRestoredResult` event.
+
+So the `"-1"` sentinel means two different things depending on direction: outbound from
+JS it means "fire and forget, no callback stored" (§4.3); inbound from native it means
+"this result has no live callback, route it to the restored-result listener".
+
+### 6.8 SystemBars and edge-to-edge
+
+`SystemBars` is a built-in plugin on both platforms (`jsName` `SystemBars`), registered
+unconditionally in `CapacitorBridge.registerPlugins()` and `Bridge.registerAllPlugins()`.
+Its JS interface lives in `core/src/core-plugins.ts`, with `core/system-bars.md` as the
+committed docgen output.
+
+The two platforms carry different weight:
+
+- **iOS** (`Plugins/SystemBars.swift`) exposes `setStyle`, `setAnimation`, `show`, `hide`
+  and defers to `UIViewController` status-bar appearance. Safe areas are already handled
+  by WebKit's `env(safe-area-inset-*)`.
+- **Android** (`plugin/SystemBars.java`, ~366 lines) additionally owns inset handling,
+  because Android has no equivalent guarantee.
+
+**The Capacitor 9 default is `insetsHandling: 'native'`.** Android 15 (API 35) made
+edge-to-edge mandatory for apps targeting it, so the app template's `MainActivity` calls
+`EdgeToEdge.enable(this)` and `migrate-edge-to-edge` adds it to existing apps (§9.6).
+Once the window draws behind the system bars, something must tell the web layer where
+the safe region is.
+
+`plugins.SystemBars.insetsHandling` (typed in `cli/src/declarations.ts`) selects how,
+and reaches the plugin through the normal config path (§8) as
+`getConfig().getString("insetsHandling", …)`. Three values, Android-only:
+
+| Value | Behaviour |
+| --- | --- |
+| `native` (default) | Let the WebView apply insets itself, so `env(safe-area-inset-*)` works as it does on iOS. |
+| `css` | Capacitor reads `WindowInsetsCompat` (system bars ∪ display cutout), converts px → dp, and sets `--safe-area-inset-top/right/bottom/left` custom properties on `document.documentElement` from an inset listener. For WebView versions where `env()` is unreliable. |
+| `disable` | Capacitor does nothing; the app handles insets itself. Also makes `migrate-edge-to-edge` skip the project. |
+
+Under `css`, Capacitor must zero the bottom inset manually while the IME is visible —
+the native path gets that correction from newer WebViews for free. The companion
+`initialViewportFitValueHint` only exists to avoid a layout jump before the real
+`viewport-fit` is detected.
 
 ---
 
@@ -908,6 +1124,43 @@ A third-party host can present itself as a non-web, non-native platform by defin
 `getPlatform()` then returns that name, and `loadPluginImplementation` falls back to the
 `web` implementation when the custom platform has no entry of its own — this is how
 Electron-style platforms are supported without changes to core.
+
+### 7.1 Cordova compatibility
+
+Existing Cordova plugins run inside a Capacitor app unmodified. The compatibility layer
+is opt-in by presence: the CLI enables it when the app has at least one Cordova plugin
+installed, or when `cordova.forceCordova` is set.
+
+**Native hosting.** On iOS the `Cordova` target carries the `CDV*` classes
+(`CDVPlugin`, `CDVPluginManager`, `CDVViewController`, `CDVInvokedUrlCommand`,
+`CDVPluginResult`); the `CapacitorCordova` target bridges them into Capacitor with a
+single Swift class, `CordovaPlugin` in `ios/Sources/CapacitorCordova/Plugin.swift`. It is
+an ordinary Capacitor plugin (`jsName` `__CordovaPlugin`, no bridged methods) whose
+`load()` parses the app's `config.xml` with `CDVConfigParser`, builds a
+`CDVPluginManager` against the Capacitor web view and view controller, and instantiates
+every plugin listed as a startup plugin. Android mirrors this with
+`android/capacitor-cordova` — `MockCordovaWebViewImpl` and `MockCordovaInterfaceImpl`
+present a Cordova-shaped host over Capacitor's `WebView`.
+
+`CapacitorBridge.registerPlugins()` notices the `CordovaPlugin` entry in
+`packageClassList` and sets `cordovaIsPresent`, which suppresses Capacitor's own
+`resume`/`pause` notification wiring so Cordova's lifecycle events are not doubled.
+
+**JS.** `core/cordova.js` (shipped inside `@capacitor/core`) provides the
+`cordova.exec` shim, and the CLI writes `cordova_plugins.js` plus each plugin's JS into
+the app's web assets — see `handleCordovaPluginsJS` in `cli/src/cordova.ts`. On Android
+these are concatenated into the document-start script by `JSInjector`; on iOS they are
+injected as additional `WKUserScript`s. `native-bridge.ts` also installs the legacy
+surface the shims expect: a `window.cordova` object, `navigator.app.exitApp`, and a
+`deviceready`/`backbutton` interception in `document.addEventListener`.
+
+**Scaffolds.** `capacitor-cordova-android-plugins/` and `capacitor-cordova-ios-plugins/`
+are the per-app staging projects the CLI materialises; plugin sources are copied in by
+`copyPluginsNativeFiles`. On Android, `writeCordovaAndroidManifest` (`cli/src/cordova.ts`)
+merges each plugin's `config.xml` `<config-file>` and `<edit-config>` entries into that
+project's `AndroidManifest.xml`. On iOS the CLI generates either podspecs
+(`generateCordovaPodspecs`) or a `Package.swift` per plugin
+(`generateCordovaPackageFiles`), depending on the package manager.
 
 ---
 
@@ -942,6 +1195,48 @@ flowchart LR
 - A handful of settings are read directly from the platform instead of the JSON —
   `UIStatusBarHidden`/`UIStatusBarStyle`/`UISupportedInterfaceOrientations` from
   `Info.plist` on iOS, `FLAG_DEBUGGABLE` for dev-mode detection on Android.
+
+### 8.1 Remote content: `server.url` and the two URLs
+
+By default the app is served locally from the custom scheme (§5.6, §6.4). Setting
+`server.url` points the web view at a remote origin instead — the mechanism behind
+live-reload (`cap run --live-reload`, which sets it to the dev server on the LAN) and
+behind apps that ship a hosted front end.
+
+This is the one case where the bridge's two URLs diverge. Both platforms track them
+separately:
+
+| | Local scheme | With `server.url` |
+| --- | --- | --- |
+| `localUrl` / `config.localURL` | `capacitor://localhost` (iOS), `https://localhost` (Android) | unchanged — still the local origin |
+| `appUrl` / `config.serverURL` | same as local | the remote URL |
+
+`Bridge.initWebView` computes both and adds the remote authority to `authorities`;
+`CAPInstanceConfiguration` does the equivalent on iOS. The distinction matters because
+navigation policy (§5.6, §6.4) allows a top-level navigation that starts with *either*,
+and because `WEBVIEW_SERVER_URL` — which `Capacitor.getServerUrl()` and `convertFileSrc`
+rely on — is the local one. Plugins that build asset URLs keep working against the local
+origin even while the page is remote.
+
+Related settings, all under `server` in `capacitor.config`:
+
+- **`allowNavigation`** — extra hosts the web view may navigate to. Anything else is
+  handed to the OS browser. On Android the list also feeds
+  `Bridge.setAllowedOriginRules()`, which scopes the `WebMessageListener` channel
+  (§6.2), so a host not on the list cannot reach the bridge even if it loads.
+- **`cleartext`** — Android blocks plaintext HTTP from API 28 onward; this re-enables it.
+  Intended for live-reload against a plain-HTTP dev server.
+- **`android.allowMixedContent`** — allows a secure page to pull insecure subresources
+  (`WebSettings.MIXED_CONTENT_ALWAYS_ALLOW`); same use case.
+- **`hostname`**, **`iosScheme`**, **`androidScheme`** — change the local origin itself.
+  Changing a scheme changes the origin, so it invalidates everything the previous origin
+  stored: `localStorage`, IndexedDB, cookies.
+- **`errorPath`** — a local page loaded when a navigation fails, which is the main reason
+  a remote-URL app still needs local assets copied.
+
+Development-only settings should not ship. `cleartext`, `allowMixedContent` and a LAN
+`server.url` all widen the app's network posture, and a release build that still carries
+them is the common failure here.
 
 ---
 
@@ -1065,6 +1360,24 @@ so SPM resolves a single Capacitor package identity.
 `copy` writes `packageClassList` into the iOS `capacitor.config.json` by scanning plugin
 sources for `@objc(Name)` (Swift) and `CAP_PLUGIN(Name` (ObjC).
 
+### 9.6 Migration tasks
+
+A major release usually requires edits inside the app's own native projects — files
+Capacitor does not own and cannot regenerate. Those edits ship as migrators in
+`cli/src/tasks/`. They parse and patch existing files, skip work already done, and warn
+rather than fail when a project has been customised beyond recognition.
+
+| Task | Command | What it rewrites |
+| --- | --- | --- |
+| `migrate.ts` | `cap migrate` | The umbrella migrator. Bumps `@capacitor/*` and known official plugins in `package.json` and installs them; updates the Gradle wrapper, root and app `build.gradle`, `gradle.properties` and `variables.gradle`; removes `jcenter()`; patches `AndroidManifest.xml` and `AppDelegate.swift`; checks the JDK major; prints the breaking-change list. Delegates to the two below. |
+| `migrate-swiftui.ts` | (from `cap migrate`) | Converts a storyboard/`SceneDelegate` iOS app to the SwiftUI App-struct layout: rewrites `AppDelegate.swift` into a `@UIApplicationDelegateAdaptor`, writes `App.swift` and `CapacitorView.swift`, repoints `Info.plist` at the SwiftUI scene setup, and registers the new files with the Xcode App target via `addSwiftFileToAppTarget` (`cli/src/util/xcode.ts`). Detects partial state and skips rather than half-applying. |
+| `migrate-edge-to-edge.ts` | (from `cap migrate`) | Adds `EdgeToEdge.enable(this)` / `enableEdgeToEdge()` plus the needed imports to the app's `MainActivity` (Java or Kotlin). Skips when `plugins.SystemBars.insetsHandling` is `'disable'` or the activity already opts in; warns with manual instructions if it cannot patch the file. |
+| `migrate-spm.ts` | `cap spm-migration-assistant` | Moves an iOS app from CocoaPods to SwiftPM: extracts the `CapApp-SPM` package directory from the bundled template and deletes `Podfile`, `Podfile.lock` and `App.xcworkspace`. |
+
+These are the one place in the CLI that edits files by pattern-matching rather than
+regenerating them, so they are the most fragile code in the package and the best covered
+by tests — see `cli/test/migrate-*.spec.ts` and `cli/test/xcode.spec.ts`.
+
 ---
 
 ## 10. Release process
@@ -1134,10 +1447,10 @@ flowchart TB
 | Android instrumented | `android/capacitor/src/androidTest` | connected-device Gradle tasks |
 
 `.github/workflows/ci.yml` runs on PRs to any branch and on pushes to `main`:
-`lint` (macOS, so SwiftLint runs) gates `test-cli`, `test-core`, `test-ios`
-(macOS 26 + Xcode 26.6) and `test-android` (JDK 21). `npm run verify` is the per-platform
-entry point — `xcodebuild build` + `xcodebuild test` for iOS, and
-`clean lint build test` for Android.
+`lint` (macOS, so SwiftLint runs) gates `test-cli`, `test-core`, `test-ios` (macOS and
+Xcode versions are pinned in that job's matrix) and `test-android` (JDK 21).
+`npm run verify` is the per-platform entry point — `xcodebuild build` + `xcodebuild test`
+for iOS, and `clean lint build test` scoped to `:capacitor-android` for Android.
 
 Notable coverage worth keeping green when touching the bridge: `core/src/tests/bridge.spec.ts`
 (drives `initBridge` directly), `plugin.spec.ts` / `runtime.spec.ts` (proxy and header

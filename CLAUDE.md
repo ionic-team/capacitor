@@ -1,7 +1,8 @@
 # CLAUDE.md
 
-See [`AGENTS.md`](./AGENTS.md) — repo layout, core concepts, conventions, and common
-pitfalls. It is the single source of truth for working in this repo; this file exists so
-Claude Code picks it up automatically.
+@AGENTS.md
 
-For system design and platform internals, see [`ARCHITECTURE.md`](./ARCHITECTURE.md).
+`AGENTS.md` is the single source of truth for working in this repo; the import above loads
+it into every Claude Code session. For system design and platform internals read
+[`ARCHITECTURE.md`](./ARCHITECTURE.md) — it is long, so open the section you need rather
+than importing it here.
