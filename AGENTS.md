@@ -249,12 +249,9 @@ Ordered roughly by how often they actually happen.
    `cli/src/android/update.ts`, `cli/src/ios/update.ts`, `cli/src/util/spm.ts`.
 
 3. **Settling a bridge call zero times or twice.** Every `PluginCall` must resolve or
-   reject exactly once, unless it is explicitly kept alive:
-   - `call.resolve(data)` / `call.reject(msg, code, err, data)`
-   - For listeners or repeated callbacks: `call.setKeepAlive(true)` (Android) /
-     `call.keepAlive = true` (iOS), then resolve repeatedly.
-   - An early `return` on an error path without rejecting hangs the caller's `await`
-     forever. There is a known instance of this in iOS `handleJSCall` — do not add more.
+   reject exactly once (see *Things that will surprise you*). For listeners or repeated
+   callbacks set `call.setKeepAlive(true)` (Android) / `call.keepAlive = true` (iOS) first.
+   There is a known early-`return` instance in iOS `handleJSCall` — do not add more.
 
 4. **Blocking the plugin queue.** Both platforms run *every* plugin method on one serial
    queue — `DispatchQueue(label: "bridge")` on iOS, `HandlerThread("CapacitorPlugins")` on
@@ -262,12 +259,10 @@ Ordered roughly by how often they actually happen.
    resolve the call from the completion handler. To touch UI, hop explicitly:
    `DispatchQueue.main.async` / `bridge.executeOnMainThread(...)`.
 
-5. **Sending non-JSON data over the bridge.** Only JSON-representable values cross —
-   class instances, functions, `Blob`s and typed arrays must be converted first. Two
-   traps on the native side: JS `null` arrives as `NSNull`, not `nil` (Objective-C
-   collections cannot hold `nil`), so type-check values instead of testing for key
-   presence; and `Date` is a valid `JSValue` natively but is stringified to ISO 8601 in
-   both directions. See [§4.2](./ARCHITECTURE.md#42-message-format).
+5. **Sending non-JSON data over the bridge.** Only JSON-representable values cross;
+   convert class instances, functions, `Blob`s and typed arrays first. The `NSNull` and
+   `Date` traps are in *Things that will surprise you*; full rules in
+   [§4.2](./ARCHITECTURE.md#42-message-format).
 
 6. **Forgetting `@objc` on an iOS plugin method.** It compiles cleanly and fails only at
    runtime with a "does not respond to method call" log — and the JS promise never

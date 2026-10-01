@@ -1073,7 +1073,7 @@ The two platforms carry different weight:
 - **iOS** (`Plugins/SystemBars.swift`) exposes `setStyle`, `setAnimation`, `show`, `hide`
   and defers to `UIViewController` status-bar appearance. Safe areas are already handled
   by WebKit's `env(safe-area-inset-*)`.
-- **Android** (`plugin/SystemBars.java`, ~366 lines) additionally owns inset handling,
+- **Android** (`plugin/SystemBars.java`) additionally owns inset handling,
   because Android has no equivalent guarantee.
 
 **The Capacitor 9 default is `insetsHandling: 'native'`.** Android 15 (API 35) made
@@ -1129,7 +1129,7 @@ Electron-style platforms are supported without changes to core.
 
 Existing Cordova plugins run inside a Capacitor app unmodified. The compatibility layer
 is opt-in by presence: the CLI enables it when the app has at least one Cordova plugin
-installed, or when `cordova.forceCordova` is set.
+installed, or when the top-level `forceCordovaInclusion` config key is set.
 
 **Native hosting.** On iOS the `Cordova` target carries the `CDV*` classes
 (`CDVPlugin`, `CDVPluginManager`, `CDVViewController`, `CDVInvokedUrlCommand`,
