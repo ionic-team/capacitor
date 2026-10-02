@@ -94,6 +94,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, assign) BOOL allowLinkPreviews;
 /**
+ @brief Whether or not the web view will allow gesture navigation .
+ @discussion Set by @c ios.allowsBackForwardNavigationGestures in the configuration file. Corresponds to @c allowsBackForwardNavigationGestures on WKWebView.
+ */
+@property (nonatomic, assign) BOOL allowsBackForwardNavigationGestures;
+/**
  @brief Whether or not the Capacitor runtime will set itself as the @c UNUserNotificationCenter delegate.
  @discussion Defaults to @c true. Required to be @c true for notification plugins to work correctly. Set to @c false if your application will handle notifications independently.
  */
