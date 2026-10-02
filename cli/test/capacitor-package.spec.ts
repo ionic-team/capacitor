@@ -383,18 +383,40 @@ describe('patching a Package.swift deployment target', () => {
     expect(result.content).toBe(`platforms: [.iOS("16.0")],`);
   });
 
+  it('does not patch a string deployment target that already satisfies the requirement', () => {
+    const before = `platforms: [.iOS("16.0")],`;
+    const result = patchPackageSwiftDeploymentTarget(before, '16');
+
+    expect(result.changed).toBe(false);
+    expect(result.previousVersion).toBe('16.0');
+    expect(result.content).toBe(before);
+  });
+
+  it('does not lower a string deployment target that is higher than required', () => {
+    const before = `platforms: [.iOS("17.0")],`;
+    const result = patchPackageSwiftDeploymentTarget(before, '16');
+
+    expect(result.changed).toBe(false);
+    expect(result.previousVersion).toBe('17.0');
+    expect(result.content).toBe(before);
+  });
+
   it('does not patch when the deployment target already satisfies the requirement', () => {
-    const result = patchPackageSwiftDeploymentTarget(`platforms: [.iOS(.v16)],`, '16');
+    const before = `platforms: [.iOS(.v16)],`;
+    const result = patchPackageSwiftDeploymentTarget(before, '16');
 
     expect(result.changed).toBe(false);
     expect(result.previousVersion).toBe('16');
+    expect(result.content).toBe(before);
   });
 
-  it('does not patch when the deployment target is higher than required', () => {
-    const result = patchPackageSwiftDeploymentTarget(`platforms: [.iOS(.v17)],`, '16');
+  it('does not lower the deployment target when the plugin requires a higher one than Capacitor', () => {
+    const before = `platforms: [.iOS(.v17)],`;
+    const result = patchPackageSwiftDeploymentTarget(before, '16');
 
     expect(result.changed).toBe(false);
     expect(result.previousVersion).toBe('17');
+    expect(result.content).toBe(before);
   });
 
   it('only patches the iOS entry in a multi-platform declaration', () => {
