@@ -15,7 +15,12 @@ import {
   resolvePlugin,
 } from '../plugin';
 import type { Plugin } from '../plugin';
-import { renderCapacitorPackage, resolveCapacitorPackage, rewriteCapacitorDependency } from '../util/capacitor-package';
+import {
+  patchPackageSwiftDeploymentTarget,
+  renderCapacitorPackage,
+  resolveCapacitorPackage,
+  rewriteCapacitorDependency,
+} from '../util/capacitor-package';
 import { extractTemplate } from '../util/template';
 
 const platform = 'ios';
@@ -490,6 +495,11 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
     let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
     content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, capacitorPackage.identity);
     content = rewriteCapacitorDependency(content, capacitorPackage, p.rootPath);
+
+    if (capacitorPackage.sourceBased) {
+      content = patchPackageSwiftDeploymentTarget(content, iosVersion).content;
+    }
+
     await writeFile(packageSwiftPath, content);
   } else {
     const resources = getPlatformElement(p, platform, 'resource-file');
