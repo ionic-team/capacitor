@@ -31,7 +31,7 @@ public class CAPCookiesPlugin: CAPPlugin, CAPBridgedPlugin {
 
         let expires = call.getString("expires", "")
         let path = call.getString("path", "")
-        cookieManager!.setCookie(url, key, cookieManager!.encode(value), expires, path)
+        cookieManager!.setCookie(url, key, value, expires, path)
         call.resolve()
     }
 
