@@ -5,6 +5,7 @@ import { join, resolve } from 'path';
 import type { Config } from '../src/definitions';
 import {
   findCapacitorDependencyVersion,
+  patchPackageSwiftDeploymentTarget,
   renderCapacitorPackage,
   resolveCapacitorPackage,
   rewriteCapacitorDependency,
@@ -362,5 +363,61 @@ describe('rewriting an existing Package.swift', () => {
     expect(
       findCapacitorDependencyVersion('.package(url: "https://github.com/other/thing.git", from: "1.0.0")'),
     ).toBeUndefined();
+  });
+});
+
+describe('patching a Package.swift deployment target', () => {
+  it('bumps a symbolic deployment target (.v13) that is lower than required', () => {
+    const result = patchPackageSwiftDeploymentTarget(`platforms: [.iOS(.v13)],`, '16');
+
+    expect(result.changed).toBe(true);
+    expect(result.previousVersion).toBe('13');
+    expect(result.content).toBe(`platforms: [.iOS(.v16)],`);
+  });
+
+  it('bumps a string deployment target ("14.0") that is lower than required', () => {
+    const result = patchPackageSwiftDeploymentTarget(`platforms: [.iOS("14.0")],`, '16');
+
+    expect(result.changed).toBe(true);
+    expect(result.previousVersion).toBe('14.0');
+    expect(result.content).toBe(`platforms: [.iOS("16.0")],`);
+  });
+
+  it('does not patch when the deployment target already satisfies the requirement', () => {
+    const result = patchPackageSwiftDeploymentTarget(`platforms: [.iOS(.v16)],`, '16');
+
+    expect(result.changed).toBe(false);
+    expect(result.previousVersion).toBe('16');
+  });
+
+  it('does not patch when the deployment target is higher than required', () => {
+    const result = patchPackageSwiftDeploymentTarget(`platforms: [.iOS(.v17)],`, '16');
+
+    expect(result.changed).toBe(false);
+    expect(result.previousVersion).toBe('17');
+  });
+
+  it('only patches the iOS entry in a multi-platform declaration', () => {
+    const before = `platforms: [\n        .iOS(.v13),\n        .macCatalyst(.v13)\n    ],`;
+    const result = patchPackageSwiftDeploymentTarget(before, '16');
+
+    expect(result.changed).toBe(true);
+    expect(result.content).toBe(`platforms: [\n        .iOS(.v16),\n        .macCatalyst(.v13)\n    ],`);
+  });
+
+  it('is a no-op when there is no .iOS(...) platform declaration', () => {
+    const before = `platforms: [.macOS(.v11)],`;
+    const result = patchPackageSwiftDeploymentTarget(before, '16');
+
+    expect(result.changed).toBe(false);
+    expect(result.previousVersion).toBeNull();
+    expect(result.content).toBe(before);
+  });
+
+  it('derives the required major version dynamically from whatever is passed in', () => {
+    const result = patchPackageSwiftDeploymentTarget(`platforms: [.iOS(.v15)],`, '17');
+
+    expect(result.changed).toBe(true);
+    expect(result.content).toBe(`platforms: [.iOS(.v17)],`);
   });
 });

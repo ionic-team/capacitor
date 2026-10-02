@@ -14,6 +14,7 @@ import { copy as copyTask } from '../tasks/copy';
 import { setAllStringIn } from '../tasks/migrate';
 import {
   findCapacitorDependencyVersion,
+  patchPackageSwiftDeploymentTarget,
   resolveCapacitorPackage,
   rewriteCapacitorDependency,
 } from '../util/capacitor-package';
@@ -30,7 +31,7 @@ import { resolveNode } from '../util/node';
 import { generatePackageFile, checkPluginsForPackageSwift } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 
-import { getIOSPlugins } from './common';
+import { getIOSPlugins, getMajoriOSVersion } from './common';
 
 const platform = 'ios';
 
@@ -73,6 +74,7 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
     const majorCapVersion = major(iosPlatformVersion);
     const capacitorPackage = await resolveCapacitorPackage(config, 'from');
+    const iosVersion = getMajoriOSVersion(config);
     await Promise.all(
       validSPMPackages.map(async (plugin) => {
         const packageSwiftPath = join(plugin.rootPath, 'Package.swift');
@@ -86,7 +88,9 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
         if (capacitorPackage.sourceBased) {
           // The plugin has to resolve to the same package identity as the app, or SPM ends up with
           // two packages that both vend a Capacitor product.
-          const rewritten = rewriteCapacitorDependency(content, capacitorPackage, plugin.rootPath);
+          let rewritten = rewriteCapacitorDependency(content, capacitorPackage, plugin.rootPath);
+          rewritten = patchPackageSwiftDeploymentTarget(rewritten, iosVersion).content;
+
           if (rewritten !== content) {
             await writeFile(packageSwiftPath, rewritten);
           }
