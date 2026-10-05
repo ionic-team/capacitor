@@ -63,7 +63,7 @@ automatically. The only `.pbxproj` files are the app scaffolds in
 declare the test targets (`ios/Tests/**` use `@testable import Capacitor`).
 `ios/Package.swift` is published inside `@capacitor/ios`, which is what apps depend on by
 path — it drops the `ios/` prefix from every target path and omits the test targets,
-because `Tests/` is not in the npm `files` list. `npm run check-ios-package-manifests`
+because `Tests/` is not in the npm `files` list. `npm run lint:package-swift`
 (part of `npm run lint`) fails if they disagree on products or target source directories.
 
 ---
@@ -333,7 +333,7 @@ Report actual results; never claim success unverified.
 | `core/native-bridge.ts` | `npm run build:nativebridge`, then `npm test -w core` |
 | `cli/src/**` | `npm run build -w cli` + `npm test -w cli` |
 | `ios/**` | `npm run verify -w ios` (macOS + Xcode required) |
-| `Package.swift` or `ios/Package.swift` | `npm run check-ios-package-manifests` (both copies) |
+| `Package.swift` or `ios/Package.swift` | `npm run lint:package-swift` (both copies) |
 | `android/**` | `npm run verify -w android` (JDK 21) |
 | anything | `npm run lint` |
 
