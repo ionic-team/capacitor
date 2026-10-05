@@ -579,14 +579,14 @@ export interface CapacitorConfig {
         /**
          * Override which Capacitor Swift package the generated `Package.swift` depends on.
          *
-         * By default the generated package pins the git tag matching the installed
-         * `@capacitor/ios` version, which is correct for both stable and pre-release versions
-         * and matches what CocoaPods resolves.
+         * By default the generated package depends on the `@capacitor/ios` npm already installed
+         * in `node_modules`, which ships the Swift package alongside the sources. The native
+         * runtime is then always the one npm resolved, with no version to keep in step.
          *
-         * Set this only when developing against an unreleased Capacitor, such as a local
+         * Set this only when developing against an unreleased Capacitor, such as a repository
          * checkout or a feature branch. Exactly one of `path`, `branch`, `revision`, `exact`,
-         * or `from` must be set. `path` points at the repository root (the directory containing
-         * `Package.swift`) and may be relative to the app.
+         * or `from` must be set. `path` points at a directory containing a `Package.swift` — a
+         * repository checkout's root, or another `@capacitor/ios` — and may be relative to the app.
          *
          * The `CAPACITOR_IOS_PACKAGE` environment variable takes precedence over this setting,
          * so a checkout can be redirected without editing committed configuration.
