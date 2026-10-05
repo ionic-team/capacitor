@@ -11,7 +11,7 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor", from: "9.0.0")
+        .package(name: "capacitor", path: "../../../node_modules/@capacitor/ios")
     ],
     targets: [
         .target(
