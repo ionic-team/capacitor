@@ -71,17 +71,14 @@ export async function checkPluginsForPackageSwift(config: Config, plugins: Plugi
 export async function extractSPMPackageDirectory(config: Config): Promise<void> {
   const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
   const spmTemplate = join(config.cli.assetsDirAbs, 'ios-spm-template.tar.gz');
-  const debugConfig = join(config.ios.platformDirAbs, 'debug.xcconfig');
 
   logger.info('Extracting ' + spmTemplate + ' to ' + spmDirectory);
 
   try {
     const tempCapDir = await mkdtemp(join(tmpdir(), 'cap-'));
     const tempCapSPM = join(tempCapDir, 'App', 'CapApp-SPM');
-    const tempDebugXCConfig = join(tempCapDir, 'debug.xcconfig');
     await extract({ file: spmTemplate, cwd: tempCapDir });
     await move(tempCapSPM, spmDirectory);
-    await move(tempDebugXCConfig, debugConfig);
   } catch (err) {
     fatal('Failed to create ' + spmDirectory + ' with error: ' + err);
   }
@@ -223,29 +220,6 @@ export async function runCocoapodsDeintegrate(config: Config): Promise<void> {
     await runCommand(podPath, ['deintegrate', projectFileName], {
       cwd: config.ios.nativeProjectDirAbs,
     });
-  }
-}
-
-export async function addInfoPlistDebugIfNeeded(config: Config): Promise<void> {
-  type Mutable<T> = { -readonly [P in keyof T]: T[P] };
-
-  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
-  logger.info('Checking ' + infoPlist + ' for CAPACITOR_DEBUG');
-
-  if (existsSync(infoPlist)) {
-    const infoPlistContents = readFileSync(infoPlist, 'utf-8');
-    const plistEntries = parse(infoPlistContents) as Mutable<PlistObject>;
-
-    if (plistEntries['CAPACITOR_DEBUG'] === undefined) {
-      logger.info('Writing CAPACITOR_DEBUG to ' + infoPlist);
-      plistEntries['CAPACITOR_DEBUG'] = '$(CAPACITOR_DEBUG)';
-      const plistToWrite = build(plistEntries);
-      writeFileSync(infoPlist, plistToWrite);
-    } else {
-      logger.warn('Found CAPACITOR_DEBUG set to ' + plistEntries['CAPACITOR_DEBUG'] + ', skipping.');
-    }
-  } else {
-    logger.warn(infoPlist + ' not found.');
   }
 }
 

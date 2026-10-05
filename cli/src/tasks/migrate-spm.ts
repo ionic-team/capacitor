@@ -3,12 +3,7 @@ import type { Config, Writable } from '../definitions';
 import { fatal } from '../errors';
 import { getCommonChecks } from '../ios/common';
 import { logger } from '../log';
-import {
-  extractSPMPackageDirectory,
-  removeCocoapodsFiles,
-  runCocoapodsDeintegrate,
-  addInfoPlistDebugIfNeeded,
-} from '../util/spm';
+import { extractSPMPackageDirectory, removeCocoapodsFiles, runCocoapodsDeintegrate } from '../util/spm';
 
 import { update } from './update';
 
@@ -20,7 +15,6 @@ export async function migrateToSPM(config: Config): Promise<void> {
   await extractSPMPackageDirectory(config);
   await runCocoapodsDeintegrate(config);
   await removeCocoapodsFiles(config);
-  await addInfoPlistDebugIfNeeded(config);
   const configWritable: Writable<Config> = config as Writable<Config>;
   configWritable.ios.packageManager = Promise.resolve('SPM');
   await update(configWritable as Config, 'ios', false);
