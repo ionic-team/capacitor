@@ -223,6 +223,31 @@ export async function runCocoapodsDeintegrate(config: Config): Promise<void> {
   }
 }
 
+export type PlistDebugResult = { status: 'removed' } | { status: 'unchanged' } | { status: 'skipped'; reason: string };
+
+/**
+ * Drop the CAPACITOR_DEBUG key from Info.plist. Capacitor 9 no longer reads it, and the
+ * debug.xcconfig that supplied its $(CAPACITOR_DEBUG) value is gone from the template.
+ */
+export function removeInfoPlistDebug(config: Config): PlistDebugResult {
+  type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+
+  const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
+
+  if (!existsSync(infoPlist)) {
+    return { status: 'skipped', reason: `${infoPlist} not found.` };
+  }
+
+  const entries = parse(readFileSync(infoPlist, 'utf-8')) as Mutable<PlistObject>;
+  if (entries['CAPACITOR_DEBUG'] === undefined) {
+    return { status: 'unchanged' };
+  }
+
+  delete entries['CAPACITOR_DEBUG'];
+  writeFileSync(infoPlist, build(entries));
+  return { status: 'removed' };
+}
+
 export type SceneManifestResult =
   { status: 'written' } | { status: 'unchanged' } | { status: 'skipped'; reason: string };
 
