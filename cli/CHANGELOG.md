@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-alpha.8](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.7...9.0.0-alpha.8) (2026-10-07)
+
+### Bug Fixes
+
+- **cli:** change Cordova AppDelegate.h imports for SPM ([#8618](https://github.com/ionic-team/capacitor/issues/8618)) ([145560e](https://github.com/ionic-team/capacitor/commit/145560ee590d86637dc9dd2e2c9f4c08b0f631c0))
+- **cli:** Patch Package.swift deploymentTarget for Capacitor and Cordova Plugins ([#8641](https://github.com/ionic-team/capacitor/issues/8641)) ([a808398](https://github.com/ionic-team/capacitor/commit/a8083981356a6b47483c4903f4b740dcaed14678))
+
+## [8.5.2](https://github.com/ionic-team/capacitor/compare/8.5.1...8.5.2) (2026-09-11)
+
 # [9.0.0-alpha.7](https://github.com/ionic-team/capacitor/compare/8.5.1...9.0.0-alpha.7) (2026-09-18)
 
 ### Bug Fixes
@@ -54,6 +63,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **android:** conditionally add Cordova ([#8453](https://github.com/ionic-team/capacitor/issues/8453)) ([e136b3f](https://github.com/ionic-team/capacitor/commit/e136b3f0cdd1437cac5234576301ed388edf85e7))
 - **cli:** conditionally add capacitor-cordova-android-plugins module ([#8449](https://github.com/ionic-team/capacitor/issues/8449)) ([9e85905](https://github.com/ionic-team/capacitor/commit/9e85905bf36c1e2300994e231cf10e829f2074ed))
 - **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([d55f4f8](https://github.com/ionic-team/capacitor/commit/d55f4f859bd88fa5617699e874c48c451bcb5e5f))
+
+## [8.5.2](https://github.com/ionic-team/capacitor/compare/8.5.1...8.5.2) (2026-09-11)
+
+### Bug Fixes
+
+- resolve issues with safe area / systembars plugin ([#8535](https://github.com/ionic-team/capacitor/issues/8535)) ([e37d9c6](https://github.com/ionic-team/capacitor/commit/e37d9c60785368acf2a83cfd4c20f47076672bdd))
 
 ## [8.5.1](https://github.com/ionic-team/capacitor/compare/8.5.0...8.5.1) (2026-08-31)
 

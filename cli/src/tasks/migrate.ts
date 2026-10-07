@@ -16,7 +16,6 @@ import { extractTemplate } from '../util/template';
 import { migrateToEdgeToEdge } from './migrate-edge-to-edge';
 import { migrateToSwiftUI } from './migrate-swiftui';
 
-// eslint-disable-next-line prefer-const
 let allDependencies: { [key: string]: any } = {};
 const libs = ['@capacitor/core', '@capacitor/cli', '@capacitor/ios', '@capacitor/android'];
 const plugins = [
@@ -157,7 +156,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         await runTask(`Installing Latest Modules using ${installerType}.`, () => {
           return installLatestLibs(installerType, runNpmInstall, config);
         });
-      } catch (ex) {
+      } catch {
         logger.error(
           `${installerType} install failed. Try deleting node_modules folder and running ${c.input(
             `${installerType} install --force`,

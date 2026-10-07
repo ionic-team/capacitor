@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-alpha.8](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.7...9.0.0-alpha.8) (2026-10-07)
+
+### Bug Fixes
+
+- **cli:** change Cordova AppDelegate.h imports for SPM ([#8618](https://github.com/ionic-team/capacitor/issues/8618)) ([145560e](https://github.com/ionic-team/capacitor/commit/145560ee590d86637dc9dd2e2c9f4c08b0f631c0))
+- **cli:** Patch Package.swift deploymentTarget for Capacitor and Cordova Plugins ([#8641](https://github.com/ionic-team/capacitor/issues/8641)) ([a808398](https://github.com/ionic-team/capacitor/commit/a8083981356a6b47483c4903f4b740dcaed14678))
+
+## [8.5.2](https://github.com/ionic-team/capacitor/compare/8.5.1...8.5.2) (2026-09-11)
+
 # [9.0.0-alpha.7](https://github.com/ionic-team/capacitor/compare/8.5.1...9.0.0-alpha.7) (2026-09-18)
 
 ### Bug Fixes
@@ -67,6 +76,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([0aac1f0](https://github.com/ionic-team/capacitor/commit/0aac1f0aee8083dc5013f0d8e3c180eb02f21141))
 - **ios:** make getArray accesible on Objective-C plugins ([#8392](https://github.com/ionic-team/capacitor/issues/8392)) ([ef57c77](https://github.com/ionic-team/capacitor/commit/ef57c773e70af6b94685a2dc0f808db3ed4cda6e))
 - **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([d55f4f8](https://github.com/ionic-team/capacitor/commit/d55f4f859bd88fa5617699e874c48c451bcb5e5f))
+
+## [8.5.2](https://github.com/ionic-team/capacitor/compare/8.5.1...8.5.2) (2026-09-11)
+
+### Bug Fixes
+
+- **android:** add null checks for plugin annotation when retrieving permissions ([#8400](https://github.com/ionic-team/capacitor/issues/8400)) ([035b16a](https://github.com/ionic-team/capacitor/commit/035b16aca15eab136efc49eaec64b45987cfefeb))
+- **ios:** do not forward scene lifecycle events to the page before it has loaded ([#8595](https://github.com/ionic-team/capacitor/issues/8595)) ([c567328](https://github.com/ionic-team/capacitor/commit/c567328d0feb90c306ea824edc5a799bdfe26542))
+- resolve issues with safe area / systembars plugin ([#8535](https://github.com/ionic-team/capacitor/issues/8535)) ([e37d9c6](https://github.com/ionic-team/capacitor/commit/e37d9c60785368acf2a83cfd4c20f47076672bdd))
 
 ## [8.5.1](https://github.com/ionic-team/capacitor/compare/8.5.0...8.5.1) (2026-08-31)
 

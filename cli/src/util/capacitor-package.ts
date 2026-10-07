@@ -186,6 +186,47 @@ export function findCapacitorDependencyVersion(content: string): string | undefi
   return undefined;
 }
 
+const IOS_PLATFORM_VERSION_REGEX = /\.iOS\(\s*(?:\.v(\d+)|"([\d.]+)")\s*\)/;
+
+export interface DeploymentTargetPatchResult {
+  content: string;
+  changed: boolean;
+  previousVersion: string | null;
+}
+
+/**
+ * Bumps a Package.swift's declared iOS deployment target (e.g. `.iOS(.v13)` or `.iOS("14.0")`) up to
+ * `requiredIosVersion` if it's lower.
+ *
+ * Only relevant for the source package: it declares `platforms: [.iOS(.v16)]` on its own manifest,
+ * and SwiftPM enforces that across the whole graph, so a plugin still declaring an older, lower
+ * target fails to resolve with "requires minimum platform version X ... but this target supports Y" —
+ * even though the very same plugin links fine against the prebuilt `capacitor-swift-pm`, which never
+ * declared a `platforms:` entry for SwiftPM to check against.
+ */
+export function patchPackageSwiftDeploymentTarget(
+  content: string,
+  requiredIosVersion: string,
+): DeploymentTargetPatchResult {
+  const match = content.match(IOS_PLATFORM_VERSION_REGEX);
+  if (!match) {
+    return { content, changed: false, previousVersion: null };
+  }
+
+  const isSymbolic = match[1] !== undefined;
+  const previousVersion = isSymbolic ? match[1] : match[2];
+  const requiredMajor = Math.trunc(parseFloat(requiredIosVersion));
+
+  if (parseFloat(previousVersion) >= requiredMajor) {
+    return { content, changed: false, previousVersion };
+  }
+
+  const replacement = isSymbolic ? `.iOS(.v${requiredMajor})` : `.iOS("${requiredMajor}.0")`;
+  const patchedContent = content.replace(IOS_PLATFORM_VERSION_REGEX, replacement);
+
+  return { content: patchedContent, changed: true, previousVersion };
+}
+
 /**
  * A path dependency carries no URL to match on, so it is matched on its pinned identity — without
  * that, a manifest rewritten by an earlier sync keeps a relative path that no longer resolves once

@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/ios",
-  "version": "9.0.0-alpha.7",
+  "version": "9.0.0-alpha.8",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitorjs.com",
   "author": "Ionic Team <hi@ionic.io> (https://ionic.io)",
@@ -25,7 +25,7 @@
     "xc:test": "cd .. && xcodebuild test -scheme Capacitor-Package -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -collect-test-diagnostics never"
   },
   "peerDependencies": {
-    "@capacitor/core": "^9.0.0-alpha.7"
+    "@capacitor/core": "^9.0.0-alpha.8"
   },
   "publishConfig": {
     "access": "public"

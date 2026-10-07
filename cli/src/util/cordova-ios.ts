@@ -15,7 +15,12 @@ import {
   resolvePlugin,
 } from '../plugin';
 import type { Plugin } from '../plugin';
-import { renderCapacitorPackage, resolveCapacitorPackage, rewriteCapacitorDependency } from '../util/capacitor-package';
+import {
+  patchPackageSwiftDeploymentTarget,
+  renderCapacitorPackage,
+  resolveCapacitorPackage,
+  rewriteCapacitorDependency,
+} from '../util/capacitor-package';
 import { extractTemplate } from '../util/template';
 
 const platform = 'ios';
@@ -229,6 +234,10 @@ export async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plu
           if (fileContent.includes('[self.webView superview]') || fileContent.includes('self.webView.superview')) {
             fileContent = fileContent.replace(/\[self.webView superview\]/g, 'self.viewController.view');
             fileContent = fileContent.replace(/self.webView.superview/g, 'self.viewController.view');
+            await writeFile(fileDest, fileContent, { encoding: 'utf-8' });
+          }
+          if (isSPM && fileContent.includes(`#import "AppDelegate.h"`)) {
+            fileContent = fileContent.replace(`#import "AppDelegate.h"`, `#import <Cordova/AppDelegate.h>`);
             await writeFile(fileDest, fileContent, { encoding: 'utf-8' });
           }
         }
@@ -490,6 +499,11 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
     let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
     content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, capacitorPackage.identity);
     content = rewriteCapacitorDependency(content, capacitorPackage, p.rootPath);
+
+    if (capacitorPackage.sourceBased) {
+      content = patchPackageSwiftDeploymentTarget(content, iosVersion).content;
+    }
+
     await writeFile(packageSwiftPath, content);
   } else {
     const resources = getPlatformElement(p, platform, 'resource-file');
