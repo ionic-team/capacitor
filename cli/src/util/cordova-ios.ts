@@ -236,6 +236,10 @@ export async function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plu
             fileContent = fileContent.replace(/self.webView.superview/g, 'self.viewController.view');
             await writeFile(fileDest, fileContent, { encoding: 'utf-8' });
           }
+          if (isSPM && fileContent.includes(`#import "AppDelegate.h"`)) {
+            fileContent = fileContent.replace(`#import "AppDelegate.h"`, `#import <Cordova/AppDelegate.h>`);
+            await writeFile(fileDest, fileContent, { encoding: 'utf-8' });
+          }
         }
       }
     }

@@ -37,6 +37,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([0aac1f0](https://github.com/ionic-team/capacitor/commit/0aac1f0aee8083dc5013f0d8e3c180eb02f21141))
 - **ios:** make getArray accesible on Objective-C plugins ([#8392](https://github.com/ionic-team/capacitor/issues/8392)) ([ef57c77](https://github.com/ionic-team/capacitor/commit/ef57c773e70af6b94685a2dc0f808db3ed4cda6e))
 
+## [8.5.2](https://github.com/ionic-team/capacitor/compare/8.5.1...8.5.2) (2026-09-11)
+
+### Bug Fixes
+
+- **ios:** do not forward scene lifecycle events to the page before it has loaded ([#8595](https://github.com/ionic-team/capacitor/issues/8595)) ([c567328](https://github.com/ionic-team/capacitor/commit/c567328d0feb90c306ea824edc5a799bdfe26542))
+- resolve issues with safe area / systembars plugin ([#8535](https://github.com/ionic-team/capacitor/issues/8535)) ([e37d9c6](https://github.com/ionic-team/capacitor/commit/e37d9c60785368acf2a83cfd4c20f47076672bdd))
+
 ## [8.5.1](https://github.com/ionic-team/capacitor/compare/8.5.0...8.5.1) (2026-08-31)
 
 ### Bug Fixes
