@@ -1,5 +1,5 @@
-import { existsSync } from 'fs-extra';
-import { isAbsolute, relative, resolve } from 'path';
+import { existsSync, realpathSync } from 'fs-extra';
+import { dirname, isAbsolute, relative, resolve } from 'path';
 import { major, valid } from 'semver';
 
 import { getCapacitorPackageVersion } from '../common';
@@ -7,11 +7,16 @@ import type { Config } from '../definitions';
 import { fatal } from '../errors';
 
 import { convertToUnixPath } from './fs';
+import { resolveNode } from './node';
 
 /** Capacitor 9 and up builds the iOS platform from source out of the main repo. */
 const SOURCE_PACKAGE_MAJOR = 9;
 const SOURCE_PACKAGE_URL = 'https://github.com/ionic-team/capacitor';
 const SOURCE_PACKAGE_IDENTITY = 'capacitor';
+const SOURCE_PACKAGE_NAME = new RegExp(`name:\\s*"${SOURCE_PACKAGE_IDENTITY}"`);
+
+/** The npm package the source-based Swift package ships inside. */
+const PLATFORM_PACKAGE = '@capacitor/ios';
 
 /** Before Capacitor 9 the platform was consumed as a prebuilt xcframework from a separate repo. */
 const BINARY_PACKAGE_URL = 'https://github.com/ionic-team/capacitor-swift-pm.git';
@@ -44,15 +49,14 @@ export interface CapacitorPackage {
  * Precedence, most specific first:
  *   1. the `CAPACITOR_IOS_PACKAGE` environment variable
  *   2. `experimental.ios.spm.capacitorPackage` in the Capacitor config
- *   3. the git tag matching the installed `@capacitor/ios` version
+ *   3. the installed `@capacitor/ios` in `node_modules`
  *
  * The environment variable deliberately outranks the config file so a checkout can be pointed at a
  * local or branch build without editing (and risking committing) the app's configuration.
  *
  * `legacyRequirement` only applies to pre-9 projects, where it preserves each caller's existing
- * requirement style. Source-based projects always pin `exact`, because the app package and any
- * generated plugin packages must agree: a prerelease such as `9.0.0-alpha.6` does not satisfy a
- * `from:` range, so mixing the two styles fails to resolve.
+ * requirement style. Source-based projects resolve a path, which carries no version to disagree
+ * about between the app package and any generated plugin packages.
  */
 export async function resolveCapacitorPackage(
   config: Config,
@@ -77,8 +81,65 @@ export async function resolveCapacitorPackage(
     cordovaProduct: 'CapacitorCordova',
     sourceBased: true,
     url: override?.url ?? SOURCE_PACKAGE_URL,
-    requirement: override?.requirement ?? { kind: 'exact', version },
+    requirement: override?.requirement ?? installedPackageRequirement(config),
   };
+}
+
+/**
+ * Points at the `@capacitor/ios` npm already installed in the app, which ships the Swift package
+ * manifest alongside the sources. Resolving from `node_modules` keeps the native runtime and the
+ * `@capacitor/core` bridge it is versioned against on the same release, with no git tag to line up
+ * against the npm version on each release.
+ */
+function installedPackageRequirement(config: Config): CapacitorRequirement {
+  const packageJsonPath = resolveNode(config.app.rootDir, PLATFORM_PACKAGE, 'package.json');
+
+  if (!packageJsonPath) {
+    fatal(`Unable to find node_modules/${PLATFORM_PACKAGE}.\nAre you sure ${PLATFORM_PACKAGE} is installed?`);
+  }
+
+  const absolutePath = installDirectory(dirname(packageJsonPath), config.app.rootDir);
+
+  if (!existsSync(resolve(absolutePath, 'Package.swift'))) {
+    fatal(
+      `The installed ${PLATFORM_PACKAGE} has no Package.swift (looked in ${absolutePath}).\n` +
+        `Early 9.0.0 alphas did not ship one; update ${PLATFORM_PACKAGE} to build with SPM.`,
+    );
+  }
+
+  return { kind: 'path', absolutePath };
+}
+
+/**
+ * Trades the resolved location for the `node_modules` entry that leads to it, when there is one.
+ *
+ * Node resolves symlinks away, so a linked or `file:`-installed package resolves to wherever it
+ * actually lives — an absolute path outside the app, which the generated `Package.swift` is
+ * committed with. The entry inside the project stays valid on every machine.
+ */
+function installDirectory(resolved: string, rootDir: string): string {
+  const real = realPath(resolved);
+  if (!real) {
+    return resolved;
+  }
+
+  for (let dir = resolve(rootDir); ; dir = dirname(dir)) {
+    const candidate = resolve(dir, 'node_modules', PLATFORM_PACKAGE);
+    if (realPath(candidate) === real) {
+      return candidate;
+    }
+    if (dirname(dir) === dir) {
+      return resolved;
+    }
+  }
+}
+
+function realPath(path: string): string | undefined {
+  try {
+    return realpathSync(path);
+  } catch {
+    return undefined;
+  }
 }
 
 /** Renders the `.package(...)` entry, with any path made relative to the file being written. */
@@ -166,8 +227,13 @@ export function patchPackageSwiftDeploymentTarget(
   return { content: patchedContent, changed: true, previousVersion };
 }
 
+/**
+ * A path dependency carries no URL to match on, so it is matched on its pinned identity — without
+ * that, a manifest rewritten by an earlier sync keeps a relative path that no longer resolves once
+ * the app, or the package it points at, has moved.
+ */
 function referencesCapacitor(call: string): boolean {
-  return call.includes(BINARY_PACKAGE_IDENTITY) || call.includes(`${SOURCE_PACKAGE_URL}`);
+  return call.includes(BINARY_PACKAGE_IDENTITY) || call.includes(SOURCE_PACKAGE_URL) || SOURCE_PACKAGE_NAME.test(call);
 }
 
 interface PackageCall {
@@ -407,7 +473,8 @@ function pathRequirement(value: string, baseDir: string): CapacitorRequirement {
   if (!existsSync(resolve(absolutePath, 'Package.swift'))) {
     fatal(
       `No Package.swift found at ${absolutePath}.\n` +
-        `A local Capacitor package must point at the repository root, not the ios directory.`,
+        `A local Capacitor package must point at a directory containing one: a repository checkout's ` +
+        `root, or an installed ${PLATFORM_PACKAGE}.`,
     );
   }
   return { kind: 'path', absolutePath };

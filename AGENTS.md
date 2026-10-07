@@ -54,9 +54,17 @@ discovering *third-party plugin* classes, but the runtime itself is Java only â€
 add Kotlin sources or the Kotlin Gradle plugin.
 
 **The iOS runtime has no Xcode project.** Since the source-first SwiftPM migration,
-`Package.swift` at the repo root is the manifest and new files under `ios/Sources/` are
-picked up automatically. The only `.pbxproj` files are the app scaffolds in
+`Package.swift` is the manifest and new files under `ios/Sources/` are picked up
+automatically. The only `.pbxproj` files are the app scaffolds in
 `ios-spm-template/App/` and `ios-pods-template/App/`.
+
+**There are two copies of that manifest, and a change to one belongs in both.**
+`Package.swift` at the repo root is what a git URL resolves and the only one that can
+declare the test targets (`ios/Tests/**` use `@testable import Capacitor`).
+`ios/Package.swift` is published inside `@capacitor/ios`, which is what apps depend on by
+path â€” it drops the `ios/` prefix from every target path and omits the test targets,
+because `Tests/` is not in the npm `files` list. `npm run lint:package-swift`
+(part of `npm run lint`) fails if they disagree on products or target source directories.
 
 ---
 
@@ -325,6 +333,7 @@ Report actual results; never claim success unverified.
 | `core/native-bridge.ts` | `npm run build:nativebridge`, then `npm test -w core` |
 | `cli/src/**` | `npm run build -w cli` + `npm test -w cli` |
 | `ios/**` | `npm run verify -w ios` (macOS + Xcode required) |
+| `Package.swift` or `ios/Package.swift` | `npm run lint:package-swift` (both copies) |
 | `android/**` | `npm run verify -w android` (JDK 21) |
 | anything | `npm run lint` |
 

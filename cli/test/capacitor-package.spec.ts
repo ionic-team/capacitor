@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from 'fs';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join, resolve } from 'path';
 
@@ -38,34 +38,68 @@ describe('capacitor package resolution', () => {
   });
 
   describe('default (no override)', () => {
-    it('pins the tag matching a stable installed version', async () => {
-      getCapacitorPackageVersion.mockResolvedValue('9.1.0');
-      const pkg = await resolveCapacitorPackage(makeConfig());
+    let appRoot: string;
+    let installed: string;
+
+    beforeEach(() => {
+      getCapacitorPackageVersion.mockResolvedValue('9.0.0-alpha.8');
+      appRoot = realpathSync(mkdtempSync(join(tmpdir(), 'cap-app-')));
+      installed = join(appRoot, 'node_modules', '@capacitor', 'ios');
+      mkdirSync(installed, { recursive: true });
+      writeFileSync(join(installed, 'package.json'), '{ "name": "@capacitor/ios" }');
+      writeFileSync(join(installed, 'Package.swift'), '// ios package');
+    });
+
+    it('depends on the installed @capacitor/ios by path', async () => {
+      const pkg = await resolveCapacitorPackage(makeConfig({}, appRoot));
 
       expect(pkg.sourceBased).toBe(true);
       expect(pkg.identity).toBe('capacitor');
       expect(pkg.cordovaProduct).toBe('CapacitorCordova');
-      expect(renderCapacitorPackage(pkg, SPM_DIR)).toBe(
-        '.package(url: "https://github.com/ionic-team/capacitor", exact: "9.1.0")',
+      expect(pkg.requirement).toEqual({ kind: 'path', absolutePath: installed });
+      expect(renderCapacitorPackage(pkg, join(appRoot, 'ios', 'App', 'CapApp-SPM'))).toBe(
+        '.package(name: "capacitor", path: "../../../node_modules/@capacitor/ios")',
       );
     });
 
-    it('pins the tag for a prerelease too, rather than tracking a branch', async () => {
-      getCapacitorPackageVersion.mockResolvedValue('9.0.0-alpha.6');
-      const pkg = await resolveCapacitorPackage(makeConfig());
+    it('renders relative to a plugin being rewritten, not just the app package', async () => {
+      const pkg = await resolveCapacitorPackage(makeConfig({}, appRoot));
 
-      expect(renderCapacitorPackage(pkg, SPM_DIR)).toBe(
-        '.package(url: "https://github.com/ionic-team/capacitor", exact: "9.0.0-alpha.6")',
+      expect(renderCapacitorPackage(pkg, join(appRoot, 'node_modules', '@capacitor', 'haptics'))).toBe(
+        '.package(name: "capacitor", path: "../ios")',
       );
     });
 
-    it('uses exact for source-based projects even when the caller asks for from', async () => {
-      // The app package and generated plugin packages must agree; a prerelease does not satisfy
-      // a `from:` range, so mixing the two styles would fail to resolve.
-      getCapacitorPackageVersion.mockResolvedValue('9.0.0-alpha.6');
-      const pkg = await resolveCapacitorPackage(makeConfig(), 'from');
+    it('resolves a path whatever requirement style the caller asks for', async () => {
+      const pkg = await resolveCapacitorPackage(makeConfig({}, appRoot), 'from');
 
-      expect(pkg.requirement).toEqual({ kind: 'exact', version: '9.0.0-alpha.6' });
+      expect(pkg.requirement).toEqual({ kind: 'path', absolutePath: installed });
+    });
+
+    it('keeps the node_modules entry when the install is a symlink', async () => {
+      // npm link and file: installs resolve away to wherever the package really lives; the
+      // generated Package.swift is committed, so it must not carry that machine-specific path.
+      const checkout = realpathSync(mkdtempSync(join(tmpdir(), 'cap-checkout-')));
+      writeFileSync(join(checkout, 'package.json'), '{ "name": "@capacitor/ios" }');
+      writeFileSync(join(checkout, 'Package.swift'), '// ios package');
+      rmSync(installed, { recursive: true });
+      symlinkSync(checkout, installed);
+
+      const pkg = await resolveCapacitorPackage(makeConfig({}, appRoot));
+
+      expect(pkg.requirement).toEqual({ kind: 'path', absolutePath: installed });
+    });
+
+    it('reports an @capacitor/ios too old to ship a Package.swift', async () => {
+      rmSync(join(installed, 'Package.swift'));
+
+      await expect(resolveCapacitorPackage(makeConfig({}, appRoot))).rejects.toThrow(/has no Package.swift/);
+    });
+
+    it('reports a missing @capacitor/ios', async () => {
+      rmSync(join(appRoot, 'node_modules'), { recursive: true });
+
+      await expect(resolveCapacitorPackage(makeConfig({}, appRoot))).rejects.toThrow(/Unable to find node_modules/);
     });
   });
 
@@ -349,6 +383,52 @@ describe('rewriting an existing Package.swift', () => {
     );
 
     expect(rewriteCapacitorDependency(once, pkg, '/plugin')).toBe(once);
+  });
+
+  describe('onto a path dependency', () => {
+    const pathPkg = {
+      ...pkg,
+      requirement: { kind: 'path' as const, absolutePath: '/app/node_modules/@capacitor/ios' },
+    };
+    const pluginDir = '/app/node_modules/@capacitor/haptics';
+
+    it('repoints a plugin at the installed package', () => {
+      const before = `dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor", from: "9.0.0")
+    ],
+    targets: [
+        .target(name: "Plugin", dependencies: [.product(name: "Capacitor", package: "capacitor")])
+    ]`;
+
+      const after = rewriteCapacitorDependency(before, pathPkg, pluginDir);
+
+      expect(after).toContain('.package(name: "capacitor", path: "../ios")');
+      expect(after).toContain('.product(name: "Capacitor", package: "capacitor")');
+    });
+
+    it('repoints a path left behind by an earlier sync', () => {
+      const before = '.package(name: "capacitor", path: "../../../somewhere/else")';
+
+      expect(rewriteCapacitorDependency(before, pathPkg, pluginDir)).toBe(
+        '.package(name: "capacitor", path: "../ios")',
+      );
+    });
+
+    it('is idempotent', () => {
+      const once = rewriteCapacitorDependency(
+        '.package(url: "https://github.com/ionic-team/capacitor", from: "9.0.0")',
+        pathPkg,
+        pluginDir,
+      );
+
+      expect(rewriteCapacitorDependency(once, pathPkg, pluginDir)).toBe(once);
+    });
+
+    it('leaves a similarly named plugin package alone', () => {
+      const before = '.package(name: "capacitor-plugin-foo", path: "../foo")';
+
+      expect(rewriteCapacitorDependency(before, pathPkg, pluginDir)).toBe(before);
+    });
   });
 
   it('reads the pinned version from either requirement style', () => {
