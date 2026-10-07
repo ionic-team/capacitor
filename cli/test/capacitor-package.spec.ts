@@ -15,7 +15,7 @@ jest.mock('../src/common', () => ({
   getCapacitorPackageVersion: jest.fn(),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { getCapacitorPackageVersion } = require('../src/common');
 
 const SPM_DIR = '/app/ios/App/CapApp-SPM';
