@@ -45,7 +45,6 @@ export class WebPlugin implements Plugin {
     for (const listener in this.windowListeners) {
       this.removeWindowListener(this.windowListeners[listener]);
     }
-    this.windowListeners = {};
   }
 
   protected notifyListeners(eventName: string, data: any, retainUntilConsumed?: boolean): void {
