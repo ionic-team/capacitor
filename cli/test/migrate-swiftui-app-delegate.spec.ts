@@ -46,6 +46,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 `;
 
+// The AppDelegate shipped by the 8.5 CocoaPods template, which — unlike the SPM one —
+// kept the pre-UIScene URL and activity proxy handlers alongside configurationForConnecting.
+const APP_DELEGATE_PODS_8_5 = `import UIKit
+import Capacitor
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        return true
+    }
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        // Called when the app was launched with a url. Feel free to add additional processing here,
+        // but if you want the App API to support tracking app url opens, make sure to keep this call
+        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
+    }
+
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        // Called when the app was launched with an activity, including Universal Links.
+        // Feel free to add additional processing here, but if you want the App API to support
+        // tracking app url opens, make sure to keep this call
+        return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    }
+
+    func application(_ application: UIApplication,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+
+        let config = UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        config.delegateClass = SceneDelegate.self
+        return config
+    }
+
+}
+`;
+
 function rewrite(source: string): string {
   const result = rewriteAppDelegateForAdaptor(source);
   if (result.status !== 'rewritten') {
@@ -109,10 +149,35 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     expect(rewrite(once)).toBe(once);
   });
 
-  it('keeps a vanilla application(_:open:) body', () => {
+  it('removes a vanilla application(_:open:), which scenes no longer call', () => {
     const patched = rewrite(APP_DELEGATE_8_4);
 
-    expect(patched).toContain('ApplicationDelegateProxy.shared.application(app, open: url, options: options)');
+    expect(patched).not.toContain('open url:');
+    expect(patched).not.toContain('ApplicationDelegateProxy.shared');
+    expect(patched).toContain('didFinishLaunchingWithOptions');
+  });
+
+  it('removes a vanilla application(_:continue:) alongside it', () => {
+    const patched = rewrite(APP_DELEGATE_PODS_8_5);
+
+    expect(patched).not.toContain('open url:');
+    expect(patched).not.toContain('continue userActivity:');
+    expect(patched).not.toContain('ApplicationDelegateProxy.shared');
+    expect(patched).not.toContain('configurationForConnecting');
+    expect(patched).toContain('didFinishLaunchingWithOptions');
+    expect(patched).not.toMatch(/\n\n\n/);
+  });
+
+  it('keeps the developer-added members when stripping the dead handlers', () => {
+    const customised = APP_DELEGATE_PODS_8_5.replace(
+      '    var window: UIWindow?',
+      '    var window: UIWindow?\n\n    var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid',
+    );
+
+    const patched = rewrite(customised);
+
+    expect(patched).toContain('var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid');
+    expect(patched).not.toContain('ApplicationDelegateProxy.shared');
   });
 
   it('refuses when no AppDelegate class is present', () => {

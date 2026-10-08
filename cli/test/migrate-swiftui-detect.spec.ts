@@ -25,12 +25,12 @@ describe('migrate-swiftui classify', () => {
     expect(classify(FULLY_MIGRATED)).toBe('already-migrated');
   });
 
-  it.each(Object.keys(NOTHING_MIGRATED))('returns partial when only %s is present', (key) => {
-    expect(classify({ ...NOTHING_MIGRATED, [key]: true })).toBe('partial');
+  it.each(Object.keys(NOTHING_MIGRATED))('stays eligible when only %s is present, so the run can resume', (key) => {
+    expect(classify({ ...NOTHING_MIGRATED, [key]: true })).toBe('eligible');
   });
 
-  it.each(Object.keys(FULLY_MIGRATED))('returns partial when only %s is missing', (key) => {
-    expect(classify({ ...FULLY_MIGRATED, [key]: false })).toBe('partial');
+  it.each(Object.keys(FULLY_MIGRATED))('stays eligible when only %s is missing, so the run can resume', (key) => {
+    expect(classify({ ...FULLY_MIGRATED, [key]: false })).toBe('eligible');
   });
 });
 
