@@ -2,6 +2,7 @@ import { existsSync, mkdirpSync, readFileSync, writeFileSync } from 'fs-extra';
 import { join, resolve } from 'path';
 
 import type { Config } from '../src/definitions';
+import { migrateToSwiftUI } from '../src/tasks/migrate-swiftui';
 
 import { mktmp } from './util';
 
@@ -33,8 +34,6 @@ jest.mock('../src/util/template', () => ({
     }
   },
 }));
-
-import { migrateToSwiftUI } from '../src/tasks/migrate-swiftui';
 
 function templateSource(name: string): string {
   return readFileSync(resolve(REPO_ROOT, 'ios-spm-template/App/App', name), 'utf-8');
