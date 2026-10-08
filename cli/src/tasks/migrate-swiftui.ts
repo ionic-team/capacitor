@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs-extra';
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs-extra';
 import { join, sep } from 'path';
 
 import { runTask } from '../common';
@@ -7,9 +7,9 @@ import { logger } from '../log';
 import { deleteFolderRecursive, readdirp } from '../util/fs';
 import { hasSwiftUISceneManifest, setSwiftUISceneManifest } from '../util/spm';
 import { extractTemplate } from '../util/template';
-import { addSwiftFileToAppTarget } from '../util/xcode';
+import { addSwiftFileToAppTarget, removeStoryboardFromAppTarget, removeSwiftFileFromAppTarget } from '../util/xcode';
 
-type MigrationState = 'eligible' | 'already-migrated' | 'partial';
+type MigrationState = 'eligible' | 'already-migrated';
 
 interface SwiftUIDetectionSignals {
   hasSwiftUIManifest: boolean;
@@ -29,22 +29,31 @@ const OPEN_URL_SIG = /func application\([^)]*\bopen url:/;
 const CONTINUE_SIG = /func application\([^)]*\bcontinue userActivity:/;
 const CONFIGURATION_FOR_CONNECTING_SIG = /func application\([^)]*\bconfigurationForConnecting\b/;
 
+const SCENE_WILL_CONNECT_SIG = /func scene\([^)]*\bwillConnectTo session:/;
+const SCENE_OPEN_URL_CONTEXTS_SIG = /func scene\([^)]*\bopenURLContexts\b/;
+const SCENE_CONTINUE_SIG = /func scene\([^)]*\bcontinue userActivity:/;
+const SCENE_DELEGATE_PROXY = 'SceneDelegateProxy.shared';
+const STOCK_WILL_CONNECT_BODY = [
+  /^guard let windowScene = scene as\? UIWindowScene else \{ return \}$/,
+  /^window = UIWindow\(windowScene: windowScene\)$/,
+  /^window\?\.rootViewController = CAPBridgeViewController\(\)$/,
+  /^window\?\.makeKeyAndVisible\(\)$/,
+  /^SceneDelegateProxy\.shared\.scene\(/,
+];
+const STOCK_WINDOW_PROPERTY = /^var\s+window\s*:\s*UIWindow\?$/;
+
 export async function migrateToSwiftUI(config: Config): Promise<void> {
   const signals = readDetectionSignals(config);
-  const state = classify(signals);
 
-  switch (state) {
-    case 'already-migrated':
-      logger.info('SwiftUI migration: project already uses the SwiftUI App-struct layout, skipping.');
-      return;
-    case 'partial':
-      logger.warn(
-        `SwiftUI migration: project is in a partial state (${describeSignals(signals)}). ` +
-          `Skipping automated migration — finish the migration by hand or reset the iOS project to a clean 8.4/8.5 state first.`,
-      );
-      return;
-    case 'eligible':
-      break;
+  if (classify(signals) === 'already-migrated') {
+    logger.info('SwiftUI migration: project already uses the SwiftUI App-struct layout, skipping.');
+    return;
+  }
+  if (hasAnySignal(signals)) {
+    logger.info(
+      `SwiftUI migration: resuming a partially migrated project (${describeSignals(signals)}); ` +
+        `completing the missing steps.`,
+    );
   }
 
   const appDelegatePath = join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift');
@@ -84,6 +93,7 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
     writeFileSync(appDelegatePath, rewrite.source);
   });
 
+  let registrationFailed = false;
   await runTask('Registering App.swift and CapacitorView.swift with the Xcode App target.', async () => {
     const pbxprojPath = join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj');
     for (const name of ['App.swift', 'CapacitorView.swift']) {
@@ -93,6 +103,7 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
           logger.warn(`${name} is already registered in the App target, skipping.`);
         }
       } catch (err: any) {
+        registrationFailed = true;
         logger.warn(
           `Could not register ${name} automatically: ${err?.message ?? err}. ` +
             `Add ${name} to the App target in Xcode manually.`,
@@ -101,8 +112,60 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
     }
   });
 
+  if (registrationFailed) {
+    logger.warn('Leaving the UIKit entry-point files in place because the App target was not fully updated.');
+  } else {
+    await runTask('Removing the leftover UIKit entry-point files.', async () => {
+      removeLeftoverUIKitFiles(config);
+    });
+  }
+
   await scanAndWarn(config);
-  printNextSteps(config);
+  printNextSteps();
+}
+
+/**
+ * Drop the UIKit entry point the SwiftUI App struct replaces.
+ *
+ * Deregisters before unlinking so a pbxproj that cannot be rewritten leaves a working
+ * project behind rather than a dangling reference. LaunchScreen.storyboard stays: Apple
+ * still requires a launch storyboard.
+ */
+function removeLeftoverUIKitFiles(config: Config): void {
+  const pbxprojPath = join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj');
+
+  const sceneDelegatePath = join(config.ios.nativeTargetDirAbs, 'SceneDelegate.swift');
+  if (existsSync(sceneDelegatePath)) {
+    if (isStockSceneDelegate(readFileSync(sceneDelegatePath, 'utf-8'))) {
+      removeFile(pbxprojPath, sceneDelegatePath, () =>
+        removeSwiftFileFromAppTarget(pbxprojPath, 'SceneDelegate.swift'),
+      );
+    } else {
+      logger.warn(
+        `${sceneDelegatePath} carries custom code and was kept. Move its window setup into App.swift and route ` +
+          `scene(_:openURLContexts:) and scene(_:continue:) through SceneDelegateProxy.shared from the SwiftUI ` +
+          `scene body, then delete the file and its App target reference.`,
+      );
+    }
+  }
+
+  const mainStoryboardPath = join(config.ios.nativeTargetDirAbs, 'Base.lproj', 'Main.storyboard');
+  if (existsSync(mainStoryboardPath)) {
+    removeFile(pbxprojPath, mainStoryboardPath, () => removeStoryboardFromAppTarget(pbxprojPath, 'Main.storyboard'));
+  }
+}
+
+function removeFile(pbxprojPath: string, path: string, deregister: () => void): void {
+  try {
+    deregister();
+  } catch (err: any) {
+    logger.warn(
+      `Could not deregister ${path} from ${pbxprojPath}: ${err?.message ?? err}. ` +
+        `Delete it from the App target in Xcode manually.`,
+    );
+    return;
+  }
+  unlinkSync(path);
 }
 
 async function scanAndWarn(config: Config): Promise<void> {
@@ -158,20 +221,57 @@ async function scanAndWarn(config: Config): Promise<void> {
   }
 }
 
-function hasCustomDelegateBody(source: string, sigRegex: RegExp): boolean {
+function hasCustomDelegateBody(
+  source: string,
+  sigRegex: RegExp,
+  proxyToken = 'ApplicationDelegateProxy.shared',
+): boolean {
+  const body = bracedBody(source, sigRegex);
+  if (body === null) return false;
+  return codeLines(body).some((line) => !line.includes(proxyToken));
+}
+
+/**
+ * Whether SceneDelegate.swift still holds exactly what the 8.x template shipped, and so
+ * can be deleted without losing anything the developer wrote.
+ */
+function isStockSceneDelegate(source: string): boolean {
+  const classBody = bracedBody(source, /\bclass\s+SceneDelegate\b/);
+  if (classBody === null) return false;
+
+  const willConnectBody = bracedBody(classBody, SCENE_WILL_CONNECT_SIG);
+  if (
+    willConnectBody !== null &&
+    !codeLines(willConnectBody).every((line) => STOCK_WILL_CONNECT_BODY.some((stock) => stock.test(line)))
+  ) {
+    return false;
+  }
+  if (hasCustomDelegateBody(classBody, SCENE_OPEN_URL_CONTEXTS_SIG, SCENE_DELEGATE_PROXY)) return false;
+  if (hasCustomDelegateBody(classBody, SCENE_CONTINUE_SIG, SCENE_DELEGATE_PROXY)) return false;
+
+  let members: string | null = classBody;
+  for (const sig of [SCENE_WILL_CONNECT_SIG, SCENE_OPEN_URL_CONTEXTS_SIG, SCENE_CONTINUE_SIG]) {
+    members = removeMethod(members, sig);
+    if (members === null) return false;
+  }
+  return codeLines(members).every((line) => STOCK_WINDOW_PROPERTY.test(line));
+}
+
+function bracedBody(source: string, sigRegex: RegExp): string | null {
   const match = source.match(sigRegex);
-  if (!match || match.index === undefined) return false;
+  if (!match || match.index === undefined) return null;
   const openIdx = source.indexOf('{', match.index);
-  if (openIdx === -1) return false;
+  if (openIdx === -1) return null;
   const closeIdx = findMatchingBrace(source, openIdx);
-  if (closeIdx === null) return false;
-  const body = source.slice(openIdx + 1, closeIdx);
-  const codeLines = body
+  if (closeIdx === null) return null;
+  return source.slice(openIdx + 1, closeIdx);
+}
+
+function codeLines(body: string): string[] {
+  return body
     .split('\n')
-    .map((l) => l.trim())
-    .filter((l) => l.length > 0 && !l.startsWith('//'));
-  if (codeLines.length === 0) return false;
-  return codeLines.some((l) => !l.includes('ApplicationDelegateProxy.shared'));
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('//'));
 }
 
 function hasCustomWindowSetup(source: string): boolean {
@@ -183,14 +283,11 @@ function hasCustomWindowSetup(source: string): boolean {
   });
 }
 
-function printNextSteps(config: Config): void {
+function printNextSteps(): void {
   logger.info('');
   logger.info('SwiftUI migration next steps:');
   logger.info('  • Review any warnings above for legacy API usage or custom AppDelegate URL/activity handlers.');
   logger.info('  • App.swift now owns the app entry point; move UIKit root-window customizations into its scene body.');
-  for (const leftover of leftoverUIKitFiles(config)) {
-    logger.info(`  • ${leftover} is no longer used by the app and can be deleted from the Xcode project.`);
-  }
   logger.info('  • Full guide: https://capacitorjs.com/docs/next/updating/9-0');
 }
 
@@ -205,14 +302,6 @@ function printManualSteps(): void {
   logger.info('  • Route URLs and universal links from the SwiftUI scene body through');
   logger.info('    SceneDelegateProxy.shared.handle(openURL:) and .handle(userActivity:).');
   logger.info('  • Full guide: https://capacitorjs.com/docs/next/updating/9-0');
-}
-
-function leftoverUIKitFiles(config: Config): string[] {
-  const candidates = [
-    join(config.ios.nativeTargetDirAbs, 'SceneDelegate.swift'),
-    join(config.ios.nativeTargetDirAbs, 'Base.lproj', 'Main.storyboard'),
-  ];
-  return candidates.filter((path) => existsSync(path));
 }
 
 async function loadTemplateAssets(config: Config): Promise<TemplateAssets | null> {
@@ -352,14 +441,25 @@ function readDetectionSignals(config: Config): SwiftUIDetectionSignals {
   };
 }
 
+/**
+ * Anything short of all four signals is eligible, not refused: every step below is
+ * individually idempotent, so a run interrupted part-way is finished by running again.
+ */
 function classify(signals: SwiftUIDetectionSignals): MigrationState {
-  const { hasSwiftUIManifest, hasAppStruct, hasCapacitorView, hasDelegateAdaptorShape } = signals;
-  const trueCount = [hasSwiftUIManifest, hasAppStruct, hasCapacitorView, hasDelegateAdaptorShape].filter(
-    Boolean,
-  ).length;
-  if (trueCount === 0) return 'eligible';
-  if (trueCount === 4) return 'already-migrated';
-  return 'partial';
+  return signalValues(signals).every(Boolean) ? 'already-migrated' : 'eligible';
+}
+
+function hasAnySignal(signals: SwiftUIDetectionSignals): boolean {
+  return signalValues(signals).some(Boolean);
+}
+
+function signalValues({
+  hasSwiftUIManifest,
+  hasAppStruct,
+  hasCapacitorView,
+  hasDelegateAdaptorShape,
+}: SwiftUIDetectionSignals): boolean[] {
+  return [hasSwiftUIManifest, hasAppStruct, hasCapacitorView, hasDelegateAdaptorShape];
 }
 
 function describeSignals({
@@ -383,6 +483,8 @@ export const __testables = {
   describeSignals,
   hasCustomDelegateBody,
   hasCustomWindowSetup,
+  isStockSceneDelegate,
+  removeLeftoverUIKitFiles,
   rewriteAppDelegateForAdaptor,
   scanAndWarn,
 };
