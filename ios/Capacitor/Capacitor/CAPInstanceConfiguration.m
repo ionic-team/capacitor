@@ -17,6 +17,7 @@
         _overridenUserAgentString = descriptor.overridenUserAgentString;
         _backgroundColor = descriptor.backgroundColor;
         _allowedNavigationHostnames = descriptor.allowedNavigationHostnames;
+        _requestReferer = descriptor.requestReferer;
         switch (descriptor.loggingBehavior) {
             case CAPInstanceLoggingBehaviorProduction:
                 _loggingEnabled = true;
@@ -65,6 +66,7 @@
         _localURL = [[configuration localURL] copy];
         _serverURL = [[configuration serverURL] copy];
         _errorPath = [[configuration errorPath] copy];
+        _requestReferer = [[configuration requestReferer] copy];
         _pluginConfigurations = [[configuration pluginConfigurations] copy];
         _loggingEnabled = configuration.loggingEnabled;
         _scrollingEnabled = configuration.scrollingEnabled;

@@ -10,6 +10,7 @@
     "androidScheme": "override",
     "allowNavigation": ["capacitorjs.com", "ionic.io", "192.168.0.1"],
     "hostname": "myhost",
+    "referer": "https://example.com/app",
     "url": "http://192.168.100.1:2057"
   },
   "plugins": {
