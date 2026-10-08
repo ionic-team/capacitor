@@ -20,10 +20,13 @@ interface SwiftUIDetectionSignals {
 
 interface TemplateAssets {
   app: string;
+  appDelegate: string;
   capacitorView: string;
 }
 
 type AppDelegateRewrite = { status: 'rewritten'; source: string } | { status: 'skipped'; reason: string };
+
+const MIGRATION_GUIDE_URL = 'https://capacitorjs.com/docs/next/updating/9-0';
 
 const OPEN_URL_SIG = /func application\([^)]*\bopen url:/;
 const CONTINUE_SIG = /func application\([^)]*\bcontinue userActivity:/;
@@ -41,6 +44,29 @@ const STOCK_WILL_CONNECT_BODY = [
   /^SceneDelegateProxy\.shared\.scene\(/,
 ];
 const STOCK_WINDOW_PROPERTY = /^var\s+window\s*:\s*UIWindow\?$/;
+
+const APP_DELEGATE_CLASS_SIG = /\bclass\s+AppDelegate\s*:\s*(?:UIResponder|NSObject)\s*,\s*UIApplicationDelegate\s*\{/;
+const DID_FINISH_LAUNCHING_SIG = /func application\([^)]*\bdidFinishLaunchingWithOptions\b/;
+const APPLICATION_DELEGATE_PROXY = 'ApplicationDelegateProxy.shared';
+// Every module a stock AppDelegate has ever imported; anything else is the developer's.
+const STOCK_APP_DELEGATE_PREAMBLE = /^(?:import\s+(?:UIKit|Capacitor|Foundation)|@(?:main|UIApplicationMain))$/;
+
+/**
+ * The members every stock AppDelegate has carried since Capacitor 5, with the body each is
+ * allowed to hold. `configurationForConnecting` takes any body: it wires up a UIKit scene
+ * delegate, which cannot survive the conversion in any form.
+ */
+const STOCK_APP_DELEGATE_METHODS: { sig: RegExp; bodyIsStock: (lines: string[]) => boolean }[] = [
+  { sig: DID_FINISH_LAUNCHING_SIG, bodyIsStock: (lines) => lines.length === 1 && lines[0] === 'return true' },
+  { sig: /func applicationWillResignActive\(/, bodyIsStock: isEmpty },
+  { sig: /func applicationDidEnterBackground\(/, bodyIsStock: isEmpty },
+  { sig: /func applicationWillEnterForeground\(/, bodyIsStock: isEmpty },
+  { sig: /func applicationDidBecomeActive\(/, bodyIsStock: isEmpty },
+  { sig: /func applicationWillTerminate\(/, bodyIsStock: isEmpty },
+  { sig: OPEN_URL_SIG, bodyIsStock: (lines) => lines.every((line) => line.includes(APPLICATION_DELEGATE_PROXY)) },
+  { sig: CONTINUE_SIG, bodyIsStock: (lines) => lines.every((line) => line.includes(APPLICATION_DELEGATE_PROXY)) },
+  { sig: CONFIGURATION_FOR_CONNECTING_SIG, bodyIsStock: () => true },
+];
 
 export async function migrateToSwiftUI(config: Config): Promise<void> {
   const signals = readDetectionSignals(config);
@@ -89,9 +115,16 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
     }
   });
 
+  const replaceAppDelegate = isStockAppDelegate(readFileSync(appDelegatePath, 'utf-8'));
   await runTask('Converting AppDelegate.swift into a UIApplicationDelegateAdaptor.', async () => {
-    writeFileSync(appDelegatePath, rewrite.source);
+    writeFileSync(appDelegatePath, replaceAppDelegate ? assets.appDelegate : rewrite.source);
   });
+  if (!replaceAppDelegate) {
+    logger.warn(
+      `${appDelegatePath} carries code of your own, so it was converted in place rather than replaced with the ` +
+        `slimmed-down Capacitor 9 template. Review what it still holds against ${MIGRATION_GUIDE_URL}.`,
+    );
+  }
 
   let registrationFailed = false;
   await runTask('Registering App.swift and CapacitorView.swift with the Xcode App target.', async () => {
@@ -142,9 +175,10 @@ function removeLeftoverUIKitFiles(config: Config): void {
       );
     } else {
       logger.warn(
-        `${sceneDelegatePath} carries custom code and was kept. Move its window setup into App.swift and route ` +
-          `scene(_:openURLContexts:) and scene(_:continue:) through SceneDelegateProxy.shared from the SwiftUI ` +
-          `scene body, then delete the file and its App target reference.`,
+        `${sceneDelegatePath} carries code of your own, so it was kept and is no longer used by the app. Move its ` +
+          `window setup into App.swift and route scene(_:openURLContexts:) and scene(_:continue:) through ` +
+          `SceneDelegateProxy.shared from the SwiftUI scene body, then delete the file and its App target ` +
+          `reference. See ${MIGRATION_GUIDE_URL}.`,
       );
     }
   }
@@ -257,6 +291,40 @@ function isStockSceneDelegate(source: string): boolean {
   return codeLines(members).every((line) => STOCK_WINDOW_PROPERTY.test(line));
 }
 
+/**
+ * Whether AppDelegate.swift still holds exactly what a Capacitor template shipped, across
+ * every stock shape from 5.x to 8.x, and so can be replaced outright with the 9.0 template
+ * rather than surgically rewritten.
+ *
+ * The 9.0 template keeps only didFinishLaunchingWithOptions: the empty lifecycle stubs are
+ * noise, and URL and universal-link routing moved to the SwiftUI scene body, which
+ * App.swift wires to SceneDelegateProxy in the same run.
+ */
+function isStockAppDelegate(source: string): boolean {
+  if (!APP_DELEGATE_CLASS_SIG.test(source)) return false;
+
+  const classBody = bracedBody(source, APP_DELEGATE_CLASS_SIG);
+  if (classBody === null) return false;
+
+  const outsideClass = source.slice(0, source.search(APP_DELEGATE_CLASS_SIG));
+  if (!codeLines(outsideClass).every((line) => STOCK_APP_DELEGATE_PREAMBLE.test(line))) {
+    return false;
+  }
+
+  let members: string | null = classBody;
+  for (const { sig, bodyIsStock } of STOCK_APP_DELEGATE_METHODS) {
+    const body = bracedBody(members, sig);
+    if (body !== null && !bodyIsStock(codeLines(body))) return false;
+    members = removeMethod(members, sig);
+    if (members === null) return false;
+  }
+  return codeLines(members).every((line) => STOCK_WINDOW_PROPERTY.test(line));
+}
+
+function isEmpty(lines: string[]): boolean {
+  return lines.length === 0;
+}
+
 function bracedBody(source: string, sigRegex: RegExp): string | null {
   const match = source.match(sigRegex);
   if (!match || match.index === undefined) return null;
@@ -288,7 +356,7 @@ function printNextSteps(): void {
   logger.info('SwiftUI migration next steps:');
   logger.info('  • Review any warnings above for legacy API usage or custom AppDelegate URL/activity handlers.');
   logger.info('  • App.swift now owns the app entry point; move UIKit root-window customizations into its scene body.');
-  logger.info('  • Full guide: https://capacitorjs.com/docs/next/updating/9-0');
+  logger.info(`  • Full guide: ${MIGRATION_GUIDE_URL}`);
 }
 
 function printManualSteps(): void {
@@ -301,7 +369,7 @@ function printManualSteps(): void {
   logger.info('  • Remove UIMainStoryboardFile from Info.plist.');
   logger.info('  • Route URLs and universal links from the SwiftUI scene body through');
   logger.info('    SceneDelegateProxy.shared.handle(openURL:) and .handle(userActivity:).');
-  logger.info('  • Full guide: https://capacitorjs.com/docs/next/updating/9-0');
+  logger.info(`  • Full guide: ${MIGRATION_GUIDE_URL}`);
 }
 
 async function loadTemplateAssets(config: Config): Promise<TemplateAssets | null> {
@@ -313,12 +381,14 @@ async function loadTemplateAssets(config: Config): Promise<TemplateAssets | null
   try {
     await extractTemplate(archivePath, tempDir);
     const appPath = join(tempDir, 'App', 'App', 'App.swift');
+    const appDelegatePath = join(tempDir, 'App', 'App', 'AppDelegate.swift');
     const capacitorViewPath = join(tempDir, 'App', 'App', 'CapacitorView.swift');
-    if (!existsSync(appPath) || !existsSync(capacitorViewPath)) {
+    if (!existsSync(appPath) || !existsSync(appDelegatePath) || !existsSync(capacitorViewPath)) {
       return null;
     }
     return {
       app: readFileSync(appPath, 'utf-8'),
+      appDelegate: readFileSync(appDelegatePath, 'utf-8'),
       capacitorView: readFileSync(capacitorViewPath, 'utf-8'),
     };
   } finally {
@@ -483,6 +553,7 @@ export const __testables = {
   describeSignals,
   hasCustomDelegateBody,
   hasCustomWindowSetup,
+  isStockAppDelegate,
   isStockSceneDelegate,
   removeLeftoverUIKitFiles,
   rewriteAppDelegateForAdaptor,
