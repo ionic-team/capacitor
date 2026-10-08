@@ -442,12 +442,21 @@ function rewriteAppDelegateForAdaptor(source: string): AppDelegateRewrite {
   rewritten = rewritten.replace(/(\bclass\s+AppDelegate\s*:\s*)UIResponder\b/, '$1NSObject');
   rewritten = rewritten.replace(/^[ \t]*var\s+window\s*:\s*UIWindow\?[ \t]*\r?\n(?:[ \t]*\r?\n)?/m, '');
 
-  const withoutSceneConfiguration = removeMethod(rewritten, CONFIGURATION_FOR_CONNECTING_SIG);
-  if (withoutSceneConfiguration === null) {
-    return { status: 'skipped', reason: 'could not parse the configurationForConnecting method in AppDelegate.swift.' };
+  // UIKit stops calling these three once the app is scene-based, so leaving them behind
+  // would plant dead code a developer could mistake for live routing. The URL and activity
+  // bodies are known to hold nothing but ApplicationDelegateProxy calls by the guard above;
+  // App.swift re-routes both through SceneDelegateProxy in the same run.
+  const sigs = [CONFIGURATION_FOR_CONNECTING_SIG, OPEN_URL_SIG, CONTINUE_SIG];
+  const names = ['configurationForConnecting', 'application(_:open:)', 'application(_:continue:)'];
+  let stripped: string | null = rewritten;
+  for (const [index, sig] of sigs.entries()) {
+    stripped = removeMethod(stripped, sig);
+    if (stripped === null) {
+      return { status: 'skipped', reason: `could not parse the ${names[index]} method in AppDelegate.swift.` };
+    }
   }
 
-  return { status: 'rewritten', source: withoutSceneConfiguration };
+  return { status: 'rewritten', source: stripped };
 }
 
 function stripMainAttribute(source: string): string {
