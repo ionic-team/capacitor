@@ -851,6 +851,7 @@ public class Bridge {
                     }
                 } catch (PluginLoadException | InvalidPluginMethodException ex) {
                     Logger.error("Unable to execute plugin method", ex);
+                    call.errorCallback(ex.getMessage());
                 } catch (Exception ex) {
                     Logger.error("Serious error executing plugin", ex);
                     throw new RuntimeException(ex);
