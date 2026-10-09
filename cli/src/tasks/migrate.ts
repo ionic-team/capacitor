@@ -7,7 +7,7 @@ import c from '../colors';
 import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
-import { getMajoriOSVersion } from '../ios/common';
+import { getMajoriOSVersion, getXcodeProjectFile, setXcprojDeploymentTarget } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
 import { runCommand } from '../util/subprocess';
@@ -152,14 +152,12 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         const currentiOSVersion = getMajoriOSVersion(config);
         if (parseInt(currentiOSVersion) < parseInt(iOSVersion)) {
           // ios template changes
-          await runTask(`Migrating deployment target to ${iOSVersion}.0.`, () => {
-            return updateFile(
-              config,
-              join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'),
-              'IPHONEOS_DEPLOYMENT_TARGET = ',
-              ';',
-              `${iOSVersion}.0`,
-            );
+          await runTask(`Migrating deployment target to ${iOSVersion}.0.`, async () => {
+            const projectFile = getXcodeProjectFile(config);
+            if (projectFile.endsWith('.xcproj')) {
+              return setXcprojDeploymentTarget(projectFile, `${iOSVersion}.0`);
+            }
+            return updateFile(config, projectFile, 'IPHONEOS_DEPLOYMENT_TARGET = ', ';', `${iOSVersion}.0`);
           });
 
           if ((await config.ios.packageManager) !== 'SPM') {

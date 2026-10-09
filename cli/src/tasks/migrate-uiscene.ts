@@ -3,6 +3,7 @@ import { join, sep } from 'path';
 
 import { runTask } from '../common';
 import type { Config } from '../definitions';
+import { getXcodeProjectFile } from '../ios/common';
 import { logger } from '../log';
 import { deleteFolderRecursive, readdirp } from '../util/fs';
 import { addSceneManifestIfNeeded, hasSceneManifest } from '../util/spm';
@@ -63,9 +64,20 @@ export async function migrateToUIScene(config: Config): Promise<void> {
   });
 
   await runTask('Registering SceneDelegate.swift with the Xcode App target.', async () => {
-    const pbxprojPath = join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj');
+    const projectFile = getXcodeProjectFile(config);
+    if (projectFile.endsWith('.xcproj')) {
+      if (readFileSync(projectFile, 'utf-8').includes('"SceneDelegate.swift"')) {
+        logger.warn('SceneDelegate.swift is already registered in the App target, skipping.');
+      } else {
+        logger.warn(
+          'Could not register SceneDelegate.swift automatically in a project.xcproj project. ' +
+            'Add SceneDelegate.swift to the App target in Xcode manually.',
+        );
+      }
+      return;
+    }
     try {
-      const { added } = addSwiftFileToAppTarget(pbxprojPath, 'App', 'SceneDelegate.swift');
+      const { added } = addSwiftFileToAppTarget(projectFile, 'App', 'SceneDelegate.swift');
       if (!added) {
         logger.warn('SceneDelegate.swift is already registered in the App target, skipping.');
       }
