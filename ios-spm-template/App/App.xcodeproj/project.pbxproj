@@ -16,6 +16,7 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		9575E845302683A8004C1ED7 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9575E844302683A6004C1ED7 /* App.swift */; };
 		9575E847302683C1004C1ED7 /* CapacitorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9575E846302683BC004C1ED7 /* CapacitorView.swift */; };
+		9575E849302683D7004C1ED7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9575E848302683D5004C1ED7 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		9575E844302683A6004C1ED7 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		9575E846302683BC004C1ED7 /* CapacitorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorView.swift; sourceTree = "<group>"; };
+		9575E848302683D5004C1ED7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -68,6 +70,7 @@
 				9575E844302683A6004C1ED7 /* App.swift */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
+				9575E848302683D5004C1ED7 /* SceneDelegate.swift */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
 				504EC3131FED79650016851F /* Info.plist */,
@@ -160,6 +163,7 @@
 				9575E845302683A8004C1ED7 /* App.swift in Sources */,
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				9575E847302683C1004C1ED7 /* CapacitorView.swift in Sources */,
+				9575E849302683D7004C1ED7 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
