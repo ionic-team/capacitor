@@ -72,6 +72,9 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
     if (!meta) {
       return null;
     }
+    const pluginXMLPath = join(rootPath, 'plugin.xml');
+    const xmlMeta = await readXML(pluginXMLPath);
+
     if (meta.capacitor) {
       return {
         id: name,
@@ -80,10 +83,9 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
         rootPath,
         repository: meta.repository,
         manifest: meta.capacitor,
+        xml: xmlMeta ? xmlMeta.plugin : undefined,
       };
     }
-    const pluginXMLPath = join(rootPath, 'plugin.xml');
-    const xmlMeta = await readXML(pluginXMLPath);
     return {
       id: name,
       name: fixName(name),
