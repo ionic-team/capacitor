@@ -6,9 +6,10 @@ import { __testables } from '../src/tasks/migrate-swiftui';
 
 import { mktmp } from './util';
 
-const { isStockSceneDelegate, removeLeftoverUIKitFiles } = __testables;
+const { isStockSceneDelegate, removeLeftoverStoryboard, writeSceneDelegate } = __testables;
 
 const PRE_SWIFTUI_PBXPROJ = resolve(__dirname, 'fixtures/pre-swiftui-project.pbxproj');
+const TEMPLATE = readFileSync(resolve(__dirname, '../../ios-spm-template/App/App/SceneDelegate.swift'), 'utf-8');
 
 const STOCK = `import UIKit
 import Capacitor
@@ -100,7 +101,48 @@ describe('isStockSceneDelegate', () => {
   });
 });
 
-describe('removeLeftoverUIKitFiles', () => {
+describe('writeSceneDelegate', () => {
+  let tmpDir: any;
+  let path: string;
+
+  beforeEach(async () => {
+    tmpDir = await mktmp();
+    path = join(tmpDir.path, 'SceneDelegate.swift');
+  });
+
+  afterEach(() => {
+    tmpDir.cleanupCallback();
+  });
+
+  it('writes the template when no SceneDelegate exists', () => {
+    expect(writeSceneDelegate(path, TEMPLATE)).toBe('written');
+    expect(readFileSync(path, 'utf-8')).toBe(TEMPLATE);
+  });
+
+  it('replaces a stock 8.x SceneDelegate, whose window setup the App struct now owns', () => {
+    writeFileSync(path, STOCK);
+
+    expect(writeSceneDelegate(path, TEMPLATE)).toBe('replaced');
+    expect(readFileSync(path, 'utf-8')).toBe(TEMPLATE);
+  });
+
+  it('keeps a customised SceneDelegate untouched', () => {
+    const customised = STOCK.replace('var window: UIWindow?', 'var deepLink: URL?');
+    writeFileSync(path, customised);
+
+    expect(writeSceneDelegate(path, TEMPLATE)).toBe('kept');
+    expect(readFileSync(path, 'utf-8')).toBe(customised);
+  });
+
+  it('is idempotent — the written template is itself stock', () => {
+    writeSceneDelegate(path, TEMPLATE);
+
+    expect(writeSceneDelegate(path, TEMPLATE)).toBe('replaced');
+    expect(readFileSync(path, 'utf-8')).toBe(TEMPLATE);
+  });
+});
+
+describe('removeLeftoverStoryboard', () => {
   let tmpDir: any;
   let config: Config;
   let targetDir: string;
@@ -128,39 +170,32 @@ describe('removeLeftoverUIKitFiles', () => {
     tmpDir.cleanupCallback();
   });
 
-  it('deletes a stock SceneDelegate and Main.storyboard from disk and from the pbxproj', () => {
-    removeLeftoverUIKitFiles(config);
+  it('removes Main.storyboard from disk and from the pbxproj', () => {
+    removeLeftoverStoryboard(config);
 
-    expect(existsSync(join(targetDir, 'SceneDelegate.swift'))).toBe(false);
     expect(existsSync(join(targetDir, 'Base.lproj', 'Main.storyboard'))).toBe(false);
+    expect(readFileSync(pbxprojPath, 'utf-8')).not.toContain('Main.storyboard');
+  });
 
-    const pbxproj = readFileSync(pbxprojPath, 'utf-8');
-    expect(pbxproj).not.toContain('SceneDelegate.swift');
-    expect(pbxproj).not.toContain('Main.storyboard');
+  it('leaves SceneDelegate.swift on disk and registered, because it is the live scene delegate', () => {
+    removeLeftoverStoryboard(config);
+
+    expect(existsSync(join(targetDir, 'SceneDelegate.swift'))).toBe(true);
+    expect(readFileSync(pbxprojPath, 'utf-8')).toContain('SceneDelegate.swift');
   });
 
   it('keeps LaunchScreen.storyboard on disk and registered', () => {
-    removeLeftoverUIKitFiles(config);
+    removeLeftoverStoryboard(config);
 
     expect(existsSync(join(targetDir, 'Base.lproj', 'LaunchScreen.storyboard'))).toBe(true);
     expect(readFileSync(pbxprojPath, 'utf-8')).toContain('LaunchScreen.storyboard');
   });
 
-  it('keeps a customised SceneDelegate and its pbxproj reference', () => {
-    writeFileSync(join(targetDir, 'SceneDelegate.swift'), STOCK.replace('var window: UIWindow?', 'var deepLink: URL?'));
-
-    removeLeftoverUIKitFiles(config);
-
-    expect(existsSync(join(targetDir, 'SceneDelegate.swift'))).toBe(true);
-    expect(readFileSync(pbxprojPath, 'utf-8')).toContain('SceneDelegate.swift');
-    expect(existsSync(join(targetDir, 'Base.lproj', 'Main.storyboard'))).toBe(false);
-  });
-
   it('makes no further changes on a second run', () => {
-    removeLeftoverUIKitFiles(config);
+    removeLeftoverStoryboard(config);
     const after = readFileSync(pbxprojPath, 'utf-8');
 
-    removeLeftoverUIKitFiles(config);
+    removeLeftoverStoryboard(config);
 
     expect(readFileSync(pbxprojPath, 'utf-8')).toBe(after);
   });

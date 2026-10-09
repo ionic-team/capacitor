@@ -1,6 +1,6 @@
 import { __testables } from '../src/tasks/migrate-swiftui';
 
-const { rewriteAppDelegateForAdaptor, hasCustomWindowSetup } = __testables;
+const { rewriteAppDelegateForAdaptor, hasCustomWindowSetup, CONFIGURATION_FOR_CONNECTING_METHOD } = __testables;
 
 // The AppDelegate shipped by the 8.4 templates: @main, UIResponder, own window.
 const APP_DELEGATE_8_4 = `import UIKit
@@ -118,12 +118,11 @@ describe('rewriteAppDelegateForAdaptor', () => {
     expect(patched).toContain('class AppDelegate: NSObject, UIApplicationDelegate {');
   });
 
-  it('removes configurationForConnecting from the 8.5 AppDelegate', () => {
+  it('keeps the 8.5 configurationForConnecting, which already names SceneDelegate', () => {
     const patched = rewrite(APP_DELEGATE_8_5);
 
-    expect(patched).not.toContain('configurationForConnecting');
-    expect(patched).not.toContain('UISceneConfiguration');
-    expect(patched).not.toContain('config.delegateClass');
+    expect(patched).toContain('configurationForConnecting');
+    expect(patched).toContain('config.delegateClass = SceneDelegate.self');
     expect(patched).toContain('didFinishLaunchingWithOptions');
     expect(patched).not.toMatch(/\n\n\n/);
   });
@@ -139,8 +138,30 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         return true
     }
+
+    func application(_ application: UIApplication,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        let config = UISceneConfiguration(name: "Default Configuration",
+                                          sessionRole: connectingSceneSession.role)
+        config.delegateClass = SceneDelegate.self
+        return config
+    }
 }
 `);
+  });
+
+  it('adds configurationForConnecting to an 8.4 AppDelegate, which has none', () => {
+    const patched = rewrite(APP_DELEGATE_8_4);
+
+    expect(patched).toContain('configurationForConnecting connectingSceneSession: UISceneSession');
+    expect(patched).toContain('configuration.delegateClass = SceneDelegate.self');
+    expect(patched).toMatch(/}\n$/);
+    expect(patched).not.toMatch(/\n\n\n/);
+  });
+
+  it('adds the method byte-for-byte as the templates ship it', () => {
+    expect(rewrite(APP_DELEGATE_8_4)).toContain(CONFIGURATION_FOR_CONNECTING_METHOD);
   });
 
   it('is idempotent — a rewritten AppDelegate rewrites to itself', () => {
@@ -163,7 +184,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     expect(patched).not.toContain('open url:');
     expect(patched).not.toContain('continue userActivity:');
     expect(patched).not.toContain('ApplicationDelegateProxy.shared');
-    expect(patched).not.toContain('configurationForConnecting');
+    expect(patched).toContain('configurationForConnecting');
     expect(patched).toContain('didFinishLaunchingWithOptions');
     expect(patched).not.toMatch(/\n\n\n/);
   });
@@ -233,7 +254,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     expect(result.status === 'skipped' && result.reason).toMatch(/application\(_:continue:\)/);
   });
 
-  it('refuses when configurationForConnecting braces are unbalanced', () => {
+  it('refuses when the AppDelegate class braces are unbalanced', () => {
     const source = `class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      configurationForConnecting connectingSceneSession: UISceneSession,
@@ -244,7 +265,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     const result = rewriteAppDelegateForAdaptor(source);
 
     expect(result.status).toBe('skipped');
-    expect(result.status === 'skipped' && result.reason).toMatch(/configurationForConnecting/);
+    expect(result.status === 'skipped' && result.reason).toMatch(/end of the AppDelegate class/);
   });
 });
 

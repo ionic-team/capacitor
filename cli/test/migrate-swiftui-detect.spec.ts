@@ -7,6 +7,7 @@ const NOTHING_MIGRATED = {
   hasAppStruct: false,
   hasCapacitorView: false,
   hasDelegateAdaptorShape: false,
+  hasSceneDelegate: false,
 };
 
 const FULLY_MIGRATED = {
@@ -14,6 +15,7 @@ const FULLY_MIGRATED = {
   hasAppStruct: true,
   hasCapacitorView: true,
   hasDelegateAdaptorShape: true,
+  hasSceneDelegate: true,
 };
 
 describe('migrate-swiftui classify', () => {
@@ -41,6 +43,13 @@ describe('migrate-swiftui describeSignals', () => {
     expect(description).toContain('present: []');
     expect(description).toContain('App.swift');
     expect(description).toContain('CapacitorView.swift');
+    expect(description).toContain('SceneDelegate.swift');
+  });
+
+  it('reports a project migrated before the scene delegate landed as missing only that', () => {
+    const description = describeSignals({ ...FULLY_MIGRATED, hasSceneDelegate: false });
+
+    expect(description).toMatch(/missing: \[SceneDelegate\.swift\]/);
   });
 
   it('splits present and missing markers', () => {

@@ -29,7 +29,7 @@ jest.mock('../src/util/template', () => ({
   extractTemplate: async (_archivePath: string, dir: string) => {
     const appDir = join(dir, 'App', 'App');
     mkdirpSync(appDir);
-    for (const name of ['App.swift', 'AppDelegate.swift', 'CapacitorView.swift']) {
+    for (const name of ['App.swift', 'AppDelegate.swift', 'CapacitorView.swift', 'SceneDelegate.swift']) {
       writeFileSync(join(appDir, name), templateSource(name));
     }
   },
@@ -149,15 +149,27 @@ describe('migrateToSwiftUI strip guard', () => {
     tmpDir.cleanupCallback();
   });
 
-  it('strips the UIKit entry point when registration succeeds', async () => {
+  it('strips the main storyboard when registration succeeds', async () => {
     await migrateToSwiftUI(config);
 
-    expect(existsSync(join(targetDir, 'SceneDelegate.swift'))).toBe(false);
     expect(existsSync(join(targetDir, 'Base.lproj', 'Main.storyboard'))).toBe(false);
+    expect(readFileSync(pbxprojPath, 'utf-8')).not.toContain('Main.storyboard');
+  });
 
-    const pbxproj = readFileSync(pbxprojPath, 'utf-8');
-    expect(pbxproj).not.toContain('SceneDelegate.swift');
-    expect(pbxproj).not.toContain('Main.storyboard');
+  it('replaces the stock 8.5 SceneDelegate with the 9.0 template and keeps it registered', async () => {
+    await migrateToSwiftUI(config);
+
+    expect(readFileSync(join(targetDir, 'SceneDelegate.swift'), 'utf-8')).toBe(templateSource('SceneDelegate.swift'));
+    expect(readFileSync(pbxprojPath, 'utf-8')).toContain('SceneDelegate.swift');
+  });
+
+  it('gives the stock 8.5 AppDelegate the template version, which still names SceneDelegate', async () => {
+    await migrateToSwiftUI(config);
+
+    expect(readFileSync(join(targetDir, 'AppDelegate.swift'), 'utf-8')).toBe(templateSource('AppDelegate.swift'));
+    expect(readFileSync(join(targetDir, 'AppDelegate.swift'), 'utf-8')).toContain(
+      'configuration.delegateClass = SceneDelegate.self',
+    );
   });
 
   it('keeps every UIKit file when the App target could not be updated', async () => {

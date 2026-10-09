@@ -7,7 +7,7 @@ import { logger } from '../log';
 import { deleteFolderRecursive, readdirp } from '../util/fs';
 import { hasSwiftUISceneManifest, setSwiftUISceneManifest } from '../util/spm';
 import { extractTemplate } from '../util/template';
-import { addSwiftFileToAppTarget, removeStoryboardFromAppTarget, removeSwiftFileFromAppTarget } from '../util/xcode';
+import { addSwiftFileToAppTarget, removeStoryboardFromAppTarget } from '../util/xcode';
 
 type MigrationState = 'eligible' | 'already-migrated';
 
@@ -16,12 +16,14 @@ interface SwiftUIDetectionSignals {
   hasAppStruct: boolean;
   hasCapacitorView: boolean;
   hasDelegateAdaptorShape: boolean;
+  hasSceneDelegate: boolean;
 }
 
 interface TemplateAssets {
   app: string;
   appDelegate: string;
   capacitorView: string;
+  sceneDelegate: string;
 }
 
 type AppDelegateRewrite = { status: 'rewritten'; source: string } | { status: 'skipped'; reason: string };
@@ -31,6 +33,19 @@ const MIGRATION_GUIDE_URL = 'https://capacitorjs.com/docs/next/updating/9-0';
 const OPEN_URL_SIG = /func application\([^)]*\bopen url:/;
 const CONTINUE_SIG = /func application\([^)]*\bcontinue userActivity:/;
 const CONFIGURATION_FOR_CONNECTING_SIG = /func application\([^)]*\bconfigurationForConnecting\b/;
+// Kept byte-identical to the shipped templates; migrate-swiftui-stock-app-delegate.spec.ts
+// fails if the two drift apart.
+const CONFIGURATION_FOR_CONNECTING_METHOD = [
+  '    func application(',
+  '        _ application: UIApplication,',
+  '        configurationForConnecting connectingSceneSession: UISceneSession,',
+  '        options: UIScene.ConnectionOptions',
+  '    ) -> UISceneConfiguration {',
+  '        let configuration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)',
+  '        configuration.delegateClass = SceneDelegate.self',
+  '        return configuration',
+  '    }',
+].join('\n');
 
 const SCENE_WILL_CONNECT_SIG = /func scene\([^)]*\bwillConnectTo session:/;
 const SCENE_OPEN_URL_CONTEXTS_SIG = /func scene\([^)]*\bopenURLContexts\b/;
@@ -53,8 +68,8 @@ const STOCK_APP_DELEGATE_PREAMBLE = /^(?:import\s+(?:UIKit|Capacitor|Foundation)
 
 /**
  * The members every stock AppDelegate has carried since Capacitor 5, with the body each is
- * allowed to hold. `configurationForConnecting` takes any body: it wires up a UIKit scene
- * delegate, which cannot survive the conversion in any form.
+ * allowed to hold. `configurationForConnecting` takes any body: whatever it names as the
+ * delegate class, the 9.0 template replaces it with one naming SceneDelegate.
  */
 const STOCK_APP_DELEGATE_METHODS: { sig: RegExp; bodyIsStock: (lines: string[]) => boolean }[] = [
   { sig: DID_FINISH_LAUNCHING_SIG, bodyIsStock: (lines) => lines.length === 1 && lines[0] === 'return true' },
@@ -103,7 +118,7 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
     }
   });
 
-  await runTask('Writing App.swift and CapacitorView.swift.', async () => {
+  await runTask('Writing App.swift, CapacitorView.swift and SceneDelegate.swift.', async () => {
     const files: [string, string][] = [
       ['App.swift', assets.app],
       ['CapacitorView.swift', assets.capacitorView],
@@ -112,6 +127,16 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
       if (!writeAppTargetFile(config, name, contents)) {
         logger.warn(`${name} already exists, skipping.`);
       }
+    }
+
+    const sceneDelegatePath = join(config.ios.nativeTargetDirAbs, 'SceneDelegate.swift');
+    if (writeSceneDelegate(sceneDelegatePath, assets.sceneDelegate) === 'kept') {
+      logger.warn(
+        `${sceneDelegatePath} carries code of your own, so it was kept. It is still the app's scene delegate, but ` +
+          `the SwiftUI App struct now owns the window: move any window setup out of it, and route ` +
+          `scene(_:openURLContexts:) and scene(_:continue:) through SceneDelegateProxy.shared from the SwiftUI ` +
+          `scene body instead. See ${MIGRATION_GUIDE_URL}.`,
+      );
     }
   });
 
@@ -127,9 +152,9 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
   }
 
   let registrationFailed = false;
-  await runTask('Registering App.swift and CapacitorView.swift with the Xcode App target.', async () => {
+  await runTask('Registering the SwiftUI entry-point files with the Xcode App target.', async () => {
     const pbxprojPath = join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj');
-    for (const name of ['App.swift', 'CapacitorView.swift']) {
+    for (const name of ['App.swift', 'CapacitorView.swift', 'SceneDelegate.swift']) {
       try {
         const { added } = addSwiftFileToAppTarget(pbxprojPath, 'App', name);
         if (!added) {
@@ -146,10 +171,10 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
   });
 
   if (registrationFailed) {
-    logger.warn('Leaving the UIKit entry-point files in place because the App target was not fully updated.');
+    logger.warn('Leaving Main.storyboard in place because the App target was not fully updated.');
   } else {
-    await runTask('Removing the leftover UIKit entry-point files.', async () => {
-      removeLeftoverUIKitFiles(config);
+    await runTask('Removing the leftover main storyboard.', async () => {
+      removeLeftoverStoryboard(config);
     });
   }
 
@@ -158,30 +183,34 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
 }
 
 /**
- * Drop the UIKit entry point the SwiftUI App struct replaces.
+ * Put the 9.0 scene delegate in place.
+ *
+ * The class stays in the app target rather than moving into the framework because
+ * UISceneConfiguration.delegateClass takes a type and UIKit instantiates it itself, so the
+ * app has to own a concrete class for AppDelegate to name. A stock 8.x file is replaced
+ * outright: its window setup belongs to the SwiftUI App struct now.
+ */
+function writeSceneDelegate(path: string, contents: string): 'written' | 'replaced' | 'kept' {
+  if (!existsSync(path)) {
+    writeFileSync(path, contents);
+    return 'written';
+  }
+  if (!isStockSceneDelegate(readFileSync(path, 'utf-8'))) {
+    return 'kept';
+  }
+  writeFileSync(path, contents);
+  return 'replaced';
+}
+
+/**
+ * Drop the storyboard the SwiftUI App struct replaces.
  *
  * Deregisters before unlinking so a pbxproj that cannot be rewritten leaves a working
  * project behind rather than a dangling reference. LaunchScreen.storyboard stays: Apple
  * still requires a launch storyboard.
  */
-function removeLeftoverUIKitFiles(config: Config): void {
+function removeLeftoverStoryboard(config: Config): void {
   const pbxprojPath = join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj');
-
-  const sceneDelegatePath = join(config.ios.nativeTargetDirAbs, 'SceneDelegate.swift');
-  if (existsSync(sceneDelegatePath)) {
-    if (isStockSceneDelegate(readFileSync(sceneDelegatePath, 'utf-8'))) {
-      removeFile(pbxprojPath, sceneDelegatePath, () =>
-        removeSwiftFileFromAppTarget(pbxprojPath, 'SceneDelegate.swift'),
-      );
-    } else {
-      logger.warn(
-        `${sceneDelegatePath} carries code of your own, so it was kept and is no longer used by the app. Move its ` +
-          `window setup into App.swift and route scene(_:openURLContexts:) and scene(_:continue:) through ` +
-          `SceneDelegateProxy.shared from the SwiftUI scene body, then delete the file and its App target ` +
-          `reference. See ${MIGRATION_GUIDE_URL}.`,
-      );
-    }
-  }
 
   const mainStoryboardPath = join(config.ios.nativeTargetDirAbs, 'Base.lproj', 'Main.storyboard');
   if (existsSync(mainStoryboardPath)) {
@@ -363,7 +392,9 @@ function printManualSteps(): void {
   logger.info('');
   logger.info('Migrate the iOS project to the SwiftUI App-struct layout by hand:');
   logger.info('  • Add App.swift (an @main struct conforming to App) and CapacitorView.swift to the App target.');
-  logger.info('  • Drop @main, the UIWindow property, and configurationForConnecting from AppDelegate.');
+  logger.info('  • Drop @main and the UIWindow property from AppDelegate.');
+  logger.info('  • Add SceneDelegate.swift (an empty UIWindowSceneDelegate) to the App target, and keep or add');
+  logger.info('    configurationForConnecting in AppDelegate naming it as the scene delegate class.');
   logger.info('  • Reference AppDelegate from App.swift with @UIApplicationDelegateAdaptor.');
   logger.info('  • Reduce UIApplicationSceneManifest to UIApplicationSupportsMultipleScenes only.');
   logger.info('  • Remove UIMainStoryboardFile from Info.plist.');
@@ -383,13 +414,16 @@ async function loadTemplateAssets(config: Config): Promise<TemplateAssets | null
     const appPath = join(tempDir, 'App', 'App', 'App.swift');
     const appDelegatePath = join(tempDir, 'App', 'App', 'AppDelegate.swift');
     const capacitorViewPath = join(tempDir, 'App', 'App', 'CapacitorView.swift');
-    if (!existsSync(appPath) || !existsSync(appDelegatePath) || !existsSync(capacitorViewPath)) {
+    const sceneDelegatePath = join(tempDir, 'App', 'App', 'SceneDelegate.swift');
+    const paths = [appPath, appDelegatePath, capacitorViewPath, sceneDelegatePath];
+    if (paths.some((path) => !existsSync(path))) {
       return null;
     }
     return {
       app: readFileSync(appPath, 'utf-8'),
       appDelegate: readFileSync(appDelegatePath, 'utf-8'),
       capacitorView: readFileSync(capacitorViewPath, 'utf-8'),
+      sceneDelegate: readFileSync(sceneDelegatePath, 'utf-8'),
     };
   } finally {
     deleteFolderRecursive(tempDir);
@@ -442,12 +476,12 @@ function rewriteAppDelegateForAdaptor(source: string): AppDelegateRewrite {
   rewritten = rewritten.replace(/(\bclass\s+AppDelegate\s*:\s*)UIResponder\b/, '$1NSObject');
   rewritten = rewritten.replace(/^[ \t]*var\s+window\s*:\s*UIWindow\?[ \t]*\r?\n(?:[ \t]*\r?\n)?/m, '');
 
-  // UIKit stops calling these three once the app is scene-based, so leaving them behind
-  // would plant dead code a developer could mistake for live routing. The URL and activity
-  // bodies are known to hold nothing but ApplicationDelegateProxy calls by the guard above;
-  // App.swift re-routes both through SceneDelegateProxy in the same run.
-  const sigs = [CONFIGURATION_FOR_CONNECTING_SIG, OPEN_URL_SIG, CONTINUE_SIG];
-  const names = ['configurationForConnecting', 'application(_:open:)', 'application(_:continue:)'];
+  // UIKit stops calling these two once the app is scene-based, so leaving them behind
+  // would plant dead code a developer could mistake for live routing. Both bodies are
+  // known to hold nothing but ApplicationDelegateProxy calls by the guard above; App.swift
+  // re-routes them through SceneDelegateProxy in the same run.
+  const sigs = [OPEN_URL_SIG, CONTINUE_SIG];
+  const names = ['application(_:open:)', 'application(_:continue:)'];
   let stripped: string | null = rewritten;
   for (const [index, sig] of sigs.entries()) {
     stripped = removeMethod(stripped, sig);
@@ -456,7 +490,37 @@ function rewriteAppDelegateForAdaptor(source: string): AppDelegateRewrite {
     }
   }
 
-  return { status: 'rewritten', source: stripped };
+  const wired = ensureConfigurationForConnecting(stripped);
+  if (wired === null) {
+    return { status: 'skipped', reason: 'could not find the end of the AppDelegate class in AppDelegate.swift.' };
+  }
+
+  return { status: 'rewritten', source: wired };
+}
+
+/**
+ * Give the AppDelegate the scene configuration that names SceneDelegate.
+ *
+ * An 8.5 project already has one and keeps it — the class name it points at has not
+ * changed. Anything older gains the 9.0 template's version, because without it UIKit
+ * builds the scene with no delegate of ours and nothing can answer per-scene callbacks.
+ */
+function ensureConfigurationForConnecting(source: string): string | null {
+  // Located even when the method is already there: an unbalanced class body used to be
+  // caught by the strip this replaced, and reporting success on a file we cannot parse
+  // is worse than refusing it.
+  const match = source.match(/\bclass\s+AppDelegate\b/);
+  if (!match || match.index === undefined) return null;
+  const openIdx = source.indexOf('{', match.index);
+  if (openIdx === -1) return null;
+  const closeIdx = findMatchingBrace(source, openIdx);
+  if (closeIdx === null) return null;
+
+  if (CONFIGURATION_FOR_CONNECTING_SIG.test(source)) {
+    return source;
+  }
+
+  return `${source.slice(0, closeIdx)}\n${CONFIGURATION_FOR_CONNECTING_METHOD}\n${source.slice(closeIdx)}`;
 }
 
 function stripMainAttribute(source: string): string {
@@ -510,6 +574,7 @@ function readDetectionSignals(config: Config): SwiftUIDetectionSignals {
   const appStructPath = join(config.ios.nativeTargetDirAbs, 'App.swift');
   const capacitorViewPath = join(config.ios.nativeTargetDirAbs, 'CapacitorView.swift');
   const appDelegatePath = join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift');
+  const sceneDelegatePath = join(config.ios.nativeTargetDirAbs, 'SceneDelegate.swift');
 
   return {
     hasSwiftUIManifest: hasSwiftUISceneManifest(config),
@@ -517,11 +582,17 @@ function readDetectionSignals(config: Config): SwiftUIDetectionSignals {
     hasCapacitorView: existsSync(capacitorViewPath),
     hasDelegateAdaptorShape:
       existsSync(appDelegatePath) && !/@(?:main|UIApplicationMain)\b/.test(readFileSync(appDelegatePath, 'utf-8')),
+    // A project migrated before the scene delegate landed has every other marker but no
+    // SceneDelegate.swift, so it reads as eligible and the next run completes it.
+    hasSceneDelegate:
+      existsSync(sceneDelegatePath) &&
+      existsSync(appDelegatePath) &&
+      CONFIGURATION_FOR_CONNECTING_SIG.test(readFileSync(appDelegatePath, 'utf-8')),
   };
 }
 
 /**
- * Anything short of all four signals is eligible, not refused: every step below is
+ * Anything short of all five signals is eligible, not refused: every step below is
  * individually idempotent, so a run interrupted part-way is finished by running again.
  */
 function classify(signals: SwiftUIDetectionSignals): MigrationState {
@@ -537,8 +608,9 @@ function signalValues({
   hasAppStruct,
   hasCapacitorView,
   hasDelegateAdaptorShape,
+  hasSceneDelegate,
 }: SwiftUIDetectionSignals): boolean[] {
-  return [hasSwiftUIManifest, hasAppStruct, hasCapacitorView, hasDelegateAdaptorShape];
+  return [hasSwiftUIManifest, hasAppStruct, hasCapacitorView, hasDelegateAdaptorShape, hasSceneDelegate];
 }
 
 function describeSignals({
@@ -546,6 +618,7 @@ function describeSignals({
   hasAppStruct,
   hasCapacitorView,
   hasDelegateAdaptorShape,
+  hasSceneDelegate,
 }: SwiftUIDetectionSignals): string {
   const present: string[] = [];
   const missing: string[] = [];
@@ -553,18 +626,21 @@ function describeSignals({
   (hasAppStruct ? present : missing).push('App.swift');
   (hasCapacitorView ? present : missing).push('CapacitorView.swift');
   (hasDelegateAdaptorShape ? present : missing).push('AppDelegate without @main');
+  (hasSceneDelegate ? present : missing).push('SceneDelegate.swift');
   return `present: [${present.join(', ')}]; missing: [${missing.join(', ')}]`;
 }
 
 // Exported for tests.
 export const __testables = {
+  CONFIGURATION_FOR_CONNECTING_METHOD,
   classify,
   describeSignals,
   hasCustomDelegateBody,
   hasCustomWindowSetup,
   isStockAppDelegate,
   isStockSceneDelegate,
-  removeLeftoverUIKitFiles,
+  removeLeftoverStoryboard,
   rewriteAppDelegateForAdaptor,
   scanAndWarn,
+  writeSceneDelegate,
 };
