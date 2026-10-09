@@ -1,6 +1,6 @@
 import { __testables } from '../src/tasks/migrate-swiftui';
 
-const { rewriteAppDelegateForAdaptor, hasCustomWindowSetup } = __testables;
+const { rewriteAppDelegateForAdaptor, hasCustomWindowSetup, CONFIGURATION_FOR_CONNECTING_METHOD } = __testables;
 
 // The AppDelegate shipped by the 8.4 templates: @main, UIResponder, own window.
 const APP_DELEGATE_8_4 = `import UIKit
@@ -46,6 +46,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 `;
 
+// The AppDelegate shipped by the 8.5 CocoaPods template, which — unlike the SPM one —
+// kept the pre-UIScene URL and activity proxy handlers alongside configurationForConnecting.
+const APP_DELEGATE_PODS_8_5 = `import UIKit
+import Capacitor
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        return true
+    }
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        // Called when the app was launched with a url. Feel free to add additional processing here,
+        // but if you want the App API to support tracking app url opens, make sure to keep this call
+        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
+    }
+
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        // Called when the app was launched with an activity, including Universal Links.
+        // Feel free to add additional processing here, but if you want the App API to support
+        // tracking app url opens, make sure to keep this call
+        return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    }
+
+    func application(_ application: UIApplication,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+
+        let config = UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        config.delegateClass = SceneDelegate.self
+        return config
+    }
+
+}
+`;
+
 function rewrite(source: string): string {
   const result = rewriteAppDelegateForAdaptor(source);
   if (result.status !== 'rewritten') {
@@ -78,12 +118,11 @@ describe('rewriteAppDelegateForAdaptor', () => {
     expect(patched).toContain('class AppDelegate: NSObject, UIApplicationDelegate {');
   });
 
-  it('removes configurationForConnecting from the 8.5 AppDelegate', () => {
+  it('keeps the 8.5 configurationForConnecting, which already names SceneDelegate', () => {
     const patched = rewrite(APP_DELEGATE_8_5);
 
-    expect(patched).not.toContain('configurationForConnecting');
-    expect(patched).not.toContain('UISceneConfiguration');
-    expect(patched).not.toContain('config.delegateClass');
+    expect(patched).toContain('configurationForConnecting');
+    expect(patched).toContain('config.delegateClass = SceneDelegate.self');
     expect(patched).toContain('didFinishLaunchingWithOptions');
     expect(patched).not.toMatch(/\n\n\n/);
   });
@@ -99,8 +138,30 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         return true
     }
+
+    func application(_ application: UIApplication,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        let config = UISceneConfiguration(name: "Default Configuration",
+                                          sessionRole: connectingSceneSession.role)
+        config.delegateClass = SceneDelegate.self
+        return config
+    }
 }
 `);
+  });
+
+  it('adds configurationForConnecting to an 8.4 AppDelegate, which has none', () => {
+    const patched = rewrite(APP_DELEGATE_8_4);
+
+    expect(patched).toContain('configurationForConnecting connectingSceneSession: UISceneSession');
+    expect(patched).toContain('configuration.delegateClass = SceneDelegate.self');
+    expect(patched).toMatch(/}\n$/);
+    expect(patched).not.toMatch(/\n\n\n/);
+  });
+
+  it('adds the method byte-for-byte as the templates ship it', () => {
+    expect(rewrite(APP_DELEGATE_8_4)).toContain(CONFIGURATION_FOR_CONNECTING_METHOD);
   });
 
   it('is idempotent — a rewritten AppDelegate rewrites to itself', () => {
@@ -109,10 +170,35 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     expect(rewrite(once)).toBe(once);
   });
 
-  it('keeps a vanilla application(_:open:) body', () => {
+  it('removes a vanilla application(_:open:), which scenes no longer call', () => {
     const patched = rewrite(APP_DELEGATE_8_4);
 
-    expect(patched).toContain('ApplicationDelegateProxy.shared.application(app, open: url, options: options)');
+    expect(patched).not.toContain('open url:');
+    expect(patched).not.toContain('ApplicationDelegateProxy.shared');
+    expect(patched).toContain('didFinishLaunchingWithOptions');
+  });
+
+  it('removes a vanilla application(_:continue:) alongside it', () => {
+    const patched = rewrite(APP_DELEGATE_PODS_8_5);
+
+    expect(patched).not.toContain('open url:');
+    expect(patched).not.toContain('continue userActivity:');
+    expect(patched).not.toContain('ApplicationDelegateProxy.shared');
+    expect(patched).toContain('configurationForConnecting');
+    expect(patched).toContain('didFinishLaunchingWithOptions');
+    expect(patched).not.toMatch(/\n\n\n/);
+  });
+
+  it('keeps the developer-added members when stripping the dead handlers', () => {
+    const customised = APP_DELEGATE_PODS_8_5.replace(
+      '    var window: UIWindow?',
+      '    var window: UIWindow?\n\n    var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid',
+    );
+
+    const patched = rewrite(customised);
+
+    expect(patched).toContain('var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid');
+    expect(patched).not.toContain('ApplicationDelegateProxy.shared');
   });
 
   it('refuses when no AppDelegate class is present', () => {
@@ -168,7 +254,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     expect(result.status === 'skipped' && result.reason).toMatch(/application\(_:continue:\)/);
   });
 
-  it('refuses when configurationForConnecting braces are unbalanced', () => {
+  it('refuses when the AppDelegate class braces are unbalanced', () => {
     const source = `class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      configurationForConnecting connectingSceneSession: UISceneSession,
@@ -179,7 +265,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     const result = rewriteAppDelegateForAdaptor(source);
 
     expect(result.status).toBe('skipped');
-    expect(result.status === 'skipped' && result.reason).toMatch(/configurationForConnecting/);
+    expect(result.status === 'skipped' && result.reason).toMatch(/end of the AppDelegate class/);
   });
 });
 
