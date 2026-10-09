@@ -663,7 +663,19 @@ public struct CapacitorView: UIViewControllerRepresentable {
   public func makeUIViewController(context: Context) -> CAPBridgeViewController { CAPBridgeViewController() }
   public func updateUIViewController(_ vc: CAPBridgeViewController, context: Context) {}
 }
+
+// SceneDelegate.swift — deliberately empty
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {}
 ```
+
+`SceneDelegate` carries no methods. It exists because `UISceneConfiguration.delegateClass`
+takes a type and UIKit instantiates it per scene, so there is no way to hand UIKit
+`SceneDelegateProxy.shared` — the app target has to own a concrete class for `AppDelegate`
+to name from `application(_:configurationForConnecting:options:)`. It is the install point
+for per-scene UIKit APIs SwiftUI does not surface, the first of which is
+`preferredWindowingControlStyle(for:)` for the iPadOS 26 window controls. It stays empty of
+routing on purpose: a scene delegate that implements `scene(_:openURLContexts:)` takes URL
+delivery away from `.onOpenURL` below.
 
 `CapacitorView` lives in the app target, not the runtime. An app that needs its own
 `CAPBridgeViewController` subclass (custom `webViewConfiguration(for:)`, `router()`,
@@ -1370,7 +1382,7 @@ rather than fail when a project has been customised beyond recognition.
 | Task | Command | What it rewrites |
 | --- | --- | --- |
 | `migrate.ts` | `cap migrate` | The umbrella migrator. Bumps `@capacitor/*` and known official plugins in `package.json` and installs them; updates the Gradle wrapper, root and app `build.gradle`, `gradle.properties` and `variables.gradle`; removes `jcenter()`; patches `AndroidManifest.xml` and `AppDelegate.swift`; checks the JDK major; prints the breaking-change list. Delegates to the two below. |
-| `migrate-swiftui.ts` | (from `cap migrate`) | Converts a storyboard/`SceneDelegate` iOS app to the SwiftUI App-struct layout: rewrites `AppDelegate.swift` into a `@UIApplicationDelegateAdaptor`, writes `App.swift` and `CapacitorView.swift`, repoints `Info.plist` at the SwiftUI scene setup, and registers the new files with the Xcode App target via `addSwiftFileToAppTarget` (`cli/src/util/xcode.ts`). Detects partial state and skips rather than half-applying. |
+| `migrate-swiftui.ts` | (from `cap migrate`) | Converts a storyboard iOS app to the SwiftUI App-struct layout: rewrites `AppDelegate.swift` into a `@UIApplicationDelegateAdaptor` (keeping or adding `configurationForConnecting`), writes `App.swift`, `CapacitorView.swift` and `SceneDelegate.swift`, repoints `Info.plist` at the SwiftUI scene setup, and registers the new files with the Xcode App target via `addSwiftFileToAppTarget` (`cli/src/util/xcode.ts`). A stock 8.x `SceneDelegate.swift` is replaced with the 9.0 one; a customised one is kept with a warning. Detects partial state and skips rather than half-applying. |
 | `migrate-edge-to-edge.ts` | (from `cap migrate`) | Adds `EdgeToEdge.enable(this)` / `enableEdgeToEdge()` plus the needed imports to the app's `MainActivity` (Java or Kotlin). Skips when `plugins.SystemBars.insetsHandling` is `'disable'` or the activity already opts in; warns with manual instructions if it cannot patch the file. |
 | `migrate-spm.ts` | `cap spm-migration-assistant` | Moves an iOS app from CocoaPods to SwiftPM: extracts the `CapApp-SPM` package directory from the bundled template and deletes `Podfile`, `Podfile.lock` and `App.xcworkspace`. |
 
