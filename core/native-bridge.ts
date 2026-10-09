@@ -18,7 +18,7 @@ import { CapacitorException } from './src/util';
 // eslint-disable-next-line
 let dummy = {};
 
-const readFileAsBase64 = (file: File): Promise<string> =>
+const readFileAsBase64 = (file: Blob): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -34,14 +34,14 @@ const convertFormData = async (formData: FormData): Promise<any> => {
   const newFormData: CapFormDataEntry[] = [];
   for (const pair of formData.entries()) {
     const [key, value] = pair;
-    if (value instanceof File) {
+    if (value instanceof Blob) {
       const base64File = await readFileAsBase64(value);
       newFormData.push({
         key,
         value: base64File,
         type: 'base64File',
         contentType: value.type,
-        fileName: value.name,
+        fileName: (value as any).name || 'blob',
       });
     } else {
       newFormData.push({ key, value, type: 'string' });
@@ -110,7 +110,7 @@ const convertBody = async (
       data: await convertFormData(body),
       type: 'formData',
     };
-  } else if (body instanceof File) {
+  } else if (body instanceof Blob) {
     const fileData = await readFileAsBase64(body);
     return {
       data: fileData,

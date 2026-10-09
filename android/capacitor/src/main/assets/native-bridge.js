@@ -48,14 +48,14 @@ var nativeBridge = (function (exports) {
         const newFormData = [];
         for (const pair of formData.entries()) {
             const [key, value] = pair;
-            if (value instanceof File) {
+            if (value instanceof Blob) {
                 const base64File = await readFileAsBase64(value);
                 newFormData.push({
                     key,
                     value: base64File,
                     type: 'base64File',
                     contentType: value.type,
-                    fileName: value.name,
+                    fileName: value.name || 'blob',
                 });
             }
             else {
@@ -128,7 +128,7 @@ var nativeBridge = (function (exports) {
                 type: 'formData',
             };
         }
-        else if (body instanceof File) {
+        else if (body instanceof Blob) {
             const fileData = await readFileAsBase64(body);
             return {
                 data: fileData,
