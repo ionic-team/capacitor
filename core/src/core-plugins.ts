@@ -1,4 +1,4 @@
-import type { Plugin } from './definitions';
+import type { Plugin, PluginListenerHandle } from './definitions';
 import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
 
@@ -659,3 +659,173 @@ export const SystemBars = registerPlugin<SystemBarsPlugin>('SystemBars', {
 });
 
 /******** END SYSTEM BARS PLUGIN ********/
+
+/******** FOLDABLE PLUGIN ********/
+
+/**
+ * How far the device is folded.
+ *
+ * `'closed'` is not reported on iPhone Duo: a shut device reports `'flat'` on
+ * its cover display, so read `activeDisplay` or the hinge angle instead.
+ *
+ * @since 9.0.0
+ */
+export type FoldState = 'flat' | 'half-opened' | 'closed';
+
+/**
+ * How the device is being held.
+ *
+ * `'tabletop'` is half open with a horizontal hinge, like a laptop. `'book'` is
+ * half open with a vertical hinge. Anything else is `'flat'`.
+ *
+ * @since 9.0.0
+ */
+export type FoldPosture = 'flat' | 'tabletop' | 'book';
+
+/**
+ * Which display of a folding device is showing the app.
+ *
+ * @since 9.0.0
+ */
+export type ActiveDisplay = 'inner' | 'outer';
+
+/**
+ * A rectangle in CSS pixels, relative to the web view.
+ *
+ * @since 9.0.0
+ */
+export interface FoldRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface FoldStateResult {
+  /**
+   * How far the device is folded.
+   *
+   * @since 9.0.0
+   */
+  state: FoldState;
+
+  /**
+   * Whether the fold splits the web view into two areas, which is true when the
+   * device is half open or the hinge has a physical gap.
+   *
+   * @since 9.0.0
+   */
+  isSeparating: boolean;
+
+  /**
+   * How the device is being held.
+   *
+   * @since 9.0.0
+   */
+  posture: FoldPosture;
+
+  /**
+   * Direction of the hinge relative to the window, so it flips when the device
+   * rotates. Omitted when there is no fold.
+   *
+   * @since 9.0.0
+   */
+  hingeOrientation?: 'horizontal' | 'vertical';
+
+  /**
+   * Where the fold crosses the web view, so a layout can keep content out of
+   * it. Omitted when there is no fold.
+   *
+   * @since 9.0.0
+   */
+  hingeBounds?: FoldRect;
+
+  /**
+   * Which display is showing the app. Omitted when the platform cannot say.
+   *
+   * @since 9.0.0
+   */
+  activeDisplay?: ActiveDisplay;
+}
+
+export interface HingeAngleResult {
+  /**
+   * Angle between the two halves in degrees: `0` closed, `180` flat.
+   * `null` when the device has no hinge or the platform cannot report it.
+   *
+   * @since 9.0.0
+   */
+  angle: number | null;
+}
+
+export interface FoldablePlugin extends Plugin {
+  /**
+   * Whether this device folds. `false` on an ordinary phone, and on iOS before
+   * 27.1.
+   *
+   * @since 9.0.0
+   */
+  isFoldable(): Promise<{ foldable: boolean }>;
+
+  /**
+   * Read the current fold.
+   *
+   * @since 9.0.0
+   */
+  getFoldState(): Promise<FoldStateResult>;
+
+  /**
+   * Read the current hinge angle.
+   *
+   * @since 9.0.0
+   */
+  getHingeAngle(): Promise<HingeAngleResult>;
+
+  /**
+   * Listen for the device folding, unfolding, or moving between displays.
+   *
+   * @since 9.0.0
+   */
+  addListener(
+    eventName: 'foldStateChange',
+    listenerFunc: (state: FoldStateResult) => void,
+  ): Promise<PluginListenerHandle>;
+
+  /**
+   * Listen for the hinge angle changing, which is continuous while the device
+   * is being folded.
+   *
+   * @since 9.0.0
+   */
+  addListener(
+    eventName: 'hingeAngleChange',
+    listenerFunc: (event: HingeAngleResult) => void,
+  ): Promise<PluginListenerHandle>;
+
+  /**
+   * Remove all listeners for this plugin.
+   *
+   * @since 9.0.0
+   */
+  removeAllListeners(): Promise<void>;
+}
+
+export class FoldablePluginWeb extends WebPlugin implements FoldablePlugin {
+  async isFoldable(): Promise<{ foldable: boolean }> {
+    return { foldable: false };
+  }
+
+  async getFoldState(): Promise<FoldStateResult> {
+    return { state: 'flat', isSeparating: false, posture: 'flat' };
+  }
+
+  async getHingeAngle(): Promise<HingeAngleResult> {
+    return { angle: null };
+  }
+}
+
+export const Foldable = registerPlugin<FoldablePlugin>('Foldable', {
+  web: () => new FoldablePluginWeb(),
+});
+
+/******** END FOLDABLE PLUGIN ********/
