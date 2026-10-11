@@ -24,7 +24,7 @@ export interface SystemConfig {
   readonly telemetry?: boolean;
 
   /**
-   * Wheter the user choose to signup or not.
+   * Whether the user chooses to sign up or not.
    *
    * If undefined, the prompt has not been shown.
    */
