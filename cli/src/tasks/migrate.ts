@@ -141,8 +141,8 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           return installLatestLibs(installerType, runNpmInstall, config);
         });
 
-        if (runNpmInstall && installerType === 'npm') {
-          const blocked = await getBlockedInstallScripts(config.app.rootDir);
+        if (runNpmInstall) {
+          const blocked = await getBlockedInstallScripts(config.app.rootDir, installerType);
           if (blocked.length > 0) {
             logBlockedInstallScripts(blocked);
             scriptsBlocked = true;

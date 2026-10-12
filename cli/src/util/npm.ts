@@ -6,14 +6,12 @@ import { output } from '../log';
 
 import { getCommandOutput } from './subprocess';
 
-export type JSPackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
-
 export interface BlockedInstallScript {
   name: string;
   version: string;
 }
 
-const LOCKFILES: ReadonlyArray<[string, JSPackageManager]> = [
+const LOCKFILE_MANAGERS: ReadonlyArray<[string, string]> = [
   ['package-lock.json', 'npm'],
   ['npm-shrinkwrap.json', 'npm'],
   ['pnpm-lock.yaml', 'pnpm'],
@@ -22,26 +20,28 @@ const LOCKFILES: ReadonlyArray<[string, JSPackageManager]> = [
   ['bun.lockb', 'bun'],
 ];
 
-export async function detectPackageManager(rootDir: string): Promise<JSPackageManager> {
+/**
+ * `npm install-scripts ls` compares the tree against npm's own `allowScripts` map, which yarn and
+ * pnpm never write. It therefore reports every install script in a yarn or pnpm project as
+ * blocked, even when that package manager ran it, so the check has to know who did the install.
+ */
+export async function isNpmProject(rootDir: string): Promise<boolean> {
   try {
     const { packageManager } = await readJSON(join(rootDir, 'package.json'));
     if (typeof packageManager === 'string') {
-      const name = packageManager.split('@')[0];
-      if (name === 'npm' || name === 'pnpm' || name === 'yarn' || name === 'bun') {
-        return name;
-      }
+      return packageManager.split('@')[0] === 'npm';
     }
   } catch (e) {
     // no package.json, or an unreadable one: fall through to the lockfiles
   }
 
-  for (const [lockfile, manager] of LOCKFILES) {
+  for (const [lockfile, manager] of LOCKFILE_MANAGERS) {
     if (existsSync(join(rootDir, lockfile))) {
-      return manager;
+      return manager === 'npm';
     }
   }
 
-  return 'npm';
+  return true;
 }
 
 /**
@@ -49,9 +49,17 @@ export async function detectPackageManager(rootDir: string): Promise<JSPackageMa
  * signal is to ask npm directly. `npm install-scripts ls` lists every package whose scripts are
  * still awaiting a decision, and does not exist before npm 12, where the command exits non-zero
  * and `getCommandOutput` hands back null.
+ *
+ * Pass `packageManager` when the caller already knows which one ran the install; otherwise it is
+ * inferred from the project.
  */
-export async function getBlockedInstallScripts(rootDir: string): Promise<BlockedInstallScript[]> {
-  if ((await detectPackageManager(rootDir)) !== 'npm') {
+export async function getBlockedInstallScripts(
+  rootDir: string,
+  packageManager?: string,
+): Promise<BlockedInstallScript[]> {
+  const isNpm = packageManager === undefined ? await isNpmProject(rootDir) : packageManager === 'npm';
+
+  if (!isNpm) {
     return [];
   }
 
