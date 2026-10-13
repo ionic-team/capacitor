@@ -13,6 +13,7 @@ import { deleteFolderRecursive } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
+import { removeDebugXcconfig } from './migrate-debug-xcconfig';
 import { migrateToEdgeToEdge } from './migrate-edge-to-edge';
 import { migrateToSwiftUI } from './migrate-swiftui';
 
@@ -198,6 +199,10 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
         await runTask(`Migrating AppDelegate.swift`, () => {
           return updateAppDelegate(join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift'));
+        });
+
+        await runTask(`Removing debug.xcconfig.`, () => {
+          return removeDebugXcconfig(config);
         });
 
         await migrateToSwiftUI(config);
