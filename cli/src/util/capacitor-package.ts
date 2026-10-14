@@ -1,6 +1,6 @@
 import { existsSync, realpathSync } from 'fs-extra';
-import { dirname, isAbsolute, relative, resolve } from 'path';
-import { major, valid } from 'semver';
+import { dirname, relative, resolve } from 'path';
+import { major } from 'semver';
 
 import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
@@ -22,15 +22,8 @@ const PLATFORM_PACKAGE = '@capacitor/ios';
 const BINARY_PACKAGE_URL = 'https://github.com/ionic-team/capacitor-swift-pm.git';
 const BINARY_PACKAGE_IDENTITY = 'capacitor-swift-pm';
 
-const ENV_OVERRIDE = 'CAPACITOR_IOS_PACKAGE';
-const REQUIREMENT_KEYS = ['path', 'branch', 'revision', 'exact', 'from'] as const;
-
 export type CapacitorRequirement =
-  | { kind: 'path'; absolutePath: string }
-  | { kind: 'branch'; branch: string }
-  | { kind: 'revision'; revision: string }
-  | { kind: 'exact'; version: string }
-  | { kind: 'from'; version: string };
+  { kind: 'path'; absolutePath: string } | { kind: 'exact'; version: string } | { kind: 'from'; version: string };
 
 export interface CapacitorPackage {
   /** SPM package identity, as referenced by `.product(name:package:)`. */
@@ -44,15 +37,8 @@ export interface CapacitorPackage {
 }
 
 /**
- * Resolves which Capacitor Swift package generated `Package.swift` files should depend on.
- *
- * Precedence, most specific first:
- *   1. the `CAPACITOR_IOS_PACKAGE` environment variable
- *   2. `experimental.ios.spm.capacitorPackage` in the Capacitor config
- *   3. the installed `@capacitor/ios` in `node_modules`
- *
- * The environment variable deliberately outranks the config file so a checkout can be pointed at a
- * local or branch build without editing (and risking committing) the app's configuration.
+ * Resolves which Capacitor Swift package generated `Package.swift` files should depend on: the
+ * installed `@capacitor/ios` from Capacitor 9, the prebuilt package by version before that.
  *
  * `legacyRequirement` only applies to pre-9 projects, where it preserves each caller's existing
  * requirement style. Source-based projects resolve a path, which carries no version to disagree
@@ -74,14 +60,12 @@ export async function resolveCapacitorPackage(
     };
   }
 
-  const override = resolveOverride(config);
-
   return {
     identity: SOURCE_PACKAGE_IDENTITY,
     cordovaProduct: 'CapacitorCordova',
     sourceBased: true,
-    url: override?.url ?? SOURCE_PACKAGE_URL,
-    requirement: override?.requirement ?? installedPackageRequirement(config),
+    url: SOURCE_PACKAGE_URL,
+    requirement: installedPackageRequirement(config),
   };
 }
 
@@ -371,10 +355,6 @@ function startOfEntry(content: string, start: number): number {
 
 function renderRequirement(requirement: CapacitorRequirement): string {
   switch (requirement.kind) {
-    case 'branch':
-      return `branch: "${requirement.branch}"`;
-    case 'revision':
-      return `revision: "${requirement.revision}"`;
     case 'exact':
       return `exact: "${requirement.version}"`;
     case 'from':
@@ -382,100 +362,4 @@ function renderRequirement(requirement: CapacitorRequirement): string {
     case 'path':
       throw new Error('path requirements are rendered by renderCapacitorPackage');
   }
-}
-
-function resolveOverride(config: Config): { url?: string; requirement: CapacitorRequirement } | undefined {
-  const baseDir = config.app.rootDir;
-
-  const fromEnv = process.env[ENV_OVERRIDE]?.trim();
-  if (fromEnv) {
-    return { requirement: parseRequirementSpec(fromEnv, baseDir) };
-  }
-
-  const fromConfig = config.app.extConfig.experimental?.ios?.spm?.capacitorPackage;
-  if (!fromConfig) {
-    return undefined;
-  }
-
-  const provided = REQUIREMENT_KEYS.filter((key) => fromConfig[key] !== undefined);
-  if (provided.length === 0) {
-    fatal(
-      `experimental.ios.spm.capacitorPackage must set one of: ${REQUIREMENT_KEYS.join(', ')}.\n` +
-        `Remove the entry to use the version matching the installed @capacitor/ios.`,
-    );
-  }
-  if (provided.length > 1) {
-    fatal(
-      `experimental.ios.spm.capacitorPackage sets more than one of: ${provided.join(', ')}.\n` + `Only one may be set.`,
-    );
-  }
-
-  const key = provided[0];
-  const value = String(fromConfig[key]);
-
-  if (key === 'path') {
-    if (fromConfig.url !== undefined) {
-      fatal(`experimental.ios.spm.capacitorPackage cannot set both "url" and "path".`);
-    }
-    return { requirement: pathRequirement(value, baseDir) };
-  }
-
-  return { url: fromConfig.url, requirement: { kind: key, ...requirementValue(key, value) } as CapacitorRequirement };
-}
-
-function requirementValue(key: (typeof REQUIREMENT_KEYS)[number], value: string) {
-  switch (key) {
-    case 'branch':
-      return { branch: value };
-    case 'revision':
-      return { revision: value };
-    default:
-      return { version: value };
-  }
-}
-
-/**
- * Parses a `CAPACITOR_IOS_PACKAGE` value. Accepts an explicit `kind:value` form, or infers `path`
- * for anything path-shaped and `exact` for a bare version.
- */
-function parseRequirementSpec(spec: string, baseDir: string): CapacitorRequirement {
-  const separator = spec.indexOf(':');
-  if (separator > 0) {
-    const key = spec.slice(0, separator);
-    const value = spec.slice(separator + 1);
-    if ((REQUIREMENT_KEYS as readonly string[]).includes(key)) {
-      if (key === 'path') {
-        return pathRequirement(value, baseDir);
-      }
-      return {
-        kind: key,
-        ...requirementValue(key as (typeof REQUIREMENT_KEYS)[number], value),
-      } as CapacitorRequirement;
-    }
-  }
-
-  if (spec.startsWith('.') || isAbsolute(spec)) {
-    return pathRequirement(spec, baseDir);
-  }
-
-  if (valid(spec)) {
-    return { kind: 'exact', version: spec };
-  }
-
-  return fatal(
-    `Could not understand ${ENV_OVERRIDE}="${spec}".\n` +
-      `Expected one of ${REQUIREMENT_KEYS.map((k) => `${k}:<value>`).join(', ')}, a path, or a version.`,
-  );
-}
-
-function pathRequirement(value: string, baseDir: string): CapacitorRequirement {
-  const absolutePath = resolve(baseDir, value);
-  if (!existsSync(resolve(absolutePath, 'Package.swift'))) {
-    fatal(
-      `No Package.swift found at ${absolutePath}.\n` +
-        `A local Capacitor package must point at a directory containing one: a repository checkout's ` +
-        `root, or an installed ${PLATFORM_PACKAGE}.`,
-    );
-  }
-  return { kind: 'path', absolutePath };
 }
