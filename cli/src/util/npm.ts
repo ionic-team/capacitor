@@ -11,7 +11,7 @@ export interface BlockedInstallScript {
   version: string;
 }
 
-const LOCKFILE_MANAGERS: ReadonlyArray<[string, string]> = [
+const LOCKFILE_MANAGERS: readonly [string, string][] = [
   ['package-lock.json', 'npm'],
   ['npm-shrinkwrap.json', 'npm'],
   ['pnpm-lock.yaml', 'pnpm'],
