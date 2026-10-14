@@ -58,13 +58,14 @@ add Kotlin sources or the Kotlin Gradle plugin.
 automatically. The only `.pbxproj` files are the app scaffolds in
 `ios-spm-template/App/` and `ios-pods-template/App/`.
 
-**There are two copies of that manifest, and a change to one belongs in both.**
-`Package.swift` at the repo root is what a git URL resolves and the only one that can
-declare the test targets (`ios/Tests/**` use `@testable import Capacitor`).
-`ios/Package.swift` is published inside `@capacitor/ios`, which is what apps depend on by
-path — it drops the `ios/` prefix from every target path and omits the test targets,
-because `Tests/` is not in the npm `files` list. `npm run lint:package-swift`
-(part of `npm run lint`) fails if they disagree on products or target source directories.
+**There are two copies of that manifest, and `ios/Package.swift` is generated.** Edit
+`Package.swift` at the repo root — it is what a git URL resolves, and the only one that can
+declare the test targets (`ios/Tests/**` use `@testable import Capacitor`). `ios/Package.swift`
+is published inside `@capacitor/ios`, which is what apps depend on by path; it drops the
+`ios/` prefix from every target path and omits the test targets, because `Tests/` is not in
+the npm `files` list. `scripts/generate-ios-package-manifest.mjs` applies that transform:
+`npm run build:package-swift` (also run by `npm run fmt`) rewrites it, and
+`npm run lint:package-swift` (part of `npm run lint`) fails if the committed copy is stale.
 
 ---
 
@@ -248,8 +249,9 @@ Ordered roughly by how often they actually happen.
    `ios/Sources/Capacitor/assets/native-bridge.js`. Run `npm run build:nativebridge` and
    commit both generated files, or your change does nothing.
 
-2. **Editing generated files directly.** In this repo the only generated, committed
-   files are the two `native-bridge.js` copies (see pitfall 1). `cli/assets/*.tar.gz` is
+2. **Editing generated files directly.** In this repo the generated, committed files are
+   the two `native-bridge.js` copies (see pitfall 1) and `ios/Package.swift`, which comes
+   from the root `Package.swift` via `npm run build:package-swift`. `cli/assets/*.tar.gz` is
    build output from `scripts/pack-cli-assets.mjs` and is gitignored. The files you may
    think of as "generated" — `capacitor.settings.gradle`, `app/capacitor.build.gradle`,
    `CapApp-SPM/Package.swift`, the `capacitor_pods` block in `Podfile` — live in
@@ -333,7 +335,7 @@ Report actual results; never claim success unverified.
 | `core/native-bridge.ts` | `npm run build:nativebridge`, then `npm test -w core` |
 | `cli/src/**` | `npm run build -w cli` + `npm test -w cli` |
 | `ios/**` | `npm run verify -w ios` (macOS + Xcode required) |
-| `Package.swift` or `ios/Package.swift` | `npm run lint:package-swift` (both copies) |
+| `Package.swift` | `npm run build:package-swift`, then commit `ios/Package.swift` |
 | `android/**` | `npm run verify -w android` (JDK 21) |
 | anything | `npm run lint` |
 

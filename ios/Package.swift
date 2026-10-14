@@ -1,8 +1,7 @@
 // swift-tools-version: 6.0
 import PackageDescription
 
-// Ships inside the @capacitor/ios npm package so apps can resolve Capacitor from node_modules.
-// Mirrors the manifest at the repository root, minus the test targets: Tests/ is not published.
+// DO NOT MODIFY THIS FILE - generated from the Package.swift in the Capacitor repository.
 let package = Package(
     name: "Capacitor",
     platforms: [.iOS(.v16)],
