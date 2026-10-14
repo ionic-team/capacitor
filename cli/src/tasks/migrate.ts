@@ -317,7 +317,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
             }
             txt = txt.replace(/= {2}'/g, `= '`);
             if (txt.includes('androidxCoreKTXVersion')) {
-              logger.warn(`androidxCoreKTXVersion might not be needed anymore, check your plugins`)
+              logger.warn(`androidxCoreKTXVersion might not be needed anymore, check your plugins`);
             }
             writeFileSync(variablesPath, txt, { encoding: 'utf-8' });
             for (const variable of Object.keys(variablesAndClasspaths.variables)) {
