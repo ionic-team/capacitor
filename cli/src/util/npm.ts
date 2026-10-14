@@ -24,6 +24,10 @@ const LOCKFILE_MANAGERS: readonly [string, string][] = [
  * `npm install-scripts ls` compares the tree against npm's own `allowScripts` map, which yarn and
  * pnpm never write. It therefore reports every install script in a yarn or pnpm project as
  * blocked, even when that package manager ran it, so the check has to know who did the install.
+ *
+ * Only a positive signal counts. `rootDir` is the app package, which in a workspace holds neither
+ * a lockfile nor a `packageManager` field, and guessing npm there reports blocked scripts for an
+ * install npm never performed.
  */
 export async function isNpmProject(rootDir: string): Promise<boolean> {
   try {
@@ -41,7 +45,7 @@ export async function isNpmProject(rootDir: string): Promise<boolean> {
     }
   }
 
-  return true;
+  return false;
 }
 
 /**
@@ -105,6 +109,15 @@ export function parseBlockedInstallScripts(commandOutput: string | null): Blocke
   }
 
   return blocked;
+}
+
+/**
+ * npm 12 denies install scripts by default, so a typical project has pending entries for packages
+ * like esbuild or sharp that a Capacitor migration has no bearing on. Only Capacitor's own blocked
+ * scripts say anything about whether the migration finished.
+ */
+export function hasBlockedCapacitorScripts(blocked: BlockedInstallScript[]): boolean {
+  return blocked.some(({ name }) => name.startsWith('@capacitor/'));
 }
 
 export function logBlockedInstallScripts(blocked: BlockedInstallScript[]): void {

@@ -2,7 +2,7 @@ import { mkdtempSync, writeFileSync } from 'fs-extra';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
-import { isNpmProject, parseBlockedInstallScripts } from '../src/util/npm';
+import { hasBlockedCapacitorScripts, isNpmProject, parseBlockedInstallScripts } from '../src/util/npm';
 
 // Captured from a real `npm install-scripts ls --json` on npm@12.2.0.
 const NOTHING_BLOCKED = `{
@@ -127,8 +127,35 @@ describe('isNpmProject', () => {
     expect(await isNpmProject(dir)).toBe(false);
   });
 
-  it('assumes npm when there is no signal', async () => {
-    expect(await isNpmProject(project({}))).toBe(true);
-    expect(await isNpmProject(project({ 'package.json': '{"name":"x"}' }))).toBe(true);
+  it('needs a positive signal, so an empty directory is not npm', async () => {
+    expect(await isNpmProject(project({}))).toBe(false);
+  });
+
+  it('is not npm for a workspace package, which carries no lockfile of its own', async () => {
+    expect(await isNpmProject(project({ 'package.json': '{"name":"myapp"}' }))).toBe(false);
+  });
+});
+
+describe('hasBlockedCapacitorScripts', () => {
+  it('is false when nothing is blocked', () => {
+    expect(hasBlockedCapacitorScripts([])).toBe(false);
+  });
+
+  it('is true when a Capacitor package is among the blocked ones', () => {
+    expect(hasBlockedCapacitorScripts(parseBlockedInstallScripts(TWO_BLOCKED))).toBe(true);
+    expect(hasBlockedCapacitorScripts(parseBlockedInstallScripts(ONE_DENIED))).toBe(true);
+  });
+
+  it('is false when only unrelated packages are blocked', () => {
+    expect(
+      hasBlockedCapacitorScripts([
+        { name: 'esbuild', version: '0.28.2' },
+        { name: 'sharp', version: '0.34.4' },
+      ]),
+    ).toBe(false);
+  });
+
+  it('does not match packages that merely mention capacitor', () => {
+    expect(hasBlockedCapacitorScripts([{ name: 'capacitor-plugin-safe-area', version: '4.0.0' }])).toBe(false);
   });
 });

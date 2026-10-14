@@ -10,7 +10,7 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
-import { getBlockedInstallScripts, logBlockedInstallScripts } from '../util/npm';
+import { getBlockedInstallScripts, hasBlockedCapacitorScripts, logBlockedInstallScripts } from '../util/npm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -145,7 +145,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           const blocked = await getBlockedInstallScripts(config.app.rootDir, installerType);
           if (blocked.length > 0) {
             logBlockedInstallScripts(blocked);
-            scriptsBlocked = true;
+            scriptsBlocked = hasBlockedCapacitorScripts(blocked);
           }
         }
       } catch (ex) {
