@@ -13,6 +13,7 @@
     "url": "https://github.com/ionic-team/capacitor/issues"
   },
   "files": [
+    "Package.swift",
     "Sources/",
     "Capacitor.podspec",
     "CapacitorCordova.podspec",
