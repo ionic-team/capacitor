@@ -61,7 +61,7 @@ export async function getBlockedInstallScripts(
   rootDir: string,
   packageManager?: string,
 ): Promise<BlockedInstallScript[]> {
-  const isNpm = packageManager === undefined ? await isNpmProject(rootDir) : packageManager === 'npm';
+  const isNpm = packageManager === undefined ? await isNpmProject(rootDir) : packageManager.toLowerCase() === 'npm';
 
   if (!isNpm) {
     return [];
@@ -125,14 +125,13 @@ export function logBlockedInstallScripts(blocked: BlockedInstallScript[]): void 
     return;
   }
 
+  const names = [...new Set(blocked.map(({ name }) => name))];
   const packages = blocked.map(({ name, version }) => `    ${c.strong(`${name}@${version}`)}\n`).join('');
-  const approvals = [...new Set(blocked.map(({ name }) => name))]
-    .map((name) => `    ${c.input(`npm install-scripts approve ${name}`)}\n`)
-    .join('');
+  const approvals = names.map((name) => `    ${c.input(`npm install-scripts approve ${name}`)}\n`).join('');
 
   output.write(
     `${c.strong('Blocked Install Scripts:')}\n\n` +
-      `  npm blocked install scripts for ${blocked.length === 1 ? '1 package' : `${blocked.length} packages`}. ` +
+      `  npm blocked install scripts for ${names.length === 1 ? '1 package' : `${names.length} packages`}. ` +
       `Features that rely on them may not work.\n\n` +
       packages +
       `\n  To allow them, run:\n\n` +

@@ -140,14 +140,6 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         await runTask(`Installing Latest Modules using ${installerType}.`, () => {
           return installLatestLibs(installerType, runNpmInstall, config);
         });
-
-        if (runNpmInstall) {
-          const blocked = await getBlockedInstallScripts(config.app.rootDir, installerType);
-          if (blocked.length > 0) {
-            logBlockedInstallScripts(blocked);
-            scriptsBlocked = hasBlockedCapacitorScripts(blocked);
-          }
-        }
       } catch (ex) {
         logger.error(
           `${installerType} install failed. Try deleting node_modules folder and running ${c.input(
@@ -155,6 +147,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           )} manually.`,
         );
         installFailed = true;
+      }
+
+      if (runNpmInstall && !installFailed) {
+        const blocked = await getBlockedInstallScripts(config.app.rootDir, installerType);
+        if (blocked.length > 0) {
+          logBlockedInstallScripts(blocked);
+          scriptsBlocked = hasBlockedCapacitorScripts(blocked);
+        }
       }
 
       // Update iOS Projects
