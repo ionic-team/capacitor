@@ -107,7 +107,7 @@ public class Foldable extends Plugin {
 
     private void observeLayout() {
         windowInfoTracker = new WindowInfoTrackerCallbackAdapter(WindowInfoTracker.Companion.getOrCreate(getActivity()));
-        layoutConsumer = info -> {
+        layoutConsumer = (info) -> {
             layoutInfo = info;
             notifyListeners("foldStateChange", foldState());
         };
