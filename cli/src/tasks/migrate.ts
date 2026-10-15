@@ -316,6 +316,9 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               return;
             }
             txt = txt.replace(/= {2}'/g, `= '`);
+            if (txt.includes('androidxCoreKTXVersion')) {
+              logger.warn(`androidxCoreKTXVersion might not be needed anymore, check your plugins`);
+            }
             writeFileSync(variablesPath, txt, { encoding: 'utf-8' });
             for (const variable of Object.keys(variablesAndClasspaths.variables)) {
               let replaceStart = `${variable} = '`;
@@ -358,6 +361,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               firebaseMessagingVersion: '25.0.1',
               playServicesLocationVersion: '21.4.0',
               androidxBrowserVersion: '1.10.0',
+              androidxCoreKTXVersion: '1.19.0',
               androidxMaterialVersion: '1.14.0',
               androidxExifInterfaceVersion: '1.4.2',
               googleMapsPlayServicesVersion: '20.0.0',
