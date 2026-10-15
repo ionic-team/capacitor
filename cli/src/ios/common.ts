@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { readFile, readFileSync, writeFile } from 'fs-extra';
+import { existsSync, readFile, readFileSync, writeFile, writeFileSync } from 'fs-extra';
 import { join, resolve } from 'path';
 
 import c from '../colors';
@@ -105,7 +105,7 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-  const pbxPath = `${config.ios.nativeXcodeProjDirAbs}/project.pbxproj`;
+  const projectPath = getXcodeProjectFile(config);
   const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
 
   let plistContent = await readFile(plistPath, { encoding: 'utf-8' });
@@ -115,15 +115,41 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
     `<key>CFBundleDisplayName</key>\n        <string>${appName}</string>`,
   );
 
-  let pbxContent = await readFile(pbxPath, { encoding: 'utf-8' });
-  pbxContent = pbxContent.replace(/PRODUCT_BUNDLE_IDENTIFIER = ([^;]+)/g, `PRODUCT_BUNDLE_IDENTIFIER = ${appId}`);
+  let projectContent = await readFile(projectPath, { encoding: 'utf-8' });
+  projectContent = projectPath.endsWith('.xcproj')
+    ? projectContent.replace(xcprojSettingPattern('PRODUCT_BUNDLE_IDENTIFIER'), `$1${appId}$3`)
+    : projectContent.replace(/PRODUCT_BUNDLE_IDENTIFIER = ([^;]+)/g, `PRODUCT_BUNDLE_IDENTIFIER = ${appId}`);
 
   await writeFile(plistPath, plistContent, { encoding: 'utf-8' });
-  await writeFile(pbxPath, pbxContent, { encoding: 'utf-8' });
+  await writeFile(projectPath, projectContent, { encoding: 'utf-8' });
+}
+
+export function getXcodeProjectFile(config: Config): string {
+  const pbxprojPath = join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj');
+  const xcprojPath = join(config.ios.nativeXcodeProjDirAbs, 'project.xcproj');
+  return !existsSync(pbxprojPath) && existsSync(xcprojPath) ? xcprojPath : pbxprojPath;
+}
+
+function xcprojSettingPattern(name: string): RegExp {
+  return new RegExp(`("${name}(?:\\[[^\\]]*\\])?"\\s*:\\s*")([^"]*)(")`, 'g');
+}
+
+export function setXcprojDeploymentTarget(projectFile: string, version: string): boolean {
+  const content = readFileSync(projectFile, 'utf-8');
+  const updated = content.replace(xcprojSettingPattern('IPHONEOS_DEPLOYMENT_TARGET'), `$1${version}$3`);
+  writeFileSync(projectFile, updated, 'utf-8');
+  return updated !== content;
 }
 
 export function getMajoriOSVersion(config: Config): string {
-  const pbx = readFileSync(join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj'), 'utf-8');
+  const projectFile = getXcodeProjectFile(config);
+  const pbx = readFileSync(projectFile, 'utf-8');
+  if (projectFile.endsWith('.xcproj')) {
+    const majors = [...pbx.matchAll(xcprojSettingPattern('IPHONEOS_DEPLOYMENT_TARGET'))].map((match) =>
+      parseInt(match[2], 10),
+    );
+    return majors.length > 0 ? String(Math.min(...majors)) : '';
+  }
   const searchString = 'IPHONEOS_DEPLOYMENT_TARGET = ';
   const iosVersion = pbx.substring(
     pbx.indexOf(searchString) + searchString.length,
