@@ -598,7 +598,7 @@ async function updateBuildGradle(
   writeFileSync(filename, replaced, 'utf-8');
 }
 
-async function updateAppBuildGradle(filename: string) {
+async function updateAppBuildGradle(filename: string): Promise<void> {
   const txt = readFile(filename);
   if (!txt) {
     return;
@@ -606,6 +606,12 @@ async function updateAppBuildGradle(filename: string) {
   let replaced = txt;
 
   replaced = replaced.replace(`proguard-android.txt`, `proguard-android-optimize.txt`);
+  const releaseMinify = /(\brelease\s*\{[^}]*?minifyEnabled\s+)(true|false)/;
+  if (releaseMinify.test(replaced)) {
+    replaced = replaced.replace(releaseMinify, '$1true');
+  } else {
+    logger.warn(`Unable to set minifyEnabled true in the release block of ${filename}. Set it manually to turn on R8.`);
+  }
   replaced = replaced.replace('        targetSdkVersion rootProject.ext.targetSdkVersion\n', '');
   replaced = replaced.replace(`    implementation project(':capacitor-cordova-android-plugins')\n`, '');
   replaced = replaced.replace(
@@ -809,5 +815,6 @@ export const __testables = {
   removeAGPMigrationProperties,
   removeJCenter,
   removeJCenterFromGradleFile,
+  updateAppBuildGradle,
   updateGradleProperties,
 };
