@@ -221,7 +221,7 @@ async function loadAndroidConfig(
   if (extConfig.android?.flavor) {
     apkPath = `${apkPath}/${extConfig.android?.flavor}`;
   }
-  const apkName = parseApkNameFromFlavor(flavor);
+  const apkName = await parseApkNameFromFlavor(flavor, `${platformDirAbs}/${apkPath}debug`);
   const buildOutputDir = `${apkPath}/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
   const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
