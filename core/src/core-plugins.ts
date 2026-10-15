@@ -1,4 +1,4 @@
-import type { Plugin } from './definitions';
+import type { PermissionState, Plugin } from './definitions';
 import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
 
@@ -659,3 +659,47 @@ export const SystemBars = registerPlugin<SystemBarsPlugin>('SystemBars', {
 });
 
 /******** END SYSTEM BARS PLUGIN ********/
+
+/******** LOCAL NETWORK PLUGIN ********/
+/**
+ * Result of the LocalNetwork permission flow.
+ *
+ * The property is declared explicitly (not via an index signature) so that
+ * consumers can use dot access (`result.localNetwork`) even with the
+ * `noPropertyAccessFromIndexSignature` compiler option enabled.
+ *
+ * @since 9.0.0
+ */
+export interface LocalNetworkPermissions {
+  /**
+   * State of the local-network (`ACCESS_LOCAL_NETWORK`) permission.
+   *
+   * @since 9.0.0
+   */
+  localNetwork: PermissionState;
+}
+
+export interface LocalNetworkPlugin {
+  checkPermissions(): Promise<LocalNetworkPermissions>;
+  requestPermissions(): Promise<LocalNetworkPermissions>;
+}
+
+export class LocalNetworkPluginWeb extends WebPlugin implements LocalNetworkPlugin {
+  async checkPermissions(): Promise<LocalNetworkPermissions> {
+    return {
+      localNetwork: 'granted',
+    };
+  }
+
+  async requestPermissions(): Promise<LocalNetworkPermissions> {
+    return {
+      localNetwork: 'granted',
+    };
+  }
+}
+
+export const LocalNetwork = registerPlugin<LocalNetworkPlugin>('LocalNetwork', {
+  web: () => new LocalNetworkPluginWeb(),
+});
+
+/******** END LOCAL NETWORK PLUGIN ********/

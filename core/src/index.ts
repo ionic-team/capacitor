@@ -24,6 +24,7 @@ export {
   SystemBarsAnimation,
   CapacitorCookies,
   CapacitorHttp,
+  LocalNetwork,
   WebView,
   buildRequestInit,
 } from './core-plugins';
@@ -38,6 +39,8 @@ export type {
   HttpParams,
   HttpResponse,
   HttpResponseType,
+  LocalNetworkPermissions,
+  LocalNetworkPlugin,
   WebViewPath,
   WebViewPlugin,
   SystemBarsVisibilityOptions,
