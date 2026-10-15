@@ -247,18 +247,3 @@ function clearBaseConfigurationReferences(section: PbxprojSection, uuids: string
     delete buildConfiguration[`baseConfigurationReference${COMMENT_SUFFIX}`];
   }
 }
-
-function removeFromGroupChildren(section: PbxprojSection, uuids: string[]): void {
-  for (const key of Object.keys(section)) {
-    if (key.endsWith(COMMENT_SUFFIX)) continue;
-    const group = section[key];
-    if (typeof group === 'string') continue;
-    const children = group['children'] as { value: string }[] | undefined;
-    if (!Array.isArray(children)) continue;
-    group['children'] = children.filter((child) => !uuids.includes(child.value));
-  }
-}
-
-function unquote(value: unknown): string {
-  return typeof value === 'string' ? value.replace(/^"(.*)"$/, '$1') : '';
-}
