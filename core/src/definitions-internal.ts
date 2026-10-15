@@ -89,6 +89,16 @@ export interface CapacitorInstance extends CapacitorGlobal {
    * Low-level API used by the native bridge.
    */
   withPlugin?: (pluginName: string, fn: (...args: any[]) => any) => void;
+
+  /**
+   * Checks if a URL is relative or a proxy URL.
+   */
+  isRelativeOrProxyUrl: (url: string | undefined) => boolean;
+
+  /**
+   * Creates a proxy URL for the given URL.
+   */
+  createProxyUrl: (url: string, win: WindowCapacitor) => string;
 }
 
 export interface MessageCallData {
