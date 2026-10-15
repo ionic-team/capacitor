@@ -14,3 +14,20 @@
  }
 
  -keep public class * extends com.getcapacitor.Plugin { *; }
+
+# The annotation types are read at runtime via reflection. If they are not kept, R8 full mode
+# treats them as never instantiated and optimizes the annotation cached in PluginHandle to null,
+# even with -keepattributes *Annotation*.
+-keep @interface com.getcapacitor.annotation.** { *; }
+-keep @interface com.getcapacitor.PluginMethod { *; }
+
+# Callback methods are found by reflection, including on non-public base classes.
+-keepclassmembers class * extends com.getcapacitor.Plugin {
+    @com.getcapacitor.annotation.ActivityCallback <methods>;
+    @com.getcapacitor.annotation.PermissionCallback <methods>;
+}
+
+# Only for apps with Room below 2.7 or firebase-components below 18.0.1, which lose these constructors under AGP 9.
+#noinspection ShrinkerUnresolvedReference
+-keep class * extends androidx.room.RoomDatabase { <init>(); }
+-keep class * implements com.google.firebase.components.ComponentRegistrar { <init>(); }
