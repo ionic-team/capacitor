@@ -14,20 +14,16 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
 
     public private(set) var lastURL: URL?
 
+    private var hasBridgeViewAppeared = false
+    private var pendingDeliveries: [() -> Void] = []
+
     public func scene(
         _ scene: UIScene, willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         NotificationCenter.default.post(name: .capacitorSceneWillConnect, object: scene)
 
-        // Plugins haven't loaded yet on a cold start, so notifications posted here are
-        // missed. Deliver them on the first capacitorViewDidAppear, once plugins are
-        // registered.
-        var token: NSObjectProtocol?
-        token = NotificationCenter.default.addObserver(forName: .capacitorViewDidAppear, object: nil, queue: .main) { _ in
-            if let token {
-                NotificationCenter.default.removeObserver(token)
-            }
+        deliver {
             if !connectionOptions.urlContexts.isEmpty {
                 self.scene(scene, openURLContexts: connectionOptions.urlContexts)
             }
@@ -113,22 +109,25 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
     public func handle(openURL: URL, scene: UIScene? = nil) {
         let targetScene = scene ?? Self.activeForegroundScene()
         lastURL = openURL
+        ApplicationDelegateProxy.shared.lastURL = openURL
         let options: [UIApplication.OpenURLOptionsKey: Any] = [:]
 
-        // Capacitor 8 backwards compat
-        NotificationCenter.default.post(
-            name: .capacitorOpenURL,
-            object: [
-                "url": openURL,
-                "options": options
-            ])
+        deliver {
+            // Capacitor 8 backwards compat
+            NotificationCenter.default.post(
+                name: .capacitorOpenURL,
+                object: [
+                    "url": openURL,
+                    "options": options
+                ])
 
-        NotificationCenter.default.post(
-            name: .capacitorSceneOpenURL, object: targetScene,
-            userInfo: [
-                "url": openURL,
-                "options": options
-            ])
+            NotificationCenter.default.post(
+                name: .capacitorSceneOpenURL, object: targetScene,
+                userInfo: [
+                    "url": openURL,
+                    "options": options
+                ])
+        }
     }
 
     /// Routes a browsing-web `NSUserActivity` into Capacitor's universal-link handlers
@@ -166,19 +165,39 @@ public class SceneDelegateProxy: NSObject, UISceneDelegate {
         }
         let targetScene = scene ?? Self.activeForegroundScene()
         lastURL = url
+        ApplicationDelegateProxy.shared.lastURL = url
 
-        // Capacitor 8 backwards compat
-        NotificationCenter.default.post(
-            name: .capacitorOpenUniversalLink,
-            object: [
-                "url": url
-            ])
+        deliver {
+            // Capacitor 8 backwards compat
+            NotificationCenter.default.post(
+                name: .capacitorOpenUniversalLink,
+                object: [
+                    "url": url
+                ])
 
-        NotificationCenter.default.post(
-            name: .capacitorSceneOpenUniversalLink, object: targetScene,
-            userInfo: [
-                "url": url
-            ])
+            NotificationCenter.default.post(
+                name: .capacitorSceneOpenUniversalLink, object: targetScene,
+                userInfo: [
+                    "url": url
+                ])
+        }
+    }
+
+    /// Called by `CAPBridgeViewController.viewDidAppear`. Until it runs, plugins are not
+    /// registered and a posted notification reaches nobody, so link deliveries are held.
+    func bridgeViewDidAppear() {
+        hasBridgeViewAppeared = true
+        let pending = pendingDeliveries
+        pendingDeliveries.removeAll()
+        pending.forEach { $0() }
+    }
+
+    private func deliver(_ work: @escaping () -> Void) {
+        if hasBridgeViewAppeared {
+            work()
+        } else {
+            pendingDeliveries.append(work)
+        }
     }
 
     private static func activeForegroundScene() -> UIWindowScene? {

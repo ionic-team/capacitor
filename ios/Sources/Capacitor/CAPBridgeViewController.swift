@@ -64,6 +64,7 @@ import WebKit
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NotificationCenter.default.post(Notification(name: .capacitorViewDidAppear))
+        SceneDelegateProxy.shared.bridgeViewDidAppear()
         if bridge?.config.hasInitialFocus ?? true {
             self.webView?.becomeFirstResponder()
         }

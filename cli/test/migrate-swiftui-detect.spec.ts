@@ -7,6 +7,7 @@ const NOTHING_MIGRATED = {
   hasAppStruct: false,
   hasCapacitorView: false,
   hasDelegateAdaptorShape: false,
+  hasSceneDelegate: false,
 };
 
 const FULLY_MIGRATED = {
@@ -14,6 +15,7 @@ const FULLY_MIGRATED = {
   hasAppStruct: true,
   hasCapacitorView: true,
   hasDelegateAdaptorShape: true,
+  hasSceneDelegate: true,
 };
 
 describe('migrate-swiftui classify', () => {
@@ -25,12 +27,12 @@ describe('migrate-swiftui classify', () => {
     expect(classify(FULLY_MIGRATED)).toBe('already-migrated');
   });
 
-  it.each(Object.keys(NOTHING_MIGRATED))('returns partial when only %s is present', (key) => {
-    expect(classify({ ...NOTHING_MIGRATED, [key]: true })).toBe('partial');
+  it.each(Object.keys(NOTHING_MIGRATED))('stays eligible when only %s is present, so the run can resume', (key) => {
+    expect(classify({ ...NOTHING_MIGRATED, [key]: true })).toBe('eligible');
   });
 
-  it.each(Object.keys(FULLY_MIGRATED))('returns partial when only %s is missing', (key) => {
-    expect(classify({ ...FULLY_MIGRATED, [key]: false })).toBe('partial');
+  it.each(Object.keys(FULLY_MIGRATED))('stays eligible when only %s is missing, so the run can resume', (key) => {
+    expect(classify({ ...FULLY_MIGRATED, [key]: false })).toBe('eligible');
   });
 });
 
@@ -41,6 +43,13 @@ describe('migrate-swiftui describeSignals', () => {
     expect(description).toContain('present: []');
     expect(description).toContain('App.swift');
     expect(description).toContain('CapacitorView.swift');
+    expect(description).toContain('SceneDelegate.swift');
+  });
+
+  it('reports a project migrated before the scene delegate landed as missing only that', () => {
+    const description = describeSignals({ ...FULLY_MIGRATED, hasSceneDelegate: false });
+
+    expect(description).toMatch(/missing: \[SceneDelegate\.swift\]/);
   });
 
   it('splits present and missing markers', () => {
