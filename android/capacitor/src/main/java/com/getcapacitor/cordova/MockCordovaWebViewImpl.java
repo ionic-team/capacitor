@@ -7,6 +7,7 @@ import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import com.getcapacitor.Logger;
 import java.util.List;
 import java.util.Map;
 import org.apache.cordova.CordovaInterface;
@@ -189,8 +190,32 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
         mainHandler.post(() -> webView.evaluateJavascript(js, callback));
     }
 
+    /**
+     * Forward an Android lifecycle transition to the page as a document event, but only when the
+     * page can receive it.
+     *
+     * <p>The document carried by the WebView is not guaranteed to hold the bridge: the injected
+     * script is scoped to the app origin, so an {@code appAllowNavigation} origin, the
+     * {@code server.errorPath} page, and a load that is still in flight all run without
+     * {@code window.Capacitor}. Calling into it unconditionally raised an uncaught TypeError in the
+     * page — visible only as a {@code Capacitor/Console} line — instead of quietly doing nothing.
+     */
     public void triggerDocumentEvent(final String eventName) {
-        eval("window.Capacitor.triggerEvent('" + eventName + "', 'document');", (s) -> {});
+        String js =
+            "(function () {" +
+            "  if (window.Capacitor && window.Capacitor.triggerEvent) {" +
+            "    window.Capacitor.triggerEvent('" +
+            eventName +
+            "', 'document');" +
+            "    return true;" +
+            "  }" +
+            "  return false;" +
+            "})();";
+        eval(js, value -> {
+            if ("false".equals(value)) {
+                Logger.debug("Skipped the '" + eventName + "' document event: no Capacitor bridge on the current page.");
+            }
+        });
     }
 
     @Override
