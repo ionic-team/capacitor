@@ -150,10 +150,10 @@ export function runProgram(config: Config): void {
       ]),
     )
     .addOption(
-      new Option('--signing-type <signingtype>', 'Program used to sign apps (default: jarsigner)').choices([
-        'apksigner',
-        'jarsigner',
-      ]),
+      new Option(
+        '--signing-type <signingtype>',
+        'Program used to sign apps (default: apksigner for APK, jarsigner for AAB)',
+      ).choices(['apksigner', 'jarsigner']),
     )
     .addOption(
       new Option('--xcode-team-id <xcodeTeamID>', 'The Developer team to use for building and exporting the archive'),

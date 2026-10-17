@@ -38,6 +38,7 @@ export async function buildCommand(
     );
   }
 
+  const androidReleaseType = buildOptions.androidreleasetype || config.android.buildOptions.releaseType || 'AAB';
   const buildCommandOptions: BuildCommandOptions = {
     scheme: buildOptions.scheme || config.ios.scheme,
     flavor: buildOptions.flavor || config.android.flavor,
@@ -45,8 +46,11 @@ export async function buildCommand(
     keystorepass: buildOptions.keystorepass || config.android.buildOptions.keystorePassword,
     keystorealias: buildOptions.keystorealias || config.android.buildOptions.keystoreAlias,
     keystorealiaspass: buildOptions.keystorealiaspass || config.android.buildOptions.keystoreAliasPassword,
-    androidreleasetype: buildOptions.androidreleasetype || config.android.buildOptions.releaseType || 'AAB',
-    signingtype: buildOptions.signingtype || config.android.buildOptions.signingType || 'jarsigner',
+    androidreleasetype: androidReleaseType,
+    signingtype:
+      buildOptions.signingtype ||
+      config.android.buildOptions.signingType ||
+      (androidReleaseType === 'APK' ? 'apksigner' : 'jarsigner'),
     configuration: buildOptions.configuration || 'Release',
     xcodeTeamId: buildOptions.xcodeTeamId || config.ios.buildOptions.teamId,
     xcodeExportMethod:
