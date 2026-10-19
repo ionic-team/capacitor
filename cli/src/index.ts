@@ -7,7 +7,7 @@ import type { Config, PackageManager, Writable } from './definitions';
 import { fatal, isFatal } from './errors';
 import { receive } from './ipc';
 import { logger, output } from './log';
-import { telemetryAction } from './telemetry';
+import { TELEMETRY_SAFE_CHOICES, telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
 
@@ -145,14 +145,12 @@ export function runProgram(config: Config): void {
     .option('--keystorealiaspass <keystoreAliasPass>', 'Password for the Key Alias')
     .addOption(
       new Option('--androidreleasetype <androidreleasetype>', 'Android release type; APK or AAB').choices([
-        'AAB',
-        'APK',
+        ...TELEMETRY_SAFE_CHOICES.androidreleasetype,
       ]),
     )
     .addOption(
       new Option('--signing-type <signingtype>', 'Program used to sign apps (default: jarsigner)').choices([
-        'apksigner',
-        'jarsigner',
+        ...TELEMETRY_SAFE_CHOICES.signingType,
       ]),
     )
     .addOption(
@@ -162,21 +160,13 @@ export function runProgram(config: Config): void {
       new Option(
         '--xcode-export-method <xcodeExportMethod>',
         'Describes how xcodebuild should export the archive (default:  app-store-connect)',
-      ).choices([
-        'app-store-connect',
-        'release-testing',
-        'enterprise',
-        'debugging',
-        'developer-id',
-        'mac-application',
-        'validation',
-      ]),
+      ).choices([...TELEMETRY_SAFE_CHOICES.xcodeExportMethod]),
     )
     .addOption(
       new Option(
         '--xcode-signing-style <xcodeSigningStyle>',
         'The iOS signing style to use when building the app for distribution (default: automatic)',
-      ).choices(['automatic', 'manual']),
+      ).choices([...TELEMETRY_SAFE_CHOICES.xcodeSigningStyle]),
     )
     .addOption(
       new Option(
