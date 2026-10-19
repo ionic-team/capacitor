@@ -19,7 +19,7 @@ const THANK_YOU =
   `\nYou can disable telemetry at any time by using the ${c.input('npx cap telemetry off')} command.`;
 
 export interface CommandMetricData {
-  app_id: string;
+  app_id: string | null;
   command: string;
   arguments: string;
   options: string;
@@ -72,13 +72,24 @@ const telemetrySafeChoices = new Map<string, ReadonlySet<string>>(
  * Positional argument values that are safe to report. Everything else is
  * dropped, since arguments like `cap init`'s app name are user content.
  */
-const TELEMETRY_ARGUMENT_ALLOWLIST = new Set(['android', 'ios', 'web', 'on', 'off']);
+const TELEMETRY_ARGUMENT_ALLOWLIST = new Set(['android', 'ios', 'web']);
 
 /**
  * Upper bound on the reported error, so a failed Gradle or Xcode build cannot
  * ship its entire log as a metric.
  */
 const TELEMETRY_ERROR_MAX_LENGTH = 500;
+
+/**
+ * The characters a dependency spec may contain to be reported as-is. A version
+ * range has none of the `:/@` a URL or path spec needs, so specs such as
+ * `git+https://x-access-token:<token>@github.com/acme/plugin.git` and
+ * `file:/Users/<name>/dev/plugin` are reported as {@link NON_REGISTRY_VERSION}
+ * instead of shipping a credential or a local path.
+ */
+const TELEMETRY_SAFE_VERSION_PATTERN = /^[\w.\-+^~><=|* ]+$/;
+
+const NON_REGISTRY_VERSION = 'non-registry';
 
 export function telemetryAction(config: Config, action: CommanderAction): CommanderAction {
   return async (...actionArgs: any[]): Promise<void> => {
@@ -108,9 +119,9 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
     // https://www.npmjs.com/org/capacitor
     const capacitorPackages = packages.filter(([k]) => k.startsWith('@capacitor/'));
 
-    const versions = capacitorPackages.map(([k, v]) => [
+    const versions = capacitorPackages.map(([k, v]): [string, string] => [
       `${k.replace(/^@capacitor\//, '').replace(/-/g, '_')}_version`,
-      v,
+      getTelemetryVersion(v),
     ]);
 
     const data: CommandMetricData = {
@@ -170,8 +181,8 @@ function isTelemetrySafeValue(name: string, value: unknown): value is string | b
 }
 
 /**
- * Build the reported error, scrubbed of every option value that
- * {@link getTelemetryOptions} reports as `null` and truncated.
+ * Build the reported error, scrubbed of every option value and positional
+ * argument the rest of the payload drops, then truncated.
  *
  * Failed subprocesses rethrow the tool's combined output, which echoes back
  * the very values that were redacted out of the option map--`xcodebuild`
@@ -184,9 +195,12 @@ export function getTelemetryError(cmd: Command, error: any): string | null {
   }
 
   const options = cmd.opts();
-  const redacted = Object.entries(getTelemetryOptions(cmd))
-    .filter(([, value]) => value === null)
-    .map(([name]) => options[name])
+  const redacted = [
+    ...Object.entries(getTelemetryOptions(cmd))
+      .filter(([, value]) => value === null)
+      .map(([name]) => options[name]),
+    ...cmd.args.filter((arg) => !TELEMETRY_ARGUMENT_ALLOWLIST.has(arg)),
+  ]
     .filter((value): value is string => typeof value === 'string')
     .sort((a, b) => b.length - a.length);
 
@@ -203,6 +217,16 @@ export function getTelemetryError(cmd: Command, error: any): string | null {
  */
 export function getTelemetryArguments(cmd: Command): string {
   return cmd.args.filter((arg) => TELEMETRY_ARGUMENT_ALLOWLIST.has(arg)).join(' ');
+}
+
+/**
+ * Build the reported version of a Capacitor dependency, keeping the spec only
+ * when it is a version range. Specs that point somewhere--a git URL, a local
+ * path--are reported as being just that, since they can carry a token or a
+ * username.
+ */
+export function getTelemetryVersion(spec: string | undefined): string {
+  return spec && TELEMETRY_SAFE_VERSION_PATTERN.test(spec) ? spec : NON_REGISTRY_VERSION;
 }
 
 /**

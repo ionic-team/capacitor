@@ -2,7 +2,13 @@ import { Command, Option } from 'commander';
 import { pathExists } from 'fs-extra';
 
 import type { Config, IOSConfig } from '../src/definitions';
-import { getIOSPackageManager, getTelemetryArguments, getTelemetryError, getTelemetryOptions } from '../src/telemetry';
+import {
+  getIOSPackageManager,
+  getTelemetryArguments,
+  getTelemetryError,
+  getTelemetryOptions,
+  getTelemetryVersion,
+} from '../src/telemetry';
 
 jest.mock('fs-extra', () => ({
   pathExists: jest.fn(),
@@ -271,6 +277,21 @@ describe('getTelemetryError', () => {
     }
   });
 
+  it('scrubs positional arguments that are dropped from the reported arguments', () => {
+    const cmd = captureInit(['init', 'My Secret App', 'com.example.internal']);
+
+    const error = getTelemetryError(cmd, 'Error: "My Secret App" (com.example.internal) is not a valid app');
+
+    expect(error).not.toContain('My Secret App');
+    expect(error).not.toContain('com.example.internal');
+  });
+
+  it('keeps allowlisted platform arguments readable', () => {
+    const cmd = captureBuild(['build', 'android']);
+
+    expect(getTelemetryError(cmd, 'android platform has not been added')).toBe('android platform has not been added');
+  });
+
   it('truncates long output so a failed build cannot ship its whole log', () => {
     const error = getTelemetryError(captureBuild(['build', 'android']), 'x'.repeat(10_000));
 
@@ -293,5 +314,25 @@ describe('getTelemetryArguments', () => {
 
   it('drops user-supplied arguments such as the app name and identifier', () => {
     expect(getTelemetryArguments(captureInit(['init', 'My Secret App', 'com.example.internal']))).toBe('');
+  });
+});
+
+describe('getTelemetryVersion', () => {
+  it.each(['7.0.0', '^7.0.0', '~7.0.0-beta.1', '>=6 <8', '*', 'latest'])('reports the version range %s', (spec) => {
+    expect(getTelemetryVersion(spec)).toBe(spec);
+  });
+
+  it.each([
+    'git+https://x-access-token:ghp_exampletoken@github.com/acme/plugin.git#v1',
+    'github:acme/plugin#main',
+    'file:/Users/me/dev/plugin',
+    'https://registry.acme.internal/plugin/-/plugin-1.0.0.tgz',
+    'npm:@acme/plugin@1.0.0',
+  ])('reports %s as non-registry', (spec) => {
+    expect(getTelemetryVersion(spec)).toBe('non-registry');
+  });
+
+  it('reports a missing spec as non-registry', () => {
+    expect(getTelemetryVersion(undefined)).toBe('non-registry');
   });
 });
