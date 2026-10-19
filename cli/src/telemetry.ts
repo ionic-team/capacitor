@@ -41,22 +41,44 @@ export interface Metric<N extends string, D> {
 type CommanderAction = (...args: any[]) => void | Promise<void>;
 
 /**
- * Option names whose values are safe to report because the option declares a
- * fixed set of choices. This is an allowlist by design: a denylist of
- * password-like names would leak the first sensitive option someone adds.
+ * The option values that are safe to report, keyed by the option's resolved
+ * name (commander's `attributeName()`, so `--signing-type` is `signingType`).
+ * This is an allowlist by design: a denylist of password-like names would leak
+ * the first sensitive option someone adds.
+ *
+ * The option declarations in `index.ts` spread these same lists into
+ * `.choices()`, so an option cannot offer a choice this does not list.
  */
-const TELEMETRY_OPTION_VALUE_ALLOWLIST = new Set([
-  'androidreleasetype',
-  'signingType',
-  'xcodeExportMethod',
-  'xcodeSigningStyle',
-]);
+export const TELEMETRY_SAFE_CHOICES = {
+  androidreleasetype: ['AAB', 'APK'],
+  signingType: ['apksigner', 'jarsigner'],
+  xcodeExportMethod: [
+    'app-store-connect',
+    'release-testing',
+    'enterprise',
+    'debugging',
+    'developer-id',
+    'mac-application',
+    'validation',
+  ],
+  xcodeSigningStyle: ['automatic', 'manual'],
+} as const satisfies Record<string, readonly string[]>;
+
+const telemetrySafeChoices = new Map<string, ReadonlySet<string>>(
+  Object.entries(TELEMETRY_SAFE_CHOICES).map(([name, choices]) => [name, new Set<string>(choices)]),
+);
 
 /**
  * Positional argument values that are safe to report. Everything else is
  * dropped, since arguments like `cap init`'s app name are user content.
  */
 const TELEMETRY_ARGUMENT_ALLOWLIST = new Set(['android', 'ios', 'web', 'on', 'off']);
+
+/**
+ * Upper bound on the reported error, so a failed Gradle or Xcode build cannot
+ * ship its entire log as a metric.
+ */
+const TELEMETRY_ERROR_MAX_LENGTH = 500;
 
 export function telemetryAction(config: Config, action: CommanderAction): CommanderAction {
   return async (...actionArgs: any[]): Promise<void> => {
@@ -97,7 +119,7 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
       arguments: getTelemetryArguments(cmd),
       options: JSON.stringify(getTelemetryOptions(cmd)),
       duration,
-      error: error ? (error.message ? error.message : String(error)) : null,
+      error: getTelemetryError(cmd, error),
       node_version: process.version,
       os: config.cli.os,
       ios_package_manager: await getIOSPackageManager(config),
@@ -129,16 +151,51 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
 /**
  * Build the reported option map: every option name the command resolved, but
  * only the values that cannot carry a secret. Booleans are kept because they
- * cannot encode one, fixed-choice options are kept by allowlist, and every
- * other value--keystore passwords, paths, signing identities--becomes `null`.
+ * cannot encode one, allowlisted options are kept when the value is one this
+ * file lists, and every other value--keystore passwords, paths, signing
+ * identities--becomes `null`.
  */
-export function getTelemetryOptions(cmd: Command): Record<string, unknown> {
+export function getTelemetryOptions(cmd: Command): Record<string, string | boolean | null> {
   return Object.fromEntries(
-    Object.entries(cmd.opts()).map(([name, value]) => [
-      name,
-      typeof value === 'boolean' || TELEMETRY_OPTION_VALUE_ALLOWLIST.has(name) ? value : null,
-    ]),
+    Object.entries(cmd.opts()).map(([name, value]) => [name, isTelemetrySafeValue(name, value) ? value : null]),
   );
+}
+
+function isTelemetrySafeValue(name: string, value: unknown): value is string | boolean {
+  if (typeof value === 'boolean') {
+    return true;
+  }
+
+  return typeof value === 'string' && (telemetrySafeChoices.get(name)?.has(value) ?? false);
+}
+
+/**
+ * Build the reported error, scrubbed of every option value that
+ * {@link getTelemetryOptions} reports as `null` and truncated.
+ *
+ * Failed subprocesses rethrow the tool's combined output, which echoes back
+ * the very values that were redacted out of the option map--`xcodebuild`
+ * prints its command-line build settings, `jarsigner` prints the keystore it
+ * was pointed at.
+ */
+export function getTelemetryError(cmd: Command, error: any): string | null {
+  if (!error) {
+    return null;
+  }
+
+  const options = cmd.opts();
+  const redacted = Object.entries(getTelemetryOptions(cmd))
+    .filter(([, value]) => value === null)
+    .map(([name]) => options[name])
+    .filter((value): value is string => typeof value === 'string')
+    .sort((a, b) => b.length - a.length);
+
+  const message = redacted.reduce<string>(
+    (message, value) => message.replaceAll(value, '<redacted>'),
+    error.message ? error.message : String(error),
+  );
+
+  return message.slice(0, TELEMETRY_ERROR_MAX_LENGTH);
 }
 
 /**
