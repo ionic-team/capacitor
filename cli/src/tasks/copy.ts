@@ -67,7 +67,10 @@ export async function copy(config: Config, platformName: string, inline = false)
     let usesSSLPinning = false;
     if (
       allPlugins.filter(
-        (plugin) => plugin.id === '@ionic-enterprise/ssl-pinning' || plugin.id === '@capacitor/ssl-pinning',
+        (plugin) =>
+          plugin.id === '@ionic-enterprise/ssl-pinning' ||
+          plugin.id === '@capacitor/ssl-pinning' ||
+          plugin.id === '@capacitor-community/ssl-pinning',
       ).length > 0
     ) {
       usesSSLPinning = true;
