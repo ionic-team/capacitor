@@ -15,6 +15,7 @@ import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { runIOS } from '../ios/run';
 import { logger, output } from '../log';
+import type { Plugin } from '../plugin';
 import { CapLiveReloadHelper } from '../util/livereload';
 import { getPlatformTargets } from '../util/native-run';
 
@@ -93,15 +94,17 @@ export async function runCommand(
       return;
     }
 
+    let cordovaPlugins: Plugin[] | undefined;
     try {
       if (options.sync) {
         await sync(config, platformName, false, true);
       }
-      const cordovaPlugins = await getCordovaPlugins(config, platformName);
+      const plugins = await getCordovaPlugins(config, platformName);
+      cordovaPlugins = plugins;
       if (options.url) {
         await CapLiveReloadHelper.editCapConfigForLiveReload(config, platformName, options);
         if (platformName === config.android.name) {
-          await await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, true);
+          await writeCordovaAndroidManifest(plugins, config, platformName, true);
         }
       }
       await run(config, platformName, options);
@@ -110,7 +113,7 @@ export async function runCommand(
           .then(async () => {
             await CapLiveReloadHelper.revertCapConfigForLiveReload();
             if (platformName === config.android.name) {
-              await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, false);
+              await writeCordovaAndroidManifest(plugins, config, platformName, false);
             }
           })
           .then(() => process.exit());
@@ -120,6 +123,11 @@ export async function runCommand(
     } catch (e: any) {
       if (options.url) {
         await CapLiveReloadHelper.revertCapConfigForLiveReload();
+        if (cordovaPlugins && platformName === config.android.name) {
+          await writeCordovaAndroidManifest(cordovaPlugins, config, platformName, false).catch((revertError) =>
+            logger.warn(`Could not revert the live reload cleartext configuration: ${revertError}`),
+          );
+        }
       }
       if (!isFatal(e)) {
         fatal(e.stack ?? e);
