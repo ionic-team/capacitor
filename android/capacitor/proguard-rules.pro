@@ -26,8 +26,3 @@
     @com.getcapacitor.annotation.ActivityCallback <methods>;
     @com.getcapacitor.annotation.PermissionCallback <methods>;
 }
-
-# Only for apps with Room below 2.7 or firebase-components below 18.0.1, which lose these constructors under AGP 9.
-#noinspection ShrinkerUnresolvedReference
--keep class * extends androidx.room.RoomDatabase { <init>(); }
--keep class * implements com.google.firebase.components.ComponentRegistrar { <init>(); }
