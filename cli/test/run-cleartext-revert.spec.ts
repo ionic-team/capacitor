@@ -31,8 +31,8 @@ jest.mock('../src/errors', () => ({
 }));
 
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { getCordovaPlugins, writeCordovaAndroidManifest } = require('../src/cordova');
 const { runAndroid } = require('../src/android/run');
+const { getCordovaPlugins, writeCordovaAndroidManifest } = require('../src/cordova');
 const { CapLiveReloadHelper } = require('../src/util/livereload');
 /* eslint-enable @typescript-eslint/no-require-imports */
 
