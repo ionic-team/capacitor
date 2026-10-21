@@ -1,11 +1,21 @@
 import type { Config } from '../src/definitions';
+import { deliver, send } from '../src/ipc';
 import type { RunContext } from '../src/run-context';
-import { getProjectIdentity, isTelemetryDisabledByEnv, isTelemetryEnabled, runContextFields } from '../src/telemetry';
+import {
+  getProjectIdentity,
+  isTelemetryDisabledByEnv,
+  isTelemetryEnabled,
+  runContextFields,
+  sendMetric,
+} from '../src/telemetry';
 import { getCommandOutput } from '../src/util/subprocess';
 
 jest.mock('../src/util/subprocess', () => ({ getCommandOutput: jest.fn() }));
+jest.mock('../src/ipc', () => ({ deliver: jest.fn(), send: jest.fn() }));
 
 const mockedGetCommandOutput = getCommandOutput as unknown as jest.Mock;
+const mockedDeliver = deliver as unknown as jest.Mock;
+const mockedSend = send as unknown as jest.Mock;
 
 function context(overrides: Partial<RunContext> = {}): RunContext {
   return { report: true, surface: 'terminal', confidence: 'none', ...overrides };
@@ -96,6 +106,54 @@ describe('runContextFields', () => {
     const fields = runContextFields(context({ agentId: 'codex', sessionVar: 'CODEX_THREAD_ID' }));
 
     expect(Object.values(fields)).not.toContain('CODEX_THREAD_ID');
+  });
+});
+
+describe('sendMetric', () => {
+  const sysconfig = { machine: 'machine-1', telemetry: true };
+
+  beforeEach(() => {
+    mockedDeliver.mockReset().mockResolvedValue(undefined);
+    mockedSend.mockReset().mockResolvedValue(undefined);
+  });
+
+  /**
+   * A developer's machine outlives the command, so delivery is detached and
+   * forgotten. An agent sandbox usually isn't around long enough for that to
+   * finish, so those runs wait on it instead.
+   */
+  it('hands a human run to the detached sender', async () => {
+    await sendMetric(sysconfig, 'capacitor_cli_command', {}, context());
+
+    expect(mockedSend).toHaveBeenCalledTimes(1);
+    expect(mockedDeliver).not.toHaveBeenCalled();
+  });
+
+  it('awaits delivery for an agent-driven run', async () => {
+    await sendMetric(sysconfig, 'capacitor_cli_command', {}, context({ agentId: 'claude-code' }));
+
+    expect(mockedDeliver).toHaveBeenCalledTimes(1);
+    expect(mockedSend).not.toHaveBeenCalled();
+  });
+
+  it('awaits delivery for an unrecognised harness too', async () => {
+    await sendMetric(sysconfig, 'capacitor_cli_command', {}, context({ agentId: 'unknown' }));
+
+    expect(mockedDeliver).toHaveBeenCalledTimes(1);
+  });
+
+  it('sends nothing at all when telemetry is off', async () => {
+    await sendMetric({ ...sysconfig, telemetry: false }, 'capacitor_cli_command', {}, context());
+
+    expect(mockedSend).not.toHaveBeenCalled();
+    expect(mockedDeliver).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing on CI', async () => {
+    await sendMetric(sysconfig, 'capacitor_cli_command', {}, context({ report: false, agentId: 'claude-code' }));
+
+    expect(mockedSend).not.toHaveBeenCalled();
+    expect(mockedDeliver).not.toHaveBeenCalled();
   });
 });
 

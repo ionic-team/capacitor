@@ -93,6 +93,15 @@ export function isCI(env: NodeJS.ProcessEnv): boolean {
   return CI_ENVIRONMENT_VARIABLES.some((name) => Boolean(env[name]));
 }
 
+/**
+ * Whether something other than a person invoked the CLI. True for an
+ * unrecognised harness as well as a named one — both mean there is nobody
+ * waiting on the terminal.
+ */
+export function isAgentDriven(runContext: RunContext): boolean {
+  return Boolean(runContext.agentId);
+}
+
 function readStreamStates(): StreamStates {
   const { stdin, stdout, stderr } = process;
 

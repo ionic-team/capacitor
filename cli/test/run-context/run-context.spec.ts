@@ -1,4 +1,4 @@
-import { detectRunContext } from '../../src/run-context';
+import { detectRunContext, isAgentDriven } from '../../src/run-context';
 
 import { ATTACHED, CWD, EXEC_PATH, FIXTURES } from './fixtures';
 
@@ -27,5 +27,25 @@ describe('detectRunContext', () => {
       surface: 'terminal',
       confidence: 'none',
     });
+  });
+});
+
+describe('isAgentDriven', () => {
+  for (const { name, env, streams, cwd, execPath, expected } of FIXTURES) {
+    it(`agrees with the verdict for ${name}`, () => {
+      expect(isAgentDriven(detectRunContext({ env, streams, cwd, execPath }))).toBe(Boolean(expected.agentId));
+    });
+  }
+
+  it('is true for an unrecognised harness, not just a named one', () => {
+    const context = detectRunContext({
+      env: { NEWTOOL_SESSION_ID: 'nt_1' },
+      streams: { tty: [false, false, false], socket: [true, true, true] },
+      cwd: CWD,
+      execPath: EXEC_PATH,
+    });
+
+    expect(context.agentId).toBe('unknown');
+    expect(isAgentDriven(context)).toBe(true);
   });
 });

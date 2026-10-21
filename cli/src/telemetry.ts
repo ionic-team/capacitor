@@ -4,9 +4,9 @@ import { pathExists } from 'fs-extra';
 
 import c from './colors';
 import type { Config, PackageManager } from './definitions';
-import { send } from './ipc';
+import { deliver, send } from './ipc';
 import { output } from './log';
-import { detectRunContext } from './run-context';
+import { detectRunContext, isAgentDriven } from './run-context';
 import type { Confidence, RunContext, Surface } from './run-context';
 import { readConfig, writeConfig } from './sysconfig';
 import type { SystemConfig } from './sysconfig';
@@ -151,18 +151,28 @@ export async function sendMetric<D>(
   data: D,
   runContext: RunContext,
 ): Promise<void> {
-  if (isTelemetryEnabled(process.env, sysconfig, runContext)) {
-    const message: Metric<string, D> = {
-      name,
-      timestamp: new Date().toISOString(),
-      session_id: sysconfig.machine,
-      source: 'capacitor_cli',
-      value: data,
-    };
-
-    await send({ type: 'telemetry', data: message });
-  } else {
+  if (!isTelemetryEnabled(process.env, sysconfig, runContext)) {
     debug('Telemetry is off (user choice, opt-out variable, or CI)--not sending metric');
+
+    return;
+  }
+
+  const message: Metric<string, D> = {
+    name,
+    timestamp: new Date().toISOString(),
+    session_id: sysconfig.machine,
+    source: 'capacitor_cli',
+    value: data,
+  };
+
+  // A developer has a terminal to get back, so delivery is handed to a
+  // detached process and forgotten. An agent sandbox is often torn down the
+  // moment the CLI exits, taking that process with it before the request
+  // leaves the machine — so those runs wait for it instead.
+  if (isAgentDriven(runContext)) {
+    await deliver(message);
+  } else {
+    await send({ type: 'telemetry', data: message });
   }
 }
 
