@@ -2,7 +2,7 @@ import { CI_ENVIRONMENT_VARIABLES } from '@ionic/utils-terminal';
 import { Socket } from 'net';
 
 import { detectDeclared } from './declared';
-import { deriveSurface, scanSignals } from './signals';
+import { NO_TTY_SIGNAL, deriveSurface, scanSignals } from './signals';
 import type { DetectRunContextOptions, RunContext, StreamStates } from './types';
 import { detectUnknownHarness } from './unknown';
 import { detectAgentVersion } from './version';
@@ -12,8 +12,8 @@ export { CONVENTION_DENYLIST, CONVENTION_PATTERN } from './unknown';
 
 /**
  * Any single signal happens legitimately — a `cat` pager, a missing TTY, a
- * local proxy. Three together is what separates a machine-driven run from a
- * developer with an unusual setup.
+ * local proxy. Three together, with no terminal anywhere, is what separates a
+ * machine-driven run from a developer with an unusual setup.
  */
 const HEURISTIC_THRESHOLD = 3;
 
@@ -65,10 +65,13 @@ export function detectRunContext(options: DetectRunContextOptions = {}): RunCont
     };
   }
 
-  // Sandbox traces only corroborate, they never raise a verdict alone: a
-  // loopback proxy and a generated-looking username describe a developer's
-  // local setup as well as they describe a container.
-  const weight = scan.headless.length + (scan.headless.length > 0 ? scan.sandbox.length : 0);
+  // This path exists for harnesses that strip their environment before
+  // invoking the CLI, and those never attach a terminal. Gating on that makes
+  // "someone sitting at a terminal is never reported as an agent" a guarantee
+  // rather than a likelihood, however unusual the rest of their environment
+  // looks — a `cat` pager and a local debug proxy are a developer, not a
+  // container.
+  const weight = scan.headless.includes(NO_TTY_SIGNAL) ? scan.headless.length + scan.sandbox.length : 0;
 
   if (weight >= HEURISTIC_THRESHOLD) {
     return {

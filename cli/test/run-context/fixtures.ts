@@ -256,9 +256,27 @@ export const FIXTURES: readonly RunContextFixture[] = [
     streams: { tty: [false, false, false], socket: [false, false, false] },
   }),
 
+  // Three signals, but a terminal is attached, so the heuristic path never
+  // opens. Without the terminal gate this run would report as an agent.
+  fixture(
+    'tty-with-three-signals',
+    {
+      ALL_PROXY: 'socks5://127.0.0.1:1080',
+      CLICOLOR_FORCE: '1',
+      HTTPS_PROXY: 'http://127.0.0.1:8080',
+      HTTP_PROXY: 'http://127.0.0.1:8080',
+      NO_COLOR: '1',
+      PAGER: 'cat',
+      TERM: 'xterm',
+      USER: 'joey',
+    },
+    { report: true, surface: 'cloud-sandbox', confidence: 'none' },
+    { streams: ATTACHED },
+  ),
+
   // A developer running a local debug proxy. A sandbox signal fires, but with
-  // nothing headless behind it the verdict stays `none`. The `cloud-sandbox`
-  // surface is a known false positive for this setup.
+  // no terminal-less run behind it the verdict stays `none`. The
+  // `cloud-sandbox` surface is a known false positive for this setup.
   fixture(
     'local-debug-proxy',
     {
@@ -272,8 +290,8 @@ export const FIXTURES: readonly RunContextFixture[] = [
     { streams: ATTACHED },
   ),
 
-  // Four sandbox signals and nothing headless. Still `none` — this is the row
-  // that pins sandbox traces never raising a verdict on their own.
+  // Four sandbox signals and a terminal attached. Still `none` — this is the
+  // row that pins sandbox traces never raising a verdict on their own.
   fixture(
     'sandbox-signals-without-headless',
     {

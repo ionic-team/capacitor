@@ -1,5 +1,11 @@
 import type { StreamStates, Surface } from './types';
 
+/**
+ * No standard stream is attached to a terminal. The strongest of the headless
+ * signals, and the one the heuristic verdict is gated on.
+ */
+export const NO_TTY_SIGNAL = 'no-tty';
+
 export interface SignalScan {
   /** Evidence that a machine rather than a person is driving the process. */
   readonly headless: readonly string[];
@@ -61,7 +67,7 @@ function scanHeadless(env: NodeJS.ProcessEnv, streams: StreamStates): string[] {
   const signals: string[] = [];
 
   if (!streams.tty.some(Boolean)) {
-    signals.push('no-tty');
+    signals.push(NO_TTY_SIGNAL);
   }
 
   if (streams.socket.some(Boolean)) {
