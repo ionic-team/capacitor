@@ -87,13 +87,38 @@ function withSeparator(source, { start, end }) {
   return [start, source[after] === ',' ? after + 1 : end];
 }
 
-/** Locates calls opening with `marker`, tracking paren depth so a nested call doesn't end one. */
+/**
+ * Locates calls opening with `marker`, skipping any inside a comment or string literal and
+ * tracking paren depth so a nested call doesn't end one.
+ *
+ * Comments have to be skipped in both directions: a commented-out `.testTarget(` would otherwise
+ * be spliced out, mangling the comment, and an unbalanced quote inside any comment would put the
+ * scanner into string mode and hide every real entry after it.
+ */
 function findCalls(source, marker) {
   const calls = [];
 
   for (let index = 0; index < source.length; index++) {
     if (source[index] === '"') {
       index = skipString(source, index);
+      continue;
+    }
+
+    if (source.startsWith('//', index)) {
+      const newline = source.indexOf('\n', index);
+      if (newline === -1) {
+        break;
+      }
+      index = newline;
+      continue;
+    }
+
+    if (source.startsWith('/*', index)) {
+      const close = source.indexOf('*/', index + 2);
+      if (close === -1) {
+        break;
+      }
+      index = close + 1;
       continue;
     }
 
