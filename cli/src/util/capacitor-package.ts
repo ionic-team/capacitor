@@ -1,81 +1,34 @@
 import { existsSync, realpathSync } from 'fs-extra';
 import { dirname, relative, resolve } from 'path';
-import { major } from 'semver';
 
-import { getCapacitorPackageVersion } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
 
 import { convertToUnixPath } from './fs';
 import { resolveNode } from './node';
 
-/** Capacitor 9 and up builds the iOS platform from source out of the main repo. */
-const SOURCE_PACKAGE_MAJOR = 9;
 const SOURCE_PACKAGE_URL = 'https://github.com/ionic-team/capacitor';
-const SOURCE_PACKAGE_IDENTITY = 'capacitor';
+export const SOURCE_PACKAGE_IDENTITY = 'capacitor';
 const SOURCE_PACKAGE_NAME = new RegExp(`name:\\s*"${SOURCE_PACKAGE_IDENTITY}"`);
 
-/** The npm package the source-based Swift package ships inside. */
+/** Product providing the Cordova compatibility layer. */
+export const CORDOVA_PRODUCT = 'CapacitorCordova';
+
+/** The npm package the Swift package ships inside. */
 const PLATFORM_PACKAGE = '@capacitor/ios';
 
-/** Before Capacitor 9 the platform was consumed as a prebuilt xcframework from a separate repo. */
-const BINARY_PACKAGE_URL = 'https://github.com/ionic-team/capacitor-swift-pm.git';
+/** Plugins published before Capacitor 9 depend on the platform as a prebuilt xcframework. */
 const BINARY_PACKAGE_IDENTITY = 'capacitor-swift-pm';
 
-export type CapacitorRequirement =
-  { kind: 'path'; absolutePath: string } | { kind: 'exact'; version: string } | { kind: 'from'; version: string };
-
-export interface CapacitorPackage {
-  /** SPM package identity, as referenced by `.product(name:package:)`. */
-  identity: string;
-  /** Product providing the Cordova compatibility layer. */
-  cordovaProduct: string;
-  /** True when this resolves to the source package (Capacitor 9+). */
-  sourceBased: boolean;
-  url: string;
-  requirement: CapacitorRequirement;
-}
-
 /**
- * Resolves which Capacitor Swift package generated `Package.swift` files should depend on: the
- * installed `@capacitor/ios` from Capacitor 9, the prebuilt package by version before that.
+ * Resolves the Capacitor Swift package generated `Package.swift` files should depend on: the
+ * `@capacitor/ios` npm already installed in the app, which ships the package alongside the sources.
  *
- * `legacyRequirement` only applies to pre-9 projects, where it preserves each caller's existing
- * requirement style. Source-based projects resolve a path, which carries no version to disagree
- * about between the app package and any generated plugin packages.
+ * Resolving from `node_modules` keeps the native runtime and the `@capacitor/core` bridge it is
+ * versioned against on the same release, with no git tag to line up against the npm version. It
+ * also carries no version for the app package and any generated plugin packages to disagree about.
  */
-export async function resolveCapacitorPackage(
-  config: Config,
-  legacyRequirement: 'exact' | 'from' = 'exact',
-): Promise<CapacitorPackage> {
-  const version = await getCapacitorPackageVersion(config, config.ios.name);
-
-  if (major(version) < SOURCE_PACKAGE_MAJOR) {
-    return {
-      identity: BINARY_PACKAGE_IDENTITY,
-      cordovaProduct: 'Cordova',
-      sourceBased: false,
-      url: BINARY_PACKAGE_URL,
-      requirement: { kind: legacyRequirement, version },
-    };
-  }
-
-  return {
-    identity: SOURCE_PACKAGE_IDENTITY,
-    cordovaProduct: 'CapacitorCordova',
-    sourceBased: true,
-    url: SOURCE_PACKAGE_URL,
-    requirement: installedPackageRequirement(config),
-  };
-}
-
-/**
- * Points at the `@capacitor/ios` npm already installed in the app, which ships the Swift package
- * manifest alongside the sources. Resolving from `node_modules` keeps the native runtime and the
- * `@capacitor/core` bridge it is versioned against on the same release, with no git tag to line up
- * against the npm version on each release.
- */
-function installedPackageRequirement(config: Config): CapacitorRequirement {
+export async function resolveCapacitorPackagePath(config: Config): Promise<string> {
   const packageJsonPath = resolveNode(config.app.rootDir, PLATFORM_PACKAGE, 'package.json');
 
   if (!packageJsonPath) {
@@ -91,7 +44,7 @@ function installedPackageRequirement(config: Config): CapacitorRequirement {
     );
   }
 
-  return { kind: 'path', absolutePath };
+  return absolutePath;
 }
 
 /**
@@ -126,16 +79,13 @@ function realPath(path: string): string | undefined {
   }
 }
 
-/** Renders the `.package(...)` entry, with any path made relative to the file being written. */
-export function renderCapacitorPackage(pkg: CapacitorPackage, fromDir: string): string {
-  if (pkg.requirement.kind === 'path') {
-    const relPath = convertToUnixPath(relative(fromDir, pkg.requirement.absolutePath));
-    // Pin the identity: for a path dependency SPM would otherwise derive it from the directory
-    // name, which breaks `.product(package:)` when the checkout is not named "capacitor".
-    return `.package(name: "${pkg.identity}", path: "${relPath}")`;
-  }
+/** Renders the `.package(...)` entry, with the path made relative to the file being written. */
+export function renderCapacitorPackage(absolutePath: string, fromDir: string): string {
+  const relPath = convertToUnixPath(relative(fromDir, absolutePath));
 
-  return `.package(url: "${pkg.url}", ${renderRequirement(pkg.requirement)})`;
+  // Pin the identity: for a path dependency SPM would otherwise derive it from the directory
+  // name, which breaks `.product(package:)` when the checkout is not named "capacitor".
+  return `.package(name: "${SOURCE_PACKAGE_IDENTITY}", path: "${relPath}")`;
 }
 
 /**
@@ -146,14 +96,10 @@ export function renderCapacitorPackage(pkg: CapacitorPackage, fromDir: string): 
  * `Capacitor` product — so a plugin left untouched would either fail to resolve or link a second
  * copy of the framework. Rewriting keeps the whole graph on one identity.
  */
-export function rewriteCapacitorDependency(content: string, pkg: CapacitorPackage, fromDir: string): string {
-  let rewritten = replacePackageCalls(content, renderCapacitorPackage(pkg, fromDir));
+export function rewriteCapacitorDependency(content: string, absolutePath: string, fromDir: string): string {
+  const rewritten = replacePackageCalls(content, renderCapacitorPackage(absolutePath, fromDir));
 
-  for (const identity of [BINARY_PACKAGE_IDENTITY, SOURCE_PACKAGE_IDENTITY]) {
-    rewritten = rewritten.split(`package: "${identity}"`).join(`package: "${pkg.identity}"`);
-  }
-
-  return rewritten;
+  return rewritten.split(`package: "${BINARY_PACKAGE_IDENTITY}"`).join(`package: "${SOURCE_PACKAGE_IDENTITY}"`);
 }
 
 /** Reads the version an existing `Package.swift` pins Capacitor to, if it pins one. */
@@ -351,15 +297,4 @@ function startOfEntry(content: string, start: number): number {
   }
 
   return content[cursor] === ',' ? cursor : start;
-}
-
-function renderRequirement(requirement: CapacitorRequirement): string {
-  switch (requirement.kind) {
-    case 'exact':
-      return `exact: "${requirement.version}"`;
-    case 'from':
-      return `from: "${requirement.version}"`;
-    case 'path':
-      throw new Error('path requirements are rendered by renderCapacitorPackage');
-  }
 }
