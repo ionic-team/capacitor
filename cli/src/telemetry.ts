@@ -81,13 +81,23 @@ const TELEMETRY_ARGUMENT_ALLOWLIST = new Set(['android', 'ios', 'web']);
 const TELEMETRY_ERROR_MAX_LENGTH = 500;
 
 /**
+ * Shortest value worth scrubbing out of a reported error. An empty string would
+ * match between every character, and a one- or two-character option value--a
+ * port, a target index--appears throughout unrelated output, so redacting
+ * either destroys the error instead of sanitizing it.
+ */
+const TELEMETRY_REDACTION_MIN_LENGTH = 3;
+
+/**
  * The characters a dependency spec may contain to be reported as-is. A version
  * range has none of the `:/@` a URL or path spec needs, so specs such as
  * `git+https://x-access-token:<token>@github.com/acme/plugin.git` and
  * `file:/Users/<name>/dev/plugin` are reported as {@link NON_REGISTRY_VERSION}
- * instead of shipping a credential or a local path.
+ * instead of shipping a credential or a local path. The pnpm and yarn workspace
+ * protocols are allowed through as the only exception, since they resolve
+ * within the repo and so cannot carry either.
  */
-const TELEMETRY_SAFE_VERSION_PATTERN = /^[\w.\-+^~><=|* ]+$/;
+const TELEMETRY_SAFE_VERSION_PATTERN = /^(?:(?:workspace|catalog):)?[\w.\-+^~><=|* ]*$/;
 
 const NON_REGISTRY_VERSION = 'non-registry';
 
@@ -124,13 +134,15 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
       getTelemetryVersion(v),
     ]);
 
+    const options = getTelemetryOptions(cmd);
+
     const data: CommandMetricData = {
       app_id: await getAppIdentifier(config),
       command,
       arguments: getTelemetryArguments(cmd),
-      options: JSON.stringify(getTelemetryOptions(cmd)),
+      options: JSON.stringify(options),
       duration,
-      error: getTelemetryError(cmd, error),
+      error: getTelemetryError(cmd, error, config, options),
       node_version: process.version,
       os: config.cli.os,
       ios_package_manager: await getIOSPackageManager(config),
@@ -181,27 +193,52 @@ function isTelemetrySafeValue(name: string, value: unknown): value is string | b
 }
 
 /**
+ * The signing credentials `capacitor.config` can supply. `cap build` falls back
+ * to the config for each of these when the flag is absent, and the resolved
+ * value still reaches the `xcodebuild` and `jarsigner` command lines--so it can
+ * come back in their output without ever having appeared in `cmd.opts()`.
+ */
+function getConfiguredCredentials(config: Config): string[] {
+  return [
+    config.android.buildOptions.keystorePath,
+    config.android.buildOptions.keystorePassword,
+    config.android.buildOptions.keystoreAlias,
+    config.android.buildOptions.keystoreAliasPassword,
+    config.ios.buildOptions.teamId,
+    config.ios.buildOptions.signingCertificate,
+    config.ios.buildOptions.provisioningProfile,
+  ].filter((value): value is string => typeof value === 'string');
+}
+
+/**
  * Build the reported error, scrubbed of every option value and positional
- * argument the rest of the payload drops, then truncated.
+ * argument the rest of the payload drops, plus the signing credentials the
+ * config can supply in place of a flag, then truncated.
  *
  * Failed subprocesses rethrow the tool's combined output, which echoes back
  * the very values that were redacted out of the option map--`xcodebuild`
  * prints its command-line build settings, `jarsigner` prints the keystore it
  * was pointed at.
  */
-export function getTelemetryError(cmd: Command, error: any): string | null {
+export function getTelemetryError(
+  cmd: Command,
+  error: any,
+  config: Config,
+  options: Record<string, string | boolean | null> = getTelemetryOptions(cmd),
+): string | null {
   if (!error) {
     return null;
   }
 
-  const options = cmd.opts();
+  const values = cmd.opts();
   const redacted = [
-    ...Object.entries(getTelemetryOptions(cmd))
+    ...Object.entries(options)
       .filter(([, value]) => value === null)
-      .map(([name]) => options[name]),
+      .map(([name]) => values[name]),
     ...cmd.args.filter((arg) => !TELEMETRY_ARGUMENT_ALLOWLIST.has(arg)),
+    ...getConfiguredCredentials(config),
   ]
-    .filter((value): value is string => typeof value === 'string')
+    .filter((value): value is string => typeof value === 'string' && value.length >= TELEMETRY_REDACTION_MIN_LENGTH)
     .sort((a, b) => b.length - a.length);
 
   const message = redacted.reduce<string>(

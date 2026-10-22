@@ -20,6 +20,15 @@ function makeConfig(ios: Partial<IOSConfig>): Config {
   return { ios } as unknown as Config;
 }
 
+function makeBuildConfig(
+  buildOptions: { android?: Record<string, string>; ios?: Record<string, string> } = {},
+): Config {
+  return {
+    android: { buildOptions: buildOptions.android ?? {} },
+    ios: { buildOptions: buildOptions.ios ?? {} },
+  } as unknown as Config;
+}
+
 describe('getIOSPackageManager', () => {
   beforeEach(() => {
     mockedPathExists.mockReset();
@@ -226,7 +235,7 @@ describe('getTelemetryOptions', () => {
 
 describe('getTelemetryError', () => {
   it('reports null when the command succeeded', () => {
-    expect(getTelemetryError(captureBuild(['build', 'android']), undefined)).toBeNull();
+    expect(getTelemetryError(captureBuild(['build', 'android']), undefined, makeBuildConfig())).toBeNull();
   });
 
   it('scrubs redacted option values out of rethrown subprocess output', () => {
@@ -250,6 +259,7 @@ describe('getTelemetryError', () => {
         '',
         'xcodebuild: error: Unable to find a destination.',
       ].join('\n'),
+      makeBuildConfig(),
     );
 
     expect(error).not.toContain(XCODE_TEAM_ID);
@@ -270,17 +280,68 @@ describe('getTelemetryError', () => {
       'upload',
     ]);
 
-    const error = getTelemetryError(cmd, `jarsigner: unable to open ${KEYSTORE_PATH} for alias upload`);
+    const error = getTelemetryError(
+      cmd,
+      `jarsigner: unable to open ${KEYSTORE_PATH} for alias upload`,
+      makeBuildConfig(),
+    );
 
     for (const secret of [KEYSTORE_PATH, KEYSTORE_PASS, 'upload']) {
       expect(error).not.toContain(secret);
     }
   });
 
+  it('scrubs the team ID the config supplies when the flag is absent', () => {
+    const cmd = captureBuild(['build', 'ios']);
+
+    const error = getTelemetryError(
+      cmd,
+      ['Build settings from command line:', `    DEVELOPMENT_TEAM = ${XCODE_TEAM_ID}`].join('\n'),
+      makeBuildConfig({ ios: { teamId: XCODE_TEAM_ID } }),
+    );
+
+    expect(error).not.toContain(XCODE_TEAM_ID);
+    expect(error).toContain('<redacted>');
+  });
+
+  it('scrubs the keystore credentials the config supplies when the flags are absent', () => {
+    const cmd = captureBuild(['build', 'android']);
+
+    const error = getTelemetryError(
+      cmd,
+      `jarsigner: unable to open ${KEYSTORE_PATH} with -storepass ${KEYSTORE_PASS}`,
+      makeBuildConfig({ android: { keystorePath: KEYSTORE_PATH, keystorePassword: KEYSTORE_PASS } }),
+    );
+
+    for (const secret of [KEYSTORE_PATH, KEYSTORE_PASS]) {
+      expect(error).not.toContain(secret);
+    }
+  });
+
+  it('leaves the error intact when an option value is an empty string', () => {
+    const cmd = captureBuild(['build', 'android', '--keystorepass', '']);
+
+    expect(getTelemetryError(cmd, 'keystore password was not accepted', makeBuildConfig())).toBe(
+      'keystore password was not accepted',
+    );
+  });
+
+  it('leaves a value too short to scrub without destroying the error alone', () => {
+    const cmd = captureRun(['run', 'android', '--target', '1']);
+
+    expect(getTelemetryError(cmd, 'no device matched target 1 of 10', makeBuildConfig())).toBe(
+      'no device matched target 1 of 10',
+    );
+  });
+
   it('scrubs positional arguments that are dropped from the reported arguments', () => {
     const cmd = captureInit(['init', 'My Secret App', 'com.example.internal']);
 
-    const error = getTelemetryError(cmd, 'Error: "My Secret App" (com.example.internal) is not a valid app');
+    const error = getTelemetryError(
+      cmd,
+      'Error: "My Secret App" (com.example.internal) is not a valid app',
+      makeBuildConfig(),
+    );
 
     expect(error).not.toContain('My Secret App');
     expect(error).not.toContain('com.example.internal');
@@ -289,11 +350,13 @@ describe('getTelemetryError', () => {
   it('keeps allowlisted platform arguments readable', () => {
     const cmd = captureBuild(['build', 'android']);
 
-    expect(getTelemetryError(cmd, 'android platform has not been added')).toBe('android platform has not been added');
+    expect(getTelemetryError(cmd, 'android platform has not been added', makeBuildConfig())).toBe(
+      'android platform has not been added',
+    );
   });
 
   it('truncates long output so a failed build cannot ship its whole log', () => {
-    const error = getTelemetryError(captureBuild(['build', 'android']), 'x'.repeat(10_000));
+    const error = getTelemetryError(captureBuild(['build', 'android']), 'x'.repeat(10_000), makeBuildConfig());
 
     expect(error).toHaveLength(500);
   });
@@ -301,7 +364,7 @@ describe('getTelemetryError', () => {
   it('prefers the error message when there is one', () => {
     const cmd = captureBuild(['build', 'android', '--keystorepass', KEYSTORE_PASS]);
 
-    expect(getTelemetryError(cmd, new Error('android platform has not been added'))).toBe(
+    expect(getTelemetryError(cmd, new Error('android platform has not been added'), makeBuildConfig())).toBe(
       'android platform has not been added',
     );
   });
@@ -321,6 +384,13 @@ describe('getTelemetryVersion', () => {
   it.each(['7.0.0', '^7.0.0', '~7.0.0-beta.1', '>=6 <8', '*', 'latest'])('reports the version range %s', (spec) => {
     expect(getTelemetryVersion(spec)).toBe(spec);
   });
+
+  it.each(['workspace:*', 'workspace:^7.0.0', 'catalog:', 'catalog:default'])(
+    'reports the workspace protocol spec %s',
+    (spec) => {
+      expect(getTelemetryVersion(spec)).toBe(spec);
+    },
+  );
 
   it.each([
     'git+https://x-access-token:ghp_exampletoken@github.com/acme/plugin.git#v1',
