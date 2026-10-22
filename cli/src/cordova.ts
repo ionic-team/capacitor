@@ -5,6 +5,7 @@ import type { PlistObject } from 'plist';
 import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
+import { removeLegacyCordovaPluginsConfig, setAndroidCleartext } from './android/network-security-config';
 import c from './colors';
 import type { Config } from './definitions';
 import { fatal } from './errors';
@@ -867,30 +868,19 @@ export async function writeCordovaAndroidManifest(
     });
   });
   const cleartextString = 'android:usesCleartextTraffic="true"';
-  const networkSecurityConfigValue =
-    cleartext || config.app.extConfig.server?.cleartext || applicationXMLAttributes.includes(cleartextString)
-      ? 'android:networkSecurityConfig="@xml/network_security_config"'
-      : '';
-  const networkSecurityConfigDir = join(config.android.cordovaPluginsDirAbs, 'src', 'main', 'res', 'xml');
-  const networkSecurityConfigPath = join(networkSecurityConfigDir, 'network_security_config.xml');
-  if (networkSecurityConfigValue) {
-    await ensureDir(networkSecurityConfigDir);
-    await writeFile(
-      networkSecurityConfigPath,
-      `<?xml version="1.0" encoding="utf-8"?>
-<network-security-config>
-    <base-config cleartextTrafficPermitted="true" />
-</network-security-config>
-`,
-    );
-  } else if (await pathExists(networkSecurityConfigPath)) {
-    await remove(networkSecurityConfigPath);
-  }
+  const cleartextEnabled = !!(
+    cleartext ||
+    config.app.extConfig.server?.cleartext ||
+    applicationXMLAttributes.includes(cleartextString)
+  );
+  // Cleartext is applied to the app module, since the Cordova plugins module is not linked into Capacitor-only apps
+  await removeLegacyCordovaPluginsConfig(config);
+  await setAndroidCleartext(config, cleartextEnabled);
 
   let content = `<?xml version='1.0' encoding='utf-8'?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:amazon="http://schemas.amazon.com/apk/res/android">
-<application ${applicationXMLAttributes.filter((attr) => !attr.includes('android:usesCleartextTraffic')).join('\n')} ${networkSecurityConfigValue}>
+<application ${applicationXMLAttributes.filter((attr) => !attr.includes('android:usesCleartextTraffic')).join('\n')}>
 ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
