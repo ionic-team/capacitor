@@ -361,7 +361,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               firebaseMessagingVersion: '25.0.1',
               playServicesLocationVersion: '21.4.0',
               androidxBrowserVersion: '1.10.0',
-              androidxCoreKTXVersion: '1.19.0',
+              androidxCoreKTXVersion: '1.19.1',
               androidxMaterialVersion: '1.14.0',
               androidxExifInterfaceVersion: '1.4.2',
               googleMapsPlayServicesVersion: '20.0.0',
