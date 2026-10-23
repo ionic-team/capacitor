@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
@@ -196,10 +197,14 @@ public class SystemBars extends Plugin {
             Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
             Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
             boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+            // Below API 30 the window is already resized by the system for the IME (adjustResize) and
+            // WindowInsetsCompat can only approximate the IME inset, so padding for it as well would
+            // shrink the WebView twice. See https://github.com/ionic-team/capacitor/issues/8601
+            boolean padForIme = keyboardVisible && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R;
 
             if (shouldPassthroughInsets) {
                 // We need to correct for a possible shown IME
-                v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
+                v.setPadding(0, 0, 0, padForIme ? imeInsets.bottom : 0);
 
                 WindowInsetsCompat newInsets = new WindowInsetsCompat.Builder(insets)
                     .setInsets(
@@ -223,7 +228,7 @@ public class SystemBars extends Plugin {
                 systemBarsInsets.left,
                 systemBarsInsets.top,
                 systemBarsInsets.right,
-                keyboardVisible ? imeInsets.bottom : systemBarsInsets.bottom
+                padForIme ? imeInsets.bottom : systemBarsInsets.bottom
             );
 
             // Returning `WindowInsetsCompat.CONSUMED` breaks recalculation of safe area insets
