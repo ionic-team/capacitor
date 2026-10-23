@@ -18,6 +18,7 @@ export { WebPlugin, ListenerCallback } from './web-plugin';
 
 // Core Plugins APIs
 export {
+  Foldable,
   SystemBars,
   SystemBarType,
   SystemBarsStyle,
