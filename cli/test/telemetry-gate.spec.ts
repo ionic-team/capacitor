@@ -39,18 +39,39 @@ describe('isTelemetryDisabledByEnv', () => {
 });
 
 describe('isTelemetryEnabled', () => {
-  /**
-   * Consent is opt-out, and only the interactive path ever writes the default.
-   * An agent sandbox never reaches that path, so reading an unset value as "no"
-   * would drop the entire population this feature exists to report on.
-   */
-  it('treats unset consent as enabled', () => {
-    expect(isTelemetryEnabled({}, {}, context())).toBe(true);
-  });
+  const agent = context({ agentId: 'claude-code', confidence: 'declared' });
 
   it('respects an explicit opt-in and opt-out', () => {
     expect(isTelemetryEnabled({}, { telemetry: true }, context())).toBe(true);
     expect(isTelemetryEnabled({}, { telemetry: false }, context())).toBe(false);
+  });
+
+  /**
+   * An explicit choice is a choice wherever it was made, so a stored opt-in
+   * still counts on a run with no terminal attached.
+   */
+  it('honours a stored opt-in on a run with nobody watching', () => {
+    expect(isTelemetryEnabled({}, { telemetry: true }, agent)).toBe(true);
+    expect(isTelemetryEnabled({}, { telemetry: false }, agent)).toBe(false);
+  });
+
+  /**
+   * Only the interactive path ever writes the default, and an agent sandbox
+   * never reaches it — reading an unset value as "no" there would drop the
+   * entire population this feature exists to report on.
+   */
+  it('treats unset consent as enabled for an agent-driven run', () => {
+    expect(isTelemetryEnabled({}, {}, agent)).toBe(true);
+    expect(isTelemetryEnabled({}, {}, context({ agentId: 'unknown', confidence: 'heuristic' }))).toBe(true);
+  });
+
+  /**
+   * The notice is only ever printed at a terminal. A first run inside a Docker
+   * build, a git hook or `cap sync | tee` has had no chance to show it, so
+   * reporting from there would put the data ahead of the disclosure.
+   */
+  it('treats unset consent as disabled when no agent is behind the run', () => {
+    expect(isTelemetryEnabled({}, {}, context())).toBe(false);
   });
 
   it('is false on CI even with consent stored', () => {
@@ -61,7 +82,7 @@ describe('isTelemetryEnabled', () => {
     const env = { CAP_TELEMETRY_DISABLED: '1' };
 
     expect(isTelemetryEnabled(env, { telemetry: true }, context())).toBe(false);
-    expect(isTelemetryEnabled(env, {}, context({ agentId: 'claude-code', confidence: 'declared' }))).toBe(false);
+    expect(isTelemetryEnabled(env, {}, agent)).toBe(false);
   });
 });
 
@@ -144,6 +165,13 @@ describe('sendMetric', () => {
 
   it('sends nothing at all when telemetry is off', async () => {
     await sendMetric({ ...sysconfig, telemetry: false }, 'capacitor_cli_command', {}, context());
+
+    expect(mockedSend).not.toHaveBeenCalled();
+    expect(mockedDeliver).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing for a non-agent run that has never been shown the notice', async () => {
+    await sendMetric({ machine: 'machine-1' }, 'capacitor_cli_command', {}, context());
 
     expect(mockedSend).not.toHaveBeenCalled();
     expect(mockedDeliver).not.toHaveBeenCalled();

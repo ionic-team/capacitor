@@ -46,7 +46,7 @@ export function detectRunContext(options: DetectRunContextOptions = {}): RunCont
     return {
       report: true,
       agentId: declared.id,
-      agentVersion: detectAgentVersion(env, declared.id, execPath),
+      agentVersion: detectAgentVersion(env, declared.id),
       surface,
       confidence: 'declared',
       sessionVar: declared.sessionVar,

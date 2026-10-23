@@ -11,20 +11,21 @@ import { overrideFor } from './registry';
 const AI_AGENT_PATTERN = /^[A-Za-z0-9-]+_(\d[\d-]*)_agent$/;
 
 /**
- * A version-shaped segment in an installation path, e.g. a package cache
- * directory ending `.../claude-code/2.1.236/cli.js`.
- */
-const PATH_VERSION_PATTERN = /(?:^|[/\\])v?(\d+\.\d+\.\d+(?:[-+][\w.]+)?)(?:[/\\]|$)/;
-
-/**
  * Resolve the harness version from the first source that carries one.
  *
  * "First source" means first *present*, not first valid: a harness that sets
  * `AI_AGENT` to something malformed reports `unknown` rather than falling
  * through to a variable it never set.
+ *
+ * Both sources are environment variables by design. An earlier revision also
+ * read a version-shaped segment out of the executable path, which cannot work:
+ * the executable is always the Node binary running the CLI, never the
+ * harness's own entrypoint, so every version-manager layout
+ * (`.../node/v22.14.0/bin/node` and friends) reported the user's Node version
+ * as the agent's. A harness we can't name reports `unknown`.
  */
-export function detectAgentVersion(env: NodeJS.ProcessEnv, agentId: string, execPath: string): string {
-  const raw = fromAiAgent(env) ?? fromVendorVariable(env, agentId) ?? fromExecutablePath(execPath);
+export function detectAgentVersion(env: NodeJS.ProcessEnv, agentId: string): string {
+  const raw = fromAiAgent(env) ?? fromVendorVariable(env, agentId);
 
   return raw && valid(raw) ? raw : 'unknown';
 }
@@ -56,10 +57,6 @@ function fromVendorVariable(env: NodeJS.ProcessEnv, agentId: string): string | u
   }
 
   return override.versionIsJson ? (fromJson(value) ?? value) : value;
-}
-
-function fromExecutablePath(execPath: string): string | undefined {
-  return PATH_VERSION_PATTERN.exec(execPath)?.[1];
 }
 
 /**

@@ -129,8 +129,9 @@ async function reportCommand(config: Config, cmd: Command, duration: number, err
   let sysconfig = await readConfig();
 
   // The notice and the persisted default only mean anything where a person can
-  // see them. A headless run reports under the opt-out default without
-  // committing a choice it was never offered.
+  // see them, so a headless run leaves the choice unmade rather than
+  // committing one it was never offered. `isTelemetryEnabled` decides what an
+  // unmade choice means for the run in hand.
   if (isInteractive() && !error && typeof sysconfig.telemetry === 'undefined') {
     // Telemetry is opt-out; turn telemetry on then inform the user how to opt-out.
     sysconfig = { ...sysconfig, telemetry: true };
@@ -152,7 +153,7 @@ export async function sendMetric<D>(
   runContext: RunContext,
 ): Promise<void> {
   if (!isTelemetryEnabled(process.env, sysconfig, runContext)) {
-    debug('Telemetry is off (user choice, opt-out variable, or CI)--not sending metric');
+    debug('Telemetry is off (user choice, unshown notice, opt-out variable, or CI)--not sending metric');
 
     return;
   }
@@ -183,10 +184,15 @@ export function isTelemetryDisabledByEnv(env: NodeJS.ProcessEnv): boolean {
 /**
  * Whether a metric may be delivered for this run.
  *
- * Consent is opt-out, so an unset value means yes. Only the interactive path
- * ever writes the default, and an agent sandbox never reaches it — reading
- * `undefined` as "no" here would silently drop the entire population this
- * reports on.
+ * An explicit choice always wins, whatever the run looks like. Only the
+ * *default* for an unmade choice depends on the run: an agent sandbox never
+ * reaches the interactive path that writes the default, so reading `undefined`
+ * as "no" there would silently drop the entire population this reports on.
+ *
+ * Everywhere else `undefined` stays "no", because the notice is only ever
+ * printed at a terminal — a first run inside a Docker build, a git hook or
+ * `cap sync | tee` has had no chance to show it, and reporting from there
+ * would put the data ahead of the disclosure.
  */
 export function isTelemetryEnabled(
   env: NodeJS.ProcessEnv,
@@ -201,7 +207,11 @@ export function isTelemetryEnabled(
     return false;
   }
 
-  return sysconfig.telemetry !== false;
+  if (typeof sysconfig.telemetry === 'boolean') {
+    return sysconfig.telemetry;
+  }
+
+  return isAgentDriven(runContext);
 }
 
 /**

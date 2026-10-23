@@ -108,6 +108,30 @@ export const FIXTURES: readonly RunContextFixture[] = [
     },
   ),
 
+  // Claude Code with no version variable of its own, launched by a Node
+  // installed through nvm. The executable path carries a version-shaped
+  // segment that belongs to Node, not the harness — this row pins that it is
+  // never mistaken for one.
+  fixture(
+    'claude-code-nvm-node',
+    {
+      CLAUDECODE: '1',
+      CLAUDE_CODE_ENTRYPOINT: 'cli',
+      CLAUDE_CODE_SESSION_ID: 'cc_nvm',
+      TERM: 'xterm-256color',
+      USER: 'joey',
+    },
+    {
+      report: true,
+      agentId: 'claude-code',
+      agentVersion: 'unknown',
+      surface: 'terminal',
+      confidence: 'declared',
+      sessionVar: 'CLAUDE_CODE_SESSION_ID',
+    },
+    { execPath: '/Users/joey/.nvm/versions/node/v22.14.0/bin/node' },
+  ),
+
   fixture(
     'codex',
     {
