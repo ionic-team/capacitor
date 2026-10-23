@@ -78,7 +78,7 @@ internal extension InstanceDescriptor {
                 appendedUserAgentString = agentString
             }
             if let agentString = (config[keyPath: "ios.overrideUserAgent"] as? String) ?? (config[keyPath: "overrideUserAgent"] as? String) {
-                overridenUserAgentString = agentString
+                overriddenUserAgentString = agentString
             }
             if let colorString = (config[keyPath: "ios.backgroundColor"] as? String) ?? (config[keyPath: "backgroundColor"] as? String),
                let color = UIColor.capacitor.color(fromHex: colorString) {

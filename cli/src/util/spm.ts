@@ -148,7 +148,7 @@ let package = Package(
         ? `, traits: [${traits
             .map((t) => {
               // Any trait is written with quotes, with the exception of .defaults
-              return /^\.?defaults?$/i.test(t) ? '.defaults' : `"${t}"`;
+              return /^\\.?defaults?$/i.test(t) ? '.defaults' : `"${t}"`;
             })
             .join(', ')}]`
         : '';
@@ -289,7 +289,7 @@ export async function checkSwiftToolsVersion(config: Config, version: string | u
     return null;
   }
 
-  const swiftToolsVersionRegex = /^[0-9]+\.[0-9]+(\.[0-9]+)?$/;
+  const swiftToolsVersionRegex = /^[0-9]+\\.[0-9]+(\\.[0-9]+)?$/;
 
   if (!swiftToolsVersionRegex.test(version)) {
     return (

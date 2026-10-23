@@ -1,5 +1,5 @@
 /**
- Notificaton types for NotificationCenter and NSNotificationCenter
+ Notification types for NotificationCenter and NSNotificationCenter
 
  We want to include `capacitor` in the name(s) to uniquely identify these even though it can make the names long
  and the deprecated notifications are only here for backwards compatibility.
