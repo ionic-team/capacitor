@@ -47,6 +47,7 @@
     "@ionic/cli-framework-output": "^2.2.8",
     "@ionic/utils-subprocess": "^3.0.1",
     "@ionic/utils-terminal": "^2.3.5",
+    "agent-cli-detector": "^0.1.7",
     "commander": "^12.1.0",
     "debug": "^4.4.0",
     "env-paths": "^2.2.0",

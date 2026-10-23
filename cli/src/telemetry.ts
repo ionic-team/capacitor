@@ -4,8 +4,10 @@ import { pathExists } from 'fs-extra';
 
 import c from './colors';
 import type { Config, PackageManager } from './definitions';
-import { send } from './ipc';
+import { deliver, send } from './ipc';
 import { output } from './log';
+import { detectRunContext, isAgentDriven } from './run-context';
+import type { Confidence, RunContext, Surface } from './run-context';
 import { readConfig, writeConfig } from './sysconfig';
 import type { SystemConfig } from './sysconfig';
 import { getCommandOutput } from './util/subprocess';
@@ -18,8 +20,17 @@ const THANK_YOU =
   `\nInformation about the data we collect is available on our website: ${c.strong('https://capacitorjs.com/docs/next/cli/telemetry')}` +
   `\nYou can disable telemetry at any time by using the ${c.input('npx cap telemetry off')} command.`;
 
+/**
+ * Which identifier `project_id` was derived from. A `session` id is unique to
+ * one agent session, so repeated runs against an uncommitted project still
+ * count more than once — downstream analysis needs to know that.
+ */
+export type ProjectIdSource = 'repository' | 'session' | 'none';
+
 export interface CommandMetricData {
   app_id: string;
+  project_id: string | null;
+  project_id_source: ProjectIdSource;
   command: string;
   arguments: string;
   options: string;
@@ -28,6 +39,11 @@ export interface CommandMetricData {
   node_version: string;
   os: string;
   ios_package_manager: PackageManager | 'unknown';
+  surface: Surface;
+  confidence: Confidence;
+  agent_id?: string;
+  agent_version?: string;
+  agent_detected_by?: string;
 }
 
 export interface Metric<N extends string, D> {
@@ -47,7 +63,6 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
     // element or second to last if there are additional options (via `.allowUnknownOption()`)
     const lastArg = actionArgs[actionArgs.length - 1];
     const cmd: Command = lastArg instanceof Command ? lastArg : actionArgs[actionArgs.length - 2];
-    const command = getFullCommandName(cmd);
     let error: any;
 
     try {
@@ -57,55 +72,86 @@ export function telemetryAction(config: Config, action: CommanderAction): Comman
     }
 
     const end = new Date();
-    const duration = end.getTime() - start.getTime();
 
-    const packages = Object.entries({
-      ...config.app.package.devDependencies,
-      ...config.app.package.dependencies,
-    });
-
-    // Only collect packages in the capacitor org:
-    // https://www.npmjs.com/org/capacitor
-    const capacitorPackages = packages.filter(([k]) => k.startsWith('@capacitor/'));
-
-    const versions = capacitorPackages.map(([k, v]) => [
-      `${k.replace(/^@capacitor\//, '').replace(/-/g, '_')}_version`,
-      v,
-    ]);
-
-    const data: CommandMetricData = {
-      app_id: await getAppIdentifier(config),
-      command,
-      arguments: cmd.args.join(' '),
-      options: JSON.stringify(cmd.opts()),
-      duration,
-      error: error ? (error.message ? error.message : String(error)) : null,
-      node_version: process.version,
-      os: config.cli.os,
-      ios_package_manager: await getIOSPackageManager(config),
-      ...Object.fromEntries(versions),
-    };
-
-    debug('metric payload: %O', data);
-
-    if (isInteractive()) {
-      let sysconfig = await readConfig();
-
-      if (!error && typeof sysconfig.telemetry === 'undefined') {
-        // Telemetry is opt-out; turn telemetry on then inform the user how to opt-out.
-        sysconfig = { ...sysconfig, telemetry: true };
-        await writeConfig(sysconfig);
-
-        output.write(THANK_YOU);
-      }
-
-      await sendMetric(sysconfig, 'capacitor_cli_command', data);
-    }
+    await reportCommand(config, cmd, end.getTime() - start.getTime(), error);
 
     if (error) {
       throw error;
     }
   };
+}
+
+/**
+ * Build and deliver the metric for one completed command.
+ */
+async function reportCommand(config: Config, cmd: Command, duration: number, error: any): Promise<void> {
+  // Read before detection and before stored consent, so the opt-out holds in
+  // environments with no filesystem to have stored one.
+  if (isTelemetryDisabledByEnv(process.env)) {
+    debug('CAP_TELEMETRY_DISABLED is set--not collecting');
+
+    return;
+  }
+
+  const runContext = detectRunContext();
+
+  let sysconfig = await readConfig();
+
+  // The notice and the persisted default only mean anything where a person can
+  // see them, so a headless run leaves the choice unmade rather than
+  // committing one it was never offered.
+  if (isInteractive() && !error && typeof sysconfig.telemetry === 'undefined') {
+    // Telemetry is opt-out; turn telemetry on then inform the user how to opt-out.
+    sysconfig = { ...sysconfig, telemetry: true };
+    await writeConfig(sysconfig);
+
+    output.write(THANK_YOU);
+  }
+
+  // Settled before the payload is built rather than at delivery: identifying
+  // the project walks the whole commit graph.
+  if (!isTelemetryEnabled(process.env, sysconfig, runContext)) {
+    debug('Telemetry is off for this run--not collecting');
+
+    return;
+  }
+
+  const packages = Object.entries({
+    ...config.app.package.devDependencies,
+    ...config.app.package.dependencies,
+  });
+
+  // Only collect packages in the capacitor org:
+  // https://www.npmjs.com/org/capacitor
+  const capacitorPackages = packages.filter(([k]) => k.startsWith('@capacitor/'));
+
+  const versions = capacitorPackages.map(([k, v]) => [
+    `${k.replace(/^@capacitor\//, '').replace(/-/g, '_')}_version`,
+    v,
+  ]);
+
+  // Both identifiers derive from this, and `git rev-list --max-parents=0`
+  // walks the whole history — so it is fetched once for the pair.
+  const firstCommit = await getFirstCommit(config);
+
+  const data: CommandMetricData = {
+    app_id: await getAppIdentifier(firstCommit),
+    ...(await getProjectIdentity(firstCommit, runContext)),
+    command: getFullCommandName(cmd),
+    arguments: cmd.args.join(' '),
+    options: JSON.stringify(cmd.opts()),
+    duration,
+    error: error ? (error.message ? error.message : String(error)) : null,
+    node_version: process.version,
+    os: config.cli.os,
+    ios_package_manager: await getIOSPackageManager(config),
+    ...runContextFields(runContext),
+    ...Object.fromEntries(versions),
+  };
+
+  debug('metric payload: %O', data);
+
+  await sendMetric(sysconfig, 'capacitor_cli_command', data, runContext);
 }
 
 /**
@@ -115,20 +161,134 @@ export async function sendMetric<D>(
   sysconfig: Pick<SystemConfig, 'machine' | 'telemetry'>,
   name: string,
   data: D,
+  runContext: RunContext,
 ): Promise<void> {
-  if (sysconfig.telemetry && isInteractive()) {
-    const message: Metric<string, D> = {
-      name,
-      timestamp: new Date().toISOString(),
-      session_id: sysconfig.machine,
-      source: 'capacitor_cli',
-      value: data,
-    };
+  if (!isTelemetryEnabled(process.env, sysconfig, runContext)) {
+    debug('Telemetry is off (user choice, unshown notice, opt-out variable, or CI)--not sending metric');
 
-    await send({ type: 'telemetry', data: message });
-  } else {
-    debug('Telemetry is off (user choice, non-interactive terminal, or CI)--not sending metric');
+    return;
   }
+
+  const message: Metric<string, D> = {
+    name,
+    timestamp: new Date().toISOString(),
+    session_id: sysconfig.machine,
+    source: 'capacitor_cli',
+    value: data,
+  };
+
+  if (needsAwaitedDelivery(runContext)) {
+    await deliver(message);
+  } else {
+    await send({ type: 'telemetry', data: message });
+  }
+}
+
+/**
+ * Whether the POST has to finish before the CLI exits.
+ *
+ * Delivery normally goes to a forked process and costs the command nothing.
+ * That process is not `detached` and still has to cold-start Node before it
+ * reaches the network, so an environment reclaimed the moment the CLI returns
+ * takes it with it mid-request. Anything that outlives the command — a
+ * harness on a developer's machine included — detaches like a human run.
+ */
+export function needsAwaitedDelivery(runContext: RunContext): boolean {
+  return isAgentDriven(runContext) && runContext.surface === 'cloud-sandbox';
+}
+
+export function isTelemetryDisabledByEnv(env: NodeJS.ProcessEnv): boolean {
+  return Boolean(env.CAP_TELEMETRY_DISABLED);
+}
+
+/**
+ * Whether a metric may be delivered for this run.
+ *
+ * An explicit choice always wins. Only the default for an unmade choice
+ * depends on the run: the notice is printed at a terminal and nowhere else, so
+ * a first run inside a Docker build or a git hook has had no chance to show it
+ * and reporting there would put the data ahead of the disclosure. An agent
+ * sandbox never reaches that path at all, which is why `undefined` means yes
+ * there and no everywhere else.
+ */
+export function isTelemetryEnabled(
+  env: NodeJS.ProcessEnv,
+  sysconfig: Pick<SystemConfig, 'telemetry'>,
+  runContext: RunContext,
+): boolean {
+  if (isTelemetryDisabledByEnv(env)) {
+    return false;
+  }
+
+  if (!runContext.report) {
+    return false;
+  }
+
+  if (typeof sysconfig.telemetry === 'boolean') {
+    return sysconfig.telemetry;
+  }
+
+  return isAgentDriven(runContext);
+}
+
+/**
+ * Map the run context onto payload fields. Agent keys are omitted rather than
+ * nulled when no agent was detected, so "no agent" and "an agent we couldn't
+ * name" stay distinguishable downstream.
+ */
+export function runContextFields(runContext: RunContext): Partial<CommandMetricData> {
+  return {
+    surface: runContext.surface,
+    confidence: runContext.confidence,
+    ...(runContext.agentId ? { agent_id: runContext.agentId } : {}),
+    ...(runContext.agentVersion ? { agent_version: runContext.agentVersion } : {}),
+    ...(runContext.agentDetectedBy ? { agent_detected_by: runContext.agentDetectedBy } : {}),
+  };
+}
+
+/**
+ * Identify the project this run belongs to, so repeated runs against one app
+ * count once however many machines they came from.
+ *
+ * The repository's first commit is the same on every machine, which makes it
+ * the preferred key — though where there is one this is `app_id` under a
+ * different hash, and `project_id_source` is what tells the two apart. The
+ * case this exists for is a freshly scaffolded app with no commit yet, where
+ * the harness session identifier stands in — hashed here, never transmitted,
+ * which is why the run context carries only the variable's name.
+ */
+export async function getProjectIdentity(
+  firstCommit: string | undefined,
+  runContext: RunContext,
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<Pick<CommandMetricData, 'project_id' | 'project_id_source'>> {
+  if (firstCommit) {
+    return { project_id: await hash(firstCommit), project_id_source: 'repository' };
+  }
+
+  const session = runContext.sessionVar ? env[runContext.sessionVar] : undefined;
+
+  if (session) {
+    return { project_id: await hash(session), project_id_source: 'session' };
+  }
+
+  debug('Could not obtain a project identifier');
+
+  return { project_id: null, project_id_source: 'none' };
+}
+
+async function hash(value: string): Promise<string> {
+  const { createHash } = await import('crypto');
+
+  return createHash('sha256').update(value).digest('hex').slice(0, 16);
+}
+
+async function getFirstCommit(config: Config): Promise<string | undefined> {
+  const output = await getCommandOutput('git', ['rev-list', '--max-parents=0', 'HEAD'], {
+    cwd: config.app.rootDir,
+  });
+
+  return output?.split('\n')[0] || undefined;
 }
 
 /**
@@ -150,25 +310,19 @@ export async function getIOSPackageManager(config: Config): Promise<PackageManag
 }
 
 /**
- * Get a unique anonymous identifier for this app.
+ * Get a unique anonymous identifier for this app from the repository's first
+ * commit, which should be universally unique.
  */
-async function getAppIdentifier(config: Config): Promise<string | null> {
-  const { createHash } = await import('crypto');
-
-  // get the first commit hash, which should be universally unique
-  const output = await getCommandOutput('git', ['rev-list', '--max-parents=0', 'HEAD'], { cwd: config.app.rootDir });
-
-  const firstLine = output?.split('\n')[0];
-
-  if (!firstLine) {
+async function getAppIdentifier(firstCommit: string | undefined): Promise<string | null> {
+  if (!firstCommit) {
     debug('Could not obtain unique app identifier');
     return null;
   }
 
-  // use sha1 to create a one-way hash to anonymize
-  const id = createHash('sha1').update(firstLine).digest('hex');
+  const { createHash } = await import('crypto');
 
-  return id;
+  // use sha1 to create a one-way hash to anonymize
+  return createHash('sha1').update(firstCommit).digest('hex');
 }
 
 /**
