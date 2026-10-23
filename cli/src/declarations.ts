@@ -272,10 +272,11 @@ export interface CapacitorConfig {
       releaseType?: 'AAB' | 'APK';
 
       /**
-       * Program to sign your build with
+       * Program to sign your build with. Defaults to `apksigner` for APKs and
+       * `jarsigner` for Android App Bundles. `apksigner` must be on your PATH
+       * when used.
        *
        * @since 5.1.0
-       * @default "jarsigner"
        */
       signingType?: 'apksigner' | 'jarsigner';
     };
