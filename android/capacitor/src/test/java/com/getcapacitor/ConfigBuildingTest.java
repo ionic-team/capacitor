@@ -37,6 +37,7 @@ public class ConfigBuildingTest {
             testPluginObject.put("var3", testPluginNestedObject);
             testPluginObject.put("var4", 2);
             testPluginObject.put("var5", testPluginArray);
+            testPluginObject.put("disabled", true);
 
             pluginConfig.put(TEST_PLUGIN_NAME, testPluginObject);
 
@@ -87,6 +88,12 @@ public class ConfigBuildingTest {
     public void getPluginBoolean() {
         boolean testBool = config.getPluginConfiguration(TEST_PLUGIN_NAME).getBoolean("var1", false);
         assertTrue(testBool);
+    }
+
+    @Test
+    public void getPluginDisabled() {
+        boolean disabled = config.getPluginConfiguration(TEST_PLUGIN_NAME).getBoolean("disabled", false);
+        assertTrue(disabled);
     }
 
     @Test
