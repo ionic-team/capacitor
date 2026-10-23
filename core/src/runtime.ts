@@ -167,6 +167,18 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
             // https://github.com/facebook/react/issues/20030
             case '$$typeof':
               return undefined;
+            // https://tc39.es/ecma262/#sec-promiseresolvethenablejob
+            // The runtime probes `.then` on any value it adopts into a Promise
+            // (e.g. a plugin proxy returned from an async function). Returning
+            // a callable wrapper here would make the proxy look like a
+            // thenable, and `proxy.then(resolve, reject)` would dispatch a
+            // `then()` call to the native side that never settles — silently
+            // hanging the outer `await`. A plugin is not a Promise, so these
+            // must not be callable.
+            case 'then':
+            case 'catch':
+            case 'finally':
+              return undefined;
             case 'toJSON':
               return () => ({});
             case 'addListener':
