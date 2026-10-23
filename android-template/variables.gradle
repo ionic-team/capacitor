@@ -3,14 +3,14 @@ ext {
     compileSdkVersion = 37
     targetSdkVersion = 37
     androidxActivityVersion = '1.13.0'
-    androidxAppCompatVersion = '1.7.1'
+    androidxAppCompatVersion = '1.8.0'
     androidxCoordinatorLayoutVersion = '1.3.0'
-    androidxCoreVersion = '1.19.0'
-    androidxFragmentVersion = '1.8.9'
+    androidxCoreVersion = '1.19.1'
+    androidxFragmentVersion = '1.9.1'
     coreSplashScreenVersion = '1.2.0'
-    androidxWebkitVersion = '1.16.0'
+    androidxWebkitVersion = '1.17.1'
     junitVersion = '4.13.2'
     androidxJunitVersion = '1.3.0'
     androidxEspressoCoreVersion = '3.7.0'
-    cordovaAndroidVersion = '15.0.0'
+    cordovaAndroidVersion = '15.1.0'
 }
