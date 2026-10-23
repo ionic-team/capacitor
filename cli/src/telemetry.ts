@@ -95,6 +95,27 @@ async function reportCommand(config: Config, cmd: Command, duration: number, err
 
   const runContext = detectRunContext();
 
+  let sysconfig = await readConfig();
+
+  // The notice and the persisted default only mean anything where a person can
+  // see them, so a headless run leaves the choice unmade rather than
+  // committing one it was never offered.
+  if (isInteractive() && !error && typeof sysconfig.telemetry === 'undefined') {
+    // Telemetry is opt-out; turn telemetry on then inform the user how to opt-out.
+    sysconfig = { ...sysconfig, telemetry: true };
+    await writeConfig(sysconfig);
+
+    output.write(THANK_YOU);
+  }
+
+  // Settled before the payload is built rather than at delivery: identifying
+  // the project walks the whole commit graph.
+  if (!isTelemetryEnabled(process.env, sysconfig, runContext)) {
+    debug('Telemetry is off for this run--not collecting');
+
+    return;
+  }
+
   const packages = Object.entries({
     ...config.app.package.devDependencies,
     ...config.app.package.dependencies,
@@ -109,9 +130,13 @@ async function reportCommand(config: Config, cmd: Command, duration: number, err
     v,
   ]);
 
+  // Both identifiers derive from this, and `git rev-list --max-parents=0`
+  // walks the whole history — so it is fetched once for the pair.
+  const firstCommit = await getFirstCommit(config);
+
   const data: CommandMetricData = {
-    app_id: await getAppIdentifier(config),
-    ...(await getProjectIdentity(config, runContext)),
+    app_id: await getAppIdentifier(firstCommit),
+    ...(await getProjectIdentity(firstCommit, runContext)),
     command: getFullCommandName(cmd),
     arguments: cmd.args.join(' '),
     options: JSON.stringify(cmd.opts()),
@@ -125,20 +150,6 @@ async function reportCommand(config: Config, cmd: Command, duration: number, err
   };
 
   debug('metric payload: %O', data);
-
-  let sysconfig = await readConfig();
-
-  // The notice and the persisted default only mean anything where a person can
-  // see them, so a headless run leaves the choice unmade rather than
-  // committing one it was never offered. `isTelemetryEnabled` decides what an
-  // unmade choice means for the run in hand.
-  if (isInteractive() && !error && typeof sysconfig.telemetry === 'undefined') {
-    // Telemetry is opt-out; turn telemetry on then inform the user how to opt-out.
-    sysconfig = { ...sysconfig, telemetry: true };
-    await writeConfig(sysconfig);
-
-    output.write(THANK_YOU);
-  }
 
   await sendMetric(sysconfig, 'capacitor_cli_command', data, runContext);
 }
@@ -166,15 +177,24 @@ export async function sendMetric<D>(
     value: data,
   };
 
-  // A developer has a terminal to get back, so delivery is handed to a
-  // detached process and forgotten. An agent sandbox is often torn down the
-  // moment the CLI exits, taking that process with it before the request
-  // leaves the machine — so those runs wait for it instead.
-  if (isAgentDriven(runContext)) {
+  if (needsAwaitedDelivery(runContext)) {
     await deliver(message);
   } else {
     await send({ type: 'telemetry', data: message });
   }
+}
+
+/**
+ * Whether the POST has to finish before the CLI exits.
+ *
+ * Delivery normally goes to a forked process and costs the command nothing.
+ * That process is not `detached` and still has to cold-start Node before it
+ * reaches the network, so an environment reclaimed the moment the CLI returns
+ * takes it with it mid-request. Anything that outlives the command — a
+ * harness on a developer's machine included — detaches like a human run.
+ */
+export function needsAwaitedDelivery(runContext: RunContext): boolean {
+  return isAgentDriven(runContext) && runContext.surface === 'cloud-sandbox';
 }
 
 export function isTelemetryDisabledByEnv(env: NodeJS.ProcessEnv): boolean {
@@ -184,15 +204,12 @@ export function isTelemetryDisabledByEnv(env: NodeJS.ProcessEnv): boolean {
 /**
  * Whether a metric may be delivered for this run.
  *
- * An explicit choice always wins, whatever the run looks like. Only the
- * *default* for an unmade choice depends on the run: an agent sandbox never
- * reaches the interactive path that writes the default, so reading `undefined`
- * as "no" there would silently drop the entire population this reports on.
- *
- * Everywhere else `undefined` stays "no", because the notice is only ever
- * printed at a terminal — a first run inside a Docker build, a git hook or
- * `cap sync | tee` has had no chance to show it, and reporting from there
- * would put the data ahead of the disclosure.
+ * An explicit choice always wins. Only the default for an unmade choice
+ * depends on the run: the notice is printed at a terminal and nowhere else, so
+ * a first run inside a Docker build or a git hook has had no chance to show it
+ * and reporting there would put the data ahead of the disclosure. An agent
+ * sandbox never reaches that path at all, which is why `undefined` means yes
+ * there and no everywhere else.
  */
 export function isTelemetryEnabled(
   env: NodeJS.ProcessEnv,
@@ -233,18 +250,18 @@ export function runContextFields(runContext: RunContext): Partial<CommandMetricD
  * Identify the project this run belongs to, so repeated runs against one app
  * count once however many machines they came from.
  *
- * The repository's first commit is the same on every machine, which is what
- * makes it the preferred key. A freshly scaffolded app has no commit yet, so
+ * The repository's first commit is the same on every machine, which makes it
+ * the preferred key — though where there is one this is `app_id` under a
+ * different hash, and `project_id_source` is what tells the two apart. The
+ * case this exists for is a freshly scaffolded app with no commit yet, where
  * the harness session identifier stands in — hashed here, never transmitted,
  * which is why the run context carries only the variable's name.
  */
 export async function getProjectIdentity(
-  config: Config,
+  firstCommit: string | undefined,
   runContext: RunContext,
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<Pick<CommandMetricData, 'project_id' | 'project_id_source'>> {
-  const firstCommit = await getFirstCommit(config);
-
   if (firstCommit) {
     return { project_id: await hash(firstCommit), project_id_source: 'repository' };
   }
@@ -293,25 +310,19 @@ export async function getIOSPackageManager(config: Config): Promise<PackageManag
 }
 
 /**
- * Get a unique anonymous identifier for this app.
+ * Get a unique anonymous identifier for this app from the repository's first
+ * commit, which should be universally unique.
  */
-async function getAppIdentifier(config: Config): Promise<string | null> {
-  const { createHash } = await import('crypto');
-
-  // get the first commit hash, which should be universally unique
-  const output = await getCommandOutput('git', ['rev-list', '--max-parents=0', 'HEAD'], { cwd: config.app.rootDir });
-
-  const firstLine = output?.split('\n')[0];
-
-  if (!firstLine) {
+async function getAppIdentifier(firstCommit: string | undefined): Promise<string | null> {
+  if (!firstCommit) {
     debug('Could not obtain unique app identifier');
     return null;
   }
 
-  // use sha1 to create a one-way hash to anonymize
-  const id = createHash('sha1').update(firstLine).digest('hex');
+  const { createHash } = await import('crypto');
 
-  return id;
+  // use sha1 to create a one-way hash to anonymize
+  return createHash('sha1').update(firstCommit).digest('hex');
 }
 
 /**

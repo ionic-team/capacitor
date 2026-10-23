@@ -7,8 +7,10 @@ export const CONVENTION_PATTERN = /^[A-Z0-9_]+_(AGENT|TOOL_USE_ID|SESSION_ID|THR
 
 /**
  * Non-agent tools that follow the same convention. Terminals, SSH and GPG all
- * mint session identifiers of their own; without these entries every macOS and
- * Linux user reports as an agent. Tested one entry at a time.
+ * mint session identifiers of their own. Tested one entry at a time.
+ *
+ * The caller only consults this rule for a run with no terminal attached, so a
+ * name missing here can only affect a headless run.
  */
 export const CONVENTION_DENYLIST: readonly string[] = [
   'TERM_SESSION_ID',

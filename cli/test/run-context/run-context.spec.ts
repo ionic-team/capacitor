@@ -1,6 +1,6 @@
 import { detectRunContext, isAgentDriven } from '../../src/run-context';
 
-import { ATTACHED, CWD, EXEC_PATH, FIXTURES } from './fixtures';
+import { ATTACHED, CWD, EXEC_PATH, FIXTURES, PIPED } from './fixtures';
 
 /**
  * Adding a harness to the registry has to leave every row below unchanged. A
@@ -26,6 +26,33 @@ describe('detectRunContext', () => {
       report: true,
       surface: 'terminal',
       confidence: 'none',
+    });
+  });
+
+  /**
+   * One unlisted `*_SESSION_ID` is enough to match the convention rule, which
+   * returns `declared` confidence. Without the terminal gate it would label
+   * the developer who set it as an agent.
+   */
+  it('does not report an unlisted convention variable at an attached terminal', () => {
+    const env = { GNOME_DESKTOP_SESSION_ID: 'this-is-deprecated', TERM: 'xterm-256color', USER: 'joey' };
+
+    expect(detectRunContext({ env, streams: ATTACHED, cwd: CWD, execPath: EXEC_PATH })).toEqual({
+      report: true,
+      surface: 'terminal',
+      confidence: 'none',
+    });
+  });
+
+  it('still reports the same variable once no terminal is attached', () => {
+    const env = { GNOME_DESKTOP_SESSION_ID: 'this-is-deprecated', TERM: 'xterm-256color', USER: 'joey' };
+
+    expect(detectRunContext({ env, streams: PIPED, cwd: CWD, execPath: EXEC_PATH })).toEqual({
+      report: true,
+      agentId: 'unknown',
+      agentDetectedBy: 'GNOME_DESKTOP_SESSION_ID',
+      surface: 'terminal',
+      confidence: 'declared',
     });
   });
 });

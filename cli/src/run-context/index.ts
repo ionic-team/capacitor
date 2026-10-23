@@ -53,7 +53,14 @@ export function detectRunContext(options: DetectRunContextOptions = {}): RunCont
     };
   }
 
-  const detectedBy = detectUnknownHarness(env);
+  // Neither path below may report a run with a terminal attached, which makes
+  // "someone at a terminal is never reported as an agent" a guarantee rather
+  // than a likelihood. The convention rule needs the gate most: it matches on
+  // the shape of a variable name alone, which desktop sessions and shells also
+  // produce, yet returns the stronger `declared` confidence.
+  const headless = scan.headless.includes(NO_TTY_SIGNAL);
+
+  const detectedBy = headless ? detectUnknownHarness(env) : undefined;
 
   if (detectedBy) {
     return {
@@ -66,12 +73,8 @@ export function detectRunContext(options: DetectRunContextOptions = {}): RunCont
   }
 
   // This path exists for harnesses that strip their environment before
-  // invoking the CLI, and those never attach a terminal. Gating on that makes
-  // "someone sitting at a terminal is never reported as an agent" a guarantee
-  // rather than a likelihood, however unusual the rest of their environment
-  // looks — a `cat` pager and a local debug proxy are a developer, not a
-  // container.
-  const weight = scan.headless.includes(NO_TTY_SIGNAL) ? scan.headless.length + scan.sandbox.length : 0;
+  // invoking the CLI.
+  const weight = headless ? scan.headless.length + scan.sandbox.length : 0;
 
   if (weight >= HEURISTIC_THRESHOLD) {
     return {

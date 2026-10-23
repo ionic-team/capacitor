@@ -1,28 +1,23 @@
-import type { Config } from '../src/definitions';
 import { deliver, send } from '../src/ipc';
 import type { RunContext } from '../src/run-context';
 import {
   getProjectIdentity,
   isTelemetryDisabledByEnv,
   isTelemetryEnabled,
+  needsAwaitedDelivery,
   runContextFields,
   sendMetric,
 } from '../src/telemetry';
-import { getCommandOutput } from '../src/util/subprocess';
 
-jest.mock('../src/util/subprocess', () => ({ getCommandOutput: jest.fn() }));
 jest.mock('../src/ipc', () => ({ deliver: jest.fn(), send: jest.fn() }));
 
-const mockedGetCommandOutput = getCommandOutput as unknown as jest.Mock;
 const mockedDeliver = deliver as unknown as jest.Mock;
 const mockedSend = send as unknown as jest.Mock;
 
+const COMMIT = '9f8c1a2b4d5e6f708192a3b4c5d6e7f801234567';
+
 function context(overrides: Partial<RunContext> = {}): RunContext {
   return { report: true, surface: 'terminal', confidence: 'none', ...overrides };
-}
-
-function makeConfig(): Config {
-  return { app: { rootDir: '/app' } } as unknown as Config;
 }
 
 describe('isTelemetryDisabledByEnv', () => {
@@ -130,6 +125,39 @@ describe('runContextFields', () => {
   });
 });
 
+/**
+ * The forked sender is not `detached` and has to cold-start Node before it can
+ * reach the network, so only an environment that disappears when the CLI
+ * returns needs the request made in-process.
+ */
+describe('needsAwaitedDelivery', () => {
+  const sandbox = { surface: 'cloud-sandbox' } as const;
+
+  it('is true for an agent in a disposable sandbox', () => {
+    expect(needsAwaitedDelivery(context({ ...sandbox, agentId: 'claude-code', confidence: 'declared' }))).toBe(true);
+    expect(needsAwaitedDelivery(context({ ...sandbox, agentId: 'unknown', confidence: 'heuristic' }))).toBe(true);
+  });
+
+  it('is false for a named agent on a machine that outlives the command', () => {
+    expect(needsAwaitedDelivery(context({ agentId: 'claude-code', confidence: 'declared' }))).toBe(false);
+    expect(needsAwaitedDelivery(context({ agentId: 'claude-code', confidence: 'declared', surface: 'ide' }))).toBe(
+      false,
+    );
+  });
+
+  /**
+   * The sandbox surface fires on a developer running a local debug proxy, so
+   * on its own it is not evidence of anything disposable.
+   */
+  it('is false for a sandbox-shaped environment with no agent behind it', () => {
+    expect(needsAwaitedDelivery(context(sandbox))).toBe(false);
+  });
+
+  it('is false for a human run', () => {
+    expect(needsAwaitedDelivery(context())).toBe(false);
+  });
+});
+
 describe('sendMetric', () => {
   const sysconfig = { machine: 'machine-1', telemetry: true };
 
@@ -138,11 +166,6 @@ describe('sendMetric', () => {
     mockedSend.mockReset().mockResolvedValue(undefined);
   });
 
-  /**
-   * A developer's machine outlives the command, so delivery is detached and
-   * forgotten. An agent sandbox usually isn't around long enough for that to
-   * finish, so those runs wait on it instead.
-   */
   it('hands a human run to the detached sender', async () => {
     await sendMetric(sysconfig, 'capacitor_cli_command', {}, context());
 
@@ -150,17 +173,20 @@ describe('sendMetric', () => {
     expect(mockedDeliver).not.toHaveBeenCalled();
   });
 
-  it('awaits delivery for an agent-driven run', async () => {
-    await sendMetric(sysconfig, 'capacitor_cli_command', {}, context({ agentId: 'claude-code' }));
+  it('awaits delivery for an agent in a disposable sandbox', async () => {
+    const runContext = context({ agentId: 'claude-code', surface: 'cloud-sandbox', confidence: 'declared' });
+
+    await sendMetric(sysconfig, 'capacitor_cli_command', {}, runContext);
 
     expect(mockedDeliver).toHaveBeenCalledTimes(1);
     expect(mockedSend).not.toHaveBeenCalled();
   });
 
-  it('awaits delivery for an unrecognised harness too', async () => {
-    await sendMetric(sysconfig, 'capacitor_cli_command', {}, context({ agentId: 'unknown' }));
+  it('detaches for an agent on a developer machine, like a human run', async () => {
+    await sendMetric(sysconfig, 'capacitor_cli_command', {}, context({ agentId: 'claude-code' }));
 
-    expect(mockedDeliver).toHaveBeenCalledTimes(1);
+    expect(mockedSend).toHaveBeenCalledTimes(1);
+    expect(mockedDeliver).not.toHaveBeenCalled();
   });
 
   it('sends nothing at all when telemetry is off', async () => {
@@ -186,23 +212,15 @@ describe('sendMetric', () => {
 });
 
 describe('getProjectIdentity', () => {
-  beforeEach(() => {
-    mockedGetCommandOutput.mockReset();
-  });
-
   it('keys on the repository first commit when there is one', async () => {
-    mockedGetCommandOutput.mockResolvedValueOnce('9f8c1a2b4d5e6f708192a3b4c5d6e7f801234567\n');
-
-    const identity = await getProjectIdentity(makeConfig(), context(), {});
+    const identity = await getProjectIdentity(COMMIT, context(), {});
 
     expect(identity.project_id_source).toBe('repository');
     expect(identity.project_id).toMatch(/^[0-9a-f]{16}$/);
   });
 
   it('falls back to the agent session when the project has no commit', async () => {
-    mockedGetCommandOutput.mockResolvedValueOnce(null);
-
-    const identity = await getProjectIdentity(makeConfig(), context({ sessionVar: 'CLAUDE_CODE_SESSION_ID' }), {
+    const identity = await getProjectIdentity(undefined, context({ sessionVar: 'CLAUDE_CODE_SESSION_ID' }), {
       CLAUDE_CODE_SESSION_ID: 'session-secret-value',
     });
 
@@ -213,37 +231,28 @@ describe('getProjectIdentity', () => {
   });
 
   it('reports no identifier when neither source is available', async () => {
-    mockedGetCommandOutput.mockResolvedValueOnce(null);
-
-    expect(await getProjectIdentity(makeConfig(), context(), {})).toEqual({
+    expect(await getProjectIdentity(undefined, context(), {})).toEqual({
       project_id: null,
       project_id_source: 'none',
     });
   });
 
   it('reports no identifier when the session variable is named but unset', async () => {
-    mockedGetCommandOutput.mockResolvedValueOnce(null);
-
-    const identity = await getProjectIdentity(makeConfig(), context({ sessionVar: 'CLAUDE_CODE_SESSION_ID' }), {});
+    const identity = await getProjectIdentity(undefined, context({ sessionVar: 'CLAUDE_CODE_SESSION_ID' }), {});
 
     expect(identity.project_id_source).toBe('none');
   });
 
   it('is deterministic, so repeated runs collapse to one project', async () => {
-    mockedGetCommandOutput.mockResolvedValue('9f8c1a2b4d5e6f708192a3b4c5d6e7f801234567');
-
-    const first = await getProjectIdentity(makeConfig(), context(), {});
-    const second = await getProjectIdentity(makeConfig(), context(), {});
+    const first = await getProjectIdentity(COMMIT, context(), {});
+    const second = await getProjectIdentity(COMMIT, context(), {});
 
     expect(first.project_id).toBe(second.project_id);
   });
 
   it('gives different projects different identifiers', async () => {
-    mockedGetCommandOutput.mockResolvedValueOnce('1111111111111111111111111111111111111111');
-    const first = await getProjectIdentity(makeConfig(), context(), {});
-
-    mockedGetCommandOutput.mockResolvedValueOnce('2222222222222222222222222222222222222222');
-    const second = await getProjectIdentity(makeConfig(), context(), {});
+    const first = await getProjectIdentity('1111111111111111111111111111111111111111', context(), {});
+    const second = await getProjectIdentity('2222222222222222222222222222222222222222', context(), {});
 
     expect(first.project_id).not.toBe(second.project_id);
   });
