@@ -450,12 +450,24 @@ public class HttpRequestHandler {
 
     public static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
         try {
-            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
+            Class<?> sslPinningImpl = findSSLPinningClass();
+            if (sslPinningImpl == null) {
+                return false;
+            }
             Method method = sslPinningImpl.getDeclaredMethod("isDomainExcluded", Bridge.class, URL.class);
             return (Boolean) method.invoke(sslPinningImpl.getDeclaredConstructor().newInstance(), bridge, url);
         } catch (Exception ignored) {
             return false;
         }
+    }
+
+    private static Class<?> findSSLPinningClass() {
+        for (String className : new String[] { "io.ionic.sslpinning.SSLPinning", "com.getcapacitor.community.sslpinning.SSLPinning" }) {
+            try {
+                return Class.forName(className);
+            } catch (ClassNotFoundException ignored) {}
+        }
+        return null;
     }
 
     @FunctionalInterface
