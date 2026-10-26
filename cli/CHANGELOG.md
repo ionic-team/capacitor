@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.5.3](https://github.com/ionic-team/capacitor/compare/8.5.2...8.5.3) (2026-10-07)
+
+### Bug Fixes
+
+- **cli:** change Cordova AppDelegate.h imports for SPM ([#8618](https://github.com/ionic-team/capacitor/issues/8618)) ([145560e](https://github.com/ionic-team/capacitor/commit/145560ee590d86637dc9dd2e2c9f4c08b0f631c0))
+
+## [8.5.2](https://github.com/ionic-team/capacitor/compare/8.5.1...8.5.2) (2026-09-11)
+
+### Bug Fixes
+
+- resolve issues with safe area / systembars plugin ([#8535](https://github.com/ionic-team/capacitor/issues/8535)) ([e37d9c6](https://github.com/ionic-team/capacitor/commit/e37d9c60785368acf2a83cfd4c20f47076672bdd))
+
+## [8.5.1](https://github.com/ionic-team/capacitor/compare/8.5.0...8.5.1) (2026-08-31)
+
+### Bug Fixes
+
+- **cli:** use POSIX paths in CapApp-SPM Package.swift ([#8549](https://github.com/ionic-team/capacitor/issues/8549)) ([5e5bb3b](https://github.com/ionic-team/capacitor/commit/5e5bb3befc312477900252ab07e23b596f8cb0d1))
+
 # [8.5.0](https://github.com/ionic-team/capacitor/compare/8.4.2...8.5.0) (2026-07-31)
 
 ### Bug Fixes
