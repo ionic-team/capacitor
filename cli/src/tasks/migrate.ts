@@ -17,6 +17,7 @@ import { extractTemplate } from '../util/template';
 import { removeDebugXcconfig } from './migrate-debug-xcconfig';
 import { migrateToEdgeToEdge } from './migrate-edge-to-edge';
 import { migrateToSwiftUI } from './migrate-swiftui';
+import { migrateToModernProject } from './migrate-to-modern-project';
 
 let allDependencies: { [key: string]: any } = {};
 const libs = ['@capacitor/core', '@capacitor/cli', '@capacitor/ios', '@capacitor/android'];
@@ -234,6 +235,10 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
         await runTask(`Migrating the main Activity to enable edge-to-edge.`, () => {
           return migrateToEdgeToEdge(config);
+        });
+
+        await runTask(`Migrating to recommended project settings`, () => {
+          return migrateToModernProject(config);
         });
 
         const gradleWrapperPath = join(config.android.platformDirAbs, 'gradle', 'wrapper', 'gradle-wrapper.properties');
