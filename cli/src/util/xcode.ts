@@ -6,7 +6,7 @@ import type { PbxprojSection, XcodeProject } from 'xcode';
 const COMMENT_SUFFIX = '_comment';
 
 export interface BuildSettings {
-  [key: string]: boolean
+  [key: string]: string
 }
 
 /**
