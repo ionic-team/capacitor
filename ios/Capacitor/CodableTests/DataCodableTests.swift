@@ -132,7 +132,6 @@ class JSValueEncoderDataTests: XCTestCase {
         try unkeyedContainer.encode(contentsOf: byteArray)
     }
 
-
     func testEncode_data__custom_root() throws {
         let encoder = JSValueEncoder(dataEncodingStrategy: customStrategy)
         let rawResult = try encoder.encode(jsonData)

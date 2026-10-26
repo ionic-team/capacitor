@@ -29,7 +29,6 @@ class JSValueEncoderNonConformingFloatTests: XCTestCase {
         XCTAssertTrue(result[2].isNaN)
     }
 
-
     func testEncode_float__default_struct() throws {
         let encoder = JSValueEncoder()
         let rawResult = try encoder.encode(Foo.init(number: .infinity))
@@ -168,7 +167,7 @@ class JSValueDecoderNonConformingFloatTests: XCTestCase {
         XCTAssertEqual(result, .init(number: .infinity))
         result = try decoder.decode(Foo.self, from: ["number": "neg"])
         XCTAssertEqual(result, .init(number: -.infinity))
-        result = try decoder.decode(Foo.self, from: ["number":"nan"])
+        result = try decoder.decode(Foo.self, from: ["number": "nan"])
         XCTAssertTrue(result.number.isNaN)
     }
 }

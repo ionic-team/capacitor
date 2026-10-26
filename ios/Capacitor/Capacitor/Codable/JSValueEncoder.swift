@@ -82,7 +82,6 @@ public final class JSValueEncoder: TopLevelEncoder {
         self.options = .init(optionalStrategy: optionalEncodingStrategy, dateStrategy: dateEncodingStrategy, dataStrategy: dataEncodingStrategy, nonConformingFloatStrategy: nonConformingFloatEncodingStategy)
     }
 
-
     /// Encodes an `Encodable` value to a ``JSValue``
     /// - Parameter value: The value to encode to ``JSValue``
     /// - Returns: The encoded ``JSValue``

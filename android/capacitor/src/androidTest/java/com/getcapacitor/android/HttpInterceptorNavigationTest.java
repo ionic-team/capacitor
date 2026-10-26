@@ -31,13 +31,15 @@ public class HttpInterceptorNavigationTest {
     @Test
     public void blocksNavigationToInterceptorPath() {
         try (ActivityScenario<TestHostActivity> scenario = ActivityScenario.launch(TestHostActivity.class)) {
-            scenario.onActivity((activity) -> {
-                Bridge bridge = activity.getBridge();
-                assertNotNull(bridge);
-                assertTrue("interceptor navigation must be blocked", bridge.launchIntent(Uri.parse(INTERCEPTOR_URL)));
-                assertFalse("in-app navigation must stay in the WebView", bridge.launchIntent(Uri.parse(IN_APP_URL)));
-                assertTrue("external navigation must leave the WebView", bridge.launchIntent(Uri.parse(EXTERNAL_URL)));
-            });
+            scenario.onActivity(
+                activity -> {
+                    Bridge bridge = activity.getBridge();
+                    assertNotNull(bridge);
+                    assertTrue("interceptor navigation must be blocked", bridge.launchIntent(Uri.parse(INTERCEPTOR_URL)));
+                    assertFalse("in-app navigation must stay in the WebView", bridge.launchIntent(Uri.parse(IN_APP_URL)));
+                    assertTrue("external navigation must leave the WebView", bridge.launchIntent(Uri.parse(EXTERNAL_URL)));
+                }
+            );
         }
     }
 
@@ -45,28 +47,30 @@ public class HttpInterceptorNavigationTest {
     @Test
     public void refusesProxyForDocumentRequests() {
         try (ActivityScenario<TestHostActivity> scenario = ActivityScenario.launch(TestHostActivity.class)) {
-            scenario.onActivity((activity) -> {
-                Bridge bridge = activity.getBridge();
-                assertNotNull(bridge);
-                // Without this the proxy refuses everything and the assertions below prove nothing.
-                assertTrue(
-                    "CapacitorHttp must be enabled for this test to mean anything",
-                    bridge.getConfig().getPluginConfiguration("CapacitorHttp").getBoolean("enabled", false)
-                );
+            scenario.onActivity(
+                activity -> {
+                    Bridge bridge = activity.getBridge();
+                    assertNotNull(bridge);
+                    // Without this the proxy refuses everything and the assertions below prove nothing.
+                    assertTrue(
+                        "CapacitorHttp must be enabled for this test to mean anything",
+                        bridge.getConfig().getPluginConfiguration("CapacitorHttp").getBoolean("enabled", false)
+                    );
 
-                Map<String, String> navHeaders = new HashMap<>();
-                navHeaders.put("Accept", "text/html,application/xhtml+xml");
-                navHeaders.put("Upgrade-Insecure-Requests", "1");
+                    Map<String, String> navHeaders = new HashMap<>();
+                    navHeaders.put("Accept", "text/html,application/xhtml+xml");
+                    navHeaders.put("Upgrade-Insecure-Requests", "1");
 
-                assertNull(
-                    "main frame document must be refused",
-                    bridge.getLocalServer().shouldInterceptRequest(new FakeRequest(INTERCEPTOR_URL, true, navHeaders))
-                );
-                assertNull(
-                    "iframe document must be refused",
-                    bridge.getLocalServer().shouldInterceptRequest(new FakeRequest(INTERCEPTOR_URL, false, navHeaders))
-                );
-            });
+                    assertNull(
+                        "main frame document must be refused",
+                        bridge.getLocalServer().shouldInterceptRequest(new FakeRequest(INTERCEPTOR_URL, true, navHeaders))
+                    );
+                    assertNull(
+                        "iframe document must be refused",
+                        bridge.getLocalServer().shouldInterceptRequest(new FakeRequest(INTERCEPTOR_URL, false, navHeaders))
+                    );
+                }
+            );
         }
     }
 
