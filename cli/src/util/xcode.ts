@@ -6,7 +6,7 @@ import type { PbxprojSection, XcodeProject } from 'xcode';
 const COMMENT_SUFFIX = '_comment';
 
 export interface BuildSettings {
-  [key: string]: string
+  [key: string]: string;
 }
 
 /**
@@ -116,12 +116,12 @@ export function removeStoryboardFromAppTarget(pbxprojPath: string, storyboardNam
   return { removed: true };
 }
 
-export function addArrayOfBuildSettings(pbxprojPath: string, settings: BuildSettings) {
+export function addArrayOfBuildSettings(pbxprojPath: string, settings: BuildSettings): void {
   const project = loadXcodeProject(pbxprojPath);
   project.parseSync();
 
   for (const key in settings) {
-    let value = settings[key];
+    const value = settings[key];
     project.addToBuildSettings(key, value);
   }
 
