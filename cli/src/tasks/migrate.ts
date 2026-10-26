@@ -10,6 +10,7 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
+import { getBlockedInstallScripts, hasBlockedCapacitorScripts, logBlockedInstallScripts } from '../util/npm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -48,9 +49,10 @@ const plugins = [
 ];
 const coreVersion = 'next';
 const pluginVersion = 'next';
-const gradleVersion = '9.5.1';
+const gradleVersion = '9.8.2';
 const iOSVersion = '16';
 let installFailed = false;
+let scriptsBlocked = false;
 
 // AGP 9 changed the defaults of these properties and Android Studio's AGP Upgrade Assistant
 // writes them into gradle.properties as compatibility shims. Capacitor apps need none of them,
@@ -164,6 +166,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           )} manually.`,
         );
         installFailed = true;
+      }
+
+      if (runNpmInstall && !installFailed) {
+        const blocked = await getBlockedInstallScripts(config.app.rootDir, installerType);
+        if (blocked.length > 0) {
+          logBlockedInstallScripts(blocked);
+          scriptsBlocked = hasBlockedCapacitorScripts(blocked);
+        }
       }
 
       // Update iOS Projects
@@ -361,7 +371,7 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
               firebaseMessagingVersion: '25.0.1',
               playServicesLocationVersion: '21.4.0',
               androidxBrowserVersion: '1.10.0',
-              androidxCoreKTXVersion: '1.19.0',
+              androidxCoreKTXVersion: '1.19.1',
               androidxMaterialVersion: '1.14.0',
               androidxExifInterfaceVersion: '1.4.2',
               googleMapsPlayServicesVersion: '20.0.0',
@@ -385,8 +395,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         return writeBreakingChanges();
       });
 
-      if (!installFailed) {
+      if (!installFailed && !scriptsBlocked) {
         logSuccess(`Migration to Capacitor ${coreVersion} is complete. Run and test your app!`);
+      } else if (scriptsBlocked) {
+        logger.warn(
+          `Migration to Capacitor ${coreVersion} is incomplete because npm blocked install scripts. Approve them as described above, then run ${c.input(
+            'npx cap sync',
+          )}.`,
+        );
       } else {
         logger.warn(
           `Migration to Capacitor ${coreVersion} is incomplete. Check the log messages for more information.`,
@@ -598,7 +614,7 @@ async function updateBuildGradle(
   writeFileSync(filename, replaced, 'utf-8');
 }
 
-async function updateAppBuildGradle(filename: string) {
+async function updateAppBuildGradle(filename: string): Promise<void> {
   const txt = readFile(filename);
   if (!txt) {
     return;
@@ -606,6 +622,12 @@ async function updateAppBuildGradle(filename: string) {
   let replaced = txt;
 
   replaced = replaced.replace(`proguard-android.txt`, `proguard-android-optimize.txt`);
+  const releaseMinify = /(\brelease\s*\{[^}]*?minifyEnabled\s+)(true|false)/;
+  if (releaseMinify.test(replaced)) {
+    replaced = replaced.replace(releaseMinify, '$1true');
+  } else {
+    logger.warn(`Unable to set minifyEnabled true in the release block of ${filename}. Set it manually to turn on R8.`);
+  }
   replaced = replaced.replace('        targetSdkVersion rootProject.ext.targetSdkVersion\n', '');
   replaced = replaced.replace(`    implementation project(':capacitor-cordova-android-plugins')\n`, '');
   replaced = replaced.replace(
@@ -809,5 +831,6 @@ export const __testables = {
   removeAGPMigrationProperties,
   removeJCenter,
   removeJCenterFromGradleFile,
+  updateAppBuildGradle,
   updateGradleProperties,
 };

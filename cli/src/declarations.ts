@@ -684,6 +684,13 @@ export interface CapacitorConfig {
      *
      * On Android, all cleartext traffic is disabled by default as of API 28.
      *
+     * When enabled, the CLI sets `cleartextTrafficPermitted="true"` on the `<base-config>` of the app's
+     * `network-security-config.xml` (`android/app/src/main/res/xml/`), creating the file and the
+     * `android:networkSecurityConfig` manifest reference if the app has none. If the app already has its own
+     * network security config, only that attribute is changed. Other settings, such as a `<domain-config>`
+     * that disallows cleartext for specific domains, are left as they are and still apply.
+     * The change is reverted when the option is disabled.
+     *
      * This is intended for use with live-reload servers where unencrypted HTTP
      * traffic is often used.
      *
@@ -827,7 +834,7 @@ export interface PluginsConfig {
      *
      * This option is only supported on Android.
      *
-     * `native` = (recommended) For older Chromium versions (< v140) this embeds the webview with padding and sets the `env(safe-area-inset-*)` variables to `0px`. For newer Chromium versions (>= v140) this makes sure the webview adheres to the `viewport-fit` meta tag. If set to `viewport-fit="cover"` this will make the webview edge-to-edge and the `env(safe-area-inset-*)` variables will contain the correct values. With those values you could set padding for example so make sure the webview is shown correctly.
+     * `native` = (recommended) For older Chromium versions (< v140) this embeds the webview with padding and sets the `env(safe-area-inset-*)` variables to `0px`. For newer Chromium versions (>= v140) this makes sure the webview adheres to the `viewport-fit` meta tag. If set to `viewport-fit="cover"` this will make the webview edge-to-edge and the `env(safe-area-inset-*)` variables will contain the correct values. With those values you could set padding for example to make sure the webview is shown correctly.
      *
      * `css` = This is the same as `native`, but it also injects CSS variables (`--safe-area-inset-*`) containing correct safe area inset values into the webview.
      *

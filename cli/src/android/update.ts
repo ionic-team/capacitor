@@ -25,6 +25,7 @@ import { resolveNode } from '../util/node';
 import { extractTemplate } from '../util/template';
 
 import { getAndroidPlugins } from './common';
+import { setAndroidCleartext } from './network-security-config';
 
 const platform = 'android';
 const debug = Debug('capacitor:android:update');
@@ -57,6 +58,8 @@ export async function updateAndroid(config: Config): Promise<void> {
   if (enableCordova) {
     await handleCordovaPluginsGradle(config, cordovaPlugins);
     await writeCordovaAndroidManifest(cordovaPlugins, config, platform);
+  } else {
+    await setAndroidCleartext(config, !!config.app.extConfig.server?.cleartext);
   }
 
   const incompatibleCordovaPlugins = plugins.filter((p) => getPluginType(p, platform) === PluginType.Incompatible);

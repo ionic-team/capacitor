@@ -12,6 +12,7 @@ const {
   removeAGPMigrationProperties,
   removeJCenter,
   removeJCenterFromGradleFile,
+  updateAppBuildGradle,
   updateGradleProperties,
 } = __testables;
 
@@ -67,6 +68,22 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+}
+`;
+
+// Capacitor 8 app/build.gradle with a debug build type added before the release one
+const APP_BUILD_GRADLE_WITH_BUILD_TYPES = `apply plugin: 'com.android.application'
+
+android {
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 `;
 
@@ -300,5 +317,49 @@ describe('android gradle migration against a project on disk', () => {
 
     // Assert
     expect(read(rootPath)).toBe(clean);
+  });
+
+  it('turns on R8 in the release block only', async () => {
+    // Arrange
+    const appPath = join(appDir, 'build.gradle');
+    writeFileSync(appPath, APP_BUILD_GRADLE_WITH_BUILD_TYPES, 'utf-8');
+    const warn = jest.spyOn(logger, 'warn').mockImplementation();
+
+    // Act
+    await updateAppBuildGradle(appPath);
+
+    // Assert
+    const result = read(appPath);
+    expect(result).toContain('release {\n            minifyEnabled true');
+    expect(result).toContain('debug {\n            minifyEnabled false');
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('does not warn when R8 is already on', async () => {
+    // Arrange
+    const appPath = join(appDir, 'build.gradle');
+    const txt = 'android {\n    buildTypes {\n        release {\n            minifyEnabled true\n        }\n    }\n}\n';
+    writeFileSync(appPath, txt, 'utf-8');
+    const warn = jest.spyOn(logger, 'warn').mockImplementation();
+
+    // Act
+    await updateAppBuildGradle(appPath);
+
+    // Assert
+    expect(read(appPath)).toBe(txt);
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('warns when the release block has no minifyEnabled line', async () => {
+    // Arrange
+    const appPath = join(appDir, 'build.gradle');
+    writeFileSync(appPath, 'android {\n    buildTypes {\n        release {\n        }\n    }\n}\n', 'utf-8');
+    const warn = jest.spyOn(logger, 'warn').mockImplementation();
+
+    // Act
+    await updateAppBuildGradle(appPath);
+
+    // Assert
+    expect(warn).toHaveBeenCalledTimes(1);
   });
 });
