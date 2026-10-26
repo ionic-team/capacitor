@@ -218,7 +218,7 @@ public class FileUtils {
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
         cursor.moveToFirst();
-        String name = (cursor.getString(nameIndex));
+        String name = cursor.getString(nameIndex);
         String fileName = sanitizeFilename(name);
         File file = new File(context.getFilesDir(), fileName);
         try {
