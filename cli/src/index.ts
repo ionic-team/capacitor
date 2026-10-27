@@ -7,7 +7,7 @@ import type { Config } from './definitions';
 import { fatal, isFatal } from './errors';
 import { receive } from './ipc';
 import { logger, output } from './log';
-import { telemetryAction } from './telemetry';
+import { TELEMETRY_SAFE_CHOICES, telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
 
@@ -159,13 +159,13 @@ export function runProgram(config: Config): void {
       new Option(
         '--androidreleasetype <androidreleasetype>',
         'Android release type; APK or AAB',
-      ).choices(['AAB', 'APK']),
+      ).choices([...TELEMETRY_SAFE_CHOICES.androidreleasetype]),
     )
     .addOption(
       new Option(
         '--signing-type <signingtype>',
         'Program used to sign apps (default: jarsigner)',
-      ).choices(['apksigner', 'jarsigner']),
+      ).choices([...TELEMETRY_SAFE_CHOICES.signingType]),
     )
     .action(
       wrapAction(
