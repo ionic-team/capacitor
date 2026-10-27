@@ -216,6 +216,10 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           return removeDebugXcconfig(config);
         });
 
+        await runTask(`Migrating to recommended project settings`, () => {
+          return migrateToModernProject(config);
+        });
+
         await migrateToSwiftUI(config);
       }
 
@@ -235,10 +239,6 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
         await runTask(`Migrating the main Activity to enable edge-to-edge.`, () => {
           return migrateToEdgeToEdge(config);
-        });
-
-        await runTask(`Migrating to recommended project settings`, () => {
-          return migrateToModernProject(config);
         });
 
         const gradleWrapperPath = join(config.android.platformDirAbs, 'gradle', 'wrapper', 'gradle-wrapper.properties');
