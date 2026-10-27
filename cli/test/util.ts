@@ -21,9 +21,10 @@ export async function makeConfig(appRoot: string): Promise<Config> {
   return config;
 }
 
-export async function run(appRoot: string, capCommand: string): Promise<string> {
+export async function run(appRoot: string, capCommand: string, env?: NodeJS.ProcessEnv): Promise<string> {
   return new Promise((resolve, reject) => {
-    exec(`cd "${appRoot}" && "${cwd}/bin/capacitor" ${capCommand}`, (error, stdout, stderr) => {
+    const options = { env: env && { ...process.env, ...env } };
+    exec(`cd "${appRoot}" && "${cwd}/bin/capacitor" ${capCommand}`, options, (error, stdout, stderr) => {
       if (error) {
         reject(stdout + stderr);
       } else {
