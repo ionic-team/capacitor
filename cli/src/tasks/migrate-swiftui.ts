@@ -46,6 +46,16 @@ const CONFIGURATION_FOR_CONNECTING_METHOD = [
   '        return configuration',
   '    }',
 ].join('\n');
+const SUPPORTED_INTERFACE_ORIENTATIONS_SIG = /func application\([^)]*\bsupportedInterfaceOrientationsFor\b/;
+// Kept byte-identical to the shipped templates, like CONFIGURATION_FOR_CONNECTING_METHOD.
+const SUPPORTED_INTERFACE_ORIENTATIONS_METHOD = [
+  '    func application(',
+  '        _ application: UIApplication,',
+  '        supportedInterfaceOrientationsFor window: UIWindow?',
+  '    ) -> UIInterfaceOrientationMask {',
+  '        ApplicationDelegateProxy.shared.application(application, supportedInterfaceOrientationsFor: window)',
+  '    }',
+].join('\n');
 
 const SCENE_WILL_CONNECT_SIG = /func scene\([^)]*\bwillConnectTo session:/;
 const SCENE_OPEN_URL_CONTEXTS_SIG = /func scene\([^)]*\bopenURLContexts\b/;
@@ -81,6 +91,10 @@ const STOCK_APP_DELEGATE_METHODS: { sig: RegExp; bodyIsStock: (lines: string[]) 
   { sig: OPEN_URL_SIG, bodyIsStock: (lines) => lines.every((line) => line.includes(APPLICATION_DELEGATE_PROXY)) },
   { sig: CONTINUE_SIG, bodyIsStock: (lines) => lines.every((line) => line.includes(APPLICATION_DELEGATE_PROXY)) },
   { sig: CONFIGURATION_FOR_CONNECTING_SIG, bodyIsStock: () => true },
+  {
+    sig: SUPPORTED_INTERFACE_ORIENTATIONS_SIG,
+    bodyIsStock: (lines) => lines.every((line) => line.includes(APPLICATION_DELEGATE_PROXY)),
+  },
 ];
 
 export async function migrateToSwiftUI(config: Config): Promise<void> {
@@ -88,6 +102,7 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
 
   if (classify(signals) === 'already-migrated') {
     logger.info('SwiftUI migration: project already uses the SwiftUI App-struct layout, skipping.');
+    await forwardSupportedInterfaceOrientations(config);
     return;
   }
   if (hasAnySignal(signals)) {
@@ -376,6 +391,8 @@ function hasCustomWindowSetup(source: string): boolean {
     const trimmed = line.trim();
     if (!/\bwindow\b/.test(trimmed)) return false;
     if (trimmed.startsWith('//')) return false;
+    // The orientation forward only passes the window UIKit asks about along.
+    if (/\bsupportedInterfaceOrientationsFor\b/.test(trimmed)) return false;
     return !/^var\s+window\s*:\s*UIWindow\?$/.test(trimmed);
   });
 }
@@ -396,6 +413,8 @@ function printManualSteps(): void {
   logger.info('  • Add SceneDelegate.swift (an empty UIWindowSceneDelegate) to the App target, and keep or add');
   logger.info('    configurationForConnecting in AppDelegate naming it as the scene delegate class.');
   logger.info('  • Reference AppDelegate from App.swift with @UIApplicationDelegateAdaptor.');
+  logger.info('  • Forward application(_:supportedInterfaceOrientationsFor:) in AppDelegate to');
+  logger.info('    ApplicationDelegateProxy.shared, so the bridge orientations (ScreenOrientation.lock()) apply.');
   logger.info('  • Reduce UIApplicationSceneManifest to UIApplicationSupportsMultipleScenes only.');
   logger.info('  • Remove UIMainStoryboardFile from Info.plist.');
   logger.info('  • Route URLs and universal links from the SwiftUI scene body through');
@@ -491,11 +510,12 @@ function rewriteAppDelegateForAdaptor(source: string): AppDelegateRewrite {
   }
 
   const wired = ensureConfigurationForConnecting(stripped);
-  if (wired === null) {
+  const forwarded = wired === null ? null : ensureSupportedInterfaceOrientations(wired);
+  if (forwarded === null) {
     return { status: 'skipped', reason: 'could not find the end of the AppDelegate class in AppDelegate.swift.' };
   }
 
-  return { status: 'rewritten', source: wired };
+  return { status: 'rewritten', source: forwarded };
 }
 
 /**
@@ -506,6 +526,37 @@ function rewriteAppDelegateForAdaptor(source: string): AppDelegateRewrite {
  * builds the scene with no delegate of ours and nothing can answer per-scene callbacks.
  */
 function ensureConfigurationForConnecting(source: string): string | null {
+  return ensureAppDelegateMethod(source, CONFIGURATION_FOR_CONNECTING_SIG, CONFIGURATION_FOR_CONNECTING_METHOD);
+}
+
+/**
+ * Forward the window's supported interface orientations to Capacitor.
+ *
+ * In the SwiftUI App-struct layout the bridge is not the window's root view controller, so
+ * UIKit only picks up its orientations, ScreenOrientation.lock() included, through the app
+ * delegate. A developer's own implementation is kept as it is.
+ */
+function ensureSupportedInterfaceOrientations(source: string): string | null {
+  const forwarded = ensureAppDelegateMethod(
+    source,
+    SUPPORTED_INTERFACE_ORIENTATIONS_SIG,
+    SUPPORTED_INTERFACE_ORIENTATIONS_METHOD,
+  );
+  if (forwarded === null || forwarded === source || /^import\s+Capacitor\b/m.test(forwarded)) {
+    return forwarded;
+  }
+  // ApplicationDelegateProxy lives in Capacitor, which a converted AppDelegate may not import yet.
+  const uiKitImport = /^import\s+UIKit\b.*$/m;
+  return uiKitImport.test(forwarded)
+    ? forwarded.replace(uiKitImport, '$&\nimport Capacitor')
+    : `import Capacitor\n${forwarded}`;
+}
+
+/**
+ * Append `method` at the end of the AppDelegate class, unless a method matching `sig` is
+ * already there. Returns null when the class body cannot be parsed.
+ */
+function ensureAppDelegateMethod(source: string, sig: RegExp, method: string): string | null {
   // Located even when the method is already there: an unbalanced class body used to be
   // caught by the strip this replaced, and reporting success on a file we cannot parse
   // is worse than refusing it.
@@ -516,11 +567,28 @@ function ensureConfigurationForConnecting(source: string): string | null {
   const closeIdx = findMatchingBrace(source, openIdx);
   if (closeIdx === null) return null;
 
-  if (CONFIGURATION_FOR_CONNECTING_SIG.test(source)) {
+  if (sig.test(source)) {
     return source;
   }
 
-  return `${source.slice(0, closeIdx)}\n${CONFIGURATION_FOR_CONNECTING_METHOD}\n${source.slice(closeIdx)}`;
+  // Trailing blank lines before the closing brace would otherwise stack up with the separator.
+  const head = source.slice(0, closeIdx).replace(/\s*$/, '');
+  return `${head}\n\n${method}\n${source.slice(closeIdx)}`;
+}
+
+/**
+ * Projects migrated before the orientation forward existed are already on the SwiftUI layout,
+ * so the rest of this migration skips them; give them the forward on their next run.
+ */
+async function forwardSupportedInterfaceOrientations(config: Config): Promise<void> {
+  const appDelegatePath = join(config.ios.nativeTargetDirAbs, 'AppDelegate.swift');
+  if (!existsSync(appDelegatePath)) return;
+  const source = readFileSync(appDelegatePath, 'utf-8');
+  const forwarded = ensureSupportedInterfaceOrientations(source);
+  if (forwarded === null || forwarded === source) return;
+  await runTask('Forwarding supported interface orientations from AppDelegate.swift to Capacitor.', async () => {
+    writeFileSync(appDelegatePath, forwarded);
+  });
 }
 
 function stripMainAttribute(source: string): string {
@@ -633,8 +701,10 @@ function describeSignals({
 // Exported for tests.
 export const __testables = {
   CONFIGURATION_FOR_CONNECTING_METHOD,
+  SUPPORTED_INTERFACE_ORIENTATIONS_METHOD,
   classify,
   describeSignals,
+  ensureSupportedInterfaceOrientations,
   hasCustomDelegateBody,
   hasCustomWindowSetup,
   isStockAppDelegate,

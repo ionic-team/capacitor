@@ -1,6 +1,17 @@
+import { readFileSync } from 'fs-extra';
+import { resolve } from 'path';
+
 import { __testables } from '../src/tasks/migrate-swiftui';
 
-const { rewriteAppDelegateForAdaptor, hasCustomWindowSetup, CONFIGURATION_FOR_CONNECTING_METHOD } = __testables;
+const {
+  rewriteAppDelegateForAdaptor,
+  hasCustomWindowSetup,
+  ensureSupportedInterfaceOrientations,
+  CONFIGURATION_FOR_CONNECTING_METHOD,
+  SUPPORTED_INTERFACE_ORIENTATIONS_METHOD,
+} = __testables;
+
+const REPO_ROOT = resolve(__dirname, '..', '..');
 
 // The AppDelegate shipped by the 8.4 templates: @main, UIResponder, own window.
 const APP_DELEGATE_8_4 = `import UIKit
@@ -147,6 +158,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         config.delegateClass = SceneDelegate.self
         return config
     }
+
+    func application(
+        _ application: UIApplication,
+        supportedInterfaceOrientationsFor window: UIWindow?
+    ) -> UIInterfaceOrientationMask {
+        ApplicationDelegateProxy.shared.application(application, supportedInterfaceOrientationsFor: window)
+    }
 }
 `);
   });
@@ -170,11 +188,26 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     expect(rewrite(once)).toBe(once);
   });
 
+  it('forwards supportedInterfaceOrientationsFor to Capacitor, as the templates ship it', () => {
+    expect(rewrite(APP_DELEGATE_8_4)).toContain(SUPPORTED_INTERFACE_ORIENTATIONS_METHOD);
+  });
+
+  it("keeps the developer's own supportedInterfaceOrientationsFor", () => {
+    const own = APP_DELEGATE_8_5.replace(
+      /\n}\n$/,
+      '\n    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {\n        return .portrait\n    }\n}\n',
+    );
+    const patched = rewrite(own);
+
+    expect(patched).toContain('return .portrait');
+    expect(patched).not.toContain(SUPPORTED_INTERFACE_ORIENTATIONS_METHOD);
+  });
+
   it('removes a vanilla application(_:open:), which scenes no longer call', () => {
     const patched = rewrite(APP_DELEGATE_8_4);
 
     expect(patched).not.toContain('open url:');
-    expect(patched).not.toContain('ApplicationDelegateProxy.shared');
+    expect(patched).not.toMatch(/ApplicationDelegateProxy\.shared\.application\(\w+, (?:open|continue):/);
     expect(patched).toContain('didFinishLaunchingWithOptions');
   });
 
@@ -183,7 +216,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
     expect(patched).not.toContain('open url:');
     expect(patched).not.toContain('continue userActivity:');
-    expect(patched).not.toContain('ApplicationDelegateProxy.shared');
+    expect(patched).not.toMatch(/ApplicationDelegateProxy\.shared\.application\(\w+, (?:open|continue):/);
     expect(patched).toContain('configurationForConnecting');
     expect(patched).toContain('didFinishLaunchingWithOptions');
     expect(patched).not.toMatch(/\n\n\n/);
@@ -198,7 +231,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     const patched = rewrite(customised);
 
     expect(patched).toContain('var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid');
-    expect(patched).not.toContain('ApplicationDelegateProxy.shared');
+    expect(patched).not.toMatch(/ApplicationDelegateProxy\.shared\.application\(\w+, (?:open|continue):/);
   });
 
   it('refuses when no AppDelegate class is present', () => {
@@ -292,5 +325,45 @@ describe('hasCustomWindowSetup', () => {
 
   it('does not trip on UIWindowScene references', () => {
     expect(hasCustomWindowSetup('    let scene = connectingSceneSession as? UIWindowScene\n')).toBe(false);
+  });
+});
+
+describe('ensureSupportedInterfaceOrientations', () => {
+  // An AppDelegate migrated before the forward existed, which also never imported Capacitor.
+  const MIGRATED_WITHOUT_FORWARD = `import UIKit
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        return true
+    }
+}
+`;
+
+  it('adds the forward to an already migrated AppDelegate and imports Capacitor for it', () => {
+    const patched = ensureSupportedInterfaceOrientations(MIGRATED_WITHOUT_FORWARD);
+
+    expect(patched).toContain('import UIKit\nimport Capacitor\n');
+    expect(patched).toContain(SUPPORTED_INTERFACE_ORIENTATIONS_METHOD);
+    expect(patched).not.toMatch(/\n\n\n/);
+  });
+
+  it('is idempotent', () => {
+    const once = ensureSupportedInterfaceOrientations(MIGRATED_WITHOUT_FORWARD) as string;
+
+    expect(ensureSupportedInterfaceOrientations(once)).toBe(once);
+  });
+
+  it.each([['ios-spm-template/App/App/AppDelegate.swift'], ['ios-pods-template/App/App/AppDelegate.swift']])(
+    'leaves the shipped template at %s untouched, so the method stays byte-identical to it',
+    (templatePath) => {
+      const template = readFileSync(resolve(REPO_ROOT, templatePath), 'utf-8');
+
+      expect(template).toContain(SUPPORTED_INTERFACE_ORIENTATIONS_METHOD);
+      expect(ensureSupportedInterfaceOrientations(template)).toBe(template);
+    },
+  );
+
+  it('refuses an AppDelegate whose class body cannot be parsed', () => {
+    expect(ensureSupportedInterfaceOrientations('class AppDelegate: NSObject, UIApplicationDelegate {\n')).toBeNull();
   });
 });
