@@ -22,9 +22,9 @@ export async function migrateToModernProject(config: Config): Promise<void> {
     try {   
         addArrayOfBuildSettings(pbxprojPath, settingsToAdd);
     } catch (err: any) {
-    logger.warn(
-        `Could not update the project ${pbxprojPath} to latest apple recomendations: ${err?.message ?? err}. ` +
-        `You can manually do so in Xcode`
-    );
+        logger.warn(
+            `Could not update the project ${pbxprojPath} to latest apple recomendations: ${err?.message ?? err}. ` +
+            `You can manually do so in Xcode`
+        );
     }
 }
