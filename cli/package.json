@@ -60,7 +60,7 @@
     "semver": "^7.6.3",
     "tar": "^7.5.3",
     "tslib": "^2.8.1",
-    "xcode": "^3.0.1",
+    "xcode": "^4.0.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
