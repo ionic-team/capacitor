@@ -349,9 +349,11 @@ function filterResources(plugin: Plugin) {
 }
 
 export async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config): Promise<void> {
-  cordovaPlugins.map((plugin: any) => {
-    generateCordovaPackageFile(plugin, config);
-  });
+  await Promise.all(
+    cordovaPlugins.map(async (plugin: any) => {
+      await generateCordovaPackageFile(plugin, config);
+    }),
+  );
 }
 
 function buildBinaryTargetEntries(p: Plugin, frameworks: any[]): { binaryTargetsText: string; binaryDepsText: string } {
