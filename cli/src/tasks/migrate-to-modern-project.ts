@@ -3,7 +3,7 @@ import { join } from 'path';
 import type { Config } from '../definitions';
 import { logger } from '../log';
 import type { BuildSettings } from '../util/xcode';
-import { addArrayOfBuildSettings } from '../util/xcode';
+import { addMultipleBuildSettings } from '../util/xcode';
 
 export async function migrateToModernProject(config: Config): Promise<void> {
   const pbxprojPath = join(config.ios.nativeXcodeProjDirAbs, 'project.pbxproj');
@@ -20,7 +20,7 @@ export async function migrateToModernProject(config: Config): Promise<void> {
   }
 
   try {
-    addArrayOfBuildSettings(pbxprojPath, settingsToAdd);
+    addMultipleBuildSettings(pbxprojPath, settingsToAdd);
   } catch (err: any) {
     logger.warn(
       `Could not update the project ${pbxprojPath} to latest apple recomendations: ${err?.message ?? err}. ` +

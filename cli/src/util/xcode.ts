@@ -116,7 +116,7 @@ export function removeStoryboardFromAppTarget(pbxprojPath: string, storyboardNam
   return { removed: true };
 }
 
-export function addArrayOfBuildSettings(pbxprojPath: string, settings: BuildSettings): void {
+export function addMultipleBuildSettings(pbxprojPath: string, settings: BuildSettings): void {
   const project = loadXcodeProject(pbxprojPath);
   project.parseSync();
 
