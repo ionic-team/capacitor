@@ -12,7 +12,12 @@ import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
 import { getPlatformElement, getPluginPlatform, getPluginType, PluginType } from '../plugin';
-import { renderCapacitorPackage, resolveCapacitorPackage } from '../util/capacitor-package';
+import {
+  CORDOVA_PRODUCT,
+  SOURCE_PACKAGE_IDENTITY,
+  renderCapacitorPackage,
+  resolveCapacitorPackagePath,
+} from '../util/capacitor-package';
 import { convertToUnixPath } from '../util/fs';
 import { runCommand } from '../util/subprocess';
 
@@ -101,7 +106,7 @@ export async function generatePackageText(config: Config, plugins: Plugin[]): Pr
   const enableCordova = cordovaPlugins.length > 0 || config.app.forceCordova;
   const packageTraits = config.app.extConfig.experimental?.ios?.spm?.packageTraits ?? {};
   const packageOptions = config.app.extConfig.experimental?.ios?.spm?.packageOptions ?? {};
-  const capacitorPackage = await resolveCapacitorPackage(config);
+  const capacitorPackagePath = await resolveCapacitorPackagePath(config);
   const spmDirectory = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM');
   const swiftToolsVersion = config.app.extConfig.experimental?.ios?.spm?.swiftToolsVersion ?? '5.9';
 
@@ -118,7 +123,7 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        ${renderCapacitorPackage(capacitorPackage, spmDirectory)}`;
+        ${renderCapacitorPackage(capacitorPackagePath, spmDirectory)}`;
 
   for (const plugin of plugins) {
     if (getPluginType(plugin, config.ios.name) === PluginType.Cordova) {
@@ -163,10 +168,10 @@ let package = Package(
         .target(
             name: "CapApp-SPM",
             dependencies: [
-                .product(name: "Capacitor", package: "${capacitorPackage.identity}")`;
+                .product(name: "Capacitor", package: "${SOURCE_PACKAGE_IDENTITY}")`;
 
   if (enableCordova) {
-    packageSwiftText += `,\n                .product(name: "${capacitorPackage.cordovaProduct}", package: "${capacitorPackage.identity}")`;
+    packageSwiftText += `,\n                .product(name: "${CORDOVA_PRODUCT}", package: "${SOURCE_PACKAGE_IDENTITY}")`;
   }
 
   for (const plugin of plugins) {

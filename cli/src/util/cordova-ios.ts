@@ -16,9 +16,10 @@ import {
 } from '../plugin';
 import type { Plugin } from '../plugin';
 import {
+  SOURCE_PACKAGE_IDENTITY,
   patchPackageSwiftDeploymentTarget,
   renderCapacitorPackage,
-  resolveCapacitorPackage,
+  resolveCapacitorPackagePath,
   rewriteCapacitorDependency,
 } from '../util/capacitor-package';
 import { extractTemplate } from '../util/template';
@@ -348,9 +349,11 @@ function filterResources(plugin: Plugin) {
 }
 
 export async function generateCordovaPackageFiles(cordovaPlugins: Plugin[], config: Config): Promise<void> {
-  cordovaPlugins.map((plugin: any) => {
-    generateCordovaPackageFile(plugin, config);
-  });
+  await Promise.all(
+    cordovaPlugins.map(async (plugin: any) => {
+      await generateCordovaPackageFile(plugin, config);
+    }),
+  );
 }
 
 function buildBinaryTargetEntries(p: Plugin, frameworks: any[]): { binaryTargetsText: string; binaryDepsText: string } {
@@ -483,7 +486,7 @@ ${entries.join(',\n')}
 }
 
 export async function generateCordovaPackageFile(p: Plugin, config: Config): Promise<void> {
-  const capacitorPackage = await resolveCapacitorPackage(config, 'from');
+  const capacitorPackagePath = await resolveCapacitorPackagePath(config);
   const iosVersion = getMajoriOSVersion(config);
   const headerFiles = getPlatformElement(p, platform, 'header-file');
   let headersText = '';
@@ -497,12 +500,9 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
   if (platformTag.$?.package) {
     const packageSwiftPath = join(p.rootPath, 'Package.swift');
     let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
-    content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, capacitorPackage.identity);
-    content = rewriteCapacitorDependency(content, capacitorPackage, p.rootPath);
-
-    if (capacitorPackage.sourceBased) {
-      content = patchPackageSwiftDeploymentTarget(content, iosVersion).content;
-    }
+    content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, SOURCE_PACKAGE_IDENTITY);
+    content = rewriteCapacitorDependency(content, capacitorPackagePath, p.rootPath);
+    content = patchPackageSwiftDeploymentTarget(content, iosVersion).content;
 
     await writeFile(packageSwiftPath, content);
   } else {
@@ -543,13 +543,13 @@ let package = Package(
         )
     ],
     dependencies: [
-        ${renderCapacitorPackage(capacitorPackage, join(config.ios.cordovaPluginsDirAbs, 'sources', p.name))}${packageText}
+        ${renderCapacitorPackage(capacitorPackagePath, join(config.ios.cordovaPluginsDirAbs, 'sources', p.name))}${packageText}
     ],
     targets: [
         .target(
             name: "${p.name}",
             dependencies: [
-                .product(name: "Cordova", package: "${capacitorPackage.identity}")${binaryDepsText}${productText}
+                .product(name: "Cordova", package: "${SOURCE_PACKAGE_IDENTITY}")${binaryDepsText}${productText}
             ],
             path: "."${resourcesText}${headersText}${cSettingsText}${linkerSettingsText}
         )${binaryTargetsText}
