@@ -1,0 +1,80 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: capacitor
+  title: Capacitor
+  description: Cross-platform native runtime for building web apps that run on iOS, Android, and the web.
+  annotations:
+    github.com/project-slug: ionic-team/capacitor
+  links:
+    - url: https://capacitorjs.com/docs
+      title: Documentation
+  tags: [capacitor, mobile, typescript, swift, java]
+spec:
+  owner: group:default/mobile-ecosystem
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: capacitor-core
+  title: '@capacitor/core'
+  description: JavaScript runtime and plugin bridge.
+  annotations:
+    github.com/project-slug: ionic-team/capacitor
+    backstage.io/source-location: url:https://github.com/ionic-team/capacitor/tree/main/core
+  tags: [typescript, npm-package]
+spec:
+  type: library
+  lifecycle: production
+  owner: group:default/mobile-ecosystem
+  system: capacitor
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: capacitor-cli
+  title: '@capacitor/cli'
+  description: CLI for creating, syncing, building, and running Capacitor apps.
+  annotations:
+    github.com/project-slug: ionic-team/capacitor
+    backstage.io/source-location: url:https://github.com/ionic-team/capacitor/tree/main/cli
+  tags: [typescript, cli, npm-package]
+spec:
+  type: tool
+  lifecycle: production
+  owner: group:default/mobile-ecosystem
+  system: capacitor
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: capacitor-android
+  title: '@capacitor/android'
+  description: Android native runtime for Capacitor.
+  annotations:
+    github.com/project-slug: ionic-team/capacitor
+    backstage.io/source-location: url:https://github.com/ionic-team/capacitor/tree/main/android
+  tags: [java, android, npm-package]
+spec:
+  type: library
+  lifecycle: production
+  owner: group:default/mobile-ecosystem
+  system: capacitor
+  dependsOn: [component:default/capacitor-core]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: capacitor-ios
+  title: '@capacitor/ios'
+  description: iOS native runtime for Capacitor.
+  annotations:
+    github.com/project-slug: ionic-team/capacitor
+    backstage.io/source-location: url:https://github.com/ionic-team/capacitor/tree/main/ios
+  tags: [swift, ios, npm-package]
+spec:
+  type: library
+  lifecycle: production
+  owner: group:default/mobile-ecosystem
+  system: capacitor
+  dependsOn: [component:default/capacitor-core]
