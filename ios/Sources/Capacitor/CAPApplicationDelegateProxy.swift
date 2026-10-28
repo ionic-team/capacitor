@@ -42,19 +42,26 @@ public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
     }
 
     static func supportedInterfaceOrientations(for window: UIWindow?) -> UIInterfaceOrientationMask {
-        // A full-screen presentation decides its own orientations, as it does when the bridge is the root view
-        // controller. Returning the bridge's here could leave UIKit with no orientation in common, which crashes.
+        // An empty mask comes from `ScreenOrientation.lock('any')`, which the bridge stores as `.unknown`.
         guard let rootViewController = window?.rootViewController,
-              !isCoveredByFullScreenPresentation(rootViewController),
-              let bridgeViewController = bridgeViewController(in: rootViewController)
+              let mask = bridgeViewController(in: rootViewController)?.supportedInterfaceOrientations,
+              !mask.isEmpty,
+              !isDecidedByPresentation(over: rootViewController, sharingNothingWith: mask)
         else { return infoPlistInterfaceOrientations }
-        return bridgeViewController.supportedInterfaceOrientations
+        return mask
     }
 
-    private static func isCoveredByFullScreenPresentation(_ viewController: UIViewController) -> Bool {
+    private static func isDecidedByPresentation(
+        over viewController: UIViewController,
+        sharingNothingWith mask: UIInterfaceOrientationMask
+    ) -> Bool {
         var presented = viewController.presentedViewController
         while let current = presented {
-            if [.fullScreen, .overFullScreen].contains(current.modalPresentationStyle) {
+            // A full-screen presentation decides its own orientations, as it does when the bridge is the root view
+            // controller. UIKit also asks `.custom` ones, so any that shares no orientation with the bridge decides
+            // too: returning the bridge's mask would leave UIKit with no orientation in common, which crashes.
+            if [.fullScreen, .overFullScreen].contains(current.modalPresentationStyle)
+                || current.supportedInterfaceOrientations.isDisjoint(with: mask) {
                 return true
             }
             presented = current.presentedViewController

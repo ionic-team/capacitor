@@ -8,6 +8,10 @@ class ApplicationDelegateProxyTests: XCTestCase {
         override var presentedViewController: UIViewController? { stubbedPresentedViewController }
     }
 
+    private final class LandscapeViewController: UIViewController {
+        override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .landscape }
+    }
+
     private func window(hosting bridge: CAPBridgeViewController?) -> (UIWindow, HostViewController) {
         let host = HostViewController()
         if let bridge {
@@ -71,6 +75,41 @@ class ApplicationDelegateProxyTests: XCTestCase {
         let presented = UIViewController()
         presented.modalPresentationStyle = .pageSheet
         host.stubbedPresentedViewController = presented
+
+        XCTAssertEqual(ApplicationDelegateProxy.supportedInterfaceOrientations(for: window), .portrait)
+    }
+
+    func testFallsBackToInfoPlistWhenTheBridgeAllowsNoOrientation() {
+        let bridge = CAPBridgeViewController()
+        // What `ScreenOrientation.lock('any')` stores.
+        bridge.supportedOrientations = [UIInterfaceOrientation.unknown.rawValue]
+        let (window, _) = window(hosting: bridge)
+
+        XCTAssertEqual(
+            ApplicationDelegateProxy.supportedInterfaceOrientations(for: window),
+            ApplicationDelegateProxy.infoPlistInterfaceOrientations
+        )
+    }
+
+    func testLetsACustomPresentationWithNoOrientationInCommonDecide() {
+        let bridge = CAPBridgeViewController()
+        bridge.supportedOrientations = [UIInterfaceOrientation.portrait.rawValue]
+        let (window, host) = window(hosting: bridge)
+        let presented = LandscapeViewController()
+        presented.modalPresentationStyle = .custom
+        host.stubbedPresentedViewController = presented
+
+        XCTAssertEqual(
+            ApplicationDelegateProxy.supportedInterfaceOrientations(for: window),
+            ApplicationDelegateProxy.infoPlistInterfaceOrientations
+        )
+    }
+
+    func testKeepsTheBridgeOrientationsUnderAnAlert() {
+        let bridge = CAPBridgeViewController()
+        bridge.supportedOrientations = [UIInterfaceOrientation.portrait.rawValue]
+        let (window, host) = window(hosting: bridge)
+        host.stubbedPresentedViewController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
 
         XCTAssertEqual(ApplicationDelegateProxy.supportedInterfaceOrientations(for: window), .portrait)
     }
