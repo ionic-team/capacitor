@@ -139,6 +139,15 @@ describe('isStockAppDelegate', () => {
     expect(isStockAppDelegate(customised)).toBe(false);
   });
 
+  it("rejects a supportedInterfaceOrientationsFor of the developer's own", () => {
+    const customised = STOCK_8_X.replace(
+      '    }\n}\n',
+      '    }\n\n    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {\n        return .portrait\n    }\n}\n',
+    );
+
+    expect(isStockAppDelegate(customised)).toBe(false);
+  });
+
   it('rejects an added stored property', () => {
     const customised = STOCK_8_X.replace('var window: UIWindow?', 'var window: UIWindow?\n    var pendingURL: URL?');
 

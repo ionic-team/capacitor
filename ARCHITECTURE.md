@@ -677,6 +677,17 @@ for per-scene UIKit APIs SwiftUI does not surface, the first of which is
 routing on purpose: a scene delegate that implements `scene(_:openURLContexts:)` takes URL
 delivery away from `.onOpenURL` below.
 
+`AppDelegate` forwards `application(_:supportedInterfaceOrientationsFor:)` to
+`ApplicationDelegateProxy.shared`. The bridge is a child of SwiftUI's hosting controller
+rather than the window's root view controller, so UIKit never asks
+`CAPBridgeViewController` for `supportedInterfaceOrientations`, and a
+`ScreenOrientation.lock()` would only hold until the next device rotation. The proxy
+returns the bridge's orientations, unless a full-screen presentation is on top, in which
+case it returns the Info.plist orientations and lets the presented controller decide, as
+UIKit does when the bridge is the root. It does the same when a presented controller
+shares no orientation with the bridge (UIKit also asks `.custom` presentations, and no
+orientation in common crashes), and when the bridge's orientations are empty.
+
 `CapacitorView` lives in the app target, not the runtime. An app that needs its own
 `CAPBridgeViewController` subclass (custom `webViewConfiguration(for:)`, `router()`,
 `capacitorDidLoad()`) returns that subclass from `makeUIViewController`. This replaces
