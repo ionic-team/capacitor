@@ -16,8 +16,7 @@ describe('Build: iOS', () => {
     // Init in this directory so we can test build
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
     await installPlatform(appDir, 'ios');
-    // Build the template against this checkout, not the released tag, as it may use unreleased iOS APIs.
-    await run(appDir, `add ios`, { CAPACITOR_IOS_PACKAGE: join(__dirname, '..', '..') });
+    await run(appDir, `add ios`);
     await runCommand(
       'xcodebuild',
       ['build', '-scheme', 'App', '-sdk', 'iphonesimulator', '-derivedDataPath', './build'],
