@@ -17,6 +17,7 @@ import { extractTemplate } from '../util/template';
 import { removeDebugXcconfig } from './migrate-debug-xcconfig';
 import { migrateToEdgeToEdge } from './migrate-edge-to-edge';
 import { migrateToSwiftUI } from './migrate-swiftui';
+import { migrateToModernProject } from './migrate-to-modern-project';
 
 let allDependencies: { [key: string]: any } = {};
 const libs = ['@capacitor/core', '@capacitor/cli', '@capacitor/ios', '@capacitor/android'];
@@ -213,6 +214,10 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
 
         await runTask(`Removing debug.xcconfig.`, () => {
           return removeDebugXcconfig(config);
+        });
+
+        await runTask(`Migrating to recommended project settings`, () => {
+          return migrateToModernProject(config);
         });
 
         await migrateToSwiftUI(config);
