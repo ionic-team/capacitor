@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.10](https://github.com/ionic-team/capacitor/compare/7.6.9...7.6.10) (2026-10-28)
+
+**Note:** Version bump only for package @capacitor/core
+
 ## [7.6.9](https://github.com/ionic-team/capacitor/compare/7.6.8...7.6.9) (2026-08-31)
 
 **Note:** Version bump only for package @capacitor/core

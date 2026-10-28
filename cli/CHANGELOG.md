@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.10](https://github.com/ionic-team/capacitor/compare/7.6.9...7.6.10) (2026-10-28)
+
+### Bug Fixes
+
+- **cli:** redact sensitive values from telemetry payloads (7.x) ([#8677](https://github.com/ionic-team/capacitor/issues/8677)) ([864369d](https://github.com/ionic-team/capacitor/commit/864369dfe9154677d3d7fd72816b07bd093c2143))
+
 ## [7.6.9](https://github.com/ionic-team/capacitor/compare/7.6.8...7.6.9) (2026-08-31)
 
 **Note:** Version bump only for package @capacitor/cli
