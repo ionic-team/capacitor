@@ -254,7 +254,9 @@ export function removeInfoPlistDebug(config: Config): PlistDebugResult {
 }
 
 export type SceneManifestResult =
-  { status: 'written' } | { status: 'unchanged' } | { status: 'skipped'; reason: string };
+  | { status: 'written' }
+  | { status: 'unchanged' }
+  | { status: 'skipped'; reason: string };
 
 export function hasSceneManifest(config: Config): boolean {
   const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
@@ -332,6 +334,25 @@ function customSceneDelegateClassNames(manifest: PlistObject | undefined): strin
     .map((roleConfig) => roleConfig['UISceneDelegateClassName'])
     .filter((className): className is string => typeof className === 'string')
     .filter((className) => className.split('.').pop() !== 'SceneDelegate');
+}
+
+export async function ensureSPMGitignoreEntry(config: Config): Promise<void> {
+  const gitignorePath = join(config.ios.nativeProjectDirAbs, 'CapApp-SPM', '.gitignore');
+  const entry = '/Package.resolved';
+
+  if (!existsSync(gitignorePath)) {
+    logger.warn(gitignorePath + ' not found, skipping.');
+    return;
+  }
+
+  const contents = readFileSync(gitignorePath, 'utf-8');
+  if (contents.split('\n').some((line) => line.trim() === entry)) {
+    logger.warn('Found ' + entry + ' in ' + gitignorePath + ', skipping.');
+    return;
+  }
+
+  const updated = contents.endsWith('\n') ? contents + entry + '\n' : contents + '\n' + entry + '\n';
+  writeFileSync(gitignorePath, updated);
 }
 
 export async function checkSwiftToolsVersion(config: Config, version: string | undefined): Promise<string | null> {
