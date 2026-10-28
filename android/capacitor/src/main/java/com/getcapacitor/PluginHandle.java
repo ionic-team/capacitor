@@ -20,42 +20,26 @@ public class PluginHandle {
 
     private final String pluginId;
 
-    @SuppressWarnings("deprecation")
-    private NativePlugin legacyPluginAnnotation;
-
     private CapacitorPlugin pluginAnnotation;
 
     private Plugin instance;
 
-    @SuppressWarnings("deprecation")
     private PluginHandle(Class<? extends Plugin> clazz, Bridge bridge) throws InvalidPluginException {
         this.bridge = bridge;
         this.pluginClass = clazz;
 
         CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
         if (pluginAnnotation == null) {
-            // Check for legacy plugin annotation, @NativePlugin
-            NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
-            if (legacyPluginAnnotation == null) {
-                throw new InvalidPluginException("No @CapacitorPlugin annotation found for plugin " + pluginClass.getName());
-            }
-
-            if (!legacyPluginAnnotation.name().equals("")) {
-                this.pluginId = legacyPluginAnnotation.name();
-            } else {
-                this.pluginId = pluginClass.getSimpleName();
-            }
-
-            this.legacyPluginAnnotation = legacyPluginAnnotation;
-        } else {
-            if (!pluginAnnotation.name().equals("")) {
-                this.pluginId = pluginAnnotation.name();
-            } else {
-                this.pluginId = pluginClass.getSimpleName();
-            }
-
-            this.pluginAnnotation = pluginAnnotation;
+            throw new InvalidPluginException("No @CapacitorPlugin annotation found for plugin " + pluginClass.getName());
         }
+
+        if (!pluginAnnotation.name().equals("")) {
+            this.pluginId = pluginAnnotation.name();
+        } else {
+            this.pluginId = pluginClass.getSimpleName();
+        }
+
+        this.pluginAnnotation = pluginAnnotation;
 
         this.indexMethods(clazz);
     }
@@ -76,11 +60,6 @@ public class PluginHandle {
 
     public String getId() {
         return this.pluginId;
-    }
-
-    @SuppressWarnings("deprecation")
-    public NativePlugin getLegacyPluginAnnotation() {
-        return this.legacyPluginAnnotation;
     }
 
     public CapacitorPlugin getPluginAnnotation() {

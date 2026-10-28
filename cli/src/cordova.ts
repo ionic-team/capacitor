@@ -5,6 +5,7 @@ import type { PlistObject } from 'plist';
 import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
+import { removeLegacyCordovaPluginsConfig, setAndroidCleartext } from './android/network-security-config';
 import c from './colors';
 import type { Config } from './definitions';
 import { fatal } from './errors';
@@ -867,14 +868,19 @@ export async function writeCordovaAndroidManifest(
     });
   });
   const cleartextString = 'android:usesCleartextTraffic="true"';
-  const cleartextValue =
-    (cleartext || config.app.extConfig.server?.cleartext) && !applicationXMLAttributes.includes(cleartextString)
-      ? cleartextString
-      : '';
+  const cleartextEnabled = !!(
+    cleartext ||
+    config.app.extConfig.server?.cleartext ||
+    applicationXMLAttributes.includes(cleartextString)
+  );
+  // Cleartext is applied to the app module, since the Cordova plugins module is not linked into Capacitor-only apps
+  await removeLegacyCordovaPluginsConfig(config);
+  await setAndroidCleartext(config, cleartextEnabled);
+
   let content = `<?xml version='1.0' encoding='utf-8'?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:amazon="http://schemas.amazon.com/apk/res/android">
-<application ${applicationXMLAttributes.join('\n')} ${cleartextValue}>
+<application ${applicationXMLAttributes.filter((attr) => !attr.includes('android:usesCleartextTraffic')).join('\n')}>
 ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}

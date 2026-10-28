@@ -53,6 +53,7 @@ export async function loadConfig(): Promise<Config> {
   const appId = conf.extConfig.appId ?? '';
   const appName = conf.extConfig.appName ?? '';
   const webDir = conf.extConfig.webDir ?? 'www';
+  const forceCordova = conf.extConfig.forceCordovaInclusion ?? false;
   const cli = await loadCLIConfig(cliRootDir);
 
   const config: Config = {
@@ -66,6 +67,7 @@ export async function loadConfig(): Promise<Config> {
       appName,
       webDir,
       webDirAbs: resolve(appRootDir, webDir),
+      forceCordova,
       package: (await tryFn(readJSON, resolve(appRootDir, 'package.json'))) ?? {
         name: appName,
         version: '1.0.0',
@@ -112,7 +114,7 @@ async function loadExtConfigTS(
       );
     }
 
-    const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
+    const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-require-imports
     const extConfigObject = (await requireTS(ts, extConfigFilePath)) as any;
     const extConfig = extConfigObject.default ? await extConfigObject.default : extConfigObject;
 
@@ -141,6 +143,7 @@ async function loadExtConfigJS(
       extConfigType: 'js',
       extConfigName,
       extConfigFilePath: extConfigFilePath,
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       extConfig: await require(extConfigFilePath),
     };
   } catch (e: any) {
@@ -236,7 +239,7 @@ async function loadAndroidConfig(
 
   return {
     name,
-    minVersion: '24',
+    minVersion: '26',
     studioPath,
     platformDir,
     platformDirAbs,
@@ -286,7 +289,7 @@ async function loadIOSConfig(rootDir: string, extConfig: ExternalConfig): Promis
   };
   return {
     name,
-    minVersion: '15.0',
+    minVersion: '16.0',
     platformDir,
     platformDirAbs,
     scheme,
@@ -358,7 +361,7 @@ async function determineIOSWebDirAbs(
 
       return resolve(nativeProjectDirAbs, 'public');
     }
-  } catch (e) {
+  } catch {
     // ignore
   }
 
@@ -456,7 +459,7 @@ async function determinePackageManager(
       if (output != null) {
         gemfilePath = resolve(output, 'Gemfile');
       }
-    } catch (e: any) {
+    } catch {
       // Nothing
     }
   }

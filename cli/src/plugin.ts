@@ -92,7 +92,7 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
       repository: meta.repository,
       xml: xmlMeta.plugin,
     };
-  } catch (e) {
+  } catch {
     // ignore
   }
   return null;
