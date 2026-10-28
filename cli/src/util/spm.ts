@@ -254,9 +254,7 @@ export function removeInfoPlistDebug(config: Config): PlistDebugResult {
 }
 
 export type SceneManifestResult =
-  | { status: 'written' }
-  | { status: 'unchanged' }
-  | { status: 'skipped'; reason: string };
+  { status: 'written' } | { status: 'unchanged' } | { status: 'skipped'; reason: string };
 
 export function hasSceneManifest(config: Config): boolean {
   const infoPlist = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
