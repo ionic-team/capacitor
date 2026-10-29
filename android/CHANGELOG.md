@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.6.0](https://github.com/ionic-team/capacitor/compare/8.5.3...8.6.0) (2026-10-28)
+
+### Bug Fixes
+
+- **android:** keep callbacks on non-public base classes from R8 ([02e43f8](https://github.com/ionic-team/capacitor/commit/02e43f83f7e101f1773e9d33cd12e3c52e7d2c4b))
+- **android:** keep plugin annotation types from R8 full mode ([#8646](https://github.com/ionic-team/capacitor/issues/8646)) ([9dc5aeb](https://github.com/ionic-team/capacitor/commit/9dc5aebd0335e0553827d81b4ce0f79e8a1c51aa))
+
+### Features
+
+- **android:** recognize @capacitor-community/ssl-pinning for cert pinning ([#8669](https://github.com/ionic-team/capacitor/issues/8669)) ([19d2a40](https://github.com/ionic-team/capacitor/commit/19d2a40b920120ac97a118ec56105b202ee99d0a))
+
 ## [8.5.3](https://github.com/ionic-team/capacitor/compare/8.5.2...8.5.3) (2026-10-07)
 
 **Note:** Version bump only for package @capacitor/android
