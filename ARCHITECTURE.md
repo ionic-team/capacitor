@@ -677,6 +677,17 @@ for per-scene UIKit APIs SwiftUI does not surface, the first of which is
 routing on purpose: a scene delegate that implements `scene(_:openURLContexts:)` takes URL
 delivery away from `.onOpenURL` below.
 
+`AppDelegate` forwards `application(_:supportedInterfaceOrientationsFor:)` to
+`ApplicationDelegateProxy.shared`. The bridge is a child of SwiftUI's hosting controller
+rather than the window's root view controller, so UIKit never asks
+`CAPBridgeViewController` for `supportedInterfaceOrientations`, and a
+`ScreenOrientation.lock()` would only hold until the next device rotation. The proxy
+returns the bridge's orientations, unless a full-screen presentation is on top, in which
+case it returns the Info.plist orientations and lets the presented controller decide, as
+UIKit does when the bridge is the root. It does the same when a presented controller
+shares no orientation with the bridge (UIKit also asks `.custom` presentations, and no
+orientation in common crashes), and when the bridge's orientations are empty.
+
 `CapacitorView` lives in the app target, not the runtime. An app that needs its own
 `CAPBridgeViewController` subclass (custom `webViewConfiguration(for:)`, `router()`,
 `capacitorDidLoad()`) returns that subclass from `makeUIViewController`. This replaces
@@ -819,10 +830,10 @@ the WebKit layer; the OS prompt still applies), `didFail`/`didFailProvisionalNav
 
 ### 5.7 Distribution shapes
 
-- **SwiftPM (default)**: root `Package.swift` vends `Capacitor`, `Cordova` and
+- **SwiftPM (default)**: the manifest vends `Capacitor`, `Cordova` and
   `CapacitorCordova`. The generated app carries a local `CapApp-SPM` package that
-  depends on `https://github.com/ionic-team/capacitor` and on each plugin's own
-  `Package.swift`.
+  depends on the installed `@capacitor/ios` by path
+  (`../../../node_modules/@capacitor/ios`) and on each plugin's own `Package.swift`.
 - **CocoaPods**: `ios/Capacitor.podspec` and `ios/CapacitorCordova.podspec` point at
   `Sources/` (with an `ios/` prefix when `NATIVE_PUBLISH=true`, because trunk publishes
   from the repo root while apps consume the npm package). The `Capacitor` podspec
@@ -1442,8 +1453,10 @@ flowchart TB
 - **iOS** (`scripts/native-podspec.sh publish`): `pod trunk push` for
   `CapacitorCordova` then `Capacitor`, with `NATIVE_PUBLISH=true` so the podspecs
   prefix their source globs with `ios/`.
-- **SwiftPM** needs no publish step — consumers resolve the git tag Lerna created against
-  the root `Package.swift`.
+- **SwiftPM** needs no publish step of its own. Apps resolve the Swift package out of the
+  `@capacitor/ios` npm, which carries `ios/Package.swift` alongside the sources, so it
+  ships on the npm publish above. A git URL still resolves the root `Package.swift` at the
+  tag Lerna created.
 
 ---
 
@@ -1478,7 +1491,9 @@ Things that will bite you when changing this codebase:
 
 1. **`native-bridge.js` is generated and committed.** Editing `core/native-bridge.ts`
    without running `npm run build:nativebridge` changes nothing at runtime, and the two
-   platform copies will silently drift.
+   platform copies will silently drift. `ios/Package.swift` is generated and committed
+   too — `npm run build:package-swift` derives it from the root `Package.swift`, and
+   `npm run lint` fails if the committed copy is stale. Edit the root manifest, not it.
 2. **The wire format is a cross-repo contract.** `callbackId` / `pluginId` /
    `methodName` / `options` / `success` / `data` / `error` / `save` are read by
    third-party plugins and by older runtimes. Add fields; do not rename or repurpose them.

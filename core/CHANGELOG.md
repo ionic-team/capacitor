@@ -3,7 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.8...9.0.0-beta.0) (2026-10-28)
+
+## [8.5.3](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.7...8.5.3) (2026-10-07)
+
+**Note:** Version bump only for package @capacitor/core
+
 # [9.0.0-alpha.8](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.7...9.0.0-alpha.8) (2026-10-07)
+
 ## [8.5.3](https://github.com/ionic-team/capacitor/compare/8.5.2...8.5.3) (2026-10-07)
 
 ## [8.5.2](https://github.com/ionic-team/capacitor/compare/8.5.1...8.5.2) (2026-09-11)

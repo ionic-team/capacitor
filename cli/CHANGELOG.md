@@ -3,7 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.8...9.0.0-beta.0) (2026-10-28)
+
+### Bug Fixes
+
+- **cli:** apply cleartext to the app module and merge with existing network-security-config ([#8671](https://github.com/ionic-team/capacitor/issues/8671)) ([19567bb](https://github.com/ionic-team/capacitor/commit/19567bbd47562fbf8395391ef0c0190c3f6cf668))
+- **cli:** bump xcode to ^4.0.0 to drop vulnerable uuid@7 ([#8674](https://github.com/ionic-team/capacitor/issues/8674)) ([463225f](https://github.com/ionic-team/capacitor/commit/463225f31d9edade1098ccbadef766deb1aafbe8))
+- **cli:** drop unused catch bindings in npm util ([#8681](https://github.com/ionic-team/capacitor/issues/8681)) ([3726d8a](https://github.com/ionic-team/capacitor/commit/3726d8a8a5cb2229f0eac62e2afdf9dd8ab91937))
+- **cli:** make migrate update androidxCoreKTXVersion ([#8656](https://github.com/ionic-team/capacitor/issues/8656)) ([e427037](https://github.com/ionic-team/capacitor/commit/e4270379d9cc050f10ae2e6d0c264d60edd9a926))
+- **cli:** redact sensitive values from telemetry payloads ([#8665](https://github.com/ionic-team/capacitor/issues/8665)) ([d19f1ea](https://github.com/ionic-team/capacitor/commit/d19f1ea0bd7018a2eb13a643c76c6b4ba60795bb))
+- **cli:** report npm 12 blocked install scripts in doctor and migrate ([#8655](https://github.com/ionic-team/capacitor/issues/8655)) ([841017a](https://github.com/ionic-team/capacitor/commit/841017a3c7ddb84c614be389e74a24ea0a629ff5))
+- **ios:** keep ScreenOrientation locks with the SwiftUI app template ([#8680](https://github.com/ionic-team/capacitor/issues/8680)) ([cd93355](https://github.com/ionic-team/capacitor/commit/cd933557e48d24effbd387a5eee98d3b06bee611))
+
+### Features
+
+- add migration to recommended project settings ([#8679](https://github.com/ionic-team/capacitor/issues/8679)) ([295b10b](https://github.com/ionic-team/capacitor/commit/295b10b39f26150ff47361ff17d423586a330d50))
+- **cli:** add /Package.resolved to CapApp-SPM/.gitignore during migration ([#8686](https://github.com/ionic-team/capacitor/issues/8686)) ([ed4a5cc](https://github.com/ionic-team/capacitor/commit/ed4a5cc943199433b760bf4294c40c41a16c48b7))
+- **cli:** finish the SwiftUI entry-point conversion in cap migrate ([#8647](https://github.com/ionic-team/capacitor/issues/8647)) ([ffb509f](https://github.com/ionic-team/capacitor/commit/ffb509ff32b4bffcdea5a368db5678bcffcfd1e1))
+- **cli:** recognize @capacitor-community/ssl-pinning for auto cert copy ([#8666](https://github.com/ionic-team/capacitor/issues/8666)) ([50a3c51](https://github.com/ionic-team/capacitor/commit/50a3c511e1b02083b6961f8359b76cc2bab92d14))
+- **cli:** resolve the iOS Swift package from NPM package ([#8644](https://github.com/ionic-team/capacitor/issues/8644)) ([f3d894b](https://github.com/ionic-team/capacitor/commit/f3d894b9bf11bb24808d6e212262c4259aa4c689))
+
+## [8.5.3](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.7...8.5.3) (2026-10-07)
+
 # [9.0.0-alpha.8](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.7...9.0.0-alpha.8) (2026-10-07)
+
 ## [8.5.3](https://github.com/ionic-team/capacitor/compare/8.5.2...8.5.3) (2026-10-07)
 
 ### Bug Fixes
