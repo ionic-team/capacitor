@@ -1,13 +1,16 @@
 import { mkdirSync, mkdtempSync, symlinkSync, writeFileSync } from 'fs';
+import { remove } from 'fs-extra';
 import { tmpdir } from 'os';
 import { dirname, join } from 'path';
 
 import { run } from './util';
 
 const APP_ID = 'com.example.app';
+const appDirs: string[] = [];
 
 function makeApp(packageType: 'module' | 'commonjs', configFile: string, configContents: string): string {
   const dir = mkdtempSync(join(tmpdir(), 'cap-config-'));
+  appDirs.push(dir);
   writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'app', type: packageType }));
   writeFileSync(join(dir, configFile), configContents);
   // the CLI needs TypeScript installed in the app to load a .ts config
@@ -23,6 +26,8 @@ async function loadAppId(dir: string): Promise<string> {
 
 describe('loading capacitor.config by package type', () => {
   jest.setTimeout(30000);
+
+  afterAll(() => Promise.all(appDirs.map((dir) => remove(dir))));
 
   describe('"type": "module"', () => {
     it('loads a .ts config that uses import.meta', async () => {
