@@ -11,12 +11,14 @@ import { getMajoriOSVersion } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
 import { getBlockedInstallScripts, hasBlockedCapacitorScripts, logBlockedInstallScripts } from '../util/npm';
+import { ensureSPMGitignoreEntry } from '../util/spm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
 import { removeDebugXcconfig } from './migrate-debug-xcconfig';
 import { migrateToEdgeToEdge } from './migrate-edge-to-edge';
 import { migrateToSwiftUI } from './migrate-swiftui';
+import { migrateToModernProject } from './migrate-to-modern-project';
 
 let allDependencies: { [key: string]: any } = {};
 const libs = ['@capacitor/core', '@capacitor/cli', '@capacitor/ios', '@capacitor/android'];
@@ -215,7 +217,17 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           return removeDebugXcconfig(config);
         });
 
+        await runTask(`Migrating to recommended project settings`, () => {
+          return migrateToModernProject(config);
+        });
+
         await migrateToSwiftUI(config);
+
+        if ((await config.ios.packageManager) === 'SPM') {
+          await runTask('Ensuring Package.resolved is in CapApp-SPM/.gitignore.', () => {
+            return ensureSPMGitignoreEntry(config);
+          });
+        }
       }
 
       if (!installFailed) {

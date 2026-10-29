@@ -5,6 +5,10 @@ import type { PbxprojSection, XcodeProject } from 'xcode';
 
 const COMMENT_SUFFIX = '_comment';
 
+export interface BuildSettings {
+  [key: string]: string;
+}
+
 /**
  * Register a Swift source file with the first native target of an Xcode project.
  *
@@ -110,6 +114,18 @@ export function removeStoryboardFromAppTarget(pbxprojPath: string, storyboardNam
 
   writeFileSync(pbxprojPath, project.writeSync(), 'utf-8');
   return { removed: true };
+}
+
+export function addMultipleBuildSettings(pbxprojPath: string, settings: BuildSettings): void {
+  const project = loadXcodeProject(pbxprojPath);
+  project.parseSync();
+
+  for (const key in settings) {
+    const value = settings[key];
+    project.addToBuildSettings(key, value);
+  }
+
+  writeFileSync(pbxprojPath, project.writeSync(), 'utf-8');
 }
 
 function findSwiftFileUuidsByFileName(section: PbxprojSection, fileName: string): string[] {

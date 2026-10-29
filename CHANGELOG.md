@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.8...9.0.0-beta.0) (2026-10-28)
+
+### Bug Fixes
+
+- **android:** keep callbacks on non-public base classes from R8 ([02e43f8](https://github.com/ionic-team/capacitor/commit/02e43f83f7e101f1773e9d33cd12e3c52e7d2c4b))
+- **android:** keep Cordova's config.xml when shrinking resources ([fd17329](https://github.com/ionic-team/capacitor/commit/fd17329f196338d8e382bdabb08e383d67826ef9))
+- **android:** keep plugin annotation types from R8 full mode ([#8646](https://github.com/ionic-team/capacitor/issues/8646)) ([9dc5aeb](https://github.com/ionic-team/capacitor/commit/9dc5aebd0335e0553827d81b4ce0f79e8a1c51aa))
+- **cli:** apply cleartext to the app module and merge with existing network-security-config ([#8671](https://github.com/ionic-team/capacitor/issues/8671)) ([19567bb](https://github.com/ionic-team/capacitor/commit/19567bbd47562fbf8395391ef0c0190c3f6cf668))
+- **cli:** bump xcode to ^4.0.0 to drop vulnerable uuid@7 ([#8674](https://github.com/ionic-team/capacitor/issues/8674)) ([463225f](https://github.com/ionic-team/capacitor/commit/463225f31d9edade1098ccbadef766deb1aafbe8))
+- **cli:** drop unused catch bindings in npm util ([#8681](https://github.com/ionic-team/capacitor/issues/8681)) ([3726d8a](https://github.com/ionic-team/capacitor/commit/3726d8a8a5cb2229f0eac62e2afdf9dd8ab91937))
+- **cli:** make migrate update androidxCoreKTXVersion ([#8656](https://github.com/ionic-team/capacitor/issues/8656)) ([e427037](https://github.com/ionic-team/capacitor/commit/e4270379d9cc050f10ae2e6d0c264d60edd9a926))
+- **cli:** redact sensitive values from telemetry payloads ([#8665](https://github.com/ionic-team/capacitor/issues/8665)) ([d19f1ea](https://github.com/ionic-team/capacitor/commit/d19f1ea0bd7018a2eb13a643c76c6b4ba60795bb))
+- **cli:** report npm 12 blocked install scripts in doctor and migrate ([#8655](https://github.com/ionic-team/capacitor/issues/8655)) ([841017a](https://github.com/ionic-team/capacitor/commit/841017a3c7ddb84c614be389e74a24ea0a629ff5))
+- **ios:** keep ScreenOrientation locks with the SwiftUI app template ([#8680](https://github.com/ionic-team/capacitor/issues/8680)) ([cd93355](https://github.com/ionic-team/capacitor/commit/cd933557e48d24effbd387a5eee98d3b06bee611))
+
+### Features
+
+- add migration to recommended project settings ([#8679](https://github.com/ionic-team/capacitor/issues/8679)) ([295b10b](https://github.com/ionic-team/capacitor/commit/295b10b39f26150ff47361ff17d423586a330d50))
+- **android:** recognize @capacitor-community/ssl-pinning for cert pinning ([#8669](https://github.com/ionic-team/capacitor/issues/8669)) ([19d2a40](https://github.com/ionic-team/capacitor/commit/19d2a40b920120ac97a118ec56105b202ee99d0a))
+- **android:** Upgrade AGP to 9.4.1 and Gradle to 9.8.2 ([#8668](https://github.com/ionic-team/capacitor/issues/8668)) ([3ccf568](https://github.com/ionic-team/capacitor/commit/3ccf568d7a97c2e3b832cc21e31c097c1dad5b75))
+- **cli:** add /Package.resolved to CapApp-SPM/.gitignore during migration ([#8686](https://github.com/ionic-team/capacitor/issues/8686)) ([ed4a5cc](https://github.com/ionic-team/capacitor/commit/ed4a5cc943199433b760bf4294c40c41a16c48b7))
+- **cli:** finish the SwiftUI entry-point conversion in cap migrate ([#8647](https://github.com/ionic-team/capacitor/issues/8647)) ([ffb509f](https://github.com/ionic-team/capacitor/commit/ffb509ff32b4bffcdea5a368db5678bcffcfd1e1))
+- **cli:** recognize @capacitor-community/ssl-pinning for auto cert copy ([#8666](https://github.com/ionic-team/capacitor/issues/8666)) ([50a3c51](https://github.com/ionic-team/capacitor/commit/50a3c511e1b02083b6961f8359b76cc2bab92d14))
+- **cli:** resolve the iOS Swift package from NPM package ([#8644](https://github.com/ionic-team/capacitor/issues/8644)) ([f3d894b](https://github.com/ionic-team/capacitor/commit/f3d894b9bf11bb24808d6e212262c4259aa4c689))
+
+### Reverts
+
+- Revert "chore(ios): add `App/CapApp-SPM/Package.resolved` to `.gitignore` (#8649)" ([175c933](https://github.com/ionic-team/capacitor/commit/175c93398b1bb4de34c55386e18aaee2e5551c83)), closes [#8649](https://github.com/ionic-team/capacitor/issues/8649)
+
+## [8.5.3](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.7...8.5.3) (2026-10-07)
+
 # [9.0.0-alpha.8](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.7...9.0.0-alpha.8) (2026-10-07)
 
 ## [8.5.3](https://github.com/ionic-team/capacitor/compare/8.5.2...8.5.3) (2026-10-07)
