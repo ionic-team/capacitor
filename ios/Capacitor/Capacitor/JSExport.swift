@@ -15,8 +15,8 @@ internal class JSExport {
     static let catchallOptionsParameter = "_options"
     static let callbackParameter = "_callback"
 
-    static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, loggingEnabled: Bool, localUrl: String) throws {
-        let data = "window.Capacitor = { DEBUG: \(isDebug), isLoggingEnabled: \(loggingEnabled), Plugins: {} }; window.WEBVIEW_SERVER_URL = '\(localUrl)';"
+    static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, loggingEnabled: Bool, localUrl: String, cookiesEnabled: Bool, httpEnabled: Bool) throws {
+        let data = "window.Capacitor = { DEBUG: \(isDebug), isLoggingEnabled: \(loggingEnabled), Plugins: {} }; window.WEBVIEW_SERVER_URL = '\(localUrl)'; window.CapacitorNativeConfig = { cookiesEnabled: \(cookiesEnabled), httpEnabled: \(httpEnabled) };"
         let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         userContentController.addUserScript(userScript)
     }
