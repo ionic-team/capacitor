@@ -21,7 +21,7 @@ import { logger } from './log';
 import { tryFn } from './util/fn';
 import { formatJSObject } from './util/js';
 import { findNXMonorepoRoot, isNXMonorepo } from './util/monorepotools';
-import { requireTS, resolveNode } from './util/node';
+import { importModule, isESMOnlyError, requireTS, resolveNode } from './util/node';
 import { lazy } from './util/promise';
 import { getCommandOutput, isInstalled } from './util/subprocess';
 
@@ -139,12 +139,22 @@ async function loadExtConfigJS(
   extConfigFilePath: string,
 ): Promise<ExtConfigPairs> {
   try {
+    let extConfigObject;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      extConfigObject = await require(extConfigFilePath);
+    } catch (e) {
+      if (!isESMOnlyError(e)) {
+        throw e;
+      }
+      extConfigObject = await importModule(extConfigFilePath);
+    }
+
     return {
       extConfigType: 'js',
       extConfigName,
       extConfigFilePath: extConfigFilePath,
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      extConfig: await require(extConfigFilePath),
+      extConfig: extConfigObject.default ? await extConfigObject.default : extConfigObject,
     };
   } catch (e: any) {
     fatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
