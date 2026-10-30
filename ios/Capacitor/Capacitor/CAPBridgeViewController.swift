@@ -9,6 +9,7 @@ import Cordova
     }
 
     public fileprivate(set) var webView: WKWebView?
+    internal private(set) var statusBarBackgroundView: UIView?
 
     public var isStatusBarVisible = true
     public var statusBarStyle: UIStatusBarStyle = .default
@@ -44,6 +45,7 @@ import Cordova
         let delegationHandler = WebViewDelegationHandler()
         prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView
+        installStatusBarBackground(using: configuration.backgroundColor ?? .systemBackground)
         // create the bridge
         capacitorBridge = CapacitorBridge(with: configuration,
                                           delegate: self,
@@ -322,6 +324,23 @@ extension CAPBridgeViewController {
         if !configuration.zoomingEnabled {
             aWebView.scrollView.delegate = delegationHandler
         }
+    }
+
+    private func installStatusBarBackground(using color: UIColor) {
+        guard let webView else { return }
+
+        let background = UIView()
+        background.backgroundColor = color
+        background.isUserInteractionEnabled = false
+        background.translatesAutoresizingMaskIntoConstraints = false
+        webView.addSubview(background)
+        NSLayoutConstraint.activate([
+            background.topAnchor.constraint(equalTo: webView.topAnchor),
+            background.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
+            background.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
+            background.bottomAnchor.constraint(equalTo: webView.safeAreaLayoutGuide.topAnchor),
+        ])
+        statusBarBackgroundView = background
     }
 
     private func updateBinaryVersion() {
