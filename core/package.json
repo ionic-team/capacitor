@@ -50,7 +50,7 @@
     "rimraf": "^4.4.1",
     "rollup": "^2.21.0",
     "rollup-plugin-terser": "^7.0.2",
-    "typescript": "~5.0.2"
+    "typescript": "~5.9"
   },
   "jest": {
     "preset": "ts-jest",
