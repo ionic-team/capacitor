@@ -153,8 +153,12 @@ export async function runHooks(config: Config, platformName: string, dir: string
   const allPlugins = await getPlugins(config, platformName);
 
   for (const p of allPlugins) {
-    await runPlatformHook(config, platformName, p.rootPath, hook);
+    await runPlatformHook(config, platformName, p.rootPath, hook, { allowNXRootFallback: false });
   }
+}
+
+interface RunPlatformHookOptions {
+  allowNXRootFallback?: boolean;
 }
 
 export async function runPlatformHook(
@@ -162,22 +166,29 @@ export async function runPlatformHook(
   platformName: string,
   platformDir: string,
   hook: string,
+  options: RunPlatformHookOptions = {},
 ): Promise<void> {
   const { spawn } = await import('child_process');
-  let pkg;
-  if (isNXMonorepo(platformDir)) {
-    pkg = await readJSON(join(findNXMonorepoRoot(platformDir), 'package.json'));
-  } else {
-    pkg = await readJSON(join(platformDir, 'package.json'));
+  const platformPackagePath = join(platformDir, 'package.json');
+  let cmd: string | undefined;
+
+  if (await pathExists(platformPackagePath)) {
+    const pkg = await readJSON(platformPackagePath);
+    cmd = pkg.scripts?.[hook];
   }
-  const cmd = pkg.scripts?.[hook];
+
+  if (!cmd && options.allowNXRootFallback !== false && isNXMonorepo(platformDir)) {
+    const pkg = await readJSON(join(findNXMonorepoRoot(platformDir), 'package.json'));
+    cmd = pkg.scripts?.[hook];
+  }
 
   if (!cmd) {
     return;
   }
+  const hookCommand = cmd;
 
   return new Promise((resolve, reject) => {
-    const p = spawn(cmd, {
+    const p = spawn(hookCommand, {
       stdio: 'inherit',
       shell: true,
       cwd: platformDir,
@@ -195,7 +206,9 @@ export async function runPlatformHook(
         resolve();
       } else {
         reject(
-          new Error(`${hook} hook on ${platformName} failed with error code: ${code} while running command: ${cmd}`),
+          new Error(
+            `${hook} hook on ${platformName} failed with error code: ${code} while running command: ${hookCommand}`,
+          ),
         );
       }
     });
