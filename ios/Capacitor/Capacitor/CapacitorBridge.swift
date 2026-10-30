@@ -378,6 +378,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
         if plugins[pluginInstance.jsName] != nil {
             CAPLog.print("⚡️  Overriding existing registered plugin \(pluginInstance.classForCoder)")
         }
+        guard !config.getPluginConfig(plugin.jsName).getBoolean("disabled", false) else {
+            CAPLog.print("⚡️  Not registering disabled plugin \(plugin.jsName)")
+            return
+        }
         plugins[pluginInstance.jsName] = pluginInstance
         pluginInstance.load(on: self)
 
@@ -396,6 +400,10 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     func loadPlugin(type: CAPPlugin.Type) -> CapacitorPlugin? {
         guard let plugin = type.init() as? CapacitorPlugin else {
             CAPLog.print("⚡️  Unable to load plugin \(type.classForCoder()). No such module found.")
+            return nil
+        }
+        guard !config.getPluginConfig(plugin.jsName).getBoolean("disabled", false) else {
+            CAPLog.print("⚡️  Not registering disabled plugin \(plugin.jsName)")
             return nil
         }
         plugin.load(on: self)
