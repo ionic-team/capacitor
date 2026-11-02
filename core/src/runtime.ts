@@ -135,18 +135,31 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
     const addListener = createPluginMethodWrapper('addListener');
     const removeListener = createPluginMethodWrapper('removeListener');
+    const removeAllListeners = createPluginMethodWrapper('removeAllListeners');
+
+    // The native bridge keeps every callback it is given until native answers with `save: false`,
+    // which never happens for listeners. So the bridge gets a forwarder, and the listener is
+    // detached from it on removal: otherwise everything the listener captures can never be freed.
+    const nativeListeners = new Set<{ callback: any }>();
+
     const addListenerNative = (eventName: string, callback: any) => {
-      const call = addListener({ eventName }, callback);
+      const listener = { callback };
+      nativeListeners.add(listener);
+
+      const forward = (...args: any[]) => listener.callback?.(...args);
+      const call = addListener({ eventName }, forward);
+
       const remove = async () => {
+        listener.callback = null;
+        nativeListeners.delete(listener);
+
         const callbackId = await call;
 
-        removeListener(
-          {
-            eventName,
-            callbackId,
-          },
-          callback,
-        );
+        // Native never answers removeListener, so passing a callback would only store it forever.
+        removeListener({
+          eventName,
+          callbackId,
+        });
       };
 
       const p = new Promise((resolve) => call.then(() => resolve({ remove })));
@@ -157,6 +170,13 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       };
 
       return p;
+    };
+
+    const removeAllListenersNative = (...args: any[]) => {
+      nativeListeners.forEach((listener) => (listener.callback = null));
+      nativeListeners.clear();
+
+      return removeAllListeners(...args);
     };
 
     const proxy = new Proxy(
@@ -173,6 +193,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
               return pluginHeader ? addListenerNative : addListener;
             case 'removeListener':
               return removeListener;
+            case 'removeAllListeners':
+              return pluginHeader ? removeAllListenersNative : removeAllListeners;
             default:
               return createPluginMethodWrapper(prop);
           }
