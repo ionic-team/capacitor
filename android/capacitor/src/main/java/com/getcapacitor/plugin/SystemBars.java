@@ -213,7 +213,7 @@ public class SystemBars extends Plugin {
                     )
                     .build();
 
-                injectSafeAreaCSS(newInsets);
+                injectSafeAreaCSS(newInsets, keyboardVisible);
 
                 return newInsets;
             }
@@ -233,19 +233,20 @@ public class SystemBars extends Plugin {
                 .setInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(), Insets.of(0, 0, 0, 0))
                 .build();
 
-            injectSafeAreaCSS(newInsets);
+            injectSafeAreaCSS(newInsets, keyboardVisible);
 
             return newInsets;
         });
     }
 
-    private void injectSafeAreaCSS(WindowInsetsCompat insets) {
+    // Take keyboardVisible from the listener's original insets. Below API 30, rebuilt insets
+    // mistake the navigation bar for an open keyboard, so the bottom inset would become 0.
+    private void injectSafeAreaCSS(WindowInsetsCompat insets, boolean keyboardVisible) {
         if (!INSETS_HANDLING_CSS.equals(insetsHandling)) {
             return;
         }
 
         Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
         // Convert pixels to density-independent pixels
         float density = getActivity().getResources().getDisplayMetrics().density;
