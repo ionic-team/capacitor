@@ -8,6 +8,7 @@ import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
 import { resolveNode } from '../util/node';
+import { getBlockedInstallScripts, logBlockedInstallScripts } from '../util/npm';
 import { getCommandOutput } from '../util/subprocess';
 
 export async function doctorCommand(config: Config, selectedPlatformName: string): Promise<void> {
@@ -24,11 +25,12 @@ export async function doctorCommand(config: Config, selectedPlatformName: string
 }
 
 export async function doctorCore(config: Config): Promise<void> {
-  const [cliVersion, coreVersion, androidVersion, iosVersion] = await Promise.all([
+  const [cliVersion, coreVersion, androidVersion, iosVersion, blockedInstallScripts] = await Promise.all([
     getCommandOutput('npm', ['info', '@capacitor/cli', 'version']),
     getCommandOutput('npm', ['info', '@capacitor/core', 'version']),
     getCommandOutput('npm', ['info', '@capacitor/android', 'version']),
     getCommandOutput('npm', ['info', '@capacitor/ios', 'version']),
+    getBlockedInstallScripts(config.app.rootDir),
   ]);
 
   output.write(
@@ -43,6 +45,8 @@ export async function doctorCore(config: Config): Promise<void> {
   await printInstalledPackages(config);
 
   output.write('\n');
+
+  logBlockedInstallScripts(blockedInstallScripts);
 }
 
 async function printInstalledPackages(config: Config) {

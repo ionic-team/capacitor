@@ -10,6 +10,7 @@ import { fatal } from '../errors';
 import { getMajoriOSVersion } from '../ios/common';
 import { logger, logPrompt, logSuccess } from '../log';
 import { deleteFolderRecursive } from '../util/fs';
+import { getBlockedInstallScripts, hasBlockedCapacitorScripts, logBlockedInstallScripts } from '../util/npm';
 import { runCommand } from '../util/subprocess';
 import { extractTemplate } from '../util/template';
 
@@ -51,6 +52,7 @@ const gradleVersion = '8.14.3';
 const iOSVersion = '15';
 const kotlinVersion = '2.2.20';
 let installFailed = false;
+let scriptsBlocked = false;
 
 export async function migrateCommand(config: Config, noprompt: boolean, packagemanager: string): Promise<void> {
   if (config === null) {
@@ -145,6 +147,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           )} manually.`,
         );
         installFailed = true;
+      }
+
+      if (runNpmInstall && !installFailed) {
+        const blocked = await getBlockedInstallScripts(config.app.rootDir, installerType);
+        if (blocked.length > 0) {
+          logBlockedInstallScripts(blocked);
+          scriptsBlocked = hasBlockedCapacitorScripts(blocked);
+        }
       }
 
       // Update iOS Projects
@@ -307,8 +317,14 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         return writeBreakingChanges();
       });
 
-      if (!installFailed) {
+      if (!installFailed && !scriptsBlocked) {
         logSuccess(`Migration to Capacitor ${coreVersion} is complete. Run and test your app!`);
+      } else if (scriptsBlocked) {
+        logger.warn(
+          `Migration to Capacitor ${coreVersion} is incomplete because npm blocked install scripts. Approve them as described above, then run ${c.input(
+            'npx cap sync',
+          )}.`,
+        );
       } else {
         logger.warn(
           `Migration to Capacitor ${coreVersion} is incomplete. Check the log messages for more information.`,

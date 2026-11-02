@@ -499,9 +499,12 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
     }
 
     public void setSSLSocketFactory(Bridge bridge) {
-        // Attach SSL Certificates if Enterprise Plugin is available
+        // Attach SSL Certificates if an SSL Pinning plugin is available
         try {
-            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
+            Class<?> sslPinningImpl = findSSLPinningClass();
+            if (sslPinningImpl == null) {
+                return;
+            }
             Method method = sslPinningImpl.getDeclaredMethod("getSSLSocketFactory", Bridge.class);
             SSLSocketFactory sslSocketFactory = (SSLSocketFactory) method.invoke(
                 sslPinningImpl.getDeclaredConstructor().newInstance(),
@@ -511,5 +514,14 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                 ((HttpsURLConnection) this.connection).setSSLSocketFactory(sslSocketFactory);
             }
         } catch (Exception ignored) {}
+    }
+
+    private static Class<?> findSSLPinningClass() {
+        for (String className : new String[] { "io.ionic.sslpinning.SSLPinning", "com.getcapacitor.community.sslpinning.SSLPinning" }) {
+            try {
+                return Class.forName(className);
+            } catch (ClassNotFoundException ignored) {}
+        }
+        return null;
     }
 }
