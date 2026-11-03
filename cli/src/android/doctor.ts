@@ -138,19 +138,31 @@ async function checkAndroidManifestData(config: Config, xmlData: any): Promise<s
 }
 
 async function checkPackage(config: Config, mainActivityClassPath: string) {
-  const appSrcMainJavaDir = join(config.android.srcMainDirAbs, 'java');
-  if (!(await pathExists(appSrcMainJavaDir))) {
-    return `${c.strong('java')} directory is missing in ${c.strong(appSrcMainJavaDir)}`;
+  const srcMainDirAbs = config.android.srcMainDirAbs;
+  const appSrcMainJavaDir = join(srcMainDirAbs, 'java');
+  const appSrcMainKotlinDir = join(srcMainDirAbs, 'kotlin');
+
+  const javaDirExists = await pathExists(appSrcMainJavaDir);
+  const kotlinDirExists = await pathExists(appSrcMainKotlinDir);
+
+  if (!javaDirExists && !kotlinDirExists) {
+    return `${c.strong('java')} or ${c.strong('kotlin')} directory is missing in ${c.strong(srcMainDirAbs)}`;
   }
 
   const mainActivityClassName: any = mainActivityClassPath.split('.').pop();
 
-  const srcFiles = await readdirp(appSrcMainJavaDir, {
-    filter: (entry) =>
-      !entry.stats.isDirectory() &&
-      ['.java', '.kt'].includes(extname(entry.path)) &&
-      mainActivityClassName === parse(entry.path).name,
-  });
+  const filter = (entry: any) =>
+    !entry.stats.isDirectory() &&
+    ['.java', '.kt'].includes(extname(entry.path)) &&
+    mainActivityClassName === parse(entry.path).name;
+
+  const srcFiles: string[] = [];
+  if (javaDirExists) {
+    srcFiles.push(...(await readdirp(appSrcMainJavaDir, { filter })));
+  }
+  if (kotlinDirExists) {
+    srcFiles.push(...(await readdirp(appSrcMainKotlinDir, { filter })));
+  }
 
   if (srcFiles.length == 0) {
     return `Main activity file (${mainActivityClassName}) is missing`;
