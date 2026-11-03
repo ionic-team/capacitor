@@ -149,6 +149,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
            !targetUrl.isEmpty {
             urlRequest.url = URL(string: targetUrl)
         }
+        applyCapacitorDefaultRequestHeaders(&urlRequest, requestConfiguration)
 
         let urlSession = URLSession.shared
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in

@@ -59,6 +59,11 @@ NS_SWIFT_NAME(InstanceDescriptor)
  */
 @property (nonatomic, copy, nullable) NSString *errorPath;
 /**
+ @brief The default HTTP `Referer` header to use for native requests when one is not explicitly set.
+ @discussion Defaults to nil. Set by @c server.referer in the configuration file.
+ */
+@property (nonatomic, copy, nullable) NSString *requestReferer;
+/**
  @brief The hostname that will be used for the server URL.
  @discussion Defaults to @c localhost. Set by @c server.hostname in the configuration file.
  */
