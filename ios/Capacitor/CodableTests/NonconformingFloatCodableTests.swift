@@ -38,7 +38,7 @@ class JSValueEncoderNonConformingFloatTests: XCTestCase {
 
     func testEncode_float__convertToString_root() throws {
         let encoder = JSValueEncoder(
-            nonConformingFloatEncodingStategy: .convertToString(
+            nonConformingFloatEncodingStrategy: .convertToString(
                 positiveInfinity: "pos",
                 negativeInfinity: "neg",
                 nan: "nan"
@@ -60,7 +60,7 @@ class JSValueEncoderNonConformingFloatTests: XCTestCase {
 
     func testEncode_float__convertToString_array() throws {
         let encoder = JSValueEncoder(
-            nonConformingFloatEncodingStategy: .convertToString(
+            nonConformingFloatEncodingStrategy: .convertToString(
                 positiveInfinity: "pos",
                 negativeInfinity: "neg",
                 nan: "nan"
@@ -74,7 +74,7 @@ class JSValueEncoderNonConformingFloatTests: XCTestCase {
 
     func testEncode_float__convertToString_struct() throws {
         let encoder = JSValueEncoder(
-            nonConformingFloatEncodingStategy: .convertToString(
+            nonConformingFloatEncodingStrategy: .convertToString(
                 positiveInfinity: "pos",
                 negativeInfinity: "neg",
                 nan: "nan"
@@ -95,17 +95,17 @@ class JSValueEncoderNonConformingFloatTests: XCTestCase {
     }
 
     func testEncode_float__throw_root() throws {
-        let encoder = JSValueEncoder(nonConformingFloatEncodingStategy: .throw)
+        let encoder = JSValueEncoder(nonConformingFloatEncodingStrategy: .throw)
         XCTAssertThrowsError(try encoder.encode(Double.infinity))
     }
 
     func testEncode_float__throw_array() throws {
-        let encoder = JSValueEncoder(nonConformingFloatEncodingStategy: .throw)
+        let encoder = JSValueEncoder(nonConformingFloatEncodingStrategy: .throw)
         XCTAssertThrowsError(try encoder.encode([Double.infinity, -.infinity, .nan]))
     }
 
     func testEncode_float__throw_struct() throws {
-        let encoder = JSValueEncoder(nonConformingFloatEncodingStategy: .throw)
+        let encoder = JSValueEncoder(nonConformingFloatEncodingStrategy: .throw)
         XCTAssertThrowsError(try encoder.encode(Foo(number: .infinity)))
     }
 }

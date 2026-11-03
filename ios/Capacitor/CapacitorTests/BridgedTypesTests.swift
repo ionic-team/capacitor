@@ -25,7 +25,7 @@ class BridgedTypesTests: XCTestCase {
     override class func setUp() {
         let formatter = ISO8601DateFormatter()
         // an ISO 8601 string does not necessarily include subsecond precision, so we can't just capture the current date
-        // or else we won't be able to compare the objects since they could differ by milliseconds or nanoseonds. so instead
+        // or else we won't be able to compare the objects since they could differ by milliseconds or nanoseconds. so instead
         // we use a fixed timestamp at a whole hour.
         let date = NSDate(timeIntervalSinceReferenceDate: 632854800)
         let subDictionary: [AnyHashable: Any] = ["testIntArray": [0, 1, 2], "testStringArray": ["1", "2", "3"], "testDictionary":["foo":"bar"]]
