@@ -182,6 +182,29 @@ describe('Web Plugin', () => {
     expect(handlerFunction).not.toHaveBeenCalled();
   });
 
+  it('Should re-register window listeners after removeAllListeners', async () => {
+    plugin.registerFakeWindowListener();
+
+    const lf1 = jest.fn();
+    await plugin.addListener('test', lf1);
+    await plugin.removeAllListeners();
+
+    const lf2 = jest.fn();
+    const handle = await plugin.addListener('test', lf2);
+
+    const windowListener = plugin.getWindowListeners()['test'];
+    expect(windowListener).not.toBe(undefined);
+    expect(windowListener.registered).toEqual(true);
+
+    window.dispatchEvent(new CustomEvent('fake', { detail: { value: 'after removeAll' } }));
+
+    expect(lf1).not.toHaveBeenCalled();
+    expect(lf2.mock.calls.length).toEqual(1);
+    expect(lf2.mock.calls[0][0].detail.value).toEqual('after removeAll');
+
+    await handle.remove();
+  });
+
   it('Should not remove a listener if it is not found', async () => {
     const lf1 = (event: any) => {
       console.log(event);
