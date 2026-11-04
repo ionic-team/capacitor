@@ -25,5 +25,5 @@ Pod::Spec.new do |s|
   s.module_map = "#{prefix}Sources/CapacitorObjCShims/Capacitor.modulemap"
   s.resources = ["#{prefix}Sources/Capacitor/assets/native-bridge.js"]
   s.resource_bundles = { 'Capacitor' => ["#{prefix}Sources/Capacitor/PrivacyInfo.xcprivacy"] }
-  s.swift_version = '5.1'
+  s.swift_version = '5.7'
 end

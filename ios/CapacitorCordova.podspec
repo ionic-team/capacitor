@@ -25,4 +25,5 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.dependency 'Capacitor', s.version.to_s
   s.framework    = 'WebKit'
+  s.swift_version = '5.7'
 end
