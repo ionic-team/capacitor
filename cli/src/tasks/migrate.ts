@@ -298,7 +298,11 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
           return removeJCenter(config);
         });
 
-        // Always run before root build.gradle changes as the AGP update could be incompatible with current gradle
+        // The wrapper task below already runs on the new Gradle, which can't load AGP 8, so AGP goes first
+        await runTask(`Migrating root build.gradle file.`, () => {
+          return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
+        });
+
         if (!installFailed && outdatedGradle) {
           try {
             await runTask(`Upgrading gradle wrapper`, () => {
@@ -324,10 +328,6 @@ export async function migrateCommand(config: Config, noprompt: boolean, packagem
         } else {
           logger.warn('Skipped upgrading gradle wrapper files');
         }
-
-        await runTask(`Migrating root build.gradle file.`, () => {
-          return updateBuildGradle(join(config.android.platformDirAbs, 'build.gradle'), variablesAndClasspaths);
-        });
 
         // Variables gradle
         await runTask(`Migrating variables.gradle file.`, () => {
