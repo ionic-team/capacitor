@@ -13,8 +13,8 @@ typedef NS_OPTIONS(NSUInteger, CAPInstanceWarning) {
     CAPInstanceWarningMissingAppDir       NS_SWIFT_NAME(missingAppDir)      = 1 << 0,
     CAPInstanceWarningMissingFile         NS_SWIFT_NAME(missingFile)        = 1 << 1,
     CAPInstanceWarningInvalidFile         NS_SWIFT_NAME(invalidFile)        = 1 << 2,
-    CAPInstanceWarningMissingCordovaFile  NS_SWIFT_NAME(missingCordovaFile) = 1 << 3,
-    CAPInstanceWarningInvalidCordovaFile  NS_SWIFT_NAME(invalidCordovaFile) = 1 << 4
+    CAPInstanceWarningMissingCordovaFile  NS_SWIFT_NAME(missingCordovaFile) DEPRECATED_MSG_ATTRIBUTE("Never raised. The Cordova configuration is not read.") = 1 << 3,
+    CAPInstanceWarningInvalidCordovaFile  NS_SWIFT_NAME(invalidCordovaFile) DEPRECATED_MSG_ATTRIBUTE("Never raised. The Cordova configuration is not read.") = 1 << 4
 } NS_SWIFT_NAME(InstanceWarning);
 
 typedef NS_OPTIONS(NSUInteger, CAPInstanceLoggingBehavior) {
@@ -137,7 +137,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 /**
  @brief The parser used to load the cofiguration for Cordova plugins.
  */
-@property (nonatomic, copy, nonnull) NSObject *cordovaConfiguration;
+@property (nonatomic, copy, nonnull) NSObject *cordovaConfiguration DEPRECATED_MSG_ATTRIBUTE("Never set. The Cordova configuration is not read.");
 /**
  @brief Warnings generated during initialization.
  */
@@ -159,9 +159,9 @@ NS_SWIFT_NAME(InstanceDescriptor)
  @brief Initialize the descriptor for use in other contexts. The app location is the one required parameter.
  @param appURL The location of the folder containing the web app.
  @param configURL The location of the Capacitor configuration file.
- @param cordovaURL The location of the Cordova configuration file.
  */
-- (instancetype _Nonnull)initAtLocation:(NSURL* _Nonnull)appURL configuration:(NSURL* _Nullable)configURL cordovaConfiguration:(NSURL* _Nullable)cordovaURL NS_SWIFT_NAME(init(at:configuration:cordovaConfiguration:));
+- (instancetype _Nonnull)initAtLocation:(NSURL* _Nonnull)appURL configuration:(NSURL* _Nullable)configURL NS_SWIFT_NAME(init(at:configuration:));
+- (instancetype _Nonnull)initAtLocation:(NSURL* _Nonnull)appURL configuration:(NSURL* _Nullable)configURL cordovaConfiguration:(NSURL* _Nullable)cordovaURL NS_SWIFT_NAME(init(at:configuration:cordovaConfiguration:)) DEPRECATED_MSG_ATTRIBUTE("The Cordova configuration is not read. Use init(at:configuration:) instead.");
 @end
 
 #endif /* CAPInstanceDescriptor_h */
