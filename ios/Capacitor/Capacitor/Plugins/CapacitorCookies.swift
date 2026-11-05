@@ -20,7 +20,9 @@ public class CAPCookiesPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @objc func getCookies(_ call: CAPPluginCall) {
         guard let url = cookieManager!.getServerUrl(call.getString("url")) else { return call.reject("Invalid URL / Server URL")}
-        call.resolve(cookieManager!.getCookiesAsMap(url))
+        CapacitorCookieManager.copyWebViewCookies(for: url) {
+            call.resolve(self.cookieManager!.getCookiesAsMap(url))
+        }
     }
 
     @objc func setCookie(_ call: CAPPluginCall) {

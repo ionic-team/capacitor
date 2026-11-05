@@ -60,7 +60,7 @@ public class CapacitorCookieManager {
         let field = ["Set-Cookie": action]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: field, for: url)
         jar.setCookies(cookies, for: url, mainDocumentURL: nil)
-        syncCookiesToWebView()
+        CapacitorCookieManager.setCookiesInWebView(cookies)
     }
 
     public func setCookie(_ url: URL, _ key: String, _ value: String, _ expires: String?, _ path: String?) {
@@ -68,11 +68,10 @@ public class CapacitorCookieManager {
         let field = ["Set-Cookie": "\(key)=\(value); expires=\(expires ?? ""); path=\(path ?? "/")"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: field, for: url)
         jar.setCookies(cookies, for: url, mainDocumentURL: nil)
-        syncCookiesToWebView()
+        CapacitorCookieManager.setCookiesInWebView(cookies)
     }
 
     public func getCookiesAsMap(_ url: URL) -> [String: String] {
-        syncCookiesToWebView()
         var cookiesMap: [String: String] = [:]
         let jar = HTTPCookieStorage.shared
         if let cookies = jar.cookies(for: url) {
@@ -86,7 +85,6 @@ public class CapacitorCookieManager {
     }
 
     public func getCookies() -> String {
-        syncCookiesToWebView()
         let jar = HTTPCookieStorage.shared
         guard let url = self.getServerUrl() else { return "" }
         guard let cookies = jar.cookies(for: url) else { return "" }
@@ -124,6 +122,41 @@ public class CapacitorCookieManager {
                 WKWebsiteDataStore.default().httpCookieStore.delete(cookie)
             }
         })
+    }
+
+    public static func setCookiesInWebView(_ cookies: [HTTPCookie], completion: (() -> Void)? = nil) {
+        DispatchQueue.main.async {
+            let cookieStore = WKWebsiteDataStore.default().httpCookieStore
+            let group = DispatchGroup()
+            for cookie in cookies {
+                group.enter()
+                cookieStore.setCookie(cookie) {
+                    group.leave()
+                }
+            }
+            group.notify(queue: .main) {
+                completion?()
+            }
+        }
+    }
+
+    public static func copyWebViewCookies(for url: URL?, completion: @escaping () -> Void) {
+        guard let host = url?.host?.lowercased() else {
+            completion()
+            return
+        }
+        DispatchQueue.main.async {
+            WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
+                cookies.filter { isDomain($0.domain, matching: host) }.forEach(HTTPCookieStorage.shared.setCookie)
+                completion()
+            }
+        }
+    }
+
+    private static func isDomain(_ cookieDomain: String, matching host: String) -> Bool {
+        let domain = cookieDomain.lowercased()
+        let bareDomain = domain.hasPrefix(".") ? String(domain.dropFirst()) : domain
+        return host == bareDomain || host.hasSuffix("." + bareDomain)
     }
 
     public func syncCookiesToWebView() {
