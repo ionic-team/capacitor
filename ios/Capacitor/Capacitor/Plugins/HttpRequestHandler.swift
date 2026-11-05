@@ -135,7 +135,13 @@ open class HttpRequestHandler {
                 }
             }
         }
-        CapacitorCookieManager(config).syncCookiesToWebView()
+    }
+
+    public static func responseCookies(_ response: HTTPURLResponse) -> [HTTPCookie] {
+        guard let url = response.url, let headers = response.allHeaderFields as? [String: String] else {
+            return []
+        }
+        return HTTPCookie.cookies(withResponseHeaderFields: headers, for: url)
     }
 
     public static func buildResponse(_ data: Data?, _ response: HTTPURLResponse, responseType: ResponseType = .default) -> [String: Any] {
@@ -217,6 +223,18 @@ open class HttpRequestHandler {
 
         let urlRequest = request.getUrlRequest()
         let urlSession = request.getUrlSession(call)
+        CapacitorCookieManager.copyWebViewCookies(for: urlRequest.url) {
+            send(urlRequest, urlSession, call, responseType, config)
+        }
+    }
+
+    private static func send(
+        _ urlRequest: URLRequest,
+        _ urlSession: URLSession,
+        _ call: CAPPluginCall,
+        _ responseType: String,
+        _ config: InstanceConfiguration?
+    ) {
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             urlSession.invalidateAndCancel()
 
@@ -225,10 +243,14 @@ open class HttpRequestHandler {
                 return
             }
 
-            setCookiesFromResponse(response as! HTTPURLResponse, config)
+            let httpResponse = response as! HTTPURLResponse
+            setCookiesFromResponse(httpResponse, config)
 
             let type = ResponseType(rawValue: responseType) ?? .default
-            call.resolve(self.buildResponse(data, response as! HTTPURLResponse, responseType: type))
+            let result = self.buildResponse(data, httpResponse, responseType: type)
+            CapacitorCookieManager.setCookiesInWebView(responseCookies(httpResponse)) {
+                call.resolve(result)
+            }
         }
 
         task.resume()
