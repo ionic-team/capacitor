@@ -399,6 +399,11 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
         parsedRequiredElements.push(rootOfRequiredElementsToAdd);
 
         const doesContainElements = (requiredElementsArray: any[], existingElementsArray: any[]) => {
+          // Some Cordova plugin config.xml shapes parse to a non-array here; guard before iterating.
+          if (!Array.isArray(requiredElementsArray)) {
+            logger.warn('Skipping malformed requiredElementsArray while merging iOS Info.plist entries');
+            return false;
+          }
           for (const requiredElement of requiredElementsArray) {
             if (requiredElement.name === 'key' || requiredElement.name === 'string') {
               let foundMatch = false;
