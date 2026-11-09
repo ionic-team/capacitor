@@ -20,7 +20,7 @@ export async function runAndroid(
     targetNameSdkVersion: selectedTargetSdkVersion,
     flavor: selectedFlavor,
     forwardPorts: selectedPorts,
-    allowLocalNetwork,
+    url: liveReloadUrl,
   }: RunCommandOptions,
 ): Promise<void> {
   const target = await promptForPlatformTarget(
@@ -37,8 +37,9 @@ export async function runAndroid(
 
   debug('Invoking ./gradlew with args: %O', gradleArgs);
 
-  // The declaration is only needed while Gradle builds the APK, so it is reverted right after the build.
-  const declaredLocalNetwork = allowLocalNetwork ? await setAndroidLocalNetworkDeclaration(config, true) : false;
+  // Live reload loads the app from a local network URL, which Android 17 only allows with the local network
+  // permission. The declaration is only needed while Gradle builds the APK, so it is reverted right after the build.
+  const declaredLocalNetwork = liveReloadUrl ? await setAndroidLocalNetworkDeclaration(config, true) : false;
 
   try {
     await runTask('Running Gradle build', async () =>
@@ -77,7 +78,7 @@ export async function runAndroid(
 
   await runTask(`Deploying ${c.strong(apkName)} to ${c.input(target.id)}`, async () => runNativeRun(nativeRunArgs));
 
-  if (allowLocalNetwork) {
+  if (liveReloadUrl) {
     await runTask('Setting up the local network permission', async () =>
       grantAndroidLocalNetworkPermission(config, target.id),
     );

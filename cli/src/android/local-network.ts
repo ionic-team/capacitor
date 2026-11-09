@@ -6,10 +6,10 @@ import { logger } from '../log';
 import { runCommand } from '../util/subprocess';
 
 /**
- * Handles the Android 17 (API 37) `ACCESS_LOCAL_NETWORK` permission for `cap run --allow-local-network`.
+ * Handles the Android 17 (API 37) `ACCESS_LOCAL_NETWORK` permission for live reload (`cap run --url`).
  *
  * Pages loaded from a local network URL (live reload, `server.url`) fail before any JavaScript runs when the
- * permission isn't granted, so the app can't request it itself. For a development run the CLI declares the
+ * permission isn't granted, so the app can't request it itself. For a live reload run the CLI declares the
  * permission in the app manifest just for the Gradle build, then grants it with `adb` after the install.
  *
  * The declaration the CLI adds is tracked by a marker comment so the revert only removes what the CLI added:
@@ -97,6 +97,9 @@ export async function grantAndroidLocalNetworkPermission(config: Config, targetI
       return;
     }
     await runCommand(adb, ['-s', targetId, 'shell', 'pm', 'grant', appId, PERMISSION]);
+    logger.info(
+      `Granted the local network permission to ${appId} for this live reload run. Your app still needs to declare and request it to reach the local network in production.`,
+    );
     await runCommand(adb, ['-s', targetId, 'shell', 'am', 'force-stop', appId]);
     await runCommand(adb, [
       '-s',

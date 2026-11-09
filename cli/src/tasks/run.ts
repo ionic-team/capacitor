@@ -31,7 +31,6 @@ export interface RunCommandOptions {
   targetNameSdkVersion?: string;
   sync?: boolean;
   forwardPorts?: string;
-  allowLocalNetwork?: boolean;
   url?: string;
   configuration?: string;
 }
@@ -141,9 +140,6 @@ export async function runCommand(
 
 export async function run(config: Config, platformName: string, options: RunCommandOptions): Promise<void> {
   if (platformName == config.ios.name) {
-    if (options.allowLocalNetwork) {
-      logger.warn(`${c.input('--allow-local-network')} only applies to Android and is ignored for iOS.`);
-    }
     await runIOS(config, options);
   } else if (platformName === config.android.name) {
     await runAndroid(config, options);
