@@ -33,8 +33,9 @@ public class CAPCookiesPlugin: CAPPlugin, CAPBridgedPlugin {
 
         let expires = call.getString("expires", "")
         let path = call.getString("path", "")
-        cookieManager!.setCookie(url, key, cookieManager!.encode(value), expires, path)
-        call.resolve()
+        cookieManager!.setCookie(url, key, cookieManager!.encode(value), expires, path) {
+            call.resolve()
+        }
     }
 
     @objc func deleteCookie(_ call: CAPPluginCall) {

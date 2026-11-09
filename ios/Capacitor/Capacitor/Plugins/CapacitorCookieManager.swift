@@ -13,6 +13,15 @@ public class CapacitorWKCookieObserver: NSObject, WKHTTPCookieStoreObserver {
     }
 }
 
+public class CapacitorRedirectCookies: NSObject, URLSessionTaskDelegate {
+    public private(set) var cookies: [HTTPCookie] = []
+
+    public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        cookies += HttpRequestHandler.responseCookies(response)
+        completionHandler(request)
+    }
+}
+
 public class CapacitorCookieManager {
     var config: InstanceConfiguration?
 
@@ -63,12 +72,12 @@ public class CapacitorCookieManager {
         CapacitorCookieManager.setCookiesInWebView(cookies)
     }
 
-    public func setCookie(_ url: URL, _ key: String, _ value: String, _ expires: String?, _ path: String?) {
+    public func setCookie(_ url: URL, _ key: String, _ value: String, _ expires: String?, _ path: String?, completion: (() -> Void)? = nil) {
         let jar = HTTPCookieStorage.shared
         let field = ["Set-Cookie": "\(key)=\(value); expires=\(expires ?? ""); path=\(path ?? "/")"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: field, for: url)
         jar.setCookies(cookies, for: url, mainDocumentURL: nil)
-        CapacitorCookieManager.setCookiesInWebView(cookies)
+        CapacitorCookieManager.setCookiesInWebView(cookies, completion: completion)
     }
 
     public func getCookiesAsMap(_ url: URL) -> [String: String] {
@@ -147,7 +156,13 @@ public class CapacitorCookieManager {
         }
         DispatchQueue.main.async {
             WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
-                cookies.filter { isDomain($0.domain, matching: host) }.forEach(HTTPCookieStorage.shared.setCookie)
+                let jar = HTTPCookieStorage.shared
+                let webCookies = cookies.filter { isDomain($0.domain, matching: host) }
+                let webKeys = Set(webCookies.map(cookieKey))
+                jar.cookies?
+                    .filter { isDomain($0.domain, matching: host) && !webKeys.contains(cookieKey($0)) }
+                    .forEach(jar.deleteCookie)
+                webCookies.forEach(jar.setCookie)
                 completion()
             }
         }
@@ -157,6 +172,10 @@ public class CapacitorCookieManager {
         let domain = cookieDomain.lowercased()
         let bareDomain = domain.hasPrefix(".") ? String(domain.dropFirst()) : domain
         return host == bareDomain || host.hasSuffix("." + bareDomain)
+    }
+
+    private static func cookieKey(_ cookie: HTTPCookie) -> String {
+        return "\(cookie.name)\t\(cookie.domain.lowercased())\t\(cookie.path)"
     }
 
     public func syncCookiesToWebView() {
