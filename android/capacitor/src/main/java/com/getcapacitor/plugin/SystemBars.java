@@ -37,8 +37,6 @@ public class SystemBars extends Plugin {
 
     // https://issues.chromium.org/issues/40699457
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
-    // https://issues.chromium.org/issues/457682720
-    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX = 144;
 
     static final String viewportMetaJSFunction = """
     function capacitorSystemBarsCheckMetaViewport() {
@@ -251,9 +249,7 @@ public class SystemBars extends Plugin {
         float density = getActivity().getResources().getDisplayMetrics().density;
         float topPx = systemBarsInsets.top / density;
         float rightPx = systemBarsInsets.right / density;
-        // For native insets the value gets automatically corrected when the IME is visible (in newer WebView versions),
-        // but for these injected values we have to handle that manually (for all WebView versions).
-        float bottomPx = (keyboardVisible ? 0 : systemBarsInsets.bottom) / density;
+        float bottomPx = getBottomInset(systemBarsInsets, keyboardVisible) / density;
         float leftPx = systemBarsInsets.left / density;
 
         // Execute JavaScript to inject the CSS
@@ -351,14 +347,11 @@ public class SystemBars extends Plugin {
     }
 
     private int getBottomInset(Insets systemBarsInsets, boolean keyboardVisible) {
-        if (getWebViewMajorVersion() < WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX) {
-            // This is a workaround for webview versions that have a bug
-            // that causes the bottom inset to be incorrect if the IME is visible
-            // See: https://issues.chromium.org/issues/457682720
-
-            if (keyboardVisible) {
-                return 0;
-            }
+        // The IME covers the navigation bar, so there is nothing left for the page to clear.
+        // Deliberately not gated on the WebView version: measured on 148-156, Chromium corrects
+        // this itself on API 35+ but not on API 29-34.
+        if (keyboardVisible) {
+            return 0;
         }
 
         return systemBarsInsets.bottom;
