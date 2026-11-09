@@ -206,7 +206,7 @@ public class SystemBars extends Plugin {
                             systemBarsInsets.left,
                             systemBarsInsets.top,
                             systemBarsInsets.right,
-                            getBottomInset(systemBarsInsets, keyboardVisible)
+                            getBottomInset(systemBarsInsets, imeInsets, keyboardVisible)
                         )
                     )
                     .build();
@@ -243,13 +243,14 @@ public class SystemBars extends Plugin {
         }
 
         Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+        Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
         boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
         // Convert pixels to density-independent pixels
         float density = getActivity().getResources().getDisplayMetrics().density;
         float topPx = systemBarsInsets.top / density;
         float rightPx = systemBarsInsets.right / density;
-        float bottomPx = getBottomInset(systemBarsInsets, keyboardVisible) / density;
+        float bottomPx = getBottomInset(systemBarsInsets, imeInsets, keyboardVisible) / density;
         float leftPx = systemBarsInsets.left / density;
 
         // Execute JavaScript to inject the CSS
@@ -346,12 +347,13 @@ public class SystemBars extends Plugin {
         return 0;
     }
 
-    private int getBottomInset(Insets systemBarsInsets, boolean keyboardVisible) {
-        // The IME covers the navigation bar, so there is nothing left for the page to clear.
+    private int getBottomInset(Insets systemBarsInsets, Insets imeInsets, boolean keyboardVisible) {
+        // Only the part of the navigation bar the IME doesn't cover is left for the page to clear:
+        // none for a docked IME, all of it for a floating one.
         // Deliberately not gated on the WebView version: measured on 148-156, Chromium corrects
         // this itself on API 35+ but not on API 29-34.
         if (keyboardVisible) {
-            return 0;
+            return Math.max(0, systemBarsInsets.bottom - imeInsets.bottom);
         }
 
         return systemBarsInsets.bottom;
