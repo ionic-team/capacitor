@@ -6,7 +6,7 @@ import { logger } from '../log';
 import { runCommand } from '../util/subprocess';
 
 /**
- * Handles the Android 17 (API 37) `ACCESS_LOCAL_NETWORK` permission for `cap run --allowLocalNetwork`.
+ * Handles the Android 17 (API 37) `ACCESS_LOCAL_NETWORK` permission for `cap run --allow-local-network`.
  *
  * Pages loaded from a local network URL (live reload, `server.url`) fail before any JavaScript runs when the
  * permission isn't granted, so the app can't request it itself. For a development run the CLI declares the
