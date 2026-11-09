@@ -239,6 +239,10 @@ export function runProgram(config: Config): void {
     )
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .option('--forwardPorts <port:port>', 'Automatically run "adb reverse" for better live-reloading support')
+    .option(
+      '--allowLocalNetwork',
+      'Android only: declare and grant the local network permission (Android 17+) for this run, for live-reloading from a local network URL',
+    )
     .option('--url <url>', 'Load an external URL in the Web View, useful for live-reload (overrides server.url config)')
     .option('--configuration <name>', 'Configuration name of the iOS Scheme')
     .action(
@@ -257,6 +261,7 @@ export function runProgram(config: Config): void {
               targetNameSdkVersion,
               sync,
               forwardPorts,
+              allowLocalNetwork,
               url,
               configuration,
             },
@@ -272,6 +277,7 @@ export function runProgram(config: Config): void {
               targetNameSdkVersion,
               sync,
               forwardPorts,
+              allowLocalNetwork,
               url,
               configuration,
             });
