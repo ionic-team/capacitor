@@ -118,7 +118,7 @@ import Cordova
      */
     open func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
         let webViewConfiguration = WKWebViewConfiguration()
-        webViewConfiguration.websiteDataStore.httpCookieStore.add(CapacitorWKCookieObserver())
+        webViewConfiguration.websiteDataStore.httpCookieStore.add(CapacitorWebViewCookies.shared)
         webViewConfiguration.allowsInlineMediaPlayback = true
         webViewConfiguration.suppressesIncrementalRendering = false
         webViewConfiguration.allowsAirPlayForMediaPlayback = true

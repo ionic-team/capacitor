@@ -41,20 +41,21 @@ public class CAPCookiesPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func deleteCookie(_ call: CAPPluginCall) {
         guard let key = call.getString("key") else { return call.reject("Must provide key") }
         guard let url = cookieManager!.getServerUrl(call.getString("url")) else { return call.reject("Invalid URL / Server URL")}
-        cookieManager!.deleteCookie(url, key)
-        call.resolve()
+        cookieManager!.deleteCookie(url, key) {
+            call.resolve()
+        }
     }
 
     @objc func clearCookies(_ call: CAPPluginCall) {
-        let url = cookieManager!.getServerUrl(call.getString("url"))
-        if url != nil {
-            cookieManager!.clearCookies(url!)
+        guard let url = cookieManager!.getServerUrl(call.getString("url")) else { return call.reject("Invalid URL / Server URL")}
+        cookieManager!.clearCookies(url) {
             call.resolve()
         }
     }
 
     @objc func clearAllCookies(_ call: CAPPluginCall) {
-        cookieManager!.clearAllCookies()
-        call.resolve()
+        cookieManager!.clearAllCookies {
+            call.resolve()
+        }
     }
 }

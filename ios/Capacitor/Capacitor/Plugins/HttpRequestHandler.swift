@@ -138,10 +138,12 @@ open class HttpRequestHandler {
     }
 
     public static func responseCookies(_ response: HTTPURLResponse) -> [HTTPCookie] {
-        guard let url = response.url, let headers = response.allHeaderFields as? [String: String] else {
+        guard let url = response.url, let host = url.host?.lowercased(), let headers = response.allHeaderFields as? [String: String] else {
             return []
         }
-        return HTTPCookie.cookies(withResponseHeaderFields: headers, for: url)
+        return HTTPCookie.cookies(withResponseHeaderFields: headers, for: url).filter {
+            CapacitorCookieManager.isDomain($0.domain, matching: host)
+        }
     }
 
     public static func buildResponse(_ data: Data?, _ response: HTTPURLResponse, responseType: ResponseType = .default) -> [String: Any] {
@@ -239,7 +241,9 @@ open class HttpRequestHandler {
             urlSession.invalidateAndCancel()
 
             if let error = error {
-                call.reject(error.localizedDescription, (error as NSError).domain, error, nil)
+                CapacitorCookieManager.setCookiesInWebView(redirectCookies.cookies) {
+                    call.reject(error.localizedDescription, (error as NSError).domain, error, nil)
+                }
                 return
             }
 
