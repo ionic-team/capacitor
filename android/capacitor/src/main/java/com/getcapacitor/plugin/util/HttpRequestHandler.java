@@ -319,10 +319,8 @@ public class HttpRequestHandler {
                 return "";
             } else if (input.trim().matches("^\".*\"$")) {
                 return parseString(input.trim());
-            } else if (input.trim().matches("^-?\\d+$")) {
-                return parseInteger(input.trim());
             } else if (input.trim().matches("^-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?$")) {
-                return parseDouble(input.trim());
+                return parseNumber(input.trim());
             } else {
                 try {
                     return new JSObject(input);
@@ -352,27 +350,23 @@ public class HttpRequestHandler {
     }
 
     /**
-     * Parses an integer JSON value, falling back to a wider type when it does not fit,
-     * so values outside the int range are returned instead of failing the request
-     * @param value An integer without a fraction or exponent
-     * @return An Integer, a Long, a Double, or the input when it exceeds the Double range
-     */
-    private static Object parseInteger(String value) {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException ignored) {}
-        try {
-            return Long.parseLong(value);
-        } catch (NumberFormatException ignored) {}
-        return parseDouble(value);
-    }
-
-    /**
-     * Parses a JSON number as a Double
+     * Parses a JSON number into the Java type that holds it: Integer or Long for integers in their range,
+     * otherwise Double, like JavaScript does
      * @param value A number, optionally with a fraction and an exponent
-     * @return A Double, or the input when it exceeds the Double range, as JSON cannot represent infinity
+     * @return An Integer, a Long, a Double, or the input when it exceeds the Double range, as JSON cannot represent infinity
      */
-    private static Object parseDouble(String value) {
+    private static Object parseNumber(String value) {
+        if (value.matches("^-?\\d+$")) {
+            try {
+                long number = Long.parseLong(value);
+                if (number >= Integer.MIN_VALUE && number <= Integer.MAX_VALUE) {
+                    return (int) number;
+                }
+                return number;
+            } catch (NumberFormatException ignored) {
+                // beyond the Long range, parsed as a Double below
+            }
+        }
         double number = Double.parseDouble(value);
         return Double.isInfinite(number) ? value : number;
     }
