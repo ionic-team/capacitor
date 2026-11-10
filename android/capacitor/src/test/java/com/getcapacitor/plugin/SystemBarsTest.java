@@ -64,6 +64,11 @@ public class SystemBarsTest {
     }
 
     @Test
+    public void bottomInsetIsUncoveredPartWhenKeyboardPartiallyCoversNavigationBar() throws Exception {
+        assertEquals(76, invokeGetBottomInset(126, 50, true));
+    }
+
+    @Test
     public void bottomInsetIsNavigationBarWhenFloatingKeyboardCoversNothing() throws Exception {
         assertEquals(63, invokeGetBottomInset(63, 0, true));
     }
