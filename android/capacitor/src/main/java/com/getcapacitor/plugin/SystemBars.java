@@ -243,14 +243,12 @@ public class SystemBars extends Plugin {
         }
 
         Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-        Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
-        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
         // Convert pixels to density-independent pixels
         float density = getActivity().getResources().getDisplayMetrics().density;
         float topPx = systemBarsInsets.top / density;
         float rightPx = systemBarsInsets.right / density;
-        float bottomPx = getBottomInset(systemBarsInsets, imeInsets, keyboardVisible) / density;
+        float bottomPx = systemBarsInsets.bottom / density;
         float leftPx = systemBarsInsets.left / density;
 
         // Execute JavaScript to inject the CSS
