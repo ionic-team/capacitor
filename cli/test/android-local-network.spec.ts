@@ -1,4 +1,5 @@
 import { mkdirp, readFile, remove, writeFile } from 'fs-extra';
+import os from 'os';
 import { join } from 'path';
 
 import { grantAndroidLocalNetworkPermission, setAndroidLocalNetworkDeclaration } from '../src/android/local-network';
@@ -123,5 +124,80 @@ describe('grantAndroidLocalNetworkPermission', () => {
     run.mockRejectedValue('adb: device offline');
 
     await expect(grantAndroidLocalNetworkPermission(config, 'device-1')).resolves.toBeUndefined();
+  });
+
+  describe('finding adb', () => {
+    const adbName = process.platform === 'win32' ? 'adb.exe' : 'adb';
+    const savedEnv = { ...process.env };
+    let tmp: Awaited<ReturnType<typeof mktmp>>;
+
+    const makeSdk = async (name: string): Promise<string> => {
+      const sdk = join(tmp.path, name);
+      await mkdirp(join(sdk, 'platform-tools'));
+      await writeFile(join(sdk, 'platform-tools', adbName), '');
+      return sdk;
+    };
+
+    const adbUsed = async (): Promise<string> => {
+      run.mockImplementation(async () => '31\n');
+      await grantAndroidLocalNetworkPermission(config, 'device-1');
+      return run.mock.calls[0][0] as string;
+    };
+
+    beforeEach(async () => {
+      tmp = await mktmp();
+      delete process.env.ANDROID_HOME;
+      delete process.env.ANDROID_SDK_ROOT;
+      // Point the default SDK location at an empty folder so the real SDK of the machine running the tests is never used.
+      jest.spyOn(os, 'homedir').mockReturnValue(join(tmp.path, 'home'));
+      process.env.LOCALAPPDATA = join(tmp.path, 'home', 'AppData', 'Local');
+    });
+
+    afterEach(async () => {
+      jest.restoreAllMocks();
+      process.env = { ...savedEnv };
+      await remove(tmp.path);
+    });
+
+    it('uses ANDROID_HOME first', async () => {
+      const home = await makeSdk('android-home');
+      process.env.ANDROID_HOME = home;
+      process.env.ANDROID_SDK_ROOT = await makeSdk('sdk-root');
+
+      expect(await adbUsed()).toBe(join(home, 'platform-tools', adbName));
+    });
+
+    it('skips an ANDROID_HOME that has no adb and uses ANDROID_SDK_ROOT', async () => {
+      process.env.ANDROID_HOME = join(tmp.path, 'missing');
+      const root = await makeSdk('sdk-root');
+      process.env.ANDROID_SDK_ROOT = root;
+
+      expect(await adbUsed()).toBe(join(root, 'platform-tools', adbName));
+    });
+
+    it('uses the default SDK location when no environment variable is set', async () => {
+      const defaultDir =
+        process.platform === 'win32'
+          ? join(tmp.path, 'home', 'AppData', 'Local', 'Android', 'Sdk')
+          : process.platform === 'darwin'
+            ? join(tmp.path, 'home', 'Library', 'Android', 'sdk')
+            : join(tmp.path, 'home', 'Android', 'sdk');
+      await mkdirp(join(defaultDir, 'platform-tools'));
+      await writeFile(join(defaultDir, 'platform-tools', adbName), '');
+
+      expect(await adbUsed()).toBe(join(defaultDir, 'platform-tools', adbName));
+    });
+
+    it('treats an empty ANDROID_HOME as unset', async () => {
+      process.env.ANDROID_HOME = '';
+      const root = await makeSdk('sdk-root');
+      process.env.ANDROID_SDK_ROOT = root;
+
+      expect(await adbUsed()).toBe(join(root, 'platform-tools', adbName));
+    });
+
+    it('falls back to adb on the PATH when no SDK is found', async () => {
+      expect(await adbUsed()).toBe('adb');
+    });
   });
 });

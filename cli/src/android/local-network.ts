@@ -1,4 +1,5 @@
 import { pathExists, readFile, writeFile } from 'fs-extra';
+import { homedir } from 'os';
 import { join } from 'path';
 
 import type { Config } from '../definitions';
@@ -66,10 +67,32 @@ export async function setAndroidLocalNetworkDeclaration(config: Config, enabled:
   return true;
 }
 
+function defaultAndroidSdkDir(): string | undefined {
+  switch (process.platform) {
+    case 'darwin':
+      return join(homedir(), 'Library', 'Android', 'sdk');
+    case 'linux':
+      return join(homedir(), 'Android', 'sdk');
+    case 'win32':
+      return join(process.env.LOCALAPPDATA || join(homedir(), 'AppData', 'Local'), 'Android', 'Sdk');
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Finds `adb` the same way native-run finds the Android SDK for the install: `ANDROID_HOME`, then
+ * `ANDROID_SDK_ROOT`, then the default SDK location of the platform. Falls back to `adb` on the PATH.
+ */
 async function resolveAdb(): Promise<string> {
-  const sdkRoot = process.env.ANDROID_HOME ?? process.env.ANDROID_SDK_ROOT;
-  if (sdkRoot) {
-    const adbPath = join(sdkRoot, 'platform-tools', 'adb');
+  const sdkRoots = [process.env.ANDROID_HOME, process.env.ANDROID_SDK_ROOT, defaultAndroidSdkDir()];
+  const adbName = process.platform === 'win32' ? 'adb.exe' : 'adb';
+
+  for (const sdkRoot of sdkRoots) {
+    if (!sdkRoot) {
+      continue;
+    }
+    const adbPath = join(sdkRoot, 'platform-tools', adbName);
     if (await pathExists(adbPath)) {
       return adbPath;
     }
