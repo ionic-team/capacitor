@@ -27,6 +27,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class HttpRequestHandler {
 
@@ -317,12 +318,9 @@ public class HttpRequestHandler {
             } else if (input.trim().length() <= 0) {
                 return "";
             } else if (input.trim().matches("^\".*\"$")) {
-                // a string enclosed in " " is a json value, return the string without the quotes
-                return input.trim().substring(1, input.trim().length() - 1);
-            } else if (input.trim().matches("^-?\\d+$")) {
-                return Integer.parseInt(input.trim());
-            } else if (input.trim().matches("^-?\\d+(\\.\\d+)?$")) {
-                return Double.parseDouble(input.trim());
+                return parseString(input.trim());
+            } else if (input.trim().matches("^-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?$")) {
+                return parseNumber(input.trim());
             } else {
                 try {
                     return new JSObject(input);
@@ -333,6 +331,44 @@ public class HttpRequestHandler {
         } catch (JSONException e) {
             return input;
         }
+    }
+
+    /**
+     * Parses a JSON string value, resolving escape sequences such as \" or \n
+     * @param value A string enclosed in " "
+     * @return The unescaped string, or the content between the quotes when the value is not a single valid JSON string
+     */
+    private static String parseString(String value) {
+        try {
+            JSONTokener tokener = new JSONTokener(value);
+            Object parsed = tokener.nextValue();
+            if (parsed instanceof String && !tokener.more()) {
+                return (String) parsed;
+            }
+        } catch (JSONException ignored) {}
+        return value.substring(1, value.length() - 1);
+    }
+
+    /**
+     * Parses a JSON number into the Java type that holds it: Integer or Long for integers in their range,
+     * otherwise Double, like JavaScript does
+     * @param value A number, optionally with a fraction and an exponent
+     * @return An Integer, a Long, a Double, or the input when it exceeds the Double range, as JSON cannot represent infinity
+     */
+    private static Object parseNumber(String value) {
+        if (value.matches("^-?\\d+$")) {
+            try {
+                long number = Long.parseLong(value);
+                if (number >= Integer.MIN_VALUE && number <= Integer.MAX_VALUE) {
+                    return (int) number;
+                }
+                return number;
+            } catch (NumberFormatException ignored) {
+                // beyond the Long range, parsed as a Double below
+            }
+        }
+        double number = Double.parseDouble(value);
+        return Double.isInfinite(number) ? value : number;
     }
 
     /**
