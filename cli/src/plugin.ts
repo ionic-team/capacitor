@@ -1,5 +1,6 @@
+import { existsSync, realpathSync } from 'fs';
 import { readJSON } from 'fs-extra';
-import { dirname, join } from 'path';
+import { dirname, isAbsolute, join, relative, sep } from 'path';
 
 import c from './colors';
 import type { Config } from './definitions';
@@ -96,6 +97,51 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
     // ignore
   }
   return null;
+}
+
+/**
+ * Returns the path to reference for an installed package from generated
+ * native project files (Gradle settings, SPM Package.swift, ...).
+ *
+ * `resolvedPath` is the package's resolved physical location, which may
+ * live outside the project when the package manager stores dependencies
+ * externally (e.g. pnpm's global virtual store). Embedding that physical
+ * location in generated files makes them machine-specific and breaks when
+ * the physical layout differs from the project's local virtual store
+ * (see #8621). The top-level `node_modules/<package>` entry is a stable,
+ * project-local symlink to the installed package, so prefer it whenever
+ * the resolved location is outside the project and the entry exists.
+ * Otherwise fall back to the resolved location (e.g. hoisted monorepo
+ * dependencies, where the app has no top-level entry for the package).
+ */
+export function getPackageReferencePath(config: Config, packageId: string, resolvedPath: string): string {
+  if (!isPathInside(config.app.rootDir, resolvedPath)) {
+    const localEntry = join(config.app.rootDir, 'node_modules', packageId);
+    if (existsSync(localEntry)) {
+      return localEntry;
+    }
+  }
+  return resolvedPath;
+}
+
+/**
+ * Returns the path to reference for a plugin from generated native
+ * project files. See `getPackageReferencePath`.
+ */
+export function getPluginReferencePath(config: Config, plugin: Plugin): string {
+  return getPackageReferencePath(config, plugin.id, plugin.rootPath);
+}
+
+function isPathInside(parent: string, child: string): boolean {
+  let rel: string;
+  try {
+    // rootDir comes from process.cwd() while resolved paths are realpaths,
+    // so canonicalize both sides before comparing.
+    rel = relative(realpathSync(parent), realpathSync(child));
+  } catch {
+    rel = relative(parent, child);
+  }
+  return rel === '' || (!rel.startsWith(`..${sep}`) && rel !== '..' && !isAbsolute(rel));
 }
 
 export function getDependencies(config: Config): string[] {
