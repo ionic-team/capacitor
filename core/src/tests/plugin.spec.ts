@@ -329,6 +329,52 @@ describe('plugin', () => {
     expect(rtn).toBeUndefined();
   });
 
+  it('calls made before a lazy web implementation loads share one instance', async () => {
+    let created = 0;
+    const AwesomeWeb = class extends WebPlugin {
+      constructor() {
+        super();
+        created++;
+      }
+      async fire() {
+        this.notifyListeners('change', { value: 88 });
+      }
+    };
+    cap = initCapacitorGlobal(win);
+    const Awesome = cap.registerPlugin<any>('Awesome', {
+      web: async () => new AwesomeWeb(),
+    });
+
+    const first = jest.fn();
+    const second = jest.fn();
+    // neither listener is awaited before the next call
+    const handles = [Awesome.addListener('change', first), Awesome.addListener('change', second)];
+    await Promise.all(handles);
+    await Awesome.fire();
+
+    expect(created).toBe(1);
+    expect(first).toHaveBeenCalledWith({ value: 88 });
+    expect(second).toHaveBeenCalledWith({ value: 88 });
+  });
+
+  it('retries a lazy implementation that failed to load', async () => {
+    let attempts = 0;
+    cap = initCapacitorGlobal(win);
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
+      web: async () => {
+        attempts++;
+        if (attempts === 1) {
+          throw 'unable to load module';
+        }
+        return { mph: async () => 88 };
+      },
+    });
+
+    await expect(Awesome.mph()).rejects.toBe('unable to load module');
+    expect(await Awesome.mph()).toBe(88);
+    expect(attempts).toBe(2);
+  });
+
   const mockAndroidBridge = () => {
     win.androidBridge = {
       postMessage: () => {
