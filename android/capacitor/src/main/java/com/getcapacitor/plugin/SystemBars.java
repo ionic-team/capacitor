@@ -38,8 +38,6 @@ public class SystemBars extends Plugin {
 
     // https://issues.chromium.org/issues/40699457
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
-    // https://issues.chromium.org/issues/457682720
-    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX = 144;
 
     static final String viewportMetaJSFunction = """
     function capacitorSystemBarsCheckMetaViewport() {
@@ -213,7 +211,7 @@ public class SystemBars extends Plugin {
                             systemBarsInsets.left,
                             systemBarsInsets.top,
                             systemBarsInsets.right,
-                            getBottomInset(systemBarsInsets, keyboardVisible)
+                            getBottomInset(systemBarsInsets, imeInsets, keyboardVisible)
                         )
                     ),
                     keyboardOverlaysWebView
@@ -268,15 +266,12 @@ public class SystemBars extends Plugin {
         }
 
         Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
         // Convert pixels to density-independent pixels
         float density = getActivity().getResources().getDisplayMetrics().density;
         float topPx = systemBarsInsets.top / density;
         float rightPx = systemBarsInsets.right / density;
-        // For native insets the value gets automatically corrected when the IME is visible (in newer WebView versions),
-        // but for these injected values we have to handle that manually (for all WebView versions).
-        float bottomPx = (keyboardVisible ? 0 : systemBarsInsets.bottom) / density;
+        float bottomPx = systemBarsInsets.bottom / density;
         float leftPx = systemBarsInsets.left / density;
 
         // Execute JavaScript to inject the CSS
@@ -373,15 +368,13 @@ public class SystemBars extends Plugin {
         return 0;
     }
 
-    private int getBottomInset(Insets systemBarsInsets, boolean keyboardVisible) {
-        if (getWebViewMajorVersion() < WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX) {
-            // This is a workaround for webview versions that have a bug
-            // that causes the bottom inset to be incorrect if the IME is visible
-            // See: https://issues.chromium.org/issues/457682720
-
-            if (keyboardVisible) {
-                return 0;
-            }
+    private int getBottomInset(Insets systemBarsInsets, Insets imeInsets, boolean keyboardVisible) {
+        // Only the part of the navigation bar the IME doesn't cover is left for the page to clear:
+        // none for a docked IME, all of it for a floating one.
+        // Deliberately not gated on the WebView version: measured on 148-156, Chromium corrects
+        // this itself on API 35+ but not on API 29-34.
+        if (keyboardVisible) {
+            return Math.max(0, systemBarsInsets.bottom - imeInsets.bottom);
         }
 
         return systemBarsInsets.bottom;
