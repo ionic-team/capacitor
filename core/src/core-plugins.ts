@@ -1,4 +1,4 @@
-import type { Plugin } from './definitions';
+import type { Plugin, PluginListenerHandle } from './definitions';
 import { registerPlugin } from './global';
 import { WebPlugin } from './web-plugin';
 
@@ -634,6 +634,22 @@ export interface SystemBarsPlugin {
    * @since 8.0.0
    */
   setAnimation(options: SystemBarsAnimationOptions): Promise<void>;
+
+  /**
+   * Listen for taps on the status bar.
+   *
+   * Only available on iOS.
+   *
+   * @since 9.0.0
+   */
+  addListener(eventName: 'statusTap', listenerFunc: () => void): Promise<PluginListenerHandle>;
+
+  /**
+   * Remove all listeners for this plugin.
+   *
+   * @since 9.0.0
+   */
+  removeAllListeners(): Promise<void>;
 }
 
 export class SystemBarsPluginWeb extends WebPlugin implements SystemBarsPlugin {

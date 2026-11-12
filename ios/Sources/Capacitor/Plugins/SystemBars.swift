@@ -13,6 +13,8 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
 
     public private(set) var hideHomeIndicator: Bool = false
 
+    private var statusBarTapObserver: NSObjectProtocol?
+
     enum Style: String {
         case dark = "DARK"
         case light = "LIGHT"
@@ -31,6 +33,16 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
         }
 
         setHidden(hidden: hidden)
+
+        statusBarTapObserver = NotificationCenter.default.addObserver(forName: .capacitorStatusBarTapped, object: nil, queue: nil) { [weak self] _ in
+            self?.notifyListeners("statusTap", data: nil)
+        }
+    }
+
+    deinit {
+        if let statusBarTapObserver {
+            NotificationCenter.default.removeObserver(statusBarTapObserver)
+        }
     }
 
     @objc func setStyle(_ call: CAPPluginCall) {

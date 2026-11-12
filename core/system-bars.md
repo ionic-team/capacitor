@@ -10,6 +10,7 @@ This API differs from the [Status Bar](https://capacitorjs.com/docs/apis/status-
 | `setBackgroundColor()` | Unsupported | Supported |
 | `setStyle()` | Supported | Supported - top Status Bar only |
 | `hide()/show()` | Supported | Supported - top Status Bar only |
+| Status bar tap event | `SystemBars.addListener('statusTap', ...)` - iOS only | `window` `statusTap` event - iOS only |
 
 ## iOS Note
 
@@ -57,6 +58,11 @@ const hideNavigationBar = async () => {
 const setStatusBarAnimation = async () => {
   await SystemBars.setAnimation({ animation: "NONE" });
 }
+
+// Listen for taps on the Status Bar, only on iOS
+SystemBars.addListener('statusTap', () => {
+  console.log('status bar tapped');
+});
 
 ````
 
@@ -114,6 +120,8 @@ export default config;
 * [`show(...)`](#show)
 * [`hide(...)`](#hide)
 * [`setAnimation(...)`](#setanimation)
+* [`addListener('statusTap', ...)`](#addlistenerstatustap-)
+* [`removeAllListeners()`](#removealllisteners)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -193,6 +201,41 @@ Only available on iOS.
 --------------------
 
 
+### addListener('statusTap', ...)
+
+```typescript
+addListener(eventName: 'statusTap', listenerFunc: () => void) => Promise<PluginListenerHandle>
+```
+
+Listen for taps on the status bar.
+
+Only available on iOS.
+
+| Param              | Type                       |
+| ------------------ | -------------------------- |
+| **`eventName`**    | <code>'statusTap'</code>   |
+| **`listenerFunc`** | <code>() =&gt; void</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
+
+**Since:** 8.7.0
+
+--------------------
+
+
+### removeAllListeners()
+
+```typescript
+removeAllListeners() => Promise<void>
+```
+
+Remove all listeners for this plugin.
+
+**Since:** 8.7.0
+
+--------------------
+
+
 ### Interfaces
 
 
@@ -217,6 +260,13 @@ Only available on iOS.
 | Prop            | Type                                                                | Description                                                                                         | Default             | Since |
 | --------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
 | **`animation`** | <code><a href="#systembarsanimation">SystemBarsAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
+
+
+#### PluginListenerHandle
+
+| Prop         | Type                                      |
+| ------------ | ----------------------------------------- |
+| **`remove`** | <code>() =&gt; Promise&lt;void&gt;</code> |
 
 
 ### Type Aliases
