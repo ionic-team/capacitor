@@ -604,6 +604,27 @@ export interface SystemBarsAnimationOptions {
   animation: SystemBarsAnimation;
 }
 
+export interface SystemBarsGetStyleOptions {
+  /**
+   * The system bar to get the style of.
+   *
+   * On iOS, only the status bar has a style, so this option is ignored.
+   *
+   * @since 9.0.0
+   * @default 'StatusBar'
+   */
+  bar?: SystemBarType;
+}
+
+export interface SystemBarsGetStyleResult {
+  /**
+   * The style last set for the system bar, using `setStyle()` or the `style` configuration value.
+   *
+   * @since 9.0.0
+   */
+  style: SystemBarsStyle;
+}
+
 export interface SystemBarsPlugin {
   /**
    * Set the current style of the system bars.
@@ -611,6 +632,16 @@ export interface SystemBarsPlugin {
    * @since 8.0.0
    */
   setStyle(options: SystemBarsStyleOptions): Promise<void>;
+
+  /**
+   * Get the current style of a system bar.
+   *
+   * Returns the style that was requested, so `DEFAULT` is returned as `DEFAULT`
+   * rather than the `LIGHT` or `DARK` style it currently resolves to.
+   *
+   * @since 9.0.0
+   */
+  getStyle(options?: SystemBarsGetStyleOptions): Promise<SystemBarsGetStyleResult>;
 
   /**
    * Show the system bars.
@@ -655,6 +686,10 @@ export interface SystemBarsPlugin {
 export class SystemBarsPluginWeb extends WebPlugin implements SystemBarsPlugin {
   async setStyle(): Promise<void> {
     this.unavailable('not available for web');
+  }
+
+  async getStyle(): Promise<SystemBarsGetStyleResult> {
+    throw this.unavailable('not available for web');
   }
 
   async setAnimation(): Promise<void> {

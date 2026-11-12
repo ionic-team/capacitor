@@ -6,6 +6,7 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
     public let jsName = "SystemBars"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "setStyle", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getStyle", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setAnimation", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "show", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "hide", returnType: CAPPluginReturnPromise)
@@ -48,6 +49,13 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func setStyle(_ call: CAPPluginCall) {
         setStyle(style: call.getString("style") ?? Style.defaultStyle.rawValue)
         call.resolve()
+    }
+
+    @objc func getStyle(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let style = Self.style(from: self.bridge?.statusBarStyle ?? .default)
+            call.resolve(["style": style.rawValue])
+        }
     }
 
     @objc func show(_ call: CAPPluginCall) {
@@ -98,6 +106,17 @@ public class CAPSystemBarsPlugin: CAPPlugin, CAPBridgedPlugin {
         }
 
         bridge?.statusBarStyle = newStyle
+    }
+
+    static func style(from statusBarStyle: UIStatusBarStyle) -> Style {
+        switch statusBarStyle {
+        case .lightContent:
+            return .dark
+        case .darkContent:
+            return .light
+        default:
+            return .defaultStyle
+        }
     }
 
     func setHidden(hidden: Bool, bar: String? = nil) {
