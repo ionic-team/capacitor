@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 # [9.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.8...9.0.0-beta.0) (2026-10-28)
+# [8.6.0](https://github.com/ionic-team/capacitor/compare/8.5.3...8.6.0) (2026-10-28)
 
 ### Bug Fixes
 
