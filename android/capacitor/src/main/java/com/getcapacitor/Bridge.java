@@ -272,7 +272,8 @@ public class Bridge {
                 Logger.warn("Invalid url, using fallback");
             }
         }
-        localServer = new WebViewLocalServer(context, this, injector, authorities, html5mode);
+        boolean jsProfilingEnabled = config.isJsProfilingEnabled();
+        localServer = new WebViewLocalServer(context, this, injector, authorities, html5mode, jsProfilingEnabled);
         localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
         Logger.debug("Loading app at " + appUrl);
