@@ -354,12 +354,6 @@ extension CAPBridgeViewController {
             if descriptor.warnings.contains(.invalidFile) {
                 CAPLog.print("Unable to parse capacitor.config.json. Make sure it's valid JSON.")
             }
-            if descriptor.warnings.contains(.missingCordovaFile) {
-                CAPLog.print("Unable to find config.xml, make sure it exists and run npx cap copy.")
-            }
-            if descriptor.warnings.contains(.invalidCordovaFile) {
-                CAPLog.print("Unable to parse config.xml. Make sure it's valid XML.")
-            }
         }
     }
 
