@@ -26,8 +26,7 @@ public class MessageHandler {
         if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER) && !bridge.getConfig().isUsingLegacyBridge()) {
             WebViewCompat.WebMessageListener capListener = (view, message, sourceOrigin, isMainFrame, replyProxy) -> {
                 if (isMainFrame) {
-                    postMessage(message.getData());
-                    javaScriptReplyProxy = replyProxy;
+                    onModernBridgeMessage(message.getData(), replyProxy);
                 } else {
                     Logger.warn("Plugin execution is allowed in Main Frame only");
                 }
@@ -40,6 +39,11 @@ public class MessageHandler {
         } else {
             webView.addJavascriptInterface(this, "androidBridge");
         }
+    }
+
+    void onModernBridgeMessage(String data, JavaScriptReplyProxy replyProxy) {
+        javaScriptReplyProxy = replyProxy;
+        postMessage(data);
     }
 
     /**
@@ -69,13 +73,13 @@ public class MessageHandler {
                 Logger.verbose(
                     Logger.tags("Plugin"),
                     "To native (Cordova plugin): callbackId: " +
-                        callbackId +
-                        ", service: " +
-                        service +
-                        ", action: " +
-                        action +
-                        ", actionArgs: " +
-                        actionArgs
+                    callbackId +
+                    ", service: " +
+                    service +
+                    ", action: " +
+                    action +
+                    ", actionArgs: " +
+                    actionArgs
                 );
 
                 this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
