@@ -3,7 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/8.6.0...9.0.0-rc.0) (2026-11-12)
+
+### Bug Fixes
+
+- **ios:** read CapacitorCookies/CapacitorHttp isEnabled from injected global ([#8688](https://github.com/ionic-team/capacitor/issues/8688)) ([8b89254](https://github.com/ionic-team/capacitor/commit/8b89254e21d7af2f22067c61efa9612456a9479d))
+- **ios:** read CapacitorCookies/CapacitorHttp isEnabled from injected global ([#8689](https://github.com/ionic-team/capacitor/issues/8689)) ([1ae2b31](https://github.com/ionic-team/capacitor/commit/1ae2b31e7106a23d757c00318b9ce39b0edad289))
+
 # [9.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.8...9.0.0-beta.0) (2026-10-28)
+
+### Bug Fixes
+
+- **ios:** keep ScreenOrientation locks with the SwiftUI app template ([#8680](https://github.com/ionic-team/capacitor/issues/8680)) ([cd93355](https://github.com/ionic-team/capacitor/commit/cd933557e48d24effbd387a5eee98d3b06bee611))
+
+### Features
+
+- **cli:** finish the SwiftUI entry-point conversion in cap migrate ([#8647](https://github.com/ionic-team/capacitor/issues/8647)) ([ffb509f](https://github.com/ionic-team/capacitor/commit/ffb509ff32b4bffcdea5a368db5678bcffcfd1e1))
+- **cli:** resolve the iOS Swift package from NPM package ([#8644](https://github.com/ionic-team/capacitor/issues/8644)) ([f3d894b](https://github.com/ionic-team/capacitor/commit/f3d894b9bf11bb24808d6e212262c4259aa4c689))
+
+# [9.0.0-alpha.8](https://github.com/ionic-team/capacitor/compare/8.5.3...9.0.0-alpha.8) (2026-10-07)
+
+# [9.0.0-alpha.7](https://github.com/ionic-team/capacitor/compare/8.5.2...9.0.0-alpha.7) (2026-09-18)
+
+### Bug Fixes
+
+- block navigation to the internal HTTP proxy path ([a4e946b](https://github.com/ionic-team/capacitor/commit/a4e946bb6d7b6ca0e0e231e653c4245ff0ab16de))
+- block the HTTP proxy path in subframes ([49b65c5](https://github.com/ionic-team/capacitor/commit/49b65c50bdc4077e4ecd43dee21f583ce0169170))
+- **iOS:** make permission functions override-able (open) ([#8602](https://github.com/ionic-team/capacitor/issues/8602)) ([0b369e7](https://github.com/ionic-team/capacitor/commit/0b369e7a85f864676f7262eb5bf8c1a0a5593d52))
+- **ios:** replace deprecated languageCode/regionCode with iOS 16 Locale APIs ([#8548](https://github.com/ionic-team/capacitor/issues/8548)) ([9f13fa6](https://github.com/ionic-team/capacitor/commit/9f13fa688c4170b816c9af72662369b8a776dc4a))
+
+# [9.0.0-alpha.6](https://github.com/ionic-team/capacitor/compare/8.4.2...9.0.0-alpha.6) (2026-07-14)
+
+### Bug Fixes
+
+- **ios:** remove Cordova.framework from Capacitor project ([#8524](https://github.com/ionic-team/capacitor/issues/8524)) ([bfae960](https://github.com/ionic-team/capacitor/commit/bfae9602d039cd283b00eceddea246e6aed146b8))
+
+# [9.0.0-alpha.5](https://github.com/ionic-team/capacitor/compare/8.4.1...9.0.0-alpha.5) (2026-06-23)
+
+# [9.0.0-alpha.4](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.3...9.0.0-alpha.4) (2026-06-19)
+
+# [9.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.4.0...9.0.0-alpha.3) (2026-06-02)
+
+# [9.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/8.3.4...9.0.0-alpha.2) (2026-05-12)
+
+# [9.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/8.3.3...9.0.0-alpha.1) (2026-05-08)
+
+# [9.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/8.3.2...9.0.0-alpha.0) (2026-05-07)
+
+### Bug Fixes
+
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([0aac1f0](https://github.com/ionic-team/capacitor/commit/0aac1f0aee8083dc5013f0d8e3c180eb02f21141))
+- **ios:** make getArray accesible on Objective-C plugins ([#8392](https://github.com/ionic-team/capacitor/issues/8392)) ([ef57c77](https://github.com/ionic-team/capacitor/commit/ef57c773e70af6b94685a2dc0f808db3ed4cda6e))
+
+# [9.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.8...9.0.0-beta.0) (2026-10-28)
+
 # [8.6.0](https://github.com/ionic-team/capacitor/compare/8.5.3...8.6.0) (2026-10-28)
 
 ### Bug Fixes

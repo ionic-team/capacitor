@@ -3,7 +3,67 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/8.6.0...9.0.0-rc.0) (2026-11-12)
+
+### Bug Fixes
+
+- **android:** skip lifecycle events when the Capacitor bridge is not present ([#8683](https://github.com/ionic-team/capacitor/issues/8683)) ([02a7cf9](https://github.com/ionic-team/capacitor/commit/02a7cf9d2461ae6e19d61a49c715ba5e29a8ffcf))
+- **android:** skip lifecycle events when the Capacitor bridge is not present ([#8684](https://github.com/ionic-team/capacitor/issues/8684)) ([06b62bd](https://github.com/ionic-team/capacitor/commit/06b62bd7305c47323825ea6c1942b8a87e99fbbf))
+- **ios:** read CapacitorCookies/CapacitorHttp isEnabled from injected global ([#8688](https://github.com/ionic-team/capacitor/issues/8688)) ([8b89254](https://github.com/ionic-team/capacitor/commit/8b89254e21d7af2f22067c61efa9612456a9479d))
+- **ios:** read CapacitorCookies/CapacitorHttp isEnabled from injected global ([#8689](https://github.com/ionic-team/capacitor/issues/8689)) ([1ae2b31](https://github.com/ionic-team/capacitor/commit/1ae2b31e7106a23d757c00318b9ce39b0edad289))
+- native android publishing compatibility with Gradle 9 / AGP 9 ([#8695](https://github.com/ionic-team/capacitor/issues/8695)) ([02de32b](https://github.com/ionic-team/capacitor/commit/02de32bb7b3fd13c2d1d444cbfd4f326b046dc69))
+
 # [9.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.8...9.0.0-beta.0) (2026-10-28)
+
+### Bug Fixes
+
+- **android:** keep Cordova's config.xml when shrinking resources ([fd17329](https://github.com/ionic-team/capacitor/commit/fd17329f196338d8e382bdabb08e383d67826ef9))
+
+### Features
+
+- **android:** Upgrade AGP to 9.4.1 and Gradle to 9.8.2 ([#8668](https://github.com/ionic-team/capacitor/issues/8668)) ([3ccf568](https://github.com/ionic-team/capacitor/commit/3ccf568d7a97c2e3b832cc21e31c097c1dad5b75))
+
+# [9.0.0-alpha.8](https://github.com/ionic-team/capacitor/compare/8.5.3...9.0.0-alpha.8) (2026-10-07)
+
+# [9.0.0-alpha.7](https://github.com/ionic-team/capacitor/compare/8.5.2...9.0.0-alpha.7) (2026-09-18)
+
+### Bug Fixes
+
+- **android:** stop using deprecated hasPermission to read Cordova prefs ([#8550](https://github.com/ionic-team/capacitor/issues/8550)) ([7e240f2](https://github.com/ionic-team/capacitor/commit/7e240f23cad0e81fe490245c7e2e93afa5d072bf))
+- block navigation to the internal HTTP proxy path ([a4e946b](https://github.com/ionic-team/capacitor/commit/a4e946bb6d7b6ca0e0e231e653c4245ff0ab16de))
+- block the HTTP proxy path in subframes ([49b65c5](https://github.com/ionic-team/capacitor/commit/49b65c50bdc4077e4ecd43dee21f583ce0169170))
+
+### Features
+
+- **SystemBars:** set default insets handling to 'native' ([#8599](https://github.com/ionic-team/capacitor/issues/8599)) ([f9e2395](https://github.com/ionic-team/capacitor/commit/f9e2395ec26b8980f269697d3fc903520479aaa6))
+
+# [9.0.0-alpha.6](https://github.com/ionic-team/capacitor/compare/8.4.2...9.0.0-alpha.6) (2026-07-14)
+
+# [9.0.0-alpha.5](https://github.com/ionic-team/capacitor/compare/8.4.1...9.0.0-alpha.5) (2026-06-23)
+
+### Bug Fixes
+
+- **android:** restore verify script ([#8513](https://github.com/ionic-team/capacitor/issues/8513)) ([0585c18](https://github.com/ionic-team/capacitor/commit/0585c180843064d4f704f38710bd0db5050b70b1))
+
+# [9.0.0-alpha.4](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.3...9.0.0-alpha.4) (2026-06-19)
+
+# [9.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/8.4.0...9.0.0-alpha.3) (2026-06-02)
+
+# [9.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/8.3.4...9.0.0-alpha.2) (2026-05-12)
+
+# [9.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/8.3.3...9.0.0-alpha.1) (2026-05-08)
+
+# [9.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/8.3.2...9.0.0-alpha.0) (2026-05-07)
+
+### Bug Fixes
+
+- **android:** conditionally add Cordova ([#8453](https://github.com/ionic-team/capacitor/issues/8453)) ([e136b3f](https://github.com/ionic-team/capacitor/commit/e136b3f0cdd1437cac5234576301ed388edf85e7))
+- **android:** Handle activity result without plugin handle ([#8436](https://github.com/ionic-team/capacitor/issues/8436)) ([65ad1fd](https://github.com/ionic-team/capacitor/commit/65ad1fd55b9793a3e078e4a837a00e2f28c75c17))
+- **http:** handle URL objects on fetch ([#8386](https://github.com/ionic-team/capacitor/issues/8386)) ([0aac1f0](https://github.com/ionic-team/capacitor/commit/0aac1f0aee8083dc5013f0d8e3c180eb02f21141))
+- **SystemBars:** use native safe area insets on Android ([#8384](https://github.com/ionic-team/capacitor/issues/8384)) ([d55f4f8](https://github.com/ionic-team/capacitor/commit/d55f4f859bd88fa5617699e874c48c451bcb5e5f))
+
+# [9.0.0-beta.0](https://github.com/ionic-team/capacitor/compare/9.0.0-alpha.8...9.0.0-beta.0) (2026-10-28)
+
 # [8.6.0](https://github.com/ionic-team/capacitor/compare/8.5.3...8.6.0) (2026-10-28)
 
 ### Bug Fixes
