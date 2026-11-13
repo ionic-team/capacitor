@@ -982,13 +982,26 @@ const initBridge = (w: any): void => {
         if (typeof postToNative === 'function') {
           let callbackId = '-1';
 
+          // native never answers removeListener nor sends `save: false` for a removed listener,
+          // so release those callbacks here, otherwise everything they capture is never freed
+          if (methodName === 'removeListener') {
+            callbacks.delete(options?.callbackId);
+          } else if (methodName === 'removeAllListeners') {
+            callbacks.forEach((stored, id) => {
+              if (stored.pluginName === pluginName && stored.methodName === 'addListener') {
+                callbacks.delete(id);
+              }
+            });
+          }
+
           if (
+            methodName !== 'removeListener' &&
             storedCallback &&
             (typeof storedCallback.callback === 'function' || typeof storedCallback.resolve === 'function')
           ) {
             // store the call for later lookup
             callbackId = String(++callbackIdCount);
-            callbacks.set(callbackId, storedCallback);
+            callbacks.set(callbackId, { ...storedCallback, pluginName, methodName });
           }
 
           const callData = {

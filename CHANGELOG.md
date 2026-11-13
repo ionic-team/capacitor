@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.6.2](https://github.com/ionic-team/capacitor/compare/8.6.1...8.6.2) (2026-11-12)
+
+**Note:** Version bump only for package capacitor
+
+## [8.6.1](https://github.com/ionic-team/capacitor/compare/8.6.0...8.6.1) (2026-11-12)
+
+### Bug Fixes
+
+- **android:** skip lifecycle events when the Capacitor bridge is not present ([#8683](https://github.com/ionic-team/capacitor/issues/8683)) ([02a7cf9](https://github.com/ionic-team/capacitor/commit/02a7cf9d2461ae6e19d61a49c715ba5e29a8ffcf))
+- **core:** release listener callbacks on remove and removeAllListeners ([#8709](https://github.com/ionic-team/capacitor/issues/8709)) ([f3bba59](https://github.com/ionic-team/capacitor/commit/f3bba59b5749099af46742521cab7ae28e45ed8b))
+- **ios:** read CapacitorCookies/CapacitorHttp isEnabled from injected global ([#8688](https://github.com/ionic-team/capacitor/issues/8688)) ([8b89254](https://github.com/ionic-team/capacitor/commit/8b89254e21d7af2f22067c61efa9612456a9479d))
+- **SystemBars:** don't report the navigation bar inset while the IME is visible ([#8707](https://github.com/ionic-team/capacitor/issues/8707)) ([97a494a](https://github.com/ionic-team/capacitor/commit/97a494a94f0232645dedd85ab7d71b9f2fa91c9f))
+- **SystemBars:** respect windowSoftInputMode="adjustNothing" ([#8619](https://github.com/ionic-team/capacitor/issues/8619)) ([b1481d9](https://github.com/ionic-team/capacitor/commit/b1481d9a2c56b059f58d43738b87d9e43f531b9d))
+
 # [8.6.0](https://github.com/ionic-team/capacitor/compare/8.5.3...8.6.0) (2026-10-28)
 
 ### Bug Fixes
