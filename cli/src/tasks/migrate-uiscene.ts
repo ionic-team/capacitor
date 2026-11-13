@@ -294,6 +294,27 @@ function describeSignals({
   return `present: [${present.join(', ')}]; missing: [${missing.join(', ')}]`;
 }
 
+/**
+ * Returns a warning for `cap doctor` when the iOS project has not fully adopted UIScene, or null when it has.
+ */
+export function getUISceneDoctorWarning(config: Config): string | null {
+  const signals = readDetectionSignals(config);
+  switch (classify(signals)) {
+    case 'already-migrated':
+      return null;
+    case 'eligible':
+      return (
+        'This iOS project has not adopted UIScene. Run `npx cap migrate` or see ' +
+        'https://capacitorjs.com/docs/updating/8-5 to migrate.'
+      );
+    case 'partial':
+      return (
+        `This iOS project has only partly adopted UIScene (${describeSignals(signals)}). ` +
+        'See https://capacitorjs.com/docs/updating/8-5 to finish the migration.'
+      );
+  }
+}
+
 // Exported for tests.
 export const __testables = {
   classify,
