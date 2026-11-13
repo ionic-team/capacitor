@@ -1,7 +1,8 @@
 import { check, checkWebDir } from '../common';
 import type { Config } from '../definitions';
 import { fatal } from '../errors';
-import { logSuccess } from '../log';
+import { logSuccess, logger } from '../log';
+import { getUISceneDoctorWarning } from '../tasks/migrate-uiscene';
 import { isInstalled } from '../util/subprocess';
 
 import { getCommonChecks } from './common';
@@ -20,6 +21,10 @@ export async function doctorIOS(config: Config): Promise<void> {
   // check if www folder is empty (index.html does not exist)
   try {
     await check([() => checkWebDir(config), checkXcode, ...(await getCommonChecks(config))]);
+    const uisceneWarning = getUISceneDoctorWarning(config);
+    if (uisceneWarning) {
+      logger.warn(uisceneWarning);
+    }
     logSuccess('iOS looking great! 👌');
   } catch (e: any) {
     fatal(e.stack ?? e);
