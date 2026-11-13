@@ -151,8 +151,16 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         }
 
         let urlSession = URLSession.shared
+        CapacitorCookieManager.copyWebViewCookies(for: urlRequest.url) {
+            self.send(urlRequest, urlSession, urlSchemeTask, url)
+        }
+    }
+
+    private func send(_ urlRequest: URLRequest, _ urlSession: URLSession, _ urlSchemeTask: WKURLSchemeTask, _ url: URL) {
+        let redirectCookies = CapacitorRedirectCookies()
         let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
-            DispatchQueue.main.async {
+            let cookies = redirectCookies.cookies + ((response as? HTTPURLResponse).map(HttpRequestHandler.responseCookies) ?? [])
+            CapacitorCookieManager.setCookiesInWebView(cookies) {
                 guard !urlSchemeTask.stopped else { return }
                 if let error = error {
                     urlSchemeTask.didFailWithError(error)
@@ -195,6 +203,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             }
         }
 
+        task.delegate = redirectCookies
         task.resume()
     }
 

@@ -20,7 +20,9 @@ public class CAPCookiesPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @objc func getCookies(_ call: CAPPluginCall) {
         guard let url = cookieManager!.getServerUrl(call.getString("url")) else { return call.reject("Invalid URL / Server URL")}
-        call.resolve(cookieManager!.getCookiesAsMap(url))
+        CapacitorCookieManager.copyWebViewCookies(for: url) {
+            call.resolve(self.cookieManager!.getCookiesAsMap(url))
+        }
     }
 
     @objc func setCookie(_ call: CAPPluginCall) {
@@ -31,27 +33,29 @@ public class CAPCookiesPlugin: CAPPlugin, CAPBridgedPlugin {
 
         let expires = call.getString("expires", "")
         let path = call.getString("path", "")
-        cookieManager!.setCookie(url, key, cookieManager!.encode(value), expires, path)
-        call.resolve()
+        cookieManager!.setCookie(url, key, cookieManager!.encode(value), expires, path) {
+            call.resolve()
+        }
     }
 
     @objc func deleteCookie(_ call: CAPPluginCall) {
         guard let key = call.getString("key") else { return call.reject("Must provide key") }
         guard let url = cookieManager!.getServerUrl(call.getString("url")) else { return call.reject("Invalid URL / Server URL")}
-        cookieManager!.deleteCookie(url, key)
-        call.resolve()
+        cookieManager!.deleteCookie(url, key) {
+            call.resolve()
+        }
     }
 
     @objc func clearCookies(_ call: CAPPluginCall) {
-        let url = cookieManager!.getServerUrl(call.getString("url"))
-        if url != nil {
-            cookieManager!.clearCookies(url!)
+        guard let url = cookieManager!.getServerUrl(call.getString("url")) else { return call.reject("Invalid URL / Server URL")}
+        cookieManager!.clearCookies(url) {
             call.resolve()
         }
     }
 
     @objc func clearAllCookies(_ call: CAPPluginCall) {
-        cookieManager!.clearAllCookies()
-        call.resolve()
+        cookieManager!.clearAllCookies {
+            call.resolve()
+        }
     }
 }
