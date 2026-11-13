@@ -65,6 +65,7 @@ export interface AppConfig {
   readonly extConfigName: string;
   readonly extConfigFilePath: string;
   readonly extConfig: ExternalConfig;
+  readonly forceCordova: boolean;
 }
 
 export interface AndroidConfig extends PlatformConfig {

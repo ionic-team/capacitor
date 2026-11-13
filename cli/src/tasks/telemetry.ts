@@ -2,6 +2,7 @@ import c from '../colors';
 import { fatal } from '../errors';
 import { logger, logSuccess, output } from '../log';
 import { readConfig, writeConfig } from '../sysconfig';
+import { isTelemetryDisabledByEnv } from '../telemetry';
 
 const THANK_YOU =
   `\nThank you for helping to make Capacitor better! 💖` +
@@ -25,7 +26,14 @@ export async function telemetryCommand(onOrOff?: string): Promise<void> {
       }
     }
   } else {
-    logger.info(`Telemetry is ${c.strong(sysconfig.telemetry ? 'on' : 'off')}`);
+    logger.info(`Telemetry is ${c.strong(sysconfig.telemetry === false ? 'off' : 'on')}`);
+  }
+
+  // The stored setting is reported above because that is what this command
+  // writes, but the environment wins at send time. Saying so avoids the
+  // command contradicting what the CLI actually does.
+  if (isTelemetryDisabledByEnv(process.env)) {
+    logger.info(`Telemetry is disabled for this environment by ${c.input('CAP_TELEMETRY_DISABLED')}`);
   }
 }
 

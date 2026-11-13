@@ -1,6 +1,5 @@
 package com.getcapacitor.plugin.util;
 
-import android.os.Build;
 import android.os.LocaleList;
 import android.text.TextUtils;
 import com.getcapacitor.Bridge;
@@ -211,9 +210,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
             this.writeRequestBody(dataString != null ? dataString : "");
         } else if (bodyType != null && bodyType.equals("file")) {
             try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    os.write(Base64.getDecoder().decode(body.toString()));
-                }
+                os.write(Base64.getDecoder().decode(body.toString()));
                 os.flush();
             }
         } else if (contentType.contains("application/x-www-form-urlencoded")) {
@@ -295,13 +292,7 @@ public class CapacitorHttpUrlConnection implements ICapacitorHttpUrlConnection {
                         os.writeBytes("Content-Type: " + fileContentType + lineEnd);
                         os.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
                         os.writeBytes(lineEnd);
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            os.write(Base64.getDecoder().decode(value));
-                        } else {
-                            os.write(android.util.Base64.decode(value, android.util.Base64.DEFAULT));
-                        }
-
+                        os.write(Base64.getDecoder().decode(value));
                         os.writeBytes(lineEnd);
                     }
                 }
