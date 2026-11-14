@@ -52,7 +52,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.cordova.ConfigXmlParser;
@@ -133,6 +135,7 @@ public class Bridge {
 
     // Our MessageHandler for sending and receiving data to the WebView
     private final MessageHandler msgHandler;
+    private final boolean scopedWebMessages;
 
     // The ThreadHandler for executing plugin calls
     private final HandlerThread handlerThread = new HandlerThread("CapacitorPlugins");
@@ -186,7 +189,7 @@ public class Bridge {
         CordovaPreferences preferences,
         CapConfig config
     ) {
-        this(context, null, null, webView, initialPlugins, new ArrayList<>(), cordovaInterface, pluginManager, preferences, config);
+        this(context, null, null, webView, initialPlugins, new ArrayList<>(), cordovaInterface, pluginManager, preferences, config, null);
     }
 
     private Bridge(
@@ -199,7 +202,8 @@ public class Bridge {
         MockCordovaInterfaceImpl cordovaInterface,
         PluginManager pluginManager,
         CordovaPreferences preferences,
-        CapConfig config
+        CapConfig config,
+        Function<Bridge, MessageHandler.WebMessagePolicy> webMessagePolicyFactory
     ) {
         this.app = new App();
         this.serverPath = serverPath;
@@ -222,7 +226,13 @@ public class Bridge {
         // Initialize web view and message handler for it
         this.initWebView();
         this.setAllowedOriginRules();
-        this.msgHandler = new MessageHandler(this, webView, pluginManager);
+        this.scopedWebMessages = webMessagePolicyFactory != null;
+        this.msgHandler = new MessageHandler(
+            this,
+            webView,
+            pluginManager,
+            scopedWebMessages ? Objects.requireNonNull(webMessagePolicyFactory.apply(this)) : null
+        );
 
         // Grab any intent info that our app was launched with
         Intent intent = context.getIntent();
@@ -1457,6 +1467,10 @@ public class Bridge {
         return appAllowNavigationMask;
     }
 
+    public boolean hasScopedWebMessages() {
+        return scopedWebMessages;
+    }
+
     public Set<String> getAllowedOriginRules() {
         return allowedOriginRules;
     }
@@ -1510,6 +1524,7 @@ public class Bridge {
 
         private Bundle instanceState = null;
         private CapConfig config = null;
+        private Function<Bridge, MessageHandler.WebMessagePolicy> webMessagePolicyFactory;
         private List<Class<? extends Plugin>> plugins = new ArrayList<>();
         private List<Plugin> pluginInstances = new ArrayList<>();
         private AppCompatActivity activity;
@@ -1529,6 +1544,11 @@ public class Bridge {
 
         public Builder setInstanceState(Bundle instanceState) {
             this.instanceState = instanceState;
+            return this;
+        }
+
+        public Builder setWebMessagePolicy(Function<Bridge, MessageHandler.WebMessagePolicy> factory) {
+            this.webMessagePolicyFactory = Objects.requireNonNull(factory);
             return this;
         }
 
@@ -1618,7 +1638,8 @@ public class Bridge {
                 cordovaInterface,
                 pluginManager,
                 preferences,
-                config
+                config,
+                webMessagePolicyFactory
             );
 
             if (webView instanceof CapacitorWebView capacitorWebView) {
