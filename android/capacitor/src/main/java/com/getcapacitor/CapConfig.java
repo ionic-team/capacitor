@@ -70,27 +70,6 @@ public class CapConfig {
     private CapConfig() {}
 
     /**
-     * Get an instance of the Config file object.
-     * @deprecated use {@link #loadDefault(Context)} to load an instance of the Config object
-     * from the capacitor.config.json file, or use the {@link CapConfig.Builder} to construct
-     * a CapConfig for embedded use.
-     *
-     * @param assetManager The AssetManager used to load the config file
-     * @param config JSON describing a configuration to use
-     */
-    @Deprecated
-    public CapConfig(AssetManager assetManager, JSONObject config) {
-        if (config != null) {
-            this.configJSON = config;
-        } else {
-            // Load the capacitor.config.json
-            loadConfigFromAssets(assetManager, null);
-        }
-
-        deserializeConfig(null);
-    }
-
-    /**
      * Constructs a Capacitor Configuration from config.json file.
      *
      * @param context The context.
@@ -427,104 +406,6 @@ public class CapConfig {
         }
 
         return pluginConfig;
-    }
-
-    /**
-     * Get a JSON object value from the Capacitor config.
-     * @deprecated use {@link PluginConfig#getObject(String)}  to access plugin config values.
-     * For main Capacitor config values, use the appropriate getter.
-     *
-     * @param key A key to fetch from the config
-     * @return The value from the config, if exists. Null if not
-     */
-    @Deprecated
-    public JSONObject getObject(String key) {
-        try {
-            return configJSON.getJSONObject(key);
-        } catch (Exception ex) {}
-        return null;
-    }
-
-    /**
-     * Get a string value from the Capacitor config.
-     * @deprecated use {@link PluginConfig#getString(String, String)} to access plugin config
-     * values. For main Capacitor config values, use the appropriate getter.
-     *
-     * @param key A key to fetch from the config
-     * @return The value from the config, if exists. Null if not
-     */
-    @Deprecated
-    public String getString(String key) {
-        return JSONUtils.getString(configJSON, key, null);
-    }
-
-    /**
-     * Get a string value from the Capacitor config.
-     * @deprecated use {@link PluginConfig#getString(String, String)} to access plugin config
-     * values. For main Capacitor config values, use the appropriate getter.
-     *
-     * @param key A key to fetch from the config
-     * @param defaultValue A default value to return if the key does not exist in the config
-     * @return The value from the config, if key exists. Default value returned if not
-     */
-    @Deprecated
-    public String getString(String key, String defaultValue) {
-        return JSONUtils.getString(configJSON, key, defaultValue);
-    }
-
-    /**
-     * Get a boolean value from the Capacitor config.
-     * @deprecated use {@link PluginConfig#getBoolean(String, boolean)} to access plugin config
-     * values. For main Capacitor config values, use the appropriate getter.
-     *
-     * @param key A key to fetch from the config
-     * @param defaultValue A default value to return if the key does not exist in the config
-     * @return The value from the config, if key exists. Default value returned if not
-     */
-    @Deprecated
-    public boolean getBoolean(String key, boolean defaultValue) {
-        return JSONUtils.getBoolean(configJSON, key, defaultValue);
-    }
-
-    /**
-     * Get an integer value from the Capacitor config.
-     * @deprecated use {@link PluginConfig#getInt(String, int)}  to access the plugin config
-     * values. For main Capacitor config values, use the appropriate getter.
-     *
-     * @param key A key to fetch from the config
-     * @param defaultValue A default value to return if the key does not exist in the config
-     * @return The value from the config, if key exists. Default value returned if not
-     */
-    @Deprecated
-    public int getInt(String key, int defaultValue) {
-        return JSONUtils.getInt(configJSON, key, defaultValue);
-    }
-
-    /**
-     * Get a string array value from the Capacitor config.
-     * @deprecated use {@link PluginConfig#getArray(String)}  to access the plugin config
-     * values. For main Capacitor config values, use the appropriate getter.
-     *
-     * @param key A key to fetch from the config
-     * @return The value from the config, if exists. Null if not
-     */
-    @Deprecated
-    public String[] getArray(String key) {
-        return JSONUtils.getArray(configJSON, key, null);
-    }
-
-    /**
-     * Get a string array value from the Capacitor config.
-     * @deprecated use {@link PluginConfig#getArray(String, String[])}  to access the plugin
-     * config values. For main Capacitor config values, use the appropriate getter.
-     *
-     * @param key A key to fetch from the config
-     * @param defaultValue A default value to return if the key does not exist in the config
-     * @return The value from the config, if key exists. Default value returned if not
-     */
-    @Deprecated
-    public String[] getArray(String key, String[] defaultValue) {
-        return JSONUtils.getArray(configJSON, key, defaultValue);
     }
 
     private static Map<String, PluginConfig> deserializePluginsConfig(JSONObject pluginsConfig) {

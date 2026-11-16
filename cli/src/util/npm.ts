@@ -35,7 +35,7 @@ export async function isNpmProject(rootDir: string): Promise<boolean> {
     if (typeof packageManager === 'string') {
       return packageManager.split('@')[0] === 'npm';
     }
-  } catch (e) {
+  } catch {
     // no package.json, or an unreadable one: fall through to the lockfiles
   }
 
@@ -80,7 +80,7 @@ export function parseBlockedInstallScripts(commandOutput: string | null): Blocke
   let parsed: any;
   try {
     parsed = JSON.parse(commandOutput);
-  } catch (e) {
+  } catch {
     return [];
   }
 
