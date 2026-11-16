@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -37,8 +38,6 @@ public class SystemBars extends Plugin {
 
     // https://issues.chromium.org/issues/40699457
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
-    // https://issues.chromium.org/issues/457682720
-    private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX = 144;
 
     static final String viewportMetaJSFunction = """
     function capacitorSystemBarsCheckMetaViewport() {
@@ -195,23 +194,28 @@ public class SystemBars extends Plugin {
 
             Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
             Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
-            boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+            // With `adjustNothing` the keyboard overlays the WebView, so it is handled as if it is not there
+            boolean keyboardOverlaysWebView =
+                (getActivity().getWindow().getAttributes().softInputMode & WindowManager.LayoutParams.SOFT_INPUT_MASK_ADJUST) ==
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
+            boolean keyboardVisible = !keyboardOverlaysWebView && insets.isVisible(WindowInsetsCompat.Type.ime());
 
             if (shouldPassthroughInsets) {
                 // We need to correct for a possible shown IME
                 v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
 
-                WindowInsetsCompat newInsets = new WindowInsetsCompat.Builder(insets)
-                    .setInsets(
+                WindowInsetsCompat newInsets = withoutOverlayingKeyboard(
+                    new WindowInsetsCompat.Builder(insets).setInsets(
                         WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
                         Insets.of(
                             systemBarsInsets.left,
                             systemBarsInsets.top,
                             systemBarsInsets.right,
-                            getBottomInset(systemBarsInsets, keyboardVisible)
+                            getBottomInset(systemBarsInsets, imeInsets, keyboardVisible)
                         )
-                    )
-                    .build();
+                    ),
+                    keyboardOverlaysWebView
+                ).build();
 
                 injectSafeAreaCSS(newInsets);
 
@@ -229,14 +233,31 @@ public class SystemBars extends Plugin {
             // Returning `WindowInsetsCompat.CONSUMED` breaks recalculation of safe area insets
             // So we have to explicitly set insets to `0`
             // See: https://issues.chromium.org/issues/461332423
-            WindowInsetsCompat newInsets = new WindowInsetsCompat.Builder(insets)
-                .setInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(), Insets.of(0, 0, 0, 0))
-                .build();
+            WindowInsetsCompat newInsets = withoutOverlayingKeyboard(
+                new WindowInsetsCompat.Builder(insets).setInsets(
+                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
+                    Insets.of(0, 0, 0, 0)
+                ),
+                keyboardOverlaysWebView
+            ).build();
 
             injectSafeAreaCSS(newInsets);
 
             return newInsets;
         });
+    }
+
+    private WindowInsetsCompat.Builder withoutOverlayingKeyboard(WindowInsetsCompat.Builder builder, boolean keyboardOverlaysWebView) {
+        if (!keyboardOverlaysWebView) {
+            return builder;
+        }
+
+        // WebView >= 139 shrinks its visual viewport for the IME insets it receives, which makes the page pannable above the keyboard.
+        // Unlike Chrome it ignores `VirtualKeyboard.overlaysContent` and `interactive-widget=overlays-content`,
+        // so not handing it the IME insets is the only way to opt out.
+        // Setting them to `0` rather than consuming them keeps the WebView's inset state up to date.
+        // See: https://developer.android.com/develop/ui/views/layout/webapps/understand-window-insets
+        return builder.setInsets(WindowInsetsCompat.Type.ime(), Insets.NONE).setVisible(WindowInsetsCompat.Type.ime(), false);
     }
 
     private void injectSafeAreaCSS(WindowInsetsCompat insets) {
@@ -245,15 +266,12 @@ public class SystemBars extends Plugin {
         }
 
         Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-        boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
 
         // Convert pixels to density-independent pixels
         float density = getActivity().getResources().getDisplayMetrics().density;
         float topPx = systemBarsInsets.top / density;
         float rightPx = systemBarsInsets.right / density;
-        // For native insets the value gets automatically corrected when the IME is visible (in newer WebView versions),
-        // but for these injected values we have to handle that manually (for all WebView versions).
-        float bottomPx = (keyboardVisible ? 0 : systemBarsInsets.bottom) / density;
+        float bottomPx = systemBarsInsets.bottom / density;
         float leftPx = systemBarsInsets.left / density;
 
         // Execute JavaScript to inject the CSS
@@ -350,15 +368,13 @@ public class SystemBars extends Plugin {
         return 0;
     }
 
-    private int getBottomInset(Insets systemBarsInsets, boolean keyboardVisible) {
-        if (getWebViewMajorVersion() < WEBVIEW_VERSION_WITH_SAFE_AREA_KEYBOARD_FIX) {
-            // This is a workaround for webview versions that have a bug
-            // that causes the bottom inset to be incorrect if the IME is visible
-            // See: https://issues.chromium.org/issues/457682720
-
-            if (keyboardVisible) {
-                return 0;
-            }
+    private int getBottomInset(Insets systemBarsInsets, Insets imeInsets, boolean keyboardVisible) {
+        // Only the part of the navigation bar the IME doesn't cover is left for the page to clear:
+        // none for a docked IME, all of it for a floating one.
+        // Deliberately not gated on the WebView version: measured on 148-156, Chromium corrects
+        // this itself on API 35+ but not on API 29-34.
+        if (keyboardVisible) {
+            return Math.max(0, systemBarsInsets.bottom - imeInsets.bottom);
         }
 
         return systemBarsInsets.bottom;

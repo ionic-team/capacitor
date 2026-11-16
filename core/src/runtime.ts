@@ -136,17 +136,15 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     const addListener = createPluginMethodWrapper('addListener');
     const removeListener = createPluginMethodWrapper('removeListener');
     const addListenerNative = (eventName: string, callback: any) => {
-      const call = addListener({ eventName }, callback);
+      // keep only the callback id: the wrapper promise's `remove` closure retains the callback
+      const call = addListener({ eventName }, callback).then((callbackId: string) => callbackId);
       const remove = async () => {
         const callbackId = await call;
 
-        removeListener(
-          {
-            eventName,
-            callbackId,
-          },
-          callback,
-        );
+        await removeListener({
+          eventName,
+          callbackId,
+        });
       };
 
       const p = new Promise((resolve) => call.then(() => resolve({ remove })));
