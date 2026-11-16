@@ -189,7 +189,12 @@ public class SystemBars extends Plugin {
 
         View view = getActivity().getWindow().getDecorView();
 
-        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, windowInsets) -> {
+            // A listener replaces the DecorView's own onApplyWindowInsets, which is what draws the system bar
+            // backgrounds and the 3-button navigation bar scrim. Let it run, and continue with the insets it
+            // leaves, so the space it already reserves for the system bars is not padded a second time.
+            WindowInsetsCompat insets = WindowInsetsCompat.toWindowInsetsCompat(v.onApplyWindowInsets(windowInsets.toWindowInsets()), v);
+
             boolean shouldPassthroughInsets = getWebViewMajorVersion() >= WEBVIEW_VERSION_WITH_SAFE_AREA_FIX && hasViewportCover;
 
             Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
