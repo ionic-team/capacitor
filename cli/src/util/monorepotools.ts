@@ -90,7 +90,7 @@ export function isMonorepo(currentPath: string): boolean {
   try {
     findMonorepoRoot(currentPath);
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -104,7 +104,7 @@ export function isNXMonorepo(currentPath: string): boolean {
   try {
     findNXMonorepoRoot(currentPath);
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

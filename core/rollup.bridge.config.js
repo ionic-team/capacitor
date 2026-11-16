@@ -17,7 +17,7 @@ export default {
       sourcemap: false,
     },
     {
-      file: '../ios/Capacitor/Capacitor/assets/native-bridge.js',
+      file: '../ios/Sources/Capacitor/assets/native-bridge.js',
       format: 'iife',
       name: 'nativeBridge',
       preferConst: true,
