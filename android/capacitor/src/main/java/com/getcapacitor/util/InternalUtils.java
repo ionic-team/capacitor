@@ -10,8 +10,11 @@ public class InternalUtils {
         return InternalUtils.getPackageInfo(pm, packageName, 0);
     }
 
-    public static PackageInfo getPackageInfo(PackageManager pm, String packageName, long flags)
-        throws PackageManager.NameNotFoundException {
+    public static PackageInfo getPackageInfo(
+        PackageManager pm,
+        String packageName,
+        long flags
+    ) throws PackageManager.NameNotFoundException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags));
         } else {
@@ -20,8 +23,11 @@ public class InternalUtils {
     }
 
     @SuppressWarnings("deprecation")
-    private static PackageInfo getPackageInfoLegacy(PackageManager pm, String packageName, long flags)
-        throws PackageManager.NameNotFoundException {
+    private static PackageInfo getPackageInfoLegacy(
+        PackageManager pm,
+        String packageName,
+        long flags
+    ) throws PackageManager.NameNotFoundException {
         return pm.getPackageInfo(packageName, (int) flags);
     }
 }
