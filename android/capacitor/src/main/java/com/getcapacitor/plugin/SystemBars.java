@@ -197,6 +197,11 @@ public class SystemBars extends Plugin {
             // Pad the WebView's parent rather than the DecorView: the DecorView also holds the system bar
             // background views, and padding it would move them away from the screen edges into the content.
             View content = (View) getBridge().getWebView().getParent();
+            if (content == null) {
+                // The WebView is not attached (e.g. a Fragment-hosted bridge whose view was destroyed),
+                // so there is nothing to pad.
+                return insets;
+            }
 
             boolean shouldPassthroughInsets = getWebViewMajorVersion() >= WEBVIEW_VERSION_WITH_SAFE_AREA_FIX && hasViewportCover;
 
