@@ -9,9 +9,30 @@ metadata:
   links:
     - url: https://capacitorjs.com/docs
       title: Documentation
-  tags: [capacitor, mobile, typescript, swift, java]
 spec:
   owner: group:default/mobile-ecosystem
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: capacitor-plugin-api
+  title: Capacitor Plugin API
+  description: JavaScript/native bridge API for authoring and consuming Capacitor plugins.
+  annotations:
+    github.com/project-slug: ionic-team/capacitor
+    backstage.io/source-location: url:https://github.com/ionic-team/capacitor/tree/main/core/src
+  links:
+    - url: https://capacitorjs.com/docs/plugins
+      title: Plugin Authoring Guide
+  tags: [typescript, plugin-bridge]
+spec:
+  type: other
+  lifecycle: production
+  owner: group:default/mobile-ecosystem
+  system: capacitor
+  definition: |
+    # Capacitor Plugin API
+    See https://capacitorjs.com/docs/plugins for full documentation.
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
@@ -28,6 +49,7 @@ spec:
   lifecycle: production
   owner: group:default/mobile-ecosystem
   system: capacitor
+  providesApis: [api:default/capacitor-plugin-api]
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
@@ -44,6 +66,7 @@ spec:
   lifecycle: production
   owner: group:default/mobile-ecosystem
   system: capacitor
+  dependsOn: [component:default/capacitor-core]
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
