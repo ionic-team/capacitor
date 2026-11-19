@@ -57,7 +57,8 @@ public class AndroidProtocolHandler {
     }
 
     private static int getFieldId(Context context, String assetType, String assetName)
-        throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+        throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException
+    {
         Class<?> d = context.getClassLoader().loadClass(context.getPackageName() + ".R$" + assetType);
         java.lang.reflect.Field field = d.getField(assetName);
         return field.getInt(null);
