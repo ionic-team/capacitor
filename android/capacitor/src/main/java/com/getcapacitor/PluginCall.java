@@ -27,12 +27,6 @@ public class PluginCall {
 
     private boolean keepAlive = false;
 
-    /**
-     * Indicates that this PluginCall was released, and should no longer be used
-     */
-    @Deprecated
-    private boolean isReleased = false;
-
     public PluginCall(MessageHandler msgHandler, String pluginId, String callbackId, String methodName, JSObject data) {
         this.msgHandler = msgHandler;
         this.pluginId = pluginId;
@@ -325,28 +319,6 @@ public class PluginCall {
     }
 
     /**
-     * @param name of the option to check
-     * @return boolean indicating if the plugin call has an option for the provided name.
-     * @deprecated Presence of a key should not be considered significant.
-     * Use typed accessors to check the value instead.
-     */
-    @Deprecated
-    public boolean hasOption(String name) {
-        return this.data.has(name);
-    }
-
-    /**
-     * Indicate that the Bridge should cache this call in order to call
-     * it again later. For example, the addListener system uses this to
-     * continuously call the call's callback (😆).
-     * @deprecated use {@link #setKeepAlive(Boolean)} instead
-     */
-    @Deprecated
-    public void save() {
-        setKeepAlive(true);
-    }
-
-    /**
      * Indicate that the Bridge should cache this call in order to call
      * it again later. For example, the addListener system uses this to
      * continuously call the call's callback.
@@ -360,16 +332,6 @@ public class PluginCall {
     public void release(Bridge bridge) {
         this.keepAlive = false;
         bridge.releaseCall(this);
-        this.isReleased = true;
-    }
-
-    /**
-     * @deprecated use {@link #isKeptAlive()}
-     * @return true if the plugin call is kept alive
-     */
-    @Deprecated
-    public boolean isSaved() {
-        return isKeptAlive();
     }
 
     /**
@@ -378,11 +340,6 @@ public class PluginCall {
      */
     public boolean isKeptAlive() {
         return keepAlive;
-    }
-
-    @Deprecated
-    public boolean isReleased() {
-        return isReleased;
     }
 
     class PluginCallDataTypeException extends Exception {

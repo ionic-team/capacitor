@@ -314,6 +314,7 @@ var nativeBridge = (function (exports) {
             win.Ionic.WebView = IonicWebView;
         };
         const initLogger = (win, cap) => {
+            var _a, _b;
             const BRIDGED_CONSOLE_METHODS = ['debug', 'error', 'info', 'log', 'trace', 'warn'];
             const createLogFromNative = (c) => (result) => {
                 if (isFullConsole(c)) {
@@ -375,13 +376,7 @@ var nativeBridge = (function (exports) {
                 let doPatchCookies = false;
                 // check if capacitor cookies is disabled before patching
                 if (platform === 'ios') {
-                    // Use prompt to synchronously get capacitor cookies config.
-                    // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
-                    const payload = {
-                        type: 'CapacitorCookies.isEnabled',
-                    };
-                    const isCookiesEnabled = prompt(JSON.stringify(payload));
-                    if (isCookiesEnabled === 'true') {
+                    if (((_a = win.CapacitorNativeConfig) === null || _a === void 0 ? void 0 : _a.cookiesEnabled) === true) {
                         doPatchCookies = true;
                     }
                 }
@@ -448,13 +443,7 @@ var nativeBridge = (function (exports) {
                 let doPatchHttp = false;
                 // check if capacitor http is disabled before patching
                 if (platform === 'ios') {
-                    // Use prompt to synchronously get capacitor http config.
-                    // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
-                    const payload = {
-                        type: 'CapacitorHttp',
-                    };
-                    const isHttpEnabled = prompt(JSON.stringify(payload));
-                    if (isHttpEnabled === 'true') {
+                    if (((_b = win.CapacitorNativeConfig) === null || _b === void 0 ? void 0 : _b.httpEnabled) === true) {
                         doPatchHttp = true;
                     }
                 }
@@ -893,11 +882,24 @@ var nativeBridge = (function (exports) {
                 try {
                     if (typeof postToNative === 'function') {
                         let callbackId = '-1';
-                        if (storedCallback &&
+                        // native never answers removeListener nor sends `save: false` for a removed listener,
+                        // so release those callbacks here, otherwise everything they capture is never freed
+                        if (methodName === 'removeListener') {
+                            callbacks.delete(options === null || options === void 0 ? void 0 : options.callbackId);
+                        }
+                        else if (methodName === 'removeAllListeners') {
+                            callbacks.forEach((stored, id) => {
+                                if (stored.pluginName === pluginName && stored.methodName === 'addListener') {
+                                    callbacks.delete(id);
+                                }
+                            });
+                        }
+                        if (methodName !== 'removeListener' &&
+                            storedCallback &&
                             (typeof storedCallback.callback === 'function' || typeof storedCallback.resolve === 'function')) {
                             // store the call for later lookup
                             callbackId = String(++callbackIdCount);
-                            callbacks.set(callbackId, storedCallback);
+                            callbacks.set(callbackId, Object.assign(Object.assign({}, storedCallback), { pluginName, methodName }));
                         }
                         const callData = {
                             callbackId: callbackId,

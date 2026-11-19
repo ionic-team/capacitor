@@ -45,6 +45,7 @@ export const requireTS = async (ts: typeof typescript, p: string): Promise<unkno
           `Your installed version of TypeScript (${ts.version}) no longer provides the compiler API Capacitor previously used to load .ts config files, ` +
             `and your Node.js runtime (${process.version}) doesn't support loading them natively either.\n` +
             'Upgrade to Node.js 22.6+ (running with --experimental-strip-types), or Node.js 23.6+, to continue using capacitor.config.ts.',
+          { cause: e },
         );
       }
       throw e;
@@ -78,17 +79,34 @@ export const requireTS = async (ts: typeof typescript, p: string): Promise<unkno
     module._compile?.(sourceText, fileName);
   };
 
-  const m = require(id); // eslint-disable-line @typescript-eslint/no-var-requires
-
-  delete require.extensions['.ts'];
-
-  return m;
+  try {
+    return require(id); // eslint-disable-line @typescript-eslint/no-require-imports
+  } catch (e) {
+    if (isESMOnlyError(e)) {
+      return importModule(id);
+    }
+    throw e;
+  } finally {
+    delete require.extensions['.ts'];
+  }
 };
+
+/**
+ * require() fails on ES modules that use top-level await. Transpiling `import.meta` to CommonJS
+ * makes Node run the output as an ES module, where `exports` doesn't exist. Both fail before the
+ * file's own code runs, so it's safe to load it again with import().
+ */
+export function isESMOnlyError(e: any): boolean {
+  return e?.code === 'ERR_REQUIRE_ASYNC_MODULE' || e?.message === 'exports is not defined in ES module scope';
+}
+
+// The query makes Node load the file fresh instead of reusing the require() that just failed.
+export const importModule = (p: string): Promise<any> => dynamicImport(`${pathToFileURL(resolve(p)).href}?esm`);
 
 export function resolveNode(root: string, ...pathSegments: string[]): string | null {
   try {
     return require.resolve(pathSegments.join('/'), { paths: [root] });
-  } catch (e) {
+  } catch {
     const path = [root, 'node_modules', ...pathSegments].join('/');
     if (existsSync(path)) {
       return path;
