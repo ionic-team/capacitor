@@ -22,7 +22,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly) BOOL handleApplicationNotifications;
 @property (nonatomic, readonly) BOOL isWebDebuggable;
 @property (nonatomic, readonly) BOOL hasInitialFocus;
-@property (nonatomic, readonly) BOOL cordovaDeployDisabled;
+@property (nonatomic, readonly) BOOL cordovaDeployDisabled DEPRECATED_MSG_ATTRIBUTE("Always false. The Cordova configuration is not read.");
 @property (nonatomic, readonly) UIScrollViewContentInsetAdjustmentBehavior contentInsetAdjustmentBehavior;
 @property (nonatomic, readonly, nonnull) NSURL *appLocation;
 @property (nonatomic, readonly, nullable) NSString *appStartPath;

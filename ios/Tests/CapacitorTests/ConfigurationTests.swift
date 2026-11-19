@@ -39,19 +39,19 @@ struct ConfigurationTests {
     @Test func missingAppDetection() throws {
         var url = getConfigURL()
         url.appendPathComponent("app", isDirectory: true)
-        let descriptor = InstanceDescriptor.init(at: url, configuration: nil, cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: nil)
         #expect(descriptor.warnings.contains(.missingAppDir))
     }
 
     @Test func failedParsing() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.nonparsable], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.nonparsable])
         #expect(descriptor.warnings.contains(.invalidFile))
     }
 
     @Test func defaults() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: nil, cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: nil)
         #expect(descriptor.backgroundColor == nil)
         #expect(descriptor.urlScheme == "capacitor")
         #expect(descriptor.urlHostname == "localhost")
@@ -64,19 +64,19 @@ struct ConfigurationTests {
 
     @Test func deprecatedParsing() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.deprecated], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.deprecated])
         #expect(descriptor.loggingBehavior != .none)
     }
 
     @Test func deprecatedOverrideParsing() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.server], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.server])
         #expect(descriptor.loggingBehavior == .production)
     }
 
     @Test func topLevelParsing() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.flat], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.flat])
         #expect(descriptor.backgroundColor == UIColor(red: 1, green: 1, blue: 1, alpha: 1))
         #expect(descriptor.overridenUserAgentString == "level 1 override")
         #expect(descriptor.appendedUserAgentString == "level 1 append")
@@ -85,7 +85,7 @@ struct ConfigurationTests {
 
     @Test func nestedParsing() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.nested], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.nested])
         #expect(descriptor.backgroundColor == UIColor(red: 0, green: 0, blue: 0, alpha: 1))
         #expect(descriptor.overridenUserAgentString == "level 2 override")
         #expect(descriptor.appendedUserAgentString == "level 2 append")
@@ -96,7 +96,7 @@ struct ConfigurationTests {
 
     @Test func serverParsing() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.server], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.server])
         #expect(descriptor.urlScheme == "override")
         #expect(descriptor.urlHostname == "myhost")
         #expect(descriptor.serverURL == "http://192.168.100.1:2057")
@@ -104,7 +104,7 @@ struct ConfigurationTests {
 
     @Test func badDataParsing() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.invalid], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.invalid])
         #expect(descriptor.backgroundColor == nil)
         #expect(descriptor.loggingBehavior == .debug)
         #expect(descriptor.contentInsetAdjustmentBehavior == .never)
@@ -112,14 +112,14 @@ struct ConfigurationTests {
 
     @Test func badDataTransformation() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.invalid], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.invalid])
         let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         #expect(configuration.serverURL != URL(string: "capacitor://myhost"))
     }
 
     @Test func serverTransformation() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.server], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.server])
         let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         #expect(configuration.serverURL == URL(string: "http://192.168.100.1:2057"))
         #expect(configuration.localURL == URL(string: "override://myhost"))
@@ -127,7 +127,7 @@ struct ConfigurationTests {
 
     @Test func pluginConfig() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.flat], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.flat])
         let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         let value = configuration.getPluginConfig("SplashScreen").getInt("launchShowDuration", 0)
         #expect(value == 1)
@@ -135,18 +135,18 @@ struct ConfigurationTests {
 
     @Test func legacyConfig() throws {
         let url = getConfigURL()
-        let flatDescriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.flat], cordovaConfiguration: nil)
+        let flatDescriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.flat])
         let flatConfiguration = InstanceConfiguration(with: flatDescriptor, isDebug: true)
         #expect(flatConfiguration.overridenUserAgentString == "level 1 override")
 
-        let nestedDescriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.nested], cordovaConfiguration: nil)
+        let nestedDescriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.nested])
         let nestedConfiguration = InstanceConfiguration(with: nestedDescriptor, isDebug: true)
         #expect(nestedConfiguration.overridenUserAgentString == "level 2 override")
     }
 
     @Test func navigationRules() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.server], cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: Self.configFiles[.server])
         let configuration = InstanceConfiguration(with: descriptor, isDebug: true)
         #expect(configuration.shouldAllowNavigation(to: "ionic.io") == true)
         #expect(configuration.shouldAllowNavigation(to: "ionic.io".uppercased()) == true)
@@ -162,7 +162,7 @@ struct ConfigurationTests {
 
     @Test func noLoggingTransformation() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: nil, cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: nil)
         descriptor.loggingBehavior = .none
         var configuration = InstanceConfiguration(with: descriptor, isDebug: false)
         #expect(configuration.loggingEnabled == false)
@@ -172,7 +172,7 @@ struct ConfigurationTests {
 
     @Test func debugLoggingTransformation() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: nil, cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: nil)
         descriptor.loggingBehavior = .debug
         var configuration = InstanceConfiguration(with: descriptor, isDebug: false)
         #expect(configuration.loggingEnabled == false)
@@ -182,7 +182,7 @@ struct ConfigurationTests {
 
     @Test func productionLoggingTransformation() throws {
         let url = getConfigURL()
-        let descriptor = InstanceDescriptor.init(at: url, configuration: nil, cordovaConfiguration: nil)
+        let descriptor = InstanceDescriptor.init(at: url, configuration: nil)
         descriptor.loggingBehavior = .production
         var configuration = InstanceConfiguration(with: descriptor, isDebug: false)
         #expect(configuration.loggingEnabled == true)

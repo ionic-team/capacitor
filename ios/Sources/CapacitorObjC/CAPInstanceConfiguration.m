@@ -5,7 +5,6 @@
 // circular dependency. Declared locally rather than in the header so Swift doesn't see a
 // redeclaration.
 @interface CAPInstanceDescriptor (SwiftVended)
-@property (nonatomic, readonly) BOOL cordovaDeployDisabled;
 - (void)normalize;
 @end
 
@@ -58,8 +57,6 @@
             _serverURL = _localURL;
         }
         _errorPath = descriptor.errorPath;
-        // extract the one value we care about from the cordova configuration
-        _cordovaDeployDisabled = [descriptor cordovaDeployDisabled];
     }
     return self;
 }
@@ -81,7 +78,6 @@
         _handleApplicationNotifications = configuration.handleApplicationNotifications;
         _isWebDebuggable = configuration.isWebDebuggable;
         _hasInitialFocus = configuration.hasInitialFocus;
-        _cordovaDeployDisabled = configuration.cordovaDeployDisabled;
         _contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior;
         // we don't care about internal usage of deprecated APIs and the framework should build cleanly
 #pragma clang diagnostic push

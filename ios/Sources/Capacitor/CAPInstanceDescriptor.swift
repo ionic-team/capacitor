@@ -29,7 +29,7 @@ internal extension InstanceDescriptor {
     // swiftlint:disable cyclomatic_complexity
     // swiftlint:disable function_body_length
     // swiftlint:disable:next identifier_name
-    @objc func _parseConfiguration(at capacitorURL: URL?, cordovaConfiguration cordovaURL: URL?) {
+    @objc func _parseConfiguration(at capacitorURL: URL?) {
         // sanity check that the app directory is valid
         var isDirectory: ObjCBool = ObjCBool(false)
         if warnings.contains(.missingAppDir) == false,
@@ -137,6 +137,7 @@ internal extension InstanceDescriptor {
 }
 
 extension InstanceDescriptor {
+    @available(*, deprecated, message: "Always false. The Cordova configuration is not read.")
     @objc public var cordovaDeployDisabled: Bool {
         return false
     }
