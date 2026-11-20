@@ -404,7 +404,8 @@ export class CapacitorHttpPluginWeb extends WebPlugin implements CapacitorHttpPl
   async request(options: HttpOptions): Promise<HttpResponse> {
     const requestInit = buildRequestInit(options, options.webFetchExtra);
     const urlParams = buildUrlParams(options.params, options.shouldEncodeUrlParams);
-    const url = urlParams ? `${options.url}?${urlParams}` : options.url;
+    const separator = options.url.includes('?') ? '&' : '?';
+    const url = urlParams ? `${options.url}${separator}${urlParams}` : options.url;
 
     const response = await fetch(url, requestInit);
     const contentType = response.headers.get('content-type') || '';
