@@ -38,6 +38,11 @@ import java.util.*;
  */
 public class BridgeWebChromeClient extends WebChromeClient {
 
+    // Cap the console message length before formatting so that a very large JS
+    // log argument (e.g. a serialized IndexedDB row or an axios error/response)
+    // cannot OutOfMemoryError the bridge on low-RAM devices. See #8532.
+    private static final int MAX_CONSOLE_MESSAGE_LENGTH = 8 * 1024;
+
     private interface PermissionListener {
         void onPermissionSelect(Boolean isGranted);
     }
@@ -427,11 +432,15 @@ public class BridgeWebChromeClient extends WebChromeClient {
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
         String tag = Logger.tags("Console");
         if (consoleMessage.message() != null && isValidMsg(consoleMessage.message())) {
+            String message = consoleMessage.message();
+            if (message.length() > MAX_CONSOLE_MESSAGE_LENGTH) {
+                message = message.substring(0, MAX_CONSOLE_MESSAGE_LENGTH) + "… [truncated]";
+            }
             String msg = String.format(
                 "File: %s - Line %d - Msg: %s",
                 consoleMessage.sourceId(),
                 consoleMessage.lineNumber(),
-                consoleMessage.message()
+                message
             );
             String level = consoleMessage.messageLevel().name();
             if ("ERROR".equalsIgnoreCase(level)) {
