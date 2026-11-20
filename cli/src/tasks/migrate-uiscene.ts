@@ -49,7 +49,15 @@ export async function migrateToUIScene(config: Config): Promise<void> {
   await runTask('Adding UIApplicationSceneManifest to Info.plist.', () => addSceneManifestIfNeeded(config));
 
   await runTask('Writing SceneDelegate.swift.', async () => {
-    const { written } = writeSceneDelegate(config, assets.sceneDelegate);
+    const storyboardPath = join(config.ios.nativeTargetDirAbs, 'Base.lproj', 'Main.storyboard');
+    const bridgeClass = existsSync(storyboardPath)
+      ? getStoryboardBridgeSubclass(readFileSync(storyboardPath, 'utf-8'))
+      : null;
+    const sceneDelegate = bridgeClass ? useBridgeSubclass(assets.sceneDelegate, bridgeClass) : assets.sceneDelegate;
+    const { written } = writeSceneDelegate(config, sceneDelegate);
+    if (written && bridgeClass) {
+      logger.info(`SceneDelegate.swift uses your ${bridgeClass} from Main.storyboard as the root view controller.`);
+    }
     if (!written) {
       logger.warn('SceneDelegate.swift already exists, skipping.');
     }
@@ -189,6 +197,25 @@ async function loadTemplateAssets(config: Config): Promise<TemplateAssets | null
   }
 }
 
+/**
+ * With UIScene the SceneDelegate creates the root view controller in code and the storyboard's
+ * view controller is never loaded, so a CAPBridgeViewController subclass set in Main.storyboard
+ * (the documented way to register local plugins) would be silently dropped. Returns that subclass.
+ */
+function getStoryboardBridgeSubclass(storyboard: string): string | null {
+  const initialId = storyboard.match(/\binitialViewController="([^"]+)"/)?.[1];
+  if (!initialId) return null;
+  const tag = [...storyboard.matchAll(/<viewController\b[^>]*>/g)]
+    .map((m) => m[0])
+    .find((t) => t.includes(` id="${initialId}"`));
+  const customClass = tag?.match(/\bcustomClass="([A-Za-z_][A-Za-z0-9_]*)"/)?.[1];
+  return customClass && customClass !== 'CAPBridgeViewController' ? customClass : null;
+}
+
+function useBridgeSubclass(sceneDelegate: string, className: string): string {
+  return sceneDelegate.replace('rootViewController = CAPBridgeViewController()', `rootViewController = ${className}()`);
+}
+
 function writeSceneDelegate(config: Config, contents: string): { written: boolean } {
   const path = join(config.ios.nativeTargetDirAbs, 'SceneDelegate.swift');
   if (existsSync(path)) {
@@ -297,6 +324,8 @@ function describeSignals({
 // Exported for tests.
 export const __testables = {
   classify,
+  getStoryboardBridgeSubclass,
+  useBridgeSubclass,
   describeSignals,
   insertBeforeAppDelegateClassEnd,
   extractConfigurationForConnecting,
