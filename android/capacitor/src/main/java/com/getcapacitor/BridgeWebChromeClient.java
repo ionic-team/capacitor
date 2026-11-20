@@ -46,8 +46,8 @@ public class BridgeWebChromeClient extends WebChromeClient {
         void onActivityResult(ActivityResult result);
     }
 
-    private ActivityResultLauncher permissionLauncher;
-    private ActivityResultLauncher activityLauncher;
+    private ActivityResultLauncher<String[]> permissionLauncher;
+    private ActivityResultLauncher<Intent> activityLauncher;
     private PermissionListener permissionListener;
     private ActivityResultListener activityListener;
 
