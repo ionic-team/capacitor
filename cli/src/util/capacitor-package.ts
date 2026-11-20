@@ -7,9 +7,17 @@ import { fatal } from '../errors';
 import { convertToUnixPath } from './fs';
 import { resolveNode } from './node';
 
-const SOURCE_PACKAGE_URL = 'https://github.com/ionic-team/capacitor';
 export const SOURCE_PACKAGE_IDENTITY = 'capacitor-ios';
-const SOURCE_PACKAGE_NAME = new RegExp(`name:\\s*"${SOURCE_PACKAGE_IDENTITY}"`);
+
+/** Matches the source package's git URL, with or without `.git`, but not repos sharing its prefix. */
+const SOURCE_PACKAGE_URL = /url:\s*"https:\/\/github\.com\/ionic-team\/capacitor(?:\.git)?\/?"/i;
+
+/**
+ * Names a path dependency on Capacitor may carry: the current identity, and the one syncs before
+ * the `capacitor-ios` rename pinned. A plugin rewritten by such a sync keeps the old name until
+ * it is synced again.
+ */
+const PINNED_PACKAGE_NAMES = [SOURCE_PACKAGE_IDENTITY, 'capacitor'];
 
 /** Product providing the Cordova compatibility layer. */
 export const CORDOVA_PRODUCT = 'CapacitorCordova';
@@ -97,9 +105,66 @@ export function renderCapacitorPackage(absolutePath: string, fromDir: string): s
  * copy of the framework. Rewriting keeps the whole graph on one identity.
  */
 export function rewriteCapacitorDependency(content: string, absolutePath: string, fromDir: string): string {
-  const rewritten = replacePackageCalls(content, renderCapacitorPackage(absolutePath, fromDir));
+  const capacitorCalls = findPackageCalls(content).filter((call) => referencesCapacitor(call.text));
+  if (capacitorCalls.length === 0) {
+    return content;
+  }
 
-  return rewritten.split(`package: "${BINARY_PACKAGE_IDENTITY}"`).join(`package: "${SOURCE_PACKAGE_IDENTITY}"`);
+  // Collected before the calls are replaced: once they are, every one reads `capacitor-ios` and
+  // the name each target's `.product(package:)` was written against is gone. The pinned names are
+  // included because a sync that renamed only the `.package(...)` entry left products on the old
+  // name behind.
+  const previousNames = new Set(
+    [...capacitorCalls.map((call) => packageReferenceName(call.text)), ...PINNED_PACKAGE_NAMES]
+      .filter((name): name is string => name !== undefined)
+      .map((name) => name.toLowerCase())
+      .filter((name) => name !== SOURCE_PACKAGE_IDENTITY),
+  );
+
+  let rewritten = replacePackageCalls(content, renderCapacitorPackage(absolutePath, fromDir));
+
+  // A name some other dependency still answers to belongs to that dependency, not Capacitor.
+  const remainingNames = new Set(
+    findPackageCalls(rewritten)
+      .map((call) => packageReferenceName(call.text)?.toLowerCase())
+      .filter((name): name is string => name !== undefined),
+  );
+
+  for (const name of previousNames) {
+    if (remainingNames.has(name)) {
+      continue;
+    }
+    rewritten = rewritten.replace(
+      new RegExp(`(package:\\s*)"${escapeRegExp(name)}"`, 'gi'),
+      `$1"${SOURCE_PACKAGE_IDENTITY}"`,
+    );
+  }
+
+  return rewritten;
+}
+
+/**
+ * The name a `.product(package:)` uses to refer to the dependency a `.package(...)` call declares:
+ * its explicit `name:` when it pins one, otherwise the identity SPM derives from the last
+ * component of its URL or path.
+ */
+function packageReferenceName(call: string): string | undefined {
+  const explicit = call.match(/name:\s*"([^"]+)"/);
+  if (explicit) {
+    return explicit[1];
+  }
+
+  const location = call.match(/(?:url|path):\s*"([^"]+)"/);
+  if (!location) {
+    return undefined;
+  }
+
+  const lastComponent = location[1].replace(/\/+$/, '').split('/').pop() ?? '';
+  return lastComponent.replace(/\.git$/i, '').toLowerCase() || undefined;
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /** Reads the version an existing `Package.swift` pins Capacitor to, if it pins one. */
@@ -163,7 +228,12 @@ export function patchPackageSwiftDeploymentTarget(
  * the app, or the package it points at, has moved.
  */
 function referencesCapacitor(call: string): boolean {
-  return call.includes(BINARY_PACKAGE_IDENTITY) || call.includes(SOURCE_PACKAGE_URL) || SOURCE_PACKAGE_NAME.test(call);
+  if (call.includes(BINARY_PACKAGE_IDENTITY) || SOURCE_PACKAGE_URL.test(call)) {
+    return true;
+  }
+
+  const pinned = call.match(/name:\s*"([^"]+)"/);
+  return pinned !== null && PINNED_PACKAGE_NAMES.includes(pinned[1].toLowerCase());
 }
 
 interface PackageCall {
