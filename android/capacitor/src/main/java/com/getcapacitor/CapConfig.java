@@ -54,6 +54,7 @@ public class CapConfig {
     private String errorPath;
     private boolean zoomableWebView = false;
     private boolean resolveServiceWorkerRequests = true;
+    private boolean jsProfilingEnabled = false;
 
     // Embedded
     private String startPath;
@@ -160,6 +161,7 @@ public class CapConfig {
         this.errorPath = builder.errorPath;
         this.zoomableWebView = builder.zoomableWebView;
         this.resolveServiceWorkerRequests = builder.resolveServiceWorkerRequests;
+        this.jsProfilingEnabled = builder.jsProfilingEnabled;
 
         // Embedded
         this.startPath = builder.startPath;
@@ -265,6 +267,7 @@ public class CapConfig {
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", isDebug);
         zoomableWebView = JSONUtils.getBoolean(configJSON, "android.zoomEnabled", JSONUtils.getBoolean(configJSON, "zoomEnabled", false));
         resolveServiceWorkerRequests = JSONUtils.getBoolean(configJSON, "android.resolveServiceWorkerRequests", true);
+        jsProfilingEnabled = JSONUtils.getBoolean(configJSON, "android.jsProfilingEnabled", false);
 
         String logBehavior = JSONUtils.getString(
             configJSON,
@@ -359,6 +362,10 @@ public class CapConfig {
 
     public boolean isResolveServiceWorkerRequests() {
         return resolveServiceWorkerRequests;
+    }
+
+    public boolean isJsProfilingEnabled() {
+        return jsProfilingEnabled;
     }
 
     public boolean isWebContentsDebuggingEnabled() {
@@ -463,6 +470,7 @@ public class CapConfig {
         private int minHuaweiWebViewVersion = DEFAULT_HUAWEI_WEBVIEW_VERSION;
         private boolean zoomableWebView = false;
         private boolean resolveServiceWorkerRequests = true;
+        private boolean jsProfilingEnabled = false;
 
         // Embedded
         private String startPath = null;
@@ -564,6 +572,11 @@ public class CapConfig {
 
         public Builder setResolveServiceWorkerRequests(boolean resolveServiceWorkerRequests) {
             this.resolveServiceWorkerRequests = resolveServiceWorkerRequests;
+            return this;
+        }
+
+        public Builder setJsProfilingEnabled(boolean jsProfilingEnabled) {
+            this.jsProfilingEnabled = jsProfilingEnabled;
             return this;
         }
 
