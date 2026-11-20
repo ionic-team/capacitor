@@ -8,7 +8,7 @@ import { convertToUnixPath } from './fs';
 import { resolveNode } from './node';
 
 const SOURCE_PACKAGE_URL = 'https://github.com/ionic-team/capacitor';
-export const SOURCE_PACKAGE_IDENTITY = 'capacitor';
+export const SOURCE_PACKAGE_IDENTITY = 'capacitor-ios';
 const SOURCE_PACKAGE_NAME = new RegExp(`name:\\s*"${SOURCE_PACKAGE_IDENTITY}"`);
 
 /** Product providing the Cordova compatibility layer. */
