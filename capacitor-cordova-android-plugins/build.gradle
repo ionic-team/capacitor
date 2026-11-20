@@ -1,6 +1,6 @@
 ext {
-    androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.8.0'
-    cordovaAndroidVersion = project.hasProperty('cordovaAndroidVersion') ? rootProject.ext.cordovaAndroidVersion : '15.1.0'
+    androidxAppCompatVersion = rootProject.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.8.0'
+    cordovaAndroidVersion = rootProject.hasProperty('cordovaAndroidVersion') ? rootProject.ext.cordovaAndroidVersion : '15.1.0'
 }
 
 buildscript {
@@ -17,9 +17,9 @@ apply plugin: 'com.android.library'
 
 android {
     namespace = "capacitor.cordova.android.plugins"
-    compileSdk = project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 37
+    compileSdk = rootProject.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 37
     defaultConfig {
-        minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 26
+        minSdkVersion rootProject.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 26
         versionCode 1
         versionName "1.0"
     }
