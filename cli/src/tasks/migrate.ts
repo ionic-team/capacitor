@@ -1,7 +1,7 @@
 import { writeFileSync, readFileSync, existsSync } from 'fs-extra';
 import { join } from 'path';
 import { rimraf } from 'rimraf';
-import { coerce, gte, lt } from 'semver';
+import { coerce, gte, lt, valid } from 'semver';
 
 import c from '../colors';
 import { getCoreVersion, runTask, checkJDKMajorVersion } from '../common';
@@ -49,8 +49,21 @@ const plugins = [
   '@capacitor/text-zoom',
   '@capacitor/toast',
 ];
-const coreVersion = 'next';
-const pluginVersion = 'next';
+const versionedPlugins: { [key: string]: string } = {
+  '@capacitor/background-runner': '^4.0.0',
+  '@capacitor/barcode-scanner': '^4.0.0',
+  '@capacitor/calendar': '^2.0.0',
+  '@capacitor/contacts': '^2.0.0',
+  '@capacitor/file-transfer': '^3.0.0',
+  '@capacitor/file-viewer': '^3.0.0',
+  '@capacitor/health-fitness': '^2.0.0',
+  '@capacitor/inappbrowser': '^5.0.0',
+  '@capacitor/privacy-screen': '^3.0.0',
+};
+
+const coreVersion = '9.0.0';
+const coreNPMVersion = valid(coreVersion) ? `^${coreVersion}` : 'next';
+const pluginVersion = '^9.0.0';
 const gradleVersion = '9.8.2';
 const iOSVersion = '16';
 let installFailed = false;
@@ -441,29 +454,29 @@ async function installLatestLibs(dependencyManager: string, runInstall: boolean,
   if (!pkgJsonFile) {
     return;
   }
+  const allPlugins = plugins.concat(Object.keys(versionedPlugins));
   const pkgJson: any = JSON.parse(pkgJsonFile);
-
   for (const devDepKey of Object.keys(pkgJson['devDependencies'] || {})) {
     if (libs.includes(devDepKey)) {
-      pkgJson['devDependencies'][devDepKey] = coreVersion;
+      pkgJson['devDependencies'][devDepKey] = coreNPMVersion;
     } else if (
-      plugins.includes(devDepKey) &&
+      allPlugins.includes(devDepKey) &&
       !(
         pkgJson['devDependencies'][devDepKey].startsWith('file:') ||
         pkgJson['devDependencies'][devDepKey].startsWith('workspace:')
       )
     ) {
-      pkgJson['devDependencies'][devDepKey] = pluginVersion;
+      pkgJson['devDependencies'][devDepKey] = versionedPlugins[devDepKey] ? versionedPlugins[devDepKey] : pluginVersion;
     }
   }
   for (const depKey of Object.keys(pkgJson['dependencies'] || {})) {
     if (libs.includes(depKey)) {
-      pkgJson['dependencies'][depKey] = coreVersion;
+      pkgJson['dependencies'][depKey] = coreNPMVersion;
     } else if (
-      plugins.includes(depKey) &&
+      allPlugins.includes(depKey) &&
       !(pkgJson['dependencies'][depKey].startsWith('file:') || pkgJson['dependencies'][depKey].startsWith('workspace:'))
     ) {
-      pkgJson['dependencies'][depKey] = pluginVersion;
+      pkgJson['dependencies'][depKey] = versionedPlugins[depKey] ? versionedPlugins[depKey] : pluginVersion;
     }
   }
 
