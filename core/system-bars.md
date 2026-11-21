@@ -10,6 +10,7 @@ This API differs from the [Status Bar](https://capacitorjs.com/docs/apis/status-
 | `setBackgroundColor()` | Unsupported | Supported |
 | `setStyle()` | Supported | Supported - top Status Bar only |
 | `hide()/show()` | Supported | Supported - top Status Bar only |
+| Status bar tap event | `SystemBars.addListener('statusTap', ...)` - iOS only | `window` `statusTap` event - iOS only |
 
 ## iOS Note
 
@@ -39,6 +40,11 @@ const setSystemBarStyleLight = async () => {
   await SystemBars.setStyle({ style: SystemBarsStyle.Light });
 };
 
+const getStatusBarStyle = async () => {
+  const { style } = await SystemBars.getStyle({ bar: SystemBarType.StatusBar });
+  console.log('status bar style', style);
+};
+
 const hideSystemBars = async () => {
   await SystemBars.hide();
 };
@@ -57,6 +63,11 @@ const hideNavigationBar = async () => {
 const setStatusBarAnimation = async () => {
   await SystemBars.setAnimation({ animation: "NONE" });
 }
+
+// Listen for taps on the Status Bar, only on iOS
+SystemBars.addListener('statusTap', () => {
+  console.log('status bar tapped');
+});
 
 ````
 
@@ -111,9 +122,12 @@ export default config;
 <docgen-index>
 
 * [`setStyle(...)`](#setstyle)
+* [`getStyle(...)`](#getstyle)
 * [`show(...)`](#show)
 * [`hide(...)`](#hide)
 * [`setAnimation(...)`](#setanimation)
+* [`addListener('statusTap', ...)`](#addlistenerstatustap-)
+* [`removeAllListeners()`](#removealllisteners)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -136,6 +150,28 @@ Set the current style of the system bars.
 | **`options`** | <code><a href="#systembarsstyleoptions">SystemBarsStyleOptions</a></code> |
 
 **Since:** 8.0.0
+
+--------------------
+
+
+### getStyle(...)
+
+```typescript
+getStyle(options?: SystemBarsGetStyleOptions) => Promise<SystemBarsGetStyleResult>
+```
+
+Get the current style of a system bar.
+
+Returns the style that was requested, so `DEFAULT` is returned as `DEFAULT`
+rather than the `LIGHT` or `DARK` style it currently resolves to.
+
+| Param         | Type                                                                            |
+| ------------- | ------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#systembarsgetstyleoptions">SystemBarsGetStyleOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#systembarsgetstyleresult">SystemBarsGetStyleResult</a>&gt;</code>
+
+**Since:** 9.0.0
 
 --------------------
 
@@ -193,6 +229,41 @@ Only available on iOS.
 --------------------
 
 
+### addListener('statusTap', ...)
+
+```typescript
+addListener(eventName: 'statusTap', listenerFunc: () => void) => Promise<PluginListenerHandle>
+```
+
+Listen for taps on the status bar.
+
+Only available on iOS.
+
+| Param              | Type                       |
+| ------------------ | -------------------------- |
+| **`eventName`**    | <code>'statusTap'</code>   |
+| **`listenerFunc`** | <code>() =&gt; void</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
+
+**Since:** 9.0.0
+
+--------------------
+
+
+### removeAllListeners()
+
+```typescript
+removeAllListeners() => Promise<void>
+```
+
+Remove all listeners for this plugin.
+
+**Since:** 9.0.0
+
+--------------------
+
+
 ### Interfaces
 
 
@@ -202,6 +273,20 @@ Only available on iOS.
 | ----------- | ----------------------------------------------------------- | ----------------------------------------------- | ---------------------- | ----- |
 | **`style`** | <code><a href="#systembarsstyle">SystemBarsStyle</a></code> | Style of the text and icons of the system bars. | <code>'DEFAULT'</code> | 8.0.0 |
 | **`bar`**   | <code><a href="#systembartype">SystemBarType</a></code>     | The system bar to which to apply the style.     | <code>null</code>      | 8.0.0 |
+
+
+#### SystemBarsGetStyleResult
+
+| Prop        | Type                                                        | Description                                                                                   | Since |
+| ----------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ----- |
+| **`style`** | <code><a href="#systembarsstyle">SystemBarsStyle</a></code> | The style last set for the system bar, using `setStyle()` or the `style` configuration value. | 9.0.0 |
+
+
+#### SystemBarsGetStyleOptions
+
+| Prop      | Type                                                    | Description                                                                                             | Default                  | Since |
+| --------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------ | ----- |
+| **`bar`** | <code><a href="#systembartype">SystemBarType</a></code> | The system bar to get the style of. On iOS, only the status bar has a style, so this option is ignored. | <code>'StatusBar'</code> | 9.0.0 |
 
 
 #### SystemBarsVisibilityOptions
@@ -217,6 +302,13 @@ Only available on iOS.
 | Prop            | Type                                                                | Description                                                                                         | Default             | Since |
 | --------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- | ----- |
 | **`animation`** | <code><a href="#systembarsanimation">SystemBarsAnimation</a></code> | The type of status bar animation used when showing or hiding. This option is only supported on iOS. | <code>'FADE'</code> | 8.0.0 |
+
+
+#### PluginListenerHandle
+
+| Prop         | Type                                      |
+| ------------ | ----------------------------------------- |
+| **`remove`** | <code>() =&gt; Promise&lt;void&gt;</code> |
 
 
 ### Type Aliases

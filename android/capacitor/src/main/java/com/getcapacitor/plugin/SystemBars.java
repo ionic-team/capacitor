@@ -15,6 +15,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.webkit.WebViewCompat;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.Logger;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -154,6 +155,17 @@ public class SystemBars extends Plugin {
         getBridge().executeOnMainThread(() -> {
             setStyle(style, bar);
             call.resolve();
+        });
+    }
+
+    @PluginMethod
+    public void getStyle(final PluginCall call) {
+        String bar = call.getString("bar", BAR_STATUS_BAR);
+
+        getBridge().executeOnMainThread(() -> {
+            JSObject ret = new JSObject();
+            ret.put("style", bar.equals(BAR_GESTURE_BAR) ? currentGestureBarStyle : currentStatusBarStyle);
+            call.resolve(ret);
         });
     }
 
@@ -299,20 +311,18 @@ public class SystemBars extends Plugin {
     }
 
     private void setStyle(String style, String bar) {
-        if (style.equals(STYLE_DEFAULT)) {
-            style = getStyleForTheme();
-        }
+        String resolvedStyle = style.equals(STYLE_DEFAULT) ? getStyleForTheme() : style;
 
         Window window = getActivity().getWindow();
         WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.getDecorView());
         if (bar.isEmpty() || bar.equals(BAR_STATUS_BAR)) {
             currentStatusBarStyle = style;
-            windowInsetsControllerCompat.setAppearanceLightStatusBars(!style.equals(STYLE_DARK));
+            windowInsetsControllerCompat.setAppearanceLightStatusBars(!resolvedStyle.equals(STYLE_DARK));
         }
 
         if (bar.isEmpty() || bar.equals(BAR_GESTURE_BAR)) {
             currentGestureBarStyle = style;
-            windowInsetsControllerCompat.setAppearanceLightNavigationBars(!style.equals(STYLE_DARK));
+            windowInsetsControllerCompat.setAppearanceLightNavigationBars(!resolvedStyle.equals(STYLE_DARK));
         }
 
         getActivity().getWindow().getDecorView().setBackgroundColor(getThemeColor(getContext(), android.R.attr.windowBackground));
