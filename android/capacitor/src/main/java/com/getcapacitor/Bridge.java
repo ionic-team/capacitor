@@ -922,7 +922,9 @@ public class Bridge {
      */
     private JSInjector getJSInjector() {
         try {
-            String globalJS = JSExport.getGlobalJS(context, config.isLoggingEnabled(), isDevMode());
+            boolean cookiesEnabled = config.getPluginConfiguration("CapacitorCookies").getBoolean("enabled", false);
+            boolean httpEnabled = config.getPluginConfiguration("CapacitorHttp").getBoolean("enabled", false);
+            String globalJS = JSExport.getGlobalJS(context, config.isLoggingEnabled(), isDevMode(), cookiesEnabled, httpEnabled);
             String bridgeJS = JSExport.getBridgeJS(context);
             String pluginJS = JSExport.getPluginJS(plugins.values());
             String cordovaJS = JSExport.getCordovaJS(context);

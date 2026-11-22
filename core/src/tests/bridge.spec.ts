@@ -114,6 +114,55 @@ describe('bridge', () => {
     });
   });
 
+  it('android patches fetch when CapacitorNativeConfig.httpEnabled is true without CapacitorHttpAndroidInterface', () => {
+    const originalFetch = window.fetch;
+    const originalXHR = window.XMLHttpRequest;
+    const stubFetch = jest.fn();
+    window.fetch = stubFetch;
+    try {
+      win.androidBridge = { postMessage: jest.fn() };
+      win.CapacitorNativeConfig = { cookiesEnabled: false, httpEnabled: true };
+      initBridge(win);
+      expect(window.fetch).not.toBe(stubFetch);
+      expect(win.CapacitorWebFetch).toBe(stubFetch);
+    } finally {
+      window.fetch = originalFetch;
+      window.XMLHttpRequest = originalXHR;
+    }
+  });
+
+  it('android does not patch fetch when CapacitorNativeConfig.httpEnabled is false', () => {
+    const originalFetch = window.fetch;
+    const originalXHR = window.XMLHttpRequest;
+    const stubFetch = jest.fn();
+    window.fetch = stubFetch;
+    try {
+      win.androidBridge = { postMessage: jest.fn() };
+      win.CapacitorNativeConfig = { cookiesEnabled: false, httpEnabled: false };
+      win.CapacitorHttpAndroidInterface = { isEnabled: jest.fn(() => true) };
+      initBridge(win);
+      expect(window.fetch).toBe(stubFetch);
+      expect(win.CapacitorHttpAndroidInterface.isEnabled).not.toHaveBeenCalled();
+    } finally {
+      window.fetch = originalFetch;
+      window.XMLHttpRequest = originalXHR;
+    }
+  });
+
+  it('android keeps browser document.cookie working when CapacitorCookiesAndroidInterface is absent', () => {
+    try {
+      win.androidBridge = { postMessage: jest.fn() };
+      win.CapacitorNativeConfig = { cookiesEnabled: true, httpEnabled: false };
+
+      initBridge(win);
+
+      document.cookie = 'cap_test=1';
+      expect(document.cookie).toContain('cap_test=1');
+    } finally {
+      document.cookie = 'cap_test=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    }
+  });
+
   const mockAndroidPluginResult = (pluginResult: PluginResult) => {
     win.androidBridge = {
       postMessage: (m) => {
