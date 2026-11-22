@@ -3,13 +3,20 @@ import XCTest
 
 @testable import Capacitor
 
-private class StubFrameInfo: WKFrameInfo {
-    override var isMainFrame: Bool { false }
+class StubFrameInfo: WKFrameInfo {
+    private let stubbedIsMainFrame: Bool
+    override var isMainFrame: Bool { stubbedIsMainFrame }
+
+    private init(isMainFrame: Bool) {
+        self.stubbedIsMainFrame = isMainFrame
+        super.init()
+    }
 
     // WKFrameInfo has no public initializer, so super.init() leaves WebKit's internal state
-    // unset and -[WKFrameInfo dealloc] then dereferences garbage. Keeping a single instance
-    // alive for the process avoids ever deallocating one.
-    static let shared = StubFrameInfo()
+    // unset and -[WKFrameInfo dealloc] then dereferences garbage. Keeping instances alive
+    // for the process avoids ever deallocating them.
+    static let shared = StubFrameInfo(isMainFrame: false)
+    static let main = StubFrameInfo(isMainFrame: true)
 }
 
 private class StubNavigationAction: WKNavigationAction {
