@@ -121,19 +121,20 @@ export function rewriteCapacitorDependency(content: string, absolutePath: string
   // included because a sync that renamed only the `.package(...)` entry left products on the old
   // name behind.
   const previousNames = new Set(
-    [...capacitorCalls.map((call) => packageReferenceName(call.text)), ...PINNED_PACKAGE_NAMES]
-      .filter((name): name is string => name !== undefined)
-      .map((name) => name.toLowerCase())
-      .filter((name) => name !== SOURCE_PACKAGE_IDENTITY),
+    [...capacitorCalls.flatMap((call) => packageReferenceNames(call.text)), ...PINNED_PACKAGE_NAMES].filter(
+      (name) => name !== SOURCE_PACKAGE_IDENTITY,
+    ),
   );
 
   let rewritten = replacePackageCalls(content, renderCapacitorPackage(absolutePath, fromDir));
 
-  // A name some other dependency still answers to belongs to that dependency, not Capacitor.
+  // A name some other dependency still answers to belongs to that dependency, not Capacitor. SPM
+  // resolves `.product(package:)` against a dependency's pinned name and its derived identity alike,
+  // so both are reserved.
   const remainingNames = new Set(
     findPackageCalls(rewritten)
-      .map((call) => packageReferenceName(call.text)?.toLowerCase())
-      .filter((name): name is string => name !== undefined),
+      .filter((call) => !referencesCapacitor(call.text))
+      .flatMap((call) => packageReferenceNames(call.text)),
   );
 
   for (const name of previousNames) {
@@ -150,23 +151,29 @@ export function rewriteCapacitorDependency(content: string, absolutePath: string
 }
 
 /**
- * The name a `.product(package:)` uses to refer to the dependency a `.package(...)` call declares:
- * its explicit `name:` when it pins one, otherwise the identity SPM derives from the last
- * component of its URL or path.
+ * The names a `.product(package:)` may use to refer to the dependency a `.package(...)` call
+ * declares, lowercased: its explicit `name:` when it pins one, and the identity SPM derives from
+ * the last component of its URL or path. SPM accepts either, so a pinned name does not retire the
+ * derived identity.
  */
-function packageReferenceName(call: string): string | undefined {
+function packageReferenceNames(call: string): string[] {
+  const names = new Set<string>();
+
   const explicit = call.match(/name:\s*"([^"]+)"/);
   if (explicit) {
-    return explicit[1];
+    names.add(explicit[1].toLowerCase());
   }
 
   const location = call.match(/(?:url|path):\s*"([^"]+)"/);
-  if (!location) {
-    return undefined;
+  if (location) {
+    const lastComponent = location[1].replace(/\/+$/, '').split('/').pop() ?? '';
+    const identity = lastComponent.replace(/\.git$/i, '').toLowerCase();
+    if (identity) {
+      names.add(identity);
+    }
   }
 
-  const lastComponent = location[1].replace(/\/+$/, '').split('/').pop() ?? '';
-  return lastComponent.replace(/\.git$/i, '').toLowerCase() || undefined;
+  return [...names];
 }
 
 function escapeRegExp(value: string): string {

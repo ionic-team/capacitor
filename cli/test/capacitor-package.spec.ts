@@ -173,6 +173,41 @@ describe('rewriting an existing Package.swift', () => {
     expect(rewrite(before)).toContain('.product(name: "SentryCapacitor", package: "capacitor")');
   });
 
+  it('does not heal products that reach another dependency through its derived identity', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0"),
+        .package(name: "SentryCapacitor", path: "../../@sentry/capacitor")
+    ],
+    targets: [
+        .target(name: "Plugin", dependencies: [
+            .product(name: "Capacitor", package: "capacitor-swift-pm"),
+            .product(name: "Sentry", package: "capacitor")
+        ])
+    ]`;
+
+    const after = rewrite(before);
+
+    expect(after).toContain('.product(name: "Capacitor", package: "capacitor-ios")');
+    expect(after).toContain('.product(name: "Sentry", package: "capacitor")');
+  });
+
+  it('renames products that reach a pinned Capacitor dependency through either of its names', () => {
+    const before = `dependencies: [
+        .package(name: "CapacitorSwiftPM", url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0")
+    ],
+    targets: [
+        .target(name: "Plugin", dependencies: [
+            .product(name: "Capacitor", package: "CapacitorSwiftPM"),
+            .product(name: "Cordova", package: "capacitor-swift-pm")
+        ])
+    ]`;
+
+    const after = rewrite(before);
+
+    expect(occurrences(after, 'package: "capacitor-ios"')).toBe(2);
+    expect(after).not.toMatch(/package: "capacitor-?swift-?pm"/i);
+  });
+
   it('leaves products of a similarly named dependency alone', () => {
     const before = `dependencies: [
         .package(url: "https://github.com/ionic-team/capacitor", from: "9.0.0"),
