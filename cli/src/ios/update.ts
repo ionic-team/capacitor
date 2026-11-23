@@ -30,7 +30,7 @@ import { resolveNode } from '../util/node';
 import { generatePackageFile, checkPluginsForPackageSwift } from '../util/spm';
 import { runCommand, isInstalled } from '../util/subprocess';
 
-import { getIOSPlugins, getMajoriOSVersion } from './common';
+import { getIOSPlugins } from './common';
 
 const platform = 'ios';
 
@@ -73,7 +73,6 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
     const iosPlatformVersion = await getCapacitorPackageVersion(config, config.ios.name);
     const majorCapVersion = major(iosPlatformVersion);
     const capacitorPackagePath = await resolveCapacitorPackagePath(config);
-    const iosVersion = getMajoriOSVersion(config);
     await Promise.all(
       validSPMPackages.map(async (plugin) => {
         const packageSwiftPath = join(plugin.rootPath, 'Package.swift');
@@ -87,7 +86,7 @@ async function updatePluginFiles(config: Config, plugins: Plugin[], deployment: 
         // The plugin has to resolve to the same package identity as the app, or SPM ends up with
         // two packages that both vend a Capacitor product.
         let rewritten = rewriteCapacitorDependency(content, capacitorPackagePath, plugin.rootPath);
-        rewritten = patchPackageSwiftDeploymentTarget(rewritten, iosVersion).content;
+        rewritten = patchPackageSwiftDeploymentTarget(rewritten, config.ios.minVersion).content;
 
         if (rewritten !== content) {
           await writeFile(packageSwiftPath, rewritten);
