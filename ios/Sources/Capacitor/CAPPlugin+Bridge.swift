@@ -36,45 +36,6 @@ import WebKit
         return bridge?.config.getPluginConfig(pluginName) ?? PluginConfig(config: JSObject())
     }
 
-    func notifyListeners(_ eventName: String, data: [String: Any]?) {
-        notifyListeners(eventName, data: data, retainUntilConsumed: false)
-    }
-
-    func notifyListeners(_ eventName: String, data: [String: Any]?, retainUntilConsumed retain: Bool) {
-        guard let listenersForEvent = eventListeners?.object(forKey: eventName) as? NSArray,
-              listenersForEvent.count > 0 else {
-            if retain, let data = data {
-                let bucket: NSMutableArray
-                if let existing = retainedEventArguments?.object(forKey: eventName) as? NSMutableArray {
-                    bucket = existing
-                } else {
-                    bucket = NSMutableArray()
-                    retainedEventArguments?.setObject(bucket, forKey: eventName as NSString)
-                }
-                bucket.add(data)
-            }
-            return
-        }
-
-        for case let call as CAPPluginCall in listenersForEvent {
-            call.successHandler(CAPPluginCallResult(data), call)
-        }
-    }
-
-    func removeListener(_ call: CAPPluginCall) {
-        guard let eventName = call.options["eventName"] as? String,
-              let callbackId = call.options["callbackId"] as? String else { return }
-        if let storedCall = bridge?.savedCall(withID: callbackId) {
-            removeEventListener(eventName, listener: storedCall)
-        }
-        bridge?.releaseCall(withID: callbackId)
-    }
-
-    func removeAllListeners(_ call: CAPPluginCall) {
-        eventListeners?.removeAllObjects()
-        call.resolve()
-    }
-
     /**
      * Configure popover sourceRect, sourceView and permittedArrowDirections to show it centered
      */
@@ -95,6 +56,45 @@ import WebKit
 }
 
 @objc extension CAPPlugin {
+    open func notifyListeners(_ eventName: String, data: [String: Any]?) {
+        notifyListeners(eventName, data: data, retainUntilConsumed: false)
+    }
+
+    open func notifyListeners(_ eventName: String, data: [String: Any]?, retainUntilConsumed retain: Bool) {
+        guard let listenersForEvent = eventListeners?.object(forKey: eventName) as? NSArray,
+              listenersForEvent.count > 0 else {
+            if retain, let data = data {
+                let bucket: NSMutableArray
+                if let existing = retainedEventArguments?.object(forKey: eventName) as? NSMutableArray {
+                    bucket = existing
+                } else {
+                    bucket = NSMutableArray()
+                    retainedEventArguments?.setObject(bucket, forKey: eventName as NSString)
+                }
+                bucket.add(data)
+            }
+            return
+        }
+
+        for case let call as CAPPluginCall in listenersForEvent {
+            call.successHandler(CAPPluginCallResult(data), call)
+        }
+    }
+
+    open func removeListener(_ call: CAPPluginCall) {
+        guard let eventName = call.options["eventName"] as? String,
+              let callbackId = call.options["callbackId"] as? String else { return }
+        if let storedCall = bridge?.savedCall(withID: callbackId) {
+            removeEventListener(eventName, listener: storedCall)
+        }
+        bridge?.releaseCall(withID: callbackId)
+    }
+
+    open func removeAllListeners(_ call: CAPPluginCall) {
+        eventListeners?.removeAllObjects()
+        call.resolve()
+    }
+
     /**
      * Default implementation of the capacitor 3.0 permission pattern
      */
