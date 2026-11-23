@@ -44,8 +44,8 @@
     "tar": "^7.5.3"
   },
   "allowScripts": {
-    "@parcel/watcher": true,
-    "nx": true,
-    "swiftlint": true
+    "@parcel/watcher@2.0.4": true,
+    "nx@16.10.0": true,
+    "swiftlint@2.0.0": true
   }
 }
