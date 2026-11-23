@@ -3,7 +3,6 @@ import { join } from 'path';
 
 import { needsStaticPod } from '../cordova';
 import type { Config } from '../definitions';
-import { getMajoriOSVersion } from '../ios/common';
 import { logger } from '../log';
 import {
   PluginType,
@@ -487,7 +486,6 @@ ${entries.join(',\n')}
 
 export async function generateCordovaPackageFile(p: Plugin, config: Config): Promise<void> {
   const capacitorPackagePath = await resolveCapacitorPackagePath(config);
-  const iosVersion = getMajoriOSVersion(config);
   const headerFiles = getPlatformElement(p, platform, 'header-file');
   let headersText = '';
   if (headerFiles.length > 0) {
@@ -502,7 +500,7 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
     let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
     content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, SOURCE_PACKAGE_IDENTITY);
     content = rewriteCapacitorDependency(content, capacitorPackagePath, p.rootPath);
-    content = patchPackageSwiftDeploymentTarget(content, iosVersion).content;
+    content = patchPackageSwiftDeploymentTarget(content, config.ios.minVersion).content;
 
     await writeFile(packageSwiftPath, content);
   } else {
@@ -535,7 +533,7 @@ import PackageDescription
 
 let package = Package(
     name: "${p.name}",
-    platforms: [.iOS(.v${iosVersion})],
+    platforms: [.iOS(.v${Math.trunc(parseFloat(config.ios.minVersion))})],
     products: [
         .library(
             name: "${p.name}",${libraryTypeText}
