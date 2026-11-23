@@ -29,6 +29,12 @@ const PLATFORM_PACKAGE = '@capacitor/ios';
 const BINARY_PACKAGE_IDENTITY = 'capacitor-swift-pm';
 
 /**
+ * Cordova plugins that ship their own `Package.swift` depend on `apache/cordova-ios` for the
+ * `Cordova` product, which the Capacitor source package also vends.
+ */
+const CORDOVA_PACKAGE_URL = /url:\s*"https:\/\/github\.com\/apache\/cordova-ios(?:\.git)?\/?"/i;
+
+/**
  * Resolves the Capacitor Swift package generated `Package.swift` files should depend on: the
  * `@capacitor/ios` npm already installed in the app, which ships the package alongside the sources.
  *
@@ -228,7 +234,7 @@ export function patchPackageSwiftDeploymentTarget(
  * the app, or the package it points at, has moved.
  */
 function referencesCapacitor(call: string): boolean {
-  if (call.includes(BINARY_PACKAGE_IDENTITY) || SOURCE_PACKAGE_URL.test(call)) {
+  if (call.includes(BINARY_PACKAGE_IDENTITY) || SOURCE_PACKAGE_URL.test(call) || CORDOVA_PACKAGE_URL.test(call)) {
     return true;
   }
 

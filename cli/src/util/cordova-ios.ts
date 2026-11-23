@@ -498,7 +498,6 @@ export async function generateCordovaPackageFile(p: Plugin, config: Config): Pro
   if (platformTag.$?.package) {
     const packageSwiftPath = join(p.rootPath, 'Package.swift');
     let content = await readFile(packageSwiftPath, { encoding: 'utf-8' });
-    content = content.replace(`apache`, `ionic-team`).replaceAll(`cordova-ios`, SOURCE_PACKAGE_IDENTITY);
     content = rewriteCapacitorDependency(content, capacitorPackagePath, p.rootPath);
     content = patchPackageSwiftDeploymentTarget(content, config.ios.minVersion).content;
 

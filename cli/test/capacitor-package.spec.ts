@@ -204,6 +204,51 @@ describe('rewriting an existing Package.swift', () => {
     expect(rewrite(before)).toBe(before);
   });
 
+  it('repoints a Cordova plugin that ships its own Package.swift on cordova-ios', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/apache/cordova-ios.git", branch: "master")
+    ],
+    targets: [
+        .target(name: "CDVFoo", dependencies: [.product(name: "Cordova", package: "cordova-ios")])
+    ]`;
+
+    const after = rewrite(before);
+
+    expect(after).toContain(rendered);
+    expect(after).toContain('.product(name: "Cordova", package: "capacitor-ios")');
+    expect(after).not.toContain('cordova-ios');
+    expect(after).not.toContain('github.com');
+  });
+
+  it('matches cordova-ios without the .git suffix and regardless of case', () => {
+    const before = `.package(url: "https://github.com/Apache/Cordova-iOS", from: "7.0.0")
+        .product(name: "Cordova", package: "Cordova-iOS")`;
+
+    const after = rewrite(before);
+
+    expect(after).toContain(rendered);
+    expect(after).toContain('.product(name: "Cordova", package: "capacitor-ios")');
+  });
+
+  it('leaves a Cordova plugin rewritten once unchanged on the next sync', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/apache/cordova-ios.git", from: "7.0.0")
+    ],
+    targets: [
+        .target(name: "CDVFoo", dependencies: [.product(name: "Cordova", package: "cordova-ios")])
+    ]`;
+
+    const once = rewrite(before);
+
+    expect(rewrite(once)).toBe(once);
+  });
+
+  it('leaves repositories that only share the cordova-ios URL prefix alone', () => {
+    const before = '.package(url: "https://github.com/apache/cordova-ios-plugin-thing.git", from: "1.0.0")';
+
+    expect(rewrite(before)).toBe(before);
+  });
+
   it('leaves a similarly named plugin package alone', () => {
     const before = '.package(name: "capacitor-plugin-foo", path: "../foo")';
 
