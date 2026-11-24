@@ -15,14 +15,14 @@
 
  -keep public class * extends com.getcapacitor.Plugin { *; }
 
-# Rules for Capacitor v2 plugins and annotations
-# These are deprecated but can still be used with Capacitor for now
--keep @com.getcapacitor.NativePlugin public class * {
-  @com.getcapacitor.PluginMethod public <methods>;
-}
+# The annotation types are read at runtime via reflection. If they are not kept, R8 full mode
+# treats them as never instantiated and optimizes the annotation cached in PluginHandle to null,
+# even with -keepattributes *Annotation*.
+-keep @interface com.getcapacitor.annotation.** { *; }
+-keep @interface com.getcapacitor.PluginMethod { *; }
 
-# Rules for Cordova plugins
--keep public class * extends org.apache.cordova.* {
-  public <methods>;
-  public <fields>;
+# Callback methods are found by reflection, including on non-public base classes.
+-keepclassmembers class * extends com.getcapacitor.Plugin {
+    @com.getcapacitor.annotation.ActivityCallback <methods>;
+    @com.getcapacitor.annotation.PermissionCallback <methods>;
 }

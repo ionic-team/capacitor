@@ -81,7 +81,7 @@ const convertBody = async (
     if (contentType === 'application/json') {
       try {
         data = JSON.parse(data);
-      } catch (ignored) {
+      } catch {
         // ignore
       }
       type = 'json';
@@ -370,7 +370,7 @@ const initBridge = (w: any): void => {
           msg = JSON.stringify(msg);
         }
         return String(msg);
-      } catch (e) {
+      } catch {
         return '';
       }
     };
@@ -387,15 +387,7 @@ const initBridge = (w: any): void => {
 
       // check if capacitor cookies is disabled before patching
       if (platform === 'ios') {
-        // Use prompt to synchronously get capacitor cookies config.
-        // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
-
-        const payload = {
-          type: 'CapacitorCookies.isEnabled',
-        };
-
-        const isCookiesEnabled = prompt(JSON.stringify(payload));
-        if (isCookiesEnabled === 'true') {
+        if (win.CapacitorNativeConfig?.cookiesEnabled === true) {
           doPatchCookies = true;
         }
       } else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
@@ -468,15 +460,7 @@ const initBridge = (w: any): void => {
 
       // check if capacitor http is disabled before patching
       if (platform === 'ios') {
-        // Use prompt to synchronously get capacitor http config.
-        // https://stackoverflow.com/questions/29249132/wkwebview-complex-communication-between-javascript-native-code/49474323#49474323
-
-        const payload = {
-          type: 'CapacitorHttp',
-        };
-
-        const isHttpEnabled = prompt(JSON.stringify(payload));
-        if (isHttpEnabled === 'true') {
+        if (win.CapacitorNativeConfig?.httpEnabled === true) {
           doPatchHttp = true;
         }
       } else if (typeof win.CapacitorHttpAndroidInterface !== 'undefined') {
@@ -998,13 +982,26 @@ const initBridge = (w: any): void => {
         if (typeof postToNative === 'function') {
           let callbackId = '-1';
 
+          // native never answers removeListener nor sends `save: false` for a removed listener,
+          // so release those callbacks here, otherwise everything they capture is never freed
+          if (methodName === 'removeListener') {
+            callbacks.delete(options?.callbackId);
+          } else if (methodName === 'removeAllListeners') {
+            callbacks.forEach((stored, id) => {
+              if (stored.pluginName === pluginName && stored.methodName === 'addListener') {
+                callbacks.delete(id);
+              }
+            });
+          }
+
           if (
+            methodName !== 'removeListener' &&
             storedCallback &&
             (typeof storedCallback.callback === 'function' || typeof storedCallback.resolve === 'function')
           ) {
             // store the call for later lookup
             callbackId = String(++callbackIdCount);
-            callbacks.set(callbackId, storedCallback);
+            callbacks.set(callbackId, { ...storedCallback, pluginName, methodName });
           }
 
           const callData = {
@@ -1123,7 +1120,6 @@ const initBridge = (w: any): void => {
       });
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cap.withPlugin = (_pluginId, _fn) => dummy;
 
     cap.Exception = CapacitorException;

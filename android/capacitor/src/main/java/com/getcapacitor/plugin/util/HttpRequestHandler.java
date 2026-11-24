@@ -122,7 +122,8 @@ public class HttpRequestHandler {
         }
 
         public HttpURLConnectionBuilder setUrlParams(JSObject params, boolean shouldEncode)
-            throws URISyntaxException, MalformedURLException {
+            throws URISyntaxException, MalformedURLException
+        {
             String initialQuery = url.getQuery();
             String initialQueryBuilderStr = initialQuery == null ? "" : initialQuery;
 
@@ -212,7 +213,8 @@ public class HttpRequestHandler {
      * @throws JSONException Thrown if the JSON is unable to be parsed
      */
     public static JSObject buildResponse(CapacitorHttpUrlConnection connection, ResponseType responseType)
-        throws IOException, JSONException {
+        throws IOException, JSONException
+    {
         int statusCode = connection.getResponseCode();
 
         JSObject output = new JSObject();
@@ -383,7 +385,8 @@ public class HttpRequestHandler {
      * @throws JSONException thrown when the incoming JSON is malformed
      */
     public static JSObject request(PluginCall call, String httpMethod, Bridge bridge)
-        throws IOException, URISyntaxException, JSONException {
+        throws IOException, URISyntaxException, JSONException
+    {
         String urlString = call.getString("url", "");
         JSObject headers = call.getObject("headers", new JSObject());
         JSObject params = call.getObject("params", new JSObject());
@@ -450,12 +453,24 @@ public class HttpRequestHandler {
 
     public static Boolean isDomainExcludedFromSSL(Bridge bridge, URL url) {
         try {
-            Class<?> sslPinningImpl = Class.forName("io.ionic.sslpinning.SSLPinning");
+            Class<?> sslPinningImpl = findSSLPinningClass();
+            if (sslPinningImpl == null) {
+                return false;
+            }
             Method method = sslPinningImpl.getDeclaredMethod("isDomainExcluded", Bridge.class, URL.class);
             return (Boolean) method.invoke(sslPinningImpl.getDeclaredConstructor().newInstance(), bridge, url);
         } catch (Exception ignored) {
             return false;
         }
+    }
+
+    private static Class<?> findSSLPinningClass() {
+        for (String className : new String[] { "io.ionic.sslpinning.SSLPinning", "com.getcapacitor.community.sslpinning.SSLPinning" }) {
+            try {
+                return Class.forName(className);
+            } catch (ClassNotFoundException ignored) {}
+        }
+        return null;
     }
 
     @FunctionalInterface

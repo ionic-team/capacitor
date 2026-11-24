@@ -13,10 +13,6 @@ task androidSourcesJar(type: Jar) {
     }
 }
 
-artifacts {
-    archives androidSourcesJar
-}
-
 group = 'com.capacitorjs'
 version = LIB_VERSION
 
@@ -25,9 +21,9 @@ afterEvaluate {
         publications {
             release(MavenPublication) {
                 // Coordinates
-                groupId 'com.capacitorjs'
-                artifactId 'core'
-                version LIB_VERSION
+                groupId = 'com.capacitorjs'
+                artifactId = 'core'
+                version = LIB_VERSION
 
                 // Two artifacts, the `aar` (or `jar`) and the sources
                 if (project.plugins.findPlugin("com.android.library")) {

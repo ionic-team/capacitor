@@ -7,7 +7,7 @@ import type { Config, PackageManager, Writable } from './definitions';
 import { fatal, isFatal } from './errors';
 import { receive } from './ipc';
 import { logger, output } from './log';
-import { telemetryAction } from './telemetry';
+import { TELEMETRY_SAFE_CHOICES, telemetryAction } from './telemetry';
 import { wrapAction } from './util/cli';
 import { emoji as _e } from './util/emoji';
 
@@ -145,14 +145,12 @@ export function runProgram(config: Config): void {
     .option('--keystorealiaspass <keystoreAliasPass>', 'Password for the Key Alias')
     .addOption(
       new Option('--androidreleasetype <androidreleasetype>', 'Android release type; APK or AAB').choices([
-        'AAB',
-        'APK',
+        ...TELEMETRY_SAFE_CHOICES.androidreleasetype,
       ]),
     )
     .addOption(
       new Option('--signing-type <signingtype>', 'Program used to sign apps (default: jarsigner)').choices([
-        'apksigner',
-        'jarsigner',
+        ...TELEMETRY_SAFE_CHOICES.signingType,
       ]),
     )
     .addOption(
@@ -162,21 +160,13 @@ export function runProgram(config: Config): void {
       new Option(
         '--xcode-export-method <xcodeExportMethod>',
         'Describes how xcodebuild should export the archive (default:  app-store-connect)',
-      ).choices([
-        'app-store-connect',
-        'release-testing',
-        'enterprise',
-        'debugging',
-        'developer-id',
-        'mac-application',
-        'validation',
-      ]),
+      ).choices([...TELEMETRY_SAFE_CHOICES.xcodeExportMethod]),
     )
     .addOption(
       new Option(
         '--xcode-signing-style <xcodeSigningStyle>',
         'The iOS signing style to use when building the app for distribution (default: automatic)',
-      ).choices(['automatic', 'manual']),
+      ).choices([...TELEMETRY_SAFE_CHOICES.xcodeSigningStyle]),
     )
     .addOption(
       new Option(
@@ -249,11 +239,8 @@ export function runProgram(config: Config): void {
     )
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .option('--forwardPorts <port:port>', 'Automatically run "adb reverse" for better live-reloading support')
-    .option('-l, --live-reload', 'Set live-reload URL via CLI (uses defaults, overrides server.url config)')
-    .option('--host <host>', 'Configure host for live-reload URL (used with --live-reload)')
-    .option('--port <port>', 'Configure port for live-reload URL (used with --live-reload)')
+    .option('--url <url>', 'Load an external URL in the Web View, useful for live-reload (overrides server.url config)')
     .option('--configuration <name>', 'Configuration name of the iOS Scheme')
-    .option('--https', 'Use https:// instead of http:// for live-reload URL (used with --live-reload)')
     .action(
       wrapAction(
         telemetryAction(
@@ -270,11 +257,8 @@ export function runProgram(config: Config): void {
               targetNameSdkVersion,
               sync,
               forwardPorts,
-              liveReload,
-              host,
-              port,
+              url,
               configuration,
-              https,
             },
           ) => {
             const { runCommand } = await import('./tasks/run');
@@ -288,11 +272,8 @@ export function runProgram(config: Config): void {
               targetNameSdkVersion,
               sync,
               forwardPorts,
-              liveReload,
-              host,
-              port,
+              url,
               configuration,
-              https,
             });
           },
         ),
