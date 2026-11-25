@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.6.3](https://github.com/ionic-team/capacitor/compare/8.6.2...8.6.3) (2026-11-25)
+
+### Bug Fixes
+
+- **android:** don't crash on unresolvable content proxy paths ([2989714](https://github.com/ionic-team/capacitor/commit/298971498d32ad9ea85c96b14bae9ade3071c858))
+- harden the internal file, content and HTTP proxy routes ([e620ecb](https://github.com/ionic-team/capacitor/commit/e620ecb4edfbdc28565ecab9844d0e86993eb3f7))
+
 ## [8.6.2](https://github.com/ionic-team/capacitor/compare/8.6.1...8.6.2) (2026-11-12)
 
 **Note:** Version bump only for package @capacitor/android
