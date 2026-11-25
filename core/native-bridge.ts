@@ -18,7 +18,7 @@ import { CapacitorException } from './src/util';
 // eslint-disable-next-line
 let dummy = {};
 
-const readFileAsBase64 = (file: File): Promise<string> =>
+const readFileAsBase64 = (file: Blob): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -29,6 +29,15 @@ const readFileAsBase64 = (file: File): Promise<string> =>
 
     reader.readAsBinaryString(file);
   });
+
+const uint8ArrayToBase64 = (bytes: Uint8Array): string => {
+  const chunkSize = 0x8000;
+  const chunks: string[] = [];
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    chunks.push(String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize) as unknown as number[]));
+  }
+  return btoa(chunks.join(''));
+};
 
 const convertFormData = async (formData: FormData): Promise<any> => {
   const newFormData: CapFormDataEntry[] = [];
@@ -55,11 +64,16 @@ const convertBody = async (
   body: Document | XMLHttpRequestBodyInit | ReadableStream<any> | undefined,
   contentType?: string,
 ): Promise<any> => {
-  if (body instanceof ReadableStream || body instanceof Uint8Array) {
-    let encodedData;
-    if (body instanceof ReadableStream) {
+  const isReadableStream = typeof ReadableStream !== 'undefined' && body instanceof ReadableStream;
+  if (isReadableStream || body instanceof ArrayBuffer || ArrayBuffer.isView(body)) {
+    let encodedData: Uint8Array;
+    if (body instanceof ArrayBuffer) {
+      encodedData = new Uint8Array(body);
+    } else if (ArrayBuffer.isView(body)) {
+      encodedData = new Uint8Array(body.buffer, body.byteOffset, body.byteLength);
+    } else {
       const reader = body.getReader();
-      const chunks: any[] = [];
+      const chunks: Uint8Array[] = [];
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -72,32 +86,11 @@ const convertBody = async (
         position += chunk.length;
       }
       encodedData = concatenated;
-    } else {
-      encodedData = body;
-    }
-
-    let data = new TextDecoder().decode(encodedData);
-    let type;
-    if (contentType === 'application/json') {
-      try {
-        data = JSON.parse(data);
-      } catch {
-        // ignore
-      }
-      type = 'json';
-    } else if (contentType === 'multipart/form-data') {
-      type = 'formData';
-    } else if (contentType?.startsWith('image')) {
-      type = 'image';
-    } else if (contentType === 'application/octet-stream') {
-      type = 'binary';
-    } else {
-      type = 'text';
     }
 
     return {
-      data,
-      type,
+      data: uint8ArrayToBase64(encodedData),
+      type: 'file',
       headers: { 'Content-Type': contentType || 'application/octet-stream' },
     };
   } else if (body instanceof URLSearchParams) {
@@ -110,12 +103,12 @@ const convertBody = async (
       data: await convertFormData(body),
       type: 'formData',
     };
-  } else if (body instanceof File) {
+  } else if (typeof Blob !== 'undefined' && body instanceof Blob) {
     const fileData = await readFileAsBase64(body);
     return {
       data: fileData,
       type: 'file',
-      headers: { 'Content-Type': body.type },
+      headers: { 'Content-Type': body.type || contentType || 'application/octet-stream' },
     };
   }
 

@@ -44,6 +44,14 @@ var nativeBridge = (function (exports) {
         reader.onerror = reject;
         reader.readAsBinaryString(file);
     });
+    const uint8ArrayToBase64 = (bytes) => {
+        const chunkSize = 0x8000;
+        const chunks = [];
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            chunks.push(String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize)));
+        }
+        return btoa(chunks.join(''));
+    };
     const convertFormData = async (formData) => {
         const newFormData = [];
         for (const pair of formData.entries()) {
@@ -65,9 +73,16 @@ var nativeBridge = (function (exports) {
         return newFormData;
     };
     const convertBody = async (body, contentType) => {
-        if (body instanceof ReadableStream || body instanceof Uint8Array) {
+        const isReadableStream = typeof ReadableStream !== 'undefined' && body instanceof ReadableStream;
+        if (isReadableStream || body instanceof ArrayBuffer || ArrayBuffer.isView(body)) {
             let encodedData;
-            if (body instanceof ReadableStream) {
+            if (body instanceof ArrayBuffer) {
+                encodedData = new Uint8Array(body);
+            }
+            else if (ArrayBuffer.isView(body)) {
+                encodedData = new Uint8Array(body.buffer, body.byteOffset, body.byteLength);
+            }
+            else {
                 const reader = body.getReader();
                 const chunks = [];
                 while (true) {
@@ -84,35 +99,9 @@ var nativeBridge = (function (exports) {
                 }
                 encodedData = concatenated;
             }
-            else {
-                encodedData = body;
-            }
-            let data = new TextDecoder().decode(encodedData);
-            let type;
-            if (contentType === 'application/json') {
-                try {
-                    data = JSON.parse(data);
-                }
-                catch (ignored) {
-                    // ignore
-                }
-                type = 'json';
-            }
-            else if (contentType === 'multipart/form-data') {
-                type = 'formData';
-            }
-            else if (contentType === null || contentType === void 0 ? void 0 : contentType.startsWith('image')) {
-                type = 'image';
-            }
-            else if (contentType === 'application/octet-stream') {
-                type = 'binary';
-            }
-            else {
-                type = 'text';
-            }
             return {
-                data,
-                type,
+                data: uint8ArrayToBase64(encodedData),
+                type: 'file',
                 headers: { 'Content-Type': contentType || 'application/octet-stream' },
             };
         }
@@ -128,12 +117,12 @@ var nativeBridge = (function (exports) {
                 type: 'formData',
             };
         }
-        else if (body instanceof File) {
+        else if (typeof Blob !== 'undefined' && body instanceof Blob) {
             const fileData = await readFileAsBase64(body);
             return {
                 data: fileData,
                 type: 'file',
-                headers: { 'Content-Type': body.type },
+                headers: { 'Content-Type': body.type || contentType || 'application/octet-stream' },
             };
         }
         return { data: body, type: 'json' };
@@ -363,7 +352,7 @@ var nativeBridge = (function (exports) {
                     }
                     return String(msg);
                 }
-                catch (e) {
+                catch (_a) {
                     return '';
                 }
             };
@@ -1006,7 +995,6 @@ var nativeBridge = (function (exports) {
                     });
                 });
             };
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             cap.withPlugin = (_pluginId, _fn) => dummy;
             cap.Exception = CapacitorException;
             initEvents(win, cap);
