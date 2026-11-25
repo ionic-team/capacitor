@@ -7,16 +7,20 @@ package com.getcapacitor;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.TypedValue;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AndroidProtocolHandler {
 
     private Context context;
+    private List<File> appStorageRoots;
 
     public AndroidProtocolHandler(Context context) {
         this.context = context;
@@ -68,6 +72,125 @@ public class AndroidProtocolHandler {
         String realPath = filePath.replace(Bridge.CAPACITOR_FILE_START, "");
         File localFile = new File(realPath);
         return new FileInputStream(localFile);
+    }
+
+    /**
+     * Opens a file served from the base path the app is hosted from (see {@code setServerBasePath}).
+     * The request path is decoded by {@link Uri#getPath()}, so an encoded slash ({@code %2F}) can carry
+     * {@code ..} segments that the browser did not resolve. The resolved file must therefore sit inside
+     * the base path, or the request would read any file the app can read.
+     *
+     * @param basePath the directory the app is hosted from
+     * @param filePath the base path followed by the request path
+     * @throws FileNotFoundException if the resolved file is outside of the base path
+     */
+    public InputStream openBasePathFile(String basePath, String filePath) throws IOException {
+        String base = new File(basePath).getCanonicalPath();
+        File file = new File(filePath).getCanonicalFile();
+        String resolved = file.getPath();
+        if (!resolved.equals(base) && !resolved.startsWith(base.endsWith(File.separator) ? base : base + File.separator)) {
+            throw new FileNotFoundException("File is outside of the base path: " + filePath);
+        }
+        return new FileInputStream(file);
+    }
+
+    /**
+     * Opens a file whose location was chosen by a {@link RouteProcessor}. The processor may map requests
+     * outside the base path on purpose, so containment is not checked here. The request path is decoded
+     * by {@link Uri#getPath()}, so an encoded slash ({@code %2F}) can still carry {@code ..} segments that
+     * the browser did not resolve and that a processor would pass on; such requests are refused.
+     *
+     * @param requestPath the decoded request path
+     * @param processedPath the file path returned by the route processor
+     * @throws FileNotFoundException if the request path contains a parent-directory segment
+     */
+    public InputStream openRoutedFile(String requestPath, String processedPath) throws IOException {
+        for (String segment : requestPath.split("/")) {
+            if (segment.equals("..")) {
+                throw new FileNotFoundException("Parent-directory segment in request path: " + requestPath);
+            }
+        }
+        return openFile(processedPath);
+    }
+
+    /**
+     * Opens a file requested through the {@link Bridge#CAPACITOR_FILE_START} proxy route.
+     * Unlike {@link #openFile(String)}, the resolved path must sit inside the app's own storage or
+     * shared/external storage, so the route cannot expose app-private data (shared_prefs, databases)
+     * or system files such as /proc or /etc.
+     *
+     * @param filePath the request path, starting with {@link Bridge#CAPACITOR_FILE_START}
+     * @throws IOException if the file cannot be opened or its location is not allowed
+     */
+    public InputStream openProxiedFile(String filePath) throws IOException {
+        String realPath = filePath.startsWith(Bridge.CAPACITOR_FILE_START)
+            ? filePath.substring(Bridge.CAPACITOR_FILE_START.length())
+            : filePath;
+        // Canonicalizing resolves ".." segments and symlinks; open the resolved file so the checked path is the read one.
+        File canonicalFile = new File(realPath).getCanonicalFile();
+        if (!isInAllowedLocation(canonicalFile)) {
+            throw new IOException("Path is outside the locations served by the file proxy: " + realPath);
+        }
+        return new FileInputStream(canonicalFile);
+    }
+
+    private boolean isInAllowedLocation(File canonicalFile) throws IOException {
+        String path = canonicalFile.getPath();
+        for (File root : getAllowedRoots()) {
+            String rootPath = root.getCanonicalPath();
+            if (path.equals(rootPath) || path.startsWith(rootPath + File.separator)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("deprecation")
+    /**
+     * The app's files and cache directories (Filesystem Data/Library/Cache, Camera temporary images). They do not
+     * change while the app runs, unlike the external storage roots, so they are looked up once.
+     */
+    private List<File> getAppStorageRoots() {
+        List<File> roots = appStorageRoots;
+        if (roots == null) {
+            roots = new ArrayList<>();
+            addIfNotNull(roots, context.getFilesDir());
+            addIfNotNull(roots, context.getCacheDir());
+            appStorageRoots = roots;
+        }
+        return roots;
+    }
+
+    private List<File> getAllowedRoots() {
+        List<File> roots = new ArrayList<>(getAppStorageRoots());
+        // Primary shared storage (Filesystem Documents/ExternalStorage, gallery and media picks)
+        addIfNotNull(roots, Environment.getExternalStorageDirectory());
+        // App-specific external dirs, and the root of every other volume (e.g. SD cards) they live on
+        List<File> externalDirs = new ArrayList<>();
+        for (File dir : context.getExternalFilesDirs(null)) {
+            externalDirs.add(dir);
+        }
+        for (File dir : context.getExternalCacheDirs()) {
+            externalDirs.add(dir);
+        }
+        for (File dir : externalDirs) {
+            if (dir == null) {
+                continue;
+            }
+            roots.add(dir);
+            String dirPath = dir.getPath();
+            int androidDirIndex = dirPath.indexOf("/Android/");
+            if (androidDirIndex > 0) {
+                roots.add(new File(dirPath.substring(0, androidDirIndex)));
+            }
+        }
+        return roots;
+    }
+
+    private static void addIfNotNull(List<File> roots, File dir) {
+        if (dir != null) {
+            roots.add(dir);
+        }
     }
 
     public InputStream openContentUrl(Uri uri) throws IOException {

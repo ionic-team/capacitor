@@ -30,7 +30,6 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
     }
 
     open func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        let startPath: String
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
         let localUrl = URL.init(string: url.absoluteString)!
@@ -46,10 +45,9 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             return
         }
 
-        if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
-            startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
-        } else {
-            startPath = router.route(for: stringToLoad)
+        guard let startPath = startPath(for: stringToLoad) else {
+            urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
+            return
         }
 
         let fileUrl = URL.init(fileURLWithPath: startPath)
@@ -61,6 +59,8 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 "Content-Type": mimeType,
                 "Cache-Control": "no-cache"
             ]
+
+            headers.merge(securityHeaders(forPath: stringToLoad)) { _, new in new }
 
             // if using live reload, then set CORS headers
             if isUsingLiveReload(localUrl) {
@@ -109,6 +109,27 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
             return
         }
         urlSchemeTask.didFinish()
+    }
+
+    /// The file to serve for a request path, or nil if the path must not be served.
+    /// `URL.path` decodes `%2F`, so an encoded slash can carry `..` segments the web view did not
+    /// resolve. Joined to the base path they would leave it and serve any file the app can read.
+    private func startPath(for path: String) -> String? {
+        if path.starts(with: CapacitorBridge.fileStartIdentifier) {
+            return path.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
+        }
+        if path.split(separator: "/").contains("..") {
+            return nil
+        }
+        return router.route(for: path)
+    }
+
+    /// A proxied file that is ever rendered as a document must stay inert and unframeable.
+    private func securityHeaders(forPath path: String) -> [String: String] {
+        guard path.starts(with: CapacitorBridge.fileStartIdentifier) else {
+            return [:]
+        }
+        return ["Content-Security-Policy": "sandbox; frame-ancestors 'none'"]
     }
 
     open func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
@@ -160,7 +181,10 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 }
 
                 if let response = response as? HTTPURLResponse {
-                    let existingHeaders = response.allHeaderFields
+                    // The target's CORS grant is not forwarded, so another origin cannot read the proxied response.
+                    let existingHeaders = response.allHeaderFields.filter {
+                        ($0.key as? String)?.caseInsensitiveCompare("Access-Control-Allow-Origin") != .orderedSame
+                    }
                     var newHeaders: [AnyHashable: Any] = [:]
 
                     // Nothing should render this. If anything does, sandbox keeps it inert.

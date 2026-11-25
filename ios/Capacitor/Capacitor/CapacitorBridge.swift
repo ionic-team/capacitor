@@ -99,6 +99,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
     @available(*, deprecated, message: "`httpsInterceptorStartIdentifier` is no longer required. All proxied requests are handled via `httpInterceptorStartIdentifier` instead")
     public static let httpsInterceptorStartIdentifier = "/_capacitor_https_interceptor_"
     public static let httpInterceptorUrlParam = "u"
+
+    /// Whether `path` addresses one of the bridge's internal proxy routes (local files or the HTTP proxy).
+    /// These are served at the app's own origin, so they must never be loaded as a document.
+    public static func isInternalProxyPath(_ path: String) -> Bool {
+        return path.starts(with: fileStartIdentifier) || path.starts(with: httpInterceptorStartIdentifier)
+    }
     public static let defaultScheme = "capacitor"
 
     public private(set) var webViewAssetHandler: WebViewAssetHandler
