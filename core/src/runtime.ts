@@ -58,8 +58,23 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     const platform = getPlatform();
     const pluginHeader = getPluginHeader(pluginName);
     let jsImplementation: any;
+    let jsImplementationPromise: Promise<any> | undefined;
 
-    const loadPluginImplementation = async (): Promise<any> => {
+    const loadPluginImplementation = (): Promise<any> => {
+      // Share one load between calls made before it settles, so a lazy
+      // implementation such as `web: () => import('./web').then(...)` is
+      // only created once. A failed load is retried on the next call.
+      if (!jsImplementationPromise) {
+        jsImplementationPromise = resolvePluginImplementation().catch((err) => {
+          jsImplementationPromise = undefined;
+          throw err;
+        });
+      }
+
+      return jsImplementationPromise;
+    };
+
+    const resolvePluginImplementation = async (): Promise<any> => {
       if (!jsImplementation && platform in jsImplementations) {
         jsImplementation =
           typeof jsImplementations[platform] === 'function'
