@@ -8,7 +8,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 - **android:** avoid implicit parent project property lookup deprecated in Gradle 9 ([#8731](https://github.com/ionic-team/capacitor/issues/8731)) ([31115e0](https://github.com/ionic-team/capacitor/commit/31115e00186f6443919b376c6835d1a3c2644b61))
+- **android:** don't crash on unresolvable content proxy paths ([f21501b](https://github.com/ionic-team/capacitor/commit/f21501bdceaebc40dc905c978109009c5fe6015c))
 - changelog regeneration ([c5ceef2](https://github.com/ionic-team/capacitor/commit/c5ceef2eb932a7686f47bbfec2b50f89b082a2ed))
+- harden the internal file, content and HTTP proxy routes ([ed8d760](https://github.com/ionic-team/capacitor/commit/ed8d7600fbb146946c4e0296d5dc7be058b9a6db))
 
 # [9.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/8.6.0...9.0.0-rc.0) (2026-11-12)
 

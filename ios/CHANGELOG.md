@@ -8,6 +8,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 - changelog regeneration ([c5ceef2](https://github.com/ionic-team/capacitor/commit/c5ceef2eb932a7686f47bbfec2b50f89b082a2ed))
+- harden the internal file, content and HTTP proxy routes ([ed8d760](https://github.com/ionic-team/capacitor/commit/ed8d7600fbb146946c4e0296d5dc7be058b9a6db))
 
 # [9.0.0-rc.0](https://github.com/ionic-team/capacitor/compare/8.6.0...9.0.0-rc.0) (2026-11-12)
 
