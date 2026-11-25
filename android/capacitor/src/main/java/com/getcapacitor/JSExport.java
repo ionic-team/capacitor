@@ -21,6 +21,17 @@ public class JSExport {
         return "window.Capacitor = { DEBUG: " + isDebug + ", isLoggingEnabled: " + loggingEnabled + ", Plugins: {} };";
     }
 
+    static String getGlobalJS(Context context, boolean loggingEnabled, boolean isDebug, boolean cookiesEnabled, boolean httpEnabled) {
+        return (
+            getGlobalJS(context, loggingEnabled, isDebug) +
+            " window.CapacitorNativeConfig = { cookiesEnabled: " +
+            cookiesEnabled +
+            ", httpEnabled: " +
+            httpEnabled +
+            " };"
+        );
+    }
+
     public static String getMiscFileJS(ArrayList<String> paths, Context context) {
         List<String> lines = new ArrayList<>();
 

@@ -93,7 +93,7 @@ var nativeBridge = (function (exports) {
                 try {
                     data = JSON.parse(data);
                 }
-                catch (ignored) {
+                catch (_a) {
                     // ignore
                 }
                 type = 'json';
@@ -314,7 +314,7 @@ var nativeBridge = (function (exports) {
             win.Ionic.WebView = IonicWebView;
         };
         const initLogger = (win, cap) => {
-            var _a, _b;
+            var _a, _b, _c, _d;
             const BRIDGED_CONSOLE_METHODS = ['debug', 'error', 'info', 'log', 'trace', 'warn'];
             const createLogFromNative = (c) => (result) => {
                 if (isFullConsole(c)) {
@@ -363,7 +363,7 @@ var nativeBridge = (function (exports) {
                     }
                     return String(msg);
                 }
-                catch (e) {
+                catch (_a) {
                     return '';
                 }
             };
@@ -381,10 +381,8 @@ var nativeBridge = (function (exports) {
                     }
                 }
                 else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
-                    const isCookiesEnabled = win.CapacitorCookiesAndroidInterface.isEnabled();
-                    if (isCookiesEnabled === true) {
-                        doPatchCookies = true;
-                    }
+                    doPatchCookies =
+                        ((_c = (_b = win.CapacitorNativeConfig) === null || _b === void 0 ? void 0 : _b.cookiesEnabled) !== null && _c !== void 0 ? _c : win.CapacitorCookiesAndroidInterface.isEnabled()) === true;
                 }
                 if (doPatchCookies) {
                     Object.defineProperty(document, 'cookie', {
@@ -442,16 +440,11 @@ var nativeBridge = (function (exports) {
                 };
                 let doPatchHttp = false;
                 // check if capacitor http is disabled before patching
-                if (platform === 'ios') {
-                    if (((_b = win.CapacitorNativeConfig) === null || _b === void 0 ? void 0 : _b.httpEnabled) === true) {
-                        doPatchHttp = true;
-                    }
+                if (((_d = win.CapacitorNativeConfig) === null || _d === void 0 ? void 0 : _d.httpEnabled) != null) {
+                    doPatchHttp = win.CapacitorNativeConfig.httpEnabled === true;
                 }
-                else if (typeof win.CapacitorHttpAndroidInterface !== 'undefined') {
-                    const isHttpEnabled = win.CapacitorHttpAndroidInterface.isEnabled();
-                    if (isHttpEnabled === true) {
-                        doPatchHttp = true;
-                    }
+                else if (platform === 'android' && typeof win.CapacitorHttpAndroidInterface !== 'undefined') {
+                    doPatchHttp = win.CapacitorHttpAndroidInterface.isEnabled() === true;
                 }
                 if (doPatchHttp) {
                     // fetch patch
@@ -1006,7 +999,6 @@ var nativeBridge = (function (exports) {
                     });
                 });
             };
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             cap.withPlugin = (_pluginId, _fn) => dummy;
             cap.Exception = CapacitorException;
             initEvents(win, cap);

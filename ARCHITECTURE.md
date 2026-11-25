@@ -336,11 +336,11 @@ Transport differs per platform but the payload does not:
 | --- | --- | --- |
 | Web → native | `window.webkit.messageHandlers.bridge.postMessage(obj)` — a real object; `type` defaulted to `'message'` | `window.androidBridge.postMessage(JSON.stringify(obj))` — a string |
 | Native → web | `webView.evaluateJavaScript("window.Capacitor.fromNative({…})")` | `JavaScriptReplyProxy.postMessage(json)` → `androidBridge.onmessage` → `returnResult(JSON.parse(e.data))`; legacy fallback is `evaluateJavascript("window.Capacitor.fromNative(…)")` |
-| Sync web → native | `prompt(JSON.stringify({ type: … }))` intercepted in `runJavaScriptTextInputPanelWithPrompt` | dedicated `@JavascriptInterface` objects (`CapacitorCookiesAndroidInterface`, `CapacitorHttpAndroidInterface`) |
+| Sync web → native | `prompt(JSON.stringify({ type: … }))` intercepted in `runJavaScriptTextInputPanelWithPrompt` | dedicated `@JavascriptInterface` objects (`CapacitorCookiesAndroidInterface`, `CapacitorHttpAndroidInterface`) registered only when enabled (Android reads `window.CapacitorNativeConfig` first and uses `isEnabled()` only as a fallback) |
 
-The synchronous `prompt()` channel on iOS serves `document.cookie` and the
-"is CapacitorHttp enabled?" check, both of which must answer synchronously; `WKWebView`
-offers no synchronous message handler.
+The synchronous `prompt()` channel on iOS serves `document.cookie`, which must answer
+synchronously; `WKWebView` offers no synchronous message handler. Whether CapacitorHttp and
+CapacitorCookies are enabled is read from the injected `window.CapacitorNativeConfig`.
 
 #### What can cross the bridge
 
@@ -590,11 +590,12 @@ is the optional interception of `fetch`, `XMLHttpRequest` and `document.cookie`.
 | `plugins.CapacitorCookies.enabled` | Redefines the `document.cookie` property descriptor |
 
 The web layer must know the switch state *before* any app script runs, which is why the
-check is synchronous: on iOS via the `prompt()` channel
-(`{ type: 'CapacitorHttp' }`, `{ type: 'CapacitorCookies.isEnabled' }`), on Android via
-the `@JavascriptInterface` methods `CapacitorHttpAndroidInterface.isEnabled()` and
-`CapacitorCookiesAndroidInterface.isEnabled()`. Both interfaces are installed by the
-plugins themselves in `load()` — see `CapacitorHttp.java` and `CapacitorCookies.java`.
+check is synchronous: iOS and Android read `window.CapacitorNativeConfig` first; on Android,
+if `window.CapacitorNativeConfig` is absent, the bridge falls back to the
+`@JavascriptInterface` methods `CapacitorHttpAndroidInterface.isEnabled()` and
+`CapacitorCookiesAndroidInterface.isEnabled()`. Both Android interfaces are registered by
+the plugins in `load()` only when the plugin is enabled — see `CapacitorHttp.java` and
+`CapacitorCookies.java`.
 
 Before patching, the originals are stashed on `window` as `CapacitorWebFetch` and
 `CapacitorWebXMLHttpRequest`, so the patched implementations can delegate.

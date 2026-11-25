@@ -391,10 +391,8 @@ const initBridge = (w: any): void => {
           doPatchCookies = true;
         }
       } else if (typeof win.CapacitorCookiesAndroidInterface !== 'undefined') {
-        const isCookiesEnabled = win.CapacitorCookiesAndroidInterface.isEnabled();
-        if (isCookiesEnabled === true) {
-          doPatchCookies = true;
-        }
+        doPatchCookies =
+          (win.CapacitorNativeConfig?.cookiesEnabled ?? win.CapacitorCookiesAndroidInterface.isEnabled()) === true;
       }
 
       if (doPatchCookies) {
@@ -459,15 +457,10 @@ const initBridge = (w: any): void => {
       let doPatchHttp = false;
 
       // check if capacitor http is disabled before patching
-      if (platform === 'ios') {
-        if (win.CapacitorNativeConfig?.httpEnabled === true) {
-          doPatchHttp = true;
-        }
-      } else if (typeof win.CapacitorHttpAndroidInterface !== 'undefined') {
-        const isHttpEnabled = win.CapacitorHttpAndroidInterface.isEnabled();
-        if (isHttpEnabled === true) {
-          doPatchHttp = true;
-        }
+      if (win.CapacitorNativeConfig?.httpEnabled != null) {
+        doPatchHttp = win.CapacitorNativeConfig.httpEnabled === true;
+      } else if (platform === 'android' && typeof win.CapacitorHttpAndroidInterface !== 'undefined') {
+        doPatchHttp = win.CapacitorHttpAndroidInterface.isEnabled() === true;
       }
 
       if (doPatchHttp) {
