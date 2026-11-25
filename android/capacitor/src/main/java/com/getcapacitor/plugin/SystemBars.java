@@ -189,7 +189,20 @@ public class SystemBars extends Plugin {
 
         View view = getActivity().getWindow().getDecorView();
 
-        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, windowInsets) -> {
+            // A listener replaces the DecorView's own onApplyWindowInsets, which is what draws the system bar
+            // backgrounds and the 3-button navigation bar scrim. Let it run, and continue with the insets it
+            // leaves, so the space it already reserves for the system bars is not padded a second time.
+            WindowInsetsCompat insets = WindowInsetsCompat.toWindowInsetsCompat(v.onApplyWindowInsets(windowInsets.toWindowInsets()), v);
+            // Pad the WebView's parent rather than the DecorView: the DecorView also holds the system bar
+            // background views, and padding it would move them away from the screen edges into the content.
+            View content = (View) getBridge().getWebView().getParent();
+            if (content == null) {
+                // The WebView is not attached (e.g. a Fragment-hosted bridge whose view was destroyed),
+                // so there is nothing to pad.
+                return insets;
+            }
+
             boolean shouldPassthroughInsets = getWebViewMajorVersion() >= WEBVIEW_VERSION_WITH_SAFE_AREA_FIX && hasViewportCover;
 
             Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
@@ -202,7 +215,7 @@ public class SystemBars extends Plugin {
 
             if (shouldPassthroughInsets) {
                 // We need to correct for a possible shown IME
-                v.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
+                content.setPadding(0, 0, 0, keyboardVisible ? imeInsets.bottom : 0);
 
                 WindowInsetsCompat newInsets = withoutOverlayingKeyboard(
                     new WindowInsetsCompat.Builder(insets).setInsets(
@@ -223,7 +236,7 @@ public class SystemBars extends Plugin {
             }
 
             // We need to correct for a possible shown IME
-            v.setPadding(
+            content.setPadding(
                 systemBarsInsets.left,
                 systemBarsInsets.top,
                 systemBarsInsets.right,
