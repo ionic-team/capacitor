@@ -76,8 +76,8 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
             return
         }
 
-        // The proxy returns a remote body at the app origin, so block it before plugins can allow it.
-        if navURL.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
+        // The proxy routes return remote or local content at the app origin, so block them before plugins can allow it.
+        if CapacitorBridge.isInternalProxyPath(navURL.path) {
             decisionHandler(.cancel)
             return
         }
