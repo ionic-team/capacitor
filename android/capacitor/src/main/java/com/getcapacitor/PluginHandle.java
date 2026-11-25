@@ -124,7 +124,8 @@ public class PluginHandle {
      * @throws InvalidPluginMethodException if no method was found on that plugin
      */
     public void invoke(String methodName, PluginCall call)
-        throws PluginLoadException, InvalidPluginMethodException, InvocationTargetException, IllegalAccessException {
+        throws PluginLoadException, InvalidPluginMethodException, InvocationTargetException, IllegalAccessException
+    {
         if (this.instance == null) {
             // Can throw PluginLoadException
             this.load();
