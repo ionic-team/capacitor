@@ -80,6 +80,7 @@
 		62FABD1A25AE5C01007B3814 /* Array+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD1925AE5C01007B3814 /* Array+Capacitor.swift */; };
 		62FABD2325AE60BA007B3814 /* BridgedTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2225AE60BA007B3814 /* BridgedTypesTests.m */; };
 		62FABD2B25AE6182007B3814 /* BridgedTypesHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FABD2A25AE6182007B3814 /* BridgedTypesHelper.swift */; };
+		91E9572D9A66BD6594F8EEC1 /* BasePathTraversalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25A69252332CEE6A4121696 /* BasePathTraversalTests.swift */; };
 		A327E6B628DB8B2900CA8B0A /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B228DB8B2800CA8B0A /* HttpRequestHandler.swift */; };
 		A327E6B728DB8B2900CA8B0A /* CapacitorHttp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B428DB8B2900CA8B0A /* CapacitorHttp.swift */; };
 		A327E6B828DB8B2900CA8B0A /* CapacitorUrlRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A327E6B528DB8B2900CA8B0A /* CapacitorUrlRequest.swift */; };
@@ -87,7 +88,6 @@
 		A38C3D7B2848BE6F004B3680 /* CapacitorCookieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */; };
 		A71289E627F380A500DADDF3 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289E527F380A500DADDF3 /* Router.swift */; };
 		A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71289EA27F380FD00DADDF3 /* RouterTests.swift */; };
-		AA01F00D0000000000000002 /* HttpInterceptorNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01F00D0000000000000001 /* HttpInterceptorNavigationTests.swift */; };
 		A7187FD22BD1CB7D00093C45 /* CAPPluginMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7187FD12BD1CB7D00093C45 /* CAPPluginMethod.swift */; };
 		A76739792B98E09700795F7B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A76739782B98E09700795F7B /* PrivacyInfo.xcprivacy */; };
 		A771ADEE2C8B845000AF234D /* DateCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A771ADED2C8B845000AF234D /* DateCodableTests.swift */; };
@@ -104,6 +104,8 @@
 		A7DB03AC29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */; };
 		A7F7EDCD291EC75C0015B73B /* CAPPlugin+LoadInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */; };
 		A7F7EDD5292BE8520015B73B /* CAPInstancePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F7EDD4292BE8520015B73B /* CAPInstancePlugin.swift */; };
+		AA01F00D0000000000000002 /* HttpInterceptorNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01F00D0000000000000001 /* HttpInterceptorNavigationTests.swift */; };
+		F4B870CF553CB525DAEEC57A /* FileProxyRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E144AB13D201CAEA589019 /* FileProxyRouteTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -245,7 +247,6 @@
 		A38C3D7A2848BE6F004B3680 /* CapacitorCookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorCookieManager.swift; sourceTree = "<group>"; };
 		A71289E527F380A500DADDF3 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		A71289EA27F380FD00DADDF3 /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
-		AA01F00D0000000000000001 /* HttpInterceptorNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpInterceptorNavigationTests.swift; sourceTree = "<group>"; };
 		A7187FD12BD1CB7D00093C45 /* CAPPluginMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPPluginMethod.swift; sourceTree = "<group>"; };
 		A76739782B98E09700795F7B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A771ADED2C8B845000AF234D /* DateCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCodableTests.swift; sourceTree = "<group>"; };
@@ -262,6 +263,9 @@
 		A7DB03AB29B001E300888AE9 /* CAPBridgedPlugin+getMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CAPBridgedPlugin+getMethod.swift"; sourceTree = "<group>"; };
 		A7F7EDCC291EC75C0015B73B /* CAPPlugin+LoadInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CAPPlugin+LoadInstance.swift"; sourceTree = "<group>"; };
 		A7F7EDD4292BE8520015B73B /* CAPInstancePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstancePlugin.swift; sourceTree = "<group>"; };
+		AA01F00D0000000000000001 /* HttpInterceptorNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpInterceptorNavigationTests.swift; sourceTree = "<group>"; };
+		D3E144AB13D201CAEA589019 /* FileProxyRouteTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FileProxyRouteTests.swift; sourceTree = "<group>"; };
+		F25A69252332CEE6A4121696 /* BasePathTraversalTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BasePathTraversalTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -349,6 +353,8 @@
 				62959BBD2526510200A3D7F1 /* Info.plist */,
 				A71289EA27F380FD00DADDF3 /* RouterTests.swift */,
 				AA01F00D0000000000000001 /* HttpInterceptorNavigationTests.swift */,
+				F25A69252332CEE6A4121696 /* BasePathTraversalTests.swift */,
+				D3E144AB13D201CAEA589019 /* FileProxyRouteTests.swift */,
 			);
 			path = CapacitorTests;
 			sourceTree = "<group>";
@@ -775,6 +781,8 @@
 				A71289EB27F380FD00DADDF3 /* RouterTests.swift in Sources */,
 				AA01F00D0000000000000002 /* HttpInterceptorNavigationTests.swift in Sources */,
 				6263686025F6EC0100576C1C /* PluginCallAccessorTests.m in Sources */,
+				91E9572D9A66BD6594F8EEC1 /* BasePathTraversalTests.swift in Sources */,
+				F4B870CF553CB525DAEEC57A /* FileProxyRouteTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
