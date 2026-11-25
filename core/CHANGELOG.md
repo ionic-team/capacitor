@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.4](https://github.com/ionic-team/capacitor/compare/6.2.3...6.2.4) (2026-11-25)
+
+**Note:** Version bump only for package @capacitor/core
+
 ## [6.2.3](https://github.com/ionic-team/capacitor/compare/6.2.2...6.2.3) (2026-10-28)
 
 **Note:** Version bump only for package @capacitor/core
