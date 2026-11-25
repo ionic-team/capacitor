@@ -81,7 +81,10 @@ public class AndroidProtocolHandler {
         InputStream stream = null;
         try {
             stream = context.getContentResolver().openInputStream(Uri.parse(realPath));
-        } catch (SecurityException e) {
+        } catch (RuntimeException e) {
+            // The target provider runs in this process and may throw unchecked exceptions for a malformed or
+            // unknown path (e.g. FileProvider throws IllegalArgumentException, older versions
+            // StringIndexOutOfBoundsException). Left uncaught they crash the app, so report "not found" instead.
             Logger.error("Unable to open content URL: " + uri, e);
         }
         return stream;
