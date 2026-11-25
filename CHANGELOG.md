@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.11](https://github.com/ionic-team/capacitor/compare/7.6.10...7.6.11) (2026-11-25)
+
+### Bug Fixes
+
+- **android:** don't crash on unresolvable content proxy paths ([505527d](https://github.com/ionic-team/capacitor/commit/505527d6033bd1538a164c9ce5768464b7b1c235))
+- harden the internal file, content and HTTP proxy routes ([18d0a0e](https://github.com/ionic-team/capacitor/commit/18d0a0e0a82ee3cf2077f5def9ca86510e64edea))
+
 ## [7.6.10](https://github.com/ionic-team/capacitor/compare/7.6.9...7.6.10) (2026-10-28)
 
 ### Bug Fixes

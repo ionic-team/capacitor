@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.6.11](https://github.com/ionic-team/capacitor/compare/7.6.10...7.6.11) (2026-11-25)
+
+### Bug Fixes
+
+- harden the internal file, content and HTTP proxy routes ([18d0a0e](https://github.com/ionic-team/capacitor/commit/18d0a0e0a82ee3cf2077f5def9ca86510e64edea))
+
 ## [7.6.10](https://github.com/ionic-team/capacitor/compare/7.6.9...7.6.10) (2026-10-28)
 
 **Note:** Version bump only for package @capacitor/ios
