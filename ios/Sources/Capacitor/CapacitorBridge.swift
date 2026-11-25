@@ -188,8 +188,11 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func exportCoreJS(localUrl: String) {
         do {
-            let cookiesEnabled = config.getPluginConfig("CapacitorCookies").getBoolean("enabled", false)
-            let httpEnabled = config.getPluginConfig("CapacitorHttp").getBoolean("enabled", false)
+            // A disabled plugin is not registered, so patching fetch/cookies to call it would leave those calls hanging.
+            let cookiesConfig = config.getPluginConfig("CapacitorCookies")
+            let cookiesEnabled = cookiesConfig.getBoolean("enabled", false) && !cookiesConfig.getBoolean("disabled", false)
+            let httpConfig = config.getPluginConfig("CapacitorHttp")
+            let httpEnabled = httpConfig.getBoolean("enabled", false) && !httpConfig.getBoolean("disabled", false)
             try JSExport.exportCapacitorGlobalJS(userContentController: webViewDelegationHandler.contentController,
                                                  isDebug: isDevEnvironment,
                                                  loggingEnabled: config.loggingEnabled,
@@ -324,12 +327,12 @@ open class CapacitorBridge: NSObject, CAPBridgeProtocol {
             return
         }
 
+        guard !config.getPluginConfig(pluginInstance.jsName).getBoolean("disabled", false) else {
+            CAPLog.print("⚡️  Not registering disabled plugin \(pluginInstance.jsName)")
+            return
+        }
         if plugins[pluginInstance.jsName] != nil {
             CAPLog.print("⚡️  Overriding existing registered plugin \(pluginInstance.classForCoder)")
-        }
-        guard !config.getPluginConfig(plugin.jsName).getBoolean("disabled", false) else {
-            CAPLog.print("⚡️  Not registering disabled plugin \(plugin.jsName)")
-            return
         }
         plugins[pluginInstance.jsName] = pluginInstance
         pluginInstance.load(on: self)

@@ -7,9 +7,13 @@ The Capacitor Http API provides native http support via patching `fetch` and `XM
 By default, the patching of `window.fetch` and `XMLHttpRequest` to use native libraries is disabled.
 If you would like to enable this feature, modify the configuration below in the `capacitor.config` file.
 
-| Prop          | Type                 | Description                                                                          | Default            |
-| ------------- | -------------------- | ------------------------------------------------------------------------------------ | ------------------ |
-| **`enabled`** | <code>boolean</code> | Enable the patching of `fetch` and `XMLHttpRequest` to use native libraries instead. | <code>false</code> |
+| Prop           | Type                 | Description                                                                                              | Default            | Since |
+| -------------- | -------------------- | -------------------------------------------------------------------------------------------------------- | ------------------ | ----- |
+| **`enabled`**  | <code>boolean</code> | Enable the patching of `fetch` and `XMLHttpRequest` to use native libraries instead.                     | <code>false</code> | 4.3.0 |
+| **`disabled`** | <code>boolean</code> | Prevent the plugin from loading on iOS and Android. Takes precedence over `enabled`.                     | <code>false</code> | 9.1.0 |
+
+`enabled` only controls the patching. With `enabled` unset or `false`, `CapacitorHttp.request()` and the other methods below still work.
+Set `disabled` to `true` to stop the plugin from loading at all: its methods then fail as unimplemented, and `fetch` and `XMLHttpRequest` are not patched even if `enabled` is `true`.
 
 ### Example Configuration
 
