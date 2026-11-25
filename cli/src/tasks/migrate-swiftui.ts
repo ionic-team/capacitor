@@ -134,13 +134,29 @@ export async function migrateToSwiftUI(config: Config): Promise<void> {
   });
 
   await runTask('Writing App.swift, CapacitorView.swift and SceneDelegate.swift.', async () => {
+    const storyboardPath = join(config.ios.nativeTargetDirAbs, 'Base.lproj', 'Main.storyboard');
+    const bridgeClass = existsSync(storyboardPath)
+      ? getStoryboardBridgeSubclass(readFileSync(storyboardPath, 'utf-8'))
+      : null;
+    const capacitorView = bridgeClass ? useBridgeSubclass(assets.capacitorView, bridgeClass) : assets.capacitorView;
     const files: [string, string][] = [
       ['App.swift', assets.app],
-      ['CapacitorView.swift', assets.capacitorView],
+      ['CapacitorView.swift', capacitorView],
     ];
     for (const [name, contents] of files) {
-      if (!writeAppTargetFile(config, name, contents)) {
+      if (writeAppTargetFile(config, name, contents)) {
+        if (name === 'CapacitorView.swift' && bridgeClass) {
+          logger.info(
+            `CapacitorView.swift uses your ${bridgeClass} from Main.storyboard as the bridge view controller.`,
+          );
+        }
+      } else {
         logger.warn(`${name} already exists, skipping.`);
+        if (name === 'CapacitorView.swift' && bridgeClass) {
+          logger.warn(
+            `Main.storyboard set ${bridgeClass} as the bridge view controller: make sure CapacitorView.swift creates it.`,
+          );
+        }
       }
     }
 
@@ -215,6 +231,26 @@ function writeSceneDelegate(path: string, contents: string): 'written' | 'replac
   }
   writeFileSync(path, contents);
   return 'replaced';
+}
+
+/**
+ * Main.storyboard is about to be removed, so a CAPBridgeViewController subclass set on its initial
+ * view controller (the documented way to register local plugins) would be silently dropped.
+ * Returns that subclass, or null when the storyboard uses CAPBridgeViewController itself.
+ */
+function getStoryboardBridgeSubclass(storyboard: string): string | null {
+  const initialId = storyboard.match(/\binitialViewController="([^"]+)"/)?.[1];
+  if (!initialId) return null;
+  const tag = [...storyboard.matchAll(/<viewController\b[^>]*>/g)]
+    .map((m) => m[0])
+    .find((t) => t.includes(` id="${initialId}"`));
+  const customClass = tag?.match(/\bcustomClass="([A-Za-z_][A-Za-z0-9_]*)"/)?.[1];
+  return customClass && customClass !== 'CAPBridgeViewController' ? customClass : null;
+}
+
+/** Point the template CapacitorView at the app's own bridge subclass. */
+function useBridgeSubclass(capacitorView: string, className: string): string {
+  return capacitorView.replace(/\bCAPBridgeViewController\b/g, className);
 }
 
 /**
@@ -705,6 +741,7 @@ export const __testables = {
   classify,
   describeSignals,
   ensureSupportedInterfaceOrientations,
+  getStoryboardBridgeSubclass,
   hasCustomDelegateBody,
   hasCustomWindowSetup,
   isStockAppDelegate,
@@ -712,5 +749,6 @@ export const __testables = {
   removeLeftoverStoryboard,
   rewriteAppDelegateForAdaptor,
   scanAndWarn,
+  useBridgeSubclass,
   writeSceneDelegate,
 };
