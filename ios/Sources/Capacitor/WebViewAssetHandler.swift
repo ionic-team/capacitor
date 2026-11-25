@@ -56,7 +56,14 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
         do {
             var data = Data()
-            let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
+            let isCordovaStub = url.lastPathComponent == "cordova.js"
+            let pathExtension: String
+            if isCordovaStub {
+                pathExtension = url.pathExtension
+            } else {
+                pathExtension = fileUrl.pathExtension.isEmpty ? url.pathExtension : fileUrl.pathExtension
+            }
+            let mimeType = mimeTypeForExtension(pathExtension: pathExtension)
             var headers =  [
                 "Content-Type": mimeType,
                 "Cache-Control": "no-cache"
@@ -88,8 +95,8 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 urlSchemeTask.didReceive(response!)
                 try fileHandle.close()
             } else {
-                if !stringToLoad.contains("cordova.js") {
-                    if isMediaExtension(pathExtension: url.pathExtension) {
+                if !isCordovaStub {
+                    if isMediaExtension(pathExtension: pathExtension) {
                         data = try Data(contentsOf: fileUrl, options: Data.ReadingOptions.mappedIfSafe)
                     } else {
                         data = try Data(contentsOf: fileUrl)
@@ -97,7 +104,7 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
                 }
                 let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
                 let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
-                if isMediaExtension(pathExtension: url.pathExtension) {
+                if isMediaExtension(pathExtension: pathExtension) {
                     urlSchemeTask.didReceive(urlResponse)
                 } else {
                     urlSchemeTask.didReceive(httpResponse!)
