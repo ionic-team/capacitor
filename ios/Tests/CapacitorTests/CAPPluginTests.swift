@@ -18,6 +18,27 @@ struct CAPPluginTests {
         return (call, recorder)
     }
 
+    private final class OverridingPlugin: CAPPlugin {
+        private(set) var notifiedEvents: [String] = []
+        private(set) var removeListenerCount = 0
+        private(set) var removeAllListenersCount = 0
+
+        override func notifyListeners(_ eventName: String, data: [String: Any]?, retainUntilConsumed retain: Bool) {
+            notifiedEvents.append(eventName)
+            super.notifyListeners(eventName, data: data, retainUntilConsumed: retain)
+        }
+
+        override func removeListener(_ call: CAPPluginCall) {
+            removeListenerCount += 1
+            super.removeListener(call)
+        }
+
+        override func removeAllListeners(_ call: CAPPluginCall) {
+            removeAllListenersCount += 1
+            super.removeAllListeners(call)
+        }
+    }
+
     @Test func notifyListenersDeliversToActiveListener() {
         let plugin = CAPPlugin()
         let (call, recorder) = Self.makeCall()
@@ -87,5 +108,47 @@ struct CAPPluginTests {
         #expect(firstRecorder.received.isEmpty)
         #expect(secondRecorder.received.count == 1)
         #expect(secondRecorder.received.first?["value"] as? String == "hello")
+    }
+
+    @Test func notifyListenersOverrideReceivesConvenienceCall() {
+        let plugin = OverridingPlugin()
+        let (call, recorder) = Self.makeCall()
+        plugin.addEventListener("myEvent", listener: call)
+
+        plugin.notifyListeners("myEvent", data: ["value": "hello"])
+
+        #expect(plugin.notifiedEvents == ["myEvent"])
+        #expect(recorder.received.count == 1)
+    }
+
+    @Test func notifyListenersOverrideReceivesRetainedReplay() {
+        let plugin = OverridingPlugin()
+        plugin.notifyListeners("myEvent", data: ["value": "hello"], retainUntilConsumed: true)
+
+        let (call, recorder) = Self.makeCall()
+        plugin.addEventListener("myEvent", listener: call)
+
+        #expect(plugin.notifiedEvents == ["myEvent", "myEvent"])
+        #expect(recorder.received.count == 1)
+    }
+
+    @Test func removeListenerOverrideReceivesSelectorDispatch() {
+        let plugin = OverridingPlugin()
+        let (call, _) = Self.makeCall()
+
+        plugin.perform(NSSelectorFromString("removeListener:"), with: call)
+
+        #expect(plugin.removeListenerCount == 1)
+    }
+
+    @Test func removeAllListenersOverrideReceivesSelectorDispatch() {
+        let plugin = OverridingPlugin()
+        let (call, _) = Self.makeCall()
+        plugin.addEventListener("myEvent", listener: call)
+
+        plugin.perform(NSSelectorFromString("removeAllListeners:"), with: call)
+
+        #expect(plugin.removeAllListenersCount == 1)
+        #expect(plugin.hasListeners("myEvent") == false)
     }
 }
