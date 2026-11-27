@@ -39,7 +39,7 @@ describe('capacitor package resolution', () => {
 
     expect(path).toBe(installed);
     expect(renderCapacitorPackage(path, join(appRoot, 'ios', 'App', 'CapApp-SPM'))).toBe(
-      '.package(name: "capacitor", path: "../../../node_modules/@capacitor/ios")',
+      '.package(name: "capacitor-ios", path: "../../../node_modules/@capacitor/ios")',
     );
   });
 
@@ -47,7 +47,7 @@ describe('capacitor package resolution', () => {
     const path = await resolveCapacitorPackagePath(makeConfig(appRoot));
 
     expect(renderCapacitorPackage(path, join(appRoot, 'node_modules', '@capacitor', 'haptics'))).toBe(
-      '.package(name: "capacitor", path: "../ios")',
+      '.package(name: "capacitor-ios", path: "../ios")',
     );
   });
 
@@ -79,7 +79,7 @@ describe('capacitor package resolution', () => {
 describe('rewriting an existing Package.swift', () => {
   const installed = '/app/node_modules/@capacitor/ios';
   const pluginDir = '/app/node_modules/@capacitor/haptics';
-  const rendered = '.package(name: "capacitor", path: "../ios")';
+  const rendered = '.package(name: "capacitor-ios", path: "../ios")';
 
   const rewrite = (content: string) => rewriteCapacitorDependency(content, installed, pluginDir);
 
@@ -94,7 +94,7 @@ describe('rewriting an existing Package.swift', () => {
     const after = rewrite(before);
 
     expect(after).toContain(rendered);
-    expect(after).toContain('.product(name: "Capacitor", package: "capacitor")');
+    expect(after).toContain('.product(name: "Capacitor", package: "capacitor-ios")');
     expect(after).not.toContain('capacitor-swift-pm');
   });
 
@@ -109,11 +109,179 @@ describe('rewriting an existing Package.swift', () => {
     const after = rewrite(before);
 
     expect(after).toContain(rendered);
-    expect(after).toContain('.product(name: "Capacitor", package: "capacitor")');
+    expect(after).toContain('.product(name: "Capacitor", package: "capacitor-ios")');
   });
 
   it('repoints a path left behind by an earlier sync', () => {
     expect(rewrite('.package(name: "capacitor", path: "../../../somewhere/else")')).toBe(rendered);
+  });
+
+  it('renames every product of a plugin on the source package, including Cordova', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor.git", from: "9.0.0-beta.0")
+    ],
+    targets: [
+        .target(
+            name: "Plugin",
+            dependencies: [
+                .product(name: "Capacitor", package: "capacitor"),
+                .product(name: "Cordova", package: "capacitor")
+            ])
+    ]`;
+
+    const after = rewrite(before);
+
+    expect(after).toContain(rendered);
+    expect(occurrences(after, 'package: "capacitor-ios"')).toBe(2);
+    expect(after).not.toContain('package: "capacitor"');
+  });
+
+  it('renames the products of a plugin rewritten by a sync from before the capacitor-ios rename', () => {
+    const before = `dependencies: [
+        .package(name: "capacitor", path: "../ios")
+    ],
+    targets: [
+        .target(name: "Plugin", dependencies: [.product(name: "Capacitor", package: "capacitor")])
+    ]`;
+
+    const after = rewrite(before);
+
+    expect(after).toContain(rendered);
+    expect(after).toContain('.product(name: "Capacitor", package: "capacitor-ios")');
+  });
+
+  it('heals a plugin whose dependency was renamed but whose products were not', () => {
+    const before = `dependencies: [
+        .package(name: "capacitor-ios", path: "../ios")
+    ],
+    targets: [
+        .target(name: "Plugin", dependencies: [.product(name: "Capacitor", package: "capacitor")])
+    ]`;
+
+    expect(rewrite(before)).toContain('.product(name: "Capacitor", package: "capacitor-ios")');
+  });
+
+  it('does not heal products that belong to another dependency identified as "capacitor"', () => {
+    const before = `dependencies: [
+        .package(name: "capacitor-ios", path: "../ios"),
+        .package(path: "../../@sentry/capacitor")
+    ],
+    targets: [
+        .target(name: "Plugin", dependencies: [.product(name: "SentryCapacitor", package: "capacitor")])
+    ]`;
+
+    expect(rewrite(before)).toContain('.product(name: "SentryCapacitor", package: "capacitor")');
+  });
+
+  it('does not heal products that reach another dependency through its derived identity', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0"),
+        .package(name: "SentryCapacitor", path: "../../@sentry/capacitor")
+    ],
+    targets: [
+        .target(name: "Plugin", dependencies: [
+            .product(name: "Capacitor", package: "capacitor-swift-pm"),
+            .product(name: "Sentry", package: "capacitor")
+        ])
+    ]`;
+
+    const after = rewrite(before);
+
+    expect(after).toContain('.product(name: "Capacitor", package: "capacitor-ios")');
+    expect(after).toContain('.product(name: "Sentry", package: "capacitor")');
+  });
+
+  it('renames products that reach a pinned Capacitor dependency through either of its names', () => {
+    const before = `dependencies: [
+        .package(name: "CapacitorSwiftPM", url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0")
+    ],
+    targets: [
+        .target(name: "Plugin", dependencies: [
+            .product(name: "Capacitor", package: "CapacitorSwiftPM"),
+            .product(name: "Cordova", package: "capacitor-swift-pm")
+        ])
+    ]`;
+
+    const after = rewrite(before);
+
+    expect(occurrences(after, 'package: "capacitor-ios"')).toBe(2);
+    expect(after).not.toMatch(/package: "capacitor-?swift-?pm"/i);
+  });
+
+  it('leaves products of a similarly named dependency alone', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/ionic-team/capacitor", from: "9.0.0"),
+        .package(name: "capacitor-plugin-foo", path: "../foo")
+    ],
+    targets: [
+        .target(name: "Plugin", dependencies: [
+            .product(name: "Capacitor", package: "capacitor"),
+            .product(name: "Foo", package: "capacitor-plugin-foo")
+        ])
+    ]`;
+
+    const after = rewrite(before);
+
+    expect(after).toContain('.package(name: "capacitor-plugin-foo", path: "../foo")');
+    expect(after).toContain('.product(name: "Foo", package: "capacitor-plugin-foo")');
+    expect(after).toContain('.product(name: "Capacitor", package: "capacitor-ios")');
+  });
+
+  it('leaves repositories that only share the source package URL prefix alone', () => {
+    const before = '.package(url: "https://github.com/ionic-team/capacitor-plugins.git", from: "1.0.0")';
+
+    expect(rewrite(before)).toBe(before);
+  });
+
+  it('leaves path dependencies inside node_modules/@capacitor alone', () => {
+    const before = '.package(name: "CapacitorHaptics", path: "../../node_modules/@capacitor/haptics")';
+
+    expect(rewrite(before)).toBe(before);
+  });
+
+  it('repoints a Cordova plugin that ships its own Package.swift on cordova-ios', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/apache/cordova-ios.git", branch: "master")
+    ],
+    targets: [
+        .target(name: "CDVFoo", dependencies: [.product(name: "Cordova", package: "cordova-ios")])
+    ]`;
+
+    const after = rewrite(before);
+
+    expect(after).toContain(rendered);
+    expect(after).toContain('.product(name: "Cordova", package: "capacitor-ios")');
+    expect(after).not.toContain('cordova-ios');
+    expect(after).not.toContain('github.com');
+  });
+
+  it('matches cordova-ios without the .git suffix and regardless of case', () => {
+    const before = `.package(url: "https://github.com/Apache/Cordova-iOS", from: "7.0.0")
+        .product(name: "Cordova", package: "Cordova-iOS")`;
+
+    const after = rewrite(before);
+
+    expect(after).toContain(rendered);
+    expect(after).toContain('.product(name: "Cordova", package: "capacitor-ios")');
+  });
+
+  it('leaves a Cordova plugin rewritten once unchanged on the next sync', () => {
+    const before = `dependencies: [
+        .package(url: "https://github.com/apache/cordova-ios.git", from: "7.0.0")
+    ],
+    targets: [
+        .target(name: "CDVFoo", dependencies: [.product(name: "Cordova", package: "cordova-ios")])
+    ]`;
+
+    const once = rewrite(before);
+
+    expect(rewrite(once)).toBe(once);
+  });
+
+  it('leaves repositories that only share the cordova-ios URL prefix alone', () => {
+    const before = '.package(url: "https://github.com/apache/cordova-ios-plugin-thing.git", from: "1.0.0")';
+
+    expect(rewrite(before)).toBe(before);
   });
 
   it('leaves a similarly named plugin package alone', () => {

@@ -134,6 +134,51 @@ describe('Update: iOS SPM plugin deployment target', () => {
     expect(content).not.toContain('.v18');
   });
 
+  it('repoints a Cordova plugin that ships its own Package.swift at the installed Capacitor package', async () => {
+    await makeSpmApp(tmpDir.path, '16.0', {});
+    const config = await loadAppConfig(tmpDir.path);
+    const rootPath = join(tmpDir.path, 'node_modules', 'cordova-plugin-foo');
+    await mkdirp(rootPath);
+    await writeFile(
+      join(rootPath, 'Package.swift'),
+      `// swift-tools-version: 5.9
+import PackageDescription
+
+let package = Package(
+    name: "cordova-plugin-foo",
+    platforms: [.iOS(.v13)],
+    products: [.library(name: "cordova-plugin-foo", targets: ["CDVFoo"])],
+    dependencies: [
+        .package(url: "https://github.com/apache/cordova-ios.git", branch: "master")
+    ],
+    targets: [
+        .target(
+            name: "CDVFoo",
+            dependencies: [.product(name: "Cordova", package: "cordova-ios")],
+            path: "src/ios"
+        )
+    ]
+)
+`,
+    );
+    const plugin = {
+      id: 'cordova-plugin-foo',
+      name: 'cordova-plugin-foo',
+      version: '1.0.0',
+      rootPath,
+      xml: { platform: [{ $: { name: 'ios', package: 'swift' } }] },
+    } as unknown as Plugin;
+
+    await generateCordovaPackageFile(plugin, config);
+
+    const content = await readFile(join(rootPath, 'Package.swift'), 'utf-8');
+    expect(content).toContain('.package(name: "capacitor-ios", path: "../@capacitor/ios")');
+    expect(content).toContain('.product(name: "Cordova", package: "capacitor-ios")');
+    expect(content).not.toContain('cordova-ios');
+    expect(content).not.toContain('github.com');
+    expect(content).toContain('platforms: [.iOS(.v16)]');
+  });
+
   it('leaves a plugin that already declares a target at or above the Capacitor minimum alone', async () => {
     const manifests = await makeSpmApp(tmpDir.path, '18.0', { app: '.iOS(.v17)' });
 
