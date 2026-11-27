@@ -302,10 +302,23 @@ public class Bridge {
         }
     }
 
+    /**
+     * Whether the path targets the local file or content proxy routes.
+     */
+    static boolean isLocalFilePath(String path) {
+        return path != null && (path.startsWith(CAPACITOR_FILE_START) || path.startsWith(CAPACITOR_CONTENT_START));
+    }
+
+    /**
+     * Whether the path targets one of the internal proxy routes (file, content, http interceptor).
+     */
+    static boolean isInternalProxyPath(String path) {
+        return isLocalFilePath(path) || (path != null && path.startsWith(CAPACITOR_HTTP_INTERCEPTOR_START));
+    }
+
     public boolean launchIntent(Uri url) {
-        // The proxy returns a remote body at the app origin, so block it before plugins can allow it.
-        String path = url.getPath();
-        if (path != null && path.startsWith(CAPACITOR_HTTP_INTERCEPTOR_START)) {
+        // The proxy routes return data at the app origin, so block navigating to them before plugins can allow it.
+        if (isInternalProxyPath(url.getPath())) {
             return true;
         }
 
