@@ -1,7 +1,7 @@
 import { pathExists, readFile } from 'fs-extra';
 
-import type { Config } from '../src/definitions';
 import { doctorAndroid } from '../src/android/doctor';
+import type { Config } from '../src/definitions';
 import { readdirp } from '../src/util/fs';
 import { readXML } from '../src/util/xml';
 
@@ -109,13 +109,10 @@ describe('doctorAndroid checkPackage', () => {
       return true;
     });
 
-    mockedReadFile.mockResolvedValue(
-      "android { defaultConfig { applicationId 'com.example.app' } }",
-    );
+    mockedReadFile.mockResolvedValue("android { defaultConfig { applicationId 'com.example.app' } }");
 
-    mockedReaddirp.mockImplementation(
-      async (dir: string, { filter }: { filter: (entry: WalkerStub) => boolean }) =>
-        (FILES[layout][dir] ?? []).filter(filter).map((entry) => entry.path),
+    mockedReaddirp.mockImplementation(async (dir: string, { filter }: { filter: (entry: WalkerStub) => boolean }) =>
+      (FILES[layout][dir] ?? []).filter(filter).map((entry) => entry.path),
     );
 
     mockedReadXML.mockResolvedValue(MANIFEST);
@@ -149,16 +146,12 @@ describe('doctorAndroid checkPackage', () => {
   it('reports the missing source dirs when neither java nor kotlin exists', async () => {
     layout = 'none';
 
-    await expect(doctorAndroid(makeConfig())).rejects.toThrow(
-      `directory is missing in ${SRC_MAIN}`,
-    );
+    await expect(doctorAndroid(makeConfig())).rejects.toThrow(`directory is missing in ${SRC_MAIN}`);
   });
 
   it('reports the missing main activity when the kotlin dir has no matching file', async () => {
     layout = 'kotlinEmpty';
 
-    await expect(doctorAndroid(makeConfig())).rejects.toThrow(
-      'Main activity file (MainActivity) is missing',
-    );
+    await expect(doctorAndroid(makeConfig())).rejects.toThrow('Main activity file (MainActivity) is missing');
   });
 });
