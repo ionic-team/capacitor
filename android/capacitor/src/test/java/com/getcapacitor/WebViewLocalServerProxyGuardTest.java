@@ -42,6 +42,7 @@ public class WebViewLocalServerProxyGuardTest {
     private MockedStatic<Logger> loggerStatic;
     private WebViewLocalServer server;
     private Bridge bridge;
+    private PluginConfig httpConfig;
 
     @Before
     public void setUp() {
@@ -50,7 +51,7 @@ public class WebViewLocalServerProxyGuardTest {
         uriStatic.when(() -> Uri.parse("https://localhost")).thenReturn(appOrigin);
         loggerStatic = mockStatic(Logger.class);
 
-        PluginConfig httpConfig = mock(PluginConfig.class);
+        httpConfig = mock(PluginConfig.class);
         when(httpConfig.getBoolean("enabled", false)).thenReturn(true);
         CapConfig config = mock(CapConfig.class);
         when(config.getPluginConfiguration("CapacitorHttp")).thenReturn(httpConfig);
@@ -164,6 +165,14 @@ public class WebViewLocalServerProxyGuardTest {
             setUpFresh();
             assertBlocked(request(uri("https", "localhost", -1, path), false, headers));
         }
+    }
+
+    @Test
+    public void httpInterceptorIsOffWhenCapacitorHttpIsDisabled() {
+        // disabled wins over enabled: the plugin isn't registered, so its proxy must not be served either
+        when(httpConfig.getBoolean("disabled", false)).thenReturn(true);
+        assertNull(server.shouldInterceptRequest(subResource("localhost", HTTP_PATH)));
+        loggerStatic.verify(() -> Logger.debug(anyString()), never());
     }
 
     @Test
