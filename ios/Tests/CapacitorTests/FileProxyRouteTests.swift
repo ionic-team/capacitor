@@ -3,19 +3,12 @@ import XCTest
 
 @testable import Capacitor
 
-private class StubFrameInfo: WKFrameInfo {
-    override var isMainFrame: Bool { false }
-
-    // See HttpInterceptorNavigationTests: WKFrameInfo must never be deallocated.
-    static let shared = StubFrameInfo()
-}
-
 private class StubNavigationAction: WKNavigationAction {
     private let stubbedRequest: URLRequest
     private let stubbedTargetFrame: WKFrameInfo?
     init(url: String, subframe: Bool) {
         self.stubbedRequest = URLRequest(url: URL(string: url)!)
-        self.stubbedTargetFrame = subframe ? StubFrameInfo.shared : nil
+        self.stubbedTargetFrame = subframe ? StubFrameInfo.subframe : nil
         super.init()
     }
     override var request: URLRequest { stubbedRequest }

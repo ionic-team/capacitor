@@ -190,6 +190,11 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
     // MARK: - WKScriptMessageHandler
 
     open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard message.frameInfo.isMainFrame else {
+            CAPLog.print("⚡️  Plugin execution is allowed in Main Frame only")
+            return
+        }
+
         guard let bridge = bridge else {
             return
         }
@@ -243,6 +248,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
     open func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
         guard let viewController = bridge?.viewController else {
+            completionHandler(false)
             return
         }
 
@@ -261,9 +267,9 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
     open func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
 
-        // Check if this is synchronous cookie or http call
-        do {
-            if let dataFromString = prompt.data(using: .utf8, allowLossyConversion: false) {
+        // Check if this is synchronous cookie call (main frame only)
+        if frame.isMainFrame, let dataFromString = prompt.data(using: .utf8, allowLossyConversion: false) {
+            do {
                 if let payload = try JSONSerialization.jsonObject(with: dataFromString, options: .fragmentsAllowed) as? [String: AnyObject] {
                     let type = payload["type"] as? String
 
@@ -282,12 +288,13 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
                         return
                     }
                 }
+            } catch {
+                // Continue with regular prompt
             }
-        } catch {
-            // Continue with regular prompt
         }
 
         guard let viewController = bridge?.viewController else {
+            completionHandler(nil)
             return
         }
 
