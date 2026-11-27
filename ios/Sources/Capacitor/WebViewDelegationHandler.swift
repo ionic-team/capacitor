@@ -248,6 +248,7 @@ open class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDelegat
 
     open func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
         guard let viewController = bridge?.viewController else {
+            completionHandler(false)
             return
         }
 

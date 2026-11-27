@@ -15,7 +15,7 @@ class StubFrameInfo: WKFrameInfo {
     // WKFrameInfo has no public initializer, so super.init() leaves WebKit's internal state
     // unset and -[WKFrameInfo dealloc] then dereferences garbage. Keeping instances alive
     // for the process avoids ever deallocating them.
-    static let shared = StubFrameInfo(isMainFrame: false)
+    static let subframe = StubFrameInfo(isMainFrame: false)
     static let main = StubFrameInfo(isMainFrame: true)
 }
 
@@ -24,7 +24,7 @@ private class StubNavigationAction: WKNavigationAction {
     private let stubbedTargetFrame: WKFrameInfo?
     init(url: String, subframe: Bool = false) {
         self.stubbedRequest = URLRequest(url: URL(string: url)!)
-        self.stubbedTargetFrame = subframe ? StubFrameInfo.shared : nil
+        self.stubbedTargetFrame = subframe ? StubFrameInfo.subframe : nil
         super.init()
     }
     override var request: URLRequest { stubbedRequest }

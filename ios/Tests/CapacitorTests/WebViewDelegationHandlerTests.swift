@@ -18,7 +18,7 @@ private class StubScriptMessage: WKScriptMessage {
     static func make(body: Any, isMainFrame: Bool) -> StubScriptMessage {
         let message = StubScriptMessage(
             body: body,
-            frameInfo: isMainFrame ? StubFrameInfo.main : StubFrameInfo.shared
+            frameInfo: isMainFrame ? StubFrameInfo.main : StubFrameInfo.subframe
         )
         retained.append(message)
         return message
@@ -83,7 +83,7 @@ class WebViewDelegationHandlerTests: XCTestCase {
             webView,
             runJavaScriptTextInputPanelWithPrompt: #"{"type":"CapacitorCookies.get"}"#,
             defaultText: nil,
-            initiatedByFrame: StubFrameInfo.shared
+            initiatedByFrame: StubFrameInfo.subframe
         ) { _ in
             completionCalled = true
         }
@@ -104,12 +104,28 @@ class WebViewDelegationHandlerTests: XCTestCase {
             webView,
             runJavaScriptTextInputPanelWithPrompt: #"{"type":"CapacitorCookies.get"}"#,
             defaultText: nil,
-            initiatedByFrame: StubFrameInfo.shared
+            initiatedByFrame: StubFrameInfo.subframe
         ) { result in
             completions.append(result)
         }
 
         XCTAssertEqual(completions, [nil])
+    }
+
+    func testConfirmCompletesOnceWithFalseWhenNoPresenter() {
+        viewController = nil
+        XCTAssertNil(handler.bridge?.viewController)
+
+        var completions: [Bool] = []
+        handler.webView(
+            webView,
+            runJavaScriptConfirmPanelWithMessage: "Continue?",
+            initiatedByFrame: StubFrameInfo.main
+        ) { result in
+            completions.append(result)
+        }
+
+        XCTAssertEqual(completions, [false])
     }
 
     func testMainFramePromptHandlesCapacitorCookiesGet() {
