@@ -73,6 +73,41 @@ public class SystemBarsTest {
         assertEquals(63, invokeGetBottomInset(63, 0, true));
     }
 
+    @Test
+    public void webViewMajorVersionIsParsedFromReleaseVersionName() {
+        assertEquals(140, SystemBars.parseWebViewMajorVersion("140.0.7339.207"));
+    }
+
+    @Test
+    public void webViewMajorVersionIsZeroForDeveloperBuild() {
+        assertEquals(0, SystemBars.parseWebViewMajorVersion("Developer Build"));
+    }
+
+    @Test
+    public void webViewMajorVersionIsZeroForEmptyVersionName() {
+        assertEquals(0, SystemBars.parseWebViewMajorVersion(""));
+    }
+
+    @Test
+    public void webViewMajorVersionIsZeroForDotOnlyVersionName() {
+        assertEquals(0, SystemBars.parseWebViewMajorVersion("."));
+    }
+
+    @Test
+    public void webViewMajorVersionIgnoresLeadingWhitespace() {
+        assertEquals(140, SystemBars.parseWebViewMajorVersion(" 140.0.7339.207"));
+    }
+
+    @Test
+    public void webViewMajorVersionIsZeroWhenNumberOverflows() {
+        assertEquals(0, SystemBars.parseWebViewMajorVersion("99999999999.0"));
+    }
+
+    @Test
+    public void webViewMajorVersionIsZeroForNullVersionName() {
+        assertEquals(0, SystemBars.parseWebViewMajorVersion(null));
+    }
+
     private int invokeGetBottomInset(int navigationBarBottom, int imeBottom, boolean keyboardVisible) throws Exception {
         Method getBottomInset = SystemBars.class.getDeclaredMethod("getBottomInset", Insets.class, Insets.class, boolean.class);
         getBottomInset.setAccessible(true);

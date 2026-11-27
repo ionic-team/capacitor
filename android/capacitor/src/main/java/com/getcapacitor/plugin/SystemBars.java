@@ -22,6 +22,8 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.WebViewListener;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @CapacitorPlugin
 public class SystemBars extends Plugin {
@@ -38,6 +40,7 @@ public class SystemBars extends Plugin {
 
     // https://issues.chromium.org/issues/40699457
     private static final int WEBVIEW_VERSION_WITH_SAFE_AREA_FIX = 140;
+    private static final Pattern WEBVIEW_MAJOR_VERSION_PATTERN = Pattern.compile("\\d+");
 
     static final String viewportMetaJSFunction = """
     function capacitorSystemBarsCheckMetaViewport() {
@@ -360,12 +363,24 @@ public class SystemBars extends Plugin {
 
     private Integer getWebViewMajorVersion() {
         PackageInfo info = WebViewCompat.getCurrentWebViewPackage(getContext());
-        if (info != null && info.versionName != null) {
-            String[] versionSegments = info.versionName.split("\\.");
-            return Integer.valueOf(versionSegments[0]);
+        return info != null ? parseWebViewMajorVersion(info.versionName) : 0;
+    }
+
+    static int parseWebViewMajorVersion(String versionName) {
+        if (versionName == null) {
+            return 0;
         }
 
-        return 0;
+        Matcher matcher = WEBVIEW_MAJOR_VERSION_PATTERN.matcher(versionName);
+        if (!matcher.find()) {
+            return 0;
+        }
+
+        try {
+            return Integer.parseInt(matcher.group());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     private int getBottomInset(Insets systemBarsInsets, Insets imeInsets, boolean keyboardVisible) {
