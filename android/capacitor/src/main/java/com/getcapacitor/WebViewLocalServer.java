@@ -179,7 +179,8 @@ public class WebViewLocalServer {
         }
 
         if (null != loadingUrl.getPath() && loadingUrl.getPath().startsWith(Bridge.CAPACITOR_HTTP_INTERCEPTOR_START)) {
-            boolean httpEnabled = bridge.getConfig().getPluginConfiguration("CapacitorHttp").getBoolean("enabled", false);
+            PluginConfig httpConfig = bridge.getConfig().getPluginConfiguration("CapacitorHttp");
+            boolean httpEnabled = httpConfig.getBoolean("enabled", false) && !httpConfig.getBoolean("disabled", false);
             if (!httpEnabled) {
                 return null;
             }

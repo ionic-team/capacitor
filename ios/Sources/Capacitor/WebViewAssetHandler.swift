@@ -37,7 +37,8 @@ open class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
         if url.path.starts(with: CapacitorBridge.httpInterceptorStartIdentifier) {
             // Only serve the proxy when CapacitorHttp is on. A scheme task can't tell a document from
             // a subresource, so keeping documents out relies on the check in decidePolicyFor.
-            if configuration?.getPluginConfig("CapacitorHttp").getBoolean("enabled", false) == true {
+            let httpConfig = configuration?.getPluginConfig("CapacitorHttp")
+            if httpConfig?.getBoolean("enabled", false) == true && httpConfig?.getBoolean("disabled", false) != true {
                 handleCapacitorHttpRequest(urlSchemeTask, localUrl, false)
             } else {
                 urlSchemeTask.didFailWithError(URLError(.unsupportedURL))

@@ -644,7 +644,10 @@ public class Bridge {
     public void registerPlugin(Class<? extends Plugin> pluginClass) {
         String pluginId = pluginId(pluginClass);
         if (pluginId == null) return;
-
+        if (config.getPluginConfiguration(pluginId).getBoolean("disabled", false)) {
+            Logger.debug("Not registering disabled plugin: " + pluginId);
+            return;
+        }
         try {
             this.plugins.put(pluginId, new PluginHandle(this, pluginClass));
         } catch (InvalidPluginException ex) {
@@ -658,7 +661,10 @@ public class Bridge {
         Class<? extends Plugin> clazz = plugin.getClass();
         String pluginId = pluginId(clazz);
         if (pluginId == null) return;
-
+        if (config.getPluginConfiguration(pluginId).getBoolean("disabled", false)) {
+            Logger.debug("Not registering disabled plugin: " + pluginId);
+            return;
+        }
         try {
             this.plugins.put(pluginId, new PluginHandle(this, plugin));
         } catch (InvalidPluginException ex) {
