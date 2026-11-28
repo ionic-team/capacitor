@@ -275,7 +275,6 @@ export async function addSceneManifestIfNeeded(config: Config): Promise<void> {
         {
           UISceneConfigurationName: 'Default Configuration',
           UISceneDelegateClassName: '$(PRODUCT_MODULE_NAME).SceneDelegate',
-          UISceneStoryboardFile: 'Main',
         },
       ],
     },
