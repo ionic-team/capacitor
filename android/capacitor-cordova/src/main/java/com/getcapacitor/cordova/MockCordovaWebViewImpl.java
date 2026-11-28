@@ -31,6 +31,7 @@ class MockCordovaWebViewImpl implements CordovaWebView {
     private CapacitorCordovaCookieManager cookieManager;
     private WebView webView;
     private boolean hasPausedEver;
+    private volatile boolean destroyed = false;
 
     MockCordovaWebViewImpl(Context context) {
         this.context = context;
@@ -172,6 +173,7 @@ class MockCordovaWebViewImpl implements CordovaWebView {
 
     @Override
     public void handleDestroy() {
+        destroyed = true;
         if (!isInitialized()) {
             return;
         }
@@ -186,7 +188,11 @@ class MockCordovaWebViewImpl implements CordovaWebView {
 
     public void eval(final String js, final ValueCallback<String> callback) {
         Handler mainHandler = new Handler(context.getMainLooper());
-        mainHandler.post(() -> webView.evaluateJavascript(js, callback));
+        mainHandler.post(() -> {
+            if (!destroyed) {
+                webView.evaluateJavascript(js, callback);
+            }
+        });
     }
 
     public void triggerDocumentEvent(final String eventName) {
